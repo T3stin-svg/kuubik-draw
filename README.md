@@ -8,7 +8,7 @@ käitumispariteeti, mitte kogu AutoCADi toodet.
 
 - vana Drawi auditi snapshot: **63,9% raw / 68,3% weighted / 60,7% visual**;
 - vana Drawi AutoCADi live-tõendiga read: **22/133**;
-- selle uue eraldatud rakenduse kohalik sertifikaat: **16/133 · 12,0% raw / 15,0% weighted**;
+- selle uue eraldatud rakenduse kohalik sertifikaat: **17/133 · 12,8% raw / 15,5% weighted**;
 - native DWG/DWT/XREF ja PC3/CTB/STB pariteet on veel blokeeritud.
 
 Need arvud on vana Drawi auditi muutmatu snapshot. Uus rakendus ei päri skoori
@@ -57,6 +57,18 @@ AutoCAD 2024 live-värav salvestab ja avab native DWG uuesti ning plotib mõlema
 olekud `DWG To PDF.pc3` kaudu. AutoCADi enda PDF-kataloogi dubleeritud
 `/PageMode` võti on tõendis ausalt kirjas; tolerantne tagasilugemine ja Poppler
 kinnitavad muutumatu vektortulemuse.
+F-105 `Batch publish layouts` salvestab layout'ide järjekorra, inclusion-state'i,
+ühe mitmeleheküljelise või eraldi PDF-ide režiimi ning failinime dokumendi
+metadata sisse ühe atomaarse Undo/Redo sammuna. Chromiumi live-töövoog tõendas
+teadlikult mitte-tähestikulise PLAN 20 → SECTION 10 järjekorra, 2→1 välistamise,
+taastamise, kahe lehe PDF-i ja kaks eraldi Windowsi-kindla nimega faili; reload
+säilitas kõik seaded. Inaktiivse SECTION 10 layout'i täpne DOM-ist mõõdetud
+Display-aken salvestati ning sõltumatu PDF-operaatorite tagasilugemine tõendas
+sama source clip'i ja outer transformi. Tootmis-PDF-i baidid kattusid brauseri
+download'iga ning `pypdf`, `pdfplumber` ja Poppler kinnitasid A4 lehejärjekorra
+ning null rasterpilti. AutoCAD 2024 live `SetLayoutsToPlot` andis samas
+järjekorras kaks native PDF-i ja ühe lehega välistatud komplekti, seejärel avati
+native DWG uuesti.
 
 ## Piirid
 

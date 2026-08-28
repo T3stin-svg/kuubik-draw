@@ -163,7 +163,7 @@ export function exportVectorPdf(document: KDrawDocumentV1, page: PrintPage): { b
   });
   const scale = (MM_TO_PT * UNIT_TO_MM[document.units.linear]) / page.scaleDenominator;
   const content = `q ${pdfNumber(scale)} 0 0 ${pdfNumber(scale)} ${pdfNumber(-page.origin.x * scale)} ${pdfNumber(-page.origin.y * scale)} cm\n${commands.join("\n")}\nQ`;
-  return { bytes: buildPdfBytes(page.widthMm, page.heightMm, content), skippedHandles };
+  return { bytes: buildPdfBytes([{ widthMm: page.widthMm, heightMm: page.heightMm, content }]), skippedHandles };
 }
 
 export interface LayoutPlotPlacement {
@@ -177,6 +177,18 @@ export interface LayoutPlotPlacement {
 export interface LayoutPlotOptions {
   /** Current paper-space display in layout coordinates. Required for Display plots. */
   displayWindow?: CadPaperRect;
+}
+
+export interface PublishedLayoutPage {
+  layoutId: string;
+  placement: LayoutPlotPlacement;
+  skippedHandles: string[];
+}
+
+export interface LayoutBatchPdfResult {
+  bytes: Uint8Array;
+  pages: PublishedLayoutPage[];
+  skippedHandles: string[];
 }
 
 function layoutPaper(layout: CadLayout): NonNullable<CadLayout["paper"]> | null {
@@ -316,9 +328,10 @@ export function exportLayoutSvg(document: KDrawDocumentV1, layoutId: string, opt
   }).join("");
   const { paper, source, destination, scaleFactor, setup } = placement;
   const transform = `translate(${destination.x} ${paper.heightMm - destination.y}) scale(${scaleFactor} ${-scaleFactor}) translate(${-source.x} ${-source.y})`;
+  const plotClip = `<clipPath id="plot-source-clip"><rect x="${destination.x}" y="${paper.heightMm - destination.y - destination.height}" width="${destination.width}" height="${destination.height}"/></clipPath>`;
   const metadata = `data-layout-id="${xml(layout.id)}" data-plot-area="${setup.plotArea.kind}" data-plot-scale="${setup.plotScale.mode}" data-plot-profile="${plotStyle.profile}" data-plot-lineweights="${plotStyle.plotLineweights}" data-plot-transparency="${plotStyle.plotTransparency}" data-source="${source.x},${source.y},${source.width},${source.height}" data-destination="${destination.x},${destination.y},${destination.width},${destination.height}"`;
   return {
-    text: `<svg xmlns="http://www.w3.org/2000/svg" width="${paper.widthMm}mm" height="${paper.heightMm}mm" viewBox="0 0 ${paper.widthMm} ${paper.heightMm}" ${metadata}><defs>${viewports.map((viewport) => viewport.definition).join("")}</defs><g transform="${transform}">${viewports.map((viewport) => viewport.body).join("")}${paperBody}</g></svg>`,
+    text: `<svg xmlns="http://www.w3.org/2000/svg" width="${paper.widthMm}mm" height="${paper.heightMm}mm" viewBox="0 0 ${paper.widthMm} ${paper.heightMm}" ${metadata}><defs>${plotClip}${viewports.map((viewport) => viewport.definition).join("")}</defs><g clip-path="url(#plot-source-clip)"><g transform="${transform}">${viewports.map((viewport) => viewport.body).join("")}${paperBody}</g></g></svg>`,
     skippedHandles: [...new Set(skippedHandles)],
     placement,
   };
@@ -332,15 +345,25 @@ function pdfClip(viewport: CadViewport): string {
   return `${pdfNumber(viewport.center.x - viewport.width / 2)} ${pdfNumber(viewport.center.y - viewport.height / 2)} ${pdfNumber(viewport.width)} ${pdfNumber(viewport.height)} re W n`;
 }
 
-function buildPdfBytes(widthMm: number, heightMm: number, content: string): Uint8Array {
-  const alphaNames = [...new Set([...content.matchAll(/\/(GS\d+(?:_\d+)?) gs/gu)].map((match) => match[1]!))].sort();
-  const alphaStartObject = 6;
+interface PdfPageDefinition { widthMm: number; heightMm: number; content: string }
+
+function buildPdfBytes(pages: readonly PdfPageDefinition[]): Uint8Array {
+  if (pages.length === 0) throw new RangeError("At least one PDF page is required.");
+  const alphaNames = [...new Set(pages.flatMap((page) => [...page.content.matchAll(/\/(GS\d+(?:_\d+)?) gs/gu)].map((match) => match[1]!)))].sort();
+  const fontObject = 3 + pages.length * 2;
+  const alphaStartObject = fontObject + 1;
   const alphaResources = alphaNames.map((name, index) => `/${name} ${alphaStartObject + index} 0 R`).join(" ");
+  const pageObjects = pages.flatMap((page, index) => {
+    const pageObject = 3 + index * 2; const contentObject = pageObject + 1;
+    return [
+      `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${pdfNumber(page.widthMm * MM_TO_PT)} ${pdfNumber(page.heightMm * MM_TO_PT)}] /Resources << /Font << /F1 ${fontObject} 0 R >> /ExtGState << ${alphaResources} >> >> /Contents ${contentObject} 0 R >>`,
+      `<< /Length ${new TextEncoder().encode(page.content).byteLength} >>\nstream\n${page.content}\nendstream`,
+    ];
+  });
   const objects = [
     "<< /Type /Catalog /Pages 2 0 R >>",
-    "<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
-    `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${pdfNumber(widthMm * MM_TO_PT)} ${pdfNumber(heightMm * MM_TO_PT)}] /Resources << /Font << /F1 5 0 R >> /ExtGState << ${alphaResources} >> >> /Contents 4 0 R >>`,
-    `<< /Length ${new TextEncoder().encode(content).byteLength} >>\nstream\n${content}\nendstream`,
+    `<< /Type /Pages /Kids [${pages.map((_, index) => `${3 + index * 2} 0 R`).join(" ")}] /Count ${pages.length} >>`,
+    ...pageObjects,
     "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>",
     ...alphaNames.map((name) => {
       const opacity = Number(name.slice(2).replace("_", ".")) / 100;
@@ -356,7 +379,7 @@ function buildPdfBytes(widthMm: number, heightMm: number, content: string): Uint
   return new TextEncoder().encode(pdf);
 }
 
-export function exportLayoutVectorPdf(document: KDrawDocumentV1, layoutId: string, options: LayoutPlotOptions = {}): { bytes: Uint8Array; skippedHandles: string[]; placement: LayoutPlotPlacement } {
+function layoutPdfPage(document: KDrawDocumentV1, layoutId: string, options: LayoutPlotOptions = {}): PdfPageDefinition & PublishedLayoutPage {
   const layout = document.layouts.find((candidate) => candidate.id === layoutId);
   if (!layout) throw new RangeError(`Layout not found: ${layoutId}`);
   const placement = resolveLayoutPlotPlacement(layout, options);
@@ -383,8 +406,29 @@ export function exportLayoutVectorPdf(document: KDrawDocumentV1, layoutId: strin
   const { source, destination, scaleFactor, paper } = placement;
   const outerScale = MM_TO_PT * scaleFactor;
   const tx = MM_TO_PT * (destination.x - source.x * scaleFactor); const ty = MM_TO_PT * (destination.y - source.y * scaleFactor);
-  const content = `q ${pdfNumber(outerScale)} 0 0 ${pdfNumber(outerScale)} ${pdfNumber(tx)} ${pdfNumber(ty)} cm\n${viewportCommands.join("\n")}\n${paperCommands.join("\n")}\nQ`;
-  return { bytes: buildPdfBytes(paper.widthMm, paper.heightMm, content), skippedHandles: [...new Set(skippedHandles)], placement };
+  const destinationClip = `${pdfNumber(destination.x * MM_TO_PT)} ${pdfNumber(destination.y * MM_TO_PT)} ${pdfNumber(destination.width * MM_TO_PT)} ${pdfNumber(destination.height * MM_TO_PT)} re W n`;
+  const content = `q ${destinationClip} ${pdfNumber(outerScale)} 0 0 ${pdfNumber(outerScale)} ${pdfNumber(tx)} ${pdfNumber(ty)} cm\n${viewportCommands.join("\n")}\n${paperCommands.join("\n")}\nQ`;
+  return { widthMm: paper.widthMm, heightMm: paper.heightMm, content, layoutId, skippedHandles: [...new Set(skippedHandles)], placement };
+}
+
+export function exportLayoutVectorPdf(document: KDrawDocumentV1, layoutId: string, options: LayoutPlotOptions = {}): { bytes: Uint8Array; skippedHandles: string[]; placement: LayoutPlotPlacement } {
+  const page = layoutPdfPage(document, layoutId, options);
+  return { bytes: buildPdfBytes([page]), skippedHandles: page.skippedHandles, placement: page.placement };
+}
+
+export function exportLayoutsVectorPdf(
+  document: KDrawDocumentV1,
+  layoutIds: readonly string[],
+  options: Readonly<Record<string, LayoutPlotOptions>> = {},
+): LayoutBatchPdfResult {
+  if (layoutIds.length === 0) throw new RangeError("At least one layout must be selected for batch publish.");
+  if (new Set(layoutIds).size !== layoutIds.length) throw new RangeError("Batch publish layout ids must be unique.");
+  const pages = layoutIds.map((layoutId) => layoutPdfPage(document, layoutId, options[layoutId] ?? {}));
+  return {
+    bytes: buildPdfBytes(pages),
+    pages: pages.map(({ layoutId, placement, skippedHandles }) => ({ layoutId, placement, skippedHandles })),
+    skippedHandles: [...new Set(pages.flatMap((page) => page.skippedHandles))],
+  };
 }
 
 export function readPdfSummary(bytes: Uint8Array): { version: string | null; pages: number; vectorStrokeCommands: number; hasXref: boolean; xrefOffsetsValid: boolean } {

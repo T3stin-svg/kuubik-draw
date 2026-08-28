@@ -1,0 +1,408 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-105",
+  "benchmark": "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
+  "engine": "Autodesk AutoCAD 2024 desktop COM SetLayoutsToPlot/PlotToFile",
+  "engineVersion": "24.3s (LMS Tech)",
+  "automationProcessId": 2004,
+  "automationProcessOwned": true,
+  "backgroundPlot": 0,
+  "requestedOrder": [
+    "F-105 SHEET 20 PLAN",
+    "F-105 SHEET 10 SECTION"
+  ],
+  "excludedRequest": [
+    "F-105 SHEET 20 PLAN"
+  ],
+  "beforeSave": [
+    {
+      "name": "F-105 SHEET 10 SECTION",
+      "tabOrder": 1,
+      "configName": "DWG To PDF.pc3",
+      "canonicalMediaName": "ISO_expand_A4_(210.00_x_297.00_MM)",
+      "paper": {
+        "widthMm": 210,
+        "heightMm": 297,
+        "rotation": 0
+      },
+      "paperText": [
+        "F-105 SHEET 10 SECTION"
+      ]
+    },
+    {
+      "name": "F-105 SHEET 20 PLAN",
+      "tabOrder": 2,
+      "configName": "DWG To PDF.pc3",
+      "canonicalMediaName": "ISO_expand_A4_(210.00_x_297.00_MM)",
+      "paper": {
+        "widthMm": 210,
+        "heightMm": 297,
+        "rotation": 0
+      },
+      "paperText": [
+        "F-105 SHEET 20 PLAN"
+      ]
+    }
+  ],
+  "afterReopen": [
+    {
+      "name": "F-105 SHEET 10 SECTION",
+      "tabOrder": 1,
+      "configName": "DWG To PDF.pc3",
+      "canonicalMediaName": "ISO_expand_A4_(210.00_x_297.00_MM)",
+      "paper": {
+        "widthMm": 210,
+        "heightMm": 297,
+        "rotation": 0
+      },
+      "paperText": [
+        "F-105 SHEET 10 SECTION"
+      ]
+    },
+    {
+      "name": "F-105 SHEET 20 PLAN",
+      "tabOrder": 2,
+      "configName": "DWG To PDF.pc3",
+      "canonicalMediaName": "ISO_expand_A4_(210.00_x_297.00_MM)",
+      "paper": {
+        "widthMm": 210,
+        "heightMm": 297,
+        "rotation": 0
+      },
+      "paperText": [
+        "F-105 SHEET 20 PLAN"
+      ]
+    }
+  ],
+  "batchOutputs": [
+    {
+      "name": "F105-F-105 SHEET 20 PLAN.pdf",
+      "fullName": "C:\\temp\\KuubikDraw-F105-75awUm\\pdf\\batch\\F105-F-105 SHEET 20 PLAN.pdf",
+      "bytes": 79632,
+      "sha256": "92792b883d7a0939ff10f329a5ccc04eeda32c77a07294b5a28944d4cb5835fb",
+      "creationTimeUtc": "2026-08-28T21:43:26.0916437Z",
+      "lastWriteTimeUtc": "2026-08-28T21:43:26.1472517Z"
+    },
+    {
+      "name": "F105-F-105 SHEET 10 SECTION.pdf",
+      "fullName": "C:\\temp\\KuubikDraw-F105-75awUm\\pdf\\batch\\F105-F-105 SHEET 10 SECTION.pdf",
+      "bytes": 78633,
+      "sha256": "642e773d8eba423624c804aaa58842b89225512aec8b340b450ebdf5f3082e00",
+      "creationTimeUtc": "2026-08-28T21:43:29.0923740Z",
+      "lastWriteTimeUtc": "2026-08-28T21:43:29.3848858Z"
+    }
+  ],
+  "excludedOutputs": [
+    {
+      "name": "F105-F-105 SHEET 20 PLAN.pdf",
+      "fullName": "C:\\temp\\KuubikDraw-F105-75awUm\\pdf\\excluded\\F105-F-105 SHEET 20 PLAN.pdf",
+      "bytes": 79632,
+      "sha256": "40e8e1f2d50de20dc9d0d9b6f688de1928c08d67a9c9e98c330ffb6154b5bad3",
+      "creationTimeUtc": "2026-08-28T21:43:32.4274887Z",
+      "lastWriteTimeUtc": "2026-08-28T21:43:32.4750367Z"
+    }
+  ],
+  "checks": {
+    "twoA4PortraitLayouts": true,
+    "deliberateTabOrder": true,
+    "orderedBatchRequest": true,
+    "requestedOrderIsNotAlphabetic": true,
+    "twoBatchOutputs": true,
+    "exclusionOutput": true,
+    "dwgReopenStable": true
+  },
+  "dwg": {
+    "bytes": 32405,
+    "sha256": "23d7d4ff1c6de647a439f23cbdebc4f5b2bcd07f538d6a2a0488f7db5d73cc5d",
+    "saveAsType": 64,
+    "retained": false
+  },
+  "status": "PASS",
+  "userDocument": {
+    "isolatedOwnedProcess": true,
+    "blankRestored": true
+  },
+  "observedGenerationOrder": [
+    "F-105 SHEET 20 PLAN",
+    "F-105 SHEET 10 SECTION"
+  ],
+  "automationProcessTerminated": true,
+  "processSetRestored": true,
+  "preExistingProcessIds": [],
+  "independentPdfReadback": {
+    "readers": {
+      "pypdf": "6.10.0",
+      "pdfplumber": "0.11.9"
+    },
+    "documents": {
+      "batch1": {
+        "label": "batch1",
+        "path": "F105-F-105 SHEET 20 PLAN.pdf",
+        "pages": 1,
+        "strictParsed": false,
+        "strictError": "PdfReadError: Multiple definitions in dictionary at byte 0x132fc for key /PageMode",
+        "pageDetails": [
+          {
+            "index": 1,
+            "mediaBox": [
+              0,
+              0,
+              595,
+              842
+            ],
+            "text": "F-105 SHEET 20 PLAN",
+            "words": [
+              "F-105",
+              "SHEET",
+              "20",
+              "PLAN"
+            ],
+            "operators": {
+              "cm": 1,
+              "q": 2,
+              "m": 3,
+              "l": 9,
+              "W": 2,
+              "n": 2,
+              "RG": 2,
+              "rg": 2,
+              "gs": 2,
+              "w": 1,
+              "j": 1,
+              "J": 1,
+              "BDC": 2,
+              "S": 1,
+              "EMC": 2,
+              "Q": 2,
+              "Tf": 1,
+              "BT": 1,
+              "Tm": 1,
+              "Tc": 1,
+              "Tz": 1,
+              "Tr": 1,
+              "Tj": 1,
+              "ET": 1
+            },
+            "strokeColors": [
+              [
+                1,
+                0,
+                0
+              ],
+              [
+                1,
+                0,
+                0
+              ]
+            ],
+            "layoutPlacement": null,
+            "imageXObjects": 0,
+            "plumberImages": 0,
+            "plumberLines": 1,
+            "plumberCurves": 0
+          }
+        ]
+      },
+      "batch2": {
+        "label": "batch2",
+        "path": "F105-F-105 SHEET 10 SECTION.pdf",
+        "pages": 1,
+        "strictParsed": false,
+        "strictError": "PdfReadError: Multiple definitions in dictionary at byte 0x12f06 for key /PageMode",
+        "pageDetails": [
+          {
+            "index": 1,
+            "mediaBox": [
+              0,
+              0,
+              595,
+              842
+            ],
+            "text": "F-105 SHEET 10 SECTION",
+            "words": [
+              "F-105",
+              "SHEET",
+              "10",
+              "SECTION"
+            ],
+            "operators": {
+              "cm": 1,
+              "q": 2,
+              "m": 3,
+              "l": 8,
+              "W": 2,
+              "n": 2,
+              "RG": 2,
+              "rg": 2,
+              "gs": 2,
+              "w": 1,
+              "j": 1,
+              "J": 1,
+              "BDC": 2,
+              "c": 4,
+              "S": 1,
+              "EMC": 2,
+              "Q": 2,
+              "Tf": 1,
+              "BT": 1,
+              "Tm": 1,
+              "Tc": 1,
+              "Tz": 1,
+              "Tr": 1,
+              "Tj": 1,
+              "ET": 1
+            },
+            "strokeColors": [
+              [
+                0,
+                0,
+                1
+              ],
+              [
+                0,
+                0,
+                1
+              ]
+            ],
+            "layoutPlacement": null,
+            "imageXObjects": 0,
+            "plumberImages": 0,
+            "plumberLines": 0,
+            "plumberCurves": 1
+          }
+        ]
+      },
+      "excluded1": {
+        "label": "excluded1",
+        "path": "F105-F-105 SHEET 20 PLAN.pdf",
+        "pages": 1,
+        "strictParsed": false,
+        "strictError": "PdfReadError: Multiple definitions in dictionary at byte 0x132fc for key /PageMode",
+        "pageDetails": [
+          {
+            "index": 1,
+            "mediaBox": [
+              0,
+              0,
+              595,
+              842
+            ],
+            "text": "F-105 SHEET 20 PLAN",
+            "words": [
+              "F-105",
+              "SHEET",
+              "20",
+              "PLAN"
+            ],
+            "operators": {
+              "cm": 1,
+              "q": 2,
+              "m": 3,
+              "l": 9,
+              "W": 2,
+              "n": 2,
+              "RG": 2,
+              "rg": 2,
+              "gs": 2,
+              "w": 1,
+              "j": 1,
+              "J": 1,
+              "BDC": 2,
+              "S": 1,
+              "EMC": 2,
+              "Q": 2,
+              "Tf": 1,
+              "BT": 1,
+              "Tm": 1,
+              "Tc": 1,
+              "Tz": 1,
+              "Tr": 1,
+              "Tj": 1,
+              "ET": 1
+            },
+            "strokeColors": [
+              [
+                1,
+                0,
+                0
+              ],
+              [
+                1,
+                0,
+                0
+              ]
+            ],
+            "layoutPlacement": null,
+            "imageXObjects": 0,
+            "plumberImages": 0,
+            "plumberLines": 1,
+            "plumberCurves": 0
+          }
+        ]
+      }
+    }
+  },
+  "renderedPixels": {
+    "schemaVersion": 1,
+    "images": {
+      "batch1": {
+        "label": "batch1",
+        "width": 1190,
+        "height": 1684,
+        "sha256": "b51dd6be35029feffeafa3f90d0e97d48f1d25722593e2b4874d45ec5593280e",
+        "counts": {
+          "red": 5695,
+          "blue": 0,
+          "black": 0,
+          "nonWhite": 9461
+        },
+        "extrema": [
+          [
+            255,
+            255
+          ],
+          [
+            0,
+            255
+          ],
+          [
+            0,
+            255
+          ]
+        ]
+      },
+      "batch2": {
+        "label": "batch2",
+        "width": 1190,
+        "height": 1684,
+        "sha256": "ec91e58782c9eff4df9bc18bce8da08b0a6839f22201139c59437241e2d299ec",
+        "counts": {
+          "red": 0,
+          "blue": 8383,
+          "black": 0,
+          "nonWhite": 10598
+        },
+        "extrema": [
+          [
+            0,
+            255
+          ],
+          [
+            0,
+            255
+          ],
+          [
+            255,
+            255
+          ]
+        ]
+      }
+    }
+  },
+  "scriptSha256": "8952f52c50604c0396bf73aca47e520a807acf9ca78ccb4b24fb50a227329c4a",
+  "matrixScriptSha256": "bf24d3b1e605abccf91bf33e07577e04a15c710a44f2895aa8fa64700a40c214",
+  "runnerScriptSha256": "965db3e8d6cb4b98cd258e552823a13348eaefea4fc85bb86c7e61e20cfea557",
+  "pdfReaderSha256": "e16e6eab403dc659ddadc2be05672007f8a9dd3672f3565f20a91073d467c0ae",
+  "pixelReaderSha256": "8da5100785701e5b2ada88f7992660d80c840e693eb28af1a978963d0015da5f",
+  "observedAt": "2026-08-28T21:43:40.558Z"
+}

@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-105",
+  "kind": "browser",
+  "authority": "kuubik-draw-browser",
+  "status": "PASS",
+  "artifactSha256": "77d384c2d338fed7fff18140d635f3f3a2a659c0b44c0e3cac3d07f96b34fa83",
+  "observedAt": "2026-08-28T21:49:22.0745700Z",
+  "workflow": "Chromium at 1920x1080 reorders a persisted two-layout publish set into non-alphabetic PLAN 20 then SECTION 10 order, excludes one sheet, exercises atomic Undo/Redo, normalized-name no-op handling, multi-page and separate downloads, reloads IndexedDB, and captures an inactive Display layout source for a second batch.",
+  "result": "The restored publish set kept PLAN 20 then SECTION 10 order, inclusions, separate-file mode and the sanitized base name with zero console/page errors. The exact DOM-derived Display window was persisted for SECTION 10 and then used while PLAN 20 was active; independent PDF operators proved the matching source clip and outer transform. pypdf, pdfplumber and Poppler proved one red PLAN page followed by one blue SECTION page and vector-only A4 output.",
+  "test": "e2e/f105-batch-publish.spec.ts",
+  "artifact": "evidence/artifacts/F-105-browser-readback.json"
+}

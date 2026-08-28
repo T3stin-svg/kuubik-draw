@@ -3,30 +3,30 @@
   "rowId": "F-104",
   "source": "Production cad-print deterministic SVG/PDF, KDRAW1 round-trip, mutation sensitivity, pypdf/pdfplumber and Poppler rendered pixels",
   "sourceSha256": {
-    "runner": "ff9ab0e9184db1f9399892047110ec5a5c05322a8c87ed963d52f8a9176e6bd5",
+    "runner": "0cbc5ed33dffe0ec833bcb0609bc3043376a26207334436018e4b70d67221bde",
     "fixture": "3c86c29e15361c90e79e5080ee3f5d035455334b4d347f55c9197d467b2ce759",
-    "browserEvidence": "1762de343fdb9dfb3ad471a05851a52bcbad12ec184d728c55a2140a061319b0",
-    "cadCore": "3b5e60e644ff3752da94e436f9784f9de9735c5304244e6c1cfa2b3228961169",
-    "cadPrint": "42f3bbec5086e42889095a462c4e7b3fd8a053ef80bd3c2e59aefaa55fc799b4",
+    "browserEvidence": "9aebeca83186230327d12c1d9f7f064c2c98a063b1fc068fcd63a6404e6b8bfc",
+    "cadCore": "96a1ffb1de2a2a049301d80a2f7fb89934c0698a1a2a491f7674ad6fc5d1608e",
+    "cadPrint": "7749dbef600fb2e54051a3f8593853d1d11db582a23fbcadad16152a8a1cb7bf",
     "svgRenderer": "951e70aa363ae189920695d452b4a4425d0bff6c9bf3811ff9f5f9ef4d203c80",
     "pdfReader": "d29a89cb4a35425198436619356b3497c1a5d107adee669414ae258ec6382025",
     "pixelReader": "952e09b669d31675204170186a821e85889f748c640f6d439ffa04d71c3314dc"
   },
   "outputs": {
     "svg": {
-      "bytes": 4773,
-      "sha256": "8a557f0916d21a4d0c99dd36c309a1aa0ae4d58f5dcae22bf71f102efff045b0",
+      "bytes": 4902,
+      "sha256": "d8d5f589f16ceb230ab296b46ac81e2fc71ee55507e2915797df4dee717cfb2d",
       "skippedHandles": [],
       "viewportIds": [
         "viewport-f104-50",
         "viewport-f104-100"
       ],
-      "rectClips": 1,
+      "rectClips": 2,
       "polygonClips": 1
     },
     "pdf": {
-      "bytes": 2725,
-      "sha256": "434072b08ed825d4e51f277d88d4d4f5b46d0be8192174fb1b84b6a76a84a489",
+      "bytes": 2759,
+      "sha256": "c6e0fcf8b1c6fd466c1e055775975e0b3db629e51517c70bca12ab2a4598ef84",
       "skippedHandles": [],
       "summary": {
         "version": "1.4",
@@ -38,17 +38,17 @@
       "images": 0
     },
     "deterministic": {
-      "svg": "8a557f0916d21a4d0c99dd36c309a1aa0ae4d58f5dcae22bf71f102efff045b0",
-      "pdf": "434072b08ed825d4e51f277d88d4d4f5b46d0be8192174fb1b84b6a76a84a489"
+      "svg": "d8d5f589f16ceb230ab296b46ac81e2fc71ee55507e2915797df4dee717cfb2d",
+      "pdf": "c6e0fcf8b1c6fd466c1e055775975e0b3db629e51517c70bca12ab2a4598ef84"
     },
     "mutations": {
       "scale": {
-        "svg": "c20e1775f904e822f4fadfb93d671d1463dddaa26923193649f6899bf2f2c4df",
-        "pdf": "c283747df0fb7bc2e92fe7bd0d000fce8ded97b79d06e9339814e39ba0e00482"
+        "svg": "914d0c99eea758f57fa4247c243254999c204298410b3d6dd24945bd7532236e",
+        "pdf": "62e37793370272967bc9e66ab604359b9520d1bd4c594d5343140f9eb421773b"
       },
       "clip": {
-        "svg": "cb5528f2b833474d7c20ae4bd2ca240a17d25fbaebf9d9916cb88e5b11a1bd57",
-        "pdf": "9c35b4e953aa491c7cf52b74689b9337469e49f71d0ba22e4b25a46c3147f20c"
+        "svg": "29b9a71f2f40bcb63a0e9ef96cb89e41454aefabba05835a943d69a0d71f3700",
+        "pdf": "76c830c5a234255d5604c9721f8d5c70df5ec048f24cf0eb1e7b3e54346ad73f"
       }
     }
   },
@@ -74,10 +74,10 @@
           "images": 0,
           "operators": {
             "q": 19,
+            "re": 2,
+            "W": 3,
+            "n": 3,
             "cm": 3,
-            "re": 1,
-            "W": 2,
-            "n": 2,
             "RG": 16,
             "rg": 16,
             "w": 16,
@@ -122,6 +122,7 @@
             ]
           ],
           "clipPaths": [
+            "re:0.0,0.0,1190.551181,841.889764",
             "re:16.25,25.0,185.0,247.0",
             "m:218.75,25.0|l:403.75,25.0|l:382.0,272.0|l:240.5,272.0|h:"
           ],
@@ -206,13 +207,13 @@
         "width": 2381,
         "height": 1684,
         "mode": "RGB",
-        "sha256": "7cff7f36c67ba99073dddad767739610f41ae5615890c53eb65bbde17a82c76c",
+        "sha256": "5c7c97e8214da096e5e2dba2e2ac3ed84d99cd658f1dfe17c43238cfdd2f4acf",
         "counts": {
           "red": 3609,
           "redAlphaOnWhite": 110657,
           "blue": 3167,
           "black": 1541,
-          "nonWhite": 147292,
+          "nonWhite": 147293,
           "leftRed": 3609,
           "rightBlue": 3090
         },
@@ -398,6 +399,6 @@
       ]
     }
   },
-  "browserEvidenceSha256": "1762de343fdb9dfb3ad471a05851a52bcbad12ec184d728c55a2140a061319b0",
+  "browserEvidenceSha256": "9aebeca83186230327d12c1d9f7f064c2c98a063b1fc068fcd63a6404e6b8bfc",
   "status": "PASS"
 }

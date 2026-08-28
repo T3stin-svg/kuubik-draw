@@ -96,6 +96,45 @@ button { font: inherit; }
 .page-setup-controls input:not([type="checkbox"]) { width: 52px; padding: 0 4px; }
 .page-setup-controls label { display: flex; align-items: center; gap: 2px; color: #c7d0d8; font-size: 10px; }
 .page-setup-controls input[type="checkbox"] { width: auto; }
+.publish-options { position: relative; flex: 0 0 auto; }
+.publish-options > summary {
+  display: flex;
+  align-items: center;
+  min-height: 27px;
+  padding: 0 8px;
+  color: #dce3e9;
+  background: #2a323a;
+  border: 1px solid #46515c;
+  font-size: 11px;
+  cursor: pointer;
+  list-style: none;
+}
+.publish-options > summary::-webkit-details-marker { display: none; }
+.publish-options[open] > summary { color: #fff; border-color: #57a7df; box-shadow: inset 0 2px #57a7df; }
+.publish-options-grid {
+  position: fixed;
+  z-index: 40;
+  bottom: 31px;
+  left: 172px;
+  display: grid;
+  width: min(430px, calc(100vw - 24px));
+  gap: 7px;
+  padding: 10px;
+  color: #e3e9ee;
+  background: #252c33;
+  border: 1px solid #596775;
+  border-radius: 2px;
+  box-shadow: 0 10px 28px rgb(0 0 0 / 48%);
+  font-size: 11px;
+}
+.publish-options-grid > label { display: grid; grid-template-columns: 86px 1fr; align-items: center; gap: 8px; }
+.publish-options-grid > label input, .publish-options-grid > label select { width: 100%; min-width: 0; padding: 0 6px; }
+.publish-sheet { display: grid; grid-template-columns: minmax(0, 1fr) 27px 27px; align-items: center; gap: 3px; }
+.publish-sheet label { display: flex; min-width: 0; align-items: center; gap: 6px; }
+.publish-sheet label span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.publish-sheet input[type="checkbox"] { flex: 0 0 auto; width: auto; }
+.publish-sheet button { min-width: 27px; padding: 0; }
+.publish-options-grid > button { min-height: 29px; }
 .viewport-view-controls { display: flex; align-items: center; gap: 2px; }
 .viewport-view-controls input { width: 62px; }
 .viewport-view-controls select { width: 72px; }

@@ -76,7 +76,7 @@ const pdfReadback = {
   xrefOffsetsValid: xref ? xref[2].trim().split("\n").slice(1).every((line, index) => pdfText.slice(Number.parseInt(line.slice(0, 10), 10)).startsWith(`${index + 1} 0 obj`)) : false,
 };
 const displayPdfText = new TextDecoder("latin1").decode(displayPdf.bytes);
-const displayOuterTransform = displayPdfText.match(/\nq ([-+0-9.]+) 0 0 ([-+0-9.]+) ([-+0-9.]+) ([-+0-9.]+) cm/u);
+const displayOuterTransform = displayPdfText.match(/\nq (?:[-+0-9.]+ ){4}re W n ([-+0-9.]+) 0 0 ([-+0-9.]+) ([-+0-9.]+) ([-+0-9.]+) cm/u);
 const displayPaperLine = [...displayPdfText.matchAll(/([-+0-9.]+) ([-+0-9.]+) m ([-+0-9.]+) ([-+0-9.]+) l S/gu)]
   .toSorted((a, b) => Math.abs(Number(b[4]) - Number(b[2])) - Math.abs(Number(a[4]) - Number(a[2])))[0] ?? null;
 const displayPdfReadback = {

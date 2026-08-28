@@ -1,5 +1,6 @@
 import {
   assertKDrawDocumentV1,
+  type CadDocumentMetadata,
   type CadEntity,
   type CadLayer,
   type CadLayout,
@@ -18,6 +19,7 @@ export type CadChange =
   | { type: "delete-layer"; layerId: string }
   | { type: "set-current-layer"; layerId: string }
   | { type: "set-layouts"; layouts: CadLayout[] }
+  | { type: "set-metadata"; metadata: CadDocumentMetadata }
   | { type: "undo-mark" };
 
 export interface CommittedOperation {
@@ -73,6 +75,7 @@ export function applyAtomicOperation(
   const layers = new Map(source.layers.map((layer) => [layer.id, structuredClone(layer)]));
   let currentLayerId = source.currentLayerId;
   let layouts = structuredClone(source.layouts);
+  let metadata = structuredClone(source.metadata);
   const inverseChanges: CadChange[] = [];
   for (const change of changes) {
     if (change.type === "undo-mark") {
@@ -104,6 +107,11 @@ export function applyAtomicOperation(
       layouts = structuredClone(change.layouts);
       continue;
     }
+    if (change.type === "set-metadata") {
+      inverseChanges.unshift({ type: "set-metadata", metadata: structuredClone(metadata) });
+      metadata = structuredClone(change.metadata);
+      continue;
+    }
     if (change.type === "delete-layer") {
       const before = layers.get(change.layerId);
       if (!before) throw new RangeError(`Cannot delete missing layer ${change.layerId}.`);
@@ -126,12 +134,13 @@ export function applyAtomicOperation(
     layers: [...layers.values()],
     layouts,
     currentLayerId,
-    metadata: { ...structuredClone(source.metadata), updatedAt: now },
+    metadata: { ...metadata, updatedAt: now },
   };
   if (
     JSON.stringify(document.entities) === JSON.stringify(source.entities) &&
     JSON.stringify(document.layers) === JSON.stringify(source.layers) &&
     JSON.stringify(document.layouts) === JSON.stringify(source.layouts) &&
+    JSON.stringify(metadata) === JSON.stringify(source.metadata) &&
     document.currentLayerId === source.currentLayerId &&
     !changes.some((change) => change.type === "undo-mark")
   ) throw new NoOpOperationError();

@@ -1,0 +1,93 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-105",
+  "status": "PASS",
+  "viewport": {
+    "width": 1920,
+    "height": 1080
+  },
+  "action": "Reorder -> exclude -> atomic Undo/Redo -> multi-page publish -> restore -> separate PDFs -> reload",
+  "order": [
+    "layout-f105-plan",
+    "layout-f105-section"
+  ],
+  "included": [
+    "layout-f105-plan",
+    "layout-f105-section"
+  ],
+  "output": "separate",
+  "baseFileName": "F105 Browser",
+  "outputs": {
+    "excluded": {
+      "bytes": 1018,
+      "sha256": "d19d07a459106fe8dc647603a905f03fce696dfe94777dc8fd53e325fbe26dd9",
+      "name": "F105 Browser.pdf",
+      "summary": {
+        "version": "1.4",
+        "pages": 1,
+        "a4Pages": 1,
+        "pageTree": "3 0 R",
+        "planTitleAt": 646,
+        "sectionTitleAt": -1,
+        "red": true,
+        "blue": false,
+        "images": 0,
+        "eof": true
+      }
+    },
+    "multi": {
+      "bytes": 1809,
+      "sha256": "9b67d9ba368d2958397adb63e663273253d8a5b49e96665a7454baf685ee1eea",
+      "name": "F105 Browser.pdf",
+      "summary": {
+        "version": "1.4",
+        "pages": 2,
+        "a4Pages": 2,
+        "pageTree": "3 0 R 5 0 R",
+        "planTitleAt": 652,
+        "sectionTitleAt": 1393,
+        "red": true,
+        "blue": true,
+        "images": 0,
+        "eof": true
+      }
+    },
+    "separate": [
+      {
+        "bytes": 1018,
+        "sha256": "d19d07a459106fe8dc647603a905f03fce696dfe94777dc8fd53e325fbe26dd9",
+        "name": "F105 Browser-F-105 SHEET 20 PLAN.pdf",
+        "summary": {
+          "version": "1.4",
+          "pages": 1,
+          "a4Pages": 1,
+          "pageTree": "3 0 R",
+          "planTitleAt": 646,
+          "sectionTitleAt": -1,
+          "red": true,
+          "blue": false,
+          "images": 0,
+          "eof": true
+        }
+      },
+      {
+        "bytes": 1192,
+        "sha256": "fd0c6727d606d5d87699e461c32a5ff45a7a573f2994d65570014f2520d92fc4",
+        "name": "F105 Browser-F-105 SHEET 10 SECTION.pdf",
+        "summary": {
+          "version": "1.4",
+          "pages": 1,
+          "a4Pages": 1,
+          "pageTree": "3 0 R",
+          "planTitleAt": -1,
+          "sectionTitleAt": 817,
+          "red": false,
+          "blue": true,
+          "images": 0,
+          "eof": true
+        }
+      }
+    ]
+  },
+  "consoleErrors": []
+}

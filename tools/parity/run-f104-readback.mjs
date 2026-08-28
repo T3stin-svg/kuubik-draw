@@ -58,11 +58,11 @@ const result = {
 const independentPdf = independentPdfReadback.documents?.independent; const pdfPixels = renderedPixels.images?.independentPdf; const svgPixels = renderedPixels.images?.independentSvg;
 if (
   browserEvidence.status !== "PASS" || browserEvidence.rowId !== "F-104" || firstSvg.skippedHandles.length !== 0 || firstPdf.skippedHandles.length !== 0 ||
-  result.outputs.svg.viewportIds.join("|") !== "viewport-f104-50|viewport-f104-100" || result.outputs.svg.rectClips !== 1 || result.outputs.svg.polygonClips !== 1 ||
+  result.outputs.svg.viewportIds.join("|") !== "viewport-f104-50|viewport-f104-100" || result.outputs.svg.rectClips !== 2 || result.outputs.svg.polygonClips !== 1 ||
   result.outputs.deterministic.svg !== result.outputs.svg.sha256 || result.outputs.deterministic.pdf !== result.outputs.pdf.sha256 ||
   result.outputs.mutations.scale.svg === result.outputs.svg.sha256 || result.outputs.mutations.scale.pdf === result.outputs.pdf.sha256 || result.outputs.mutations.clip.svg === result.outputs.svg.sha256 || result.outputs.mutations.clip.pdf === result.outputs.pdf.sha256 ||
   pdfSummary.version !== "1.4" || pdfSummary.pages !== 1 || !pdfSummary.hasXref || !pdfSummary.xrefOffsetsValid || result.outputs.pdf.images !== 0 ||
-  independentPdf?.pypdf?.strictParsed !== true || independentPdf?.pypdf?.pages !== 1 || independentPdf?.pypdf?.imageXObjects !== 0 || independentPdf?.pdfplumber?.images !== 0 || independentPdf?.pypdf?.operators?.W !== 2 || independentPdf?.pypdf?.operators?.cm !== 3 ||
+  independentPdf?.pypdf?.strictParsed !== true || independentPdf?.pypdf?.pages !== 1 || independentPdf?.pypdf?.imageXObjects !== 0 || independentPdf?.pdfplumber?.images !== 0 || independentPdf?.pypdf?.operators?.W !== 3 || independentPdf?.pypdf?.operators?.cm !== 3 ||
   pdfPixels?.counts?.leftRed <= 0 || pdfPixels?.counts?.rightBlue <= 0 || pdfPixels?.counts?.redAlphaOnWhite <= 0 || pdfPixels?.counts?.black <= 0 ||
   svgPixels?.counts?.leftRed <= 0 || svgPixels?.counts?.rightBlue <= 0 || svgPixels?.counts?.redAlphaOnWhite <= 0 || svgPixels?.counts?.black <= 0 ||
   !entry || entry.byteLength !== documentBytes.byteLength || entry.sha256 !== sha256(documentBytes) || decoded.revision !== 0 || decoded.layouts?.[1]?.viewports?.length !== 2

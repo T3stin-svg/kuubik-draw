@@ -1,0 +1,1031 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-105",
+  "source": "Production ordered batch PDF generation, mutation sensitivity, pypdf/pdfplumber and Poppler read-back",
+  "sourceSha256": {
+    "runner": "b0a3a7c9d002f9ce526b3368b0a6bfbb83da6d1866d23521802277ef6bdab3aa",
+    "fixture": "f8b1fad944cb580054d368596a583c50d0645a3bf5e4cf9e149d67917cc5f944",
+    "browserEvidence": "77d384c2d338fed7fff18140d635f3f3a2a659c0b44c0e3cac3d07f96b34fa83",
+    "publish": "b90890bbcbe114dd4847ef5dcfc4c16dede0d7b6e98c388b2ba5ce4ca2be13c5",
+    "transaction": "a9129ff53a9a05e100ef988565bddc463b448ed6c01b48b6e33bab1741cf32d4",
+    "cadPrint": "7749dbef600fb2e54051a3f8593853d1d11db582a23fbcadad16152a8a1cb7bf",
+    "pdfReader": "e16e6eab403dc659ddadc2be05672007f8a9dd3672f3565f20a91073d467c0ae",
+    "pixelReader": "8da5100785701e5b2ada88f7992660d80c840e693eb28af1a978963d0015da5f"
+  },
+  "plan": {
+    "multi": {
+      "settings": {
+        "schemaVersion": 1,
+        "sheets": [
+          {
+            "layoutId": "layout-f105-plan",
+            "included": true
+          },
+          {
+            "layoutId": "layout-f105-section",
+            "included": true
+          }
+        ],
+        "output": "multi-page",
+        "baseFileName": "F105 Browser"
+      },
+      "layoutIds": [
+        "layout-f105-plan",
+        "layout-f105-section"
+      ],
+      "multiPageFileName": "F105 Browser.pdf",
+      "separateFiles": [
+        {
+          "layoutId": "layout-f105-plan",
+          "fileName": "F105 Browser-F-105 SHEET 20 PLAN.pdf"
+        },
+        {
+          "layoutId": "layout-f105-section",
+          "fileName": "F105 Browser-F-105 SHEET 10 SECTION.pdf"
+        }
+      ]
+    },
+    "excluded": {
+      "settings": {
+        "schemaVersion": 1,
+        "sheets": [
+          {
+            "layoutId": "layout-f105-plan",
+            "included": true
+          },
+          {
+            "layoutId": "layout-f105-section",
+            "included": false
+          }
+        ],
+        "output": "multi-page",
+        "baseFileName": "F105 Browser"
+      },
+      "layoutIds": [
+        "layout-f105-plan"
+      ],
+      "multiPageFileName": "F105 Browser.pdf",
+      "separateFiles": [
+        {
+          "layoutId": "layout-f105-plan",
+          "fileName": "F105 Browser-F-105 SHEET 20 PLAN.pdf"
+        }
+      ]
+    },
+    "display": {
+      "settings": {
+        "schemaVersion": 1,
+        "sheets": [
+          {
+            "layoutId": "layout-f105-section",
+            "included": true,
+            "displayWindow": {
+              "x": -292.418553,
+              "y": -40.150717,
+              "width": 794.735847,
+              "height": 377.499527
+            }
+          },
+          {
+            "layoutId": "layout-f105-plan",
+            "included": false
+          }
+        ],
+        "output": "multi-page",
+        "baseFileName": "F105 Display"
+      },
+      "layoutIds": [
+        "layout-f105-section"
+      ],
+      "multiPageFileName": "F105 Display.pdf",
+      "separateFiles": [
+        {
+          "layoutId": "layout-f105-section",
+          "fileName": "F105 Display-F-105 SHEET 10 SECTION.pdf"
+        }
+      ]
+    }
+  },
+  "outputs": {
+    "multi": {
+      "bytes": 1809,
+      "sha256": "9b67d9ba368d2958397adb63e663273253d8a5b49e96665a7454baf685ee1eea",
+      "summary": {
+        "version": "1.4",
+        "pages": 2,
+        "vectorStrokeCommands": 4,
+        "hasXref": true,
+        "xrefOffsetsValid": true
+      },
+      "pages": [
+        {
+          "layoutId": "layout-f105-plan",
+          "placement": {
+            "paper": {
+              "widthMm": 210,
+              "heightMm": 297,
+              "marginsMm": {
+                "top": 10,
+                "right": 10,
+                "bottom": 10,
+                "left": 10
+              }
+            },
+            "setup": {
+              "mediaName": "ISO_A4",
+              "orientation": "portrait",
+              "plotArea": {
+                "kind": "layout"
+              },
+              "plotScale": {
+                "mode": "custom",
+                "paperUnits": 1,
+                "drawingUnits": 1
+              },
+              "centerPlot": false,
+              "plotOriginMm": {
+                "x": 0,
+                "y": 0
+              },
+              "plotStyle": {
+                "profile": "color",
+                "plotLineweights": true,
+                "plotTransparency": true
+              },
+              "displayPlotStyles": false
+            },
+            "source": {
+              "x": 0,
+              "y": 0,
+              "width": 210,
+              "height": 297
+            },
+            "destination": {
+              "x": 0,
+              "y": 0,
+              "width": 210,
+              "height": 297
+            },
+            "scaleFactor": 1
+          },
+          "skippedHandles": []
+        },
+        {
+          "layoutId": "layout-f105-section",
+          "placement": {
+            "paper": {
+              "widthMm": 210,
+              "heightMm": 297,
+              "marginsMm": {
+                "top": 10,
+                "right": 10,
+                "bottom": 10,
+                "left": 10
+              }
+            },
+            "setup": {
+              "mediaName": "ISO_A4",
+              "orientation": "portrait",
+              "plotArea": {
+                "kind": "layout"
+              },
+              "plotScale": {
+                "mode": "custom",
+                "paperUnits": 1,
+                "drawingUnits": 1
+              },
+              "centerPlot": false,
+              "plotOriginMm": {
+                "x": 0,
+                "y": 0
+              },
+              "plotStyle": {
+                "profile": "color",
+                "plotLineweights": true,
+                "plotTransparency": true
+              },
+              "displayPlotStyles": false
+            },
+            "source": {
+              "x": 0,
+              "y": 0,
+              "width": 210,
+              "height": 297
+            },
+            "destination": {
+              "x": 0,
+              "y": 0,
+              "width": 210,
+              "height": 297
+            },
+            "scaleFactor": 1
+          },
+          "skippedHandles": []
+        }
+      ]
+    },
+    "excluded": {
+      "bytes": 1018,
+      "sha256": "d19d07a459106fe8dc647603a905f03fce696dfe94777dc8fd53e325fbe26dd9",
+      "summary": {
+        "version": "1.4",
+        "pages": 1,
+        "vectorStrokeCommands": 2,
+        "hasXref": true,
+        "xrefOffsetsValid": true
+      },
+      "pages": [
+        {
+          "layoutId": "layout-f105-plan",
+          "placement": {
+            "paper": {
+              "widthMm": 210,
+              "heightMm": 297,
+              "marginsMm": {
+                "top": 10,
+                "right": 10,
+                "bottom": 10,
+                "left": 10
+              }
+            },
+            "setup": {
+              "mediaName": "ISO_A4",
+              "orientation": "portrait",
+              "plotArea": {
+                "kind": "layout"
+              },
+              "plotScale": {
+                "mode": "custom",
+                "paperUnits": 1,
+                "drawingUnits": 1
+              },
+              "centerPlot": false,
+              "plotOriginMm": {
+                "x": 0,
+                "y": 0
+              },
+              "plotStyle": {
+                "profile": "color",
+                "plotLineweights": true,
+                "plotTransparency": true
+              },
+              "displayPlotStyles": false
+            },
+            "source": {
+              "x": 0,
+              "y": 0,
+              "width": 210,
+              "height": 297
+            },
+            "destination": {
+              "x": 0,
+              "y": 0,
+              "width": 210,
+              "height": 297
+            },
+            "scaleFactor": 1
+          },
+          "skippedHandles": []
+        }
+      ]
+    },
+    "separate": [
+      {
+        "fileName": "F105 Browser-F-105 SHEET 20 PLAN.pdf",
+        "bytes": 1018,
+        "sha256": "d19d07a459106fe8dc647603a905f03fce696dfe94777dc8fd53e325fbe26dd9"
+      },
+      {
+        "fileName": "F105 Browser-F-105 SHEET 10 SECTION.pdf",
+        "bytes": 1192,
+        "sha256": "fd0c6727d606d5d87699e461c32a5ff45a7a573f2994d65570014f2520d92fc4"
+      }
+    ],
+    "display": {
+      "bytes": 1229,
+      "sha256": "bfcf30813a7e8194f8b81b0ee3fa86087f49b2e3c02363ed146b44dc68a48516",
+      "pages": [
+        {
+          "layoutId": "layout-f105-section",
+          "placement": {
+            "paper": {
+              "widthMm": 210,
+              "heightMm": 297,
+              "marginsMm": {
+                "top": 10,
+                "right": 10,
+                "bottom": 10,
+                "left": 10
+              }
+            },
+            "setup": {
+              "mediaName": "ISO_A4",
+              "orientation": "portrait",
+              "plotArea": {
+                "kind": "display"
+              },
+              "plotScale": {
+                "mode": "custom",
+                "paperUnits": 1,
+                "drawingUnits": 1
+              },
+              "centerPlot": false,
+              "plotOriginMm": {
+                "x": 0,
+                "y": 0
+              },
+              "plotStyle": {
+                "profile": "color",
+                "plotLineweights": true,
+                "plotTransparency": true
+              },
+              "displayPlotStyles": false
+            },
+            "source": {
+              "x": -292.418553,
+              "y": -40.150717,
+              "width": 794.735847,
+              "height": 377.499527
+            },
+            "destination": {
+              "x": 10,
+              "y": 10,
+              "width": 794.735847,
+              "height": 377.499527
+            },
+            "scaleFactor": 1
+          },
+          "skippedHandles": []
+        }
+      ]
+    },
+    "deterministic": "9b67d9ba368d2958397adb63e663273253d8a5b49e96665a7454baf685ee1eea",
+    "mutations": {
+      "order": "8d94a9836aa7d073963db2d6f2fda52072cb083a40757ae5dc414960c7e6845d",
+      "content": "d8eb7eefc4341bf6b8c0afe4ea93e277ed60bf9c73ab52d054e239f63ef9320f"
+    }
+  },
+  "independentPdfReadback": {
+    "readers": {
+      "pypdf": "6.10.0",
+      "pdfplumber": "0.11.9"
+    },
+    "documents": {
+      "multi": {
+        "label": "multi",
+        "path": "F-105-independent-multi.pdf",
+        "pages": 2,
+        "strictParsed": true,
+        "strictError": null,
+        "pageDetails": [
+          {
+            "index": 1,
+            "mediaBox": [
+              0,
+              0,
+              595.275591,
+              841.889764
+            ],
+            "text": "F-105 SHEET 20 PLAN",
+            "words": [
+              "F-105",
+              "SHEET",
+              "20",
+              "PLAN"
+            ],
+            "operators": {
+              "q": 5,
+              "re": 2,
+              "W": 2,
+              "n": 2,
+              "cm": 2,
+              "RG": 3,
+              "rg": 3,
+              "w": 3,
+              "gs": 3,
+              "m": 2,
+              "l": 4,
+              "S": 2,
+              "Q": 5,
+              "h": 1,
+              "BT": 1,
+              "Tf": 1,
+              "Td": 1,
+              "Tj": 1,
+              "ET": 1
+            },
+            "strokeColors": [
+              [
+                1,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0
+              ],
+              [
+                1,
+                0,
+                0
+              ]
+            ],
+            "layoutPlacement": {
+              "destination": {
+                "x": 0,
+                "y": 0,
+                "width": 210.0000001583333,
+                "height": 297.00000007777777
+              },
+              "scaleFactor": 1.0000001166666665,
+              "source": {
+                "x": 0,
+                "y": 0,
+                "width": 209.99997565833618,
+                "height": 296.99996542778183
+              },
+              "clipPoints": [
+                0,
+                0,
+                595.275591,
+                841.889764
+              ],
+              "matrix": [
+                2.834646,
+                0,
+                0,
+                2.834646,
+                0,
+                0
+              ]
+            },
+            "imageXObjects": 0,
+            "plumberImages": 0,
+            "plumberLines": 1,
+            "plumberCurves": 0
+          },
+          {
+            "index": 2,
+            "mediaBox": [
+              0,
+              0,
+              595.275591,
+              841.889764
+            ],
+            "text": "F-105 SHEET 10 SECTION",
+            "words": [
+              "F-105",
+              "SHEET",
+              "10",
+              "SECTION"
+            ],
+            "operators": {
+              "q": 5,
+              "re": 2,
+              "W": 2,
+              "n": 2,
+              "cm": 2,
+              "RG": 3,
+              "rg": 3,
+              "w": 3,
+              "gs": 3,
+              "m": 2,
+              "c": 4,
+              "S": 2,
+              "Q": 5,
+              "l": 3,
+              "h": 1,
+              "BT": 1,
+              "Tf": 1,
+              "Td": 1,
+              "Tj": 1,
+              "ET": 1
+            },
+            "strokeColors": [
+              [
+                0,
+                0.4,
+                1
+              ],
+              [
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0.4,
+                1
+              ]
+            ],
+            "layoutPlacement": {
+              "destination": {
+                "x": 0,
+                "y": 0,
+                "width": 210.0000001583333,
+                "height": 297.00000007777777
+              },
+              "scaleFactor": 1.0000001166666665,
+              "source": {
+                "x": 0,
+                "y": 0,
+                "width": 209.99997565833618,
+                "height": 296.99996542778183
+              },
+              "clipPoints": [
+                0,
+                0,
+                595.275591,
+                841.889764
+              ],
+              "matrix": [
+                2.834646,
+                0,
+                0,
+                2.834646,
+                0,
+                0
+              ]
+            },
+            "imageXObjects": 0,
+            "plumberImages": 0,
+            "plumberLines": 0,
+            "plumberCurves": 1
+          }
+        ]
+      },
+      "excluded": {
+        "label": "excluded",
+        "path": "F-105-independent-excluded.pdf",
+        "pages": 1,
+        "strictParsed": true,
+        "strictError": null,
+        "pageDetails": [
+          {
+            "index": 1,
+            "mediaBox": [
+              0,
+              0,
+              595.275591,
+              841.889764
+            ],
+            "text": "F-105 SHEET 20 PLAN",
+            "words": [
+              "F-105",
+              "SHEET",
+              "20",
+              "PLAN"
+            ],
+            "operators": {
+              "q": 5,
+              "re": 2,
+              "W": 2,
+              "n": 2,
+              "cm": 2,
+              "RG": 3,
+              "rg": 3,
+              "w": 3,
+              "gs": 3,
+              "m": 2,
+              "l": 4,
+              "S": 2,
+              "Q": 5,
+              "h": 1,
+              "BT": 1,
+              "Tf": 1,
+              "Td": 1,
+              "Tj": 1,
+              "ET": 1
+            },
+            "strokeColors": [
+              [
+                1,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0
+              ],
+              [
+                1,
+                0,
+                0
+              ]
+            ],
+            "layoutPlacement": {
+              "destination": {
+                "x": 0,
+                "y": 0,
+                "width": 210.0000001583333,
+                "height": 297.00000007777777
+              },
+              "scaleFactor": 1.0000001166666665,
+              "source": {
+                "x": 0,
+                "y": 0,
+                "width": 209.99997565833618,
+                "height": 296.99996542778183
+              },
+              "clipPoints": [
+                0,
+                0,
+                595.275591,
+                841.889764
+              ],
+              "matrix": [
+                2.834646,
+                0,
+                0,
+                2.834646,
+                0,
+                0
+              ]
+            },
+            "imageXObjects": 0,
+            "plumberImages": 0,
+            "plumberLines": 1,
+            "plumberCurves": 0
+          }
+        ]
+      },
+      "plan": {
+        "label": "plan",
+        "path": "F-105-independent-plan.pdf",
+        "pages": 1,
+        "strictParsed": true,
+        "strictError": null,
+        "pageDetails": [
+          {
+            "index": 1,
+            "mediaBox": [
+              0,
+              0,
+              595.275591,
+              841.889764
+            ],
+            "text": "F-105 SHEET 20 PLAN",
+            "words": [
+              "F-105",
+              "SHEET",
+              "20",
+              "PLAN"
+            ],
+            "operators": {
+              "q": 5,
+              "re": 2,
+              "W": 2,
+              "n": 2,
+              "cm": 2,
+              "RG": 3,
+              "rg": 3,
+              "w": 3,
+              "gs": 3,
+              "m": 2,
+              "l": 4,
+              "S": 2,
+              "Q": 5,
+              "h": 1,
+              "BT": 1,
+              "Tf": 1,
+              "Td": 1,
+              "Tj": 1,
+              "ET": 1
+            },
+            "strokeColors": [
+              [
+                1,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0
+              ],
+              [
+                1,
+                0,
+                0
+              ]
+            ],
+            "layoutPlacement": {
+              "destination": {
+                "x": 0,
+                "y": 0,
+                "width": 210.0000001583333,
+                "height": 297.00000007777777
+              },
+              "scaleFactor": 1.0000001166666665,
+              "source": {
+                "x": 0,
+                "y": 0,
+                "width": 209.99997565833618,
+                "height": 296.99996542778183
+              },
+              "clipPoints": [
+                0,
+                0,
+                595.275591,
+                841.889764
+              ],
+              "matrix": [
+                2.834646,
+                0,
+                0,
+                2.834646,
+                0,
+                0
+              ]
+            },
+            "imageXObjects": 0,
+            "plumberImages": 0,
+            "plumberLines": 1,
+            "plumberCurves": 0
+          }
+        ]
+      },
+      "section": {
+        "label": "section",
+        "path": "F-105-independent-section.pdf",
+        "pages": 1,
+        "strictParsed": true,
+        "strictError": null,
+        "pageDetails": [
+          {
+            "index": 1,
+            "mediaBox": [
+              0,
+              0,
+              595.275591,
+              841.889764
+            ],
+            "text": "F-105 SHEET 10 SECTION",
+            "words": [
+              "F-105",
+              "SHEET",
+              "10",
+              "SECTION"
+            ],
+            "operators": {
+              "q": 5,
+              "re": 2,
+              "W": 2,
+              "n": 2,
+              "cm": 2,
+              "RG": 3,
+              "rg": 3,
+              "w": 3,
+              "gs": 3,
+              "m": 2,
+              "c": 4,
+              "S": 2,
+              "Q": 5,
+              "l": 3,
+              "h": 1,
+              "BT": 1,
+              "Tf": 1,
+              "Td": 1,
+              "Tj": 1,
+              "ET": 1
+            },
+            "strokeColors": [
+              [
+                0,
+                0.4,
+                1
+              ],
+              [
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0.4,
+                1
+              ]
+            ],
+            "layoutPlacement": {
+              "destination": {
+                "x": 0,
+                "y": 0,
+                "width": 210.0000001583333,
+                "height": 297.00000007777777
+              },
+              "scaleFactor": 1.0000001166666665,
+              "source": {
+                "x": 0,
+                "y": 0,
+                "width": 209.99997565833618,
+                "height": 296.99996542778183
+              },
+              "clipPoints": [
+                0,
+                0,
+                595.275591,
+                841.889764
+              ],
+              "matrix": [
+                2.834646,
+                0,
+                0,
+                2.834646,
+                0,
+                0
+              ]
+            },
+            "imageXObjects": 0,
+            "plumberImages": 0,
+            "plumberLines": 0,
+            "plumberCurves": 1
+          }
+        ]
+      },
+      "display": {
+        "label": "display",
+        "path": "F-105-independent-display.pdf",
+        "pages": 1,
+        "strictParsed": true,
+        "strictError": null,
+        "pageDetails": [
+          {
+            "index": 1,
+            "mediaBox": [
+              0,
+              0,
+              595.275591,
+              841.889764
+            ],
+            "text": "F-105 SHEET 10 SECTION",
+            "words": [
+              "F-105",
+              "SHEET",
+              "10",
+              "SECTION"
+            ],
+            "operators": {
+              "q": 5,
+              "re": 2,
+              "W": 2,
+              "n": 2,
+              "cm": 2,
+              "RG": 3,
+              "rg": 3,
+              "w": 3,
+              "gs": 3,
+              "m": 2,
+              "c": 4,
+              "S": 2,
+              "Q": 5,
+              "l": 3,
+              "h": 1,
+              "BT": 1,
+              "Tf": 1,
+              "Td": 1,
+              "Tj": 1,
+              "ET": 1
+            },
+            "strokeColors": [
+              [
+                0,
+                0.4,
+                1
+              ],
+              [
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0.4,
+                1
+              ]
+            ],
+            "layoutPlacement": {
+              "destination": {
+                "x": 10.000000108333333,
+                "y": 10.000000108333333,
+                "width": 794.7358470249999,
+                "height": 377.4995268694444
+              },
+              "scaleFactor": 1.0000001166666665,
+              "source": {
+                "x": -292.4185189261728,
+                "y": -40.15071229352802,
+                "width": 794.7357543058287,
+                "height": 377.49948282783816
+              },
+              "clipPoints": [
+                28.346457,
+                28.346457,
+                2252.794527,
+                1070.077399
+              ],
+              "matrix": [
+                2.834646,
+                0,
+                0,
+                2.834646,
+                857.249442,
+                142.159513
+              ]
+            },
+            "imageXObjects": 0,
+            "plumberImages": 0,
+            "plumberLines": 0,
+            "plumberCurves": 1
+          }
+        ]
+      }
+    }
+  },
+  "renderedPixels": {
+    "schemaVersion": 1,
+    "images": {
+      "multi1": {
+        "label": "multi1",
+        "width": 1191,
+        "height": 1684,
+        "sha256": "0df61c120228ee05556c45b3be9cdbb5712cfe9cbd00009ae9ce59169b199f1f",
+        "counts": {
+          "red": 4977,
+          "blue": 0,
+          "black": 7148,
+          "nonWhite": 14879
+        },
+        "extrema": [
+          [
+            0,
+            255
+          ],
+          [
+            0,
+            255
+          ],
+          [
+            0,
+            255
+          ]
+        ]
+      },
+      "multi2": {
+        "label": "multi2",
+        "width": 1191,
+        "height": 1684,
+        "sha256": "f64982e6c17dc92596528cd5a7124dea916d2b84cf50c35f00e58c1950f39f0a",
+        "counts": {
+          "red": 0,
+          "blue": 9693,
+          "black": 7148,
+          "nonWhite": 19336
+        },
+        "extrema": [
+          [
+            0,
+            255
+          ],
+          [
+            0,
+            255
+          ],
+          [
+            0,
+            255
+          ]
+        ]
+      },
+      "excluded": {
+        "label": "excluded",
+        "width": 1191,
+        "height": 1684,
+        "sha256": "0df61c120228ee05556c45b3be9cdbb5712cfe9cbd00009ae9ce59169b199f1f",
+        "counts": {
+          "red": 4977,
+          "blue": 0,
+          "black": 7148,
+          "nonWhite": 14879
+        },
+        "extrema": [
+          [
+            0,
+            255
+          ],
+          [
+            0,
+            255
+          ],
+          [
+            0,
+            255
+          ]
+        ]
+      }
+    }
+  },
+  "browserEvidenceSha256": "77d384c2d338fed7fff18140d635f3f3a2a659c0b44c0e3cac3d07f96b34fa83",
+  "status": "PASS"
+}

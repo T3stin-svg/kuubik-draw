@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-105",
+  "kind": "autocad",
+  "authority": "autocad-2024.1.2-live",
+  "status": "PASS",
+  "artifactSha256": "a98641daedc2f1f1cf3b44c1c68690e94175b8fa58c95429b4239ac9703513df",
+  "observedAt": "2026-08-28T21:43:55.867Z",
+  "workflow": "An owned isolated AutoCAD 24.3 process creates two ISO A4 portrait layouts in deliberate SECTION 10 then PLAN 20 tab order, requests the non-alphabetic PLAN 20 then SECTION 10 order through SetLayoutsToPlot, observes native PDF creation order, requests PLAN 20 alone, saves DWG and reopens it.",
+  "result": "AutoCAD created PLAN 20 then SECTION 10 PDFs in the requested non-alphabetic order and one excluded-set PLAN PDF. pypdf, pdfplumber and Poppler proved the titles, A4 pages and vector-only output; native DWG reopen preserved both layouts. The owned process terminated and the pre-existing process set was restored.",
+  "artifact": "evidence/artifacts/F-105-autocad-readback.json"
+}

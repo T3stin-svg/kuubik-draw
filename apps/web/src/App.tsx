@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ISO_PAPER_MEDIA, STANDARD_VIEWPORT_SCALE_DENOMINATORS, allocateEntityHandles, CadCommandInputError, CadSession, LayoutCommandError, copyPaperLayout, createEmptyDocument, createPaperLayout, createPaperViewport, deletePaperLayout, deletePaperViewport, formatViewportScale, movePaperLayout, panPaperViewportByPixels, parseCartesianPoint, parseCopyDestinations, parseMoveDestination, parseOffsetDistance, parseOffsetPlacementPoints, parseReferenceAngleInput, parseRotationAngleInput, parseScaleFactorInput, parseScaleLengthInput, renamePaperLayout, resolveCadCommand, resolvePageSetup, resolvePaperDefinition, serializeKDraw, setPaperLayoutPageSetup, setPaperViewportDisplayLocked, setPaperViewportView, viewportScaleDenominator, zoomPaperViewportAtModelPoint, type CadChange, type CopyRejectedTarget, type MirrorRejectedTarget, type MoveRejectedTarget, type OffsetLayerMode, type OffsetRejectedTarget, type RotateAngleSpec, type RotateRejectedTarget, type ScaleFactorSpec, type ScaleRejectedTarget } from "@kuubik/cad-core";
+import { ISO_PAPER_MEDIA, STANDARD_VIEWPORT_SCALE_DENOMINATORS, allocateEntityHandles, buildLayoutPublishPlan, CadCommandInputError, CadSession, LayoutCommandError, LayoutPublishSettingsError, copyPaperLayout, createEmptyDocument, createPaperLayout, createPaperViewport, deletePaperLayout, deletePaperViewport, formatViewportScale, metadataWithLayoutPublishSettings, movePaperLayout, panPaperViewportByPixels, parseCartesianPoint, parseCopyDestinations, parseMoveDestination, parseOffsetDistance, parseOffsetPlacementPoints, parseReferenceAngleInput, parseRotationAngleInput, parseScaleFactorInput, parseScaleLengthInput, renamePaperLayout, resolveCadCommand, resolveLayoutPublishSettings, resolvePageSetup, resolvePaperDefinition, serializeKDraw, setPaperLayoutPageSetup, setPaperViewportDisplayLocked, setPaperViewportView, viewportScaleDenominator, zoomPaperViewportAtModelPoint, type CadChange, type CopyRejectedTarget, type LayoutPublishSettingsV1, type MirrorRejectedTarget, type MoveRejectedTarget, type OffsetLayerMode, type OffsetRejectedTarget, type RotateAngleSpec, type RotateRejectedTarget, type ScaleFactorSpec, type ScaleRejectedTarget } from "@kuubik/cad-core";
 import { exportDxf } from "@kuubik/cad-dxf";
-import { exportLayoutSvg, exportLayoutVectorPdf } from "@kuubik/cad-print";
+import { exportLayoutSvg, exportLayoutsVectorPdf, exportLayoutVectorPdf, type LayoutPlotOptions } from "@kuubik/cad-print";
 import { CadCanvasRenderer, pannedViewportWorldCenter, viewportScreenToWorld, type Viewport2D } from "@kuubik/cad-renderer";
 import type { CadEntity, CadLayout, CadPageSetup, CadPaperRect, CadPlotStyle, CadViewport, KDrawDocumentV1 } from "@kuubik/cad-schema";
 import { KDrawIndexedDb, StorageRevisionConflictError } from "./indexed-db.js";
@@ -258,6 +258,8 @@ export function App() {
   const [plotTransparencyInput, setPlotTransparencyInput] = useState(true);
   const [displayPlotStylesInput, setDisplayPlotStylesInput] = useState(false);
   const [layoutRenameInput, setLayoutRenameInput] = useState("");
+  const [publishBaseNameInput, setPublishBaseNameInput] = useState("local");
+  const [publishCommitting, setPublishCommitting] = useState(false);
   const [firstCornerInput, setFirstCornerInput] = useState("100,200");
   const [otherCornerInput, setOtherCornerInput] = useState("600,900");
   const [selectedHandles, setSelectedHandles] = useState<string[]>([]);
@@ -309,9 +311,10 @@ export function App() {
   const activeSpace = modelSpaceEditing ? "MODEL" : "PAPER";
   const pendingViewportScale = Number(viewportScaleInput.trim().replace(",", "."));
   const selectedViewportPreset = String(STANDARD_VIEWPORT_SCALE_DENOMINATORS.find((candidate) => Math.abs(candidate - pendingViewportScale) <= Math.max(1, candidate) * 1e-9) ?? "custom");
-  const canUndoInActiveLayout = session.current.canUndo && (modelSpaceEditing || /^(LAYOUT|VIEWPORT|PAGESETUP)/u.test(session.current.nextUndoCommandId ?? ""));
-  const canRedoInActiveLayout = session.current.canRedo && (modelSpaceEditing || /^(LAYOUT|VIEWPORT|PAGESETUP)/u.test(session.current.nextRedoCommandId ?? ""));
+  const canUndoInActiveLayout = session.current.canUndo && (modelSpaceEditing || /^(LAYOUT|VIEWPORT|PAGESETUP|PUBLISH)/u.test(session.current.nextUndoCommandId ?? ""));
+  const canRedoInActiveLayout = session.current.canRedo && (modelSpaceEditing || /^(LAYOUT|VIEWPORT|PAGESETUP|PUBLISH)/u.test(session.current.nextRedoCommandId ?? ""));
   const paperLayouts = document.layouts.filter((layout) => layout.kind === "paper");
+  const publishSettings = useMemo(() => resolveLayoutPublishSettings(document), [document]);
   const activePaperIndex = paperLayouts.findIndex((layout) => layout.id === activeLayout.id);
   const movePreview = useMemo((): { entities: CadEntity[]; delta: { x: number; y: number } } | null => {
     if (previewCommand !== "MOVE" || selectedHandles.length === 0) return null;
@@ -438,6 +441,10 @@ export function App() {
       database.close();
     };
   }, [database]);
+
+  useEffect(() => {
+    setPublishBaseNameInput(publishSettings.baseFileName);
+  }, [publishSettings.baseFileName]);
 
   useEffect(() => {
     if (document.layouts.some((layout) => layout.id === activeLayoutId)) return;
@@ -1399,6 +1406,112 @@ export function App() {
     setStatus(`PDF: ${output.placement.setup.plotArea.kind}, ${output.placement.paper.widthMm}×${output.placement.paper.heightMm} mm`);
   }
 
+  async function commitPublishSettings(next: LayoutPublishSettingsV1, message: string): Promise<void> {
+    if (committing.current) return;
+    committing.current = true;
+    setPublishCommitting(true);
+    try {
+      const change = metadataWithLayoutPublishSettings(document, next);
+      const normalized = resolveLayoutPublishSettings({ ...document, metadata: change.metadata });
+      if (JSON.stringify(normalized) === JSON.stringify(publishSettings)) {
+        setPublishBaseNameInput(normalized.baseFileName);
+        setStatus(message);
+        return;
+      }
+      await commitChanges("PUBLISH_SET", normalized, [change], []);
+      setPublishBaseNameInput(normalized.baseFileName);
+      setStatus(message);
+    } catch (error) {
+      if (error instanceof StorageRevisionConflictError) await recoverFromStorageConflict(error);
+      else if (error instanceof LayoutPublishSettingsError) setStatus(`PUBLISH viga: ${error.message}`);
+      else throw error;
+    } finally {
+      setPublishCommitting(false);
+      committing.current = false;
+    }
+  }
+
+  async function setPublishIncluded(layoutId: string, included: boolean): Promise<void> {
+    const next = structuredClone(publishSettings);
+    const sheet = next.sheets.find((candidate) => candidate.layoutId === layoutId);
+    if (!sheet) return;
+    sheet.included = included;
+    await commitPublishSettings(next, `${included ? "Lisatud" : "Välistatud"}: ${document.layouts.find((layout) => layout.id === layoutId)?.name ?? layoutId}`);
+  }
+
+  async function movePublishSheet(index: number, delta: -1 | 1): Promise<void> {
+    const destination = index + delta;
+    if (destination < 0 || destination >= publishSettings.sheets.length) return;
+    const next = structuredClone(publishSettings);
+    const [sheet] = next.sheets.splice(index, 1);
+    next.sheets.splice(destination, 0, sheet!);
+    await commitPublishSettings(next, `Publish järjestus: ${next.sheets.map((entry) => document.layouts.find((layout) => layout.id === entry.layoutId)?.name).join(" → ")}`);
+  }
+
+  async function setPublishOutput(output: LayoutPublishSettingsV1["output"]): Promise<void> {
+    await commitPublishSettings({ ...structuredClone(publishSettings), output }, `Publish väljund: ${output}`);
+  }
+
+  async function savePublishBaseName(): Promise<void> {
+    await commitPublishSettings({ ...structuredClone(publishSettings), baseFileName: publishBaseNameInput }, `Publish failinimi: ${publishBaseNameInput}`);
+  }
+
+  async function capturePublishDisplayWindow(layoutId: string): Promise<void> {
+    if (layoutId !== activeLayout.id || resolvePageSetup(activeLayout)?.plotArea.kind !== "display") {
+      setStatus("PUBLISH viga: kuvaala saab salvestada ainult aktiivselt Display-layout'ilt.");
+      return;
+    }
+    const next = structuredClone(publishSettings);
+    const sheet = next.sheets.find((candidate) => candidate.layoutId === layoutId);
+    if (!sheet) return;
+    sheet.displayWindow = currentPaperDisplayWindow();
+    await commitPublishSettings(next, `Publish kuvaala salvestatud: ${activeLayout.name}`);
+  }
+
+  function publishLayoutOptions(plan: ReturnType<typeof buildLayoutPublishPlan>): Readonly<Record<string, LayoutPlotOptions>> {
+    const options: Record<string, LayoutPlotOptions> = {};
+    for (const layoutId of plan.layoutIds) {
+      const layout = document.layouts.find((candidate) => candidate.id === layoutId);
+      if (!layout || resolvePageSetup(layout)?.plotArea.kind !== "display") continue;
+      const captured = plan.settings.sheets.find((sheet) => sheet.layoutId === layoutId)?.displayWindow;
+      const displayWindow = layoutId === activeLayout.id && activePaper ? currentPaperDisplayWindow() : captured;
+      if (!displayWindow) throw new LayoutCommandError("INVALID_PAPER", `Display-layout ${layout.name} vajab enne publish'i salvestatud kuvaala.`);
+      options[layoutId] = { displayWindow };
+    }
+    return options;
+  }
+
+  function publishLayouts(): void {
+    try {
+      const plan = buildLayoutPublishPlan(document, publishSettings);
+      const options = publishLayoutOptions(plan);
+      if (plan.settings.output === "multi-page") {
+        const output = exportLayoutsVectorPdf(document, plan.layoutIds, options);
+        if (output.skippedHandles.length) {
+          setStatus(`PUBLISH peatatud: ${output.skippedHandles.length} toetamata objekti`);
+          return;
+        }
+        downloadBlob(new Blob([output.bytes as Uint8Array<ArrayBuffer>], { type: "application/pdf" }), plan.multiPageFileName);
+        setStatus(`PUBLISH: ${output.pages.length} layout'i ühes järjestatud vektor-PDF-is.`);
+        return;
+      }
+      const outputs = plan.separateFiles.map((file) => ({ file, output: exportLayoutVectorPdf(document, file.layoutId, options[file.layoutId] ?? {}) }));
+      const skipped = [...new Set(outputs.flatMap(({ output }) => output.skippedHandles))];
+      if (skipped.length) {
+        setStatus(`PUBLISH peatatud: ${skipped.length} toetamata objekti`);
+        return;
+      }
+      for (const { file, output } of outputs) {
+        downloadBlob(new Blob([output.bytes as Uint8Array<ArrayBuffer>], { type: "application/pdf" }), file.fileName);
+      }
+      setStatus(`PUBLISH: ${outputs.length} eraldi vektor-PDF faili.`);
+    } catch (error) {
+      if (error instanceof LayoutPublishSettingsError || error instanceof LayoutCommandError || error instanceof RangeError || error instanceof TypeError) {
+        setStatus(`PUBLISH viga: ${error.message}`);
+      } else throw error;
+    }
+  }
+
   function downloadDxf(): void {
     const exported = exportDxf(document);
     if (exported.report.skipped.length) {
@@ -1738,6 +1851,53 @@ export function App() {
               <button type="button" className="layout-action" aria-label="Ekspordi layout SVG" onClick={downloadActiveLayoutSvg}>SVG</button>
               <button type="button" className="layout-action" aria-label="Ekspordi layout PDF" onClick={downloadActiveLayoutPdf}>PDF</button>
             </span>
+            <details
+              className="publish-options"
+              data-testid="publish-options"
+              data-output={publishSettings.output}
+              data-busy={publishCommitting}
+              data-order={publishSettings.sheets.map((sheet) => sheet.layoutId).join("|")}
+              data-included={publishSettings.sheets.filter((sheet) => sheet.included).map((sheet) => sheet.layoutId).join("|")}
+            >
+              <summary>PUBLISH</summary>
+              <div className="publish-options-grid">
+                {publishSettings.sheets.map((sheet, index) => {
+                  const layout = document.layouts.find((candidate) => candidate.id === sheet.layoutId);
+                  const isDisplay = layout ? resolvePageSetup(layout)?.plotArea.kind === "display" : false;
+                  return <div className="publish-sheet" key={sheet.layoutId}>
+                    <label>
+                      <input
+                        type="checkbox"
+                        aria-label={`Avalda ${layout?.name ?? sheet.layoutId}`}
+                        checked={sheet.included}
+                        disabled={publishCommitting}
+                        onChange={(event) => void setPublishIncluded(sheet.layoutId, event.target.checked)}
+                      />
+                      {layout?.name ?? sheet.layoutId}
+                    </label>
+                    <button type="button" aria-label={`Liiguta publish leht ${layout?.name ?? sheet.layoutId} üles`} disabled={publishCommitting || index === 0} onClick={() => void movePublishSheet(index, -1)}>↑</button>
+                    <button type="button" aria-label={`Liiguta publish leht ${layout?.name ?? sheet.layoutId} alla`} disabled={publishCommitting || index === publishSettings.sheets.length - 1} onClick={() => void movePublishSheet(index, 1)}>↓</button>
+                    {isDisplay && <button
+                      type="button"
+                      aria-label={`Salvesta publish kuvaala ${layout?.name ?? sheet.layoutId}`}
+                      disabled={publishCommitting || layout?.id !== activeLayout.id}
+                      onClick={() => void capturePublishDisplayWindow(sheet.layoutId)}
+                    >{sheet.displayWindow ? "Kuvaala ✓" : "Salvesta kuvaala"}</button>}
+                  </div>;
+                })}
+                <label>Väljund
+                  <select aria-label="Publish output" value={publishSettings.output} disabled={publishCommitting} onChange={(event) => void setPublishOutput(event.target.value as LayoutPublishSettingsV1["output"])}>
+                    <option value="multi-page">Üks mitmeleheküljeline PDF</option>
+                    <option value="separate">Eraldi PDF failid</option>
+                  </select>
+                </label>
+                <label>Failinimi
+                  <input aria-label="Publish failinimi" value={publishBaseNameInput} disabled={publishCommitting} onChange={(event) => setPublishBaseNameInput(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") void savePublishBaseName(); }} />
+                </label>
+                <button type="button" aria-label="Salvesta publish failinimi" disabled={publishCommitting} onClick={() => void savePublishBaseName()}>Salvesta nimi</button>
+                <button type="button" aria-label="Publish layouts" disabled={publishCommitting || !publishSettings.sheets.some((sheet) => sheet.included)} onClick={publishLayouts}>Publish layouts</button>
+              </div>
+            </details>
             <button type="button" className="layout-action" aria-label="Lisa ristkülikviewport" onClick={() => void addViewport("rectangle")}>+ View</button>
             <button type="button" className="layout-action" aria-label="Lisa polügoonviewport" onClick={() => void addViewport("polygon")}>+ Clip</button>
             <button type="button" className="layout-action danger" aria-label="Kustuta viewport" disabled={selectedViewportId === null} onClick={() => void deleteSelectedViewport()}>− View</button>

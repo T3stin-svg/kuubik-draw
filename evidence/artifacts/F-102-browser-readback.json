@@ -3,13 +3,13 @@
   "rowId": "F-102",
   "source": "Chromium 1920x1080 live PAGESETUP/undo/redo/reload plus independent SVG, PDF and KDRAW1 parsers",
   "sourceSha256": {
-    "e2e": "c73e9edc9f66c9af8884f32f8af9228676e5f40b5b7090a5909bd15bdbbdbbf7",
+    "e2e": "a4c4e680285454cc5ab25e21f33c15b07e437a0cdcac76b10442c5e02b1701fe",
     "capture": "d0e72670a88c9a3c472008191600e1acfc011c1515e8d7cf0cc4907583b34810",
-    "builder": "7358fe6bc88e34be485211b4571c9fca586e4f0883fdab91d18e3f0a79ec047a",
-    "app": "63dbb66ee4b295906b3e25a332bf1fbac8ce3874ff8a334ca136051f3c8bcc57",
-    "style": "f0c80ef7b28711b633f893a65924f0cb5819b124dd756e4ed86b14bcab740eff",
+    "builder": "ecb7c885f17d825a181e3c78f3fd8826a0aa6109668502bc4eef697e07cd6ca9",
+    "app": "8affc8b534788c0adfea11fb38c388e93d08057d474ba27b43414991ec27ca4d",
+    "style": "5dc967502052c411f25bdc035f77af497e43e99020499be1360dba54d4a57017",
     "cadCore": "aa27aeaf9bfcd6eb6bf076bff094a428e941f84b5a2204e72ad3f77f2eca23c4",
-    "cadPrint": "42f3bbec5086e42889095a462c4e7b3fd8a053ef80bd3c2e59aefaa55fc799b4",
+    "cadPrint": "7749dbef600fb2e54051a3f8593853d1d11db582a23fbcadad16152a8a1cb7bf",
     "packageLock": "6a1cc440651b512afd80deb2cb6cb99c3fd1a5637e3548b8676fe6198940c3e3"
   },
   "matrix": {
@@ -73,16 +73,16 @@
         "height": 377.499527
       },
       "svg": {
-        "bytes": 1279,
-        "sha256": "c328a1c44c6bc6871e27fd1aeb47f154eac26fcd37c07beae16d1097bc647dff",
+        "bytes": 1440,
+        "sha256": "286d58cf56898e3364a49da23c9f8b90e96694a14eb43d5d03756df3adf48119",
         "paperLineDeltaMm": {
           "x": 43.03316646543565,
           "y": 59.76828675754951
         }
       },
       "pdf": {
-        "bytes": 897,
-        "sha256": "f6931e346a31ac11980d90bc42065d748464975450db4d84827e182c98d8a826",
+        "bytes": 947,
+        "sha256": "1d5385007fafb4c5a62fb91548809eda85b3743c408f20f8144a1836828ef7c2",
         "summary": {
           "version": "1.4",
           "mediaBoxPt": {
@@ -100,12 +100,12 @@
       }
     },
     "svg": {
-      "bytes": 1161,
-      "sha256": "b1e681d9625ada2fff987dc388306514da191f508930e59bbe0f797c89114096"
+      "bytes": 1292,
+      "sha256": "2ba38d3e42a2574d551b53fcd57de7dc9f2acdafe8607edb6484990e37cf6a51"
     },
     "pdf": {
-      "bytes": 875,
-      "sha256": "55c3866287240428b0330a9447bc0f8902f012274e389ee4e9eb173ed2516cbd",
+      "bytes": 923,
+      "sha256": "90633d5804b0880e20923a589b17027dd7f0713a73a750477aed4f7451eb7248",
       "summary": {
         "version": "1.4",
         "mediaBoxPt": {
@@ -127,7 +127,7 @@
     },
     "operations": [
       {
-        "opId": "e7284825-960f-4471-9407-0c19b8fc7d0a",
+        "opId": "5de16b20-3376-4256-868f-decb861930bf",
         "baseRevision": 0,
         "commandId": "PAGESETUP",
         "args": {
@@ -166,17 +166,17 @@
         "resultHandles": []
       },
       {
-        "opId": "e7284825-960f-4471-9407-0c19b8fc7d0a:undo:1",
+        "opId": "5de16b20-3376-4256-868f-decb861930bf:undo:1",
         "baseRevision": 1,
         "commandId": "UNDO",
         "args": {
-          "originalOpId": "e7284825-960f-4471-9407-0c19b8fc7d0a"
+          "originalOpId": "5de16b20-3376-4256-868f-decb861930bf"
         },
         "targetHandles": [],
         "resultHandles": []
       },
       {
-        "opId": "e7284825-960f-4471-9407-0c19b8fc7d0a:redo:2",
+        "opId": "5de16b20-3376-4256-868f-decb861930bf:redo:2",
         "baseRevision": 2,
         "commandId": "PAGESETUP",
         "args": {
@@ -215,7 +215,7 @@
         "resultHandles": []
       },
       {
-        "opId": "f219af79-870c-4d31-9dcf-b724ff06c072",
+        "opId": "6c8c99a4-e6c2-49c7-9bab-5ac12aa36572",
         "baseRevision": 3,
         "commandId": "PAGESETUP",
         "args": {
@@ -246,7 +246,7 @@
         "resultHandles": []
       },
       {
-        "opId": "3488ae64-747a-485d-8718-aa49ed3b8dd6",
+        "opId": "904f9772-52df-4200-8cfb-02ac6cf404a6",
         "baseRevision": 4,
         "commandId": "PAGESETUP",
         "args": {
@@ -285,7 +285,7 @@
         "resultHandles": []
       },
       {
-        "opId": "9bbe9152-155b-47f5-ab7b-e85b4c2510a8",
+        "opId": "d120280f-6ab1-4ab9-8d9f-70f2a16244bc",
         "baseRevision": 5,
         "commandId": "PAGESETUP",
         "args": {
@@ -316,7 +316,7 @@
         "resultHandles": []
       },
       {
-        "opId": "961e0c16-1dee-46ab-9587-ac567c2a0164",
+        "opId": "45756ef6-c312-4ede-b4f2-a0cd9642ed02",
         "baseRevision": 6,
         "commandId": "PAGESETUP",
         "args": {
@@ -425,15 +425,15 @@
   },
   "outputs": {
     "svg": {
-      "bytes": 1161,
-      "sha256": "b1e681d9625ada2fff987dc388306514da191f508930e59bbe0f797c89114096",
+      "bytes": 1292,
+      "sha256": "2ba38d3e42a2574d551b53fcd57de7dc9f2acdafe8607edb6484990e37cf6a51",
       "physicalA4": true,
       "source": "10,20,180,250",
       "destination": "10,10,90,125"
     },
     "pdf": {
-      "bytes": 875,
-      "sha256": "55c3866287240428b0330a9447bc0f8902f012274e389ee4e9eb173ed2516cbd",
+      "bytes": 923,
+      "sha256": "90633d5804b0880e20923a589b17027dd7f0713a73a750477aed4f7451eb7248",
       "summary": {
         "version": "1.4",
         "mediaBoxPt": {
@@ -450,8 +450,8 @@
       }
     },
     "displaySvg": {
-      "bytes": 1279,
-      "sha256": "c328a1c44c6bc6871e27fd1aeb47f154eac26fcd37c07beae16d1097bc647dff",
+      "bytes": 1440,
+      "sha256": "286d58cf56898e3364a49da23c9f8b90e96694a14eb43d5d03756df3adf48119",
       "source": "-292.418553,-40.150717,794.735847,377.499527",
       "destination": "10,103.3750000388494,190,90.24999992230121",
       "paperLineDeltaMm": {
@@ -460,8 +460,8 @@
       }
     },
     "displayPdf": {
-      "bytes": 897,
-      "sha256": "f6931e346a31ac11980d90bc42065d748464975450db4d84827e182c98d8a826",
+      "bytes": 947,
+      "sha256": "1d5385007fafb4c5a62fb91548809eda85b3743c408f20f8144a1836828ef7c2",
       "summary": {
         "version": "1.4",
         "mediaBoxPt": {

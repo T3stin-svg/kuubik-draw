@@ -1,11 +1,30 @@
 import { describe, expect, it } from "vitest";
 import { createEmptyDocument, createPaperLayout } from "../../cad-core/src/index.js";
 import { createF104Document, F104_LAYOUT_ID, F104_VIEWPORT_IDS } from "../../../parity/fixtures/f104-document.js";
-import { exportLayoutSvg, exportLayoutVectorPdf, exportSvg, exportVectorPdf, readPdfSummary, resolveLayoutPlotPlacement } from "../src/index.js";
+import { createF105Document, F105_LAYOUT_IDS, F105_LAYOUT_NAMES } from "../../../parity/fixtures/f105-document.js";
+import { exportLayoutSvg, exportLayoutsVectorPdf, exportLayoutVectorPdf, exportSvg, exportVectorPdf, readPdfSummary, resolveLayoutPlotPlacement } from "../src/index.js";
 
 const page = { widthMm: 297, heightMm: 210, scaleDenominator: 1, origin: { x: 0, y: 0 } };
 
 describe("vector print output", () => {
+  it("publishes F-105 layouts as one deterministic ordered multi-page vector PDF", () => {
+    const document = createF105Document();
+    const first = exportLayoutsVectorPdf(document, F105_LAYOUT_IDS);
+    const second = exportLayoutsVectorPdf(structuredClone(document), F105_LAYOUT_IDS);
+    expect(second.bytes).toEqual(first.bytes);
+    expect(first.pages.map((page) => page.layoutId)).toEqual([...F105_LAYOUT_IDS]);
+    expect(first.skippedHandles).toEqual([]);
+    expect(readPdfSummary(first.bytes)).toEqual({
+      version: "1.4", pages: 2, vectorStrokeCommands: 4, hasXref: true, xrefOffsetsValid: true,
+    });
+    const text = new TextDecoder("latin1").decode(first.bytes);
+    expect(text.match(/\/MediaBox \[0 0 595\.275591 841\.889764\]/gu)).toHaveLength(2);
+    expect(text.indexOf(`(${F105_LAYOUT_NAMES[0]}) Tj`)).toBeGreaterThan(-1);
+    expect(text.indexOf(`(${F105_LAYOUT_NAMES[1]}) Tj`)).toBeGreaterThan(text.indexOf(`(${F105_LAYOUT_NAMES[0]}) Tj`));
+    expect(text).not.toContain("/Subtype /Image");
+    expect(() => exportLayoutsVectorPdf(document, [])).toThrow(/At least one layout/u);
+    expect(() => exportLayoutsVectorPdf(document, [F105_LAYOUT_IDS[0], F105_LAYOUT_IDS[0]])).toThrow(/unique/u);
+  });
   it("emits a deterministic F-104 A3 layout with two independently clipped vector viewports", () => {
     const document = createF104Document();
     const firstSvg = exportLayoutSvg(document, F104_LAYOUT_ID);
@@ -286,7 +305,10 @@ describe("vector print output", () => {
         plotScale: { mode: "fit" }, centerPlot: true, plotOriginMm: { x: 0, y: 0 },
       },
       viewports: [],
-      entities: [{ kind: "line", handle: "20", layerId: "0", start: { x: -25, y: -40 }, end: { x: 275, y: 360 } }],
+      entities: [
+        { kind: "line", handle: "20", layerId: "0", start: { x: -25, y: -40 }, end: { x: 275, y: 360 } },
+        { kind: "line", handle: "21", layerId: "0", start: { x: 500, y: 500 }, end: { x: 600, y: 600 } },
+      ],
     });
     const source = { ...document, layouts: paper.layouts };
     expect(() => resolveLayoutPlotPlacement(source.layouts[1]!)).toThrow(/current paper-space display window/i);
@@ -300,8 +322,15 @@ describe("vector print output", () => {
     const svg = exportLayoutSvg(source, paper.layoutId, { displayWindow });
     expect(svg.text).toContain('data-plot-area="display"');
     expect(svg.text).toContain('data-source="-25,-40,300,400"');
+    expect(svg.text).toContain('<clipPath id="plot-source-clip"><rect');
+    expect(svg.text).toContain('<g clip-path="url(#plot-source-clip)"><g transform=');
+    expect(svg.text).toContain('data-handle="21"');
     const pdf = exportLayoutVectorPdf(source, paper.layoutId, { displayWindow });
     expect(pdf.placement.source).toEqual(displayWindow);
-    expect(readPdfSummary(pdf.bytes).vectorStrokeCommands).toBe(1);
+    expect(readPdfSummary(pdf.bytes).vectorStrokeCommands).toBe(2);
+    const pdfText = new TextDecoder("latin1").decode(pdf.bytes);
+    const plotClipAt = pdfText.indexOf(" re W n ");
+    expect(plotClipAt).toBeGreaterThan(0);
+    expect(plotClipAt).toBeLessThan(pdfText.indexOf(" cm\n", plotClipAt));
   });
 });

@@ -99,7 +99,7 @@ function independentPdfSummary(bytes: Buffer) {
   const media = text.match(/\/MediaBox \[0 0 ([0-9.]+) ([0-9.]+)\]/u);
   const xref = text.match(/\nxref\n0 (\d+)\n([\s\S]*?)trailer\n/u);
   const offsetsValid = xref ? xref[2]!.trim().split("\n").slice(1).every((line, index) => text.slice(Number.parseInt(line.slice(0, 10), 10)).startsWith(`${index + 1} 0 obj`)) : false;
-  const outerTransform = text.match(/\nq ([-+0-9.]+) 0 0 ([-+0-9.]+) ([-+0-9.]+) ([-+0-9.]+) cm/u);
+  const outerTransform = text.match(/\nq (?:[-+0-9.]+ ){4}re W n ([-+0-9.]+) 0 0 ([-+0-9.]+) ([-+0-9.]+) ([-+0-9.]+) cm/u);
   const paperLine = [...text.matchAll(/([-+0-9.]+) ([-+0-9.]+) m ([-+0-9.]+) ([-+0-9.]+) l S/gu)]
     .toSorted((a, b) => Math.abs(Number(b[4]) - Number(b[2])) - Math.abs(Number(a[4]) - Number(a[2])))[0] ?? null;
   return {
