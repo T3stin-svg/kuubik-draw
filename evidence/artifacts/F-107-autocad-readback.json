@@ -1,0 +1,187 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-107",
+  "benchmark": "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
+  "engine": "Autodesk AutoCAD 2024 desktop COM named PlotConfiguration and native DWT",
+  "engineVersion": "24.3s (LMS Tech)",
+  "automationProcessId": 23736,
+  "automationProcessOwned": true,
+  "backgroundPlot": 0,
+  "operations": {
+    "create": "F-107 A4 Monochrome",
+    "applyTo": "Layout1",
+    "renameTo": "F-107 A4 Issue",
+    "deleted": "F-107 DELETE"
+  },
+  "counts": {
+    "beforeDelete": 1,
+    "withDelete": 2,
+    "afterDelete": 1,
+    "reopened": 1
+  },
+  "insertionUnits": {
+    "saved": 4,
+    "reopened": 4,
+    "expectedMillimeters": 4
+  },
+  "savedSetup": {
+    "name": "F-107 A4 Issue",
+    "configName": "DWG To PDF.pc3",
+    "canonicalMediaName": "ISO_expand_A4_(210.00_x_297.00_MM)",
+    "rotation": 0,
+    "paper": {
+      "widthMm": 210,
+      "heightMm": 297
+    },
+    "plotType": 5,
+    "paperUnits": 1,
+    "useStandardScale": true,
+    "standardScale": 1,
+    "customScale": 0,
+    "centerPlot": false,
+    "plotOrigin": {
+      "x": 0,
+      "y": 0
+    },
+    "paperMargins": {
+      "lowerLeft": {
+        "x": 5,
+        "y": 10
+      },
+      "upperRight": {
+        "x": 5,
+        "y": 10
+      }
+    },
+    "plotWithLineweights": true,
+    "plotWithPlotStyles": true,
+    "styleSheet": "monochrome.ctb"
+  },
+  "savedLayout": {
+    "name": "Layout1",
+    "configName": "DWG To PDF.pc3",
+    "canonicalMediaName": "ISO_expand_A4_(210.00_x_297.00_MM)",
+    "rotation": 0,
+    "paper": {
+      "widthMm": 210,
+      "heightMm": 297
+    },
+    "plotType": 5,
+    "paperUnits": 1,
+    "useStandardScale": true,
+    "standardScale": 1,
+    "customScale": 0,
+    "centerPlot": false,
+    "plotOrigin": {
+      "x": 0,
+      "y": 0
+    },
+    "paperMargins": {
+      "lowerLeft": {
+        "x": 5,
+        "y": 10
+      },
+      "upperRight": {
+        "x": 5,
+        "y": 10
+      }
+    },
+    "plotWithLineweights": true,
+    "plotWithPlotStyles": true,
+    "styleSheet": "monochrome.ctb"
+  },
+  "reopenedSetup": {
+    "name": "F-107 A4 Issue",
+    "configName": "DWG To PDF.pc3",
+    "canonicalMediaName": "ISO_expand_A4_(210.00_x_297.00_MM)",
+    "rotation": 0,
+    "paper": {
+      "widthMm": 210,
+      "heightMm": 297
+    },
+    "plotType": 5,
+    "paperUnits": 1,
+    "useStandardScale": true,
+    "standardScale": 1,
+    "customScale": 0,
+    "centerPlot": false,
+    "plotOrigin": {
+      "x": 0,
+      "y": 0
+    },
+    "paperMargins": {
+      "lowerLeft": {
+        "x": 5,
+        "y": 10
+      },
+      "upperRight": {
+        "x": 5,
+        "y": 10
+      }
+    },
+    "plotWithLineweights": true,
+    "plotWithPlotStyles": true,
+    "styleSheet": "monochrome.ctb"
+  },
+  "reopenedLayout": {
+    "name": "Layout1",
+    "configName": "DWG To PDF.pc3",
+    "canonicalMediaName": "ISO_expand_A4_(210.00_x_297.00_MM)",
+    "rotation": 0,
+    "paper": {
+      "widthMm": 210,
+      "heightMm": 297
+    },
+    "plotType": 5,
+    "paperUnits": 1,
+    "useStandardScale": true,
+    "standardScale": 1,
+    "customScale": 0,
+    "centerPlot": false,
+    "plotOrigin": {
+      "x": 0,
+      "y": 0
+    },
+    "paperMargins": {
+      "lowerLeft": {
+        "x": 5,
+        "y": 10
+      },
+      "upperRight": {
+        "x": 5,
+        "y": 10
+      }
+    },
+    "plotWithLineweights": true,
+    "plotWithPlotStyles": true,
+    "styleSheet": "monochrome.ctb"
+  },
+  "dwt": {
+    "bytes": 32685,
+    "sha256": "8a433d3b39dcc2629f7c2a160af88fd1a45c38087a2720ad60c68da2f4688cdc",
+    "saveAsType": 66,
+    "header": "AC1032",
+    "retained": false
+  },
+  "checks": {
+    "createdAppliedRenamed": true,
+    "deletedNamedSetup": true,
+    "fullA4LayoutContract": true,
+    "millimeterUnitsReopened": true,
+    "nativeDwtCreated": true,
+    "namedSetupReopened": true,
+    "appliedLayoutReopened": true
+  },
+  "status": "PASS",
+  "userDocument": {
+    "isolatedOwnedProcess": true,
+    "blankRestored": true
+  },
+  "automationProcessTerminated": true,
+  "processSetRestored": true,
+  "preExistingProcessIds": [],
+  "scriptSha256": "0bcde8287a4dafb620b1ffd500e4b60ae210bd7f036584fe3cecd86c6398a19f",
+  "matrixScriptSha256": "82bad3c8deefe656ba015f4e197b1afdff790b7a3c6d6ba58f34ce7cb10c77e6",
+  "runnerScriptSha256": "1a4d23ba7e7aa0d2fdbe0c22a44476318cdb44c7f58ac1c66b7a78608f694755",
+  "observedAt": "2026-08-28T23:47:10.715Z"
+}

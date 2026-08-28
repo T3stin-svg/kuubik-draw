@@ -5,7 +5,7 @@
   "authority": "autocad-2024.1.2-live",
   "status": "PASS",
   "artifactSha256": "ae2bfd8806f4d1c40866827ee39f85cd4a134b1a294a0cf0ee45107fdf82f094",
-  "observedAt": "2026-08-28T20:43:36.7034173Z",
+  "observedAt": "08/28/2026 20:43:23",
   "workflow": "An owned isolated AutoCAD 24.3 scratch process plots ACI and TrueColor entities through Color, monochrome.ctb, Grayscale.ctb, Plot Lineweights OFF and 40% transparency profiles, then saves and reopens an anonymous native DWG without weakening SECURELOAD.",
   "result": "Native PDF operators and Poppler pixels proved ACI remapping, preserved TrueColor RGB, explicit 0.00 mm plus 0.35/0.70 mm lineweights, width-zero OFF output and a soft-masked 40% hatch. Native Layout.PlotTransparency and the monochrome layout persisted after DWG reopen; touched user settings were restored, the owned PID terminated and temporary DWG/PDF files were removed.",
   "artifact": "evidence/artifacts/F-103-autocad-readback.json"

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ISO_PAPER_MEDIA, STANDARD_VIEWPORT_SCALE_DENOMINATORS, allocateEntityHandles, buildLayoutPublishPlan, CadCommandInputError, CadSession, LayoutCommandError, LayoutPublishSettingsError, copyPaperLayout, createEmptyDocument, createPaperLayout, createPaperViewport, deletePaperLayout, deletePaperViewport, formatViewportScale, metadataWithLayoutPublishSettings, movePaperLayout, panPaperViewportByPixels, paperDefinitionForPageSetup, parseCartesianPoint, parseCopyDestinations, parseMoveDestination, parseOffsetDistance, parseOffsetPlacementPoints, parseReferenceAngleInput, parseRotationAngleInput, parseScaleFactorInput, parseScaleLengthInput, renamePaperLayout, resolveCadCommand, resolveLayoutPublishSettings, resolveModelPageSetup, resolvePageSetup, resolvePaperDefinition, serializeKDraw, setModelLayoutPageSetup, setPaperLayoutPageSetup, setPaperViewportDisplayLocked, setPaperViewportView, viewportScaleDenominator, zoomPaperViewportAtModelPoint, type CadChange, type CopyRejectedTarget, type LayoutPublishSettingsV1, type MirrorRejectedTarget, type MoveRejectedTarget, type OffsetLayerMode, type OffsetRejectedTarget, type RotateAngleSpec, type RotateRejectedTarget, type ScaleFactorSpec, type ScaleRejectedTarget } from "@kuubik/cad-core";
+import { ISO_PAPER_MEDIA, MAX_PAGE_SETUP_TEMPLATE_BYTES, STANDARD_VIEWPORT_SCALE_DENOMINATORS, allocateEntityHandles, applyNamedPageSetup, buildLayoutPublishPlan, CadCommandInputError, CadSession, clearNamedPageSetupAssignment, createPageSetupTemplate, LayoutCommandError, LayoutPublishSettingsError, PageSetupLibraryError, copyPaperLayout, createEmptyDocument, createPaperLayout, createPaperViewport, deleteNamedPageSetup, deletePaperLayout, deletePaperViewport, formatViewportScale, importPageSetupTemplate, metadataWithLayoutPublishSettings, movePaperLayout, panPaperViewportByPixels, paperDefinitionForPageSetup, parseCartesianPoint, parseCopyDestinations, parseMoveDestination, parseOffsetDistance, parseOffsetPlacementPoints, parsePageSetupTemplate, parseReferenceAngleInput, parseRotationAngleInput, parseScaleFactorInput, parseScaleLengthInput, renameNamedPageSetup, renamePaperLayout, resolveCadCommand, resolveLayoutPublishSettings, resolveModelPageSetup, resolvePageSetup, resolvePageSetupLibrary, resolvePaperDefinition, sanitizePdfFileStem, saveNamedPageSetup, serializeKDraw, serializePageSetupTemplate, setModelLayoutPageSetup, setPaperLayoutPageSetup, setPaperViewportDisplayLocked, setPaperViewportView, viewportScaleDenominator, zoomPaperViewportAtModelPoint, type CadChange, type CopyRejectedTarget, type LayoutPublishSettingsV1, type MirrorRejectedTarget, type MoveRejectedTarget, type OffsetLayerMode, type OffsetRejectedTarget, type RotateAngleSpec, type RotateRejectedTarget, type ScaleFactorSpec, type ScaleRejectedTarget } from "@kuubik/cad-core";
 import { exportDxf } from "@kuubik/cad-dxf";
 import { exportLayoutSvg, exportLayoutsVectorPdf, exportLayoutVectorPdf, exportModelSvg, exportModelVectorPdf, type LayoutPlotOptions, type ModelPlotOptions } from "@kuubik/cad-print";
 import { CadCanvasRenderer, pannedViewportWorldCenter, viewportScreenToWorld, type Viewport2D } from "@kuubik/cad-renderer";
@@ -258,6 +258,10 @@ export function App() {
   const [plotLineweightsInput, setPlotLineweightsInput] = useState(true);
   const [plotTransparencyInput, setPlotTransparencyInput] = useState(true);
   const [displayPlotStylesInput, setDisplayPlotStylesInput] = useState(false);
+  const [selectedNamedPageSetupId, setSelectedNamedPageSetupId] = useState("");
+  const [newPageSetupNameInput, setNewPageSetupNameInput] = useState("");
+  const [renamePageSetupInput, setRenamePageSetupInput] = useState("");
+  const [pageSetupTemplateNameInput, setPageSetupTemplateNameInput] = useState("Kuubik office template");
   const [layoutRenameInput, setLayoutRenameInput] = useState("");
   const [publishBaseNameInput, setPublishBaseNameInput] = useState("local");
   const [publishCommitting, setPublishCommitting] = useState(false);
@@ -317,6 +321,7 @@ export function App() {
   const canRedoInActiveLayout = session.current.canRedo && (modelSpaceEditing || /^(LAYOUT|VIEWPORT|PAGESETUP|PUBLISH)/u.test(session.current.nextRedoCommandId ?? ""));
   const paperLayouts = document.layouts.filter((layout) => layout.kind === "paper");
   const publishSettings = useMemo(() => resolveLayoutPublishSettings(document), [document]);
+  const pageSetupLibrary = useMemo(() => resolvePageSetupLibrary(document), [document]);
   const activePaperIndex = paperLayouts.findIndex((layout) => layout.id === activeLayout.id);
   const movePreview = useMemo((): { entities: CadEntity[]; delta: { x: number; y: number } } | null => {
     if (previewCommand !== "MOVE" || selectedHandles.length === 0) return null;
@@ -447,6 +452,16 @@ export function App() {
   useEffect(() => {
     setPublishBaseNameInput(publishSettings.baseFileName);
   }, [publishSettings.baseFileName]);
+
+  useEffect(() => {
+    const assigned = pageSetupLibrary.assignments[activeLayout.id] ?? "";
+    setSelectedNamedPageSetupId(assigned);
+  }, [activeLayout.id, pageSetupLibrary]);
+
+  useEffect(() => {
+    const setup = pageSetupLibrary.setups.find((candidate) => candidate.id === selectedNamedPageSetupId);
+    setRenamePageSetupInput(setup?.name ?? "");
+  }, [pageSetupLibrary.setups, selectedNamedPageSetupId]);
 
   useEffect(() => {
     if (document.layouts.some((layout) => layout.id === activeLayoutId)) return;
@@ -1351,12 +1366,124 @@ export function App() {
       const result = activeLayout.kind === "model"
         ? setModelLayoutPageSetup(document, activeLayout.id, setup)
         : setPaperLayoutPageSetup(document, activeLayout.id, setup);
-      await commitChanges(activeLayout.kind === "model" ? "PAGESETUP_MODEL" : "PAGESETUP", { layoutId: activeLayout.id, setup }, result.changes, []);
+      const detached = clearNamedPageSetupAssignment(document, activeLayout.id);
+      await commitChanges(activeLayout.kind === "model" ? "PAGESETUP_MODEL" : "PAGESETUP", { layoutId: activeLayout.id, setup }, [...result.changes, ...detached], []);
       setModelViewportId(null);
       setStatus(`${activeLayout.name}: ${pageMediaInput} ${pageOrientationInput}, ${plotAreaInput}, ${plotScaleModeInput === "fit" ? "Fit" : `1:${denominator}`}, ${plotProfileInput}, LW ${plotLineweightsInput ? "ON" : "OFF"}, transparency ${plotTransparencyInput ? "ON" : "OFF"}, preview ${displayPlotStylesInput ? "ON" : "OFF"}`);
     } catch (error) {
       if (error instanceof StorageRevisionConflictError) await recoverFromStorageConflict(error);
-      else if (error instanceof LayoutCommandError) setStatus(`PAGESETUP viga: ${error.message}`);
+      else if (error instanceof LayoutCommandError || error instanceof PageSetupLibraryError) setStatus(`PAGESETUP viga: ${error.message}`);
+      else throw error;
+    } finally {
+      committing.current = false;
+    }
+  }
+
+  async function saveCurrentNamedPageSetup(): Promise<void> {
+    if (committing.current) return;
+    committing.current = true;
+    try {
+      const result = saveNamedPageSetup(document, activeLayout.id, newPageSetupNameInput);
+      const named = result.library.setups.find((setup) => setup.id === result.setupId)!;
+      await commitChanges("PAGESETUP_SAVE", { layoutId: activeLayout.id, setupId: result.setupId, name: named.name }, result.changes, []);
+      setSelectedNamedPageSetupId(result.setupId);
+      setRenamePageSetupInput(named.name);
+      setNewPageSetupNameInput("");
+      setStatus(`Page setup “${named.name}” salvestatud.`);
+    } catch (error) {
+      if (error instanceof StorageRevisionConflictError) await recoverFromStorageConflict(error);
+      else if (error instanceof PageSetupLibraryError || error instanceof LayoutCommandError) setStatus(`PAGESETUP viga: ${error.message}`);
+      else throw error;
+    } finally {
+      committing.current = false;
+    }
+  }
+
+  async function applySelectedNamedPageSetup(): Promise<void> {
+    if (committing.current || !selectedNamedPageSetupId) return;
+    committing.current = true;
+    try {
+      const result = applyNamedPageSetup(document, activeLayout.id, selectedNamedPageSetupId);
+      const named = result.library.setups.find((setup) => setup.id === result.setupId)!;
+      await commitChanges("PAGESETUP_APPLY", { layoutId: activeLayout.id, setupId: result.setupId }, result.changes, []);
+      setModelViewportId(null);
+      setStatus(`Page setup “${named.name}” rakendatud paigutusele ${activeLayout.name}.`);
+    } catch (error) {
+      if (error instanceof StorageRevisionConflictError) await recoverFromStorageConflict(error);
+      else if (error instanceof PageSetupLibraryError || error instanceof LayoutCommandError) setStatus(`PAGESETUP viga: ${error.message}`);
+      else throw error;
+    } finally {
+      committing.current = false;
+    }
+  }
+
+  async function renameSelectedNamedPageSetup(): Promise<void> {
+    if (committing.current || !selectedNamedPageSetupId) return;
+    committing.current = true;
+    try {
+      const result = renameNamedPageSetup(document, selectedNamedPageSetupId, renamePageSetupInput);
+      const named = result.library.setups.find((setup) => setup.id === result.setupId)!;
+      await commitChanges("PAGESETUP_RENAME", { setupId: result.setupId, name: named.name }, result.changes, []);
+      setRenamePageSetupInput(named.name);
+      setStatus(`Page setup nimetatud: “${named.name}”.`);
+    } catch (error) {
+      if (error instanceof StorageRevisionConflictError) await recoverFromStorageConflict(error);
+      else if (error instanceof PageSetupLibraryError) setStatus(`PAGESETUP viga: ${error.message}`);
+      else throw error;
+    } finally {
+      committing.current = false;
+    }
+  }
+
+  async function deleteSelectedNamedPageSetup(): Promise<void> {
+    if (committing.current || !selectedNamedPageSetupId) return;
+    const named = pageSetupLibrary.setups.find((setup) => setup.id === selectedNamedPageSetupId);
+    if (!named || !window.confirm(`Kustuta page setup “${named.name}”?`)) return;
+    committing.current = true;
+    try {
+      const result = deleteNamedPageSetup(document, selectedNamedPageSetupId);
+      await commitChanges("PAGESETUP_DELETE", { setupId: selectedNamedPageSetupId }, result.changes, []);
+      setSelectedNamedPageSetupId("");
+      setRenamePageSetupInput("");
+      setStatus(`Page setup “${named.name}” kustutatud; layout'ide praegused plotiseaded säilisid.`);
+    } catch (error) {
+      if (error instanceof StorageRevisionConflictError) await recoverFromStorageConflict(error);
+      else if (error instanceof PageSetupLibraryError) setStatus(`PAGESETUP viga: ${error.message}`);
+      else throw error;
+    } finally {
+      committing.current = false;
+    }
+  }
+
+  function exportPageSetupTemplate(): void {
+    try {
+      const template = createPageSetupTemplate(document, pageSetupTemplateNameInput);
+      const text = serializePageSetupTemplate(template);
+      const fileName = `${sanitizePdfFileStem(template.name)}.kdraw-template.json`;
+      downloadBlob(new Blob([text], { type: "application/json" }), fileName);
+      setStatus(`Page setup template “${template.name}” eksporditud ilma geomeetriata.`);
+    } catch (error) {
+      if (error instanceof PageSetupLibraryError || error instanceof LayoutCommandError) setStatus(`TEMPLATE viga: ${error.message}`);
+      else throw error;
+    }
+  }
+
+  async function importPageSetupTemplateFile(file: File): Promise<void> {
+    if (committing.current) return;
+    committing.current = true;
+    try {
+      if (file.size > MAX_PAGE_SETUP_TEMPLATE_BYTES) {
+        throw new PageSetupLibraryError("TEMPLATE_TOO_LARGE", `Page setup template exceeds ${MAX_PAGE_SETUP_TEMPLATE_BYTES} bytes.`);
+      }
+      const template = parsePageSetupTemplate(await file.text());
+      const result = importPageSetupTemplate(document, template);
+      await commitChanges("PAGESETUP_TEMPLATE_IMPORT", { templateName: template.name, importedLayoutIds: result.importedLayoutIds, importedSetupIds: result.importedSetupIds }, result.changes, []);
+      if (result.importedLayoutIds[0]) setActiveLayoutId(result.importedLayoutIds[0]);
+      setSelectedNamedPageSetupId(result.importedLayoutIds[0] ? (result.library.assignments[result.importedLayoutIds[0]] ?? "") : "");
+      setStatus(`Template “${template.name}” rakendatud ühe undo-sammuna: ${result.importedSetupIds.length} setup'i, ${result.importedLayoutIds.length} layout'i.`);
+    } catch (error) {
+      if (error instanceof StorageRevisionConflictError) await recoverFromStorageConflict(error);
+      else if (error instanceof PageSetupLibraryError || error instanceof LayoutCommandError) setStatus(`TEMPLATE viga: ${error.message}`);
       else throw error;
     } finally {
       committing.current = false;
@@ -2052,6 +2179,35 @@ export function App() {
             <button type="button" className="layout-action danger" aria-label="Kustuta paigutus" disabled={paperLayouts.length <= 1} onClick={() => void deleteLayout()}>Kustuta</button>
           </span>
         )}
+        <details className="page-setup-library" data-testid="page-setup-library" data-count={pageSetupLibrary.setups.length} data-assigned={pageSetupLibrary.assignments[activeLayout.id] ?? ""}>
+          <summary>PAGE SETUPS</summary>
+          <div className="page-setup-library-grid">
+            <select aria-label="Named page setup" value={selectedNamedPageSetupId} onChange={(event) => setSelectedNamedPageSetupId(event.target.value)}>
+              <option value="">Current layout settings</option>
+              {pageSetupLibrary.setups.map((setup) => <option key={setup.id} value={setup.id}>{setup.name}</option>)}
+            </select>
+            <button type="button" aria-label="Apply named page setup" disabled={!selectedNamedPageSetupId} onClick={() => void applySelectedNamedPageSetup()}>Apply</button>
+            <input aria-label="New page setup name" maxLength={255} value={newPageSetupNameInput} onChange={(event) => setNewPageSetupNameInput(event.target.value)} />
+            <button type="button" aria-label="Save named page setup" disabled={!newPageSetupNameInput.trim()} onClick={() => void saveCurrentNamedPageSetup()}>Save as</button>
+            <input aria-label="Rename page setup" maxLength={255} disabled={!selectedNamedPageSetupId} value={renamePageSetupInput} onChange={(event) => setRenamePageSetupInput(event.target.value)} />
+            <button type="button" aria-label="Rename named page setup" disabled={!selectedNamedPageSetupId || !renamePageSetupInput.trim()} onClick={() => void renameSelectedNamedPageSetup()}>Rename</button>
+            <button type="button" aria-label="Delete named page setup" disabled={!selectedNamedPageSetupId} onClick={() => void deleteSelectedNamedPageSetup()}>Delete</button>
+            <input aria-label="Page setup template name" maxLength={255} value={pageSetupTemplateNameInput} onChange={(event) => setPageSetupTemplateNameInput(event.target.value)} />
+            <button type="button" aria-label="Export page setup template" onClick={exportPageSetupTemplate}>Export template</button>
+            <label className="template-import">Import template
+              <input
+                type="file"
+                accept=".json,.kdraw-template.json,application/json"
+                aria-label="Import page setup template"
+                onChange={(event) => {
+                  const input = event.currentTarget;
+                  const file = input.files?.[0];
+                  if (file) void importPageSetupTemplateFile(file).finally(() => { input.value = ""; });
+                }}
+              />
+            </label>
+          </div>
+        </details>
         <span className="layout-space">{activeSpace}</span>
       </section>
       <footer className="statusbar">

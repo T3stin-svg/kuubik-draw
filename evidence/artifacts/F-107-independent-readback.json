@@ -1,0 +1,389 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-107",
+  "source": "Exact production template serialization plus checksum-verified KDRAW1 import/reopen and mutation/dangling-reference rejection",
+  "sourceSha256": {
+    "runner": "5bcd41cc4177c89319570bac6f3e659aba458dd6a923297c80e2293367897013",
+    "fixture": "6e5f5eb225eb3c67e5b2952da54ba0a91765cb6483c638555db53f95c285acfd",
+    "library": "0fe9a61112cc75dd5e5654fe07bd5044b2db3183eb06823d7a693e9b5921d821",
+    "container": "931db68e6aa0688ac9a7aa6d5ac56c07d1cd5e0126adec836f27258011419502",
+    "browserEvidence": "664b6d4d6ccc998236af52146810298bf603b1e0c47a3fe3a2458dc378e5138b",
+    "browserTemplate": "c321a5f073d38246d64be8d432b76b4d2e909f959d1d5b39452c27a3ff65cfb0"
+  },
+  "template": {
+    "bytes": 2875,
+    "sha256": "c321a5f073d38246d64be8d432b76b4d2e909f959d1d5b39452c27a3ff65cfb0",
+    "parsed": {
+      "schemaVersion": 1,
+      "format": "kuubik-draw-page-setup-template",
+      "name": "F-107 office template",
+      "units": {
+        "linear": "mm",
+        "displayPrecision": 4,
+        "angularPrecision": 6
+      },
+      "pageSetups": [
+        {
+          "id": "page-setup-1",
+          "name": "F-107 A4 FINAL",
+          "pageSetup": {
+            "mediaName": "ISO_A4",
+            "orientation": "portrait",
+            "plotArea": {
+              "kind": "layout"
+            },
+            "plotScale": {
+              "mode": "custom",
+              "paperUnits": 1,
+              "drawingUnits": 1
+            },
+            "centerPlot": false,
+            "plotOriginMm": {
+              "x": 0,
+              "y": 0
+            },
+            "plotStyle": {
+              "profile": "monochrome",
+              "plotLineweights": true,
+              "plotTransparency": true
+            },
+            "displayPlotStyles": false
+          },
+          "paperMarginsMm": {
+            "top": 10,
+            "right": 10,
+            "bottom": 10,
+            "left": 10
+          }
+        }
+      ],
+      "layouts": [
+        {
+          "id": "model",
+          "name": "Model",
+          "kind": "model",
+          "pageSetup": {
+            "mediaName": "ISO_A4",
+            "orientation": "portrait",
+            "plotArea": {
+              "kind": "extents"
+            },
+            "plotScale": {
+              "mode": "custom",
+              "paperUnits": 1,
+              "drawingUnits": 50
+            },
+            "centerPlot": true,
+            "plotOriginMm": {
+              "x": 0,
+              "y": 0
+            },
+            "plotStyle": {
+              "profile": "monochrome",
+              "plotLineweights": true,
+              "plotTransparency": true
+            },
+            "displayPlotStyles": false
+          },
+          "viewports": []
+        },
+        {
+          "id": "layout-1",
+          "name": "F-107 ISSUE LAYOUT",
+          "kind": "paper",
+          "pageSetup": {
+            "mediaName": "ISO_A4",
+            "orientation": "portrait",
+            "plotArea": {
+              "kind": "layout"
+            },
+            "plotScale": {
+              "mode": "custom",
+              "paperUnits": 1,
+              "drawingUnits": 1
+            },
+            "centerPlot": false,
+            "plotOriginMm": {
+              "x": 0,
+              "y": 0
+            },
+            "plotStyle": {
+              "profile": "monochrome",
+              "plotLineweights": true,
+              "plotTransparency": true
+            },
+            "displayPlotStyles": false
+          },
+          "pageSetupId": "page-setup-1",
+          "viewports": [
+            {
+              "id": "viewport-1",
+              "center": {
+                "x": 148.5,
+                "y": 105
+              },
+              "width": 277,
+              "height": 190,
+              "viewCenter": {
+                "x": 0,
+                "y": 0
+              },
+              "viewHeight": 190,
+              "twistAngleRad": 0,
+              "locked": false
+            }
+          ],
+          "paper": {
+            "widthMm": 210,
+            "heightMm": 297,
+            "marginsMm": {
+              "top": 10,
+              "right": 10,
+              "bottom": 10,
+              "left": 10
+            }
+          }
+        }
+      ]
+    }
+  },
+  "kdraw": {
+    "bytes": 4337,
+    "sha256": "125c02922c5e8bd9637f31e68d77666aa401fcd7881a35e0ef8dbfa8576179cd",
+    "manifest": {
+      "containerVersion": 1,
+      "documentPath": "document.json",
+      "createdAt": "2026-08-29T00:00:00.000Z",
+      "entries": [
+        {
+          "path": "document.json",
+          "mediaType": "application/json",
+          "byteLength": 2989,
+          "sha256": "28991c05443dc74030fffc4c6e3c07a7fa0bf6c5ae880149ebaa8049c198797b"
+        }
+      ]
+    }
+  },
+  "restored": {
+    "revision": 1,
+    "layouts": [
+      {
+        "id": "model",
+        "name": "Model",
+        "kind": "model",
+        "viewports": [],
+        "entities": [],
+        "pageSetup": {
+          "mediaName": "ISO_A4",
+          "orientation": "portrait",
+          "plotArea": {
+            "kind": "extents"
+          },
+          "plotScale": {
+            "mode": "custom",
+            "paperUnits": 1,
+            "drawingUnits": 50
+          },
+          "centerPlot": true,
+          "plotOriginMm": {
+            "x": 0,
+            "y": 0
+          },
+          "plotStyle": {
+            "profile": "monochrome",
+            "plotLineweights": true,
+            "plotTransparency": true
+          },
+          "displayPlotStyles": false
+        }
+      },
+      {
+        "id": "layout-1",
+        "name": "F-107 ISSUE LAYOUT",
+        "kind": "paper",
+        "paper": {
+          "widthMm": 210,
+          "heightMm": 297,
+          "marginsMm": {
+            "top": 10,
+            "right": 10,
+            "bottom": 10,
+            "left": 10
+          }
+        },
+        "pageSetup": {
+          "mediaName": "ISO_A4",
+          "orientation": "portrait",
+          "plotArea": {
+            "kind": "layout"
+          },
+          "plotScale": {
+            "mode": "custom",
+            "paperUnits": 1,
+            "drawingUnits": 1
+          },
+          "centerPlot": false,
+          "plotOriginMm": {
+            "x": 0,
+            "y": 0
+          },
+          "plotStyle": {
+            "profile": "monochrome",
+            "plotLineweights": true,
+            "plotTransparency": true
+          },
+          "displayPlotStyles": false
+        },
+        "viewports": [
+          {
+            "id": "viewport-1",
+            "center": {
+              "x": 148.5,
+              "y": 105
+            },
+            "width": 277,
+            "height": 190,
+            "viewCenter": {
+              "x": 0,
+              "y": 0
+            },
+            "viewHeight": 190,
+            "twistAngleRad": 0,
+            "locked": false
+          }
+        ],
+        "entities": [
+          {
+            "kind": "circle",
+            "handle": "12",
+            "layerId": "0",
+            "center": {
+              "x": 30,
+              "y": 30
+            },
+            "radius": 10
+          }
+        ]
+      },
+      {
+        "id": "layout-2",
+        "name": "F-107 ISSUE LAYOUT (2)",
+        "kind": "paper",
+        "paper": {
+          "widthMm": 210,
+          "heightMm": 297,
+          "marginsMm": {
+            "top": 10,
+            "right": 10,
+            "bottom": 10,
+            "left": 10
+          }
+        },
+        "pageSetup": {
+          "mediaName": "ISO_A4",
+          "orientation": "portrait",
+          "plotArea": {
+            "kind": "layout"
+          },
+          "plotScale": {
+            "mode": "custom",
+            "paperUnits": 1,
+            "drawingUnits": 1
+          },
+          "centerPlot": false,
+          "plotOriginMm": {
+            "x": 0,
+            "y": 0
+          },
+          "plotStyle": {
+            "profile": "monochrome",
+            "plotLineweights": true,
+            "plotTransparency": true
+          },
+          "displayPlotStyles": false
+        },
+        "viewports": [
+          {
+            "id": "viewport-2",
+            "center": {
+              "x": 148.5,
+              "y": 105
+            },
+            "width": 277,
+            "height": 190,
+            "viewCenter": {
+              "x": 0,
+              "y": 0
+            },
+            "viewHeight": 190,
+            "twistAngleRad": 0,
+            "locked": false
+          }
+        ],
+        "entities": []
+      }
+    ],
+    "library": {
+      "schemaVersion": 1,
+      "setups": [
+        {
+          "id": "page-setup-1",
+          "name": "F-107 A4 FINAL",
+          "pageSetup": {
+            "mediaName": "ISO_A4",
+            "orientation": "portrait",
+            "plotArea": {
+              "kind": "layout"
+            },
+            "plotScale": {
+              "mode": "custom",
+              "paperUnits": 1,
+              "drawingUnits": 1
+            },
+            "centerPlot": false,
+            "plotOriginMm": {
+              "x": 0,
+              "y": 0
+            },
+            "plotStyle": {
+              "profile": "monochrome",
+              "plotLineweights": true,
+              "plotTransparency": true
+            },
+            "displayPlotStyles": false
+          },
+          "paperMarginsMm": {
+            "top": 10,
+            "right": 10,
+            "bottom": 10,
+            "left": 10
+          }
+        }
+      ],
+      "assignments": {
+        "layout-2": "page-setup-1"
+      }
+    },
+    "modelEntityHandles": [
+      "10",
+      "11"
+    ]
+  },
+  "mutations": {
+    "plotProfileSha256": "b80b198f64fc2cd481e088c178488120df0084a08b08850f201e37d149f3c642",
+    "danglingRejected": true,
+    "staleRejected": true
+  },
+  "checks": {
+    "browserAuthorityPassed": true,
+    "productionBytesMatchBrowser": true,
+    "deterministicTemplate": true,
+    "mutationSensitive": true,
+    "danglingRejected": true,
+    "staleRejected": true,
+    "kdrawChecksumReadback": true,
+    "drawingGeometryPreserved": true,
+    "importedLayoutAndReference": true
+  },
+  "status": "PASS"
+}

@@ -8,7 +8,7 @@ käitumispariteeti, mitte kogu AutoCADi toodet.
 
 - vana Drawi auditi snapshot: **63,9% raw / 68,3% weighted / 60,7% visual**;
 - vana Drawi AutoCADi live-tõendiga read: **22/133**;
-- selle uue eraldatud rakenduse kohalik sertifikaat: **18/133 · 13,5% raw / 16,4% weighted**;
+- selle uue eraldatud rakenduse kohalik sertifikaat: **19/133 · 14,3% raw / 17,0% weighted**;
 - native DWG/DWT/XREF ja PC3/CTB/STB pariteet on veel blokeeritud.
 
 Need arvud on vana Drawi auditi muutmatu snapshot. Uus rakendus ei päri skoori
@@ -79,6 +79,14 @@ PDF-ideks, salvestab ja avab DWG uuesti ning kontrollib seadme, media ja kõigi
 püsivate page-setup väljade säilimist. `pypdf`, `pdfplumber` ja Poppler mõõdavad
 line/circle geomeetria füüsilised pikkused ja asukohad; kõik väljundid on
 vektorid ilma rasterpiltideta.
+F-107 `Named page setups/templates` lisab nimega setup'i create/apply/rename/
+delete töövoo, atomaarse assignment'i ja rangelt geomeetriavaba JSON-template'i.
+Import tõkestab tundmatud väljad, ühikute vastuolu, rippuvad või semantiliselt
+vananenud viited ning liiga suure faili enne commit'i; võtmete järjekord ei muuda
+semantiliselt sama setup'i. Chromium tõendab Undo/Redo, IndexedDB ja KDRAW1
+taastamise. AutoCAD 2024 live-värav salvestab native DWT, loob sellest värske
+joonise ning loeb tagasi INSUNITS-i, PlotOrigin'i, marginaalid, mõõtkava ja
+named PlotConfiguration'i ainult PID-ga tõendatud omatud protsessis.
 
 ## Piirid
 

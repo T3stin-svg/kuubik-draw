@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-107",
+  "status": "PASS",
+  "viewport": {
+    "width": 1920,
+    "height": 1080
+  },
+  "workflow": "Save unique named A4 setup -> duplicate reject -> mutate layout -> apply -> rename -> geometry-free export -> delete -> file-input import -> atomic Undo/Redo -> IndexedDB reload",
+  "template": {
+    "bytes": 2875,
+    "sha256": "c321a5f073d38246d64be8d432b76b4d2e909f959d1d5b39452c27a3ff65cfb0",
+    "name": "F-107 office template",
+    "pageSetups": 1,
+    "layouts": 2,
+    "geometryFree": true
+  },
+  "finalDocument": {
+    "revision": 8,
+    "layouts": 3,
+    "modelEntities": 2,
+    "preservedPaperEntities": 1,
+    "importedPaperEntities": 0,
+    "library": {
+      "schemaVersion": 1,
+      "setups": [
+        {
+          "id": "page-setup-1",
+          "name": "F-107 A4 FINAL",
+          "pageSetup": {
+            "mediaName": "ISO_A4",
+            "orientation": "portrait",
+            "plotArea": {
+              "kind": "layout"
+            },
+            "plotScale": {
+              "mode": "custom",
+              "paperUnits": 1,
+              "drawingUnits": 1
+            },
+            "centerPlot": false,
+            "plotOriginMm": {
+              "x": 0,
+              "y": 0
+            },
+            "plotStyle": {
+              "profile": "monochrome",
+              "plotLineweights": true,
+              "plotTransparency": true
+            },
+            "displayPlotStyles": false
+          },
+          "paperMarginsMm": {
+            "top": 10,
+            "right": 10,
+            "bottom": 10,
+            "left": 10
+          }
+        }
+      ],
+      "assignments": {
+        "layout-2": "page-setup-1"
+      }
+    }
+  },
+  "consoleErrors": []
+}

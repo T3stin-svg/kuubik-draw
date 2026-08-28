@@ -46,11 +46,20 @@
   Fit/custom scale, center/offset, A4/A3 output, atomic Undo/Redo and exact
   vector SVG/PDF read-back. Native AutoCAD reopens the synthetic DWG and
   independent readers measure the known LINE/CIRCLE geometry on paper.
+- F-107 Named page setups/templates mirrored unique create/apply/rename/delete,
+  assignment cleanup, strict geometry-free template export/import, collision-safe
+  IDs/names, one-step Undo/Redo and IndexedDB/KDRAW1 persistence. AutoCAD creates
+  the same A4 portrait Layout 1:1 named setup, saves a native DWT and reads the
+  named setup plus applied Layout1 settings, millimetre units, plot origin and
+  printable margins back from a fresh drawing. Import rejects incompatible units,
+  dangling/stale assignments, unknown nested keys and oversized files before commit;
+  semantic equality is independent of JSON object-key order. Independent final
+  review closed at 0 P0 / 0 P1 / 0 P2.
 
 ## Explicitly not certified yet
 
-- the new application has **18/133** locally certified parity rows (**13.5% raw / 16.4% weighted**);
-- 4 of the 22 legacy-certified rows still need mirror workflows and evidence here;
+- the new application has **19/133** locally certified parity rows (**14.3% raw / 17.0% weighted**);
+- 3 of the 22 legacy-certified rows still need mirror workflows and evidence here;
 - F-022 TRIM is not implemented in the new kernel;
 - spline/NURBS rendering is rejected rather than drawn as a misleading control polygon;
 - Unicode PDF text is rejected until a font-embedding path exists;
@@ -60,7 +69,8 @@
 - native DWG/DWT/XREF and PC3/CTB/STB remain deferred;
 - no preview or production deployment has been made.
 
-The next release gate remains parity mirror; F-107 named page setups/templates
-is the next directly testable legacy-certified row. F-108 native PC3/CTB/STB
-remains blocked on a licensed adapter. F-022 work starts only after the mirror
-baseline and oracle-labor execution paths are real.
+The next release gate remains parity mirror. F-108 native PC3/CTB/STB remains
+blocked on a licensed adapter, so F-109 DXF export is the next directly testable
+legacy-certified row, followed by F-111 roundtrip fidelity and F-114 PDF vector
+output. F-022 work starts only after the mirror baseline and oracle-labor
+execution paths are real.

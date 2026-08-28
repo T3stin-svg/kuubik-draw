@@ -4,7 +4,7 @@
   "benchmark": "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
   "engine": "Autodesk AutoCAD 2024 desktop COM/native Layout PlotConfiguration and PlotToFile",
   "engineVersion": "24.3s (LMS Tech)",
-  "automationProcessId": 22468,
+  "automationProcessId": 13544,
   "automationProcessOwned": true,
   "media": {
     "a3": "ISO_expand_A3_(297.00_x_420.00_MM)",
@@ -234,13 +234,13 @@
     "standardScale": 0,
     "customScale": {
       "paperUnits": 1,
-      "drawingUnits": 3.9771161040609564,
-      "denominator": 3.9771161040609564
+      "drawingUnits": 3.975792890744681,
+      "denominator": 3.975792890744681
     },
     "centerPlot": true,
     "plotOrigin": {
-      "x": 1.4210854715202004e-14,
-      "y": 91.04104769351056
+      "x": 0,
+      "y": 91.02525252525254
     },
     "window": null,
     "viewport": {
@@ -260,9 +260,9 @@
     "height": 377.499527
   },
   "displayScreenTarget": {
-    "width": 1280,
-    "height": 608,
-    "score": 1692.8124808320863
+    "width": 2080,
+    "height": 988,
+    "score": 194.8124808320863
   },
   "displayWindow": {
     "center": {
@@ -278,8 +278,8 @@
       "height": 377.499527
     },
     "screenPixels": {
-      "width": 1280,
-      "height": 608
+      "width": 2080,
+      "height": 988
     }
   },
   "layoutCenterAttempt": {
@@ -339,18 +339,18 @@
   },
   "dwg": {
     "bytes": 32532,
-    "sha256": "fc89d669a45f82b07557d81911d9d63a332b04951d4089e111eea4ae088e679e",
+    "sha256": "686cda093a375cfb1f9ecb1317fcdb5a2c84ec04345bd5c1c5e66d5acba55ab8",
     "saveAsType": 64,
     "retained": false
   },
   "pdf": {
     "bytes": 2021,
-    "sha256": "b5e448bec6c5873e189a9aeba35bdcd15ed9269084c4a82bf5a5fe660e100b59",
+    "sha256": "701c11f9f7286a4eae2aea53541595898fe073135dda3a19757ba324db8e03fd",
     "retained": false
   },
   "displayPdf": {
     "bytes": 2048,
-    "sha256": "2ee042c04199bc79abfbf3d686b227d74d28a8dc4c8ff138fb485e28a99c4296",
+    "sha256": "16f679fdc80a80f32c6708eb99e294dc2bb0f36b245977eca4a52848d4c6ab25",
     "retained": false
   },
   "status": "PASS",
@@ -398,27 +398,27 @@
       "y1": 842
     },
     "eof": true,
-    "decodedStreamSha256": "69433843fa7a6b1d8d8b56833dff37fd08b8e40830164f8cfc855a7b4ee0150e",
+    "decodedStreamSha256": "a1c1a4c6fe9d44b9bc4213f07a3b3a0ef29cfaa61f5e14fea05df199d9b2c26a",
     "lineSegments": 1,
     "dominantLine": {
       "lineWidth": 3,
       "startPt": {
-        "x": 229.76,
-        "y": 328.96
+        "x": 229.64,
+        "y": 328.84
       },
       "endPt": {
         "x": 358.03999999999996,
-        "y": 507.15999999999997
+        "y": 507.03999999999996
       },
       "deltaMm": {
-        "x": 45.25433333333332,
+        "x": 45.29666666666665,
         "y": 62.864999999999995
       }
     }
   },
-  "browserEvidenceSha256": "28526d88322daef7cb5b5da0a810d5eefe4e445ce3e0473dc34e9f1a0332e834",
+  "browserEvidenceSha256": "2f936a99a4185692793af522b58d197bc1f442cba15fc3360aaed1ccfdc2fa2c",
   "scriptSha256": "82fe5a54be4efcfbd5ce2735ad23147a2d75c093e83ba404d2c3189d3821d23e",
   "matrixScriptSha256": "1e0b54ca1e79cf36d862e3425462000e8ca3f038edde4037dcbe6bf8da01a940",
   "runnerScriptSha256": "0dfcb151d4b92f2fdf3221ffddf2377f5e468194cf042f512e5e1c9018aba674",
-  "observedAt": "2026-08-28T22:33:15.350Z"
+  "observedAt": "2026-08-28T23:40:29.534Z"
 }

@@ -1,0 +1,7 @@
+; F-107 AutoCAD 2024.1.2 live reference workflow.
+; Run only in a disposable drawing/process.
+; Create a named paper-space page setup from Layout1, set DWG To PDF.pc3,
+; ISO A4 portrait, Layout, 1:1, monochrome.ctb, lineweights and plot styles.
+; Apply it to Layout1, rename it, create/delete a second setup, save native
+; AutoCAD 2018 DWT, create another drawing from the DWT and read the named
+; setup plus Layout1 values back by name. Close every disposable document.

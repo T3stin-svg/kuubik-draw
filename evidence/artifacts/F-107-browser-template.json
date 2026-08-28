@@ -1,0 +1,133 @@
+{
+  "schemaVersion": 1,
+  "format": "kuubik-draw-page-setup-template",
+  "name": "F-107 office template",
+  "units": {
+    "linear": "mm",
+    "displayPrecision": 4,
+    "angularPrecision": 6
+  },
+  "pageSetups": [
+    {
+      "id": "page-setup-1",
+      "name": "F-107 A4 FINAL",
+      "pageSetup": {
+        "mediaName": "ISO_A4",
+        "orientation": "portrait",
+        "plotArea": {
+          "kind": "layout"
+        },
+        "plotScale": {
+          "mode": "custom",
+          "paperUnits": 1,
+          "drawingUnits": 1
+        },
+        "centerPlot": false,
+        "plotOriginMm": {
+          "x": 0,
+          "y": 0
+        },
+        "plotStyle": {
+          "profile": "monochrome",
+          "plotLineweights": true,
+          "plotTransparency": true
+        },
+        "displayPlotStyles": false
+      },
+      "paperMarginsMm": {
+        "top": 10,
+        "right": 10,
+        "bottom": 10,
+        "left": 10
+      }
+    }
+  ],
+  "layouts": [
+    {
+      "id": "model",
+      "name": "Model",
+      "kind": "model",
+      "pageSetup": {
+        "mediaName": "ISO_A4",
+        "orientation": "portrait",
+        "plotArea": {
+          "kind": "extents"
+        },
+        "plotScale": {
+          "mode": "custom",
+          "paperUnits": 1,
+          "drawingUnits": 50
+        },
+        "centerPlot": true,
+        "plotOriginMm": {
+          "x": 0,
+          "y": 0
+        },
+        "plotStyle": {
+          "profile": "monochrome",
+          "plotLineweights": true,
+          "plotTransparency": true
+        },
+        "displayPlotStyles": false
+      },
+      "viewports": []
+    },
+    {
+      "id": "layout-1",
+      "name": "F-107 ISSUE LAYOUT",
+      "kind": "paper",
+      "pageSetup": {
+        "mediaName": "ISO_A4",
+        "orientation": "portrait",
+        "plotArea": {
+          "kind": "layout"
+        },
+        "plotScale": {
+          "mode": "custom",
+          "paperUnits": 1,
+          "drawingUnits": 1
+        },
+        "centerPlot": false,
+        "plotOriginMm": {
+          "x": 0,
+          "y": 0
+        },
+        "plotStyle": {
+          "profile": "monochrome",
+          "plotLineweights": true,
+          "plotTransparency": true
+        },
+        "displayPlotStyles": false
+      },
+      "pageSetupId": "page-setup-1",
+      "viewports": [
+        {
+          "id": "viewport-1",
+          "center": {
+            "x": 148.5,
+            "y": 105
+          },
+          "width": 277,
+          "height": 190,
+          "viewCenter": {
+            "x": 0,
+            "y": 0
+          },
+          "viewHeight": 190,
+          "twistAngleRad": 0,
+          "locked": false
+        }
+      ],
+      "paper": {
+        "widthMm": 210,
+        "heightMm": 297,
+        "marginsMm": {
+          "top": 10,
+          "right": 10,
+          "bottom": 10,
+          "left": 10
+        }
+      }
+    }
+  ]
+}

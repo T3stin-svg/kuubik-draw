@@ -1689,7 +1689,7 @@ const certifications = {
   'F-107': {
     currentScore: 1,
     status: 'verified',
-    note: 'AutoCAD 2024 named PlotConfiguration and native DWT create/reopen read-back certified against Kuubik unique named setup save/delete, strict geometry-free template JSON, active-storey viewport rebinding, immediate 1920x1080 file-import UI read-back, independent JSON/hash verification, and restored browser/document state.',
+    note: 'AutoCAD 2024 named PlotConfiguration create/apply/rename/delete and native DWT create/reopen read-back certified against Kuubik unique named setup CRUD, strict geometry-free template JSON, collision-safe atomic import, exact 1920x1080 file-input workflow, Undo/Redo, IndexedDB restore and independent KDRAW1 checksum read-back.',
   },
   'F-109': {
     currentScore: 1,
