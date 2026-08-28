@@ -1,5 +1,5 @@
 import type { CadEntity, CadLayout, CadPageSetup, CadPaperRect, CadPlotStyle, CadViewport, KDrawDocumentV1 } from "@kuubik/cad-schema";
-import { resolveEntityPlotAppearance, resolvePlotStyle } from "@kuubik/cad-core";
+import { paperDefinitionForPageSetup, resolveEntityPlotAppearance, resolveModelPageSetup, resolvePlotStyle } from "@kuubik/cad-core";
 
 export interface PrintPage {
   widthMm: number;
@@ -67,7 +67,10 @@ function printableEntities(document: KDrawDocumentV1, entities: readonly CadEnti
 
 export function exportSvg(document: KDrawDocumentV1, page: PrintPage): { text: string; skippedHandles: string[] } {
   const printable = printableEntities(document);
-  const skippedHandles: string[] = [...printable.omitted];
+  // Hidden, frozen and non-plottable entities are intentionally filtered, not
+  // unsupported output. Only printable entities that cannot be represented by
+  // this writer belong in skippedHandles and may stop a user-facing export.
+  const skippedHandles: string[] = [];
   const body = printable.entities
     .map((entity) => {
       const result = svgEntity(entity, document);
@@ -151,7 +154,7 @@ function pdfEntity(entity: CadEntity, document: KDrawDocumentV1, plotStyle: CadP
 
 export function exportVectorPdf(document: KDrawDocumentV1, page: PrintPage): { bytes: Uint8Array; skippedHandles: string[] } {
   const printable = printableEntities(document);
-  const skippedHandles: string[] = [...printable.omitted];
+  const skippedHandles: string[] = [];
   const commands = printable.entities.flatMap((entity) => {
     const style = resolveEntityPlotAppearance(entity, document.layers);
     const output = pdfEntity(entity, document, undefined, (style.lineweightMm * page.scaleDenominator) / UNIT_TO_MM[document.units.linear]);
@@ -229,6 +232,13 @@ function entityBounds(entity: CadEntity): CadPaperRect | null {
     case "text":
     case "mtext":
       return { x: entity.position.x, y: entity.position.y, width: Math.max(entity.height * entity.text.length * 0.6, 1e-9), height: entity.height };
+    case "hatch": {
+      const vertices = entity.loops.flatMap((loop) => loop.vertices);
+      if (vertices.length === 0) return null;
+      const xs = vertices.map((point) => point.x); const ys = vertices.map((point) => point.y);
+      const x = Math.min(...xs); const y = Math.min(...ys);
+      return { x, y, width: Math.max(Math.max(...xs) - x, 1e-9), height: Math.max(Math.max(...ys) - y, 1e-9) };
+    }
     default: return null;
   }
 }
@@ -250,6 +260,107 @@ function layoutExtents(layout: CadLayout): CadPaperRect | null {
   return unionBounds([...viewportBounds, ...(layout.entities ?? []).flatMap((entity) => {
     const bounds = entityBounds(entity); return bounds ? [bounds] : [];
   })]);
+}
+
+export interface ModelPlotOptions {
+  /** Current model-space display in drawing coordinates. Required for Display plots. */
+  displayWindow?: CadPaperRect;
+}
+
+export interface ModelPlotPlacement {
+  paper: NonNullable<CadLayout["paper"]>;
+  setup: CadPageSetup;
+  source: CadPaperRect;
+  destination: CadPaperRect;
+  /** Physical paper millimetres per drawing unit. */
+  scaleFactor: number;
+}
+
+function modelExtents(document: KDrawDocumentV1): CadPaperRect | null {
+  return unionBounds(printableEntities(document).entities.flatMap((entity) => {
+    const bounds = entityBounds(entity);
+    return bounds ? [bounds] : [];
+  }));
+}
+
+export function resolveModelPlotPlacement(document: KDrawDocumentV1, options: ModelPlotOptions = {}): ModelPlotPlacement {
+  const model = document.layouts.find((layout) => layout.kind === "model");
+  const setup = model ? resolveModelPageSetup(model) : null;
+  if (!model || !setup) throw new TypeError("A Model layout with a valid model-space page setup is required.");
+  const paper = paperDefinitionForPageSetup(setup);
+  const source = setup.plotArea.kind === "window"
+    ? structuredClone(setup.plotArea.window)
+    : setup.plotArea.kind === "extents"
+      ? modelExtents(document)
+      : setup.plotArea.kind === "display" && options.displayWindow
+        ? structuredClone(options.displayWindow)
+        : null;
+  if (!source) throw new TypeError(setup.plotArea.kind === "display"
+    ? "Display plot area requires the current model-space display window."
+    : "Extents plot area has no printable model-space geometry.");
+  if ([source.x, source.y, source.width, source.height].some((value) => !Number.isFinite(value)) || source.width <= 0 || source.height <= 0) {
+    throw new TypeError("Model plot source must be a finite rectangle with positive dimensions.");
+  }
+  const printable = {
+    x: paper.marginsMm.left,
+    y: paper.marginsMm.bottom,
+    width: paper.widthMm - paper.marginsMm.left - paper.marginsMm.right,
+    height: paper.heightMm - paper.marginsMm.top - paper.marginsMm.bottom,
+  };
+  const unitToMm = UNIT_TO_MM[document.units.linear];
+  const scaleFactor = setup.plotScale.mode === "fit"
+    ? Math.min(printable.width / source.width, printable.height / source.height)
+    : unitToMm / pageScaleDenominator(setup)!;
+  if (!Number.isFinite(scaleFactor) || scaleFactor <= 0) throw new TypeError("Model plot placement scale must be finite and positive.");
+  const width = source.width * scaleFactor; const height = source.height * scaleFactor;
+  const destination = setup.centerPlot
+    ? { x: printable.x + (printable.width - width) / 2, y: printable.y + (printable.height - height) / 2, width, height }
+    : { x: printable.x + setup.plotOriginMm.x, y: printable.y + setup.plotOriginMm.y, width, height };
+  return { paper, setup, source, destination, scaleFactor };
+}
+
+export function exportModelSvg(document: KDrawDocumentV1, options: ModelPlotOptions = {}): { text: string; skippedHandles: string[]; placement: ModelPlotPlacement } {
+  const placement = resolveModelPlotPlacement(document, options);
+  const printable = printableEntities(document);
+  const skippedHandles: string[] = [];
+  const plotStyle = resolvePlotStyle(placement.setup.plotStyle);
+  const body = printable.entities.map((entity) => {
+    const output = svgEntity(entity, document, plotStyle);
+    if (!output) skippedHandles.push(entity.handle);
+    return output ?? "";
+  }).join("");
+  const { paper, source, destination, scaleFactor, setup } = placement;
+  const transform = `translate(${destination.x} ${paper.heightMm - destination.y}) scale(${scaleFactor} ${-scaleFactor}) translate(${-source.x} ${-source.y})`;
+  const clip = `<clipPath id="model-plot-clip"><rect x="${destination.x}" y="${paper.heightMm - destination.y - destination.height}" width="${destination.width}" height="${destination.height}"/></clipPath>`;
+  const metadata = `data-model-space-plot="true" data-plot-area="${setup.plotArea.kind}" data-plot-scale="${setup.plotScale.mode}" data-plot-profile="${plotStyle.profile}" data-source="${source.x},${source.y},${source.width},${source.height}" data-destination="${destination.x},${destination.y},${destination.width},${destination.height}"`;
+  return {
+    text: `<svg xmlns="http://www.w3.org/2000/svg" width="${paper.widthMm}mm" height="${paper.heightMm}mm" viewBox="0 0 ${paper.widthMm} ${paper.heightMm}" ${metadata}><defs>${clip}</defs><g clip-path="url(#model-plot-clip)"><g transform="${transform}">${body}</g></g></svg>`,
+    skippedHandles: [...new Set(skippedHandles)],
+    placement,
+  };
+}
+
+export function exportModelVectorPdf(document: KDrawDocumentV1, options: ModelPlotOptions = {}): { bytes: Uint8Array; skippedHandles: string[]; placement: ModelPlotPlacement } {
+  const placement = resolveModelPlotPlacement(document, options);
+  const printable = printableEntities(document);
+  const skippedHandles: string[] = [];
+  const plotStyle = resolvePlotStyle(placement.setup.plotStyle);
+  const commands = printable.entities.flatMap((entity) => {
+    const style = resolveEntityPlotAppearance(entity, document.layers, plotStyle);
+    const output = pdfEntity(entity, document, plotStyle, style.lineweightMm / placement.scaleFactor);
+    if (!output) { skippedHandles.push(entity.handle); return []; }
+    return [output];
+  });
+  const { paper, source, destination, scaleFactor } = placement;
+  const outerScale = MM_TO_PT * scaleFactor;
+  const tx = MM_TO_PT * (destination.x - source.x * scaleFactor); const ty = MM_TO_PT * (destination.y - source.y * scaleFactor);
+  const destinationClip = `${pdfNumber(destination.x * MM_TO_PT)} ${pdfNumber(destination.y * MM_TO_PT)} ${pdfNumber(destination.width * MM_TO_PT)} ${pdfNumber(destination.height * MM_TO_PT)} re W n`;
+  const content = `q ${destinationClip} ${pdfNumber(outerScale)} 0 0 ${pdfNumber(outerScale)} ${pdfNumber(tx)} ${pdfNumber(ty)} cm\n${commands.join("\n")}\nQ`;
+  return {
+    bytes: buildPdfBytes([{ widthMm: paper.widthMm, heightMm: paper.heightMm, content }]),
+    skippedHandles: [...new Set(skippedHandles)],
+    placement,
+  };
 }
 
 export function resolveLayoutPlotPlacement(layout: CadLayout, options: LayoutPlotOptions = {}): LayoutPlotPlacement {
@@ -320,7 +431,7 @@ export function exportLayoutSvg(document: KDrawDocumentV1, layoutId: string, opt
   if (!layout) throw new RangeError(`Layout not found: ${layoutId}`);
   const placement = resolveLayoutPlotPlacement(layout, options);
   const paperPrintable = printableEntities(document, layout.entities ?? []);
-  const skippedHandles: string[] = [...paperPrintable.omitted];
+  const skippedHandles: string[] = [];
   const plotStyle = resolvePlotStyle(placement.setup.plotStyle);
   const viewports = layout.viewports.map((viewport, index) => svgViewport(document, viewport, index, skippedHandles, plotStyle));
   const paperBody = paperPrintable.entities.map((entity) => {
@@ -384,7 +495,7 @@ function layoutPdfPage(document: KDrawDocumentV1, layoutId: string, options: Lay
   if (!layout) throw new RangeError(`Layout not found: ${layoutId}`);
   const placement = resolveLayoutPlotPlacement(layout, options);
   const paperPrintable = printableEntities(document, layout.entities ?? []);
-  const skippedHandles: string[] = [...paperPrintable.omitted];
+  const skippedHandles: string[] = [];
   const plotStyle = resolvePlotStyle(placement.setup.plotStyle);
   const paperCommands = paperPrintable.entities.flatMap((entity) => {
     const style = resolveEntityPlotAppearance(entity, document.layers, plotStyle);

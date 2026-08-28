@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ISO_PAPER_MEDIA, STANDARD_VIEWPORT_SCALE_DENOMINATORS, allocateEntityHandles, buildLayoutPublishPlan, CadCommandInputError, CadSession, LayoutCommandError, LayoutPublishSettingsError, copyPaperLayout, createEmptyDocument, createPaperLayout, createPaperViewport, deletePaperLayout, deletePaperViewport, formatViewportScale, metadataWithLayoutPublishSettings, movePaperLayout, panPaperViewportByPixels, parseCartesianPoint, parseCopyDestinations, parseMoveDestination, parseOffsetDistance, parseOffsetPlacementPoints, parseReferenceAngleInput, parseRotationAngleInput, parseScaleFactorInput, parseScaleLengthInput, renamePaperLayout, resolveCadCommand, resolveLayoutPublishSettings, resolvePageSetup, resolvePaperDefinition, serializeKDraw, setPaperLayoutPageSetup, setPaperViewportDisplayLocked, setPaperViewportView, viewportScaleDenominator, zoomPaperViewportAtModelPoint, type CadChange, type CopyRejectedTarget, type LayoutPublishSettingsV1, type MirrorRejectedTarget, type MoveRejectedTarget, type OffsetLayerMode, type OffsetRejectedTarget, type RotateAngleSpec, type RotateRejectedTarget, type ScaleFactorSpec, type ScaleRejectedTarget } from "@kuubik/cad-core";
+import { ISO_PAPER_MEDIA, STANDARD_VIEWPORT_SCALE_DENOMINATORS, allocateEntityHandles, buildLayoutPublishPlan, CadCommandInputError, CadSession, LayoutCommandError, LayoutPublishSettingsError, copyPaperLayout, createEmptyDocument, createPaperLayout, createPaperViewport, deletePaperLayout, deletePaperViewport, formatViewportScale, metadataWithLayoutPublishSettings, movePaperLayout, panPaperViewportByPixels, paperDefinitionForPageSetup, parseCartesianPoint, parseCopyDestinations, parseMoveDestination, parseOffsetDistance, parseOffsetPlacementPoints, parseReferenceAngleInput, parseRotationAngleInput, parseScaleFactorInput, parseScaleLengthInput, renamePaperLayout, resolveCadCommand, resolveLayoutPublishSettings, resolveModelPageSetup, resolvePageSetup, resolvePaperDefinition, serializeKDraw, setModelLayoutPageSetup, setPaperLayoutPageSetup, setPaperViewportDisplayLocked, setPaperViewportView, viewportScaleDenominator, zoomPaperViewportAtModelPoint, type CadChange, type CopyRejectedTarget, type LayoutPublishSettingsV1, type MirrorRejectedTarget, type MoveRejectedTarget, type OffsetLayerMode, type OffsetRejectedTarget, type RotateAngleSpec, type RotateRejectedTarget, type ScaleFactorSpec, type ScaleRejectedTarget } from "@kuubik/cad-core";
 import { exportDxf } from "@kuubik/cad-dxf";
-import { exportLayoutSvg, exportLayoutsVectorPdf, exportLayoutVectorPdf, type LayoutPlotOptions } from "@kuubik/cad-print";
+import { exportLayoutSvg, exportLayoutsVectorPdf, exportLayoutVectorPdf, exportModelSvg, exportModelVectorPdf, type LayoutPlotOptions, type ModelPlotOptions } from "@kuubik/cad-print";
 import { CadCanvasRenderer, pannedViewportWorldCenter, viewportScreenToWorld, type Viewport2D } from "@kuubik/cad-renderer";
 import type { CadEntity, CadLayout, CadPageSetup, CadPaperRect, CadPlotStyle, CadViewport, KDrawDocumentV1 } from "@kuubik/cad-schema";
 import { KDrawIndexedDb, StorageRevisionConflictError } from "./indexed-db.js";
@@ -9,6 +9,7 @@ import "./style.css";
 
 const LOCAL_DOCUMENT_ID = "local";
 const MODEL_SPACE_COMMANDS = new Set(["LINE", "RECTANGLE", "MOVE", "COPY", "ROTATE", "SCALE", "MIRROR", "OFFSET", "ERASE"]);
+const MODEL_VIEW_WORLD = Object.freeze({ minX: -500, minY: -500, maxX: 2500, maxY: 2500 });
 
 function nextInteractiveHandle(document: KDrawDocumentV1): string {
   const preferred = (document.revision + 16).toString(16).toUpperCase();
@@ -307,7 +308,8 @@ export function App() {
     : null;
   const modelSpaceEditing = activeLayout.kind === "model" || modelViewportId !== null;
   const activePaper = useMemo(() => resolvePaperDefinition(activeLayout), [activeLayout]);
-  const activePageSetup = useMemo(() => resolvePageSetup(activeLayout), [activeLayout]);
+  const activePageSetup = useMemo(() => activeLayout.kind === "model" ? resolveModelPageSetup(activeLayout) : resolvePageSetup(activeLayout), [activeLayout]);
+  const activePlotPaper = useMemo(() => activePageSetup ? (activePaper ?? paperDefinitionForPageSetup(activePageSetup)) : null, [activePageSetup, activePaper]);
   const activeSpace = modelSpaceEditing ? "MODEL" : "PAPER";
   const pendingViewportScale = Number(viewportScaleInput.trim().replace(",", "."));
   const selectedViewportPreset = String(STANDARD_VIEWPORT_SCALE_DENOMINATORS.find((candidate) => Math.abs(candidate - pendingViewportScale) <= Math.max(1, candidate) * 1e-9) ?? "custom");
@@ -471,7 +473,7 @@ export function App() {
   }, [selectedViewport]);
 
   useEffect(() => {
-    if (!activePageSetup || !activePaper) return;
+    if (!activePageSetup || !activePlotPaper) return;
     setPageMediaInput(activePageSetup.mediaName);
     setPageOrientationInput(activePageSetup.orientation);
     setPlotAreaInput(activePageSetup.plotArea.kind);
@@ -486,17 +488,22 @@ export function App() {
     setPlotLineweightsInput(activePageSetup.plotStyle?.plotLineweights ?? true);
     setPlotTransparencyInput(activePageSetup.plotStyle?.plotTransparency ?? true);
     setDisplayPlotStylesInput(activePageSetup.displayPlotStyles === true);
-    const window = activePageSetup.plotArea.kind === "window" ? activePageSetup.plotArea.window : {
-      x: activePaper.marginsMm.left,
-      y: activePaper.marginsMm.bottom,
-      width: activePaper.widthMm - activePaper.marginsMm.left - activePaper.marginsMm.right,
-      height: activePaper.heightMm - activePaper.marginsMm.top - activePaper.marginsMm.bottom,
+    const window = activePageSetup.plotArea.kind === "window" ? activePageSetup.plotArea.window : activeLayout.kind === "model" ? {
+      x: MODEL_VIEW_WORLD.minX,
+      y: MODEL_VIEW_WORLD.minY,
+      width: MODEL_VIEW_WORLD.maxX - MODEL_VIEW_WORLD.minX,
+      height: MODEL_VIEW_WORLD.maxY - MODEL_VIEW_WORLD.minY,
+    } : {
+      x: activePlotPaper.marginsMm.left,
+      y: activePlotPaper.marginsMm.bottom,
+      width: activePlotPaper.widthMm - activePlotPaper.marginsMm.left - activePlotPaper.marginsMm.right,
+      height: activePlotPaper.heightMm - activePlotPaper.marginsMm.top - activePlotPaper.marginsMm.bottom,
     };
     setPlotWindowXInput(String(window.x));
     setPlotWindowYInput(String(window.y));
     setPlotWindowWidthInput(String(window.width));
     setPlotWindowHeightInput(String(window.height));
-  }, [activePageSetup, activePaper]);
+  }, [activeLayout.kind, activePageSetup, activePlotPaper]);
 
   useEffect(() => {
     const element = canvas.current;
@@ -516,7 +523,7 @@ export function App() {
       renderer.render(context, {
         world: activePaper
           ? { minX: 0, minY: 0, maxX: activePaper.widthMm, maxY: activePaper.heightMm }
-          : { minX: -500, minY: -500, maxX: 2500, maxY: 2500 },
+          : MODEL_VIEW_WORLD,
         widthPx,
         heightPx,
         devicePixelRatio: ratio,
@@ -1317,7 +1324,7 @@ export function App() {
   }
 
   async function applyPageSetup(): Promise<void> {
-    if (committing.current || activeLayout.kind !== "paper") return;
+    if (committing.current) return;
     committing.current = true;
     try {
       const plotArea: CadPageSetup["plotArea"] = plotAreaInput === "window"
@@ -1328,19 +1335,23 @@ export function App() {
             height: pageNumber(plotWindowHeightInput, "Window kõrgus", true),
           } }
         : { kind: plotAreaInput };
-      const denominator = pageNumber(plotScaleDenominatorInput, "Plot mõõtkava", true);
+      const denominator = plotScaleModeInput === "custom"
+        ? pageNumber(plotScaleDenominatorInput, "Plot mõõtkava", true)
+        : null;
       const setup: CadPageSetup = {
         mediaName: pageMediaInput,
         orientation: pageOrientationInput,
         plotArea,
-        plotScale: plotScaleModeInput === "fit" ? { mode: "fit" } : { mode: "custom", paperUnits: 1, drawingUnits: denominator },
+        plotScale: plotScaleModeInput === "fit" ? { mode: "fit" } : { mode: "custom", paperUnits: 1, drawingUnits: denominator! },
         centerPlot: centerPlotInput,
         plotOriginMm: { x: pageNumber(plotOriginXInput, "Plot offset X"), y: pageNumber(plotOriginYInput, "Plot offset Y") },
         plotStyle: { profile: plotProfileInput, plotLineweights: plotLineweightsInput, plotTransparency: plotTransparencyInput },
         displayPlotStyles: displayPlotStylesInput,
       };
-      const result = setPaperLayoutPageSetup(document, activeLayout.id, setup);
-      await commitChanges("PAGESETUP", { layoutId: activeLayout.id, setup }, result.changes, []);
+      const result = activeLayout.kind === "model"
+        ? setModelLayoutPageSetup(document, activeLayout.id, setup)
+        : setPaperLayoutPageSetup(document, activeLayout.id, setup);
+      await commitChanges(activeLayout.kind === "model" ? "PAGESETUP_MODEL" : "PAGESETUP", { layoutId: activeLayout.id, setup }, result.changes, []);
       setModelViewportId(null);
       setStatus(`${activeLayout.name}: ${pageMediaInput} ${pageOrientationInput}, ${plotAreaInput}, ${plotScaleModeInput === "fit" ? "Fit" : `1:${denominator}`}, ${plotProfileInput}, LW ${plotLineweightsInput ? "ON" : "OFF"}, transparency ${plotTransparencyInput ? "ON" : "OFF"}, preview ${displayPlotStylesInput ? "ON" : "OFF"}`);
     } catch (error) {
@@ -1378,6 +1389,62 @@ export function App() {
       width: round(paperDesk.current.clientWidth / scale),
       height: round(paperDesk.current.clientHeight / scale),
     };
+  }
+
+  function currentModelDisplayWindow(): CadPaperRect {
+    const element = canvas.current;
+    if (activeLayout.kind !== "model" || !element || element.clientWidth <= 0 || element.clientHeight <= 0) {
+      throw new LayoutCommandError("INVALID_PAPER", "Aktiivne mudelivaade puudub.");
+    }
+    const viewport: Viewport2D = {
+      world: MODEL_VIEW_WORLD,
+      widthPx: element.clientWidth,
+      heightPx: element.clientHeight,
+      devicePixelRatio: window.devicePixelRatio || 1,
+    };
+    const bottomLeft = viewportScreenToWorld(viewport, { x: 0, y: element.clientHeight });
+    const topRight = viewportScreenToWorld(viewport, { x: element.clientWidth, y: 0 });
+    const round = (value: number) => Number(value.toFixed(6));
+    return {
+      x: round(Math.min(bottomLeft.x, topRight.x)),
+      y: round(Math.min(bottomLeft.y, topRight.y)),
+      width: round(Math.abs(topRight.x - bottomLeft.x)),
+      height: round(Math.abs(topRight.y - bottomLeft.y)),
+    };
+  }
+
+  function modelPlotOptions(): ModelPlotOptions {
+    return activePageSetup?.plotArea.kind === "display" ? { displayWindow: currentModelDisplayWindow() } : {};
+  }
+
+  function downloadModelSvg(): void {
+    if (activeLayout.kind !== "model") return;
+    try {
+      const output = exportModelSvg(document, modelPlotOptions());
+      if (output.skippedHandles.length) {
+        setStatus(`Model SVG peatatud: ${output.skippedHandles.length} toetamata objekti`);
+        return;
+      }
+      downloadBlob(new Blob([output.text], { type: "image/svg+xml" }), `${document.documentId}-Model.svg`);
+      setStatus(`Model SVG: ${output.placement.setup.plotArea.kind}, ${output.placement.paper.widthMm}×${output.placement.paper.heightMm} mm`);
+    } catch (error) {
+      setStatus(`Model SVG viga: ${error instanceof Error ? error.message : String(error)}`);
+    }
+  }
+
+  function downloadModelPdf(): void {
+    if (activeLayout.kind !== "model") return;
+    try {
+      const output = exportModelVectorPdf(document, modelPlotOptions());
+      if (output.skippedHandles.length) {
+        setStatus(`Model PDF peatatud: ${output.skippedHandles.length} toetamata objekti`);
+        return;
+      }
+      downloadBlob(new Blob([output.bytes as Uint8Array<ArrayBuffer>], { type: "application/pdf" }), `${document.documentId}-Model.pdf`);
+      setStatus(`Model PDF: ${output.placement.setup.plotArea.kind}, ${output.placement.paper.widthMm}×${output.placement.paper.heightMm} mm`);
+    } catch (error) {
+      setStatus(`Model PDF viga: ${error instanceof Error ? error.message : String(error)}`);
+    }
   }
 
   function downloadActiveLayoutSvg(): void {
@@ -1796,6 +1863,50 @@ export function App() {
           </button>
         ))}
         <button type="button" className="layout-action" aria-label="Lisa paigutus" onClick={() => void createLayout()}>+</button>
+        {activeLayout.kind === "model" && activePageSetup && activePlotPaper && (
+          <span
+            className="page-setup-controls model-page-setup-controls"
+            data-testid="model-page-setup-controls"
+            data-media={activePageSetup.mediaName}
+            data-orientation={activePageSetup.orientation}
+            data-plot-area={activePageSetup.plotArea.kind}
+            data-plot-scale={activePageSetup.plotScale.mode === "fit" ? "fit" : String(activePageSetup.plotScale.drawingUnits / activePageSetup.plotScale.paperUnits)}
+            data-center-plot={activePageSetup.centerPlot ? "true" : "false"}
+            data-plot-origin={`${activePageSetup.plotOriginMm.x},${activePageSetup.plotOriginMm.y}`}
+            data-paper={`${activePlotPaper.widthMm},${activePlotPaper.heightMm}`}
+          >
+            <select aria-label="Model paper media" value={pageMediaInput} onChange={(event) => setPageMediaInput(event.target.value)}>
+              {ISO_PAPER_MEDIA.map((paper) => <option key={paper.mediaName} value={paper.mediaName}>{paper.mediaName.replace("ISO_", "")}</option>)}
+            </select>
+            <select aria-label="Model paper orientation" value={pageOrientationInput} onChange={(event) => setPageOrientationInput(event.target.value as "portrait" | "landscape")}>
+              <option value="portrait">Portrait</option><option value="landscape">Landscape</option>
+            </select>
+            <select aria-label="Model plot area" value={plotAreaInput} onChange={(event) => setPlotAreaInput(event.target.value as CadPageSetup["plotArea"]["kind"])}>
+              <option value="window">Window</option><option value="extents">Extents</option><option value="display">Display</option>
+            </select>
+            <select aria-label="Model plot scale mode" value={plotScaleModeInput} onChange={(event) => setPlotScaleModeInput(event.target.value as CadPageSetup["plotScale"]["mode"])}>
+              <option value="custom">Fixed</option><option value="fit">Fit</option>
+            </select>
+            <input aria-label="Model plot scale denominator" inputMode="decimal" disabled={plotScaleModeInput === "fit"} value={plotScaleDenominatorInput} onChange={(event) => setPlotScaleDenominatorInput(event.target.value)} />
+            <label><input aria-label="Model center plot" type="checkbox" checked={centerPlotInput} onChange={(event) => setCenterPlotInput(event.target.checked)} />Center</label>
+            <input aria-label="Model plot offset X" inputMode="decimal" disabled={centerPlotInput} value={plotOriginXInput} onChange={(event) => setPlotOriginXInput(event.target.value)} />
+            <input aria-label="Model plot offset Y" inputMode="decimal" disabled={centerPlotInput} value={plotOriginYInput} onChange={(event) => setPlotOriginYInput(event.target.value)} />
+            <select aria-label="Model plot profile" value={plotProfileInput} onChange={(event) => setPlotProfileInput(event.target.value as CadPlotStyle["profile"])}>
+              <option value="color">Color</option><option value="monochrome">Monochrome</option><option value="grayscale">Grayscale</option>
+            </select>
+            <label><input aria-label="Model lineweights" type="checkbox" checked={plotLineweightsInput} onChange={(event) => setPlotLineweightsInput(event.target.checked)} />LW</label>
+            <label><input aria-label="Model transparency" type="checkbox" checked={plotTransparencyInput} onChange={(event) => setPlotTransparencyInput(event.target.checked)} />Alpha</label>
+            {plotAreaInput === "window" && <>
+              <input aria-label="Model plot window X" inputMode="decimal" value={plotWindowXInput} onChange={(event) => setPlotWindowXInput(event.target.value)} />
+              <input aria-label="Model plot window Y" inputMode="decimal" value={plotWindowYInput} onChange={(event) => setPlotWindowYInput(event.target.value)} />
+              <input aria-label="Model plot window width" inputMode="decimal" value={plotWindowWidthInput} onChange={(event) => setPlotWindowWidthInput(event.target.value)} />
+              <input aria-label="Model plot window height" inputMode="decimal" value={plotWindowHeightInput} onChange={(event) => setPlotWindowHeightInput(event.target.value)} />
+            </>}
+            <button type="button" className="layout-action" aria-label="Rakenda model page setup" onClick={() => void applyPageSetup()}>PAGESETUP</button>
+            <button type="button" className="layout-action" aria-label="Ekspordi model SVG" onClick={downloadModelSvg}>SVG</button>
+            <button type="button" className="layout-action" aria-label="Ekspordi model PDF" onClick={downloadModelPdf}>PDF</button>
+          </span>
+        )}
         {activeLayout.kind === "paper" && (
           <span className="layout-actions" aria-label="Layout tegevused">
             <button type="button" className="layout-action" aria-label="Kopeeri paigutus" onClick={() => void copyLayout()}>Kopeeri</button>

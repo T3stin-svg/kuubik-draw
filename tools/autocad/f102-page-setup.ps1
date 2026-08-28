@@ -240,8 +240,10 @@ try {
   Invoke-ComRetry { $scratch.Close($false) } | Out-Null; $scratch = $null
   $dwgInfo = Get-Item -LiteralPath $tempDwg; $dwgSha256 = Get-Sha256 $tempDwg
   $reopened = Invoke-ComRetry { $acad.Documents.Open($tempDwg) }; Invoke-ComRetry { $reopened.Activate() } | Out-Null; Wait-AcadIdle $reopened
-  $paper = Invoke-ComRetry { $reopened.Layouts.Item('F102 PAGE SETUP') }; $viewport = Invoke-ComRetry { $reopened.HandleToObject($configured.viewport.handle) }
-  Invoke-ComRetry { $reopened.ActiveLayout = $paper; $reopened.ActiveSpace = 0; $reopened.MSpace = $false; $reopened.Regen(1) } | Out-Null
+  $paper = Invoke-ComRetry { $reopened.Layouts.Item('F102 PAGE SETUP') }
+  Invoke-ComRetry { $reopened.ActiveLayout = $paper; $reopened.ActiveSpace = 0; $reopened.MSpace = $false; $paper.RefreshPlotDeviceInfo(); $reopened.Regen(1) } | Out-Null
+  Start-Sleep -Milliseconds 500
+  $viewport = Invoke-ComRetry { $reopened.HandleToObject($configured.viewport.handle) }
   $afterReopen = Get-PlotSnapshot $paper $viewport
 
   Invoke-ComRetry { $paper.PlotType = 1; $paper.UseStandardScale = $true; $paper.StandardScale = 0; $paper.CenterPlot = $true; $reopened.Regen(1) } | Out-Null
@@ -272,6 +274,26 @@ try {
 
   $close = { param([double]$A, [double]$B, [double]$Tolerance = 0.001) [Math]::Abs($A - $B) -le $Tolerance }
   $sameViewport = { param($A, $B) (& $close $A.center.x $B.center.x) -and (& $close $A.center.y $B.center.y) -and (& $close $A.width $B.width) -and (& $close $A.height $B.height) }
+  $sameWindow = {
+    param($A, $B)
+    if ($null -eq $A -or $null -eq $B) { return $null -eq $A -and $null -eq $B }
+    return (& $close $A.lowerLeft.x $B.lowerLeft.x) -and (& $close $A.lowerLeft.y $B.lowerLeft.y) -and
+      (& $close $A.upperRight.x $B.upperRight.x) -and (& $close $A.upperRight.y $B.upperRight.y)
+  }
+  $samePageSetup = {
+    param($A, $B)
+    return $A.layoutName -eq $B.layoutName -and $A.configName -eq $B.configName -and
+      $A.canonicalMediaName -eq $B.canonicalMediaName -and $A.paperUnits -eq $B.paperUnits -and
+      $A.plotRotation -eq $B.plotRotation -and (& $close $A.paper.widthMm $B.paper.widthMm) -and
+      (& $close $A.paper.heightMm $B.paper.heightMm) -and (& $close $A.paper.rawWidthMm $B.paper.rawWidthMm) -and
+      (& $close $A.paper.rawHeightMm $B.paper.rawHeightMm) -and $A.plotType -eq $B.plotType -and
+      $A.useStandardScale -eq $B.useStandardScale -and $A.standardScale -eq $B.standardScale -and
+      (& $close $A.customScale.paperUnits $B.customScale.paperUnits) -and
+      (& $close $A.customScale.drawingUnits $B.customScale.drawingUnits) -and
+      (& $close $A.customScale.denominator $B.customScale.denominator) -and $A.centerPlot -eq $B.centerPlot -and
+      (& $close $A.plotOrigin.x $B.plotOrigin.x) -and (& $close $A.plotOrigin.y $B.plotOrigin.y) -and
+      (& $sameWindow $A.window $B.window) -and (& $sameViewport $A.viewport $B.viewport)
+  }
   $checks = [ordered]@{
     baselineA3LandscapeLayoutOneToOne = (& $close $baseline.paper.widthMm 420) -and (& $close $baseline.paper.heightMm 297) -and $baseline.plotType -eq 5 -and (& $close $baseline.customScale.denominator 1) -and -not $baseline.centerPlot
     configuredA4PortraitWindowOneToTwo = (& $close $configured.paper.widthMm 210) -and (& $close $configured.paper.heightMm 297) -and $configured.plotType -eq 4 -and (& $close $configured.customScale.denominator 2) -and -not $configured.centerPlot
@@ -279,7 +301,7 @@ try {
     viewportPaperCoordinatesRemainUnchanged = & $sameViewport $baseline.viewport $configured.viewport
     nativePdfPlot = $plotSucceeded -and $pdfInfo.Length -gt 0 -and $pdfSha256 -match '^[a-f0-9]{64}$'
     nativeDwgReopen = $dwgInfo.Length -gt 0 -and $dwgSha256 -match '^[a-f0-9]{64}$'
-    pageSetupPersisted = $afterReopen.plotType -eq 4 -and (& $close $afterReopen.customScale.denominator 2) -and (& $sameViewport $configured.viewport $afterReopen.viewport)
+    pageSetupPersisted = & $samePageSetup $configured $afterReopen
     extentsFitCentered = $fit.plotType -eq 1 -and $fit.useStandardScale -and $fit.standardScale -eq 0 -and $fit.centerPlot
     arbitraryWindowCoordinates = $outsideWindow.plotType -eq 4 -and (& $close $outsideWindow.window.lowerLeft.x -25) -and (& $close $outsideWindow.window.lowerLeft.y -40) -and (& $close $outsideWindow.window.upperRight.x 275) -and (& $close $outsideWindow.window.upperRight.y 360)
     displayUsesCurrentView = $display.plotType -eq 0 -and $display.useStandardScale -and $display.standardScale -eq 0 -and $display.centerPlot -and $displayPlotSucceeded -and $displayPdfInfo.Length -gt 0

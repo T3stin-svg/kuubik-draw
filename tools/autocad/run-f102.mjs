@@ -14,6 +14,21 @@ const outputPath = resolve(root, process.argv[2] ?? "evidence/artifacts/F-102-au
 const browserEvidencePath = resolve(root, "evidence/artifacts/F-102-browser-readback.json");
 const sha256 = (bytes) => createHash("sha256").update(bytes).digest("hex");
 const close = (actual, expected, tolerance) => Number.isFinite(actual) && Number.isFinite(expected) && Math.abs(actual - expected) <= tolerance;
+const samePoint = (left, right, tolerance = 0.001) => close(left?.x, right?.x, tolerance) && close(left?.y, right?.y, tolerance);
+const sameWindow = (left, right, tolerance = 0.001) => left === null || right === null
+  ? left === right
+  : samePoint(left?.lowerLeft, right?.lowerLeft, tolerance) && samePoint(left?.upperRight, right?.upperRight, tolerance);
+const samePageSetup = (left, right) =>
+  left?.layoutName === right?.layoutName && left?.configName === right?.configName && left?.canonicalMediaName === right?.canonicalMediaName &&
+  left?.paperUnits === right?.paperUnits && left?.plotRotation === right?.plotRotation &&
+  close(left?.paper?.widthMm, right?.paper?.widthMm, 0.001) && close(left?.paper?.heightMm, right?.paper?.heightMm, 0.001) &&
+  close(left?.paper?.rawWidthMm, right?.paper?.rawWidthMm, 0.001) && close(left?.paper?.rawHeightMm, right?.paper?.rawHeightMm, 0.001) &&
+  left?.plotType === right?.plotType && left?.useStandardScale === right?.useStandardScale && left?.standardScale === right?.standardScale &&
+  close(left?.customScale?.paperUnits, right?.customScale?.paperUnits, 1e-9) && close(left?.customScale?.drawingUnits, right?.customScale?.drawingUnits, 1e-9) &&
+  close(left?.customScale?.denominator, right?.customScale?.denominator, 1e-9) && left?.centerPlot === right?.centerPlot &&
+  samePoint(left?.plotOrigin, right?.plotOrigin) && sameWindow(left?.window, right?.window) &&
+  left?.viewport?.handle === right?.viewport?.handle && samePoint(left?.viewport?.center, right?.viewport?.center) &&
+  close(left?.viewport?.width, right?.viewport?.width, 0.001) && close(left?.viewport?.height, right?.viewport?.height, 0.001);
 const temporaryStem = resolve(tmpdir(), `KuubikDraw-F102-${randomUUID()}`); const ownershipToken = randomUUID();
 const temporaryPaths = { dwg: `${temporaryStem}.dwg`, bak: `${temporaryStem}.bak`, pdf: `${temporaryStem}.pdf`, displayPdf: `${temporaryStem}.display.pdf`, pid: `${temporaryStem}.pid` };
 const browserEvidenceBytes = await readFile(browserEvidencePath);
@@ -154,7 +169,7 @@ if (
   matrix.baseline?.plotType !== 5 || Math.abs(matrix.baseline?.paper?.widthMm - 420) > 0.001 || Math.abs(matrix.baseline?.paper?.heightMm - 297) > 0.001 ||
   matrix.configured?.plotType !== 4 || Math.abs(matrix.configured?.paper?.widthMm - 210) > 0.001 || Math.abs(matrix.configured?.paper?.heightMm - 297) > 0.001 ||
   Math.abs(matrix.configured?.customScale?.denominator - 2) > 1e-9 || matrix.configured?.centerPlot !== false ||
-  matrix.afterReopen?.plotType !== 4 || matrix.fit?.plotType !== 1 || matrix.fit?.standardScale !== 0 || matrix.fit?.centerPlot !== true ||
+  !samePageSetup(matrix.configured, matrix.afterReopen) || matrix.fit?.plotType !== 1 || matrix.fit?.standardScale !== 0 || matrix.fit?.centerPlot !== true ||
   matrix.outsideWindow?.plotType !== 4 || matrix.outsideWindow?.window?.lowerLeft?.x !== -25 || matrix.outsideWindow?.window?.lowerLeft?.y !== -40 ||
   matrix.display?.plotType !== 0 || matrix.display?.standardScale !== 0 || matrix.display?.centerPlot !== true ||
   !close(matrix.displayWindow?.window?.x, requestedDisplayWindow.x, 0.01) || !close(matrix.displayWindow?.window?.y, requestedDisplayWindow.y, 0.01) ||

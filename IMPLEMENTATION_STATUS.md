@@ -1,4 +1,4 @@
-# Implementation status — 2026-08-28
+# Implementation status — 2026-08-29
 
 ## Shipped foundation
 
@@ -36,11 +36,21 @@
   source; PC3 printable-origin parity remains explicitly scoped to F-108.
   Display now requires the current paper view, arbitrary Window coordinates are
   accepted and native PDF line endpoints prove the 1:2 physical scale.
+- F-103 Plot profiles mirrored Color/Monochrome/Grayscale, ACI/TrueColor,
+  ByLayer/explicit lineweights, transparency and persisted plot-style preview.
+- F-104 Layout vector output mirrored deterministic SVG/PDF for two independent
+  clipped viewports, paper-space geometry and physical paper dimensions.
+- F-105 Batch publish mirrored ordered include/exclude settings, one multi-page
+  or separate PDF workflow, per-layout Display sources and Windows-safe names.
+- F-106 Model-space print mirrored persisted Extents/Window/Display areas,
+  Fit/custom scale, center/offset, A4/A3 output, atomic Undo/Redo and exact
+  vector SVG/PDF read-back. Native AutoCAD reopens the synthetic DWG and
+  independent readers measure the known LINE/CIRCLE geometry on paper.
 
 ## Explicitly not certified yet
 
-- the new application has **14/133** locally certified parity rows (**10.5% raw / 13.1% weighted**);
-- 8 of the 22 legacy-certified rows still need mirror workflows and evidence here;
+- the new application has **18/133** locally certified parity rows (**13.5% raw / 16.4% weighted**);
+- 4 of the 22 legacy-certified rows still need mirror workflows and evidence here;
 - F-022 TRIM is not implemented in the new kernel;
 - spline/NURBS rendering is rejected rather than drawn as a misleading control polygon;
 - Unicode PDF text is rejected until a font-embedding path exists;
@@ -50,6 +60,7 @@
 - native DWG/DWT/XREF and PC3/CTB/STB remain deferred;
 - no preview or production deployment has been made.
 
-The next release gate remains parity mirror; F-103 plot profile, lineweights and
-transparency is the next legacy-certified weight-5 P0 row. F-022 work starts only after the mirror baseline
-and oracle-labor execution paths are real.
+The next release gate remains parity mirror; F-107 named page setups/templates
+is the next directly testable legacy-certified row. F-108 native PC3/CTB/STB
+remains blocked on a licensed adapter. F-022 work starts only after the mirror
+baseline and oracle-labor execution paths are real.

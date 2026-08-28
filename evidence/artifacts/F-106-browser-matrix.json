@@ -1,0 +1,128 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-106",
+  "status": "PASS",
+  "viewport": {
+    "width": 1920,
+    "height": 1080
+  },
+  "workflow": "Model Extents A4 fixed 1:50 centered -> Window A3 Fit offset -> atomic Undo/Redo -> Display A4 fixed 1:100 centered -> IndexedDB reload",
+  "outputs": {
+    "extents": {
+      "bytes": 1156,
+      "sha256": "b15d6a4a5378837b0fa60b3d8b28402ad13184834bf058388a1ac44062b4e419",
+      "summary": {
+        "pages": 1,
+        "a4Portrait": true,
+        "a3Landscape": false,
+        "title": true,
+        "images": 0,
+        "eof": true
+      },
+      "placement": {
+        "destination": {
+          "x": 65.000000175,
+          "y": 35.999999966666664,
+          "width": 80.0000001611111,
+          "height": 225.0000001444444
+        },
+        "scaleFactor": 0.020000030555555555,
+        "source": {
+          "x": 999.9984830578733,
+          "y": 1999.9969484768842,
+          "width": 3999.9938969537684,
+          "height": 11249.98281974847
+        }
+      }
+    },
+    "svg": {
+      "bytes": 1235,
+      "sha256": "76970b46b0900a07a989c9646a8a2374d85fe97178e465e1efa729de516e7bd6"
+    },
+    "window": {
+      "bytes": 1145,
+      "sha256": "75d2274404d1d765656a79deec13e94ce5eecf14ff0d8d5461de42dc993b7342",
+      "summary": {
+        "pages": 1,
+        "a4Portrait": false,
+        "a3Landscape": true,
+        "title": true,
+        "images": 0,
+        "eof": true
+      },
+      "placement": {
+        "destination": {
+          "x": 13.999999869444444,
+          "y": 16.000000102777776,
+          "width": 400.00000009999997,
+          "height": 249.99999988611108
+        },
+        "scaleFactor": 0.04999989999999999,
+        "source": {
+          "x": -100.0002046115203,
+          "y": 200.000402167471,
+          "width": 8000.0160020320045,
+          "height": 5000.009997742218
+        }
+      }
+    },
+    "display": {
+      "bytes": 1148,
+      "sha256": "7135c52bc46a3868f161c9af0a113f6696bde4819f244823c531b9dfa1258b53",
+      "summary": {
+        "pages": 1,
+        "a4Portrait": true,
+        "a3Landscape": false,
+        "title": true,
+        "images": 0,
+        "eof": true
+      },
+      "placement": {
+        "destination": {
+          "x": 73.38461531666667,
+          "y": 133.50000005277778,
+          "width": 63.23076917222222,
+          "height": 29.99999997222222
+        },
+        "scaleFactor": 0.009999838888888888,
+        "source": {
+          "x": -2161.573308403301,
+          "y": -500.0080434629229,
+          "width": 6323.178790658294,
+          "height": 3000.048331334227
+        }
+      }
+    }
+  },
+  "displayWindow": {
+    "x": -2161.538462,
+    "y": -500,
+    "width": 6323.076923,
+    "height": 3000
+  },
+  "storedRevision": 4,
+  "storedPageSetup": {
+    "mediaName": "ISO_A4",
+    "orientation": "portrait",
+    "plotArea": {
+      "kind": "display"
+    },
+    "plotScale": {
+      "mode": "custom",
+      "paperUnits": 1,
+      "drawingUnits": 100
+    },
+    "centerPlot": true,
+    "plotOriginMm": {
+      "x": 4,
+      "y": 6
+    },
+    "plotStyle": {
+      "profile": "monochrome",
+      "plotLineweights": true,
+      "plotTransparency": true
+    },
+    "displayPlotStyles": false
+  },
+  "consoleErrors": []
+}

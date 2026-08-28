@@ -68,3 +68,7 @@ jobs:
       - run: npm run parity:f105:readback
       - run: npm run parity:f105:autocad
       - run: npm run parity:f105:cross-evidence
+      - run: npm run parity:f106:browser-artifact
+      - run: npm run parity:f106:readback
+      - run: npm run parity:f106:autocad
+      - run: npm run parity:f106:cross-evidence

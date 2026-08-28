@@ -1,0 +1,767 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-106",
+  "source": "Production Model SVG/PDF deterministic generation, mutation sensitivity, pypdf/pdfplumber and Poppler read-back",
+  "sourceSha256": {
+    "runner": "0961614a103bedfe1a345f520734dd3655a63a4cb5ed76bafc6df5e96201b162",
+    "fixture": "78005b7201c2b4469a4664258ba4f238d601905472c39c49c0c097ebf606eae6",
+    "browserEvidence": "532bde610aefa6a367dd08e3199fafd2ffec5cb85c13dc83fd2f46a4b2a81506",
+    "layouts": "0ea7b5f9bdbcfb1236eb3e6d5405c338ce85e4d05d699259e4e60dc84c0804d6",
+    "cadPrint": "9216a0ad409b66b06945dfcd564cc0ca81fd4d45618525e7801863bb8dc3816b",
+    "pdfReader": "d16e7fc10f2f054d18aec11fe4b2c2f5221c67286a6645f6d932ea3737d2bcd2",
+    "pixelReader": "50407f2a470f97909f205e7f46a3818bb15d8c1f9700b120ff880de5e739de9a"
+  },
+  "outputs": {
+    "extents": {
+      "bytes": 1156,
+      "sha256": "b15d6a4a5378837b0fa60b3d8b28402ad13184834bf058388a1ac44062b4e419",
+      "summary": {
+        "version": "1.4",
+        "pages": 1,
+        "vectorStrokeCommands": 2,
+        "hasXref": true,
+        "xrefOffsetsValid": true
+      },
+      "placement": {
+        "paper": {
+          "widthMm": 210,
+          "heightMm": 297,
+          "marginsMm": {
+            "top": 10,
+            "right": 10,
+            "bottom": 10,
+            "left": 10
+          }
+        },
+        "setup": {
+          "mediaName": "ISO_A4",
+          "orientation": "portrait",
+          "plotArea": {
+            "kind": "extents"
+          },
+          "plotScale": {
+            "mode": "custom",
+            "paperUnits": 1,
+            "drawingUnits": 50
+          },
+          "centerPlot": true,
+          "plotOriginMm": {
+            "x": 0,
+            "y": 0
+          },
+          "plotStyle": {
+            "profile": "monochrome",
+            "plotLineweights": true,
+            "plotTransparency": true
+          },
+          "displayPlotStyles": false
+        },
+        "source": {
+          "x": 1000,
+          "y": 2000,
+          "width": 4000,
+          "height": 11250
+        },
+        "destination": {
+          "x": 65,
+          "y": 36,
+          "width": 80,
+          "height": 225
+        },
+        "scaleFactor": 0.02
+      }
+    },
+    "svg": {
+      "bytes": 1235,
+      "sha256": "76970b46b0900a07a989c9646a8a2374d85fe97178e465e1efa729de516e7bd6",
+      "placement": {
+        "paper": {
+          "widthMm": 210,
+          "heightMm": 297,
+          "marginsMm": {
+            "top": 10,
+            "right": 10,
+            "bottom": 10,
+            "left": 10
+          }
+        },
+        "setup": {
+          "mediaName": "ISO_A4",
+          "orientation": "portrait",
+          "plotArea": {
+            "kind": "extents"
+          },
+          "plotScale": {
+            "mode": "custom",
+            "paperUnits": 1,
+            "drawingUnits": 50
+          },
+          "centerPlot": true,
+          "plotOriginMm": {
+            "x": 0,
+            "y": 0
+          },
+          "plotStyle": {
+            "profile": "monochrome",
+            "plotLineweights": true,
+            "plotTransparency": true
+          },
+          "displayPlotStyles": false
+        },
+        "source": {
+          "x": 1000,
+          "y": 2000,
+          "width": 4000,
+          "height": 11250
+        },
+        "destination": {
+          "x": 65,
+          "y": 36,
+          "width": 80,
+          "height": 225
+        },
+        "scaleFactor": 0.02
+      }
+    },
+    "window": {
+      "bytes": 1145,
+      "sha256": "75d2274404d1d765656a79deec13e94ce5eecf14ff0d8d5461de42dc993b7342",
+      "summary": {
+        "version": "1.4",
+        "pages": 1,
+        "vectorStrokeCommands": 2,
+        "hasXref": true,
+        "xrefOffsetsValid": true
+      },
+      "placement": {
+        "paper": {
+          "widthMm": 420,
+          "heightMm": 297,
+          "marginsMm": {
+            "top": 10,
+            "right": 10,
+            "bottom": 10,
+            "left": 10
+          }
+        },
+        "setup": {
+          "mediaName": "ISO_A3",
+          "orientation": "landscape",
+          "plotArea": {
+            "kind": "window",
+            "window": {
+              "x": -100,
+              "y": 200,
+              "width": 8000,
+              "height": 5000
+            }
+          },
+          "plotScale": {
+            "mode": "fit"
+          },
+          "centerPlot": false,
+          "plotOriginMm": {
+            "x": 4,
+            "y": 6
+          },
+          "plotStyle": {
+            "profile": "monochrome",
+            "plotLineweights": true,
+            "plotTransparency": true
+          },
+          "displayPlotStyles": false
+        },
+        "source": {
+          "x": -100,
+          "y": 200,
+          "width": 8000,
+          "height": 5000
+        },
+        "destination": {
+          "x": 14,
+          "y": 16,
+          "width": 400,
+          "height": 250
+        },
+        "scaleFactor": 0.05
+      }
+    },
+    "display": {
+      "bytes": 1148,
+      "sha256": "7135c52bc46a3868f161c9af0a113f6696bde4819f244823c531b9dfa1258b53",
+      "summary": {
+        "version": "1.4",
+        "pages": 1,
+        "vectorStrokeCommands": 2,
+        "hasXref": true,
+        "xrefOffsetsValid": true
+      },
+      "placement": {
+        "paper": {
+          "widthMm": 210,
+          "heightMm": 297,
+          "marginsMm": {
+            "top": 10,
+            "right": 10,
+            "bottom": 10,
+            "left": 10
+          }
+        },
+        "setup": {
+          "mediaName": "ISO_A4",
+          "orientation": "portrait",
+          "plotArea": {
+            "kind": "display"
+          },
+          "plotScale": {
+            "mode": "custom",
+            "paperUnits": 1,
+            "drawingUnits": 100
+          },
+          "centerPlot": true,
+          "plotOriginMm": {
+            "x": 4,
+            "y": 6
+          },
+          "plotStyle": {
+            "profile": "monochrome",
+            "plotLineweights": true,
+            "plotTransparency": true
+          },
+          "displayPlotStyles": false
+        },
+        "source": {
+          "x": -2161.538462,
+          "y": -500,
+          "width": 6323.076923,
+          "height": 3000
+        },
+        "destination": {
+          "x": 73.384615385,
+          "y": 133.5,
+          "width": 63.23076923,
+          "height": 30
+        },
+        "scaleFactor": 0.01
+      }
+    },
+    "deterministic": "b15d6a4a5378837b0fa60b3d8b28402ad13184834bf058388a1ac44062b4e419",
+    "mutations": {
+      "scale": "3f7abbff070c3e9de1a86116ea1be8c7351b87b2d35452a461d40a8662daedef",
+      "geometry": "db58ae6e66f032668afe9f3032e0147a6b02b26f3cbfb7886157bee85501bc50"
+    }
+  },
+  "independentPdfReadback": {
+    "readers": {
+      "pypdf": "6.10.0",
+      "pdfplumber": "0.11.9"
+    },
+    "documents": {
+      "extents": {
+        "label": "extents",
+        "path": "F-106-independent-extents.pdf",
+        "pages": 1,
+        "strictParsed": true,
+        "strictError": null,
+        "mediaBox": [
+          0,
+          0,
+          595.275591,
+          841.889764
+        ],
+        "rotation": 0,
+        "text": "F-106 MODEL 1:50",
+        "words": [
+          "F-106",
+          "MODEL",
+          "1:50"
+        ],
+        "operators": {
+          "q": 4,
+          "re": 1,
+          "W": 1,
+          "n": 1,
+          "cm": 1,
+          "RG": 3,
+          "rg": 3,
+          "w": 3,
+          "gs": 3,
+          "m": 2,
+          "l": 1,
+          "S": 2,
+          "Q": 4,
+          "c": 4,
+          "BT": 1,
+          "Tf": 1,
+          "Td": 1,
+          "Tj": 1,
+          "ET": 1
+        },
+        "placement": {
+          "destination": {
+            "x": 65.000000175,
+            "y": 35.999999966666664,
+            "width": 80.0000001611111,
+            "height": 225.0000001444444
+          },
+          "scaleFactor": 0.020000030555555555,
+          "source": {
+            "x": 999.9984830578733,
+            "y": 1999.9969484768842,
+            "width": 3999.9938969537684,
+            "height": 11249.98281974847
+          },
+          "clipPoints": [
+            184.251969,
+            102.047244,
+            226.771654,
+            637.795276
+          ],
+          "matrix": [
+            0.056693,
+            0,
+            0,
+            0.056693,
+            127.559055,
+            -11.338583
+          ]
+        },
+        "effectiveMediaMm": {
+          "width": 210.0000001583333,
+          "height": 297.00000007777777
+        },
+        "primaryLineMm": {
+          "startMm": {
+            "x": 65.00003051388887,
+            "y": 36.000060997222214
+          },
+          "endMm": {
+            "x": 145.0001527361111,
+            "y": 36.000060997222214
+          },
+          "deltaMm": {
+            "x": 80.00012222222222,
+            "y": 0
+          },
+          "lengthMm": 80.00012222222222,
+          "midpointMm": {
+            "x": 105.00009162499998,
+            "y": 36.000060997222214
+          }
+        },
+        "lineSegmentsMm": [
+          {
+            "startMm": {
+              "x": 65.00003051388887,
+              "y": 36.000060997222214
+            },
+            "endMm": {
+              "x": 145.0001527361111,
+              "y": 36.000060997222214
+            },
+            "deltaMm": {
+              "x": 80.00012222222222,
+              "y": 0
+            },
+            "lengthMm": 80.00012222222222,
+            "midpointMm": {
+              "x": 105.00009162499998,
+              "y": 36.000060997222214
+            }
+          }
+        ],
+        "primaryCurveBoundsMm": {
+          "x": 85.00006106944443,
+          "y": 76.00012210833333,
+          "width": 40.00006111111111,
+          "height": 40.00006111111112
+        },
+        "curveBoundsMm": [
+          {
+            "x": 85.00006106944443,
+            "y": 76.00012210833333,
+            "width": 40.00006111111111,
+            "height": 40.00006111111112
+          }
+        ],
+        "imageXObjects": 0,
+        "plumberImages": 0,
+        "plumberLines": 1,
+        "plumberCurves": 1
+      },
+      "window": {
+        "label": "window",
+        "path": "F-106-independent-window.pdf",
+        "pages": 1,
+        "strictParsed": true,
+        "strictError": null,
+        "mediaBox": [
+          0,
+          0,
+          1190.551181,
+          841.889764
+        ],
+        "rotation": 0,
+        "text": "F-106 MODEL 1:50",
+        "words": [
+          "F-106",
+          "MODEL",
+          "1:50"
+        ],
+        "operators": {
+          "q": 4,
+          "re": 1,
+          "W": 1,
+          "n": 1,
+          "cm": 1,
+          "RG": 3,
+          "rg": 3,
+          "w": 3,
+          "gs": 3,
+          "m": 2,
+          "l": 1,
+          "S": 2,
+          "Q": 4,
+          "c": 4,
+          "BT": 1,
+          "Tf": 1,
+          "Td": 1,
+          "Tj": 1,
+          "ET": 1
+        },
+        "placement": {
+          "destination": {
+            "x": 13.999999869444444,
+            "y": 16.000000102777776,
+            "width": 400.00000009999997,
+            "height": 249.99999988611108
+          },
+          "scaleFactor": 0.04999989999999999,
+          "source": {
+            "x": -100.0002046115203,
+            "y": 200.000402167471,
+            "width": 8000.0160020320045,
+            "height": 5000.009997742218
+          },
+          "clipPoints": [
+            39.685039,
+            45.354331,
+            1133.858268,
+            708.661417
+          ],
+          "matrix": [
+            0.141732,
+            0,
+            0,
+            0.141732,
+            53.858268,
+            17.007874
+          ]
+        },
+        "effectiveMediaMm": {
+          "width": 419.99999996388885,
+          "height": 297.00000007777777
+        },
+        "primaryLineMm": {
+          "startMm": {
+            "x": 68.99990009999999,
+            "y": 105.99979999444444
+          },
+          "endMm": {
+            "x": 268.9995000999999,
+            "y": 105.99979999444444
+          },
+          "deltaMm": {
+            "x": 199.99959999999993,
+            "y": 0
+          },
+          "lengthMm": 199.99959999999993,
+          "midpointMm": {
+            "x": 168.99970009999996,
+            "y": 105.99979999444444
+          }
+        },
+        "lineSegmentsMm": [
+          {
+            "startMm": {
+              "x": 68.99990009999999,
+              "y": 105.99979999444444
+            },
+            "endMm": {
+              "x": 268.9995000999999,
+              "y": 105.99979999444444
+            },
+            "deltaMm": {
+              "x": 199.99959999999993,
+              "y": 0
+            },
+            "lengthMm": 199.99959999999993,
+            "midpointMm": {
+              "x": 168.99970009999996,
+              "y": 105.99979999444444
+            }
+          }
+        ],
+        "primaryCurveBoundsMm": {
+          "x": 118.99980009999999,
+          "y": 205.99959999444442,
+          "width": 99.99979999999996,
+          "height": 99.99979999999996
+        },
+        "curveBoundsMm": [
+          {
+            "x": 118.99980009999999,
+            "y": 205.99959999444442,
+            "width": 99.99979999999996,
+            "height": 99.99979999999996
+          }
+        ],
+        "imageXObjects": 0,
+        "plumberImages": 0,
+        "plumberLines": 1,
+        "plumberCurves": 1
+      },
+      "display": {
+        "label": "display",
+        "path": "F-106-independent-display.pdf",
+        "pages": 1,
+        "strictParsed": true,
+        "strictError": null,
+        "mediaBox": [
+          0,
+          0,
+          595.275591,
+          841.889764
+        ],
+        "rotation": 0,
+        "text": "F-106 MODEL 1:50",
+        "words": [
+          "F-106",
+          "MODEL",
+          "1:50"
+        ],
+        "operators": {
+          "q": 4,
+          "re": 1,
+          "W": 1,
+          "n": 1,
+          "cm": 1,
+          "RG": 3,
+          "rg": 3,
+          "w": 3,
+          "gs": 3,
+          "m": 2,
+          "l": 1,
+          "S": 2,
+          "Q": 4,
+          "c": 4,
+          "BT": 1,
+          "Tf": 1,
+          "Td": 1,
+          "Tj": 1,
+          "ET": 1
+        },
+        "placement": {
+          "destination": {
+            "x": 73.38461531666667,
+            "y": 133.50000005277778,
+            "width": 63.23076917222222,
+            "height": 29.99999997222222
+          },
+          "scaleFactor": 0.009999838888888888,
+          "source": {
+            "x": -2161.573308403301,
+            "y": -500.0080434629229,
+            "width": 6323.178790658294,
+            "height": 3000.048331334227
+          },
+          "clipPoints": [
+            208.019382,
+            378.425197,
+            179.236826,
+            85.03937
+          ],
+          "matrix": [
+            0.028346,
+            0,
+            0,
+            0.028346,
+            269.291339,
+            392.598425
+          ]
+        },
+        "effectiveMediaMm": {
+          "width": 210.0000001583333,
+          "height": 297.00000007777777
+        },
+        "primaryLineMm": {
+          "startMm": {
+            "x": 104.9998390361111,
+            "y": 158.49967770833334
+          },
+          "endMm": {
+            "x": 144.99919459166665,
+            "y": 158.49967770833334
+          },
+          "deltaMm": {
+            "x": 39.99935555555555,
+            "y": 0
+          },
+          "lengthMm": 39.99935555555555,
+          "midpointMm": {
+            "x": 124.99951681388887,
+            "y": 158.49967770833334
+          }
+        },
+        "lineSegmentsMm": [
+          {
+            "startMm": {
+              "x": 104.9998390361111,
+              "y": 158.49967770833334
+            },
+            "endMm": {
+              "x": 144.99919459166665,
+              "y": 158.49967770833334
+            },
+            "deltaMm": {
+              "x": 39.99935555555555,
+              "y": 0
+            },
+            "lengthMm": 39.99935555555555,
+            "midpointMm": {
+              "x": 124.99951681388887,
+              "y": 158.49967770833334
+            }
+          }
+        ],
+        "primaryCurveBoundsMm": {
+          "x": 114.99967792499999,
+          "y": 178.4993554861111,
+          "width": 19.999677777777777,
+          "height": 19.999677777777777
+        },
+        "curveBoundsMm": [
+          {
+            "x": 114.99967792499999,
+            "y": 178.4993554861111,
+            "width": 19.999677777777777,
+            "height": 19.999677777777777
+          }
+        ],
+        "imageXObjects": 0,
+        "plumberImages": 0,
+        "plumberLines": 1,
+        "plumberCurves": 1
+      }
+    }
+  },
+  "renderedPixels": {
+    "schemaVersion": 1,
+    "images": {
+      "extents": {
+        "label": "extents",
+        "width": 1191,
+        "height": 1684,
+        "mode": "RGB",
+        "sha256": "22f641bbe97a91625bbc1c41d04c55c104bb1053c4c2bb27cbd64f757a61a9d5",
+        "counts": {
+          "black": 2320,
+          "nonWhite": 4441
+        },
+        "paintedBounds": [
+          368,
+          211,
+          821,
+          1479
+        ],
+        "extrema": [
+          [
+            0,
+            255
+          ],
+          [
+            0,
+            255
+          ],
+          [
+            0,
+            255
+          ]
+        ]
+      },
+      "window": {
+        "label": "window",
+        "width": 2382,
+        "height": 1684,
+        "mode": "RGB",
+        "sha256": "a13ae81cb0f22af4b6e70a11dbdd009915727b2baa1a14609409c05994bf1ec7",
+        "counts": {
+          "black": 3344,
+          "nonWhite": 4958
+        },
+        "paintedBounds": [
+          391,
+          175,
+          1524,
+          1083
+        ],
+        "extrema": [
+          [
+            0,
+            255
+          ],
+          [
+            0,
+            255
+          ],
+          [
+            0,
+            255
+          ]
+        ]
+      },
+      "display": {
+        "label": "display",
+        "width": 1191,
+        "height": 1684,
+        "mode": "RGB",
+        "sha256": "83435e951ada56203f8396c302435a39380b1643deafe819cabf5e2e9784283c",
+        "counts": {
+          "black": 358,
+          "nonWhite": 360
+        },
+        "paintedBounds": [
+          595,
+          784,
+          774,
+          785
+        ],
+        "extrema": [
+          [
+            0,
+            255
+          ],
+          [
+            0,
+            255
+          ],
+          [
+            0,
+            255
+          ]
+        ]
+      }
+    }
+  },
+  "browserEvidenceSha256": "532bde610aefa6a367dd08e3199fafd2ffec5cb85c13dc83fd2f46a4b2a81506",
+  "checks": {
+    "browserPassed": true,
+    "exactProductionBytes": true,
+    "deterministic": true,
+    "mutationsObserved": true,
+    "noSkipped": true,
+    "independentReaders": true,
+    "popplerPainted": true
+  },
+  "status": "PASS"
+}

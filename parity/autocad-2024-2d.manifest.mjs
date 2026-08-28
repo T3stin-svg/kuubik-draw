@@ -1684,7 +1684,7 @@ const certifications = {
   'F-106': {
     currentScore: 1,
     status: 'verified',
-    note: 'AutoCAD 2024 Model-tab Extents/A4/1:50 DWG To PDF output certified against Kuubik system-print plus browser-independent model-space vector PDF, exact production-builder bytes, pypdf/pdfplumber read-back, zero raster images, Poppler visual renders, and restored browser/document state.',
+    note: 'AutoCAD 2024 Model-tab Extents/Window/Display, A4/A3, fixed/Fit and centered/offset native plots certified against Kuubik persisted atomic Model PAGESETUP, exact production SVG/PDF bytes, pypdf/pdfplumber read-back, zero raster images, Poppler renders, IndexedDB restore and native DWG reopen.',
   },
   'F-107': {
     currentScore: 1,

@@ -2,11 +2,63 @@ import { describe, expect, it } from "vitest";
 import { createEmptyDocument, createPaperLayout } from "../../cad-core/src/index.js";
 import { createF104Document, F104_LAYOUT_ID, F104_VIEWPORT_IDS } from "../../../parity/fixtures/f104-document.js";
 import { createF105Document, F105_LAYOUT_IDS, F105_LAYOUT_NAMES } from "../../../parity/fixtures/f105-document.js";
-import { exportLayoutSvg, exportLayoutsVectorPdf, exportLayoutVectorPdf, exportSvg, exportVectorPdf, readPdfSummary, resolveLayoutPlotPlacement } from "../src/index.js";
+import { exportLayoutSvg, exportLayoutsVectorPdf, exportLayoutVectorPdf, exportModelSvg, exportModelVectorPdf, exportSvg, exportVectorPdf, readPdfSummary, resolveLayoutPlotPlacement, resolveModelPlotPlacement } from "../src/index.js";
 
 const page = { widthMm: 297, heightMm: 210, scaleDenominator: 1, origin: { x: 0, y: 0 } };
 
 describe("vector print output", () => {
+  it("plots Model Extents to centered A4 portrait at exact 1:50 physical scale", () => {
+    const document = createEmptyDocument({ documentId: "F-106-model-extents" });
+    document.entities = [
+      { kind: "line", handle: "10", layerId: "0", start: { x: 1000, y: 2000 }, end: { x: 5000, y: 2000 } },
+      { kind: "circle", handle: "11", layerId: "0", center: { x: 3000, y: 5000 }, radius: 1000 },
+      { kind: "text", handle: "12", layerId: "0", position: { x: 1000, y: 13000 }, text: "F-106 MODEL 1:50", height: 250, rotationRad: 0 },
+    ];
+    document.layouts[0]!.pageSetup = {
+      mediaName: "ISO_A4", orientation: "portrait", plotArea: { kind: "extents" },
+      plotScale: { mode: "custom", paperUnits: 1, drawingUnits: 50 }, centerPlot: true, plotOriginMm: { x: 0, y: 0 },
+      plotStyle: { profile: "monochrome", plotLineweights: true, plotTransparency: true },
+    };
+    const placement = resolveModelPlotPlacement(document);
+    expect(placement).toMatchObject({
+      paper: { widthMm: 210, heightMm: 297 }, source: { x: 1000, y: 2000, width: 4000, height: 11250 },
+      destination: { x: 65, y: 36, width: 80, height: 225 }, scaleFactor: 0.02,
+    });
+    const svg = exportModelSvg(document);
+    expect(svg.skippedHandles).toEqual([]);
+    expect(svg.text).toContain('width="210mm" height="297mm"');
+    expect(svg.text).toContain('data-model-space-plot="true"');
+    expect(svg.text).toContain('data-source="1000,2000,4000,11250"');
+    expect(svg.text).toContain('data-destination="65,36,80,225"');
+    const pdf = exportModelVectorPdf(document);
+    expect(pdf.skippedHandles).toEqual([]);
+    expect(readPdfSummary(pdf.bytes)).toMatchObject({ pages: 1, hasXref: true, xrefOffsetsValid: true });
+    const text = new TextDecoder("latin1").decode(pdf.bytes);
+    expect(text).toContain("184.251969 102.047244 226.771654 637.795276 re W n");
+    expect(text).toContain("F-106 MODEL 1:50");
+  });
+
+  it("supports Model Window/Fit/offset and requires an explicit current view for Display", () => {
+    const document = createEmptyDocument({ documentId: "F-106-model-matrix" });
+    document.entities = [{ kind: "line", handle: "10", layerId: "0", start: { x: 0, y: 0 }, end: { x: 1000, y: 1000 } }];
+    document.layouts[0]!.pageSetup = {
+      mediaName: "ISO_A3", orientation: "landscape", plotArea: { kind: "window", window: { x: -100, y: 200, width: 8000, height: 5000 } },
+      plotScale: { mode: "fit" }, centerPlot: false, plotOriginMm: { x: 4, y: 6 },
+      plotStyle: { profile: "color", plotLineweights: false, plotTransparency: false },
+    };
+    const windowPlacement = resolveModelPlotPlacement(document);
+    expect(windowPlacement.paper).toMatchObject({ widthMm: 420, heightMm: 297 });
+    expect(windowPlacement.scaleFactor).toBeCloseTo(0.05, 12);
+    expect(windowPlacement.destination).toEqual({ x: 14, y: 16, width: 400, height: 250 });
+    document.layouts[0]!.pageSetup = {
+      ...document.layouts[0]!.pageSetup!, plotArea: { kind: "display" }, plotScale: { mode: "custom", paperUnits: 1, drawingUnits: 100 }, centerPlot: true,
+    };
+    expect(() => exportModelVectorPdf(document)).toThrow(/current model-space display window/u);
+    const displayWindow = { x: -500, y: -250, width: 3000, height: 2000 };
+    const display = exportModelVectorPdf(document, { displayWindow });
+    expect(display.placement.source).toEqual(displayWindow);
+    expect(display.placement.scaleFactor).toBe(0.01);
+  });
   it("publishes F-105 layouts as one deterministic ordered multi-page vector PDF", () => {
     const document = createF105Document();
     const first = exportLayoutsVectorPdf(document, F105_LAYOUT_IDS);
@@ -163,7 +215,7 @@ describe("vector print output", () => {
       { kind: "text", handle: "11", layerId: "0", position: { x: 10, y: 20 }, text: "A", height: 2.5, rotationRad: 0 },
     ];
     const svg = exportSvg(document, page);
-    expect(svg.skippedHandles).toEqual(["10"]);
+    expect(svg.skippedHandles).toEqual([]);
     expect(svg.text).not.toContain('data-handle="10"');
     expect(svg.text).toContain('transform="translate(10 20) scale(1 -1)"');
   });
@@ -185,13 +237,13 @@ describe("vector print output", () => {
     });
     const source = { ...document, layouts: paper.layouts };
     const svg = exportLayoutSvg(source, paper.layoutId);
-    expect(svg.skippedHandles).toEqual(["21"]);
+    expect(svg.skippedHandles).toEqual([]);
     expect(svg.text).toContain('data-handle="20"');
     expect(svg.text).toContain('data-opacity="0.596"');
     expect(svg.text).not.toContain('data-handle="21"');
     const pdf = exportLayoutVectorPdf(source, paper.layoutId);
     const pdfText = new TextDecoder("latin1").decode(pdf.bytes);
-    expect(pdf.skippedHandles).toEqual(["21"]);
+    expect(pdf.skippedHandles).toEqual([]);
     expect(pdfText).toContain("/GS59_6 gs");
     expect(pdfText).toContain("/CA 0.596 /ca 0.596");
   });

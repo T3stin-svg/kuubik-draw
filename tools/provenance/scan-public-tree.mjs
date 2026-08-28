@@ -91,6 +91,15 @@ const syntheticCadAllowlist = new Set([
   "evidence/artifacts/F-105-independent-multi.pdf",
   "evidence/artifacts/F-105-independent-plan.pdf",
   "evidence/artifacts/F-105-independent-section.pdf",
+  "evidence/artifacts/F-106-autocad-extents.pdf",
+  "evidence/artifacts/F-106-autocad-window.pdf",
+  "evidence/artifacts/F-106-autocad-display.pdf",
+  "evidence/artifacts/F-106-browser-extents.pdf",
+  "evidence/artifacts/F-106-browser-window.pdf",
+  "evidence/artifacts/F-106-browser-display.pdf",
+  "evidence/artifacts/F-106-independent-extents.pdf",
+  "evidence/artifacts/F-106-independent-window.pdf",
+  "evidence/artifacts/F-106-independent-display.pdf",
 ]);
 const textExtensions = new Set([".ts", ".tsx", ".js", ".mjs", ".json", ".md", ".yml", ".yaml", ".html", ".css", ".txt"]);
 const secretPatterns = [

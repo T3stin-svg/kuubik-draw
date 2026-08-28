@@ -1,0 +1,6 @@
+; F-106 is executed by tools/autocad/f106-model-print.ps1.
+; The owned AutoCAD 2024.1.2 scratch process creates LINE/CIRCLE/TEXT in Model,
+; plots Extents A4 1:50 centered, Window A3 Fit at 4/6 mm and Display A4
+; 1:100 centered through DWG To PDF.pc3, saves/reopens the DWG, and restores
+; the pre-existing process set. Independent readers inspect every native PDF.
+_.REGENALL

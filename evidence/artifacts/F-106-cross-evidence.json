@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-106",
+  "source": "AutoCAD native Model Extents/Window/Display and Chromium/production SVG/PDF with independent pypdf/pdfplumber/Poppler read-back",
+  "sourceSha256": {
+    "autocad": "8e5b398bd235ddda8b7b3553814317cf88fb27b955f5fdcc61170730abfd0541",
+    "browser": "532bde610aefa6a367dd08e3199fafd2ffec5cb85c13dc83fd2f46a4b2a81506",
+    "readback": "e94b3c697b8d0bcdd0d62483cc0e380485bbce010935212d19111217e2ee44a8"
+  },
+  "implementationSha256": {
+    "autocadMarker": "2129964d96f5dc69297252e886bc90966aaeebb1eac09b6d225b8334c96e3a38",
+    "autocadMatrix": "731705b242561bc179f21862325ecc62279962c982638850f92bc23246f6c505",
+    "autocadRunner": "c51e5b8e0f06f380ee641d055d6b65849ed5a5f44e73bf500bd1bd0450a1f690",
+    "browserE2e": "280eddd22e337cd78315fdf5b994a97e26f009c126ed6c1e16b9784c4b2e4831",
+    "fixture": "78005b7201c2b4469a4664258ba4f238d601905472c39c49c0c097ebf606eae6",
+    "browserCapture": "46bf5117eaedfe43e1b5e13bf2b0bd262be0e73a3f3f762bcaab19bef390373a",
+    "browserBuilder": "9c753b92786704f5a1d7de4099f1bca948cd89c824e68ed96b5a9cd6d5f007e6",
+    "readbackRunner": "0961614a103bedfe1a345f520734dd3655a63a4cb5ed76bafc6df5e96201b162",
+    "pdfReader": "d16e7fc10f2f054d18aec11fe4b2c2f5221c67286a6645f6d932ea3737d2bcd2",
+    "pixelReader": "50407f2a470f97909f205e7f46a3818bb15d8c1f9700b120ff880de5e739de9a",
+    "app": "8f3f836452d40a74592f25259b23916a022d151ec48ff25591a83d18bdff4419",
+    "style": "5dc967502052c411f25bdc035f77af497e43e99020499be1360dba54d4a57017",
+    "layouts": "0ea7b5f9bdbcfb1236eb3e6d5405c338ce85e4d05d699259e4e60dc84c0804d6",
+    "cadPrint": "9216a0ad409b66b06945dfcd564cc0ca81fd4d45618525e7801863bb8dc3816b",
+    "packageLock": "6a1cc440651b512afd80deb2cb6cb99c3fd1a5637e3548b8676fe6198940c3e3",
+    "scope": "c269f5a52440245ff3203b68ddfa607b7dc74a73ec279e131cca91daae2cbad0",
+    "crossChecker": "54b71ee348c184f8d7029ed3283565892ef89dbca5cadd938f547af830bed2f4"
+  },
+  "checks": {
+    "threeAuthoritiesPassed": true,
+    "autoCadOwnedAndClean": true,
+    "sameExtentsContract": true,
+    "sameWindowContract": true,
+    "sameDisplayContract": true,
+    "nativeDwgReopenStable": true,
+    "nativePdfGeometryReadback": true,
+    "nativeCenterAndOffsetPlacement": true,
+    "allVectorNoRaster": true,
+    "allPopplerRendersPainted": true,
+    "browserAndProductionBytesAgree": true,
+    "deterministicAndMutationSensitive": true,
+    "persistedAtomicBrowserWorkflow": true,
+    "evidenceMatchesCurrentSources": true
+  },
+  "status": "PASS"
+}

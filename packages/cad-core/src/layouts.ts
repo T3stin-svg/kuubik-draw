@@ -27,6 +27,17 @@ export const DEFAULT_PAGE_SETUP: Readonly<CadPageSetup> = Object.freeze({
   displayPlotStyles: false,
 });
 
+export const DEFAULT_MODEL_PAGE_SETUP: Readonly<CadPageSetup> = Object.freeze({
+  mediaName: "ISO_A4",
+  orientation: "portrait",
+  plotArea: Object.freeze({ kind: "extents" }),
+  plotScale: Object.freeze({ mode: "custom", paperUnits: 1, drawingUnits: 50 }),
+  centerPlot: true,
+  plotOriginMm: Object.freeze({ x: 0, y: 0 }),
+  plotStyle: DEFAULT_PLOT_STYLE,
+  displayPlotStyles: false,
+});
+
 export type LayoutCommandErrorCode =
   | "DUPLICATE_NAME"
   | "INVALID_PAPER"
@@ -138,11 +149,7 @@ export function resolvePageSetup(layout: CadLayout): CadPageSetup | null {
   if (layout.kind !== "paper") return null;
   const paper = resolvePaperDefinition(layout)!;
   const setup = structuredClone(layout.pageSetup ?? inferredPageSetup(layout));
-  setup.plotStyle = resolvePlotStyle(setup.plotStyle);
-  setup.displayPlotStyles = setup.displayPlotStyles === true;
-  if (setup.mediaName.trim().length === 0 || (setup.orientation !== "portrait" && setup.orientation !== "landscape")) {
-    throw new LayoutCommandError("INVALID_PAPER", "Page setup media and orientation are required.");
-  }
+  validatePageSetup(setup, true);
   const knownMedia = ISO_PAPER_MEDIA.find((candidate) => candidate.mediaName === setup.mediaName);
   if (knownMedia) {
     const expectedWidth = setup.orientation === "portrait" ? knownMedia.portraitWidthMm : knownMedia.portraitHeightMm;
@@ -150,6 +157,18 @@ export function resolvePageSetup(layout: CadLayout): CadPageSetup | null {
     if (!closeNumber(paper.widthMm, expectedWidth) || !closeNumber(paper.heightMm, expectedHeight)) {
       throw new LayoutCommandError("INVALID_PAPER", "Page setup media/orientation and paper dimensions disagree.");
     }
+  }
+  return setup;
+}
+
+function validatePageSetup(setup: CadPageSetup, allowLayout: boolean): void {
+  setup.plotStyle = resolvePlotStyle(setup.plotStyle);
+  setup.displayPlotStyles = setup.displayPlotStyles === true;
+  if (setup.mediaName.trim().length === 0 || (setup.orientation !== "portrait" && setup.orientation !== "landscape")) {
+    throw new LayoutCommandError("INVALID_PAPER", "Page setup media and orientation are required.");
+  }
+  if (!allowLayout && !ISO_PAPER_MEDIA.some((candidate) => candidate.mediaName === setup.mediaName)) {
+    throw new LayoutCommandError("INVALID_PAPER", `Unsupported paper media: ${setup.mediaName}`);
   }
   if (!Number.isFinite(setup.plotOriginMm.x) || !Number.isFinite(setup.plotOriginMm.y)) {
     throw new LayoutCommandError("INVALID_PAPER", "Plot origin must contain finite millimeter coordinates.");
@@ -165,11 +184,20 @@ export function resolvePageSetup(layout: CadLayout): CadPageSetup | null {
     !Number.isFinite(setup.plotScale.paperUnits) || setup.plotScale.paperUnits <= 0 ||
     !Number.isFinite(setup.plotScale.drawingUnits) || setup.plotScale.drawingUnits <= 0
   )) throw new LayoutCommandError("INVALID_PAPER", "Custom plot scale units must be finite and positive.");
+  if (!allowLayout && setup.plotArea.kind === "layout") {
+    throw new LayoutCommandError("INVALID_PAPER", "Model-space plot area must be Extents, Window or Display.");
+  }
   if (setup.plotArea.kind === "layout" && (
     setup.centerPlot || setup.plotScale.mode !== "custom" ||
     !closeNumber(setup.plotScale.paperUnits, setup.plotScale.drawingUnits) ||
     !closeNumber(setup.plotOriginMm.x, 0) || !closeNumber(setup.plotOriginMm.y, 0)
   )) throw new LayoutCommandError("INVALID_PAPER", "Layout plot area uses fixed 1:1 scale, origin 0,0 and cannot be centered.");
+}
+
+export function resolveModelPageSetup(layout: CadLayout): CadPageSetup | null {
+  if (layout.kind !== "model") return null;
+  const setup = structuredClone(layout.pageSetup ?? DEFAULT_MODEL_PAGE_SETUP);
+  validatePageSetup(setup, false);
   return setup;
 }
 
@@ -198,6 +226,17 @@ export function setPaperLayoutPageSetup(document: KDrawDocumentV1, layoutId: str
   // when PAGESETUP changes media or orientation. The sheet can become smaller
   // than a viewport; that is observable and is not silently repaired here.
   resolvePageSetup(layout);
+  return result(layouts, layoutId);
+}
+
+export function setModelLayoutPageSetup(document: KDrawDocumentV1, layoutId: string, requested: CadPageSetup): LayoutEditResult {
+  const layouts = structuredClone(document.layouts);
+  const layout = layouts.find((candidate) => candidate.id === layoutId);
+  if (!layout) throw new LayoutCommandError("MISSING_LAYOUT", `Layout not found: ${layoutId}`);
+  if (layout.kind !== "model") throw new LayoutCommandError("MODEL_LAYOUT_PROTECTED", "Model page setup requires the Model layout.");
+  const setup = structuredClone(requested);
+  validatePageSetup(setup, false);
+  layout.pageSetup = setup;
   return result(layouts, layoutId);
 }
 

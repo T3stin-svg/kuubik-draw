@@ -15,8 +15,10 @@ import {
   panPaperViewportByPixels,
   plotScaleDenominator,
   renamePaperLayout,
+  resolveModelPageSetup,
   resolvePageSetup,
   resolvePaperDefinition,
+  setModelLayoutPageSetup,
   setPaperLayoutPageSetup,
   setPaperViewportDisplayLocked,
   setPaperViewportView,
@@ -361,5 +363,49 @@ describe("F-097 layout transactions", () => {
       mediaName: "ISO_A4", orientation: "portrait", plotArea: { kind: "extents" },
       plotScale: { mode: "custom", paperUnits: 1, drawingUnits: 0 }, centerPlot: true, plotOriginMm: { x: 0, y: 0 },
     })).toThrow(/positive/i);
+  });
+});
+
+describe("F-106 model-space page setup", () => {
+  it("persists an Extents/Window/Display model plot contract as one atomic layout transaction", () => {
+    const session = new CadSession(createEmptyDocument({ documentId: "F-106", now: "2026-08-29T00:00:00Z" }));
+    const model = session.document.layouts[0]!;
+    expect(resolveModelPageSetup(model)).toMatchObject({
+      mediaName: "ISO_A4", orientation: "portrait", plotArea: { kind: "extents" },
+      plotScale: { mode: "custom", paperUnits: 1, drawingUnits: 50 }, centerPlot: true,
+    });
+    const setup = {
+      mediaName: "ISO_A3", orientation: "landscape" as const,
+      plotArea: { kind: "window" as const, window: { x: -100, y: 200, width: 8000, height: 5000 } },
+      plotScale: { mode: "fit" as const }, centerPlot: false, plotOriginMm: { x: 4, y: 6 },
+      plotStyle: { profile: "color" as const, plotLineweights: false, plotTransparency: true },
+      displayPlotStyles: true,
+    };
+    const result = setModelLayoutPageSetup(session.document, model.id, setup);
+    session.commit(operation(0, "PAGESETUP_MODEL", setup), result.changes);
+    expect(resolveModelPageSetup(session.document.layouts[0]!)).toEqual(setup);
+    expect(session.document.revision).toBe(1);
+    session.undo();
+    expect(session.document.layouts[0]!.pageSetup).toBeUndefined();
+    expect(resolveModelPageSetup(session.document.layouts[0]!)?.plotArea).toEqual({ kind: "extents" });
+    session.redo();
+    expect(resolveModelPageSetup(session.document.layouts[0]!)).toEqual(setup);
+  });
+
+  it("rejects paper-only Layout area, unsupported media and a paper-layout target", () => {
+    const document = createEmptyDocument({ documentId: "F-106-guards" });
+    expect(() => setModelLayoutPageSetup(document, document.layouts[0]!.id, {
+      mediaName: "ISO_A4", orientation: "portrait", plotArea: { kind: "layout" },
+      plotScale: { mode: "custom", paperUnits: 1, drawingUnits: 1 }, centerPlot: false, plotOriginMm: { x: 0, y: 0 },
+    })).toThrow(/Extents, Window or Display/u);
+    expect(() => setModelLayoutPageSetup(document, document.layouts[0]!.id, {
+      mediaName: "Letter", orientation: "portrait", plotArea: { kind: "extents" },
+      plotScale: { mode: "fit" }, centerPlot: true, plotOriginMm: { x: 0, y: 0 },
+    })).toThrow(/Unsupported paper media/u);
+    const paper = createPaperLayout(document, { name: "NOT MODEL" });
+    expect(() => setModelLayoutPageSetup({ ...document, layouts: paper.layouts }, paper.layoutId, {
+      mediaName: "ISO_A4", orientation: "portrait", plotArea: { kind: "extents" },
+      plotScale: { mode: "fit" }, centerPlot: true, plotOriginMm: { x: 0, y: 0 },
+    })).toThrow(/Model layout/u);
   });
 });

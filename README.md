@@ -8,7 +8,7 @@ käitumispariteeti, mitte kogu AutoCADi toodet.
 
 - vana Drawi auditi snapshot: **63,9% raw / 68,3% weighted / 60,7% visual**;
 - vana Drawi AutoCADi live-tõendiga read: **22/133**;
-- selle uue eraldatud rakenduse kohalik sertifikaat: **17/133 · 12,8% raw / 15,5% weighted**;
+- selle uue eraldatud rakenduse kohalik sertifikaat: **18/133 · 13,5% raw / 16,4% weighted**;
 - native DWG/DWT/XREF ja PC3/CTB/STB pariteet on veel blokeeritud.
 
 Need arvud on vana Drawi auditi muutmatu snapshot. Uus rakendus ei päri skoori
@@ -69,6 +69,16 @@ download'iga ning `pypdf`, `pdfplumber` ja Poppler kinnitasid A4 lehejärjekorra
 ning null rasterpilti. AutoCAD 2024 live `SetLayoutsToPlot` andis samas
 järjekorras kaks native PDF-i ja ühe lehega välistatud komplekti, seejärel avati
 native DWG uuesti.
+F-106 `Model-space print/PDF` lisab Model-tab'ile eraldi püsiva PAGESETUP-i,
+mis katab Extents/Window/Display alad, Fit või fikseeritud mõõtkava,
+center/offset paigutuse ning A4 portrait/A3 landscape väljundi. Chromiumi
+töövoog tõendab atomaarset Undo/Redo'd, IndexedDB taastamist, täpseid
+production SVG/PDF baite ja ausat veateadet tühja Extents-väljundi korral.
+AutoCAD 2024 live-värav plotib samad kolm juhtu native `DWG To PDF.pc3`
+PDF-ideks, salvestab ja avab DWG uuesti ning kontrollib seadme, media ja kõigi
+püsivate page-setup väljade säilimist. `pypdf`, `pdfplumber` ja Poppler mõõdavad
+line/circle geomeetria füüsilised pikkused ja asukohad; kõik väljundid on
+vektorid ilma rasterpiltideta.
 
 ## Piirid
 
