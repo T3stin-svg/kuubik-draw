@@ -235,8 +235,10 @@ test("F-105 captures an inactive Display layout source for batch publish", async
   await capture.click();
   await expect(options).toHaveAttribute("data-busy", "false");
   await expect(capture).toHaveText("Kuvaala ✓");
-  await options.getByRole("checkbox", { name: "Avalda F-105 SHEET 20 PLAN" }).uncheck();
+  const planIncluded = options.getByRole("checkbox", { name: "Avalda F-105 SHEET 20 PLAN" });
+  await planIncluded.click();
   await expect(options).toHaveAttribute("data-busy", "false");
+  await expect(planIncluded).not.toBeChecked();
   const stored = await readLocalDocument(page);
   const storedSettings = stored.metadata.extensions?.["kuubikDraw.layoutPublish.v1"] as { sheets?: Array<{ layoutId: string; displayWindow?: typeof expectedWindow }> } | undefined;
   const storedWindow = storedSettings?.sheets?.find((sheet) => sheet.layoutId === F105_LAYOUT_IDS[0])?.displayWindow;
