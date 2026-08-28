@@ -1,0 +1,81 @@
+#!/usr/bin/env node
+import { createHash } from "node:crypto";
+import { execFileSync } from "node:child_process";
+import { readFile, writeFile } from "node:fs/promises";
+import { resolve } from "node:path";
+
+const root = process.cwd();
+const evidenceDirectory = "evidence/security";
+const manifestPath = `${evidenceDirectory}/gitleaks-source-manifest.json`;
+const reportPath = `${evidenceDirectory}/gitleaks-report.json`;
+const runPath = `${evidenceDirectory}/gitleaks-run.json`;
+const generatedPaths = new Set([manifestPath, reportPath, runPath]);
+const expectedCommand = "gitleaks dir --no-banner --redact --config .gitleaks.toml --report-format json --report-path evidence/security/gitleaks-report.json .";
+
+function sha256(bytes) {
+  return createHash("sha256").update(bytes).digest("hex");
+}
+
+async function collectSourceTree() {
+  const listed = execFileSync("git", ["ls-files", "--cached", "--others", "--exclude-standard", "-z"], {
+    cwd: root,
+    encoding: "utf8",
+  });
+  const paths = listed
+    .split("\0")
+    .filter(Boolean)
+    .map((path) => path.replaceAll("\\", "/"))
+    .filter((path) => !generatedPaths.has(path))
+    .sort((a, b) => a.localeCompare(b, "en"));
+  const files = await Promise.all(paths.map(async (path) => {
+    const bytes = await readFile(resolve(root, path));
+    return { path, size: bytes.byteLength, sha256: sha256(bytes) };
+  }));
+  const sourceTreeSha256 = sha256(JSON.stringify(files));
+  return {
+    schemaVersion: 1,
+    algorithm: "sha256",
+    fileSelection: "git ls-files --cached --others --exclude-standard",
+    generatedEvidenceExcluded: [...generatedPaths].sort(),
+    fileCount: files.length,
+    sourceTreeSha256,
+    files,
+  };
+}
+
+async function writeManifest() {
+  const manifest = await collectSourceTree();
+  await writeFile(resolve(root, manifestPath), `${JSON.stringify(manifest, null, 2)}\n`, "utf8");
+  console.log(`Gitleaks source manifest written (${manifest.fileCount} files, ${manifest.sourceTreeSha256}).`);
+}
+
+async function verifyEvidence() {
+  const [storedManifestBytes, reportBytes, runBytes, configBytes] = await Promise.all([
+    readFile(resolve(root, manifestPath)),
+    readFile(resolve(root, reportPath)),
+    readFile(resolve(root, runPath)),
+    readFile(resolve(root, ".gitleaks.toml")),
+  ]);
+  const storedManifest = JSON.parse(storedManifestBytes.toString("utf8"));
+  const currentManifest = await collectSourceTree();
+  const report = JSON.parse(reportBytes.toString("utf8"));
+  const run = JSON.parse(runBytes.toString("utf8"));
+  const errors = [];
+  if (JSON.stringify(storedManifest) !== JSON.stringify(currentManifest)) errors.push("Public source tree changed after the Gitleaks manifest was written.");
+  if (!Array.isArray(report) || report.length !== 0) errors.push("Gitleaks report is not an empty finding list.");
+  if (run.status !== "PASS" || run.leakCount !== 0) errors.push("Gitleaks run metadata is not PASS/0.");
+  if (run.command !== expectedCommand) errors.push("Gitleaks command does not match the fixed directory-scan command.");
+  if (run.configuration?.path !== ".gitleaks.toml" || run.configuration?.sha256 !== sha256(configBytes)) errors.push("Gitleaks configuration hash mismatch.");
+  if (run.sourceManifest?.path !== manifestPath || run.sourceManifest?.sha256 !== sha256(storedManifestBytes)) errors.push("Gitleaks source-manifest hash mismatch.");
+  if (run.sourceManifest?.sourceTreeSha256 !== currentManifest.sourceTreeSha256) errors.push("Gitleaks source-tree hash mismatch.");
+  if (run.report?.path !== reportPath || run.report?.sha256 !== sha256(reportBytes)) errors.push("Gitleaks report hash mismatch.");
+  if (!Number.isFinite(Date.parse(run.scannedAt ?? ""))) errors.push("Gitleaks scan timestamp is invalid.");
+  if (errors.length) {
+    console.error(errors.join("\n"));
+    process.exit(1);
+  }
+  console.log(`Gitleaks evidence PASS (${currentManifest.fileCount} source files bound to ${currentManifest.sourceTreeSha256}).`);
+}
+
+if (process.argv.includes("--write")) await writeManifest();
+else await verifyEvidence();

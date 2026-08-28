@@ -1,0 +1,38 @@
+{
+  "name": "kuubik-draw",
+  "version": "0.1.0-alpha.0",
+  "private": true,
+  "description": "Standalone public 2D CAD application targeting a fixed AutoCAD 2024.1.2 parity audit.",
+  "license": "GPL-2.0-only",
+  "type": "module",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm run build -w @kuubik/cad-core && npm run build -w @kuubik/cad-renderer && npm run build -w @kuubik/cad-dxf && npm run build -w @kuubik/cad-print && npm run build -w @kuubik/draw-web",
+    "typecheck": "npm run typecheck -w @kuubik/cad-core && npm run typecheck -w @kuubik/cad-renderer && npm run typecheck -w @kuubik/cad-dxf && npm run typecheck -w @kuubik/cad-print && npm run typecheck -w @kuubik/draw-web",
+    "lint": "npm run lint -w @kuubik/cad-core && npm run lint -w @kuubik/cad-renderer && npm run lint -w @kuubik/cad-dxf && npm run lint -w @kuubik/cad-print && npm run lint -w @kuubik/draw-web",
+    "test": "vitest run",
+    "test:mutation": "vitest run packages/cad-core/test/mutation-proven.test.ts",
+    "test:e2e": "playwright test",
+    "test:oracles": "node tools/oracles/run-oracles.mjs",
+    "gate:dxf": "vitest run packages/cad-dxf",
+    "gate:pdf": "vitest run packages/cad-print",
+    "parity:check": "node parity/check-parity.mjs",
+    "license:check": "node tools/provenance/check-licenses.mjs",
+    "security:evidence:manifest": "node tools/provenance/gitleaks-evidence.mjs --write",
+    "security:scan": "node tools/provenance/scan-public-tree.mjs && node tools/provenance/gitleaks-evidence.mjs",
+    "check": "npm run typecheck && npm run lint && npm run test && npm run test:mutation && npm run gate:dxf && npm run gate:pdf && npm run parity:check && npm run test:oracles && npm run license:check && npm run security:scan && npm run build && npm run test:e2e"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.55.0",
+    "@types/node": "^24.3.0",
+    "dxf-parser": "1.1.2",
+    "typescript": "^6.0.0",
+    "vitest": "^3.2.4"
+  }
+}

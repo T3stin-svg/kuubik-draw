@@ -1,0 +1,38 @@
+#!/usr/bin/env node
+import { execFileSync } from "node:child_process";
+import { readFile } from "node:fs/promises";
+import { extname, resolve } from "node:path";
+
+const root = resolve(import.meta.dirname, "../..");
+const files = execFileSync("git", ["-C", root, "ls-files", "--cached", "--others", "--exclude-standard"], {
+  encoding: "utf8",
+})
+  .split(/\r?\n/)
+  .filter(Boolean)
+  .map((path) => path.replaceAll("\\", "/"));
+
+const blockedNames = /(^|\/)(\.env(?:\.|$)|credentials?|secrets?|service-account)(\/|$)/i;
+const blockedCad = /\.(dwg|dwt|dws|dxf|pdf|fcstd)$/i;
+const textExtensions = new Set([".ts", ".tsx", ".js", ".mjs", ".json", ".md", ".yml", ".yaml", ".html", ".css", ".txt"]);
+const secretPatterns = [
+  /-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----/,
+  /(?:SUPABASE_SERVICE_ROLE_KEY|AWS_SECRET_ACCESS_KEY|GITHUB_TOKEN)\s*[:=]\s*["']?[A-Za-z0-9_\-/.+=]{12,}/i,
+  /\b(?:sk_live_|ghp_|github_pat_)[A-Za-z0-9_\-]{16,}\b/,
+];
+
+const failures = [];
+for (const path of files) {
+  if (blockedNames.test(path)) failures.push(`${path}: blocked sensitive filename`);
+  if (blockedCad.test(path) && !path.startsWith("packages/cad-dxf/test/fixtures/synthetic/")) {
+    failures.push(`${path}: CAD/PDF artifacts require an explicit synthetic-fixture allowlist`);
+  }
+  if (!textExtensions.has(extname(path).toLowerCase())) continue;
+  const text = await readFile(resolve(root, path), "utf8");
+  if (secretPatterns.some((pattern) => pattern.test(text))) failures.push(`${path}: possible secret material`);
+}
+
+if (failures.length > 0) {
+  console.error(failures.join("\n"));
+  process.exit(1);
+}
+console.log(`Public-tree scan PASS (${files.length} files, no blocked artifacts or secret patterns).`);

@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "entries": [
+    {
+      "project": "Kuubik CAD Schema",
+      "repository": "https://github.com/T3stin-svg/kuubik-cad-schema",
+      "commit": "bcf167099881123a203f8f243c4ac7f806450653",
+      "sourcePath": "src",
+      "sourceSha256": null,
+      "license": "MIT",
+      "authors": ["Kuubik Projekt OÜ contributors"],
+      "adoption": "dependency",
+      "localModule": "workspace dependency",
+      "parityRows": [],
+      "modifications": "None; consumed as public types and validation contracts."
+    },
+    {
+      "project": "LibreCAD",
+      "repository": "https://github.com/LibreCAD/LibreCAD",
+      "commit": "7ebab007d9eb4c68609388b835a2487648f0877b",
+      "sourcePath": null,
+      "sourceSha256": null,
+      "license": "GPL-2.0",
+      "authors": [],
+      "adoption": "oracle-pin",
+      "localModule": "tools/oracles",
+      "parityRows": ["F-022", "F-023", "F-024", "F-025", "F-026", "F-048", "F-049", "F-050"],
+      "modifications": "No source imported. Stable executable will be used only as an optional oracle."
+    },
+    {
+      "project": "LibreCAD",
+      "repository": "https://github.com/LibreCAD/LibreCAD",
+      "commit": "a05b4261f61d61e23d8c27c8d869ede756c2ac2b",
+      "sourcePath": "librecad/src/lib/modification/tests",
+      "sourceSha256": null,
+      "license": "GPL-2.0",
+      "authors": [],
+      "adoption": "test-corpus-pin",
+      "localModule": "future fixtures only",
+      "parityRows": ["F-012", "F-022"],
+      "modifications": "Reference pin only; no test fixture copied yet."
+    },
+    {
+      "project": "FreeCAD",
+      "repository": "https://github.com/FreeCAD/FreeCAD",
+      "commit": "145529fe741292ff0b3977a01195bf0247425794",
+      "sourcePath": null,
+      "sourceSha256": null,
+      "license": "LGPL-2.1-or-later",
+      "authors": [],
+      "adoption": "oracle-pin",
+      "localModule": "tools/oracles",
+      "parityRows": ["F-012", "F-014", "F-022", "F-023", "F-024", "F-025", "F-026"],
+      "modifications": "No source imported or linked; optional headless developer/CI oracle only."
+    },
+    {
+      "project": "dxf-parser",
+      "repository": "https://github.com/gdsestimating/dxf-parser",
+      "commit": "1.1.2",
+      "sourcePath": null,
+      "sourceSha256": null,
+      "license": "MIT",
+      "authors": ["dxf-parser contributors"],
+      "adoption": "development-dependency",
+      "localModule": "packages/cad-dxf/test",
+      "parityRows": ["F-109", "F-111"],
+      "modifications": "Unmodified package used only for independent synthetic DXF read-back."
+    }
+  ]
+}

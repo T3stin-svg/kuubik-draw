@@ -1,0 +1,27 @@
+{
+  "name": "@kuubik/draw-web",
+  "version": "0.1.0-alpha.0",
+  "private": true,
+  "license": "GPL-2.0-only",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "tsc -b && vite build",
+    "typecheck": "tsc -b --pretty false",
+    "lint": "tsc -b --pretty false"
+  },
+  "dependencies": {
+    "@kuubik/cad-core": "*",
+    "@kuubik/cad-renderer": "*",
+    "@kuubik/cad-schema": "https://github.com/T3stin-svg/kuubik-cad-schema/archive/bcf167099881123a203f8f243c4ac7f806450653.tar.gz",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
+  },
+  "devDependencies": {
+    "@types/react": "^19.1.10",
+    "@types/react-dom": "^19.1.7",
+    "@vitejs/plugin-react": "^5.0.2",
+    "fake-indexeddb": "^6.2.2",
+    "vite": "^7.1.3"
+  }
+}

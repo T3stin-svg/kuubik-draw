@@ -1,0 +1,374 @@
+{
+  "schemaVersion": 1,
+  "algorithm": "sha256",
+  "fileSelection": "git ls-files --cached --others --exclude-standard",
+  "generatedEvidenceExcluded": [
+    "evidence/security/gitleaks-report.json",
+    "evidence/security/gitleaks-run.json",
+    "evidence/security/gitleaks-source-manifest.json"
+  ],
+  "fileCount": 72,
+  "sourceTreeSha256": "0922f5a56557b95a4152fc20abd284cad3f5e077bd5234a7e78e682809470303",
+  "files": [
+    {
+      "path": ".github/workflows/ci.yml",
+      "size": 943,
+      "sha256": "46621f6b968ff5c74ab26024e0852ceb953a11d67556e3cd4f78550b10195315"
+    },
+    {
+      "path": ".gitignore",
+      "size": 134,
+      "sha256": "7bf14ed5f06d9bf449e1803cc5b8c52b4d4fafae25ad2042ffcae323edd36332"
+    },
+    {
+      "path": ".gitleaks.toml",
+      "size": 69,
+      "sha256": "da1cf2b1aee66919ceee8ed4597757d7e49588ffc45cf19976e2268b8bc619a2"
+    },
+    {
+      "path": "apps/web/index.html",
+      "size": 298,
+      "sha256": "ee3e6982ad4a6ee874e2f776b29476b04c7281eff653bec020cb8a0176813476"
+    },
+    {
+      "path": "apps/web/package.json",
+      "size": 759,
+      "sha256": "78d0a5eb096bc8dedef4af8e14c1662a4965b6ce837c43c6e665296afdb9da79"
+    },
+    {
+      "path": "apps/web/src/App.tsx",
+      "size": 4324,
+      "sha256": "627cf855f16a8a8db1aad736d83fdf12021be8b16ae612b1d65e000d178d598b"
+    },
+    {
+      "path": "apps/web/src/indexed-db.test.ts",
+      "size": 3007,
+      "sha256": "3ccf01a45fb36e4c2d2390f3d779d4503a9b0647c63b4220be94f81216157eda"
+    },
+    {
+      "path": "apps/web/src/indexed-db.ts",
+      "size": 5646,
+      "sha256": "257405697d79c2319ef1a25cbb48e98568758f21908fd2d69e98c5b63ff84232"
+    },
+    {
+      "path": "apps/web/src/main.tsx",
+      "size": 275,
+      "sha256": "f0b0790cfa19ffe76fbcedb5705f8b341e3d79e76cb75b5480d95b22d04e3aa4"
+    },
+    {
+      "path": "apps/web/src/style.css",
+      "size": 1122,
+      "sha256": "e12cfa89c5c7fb6a1eb147490b0c3f934fcf0b6fbf880d6c1a4b6288c6f4f063"
+    },
+    {
+      "path": "apps/web/tsconfig.json",
+      "size": 255,
+      "sha256": "30b587fa15b9e7bd13e5650cac99e69225a09bfc4bc453e3274422ba825cecd0"
+    },
+    {
+      "path": "apps/web/vite.config.ts",
+      "size": 225,
+      "sha256": "55218d1428e108bfa4c4c64aee095ed3030a7aefa12e89e08bd4f66e110dcf7f"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "size": 549,
+      "sha256": "c371807e3b8ad8dd31af252f8fbe90c5a331162a6bdc206882bd3f4ab4d58d5c"
+    },
+    {
+      "path": "e2e/local-document.spec.ts",
+      "size": 1004,
+      "sha256": "08b933cfe03eafb1becf407bb56b98e2f5e66316f067936e0092800ecaf5f7a0"
+    },
+    {
+      "path": "evidence/source-state/kuubik-3d-14475e6-dirty.json",
+      "size": 30970,
+      "sha256": "28e2073c9e02d372041f1d7f0aa359e368514a26106c4dbc6c8edfeb91318eb2"
+    },
+    {
+      "path": "IMPLEMENTATION_STATUS.md",
+      "size": 1942,
+      "sha256": "8f005b782fd59a1c072eb4eeeda6b9865a6a7799194a61b74e27fbd396e3a1a5"
+    },
+    {
+      "path": "LICENSE",
+      "size": 18431,
+      "sha256": "189b1af95d661151e054cea10c91b3d754e4de4d3fecfb074c1fb29476f7167b"
+    },
+    {
+      "path": "LICENSES/GPL-2.0-only.txt",
+      "size": 18431,
+      "sha256": "189b1af95d661151e054cea10c91b3d754e4de4d3fecfb074c1fb29476f7167b"
+    },
+    {
+      "path": "LICENSES/LGPL-2.1-or-later.txt",
+      "size": 27030,
+      "sha256": "7ffe1954587c77dfba1cf8eb9b2ea743671fa6e63f9e7a2f258119d42e14eefe"
+    },
+    {
+      "path": "LICENSES/MIT.txt",
+      "size": 1088,
+      "sha256": "f7903523241984720401ff9526a351805ef6f9802b344f3f22ae57422006b130"
+    },
+    {
+      "path": "LICENSES/README.md",
+      "size": 261,
+      "sha256": "8e14a8d7aaeb730a6b1d2c0bb0643b281d80d40326e4acc7955aec40c5e4bb6e"
+    },
+    {
+      "path": "package-lock.json",
+      "size": 84207,
+      "sha256": "462b51ba921f4d0479b7f609f5524b27de43cc9e9be3b1eef2575e77a0d17b35"
+    },
+    {
+      "path": "package.json",
+      "size": 2022,
+      "sha256": "2f5d59edd2721154845baa5e00fb0166492fad29c870d68a863ceb16f0e311d1"
+    },
+    {
+      "path": "packages/cad-core/package.json",
+      "size": 508,
+      "sha256": "faf7c6692ee52c09f49b9e98b8af8c2f04d265940643a04111a409e25dea63b1"
+    },
+    {
+      "path": "packages/cad-core/src/container.ts",
+      "size": 4130,
+      "sha256": "472a9c7950e797f21d8954c9e973a89dd9308d6ffb12dac86fd5798ac77478ea"
+    },
+    {
+      "path": "packages/cad-core/src/document.ts",
+      "size": 992,
+      "sha256": "c830da2ab9bee28527b3ab246c4a6eee8cc10380fb588ac202fc81d998954c62"
+    },
+    {
+      "path": "packages/cad-core/src/index.ts",
+      "size": 133,
+      "sha256": "0f486e3662587804b71dddd49216f98dfc024fb693b40b18099d4ba53f228d36"
+    },
+    {
+      "path": "packages/cad-core/src/legacy-import.ts",
+      "size": 12654,
+      "sha256": "96f30a10d89a9a596eb38dfa0a2e5d1a0bc81a585bd9459f70f451eb172d0e95"
+    },
+    {
+      "path": "packages/cad-core/src/transaction.ts",
+      "size": 5393,
+      "sha256": "4813b0f3ff9f88f1576f8608c23865376bea044a445d8a2c367b6aa195f6c4ed"
+    },
+    {
+      "path": "packages/cad-core/test/container.test.ts",
+      "size": 1617,
+      "sha256": "49a41c5c9625e949de966bf246f3ae0925a6777557d09478b54732663794a020"
+    },
+    {
+      "path": "packages/cad-core/test/legacy-import.test.ts",
+      "size": 2433,
+      "sha256": "9464d8720f6be92fa021e85259ea343ed373915d5f2932873214343315789c24"
+    },
+    {
+      "path": "packages/cad-core/test/mutation-proven.test.ts",
+      "size": 708,
+      "sha256": "09f10045ef65449269aa76eb55d32022e43dfeeb71c8c893129fc86cde4dd6b2"
+    },
+    {
+      "path": "packages/cad-core/test/transaction.test.ts",
+      "size": 2836,
+      "sha256": "e2f8d82b6cba0467e85b17a9c701a509c9bd07e870b39c2ebfa00e919d61ff82"
+    },
+    {
+      "path": "packages/cad-core/tsconfig.json",
+      "size": 170,
+      "sha256": "316d5e6eefcb05736e253b4e315aef5e4bcb94b97b0e0084e3af5cfc96c54495"
+    },
+    {
+      "path": "packages/cad-dxf/package.json",
+      "size": 507,
+      "sha256": "aa812e834a020a3fa15f4fa40108810e25cfcd7dd15b52e7ad91ed8306628cd2"
+    },
+    {
+      "path": "packages/cad-dxf/src/index.ts",
+      "size": 6403,
+      "sha256": "428f080c825f2a6b26c586ad23ad8ed16a0d79e429d57ec0acdc123aa378b634"
+    },
+    {
+      "path": "packages/cad-dxf/test/roundtrip.test.ts",
+      "size": 2833,
+      "sha256": "bcd3350badab23d9b10b89dd4d9dbe7a65e2ce86e3f6f8eccdfaaab4a784c802"
+    },
+    {
+      "path": "packages/cad-dxf/tsconfig.json",
+      "size": 156,
+      "sha256": "31fa640b9629a83b8e8e49e5b9598a61417dcd15d8d67dff7df1f541cb345435"
+    },
+    {
+      "path": "packages/cad-print/package.json",
+      "size": 509,
+      "sha256": "6c05c7904be54cfe09873191c9aeb54d152d538153edd58e1b1565ac8f604467"
+    },
+    {
+      "path": "packages/cad-print/src/index.ts",
+      "size": 7787,
+      "sha256": "8e98c7eb6d9d563f3b4d2e944396c423c9949e994cb728342ce2549291ef60e8"
+    },
+    {
+      "path": "packages/cad-print/test/vector-output.test.ts",
+      "size": 3552,
+      "sha256": "5f910bb287169473dc0a478822c30b75d29239452a5bab5dfc85bb4e13b58dac"
+    },
+    {
+      "path": "packages/cad-print/tsconfig.json",
+      "size": 156,
+      "sha256": "31fa640b9629a83b8e8e49e5b9598a61417dcd15d8d67dff7df1f541cb345435"
+    },
+    {
+      "path": "packages/cad-renderer/package.json",
+      "size": 512,
+      "sha256": "d802520493d26a3d379e4c6253b4954c2b9210aceefcce3c3ebac46de13a03ea"
+    },
+    {
+      "path": "packages/cad-renderer/src/bounds.ts",
+      "size": 2549,
+      "sha256": "fd73f9b6301f8a71a473c4dd4a0f76bf7705b0462e176fe1960c44f3b0da92a3"
+    },
+    {
+      "path": "packages/cad-renderer/src/index.ts",
+      "size": 88,
+      "sha256": "ac3074dbc13dd9bc0dad8dd53d4c5994d8ad9a39beb51c158608492dd1c8b4f6"
+    },
+    {
+      "path": "packages/cad-renderer/src/renderer.ts",
+      "size": 6788,
+      "sha256": "1e1206c500ea73006dc746c6488c4c2601440438bb4f58a3b40dc74aaaddba9b"
+    },
+    {
+      "path": "packages/cad-renderer/src/rtree.ts",
+      "size": 2415,
+      "sha256": "1ee440db21555f018500dae5c5302c38c27a809a291bcd521702f94aa07068be"
+    },
+    {
+      "path": "packages/cad-renderer/test/renderer.test.ts",
+      "size": 2573,
+      "sha256": "6ca024b9d01e2f27849bad176f2ce4279c742739a7f60258a0d1089580c1661d"
+    },
+    {
+      "path": "packages/cad-renderer/test/rtree.test.ts",
+      "size": 1158,
+      "sha256": "bc0ebded42c3603304dd1f4e6075ecdbb41c5eb2ce5578dc16569f62d234b55c"
+    },
+    {
+      "path": "packages/cad-renderer/tsconfig.json",
+      "size": 170,
+      "sha256": "316d5e6eefcb05736e253b4e315aef5e4bcb94b97b0e0084e3af5cfc96c54495"
+    },
+    {
+      "path": "parity/autocad-2024-2d.manifest.mjs",
+      "size": 31308,
+      "sha256": "5e23d0073e2a65a1b37f3791107e2e9fb9741be99b115303a51896d46866e694"
+    },
+    {
+      "path": "parity/check-parity.mjs",
+      "size": 5305,
+      "sha256": "44cbe3275b23da54a27b43a2c32aa76d10b4c791cfb674c59a11e0b9aefd2f30"
+    },
+    {
+      "path": "parity/local-certifications.json",
+      "size": 49,
+      "sha256": "bdc3040537975c90a089ba25dafaa09d5f204ac757257d67b286f55d0cb9ceb0"
+    },
+    {
+      "path": "parity/snapshot-lock.json",
+      "size": 543,
+      "sha256": "be793df9a84a319d9997bbf51a3b77f95ddbd48ff4602801e7b43dc2eba74f80"
+    },
+    {
+      "path": "playwright.config.ts",
+      "size": 547,
+      "sha256": "934bf27906ceb40f12c8a629df2865a03b197a6ea7b6d5d27386c9b3c47046c5"
+    },
+    {
+      "path": "README.md",
+      "size": 1412,
+      "sha256": "5b24725763a09221b240b3a58a84a6295b494ee4115bc46d9f6ce7dd021fe099"
+    },
+    {
+      "path": "RIGHTS.md",
+      "size": 473,
+      "sha256": "057b17a4fb4778b239e79a16ad2c007e46b4d4580fd118fa2509eba240e0359e"
+    },
+    {
+      "path": "SECURITY.md",
+      "size": 360,
+      "sha256": "773ca6e312a42a9f4fcaf46806e9a341c79c0623428f339999501f4b5663bc85"
+    },
+    {
+      "path": "THIRD_PARTY_NOTICES.md",
+      "size": 1165,
+      "sha256": "3808f3d84aab5eb8a1fdeb18c83e9316fa2a7806243403f52cac549c199fb58d"
+    },
+    {
+      "path": "tools/oracles/freecad-headless.py",
+      "size": 1103,
+      "sha256": "77cbb129708e08c3952da0f234c7cf32070a38b36e63c6b78f9c1be3e52e4755"
+    },
+    {
+      "path": "tools/oracles/oracles.test.mjs",
+      "size": 656,
+      "sha256": "4de54d564e50b040d0e885d4c97b6ef5db1c464419c4d0e8cb5e47be0ada5813"
+    },
+    {
+      "path": "tools/oracles/probe-tools.mjs",
+      "size": 3043,
+      "sha256": "ba0cf6aeca1a9b9f38438cba48ac9c6954c201005df00bf8ab7cb5b1811ba54d"
+    },
+    {
+      "path": "tools/oracles/README.md",
+      "size": 728,
+      "sha256": "b42af9fa52c890f2dd376dc3cfe3c70366356d95e94b15f7361ab9f1f35b7aaf"
+    },
+    {
+      "path": "tools/oracles/run-oracles.mjs",
+      "size": 510,
+      "sha256": "6b0aca1881d4316da02c73e4a657acff7df3538c1da2b27c0b7262ef87320aaf"
+    },
+    {
+      "path": "tools/provenance/capture-source-state.mjs",
+      "size": 2130,
+      "sha256": "987abb62bd8c91321d2be59a8025ab7e31049f449aa35dabf60322b18772c786"
+    },
+    {
+      "path": "tools/provenance/check-licenses.mjs",
+      "size": 2291,
+      "sha256": "838f40e6c7ff9b39100c1122728976ea1a7a7dcf09ade16b414bb6f09a828eb6"
+    },
+    {
+      "path": "tools/provenance/gitleaks-evidence.mjs",
+      "size": 4054,
+      "sha256": "c43cc597475577b197302ba9fe5ccb45ee11b757f7af15d3de552a27c7d5a7c4"
+    },
+    {
+      "path": "tools/provenance/import-parity-snapshot.mjs",
+      "size": 837,
+      "sha256": "97bcfd541b77beea55794f60866075ff3c4edf62c0d6050f152487a28441fc10"
+    },
+    {
+      "path": "tools/provenance/scan-public-tree.mjs",
+      "size": 1710,
+      "sha256": "3909c6dca974c12d8ef913ecd7122a1b2bbf3adfaf0df17f66a187d9cd4587f1"
+    },
+    {
+      "path": "tsconfig.base.json",
+      "size": 334,
+      "sha256": "e3901b37a5df116b739570d8db547154598056784a69f91fbc9384ebd199fe25"
+    },
+    {
+      "path": "upstream-provenance.json",
+      "size": 2579,
+      "sha256": "716a5c12be69b03fc38e1ad5bb938c0be06abab9f5f28f47f00c9555239039a4"
+    },
+    {
+      "path": "vitest.config.ts",
+      "size": 295,
+      "sha256": "55442576691e85653045821dbb2044640a1c18fac7f97711fbe180cff3e1fd71"
+    }
+  ]
+}
