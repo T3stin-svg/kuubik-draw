@@ -144,6 +144,33 @@ export interface ScaleCommandDefinition {
   execute(document: KDrawDocumentV1, args: ScaleCommandArgs): ScaleCommandResult;
 }
 
+export interface MirrorCommandArgs {
+  targetHandles: readonly string[];
+  axisStart: CadPoint2;
+  axisEnd: CadPoint2;
+  eraseSource: boolean;
+}
+
+export interface MirrorRejectedTarget {
+  handle: string;
+  reason: "missing" | "locked-layer" | "unsupported-entity";
+}
+
+export interface MirrorCommandResult {
+  changes: EntityChange[];
+  sourceHandles: string[];
+  mirroredHandles: string[];
+  createdHandles: string[];
+  rejected: MirrorRejectedTarget[];
+  eraseSource: boolean;
+}
+
+export interface MirrorCommandDefinition {
+  id: "MIRROR";
+  aliases: readonly string[];
+  execute(document: KDrawDocumentV1, args: MirrorCommandArgs): MirrorCommandResult;
+}
+
 export class CadCommandInputError extends Error {
   constructor(message: string) {
     super(message);
@@ -671,6 +698,177 @@ export function executeScale(document: KDrawDocumentV1, args: ScaleCommandArgs):
   return { changes, sourceHandles, scaledHandles, createdHandles, rejected, factor, copy: args.copy };
 }
 
+function cleanCoordinate(value: number): number {
+  if (!Number.isFinite(value)) throw new CadCommandInputError("Mirrored coordinate must remain finite.");
+  if (Math.abs(value) < 1e-12) return 0;
+  return value;
+}
+
+function mirrorAxis(axisStart: CadPoint2, axisEnd: CadPoint2): { dx: number; dy: number; lengthSquared: number; angleRad: number } {
+  assertFinitePoint("axisStart", axisStart);
+  assertFinitePoint("axisEnd", axisEnd);
+  const dx = axisEnd.x - axisStart.x;
+  const dy = axisEnd.y - axisStart.y;
+  const lengthSquared = dx * dx + dy * dy;
+  if (!Number.isFinite(lengthSquared) || !(lengthSquared > 0)) {
+    throw new CadCommandInputError("Mirror line points must not coincide and must define a finite line.");
+  }
+  return { dx, dy, lengthSquared, angleRad: Math.atan2(dy, dx) };
+}
+
+export function mirrorCadPoint(point: CadPoint2, axisStart: CadPoint2, axisEnd: CadPoint2): CadPoint2 {
+  assertFinitePoint("point", point);
+  const axis = mirrorAxis(axisStart, axisEnd);
+  const projection = ((point.x - axisStart.x) * axis.dx + (point.y - axisStart.y) * axis.dy) / axis.lengthSquared;
+  const projectedX = axisStart.x + projection * axis.dx;
+  const projectedY = axisStart.y + projection * axis.dy;
+  return {
+    x: cleanCoordinate(2 * projectedX - point.x),
+    y: cleanCoordinate(2 * projectedY - point.y),
+  };
+}
+
+function mirrorCadVector(vector: CadPoint2, axisStart: CadPoint2, axisEnd: CadPoint2): CadPoint2 {
+  const origin = mirrorCadPoint({ x: 0, y: 0 }, axisStart, axisEnd);
+  const tip = mirrorCadPoint(vector, axisStart, axisEnd);
+  return { x: cleanCoordinate(tip.x - origin.x), y: cleanCoordinate(tip.y - origin.y) };
+}
+
+function reflectedAngle(angleRad: number, axisAngleRad: number): number {
+  return normalizedRadians(2 * axisAngleRad - angleRad);
+}
+
+function readableReflectedTextAngle(angleRad: number, axisAngleRad: number): { rotationRad: number; flipped180: boolean } {
+  const reflected = reflectedAngle(angleRad, axisAngleRad);
+  if (reflected > Math.PI / 2 && reflected < Math.PI * 1.5) {
+    return { rotationRad: normalizedRadians(reflected + Math.PI), flipped180: true };
+  }
+  return { rotationRad: reflected, flipped180: false };
+}
+
+function reflectedEllipseParameters(startParameter: number, endParameter: number): { startParameter: number; endParameter: number } {
+  if (!Number.isFinite(startParameter) || !Number.isFinite(endParameter)) {
+    throw new CadCommandInputError("Ellipse parameters must remain finite.");
+  }
+  const fullTurn = Math.PI * 2;
+  const sweep = endParameter - startParameter;
+  if (Math.abs(Math.abs(sweep) - fullTurn) < 1e-12) {
+    return { startParameter: 0, endParameter: fullTurn };
+  }
+  const start = normalizedRadians(-endParameter);
+  let end = normalizedRadians(-startParameter);
+  if (end <= start) end += fullTurn;
+  return { startParameter: start, endParameter: end };
+}
+
+export function mirrorCadEntity(entity: CadEntity, axisStart: CadPoint2, axisEnd: CadPoint2): CadEntity | null {
+  const axis = mirrorAxis(axisStart, axisEnd);
+  const point = (candidate: CadPoint2) => mirrorCadPoint(candidate, axisStart, axisEnd);
+  switch (entity.kind) {
+    case "line": return { ...entity, start: point(entity.start), end: point(entity.end) };
+    case "polyline": return {
+      ...entity,
+      vertices: entity.vertices.map((vertex) => ({
+        ...vertex,
+        ...point(vertex),
+        ...(vertex.bulge === undefined ? {} : { bulge: Object.is(-vertex.bulge, -0) ? 0 : -vertex.bulge }),
+      })),
+    };
+    case "circle": return { ...entity, center: point(entity.center) };
+    case "arc": return {
+      ...entity,
+      center: point(entity.center),
+      startAngleRad: reflectedAngle(entity.startAngleRad, axis.angleRad),
+      endAngleRad: reflectedAngle(entity.endAngleRad, axis.angleRad),
+      counterClockwise: !entity.counterClockwise,
+    };
+    case "ellipse": return {
+      ...entity,
+      center: point(entity.center),
+      majorAxis: mirrorCadVector(entity.majorAxis, axisStart, axisEnd),
+      ...reflectedEllipseParameters(entity.startParameter, entity.endParameter),
+    };
+    case "spline": return { ...entity, controlPoints: entity.controlPoints.map(point) };
+    case "text":
+    case "mtext": {
+      const readable = readableReflectedTextAngle(entity.rotationRad, axis.angleRad);
+      return {
+        ...entity,
+        position: point(entity.position),
+        rotationRad: readable.rotationRad,
+        ...(readable.flipped180 ? {
+          extensionData: {
+            ...entity.extensionData,
+            kuubikMirrorTextAlign: entity.extensionData?.kuubikMirrorTextAlign === "end" ? "start" : "end",
+          },
+        } : {}),
+      };
+    }
+    case "leader": return { ...entity, vertices: entity.vertices.map(point) };
+    case "dimension": return { ...entity, definitionPoints: entity.definitionPoints.map(point) };
+    case "hatch": return {
+      ...entity,
+      loops: entity.loops.map((loop) => ({ ...loop, vertices: loop.vertices.map(point) })),
+    };
+    case "blockRef": return {
+      ...entity,
+      insertion: point(entity.insertion),
+      rotationRad: normalizedRadians(reflectedAngle(entity.rotationRad, axis.angleRad) + Math.PI),
+      scale: { x: cleanCoordinate(-entity.scale.x), y: entity.scale.y },
+    };
+    case "proxy": return null;
+  }
+}
+
+export function executeMirror(document: KDrawDocumentV1, args: MirrorCommandArgs): MirrorCommandResult {
+  mirrorAxis(args.axisStart, args.axisEnd);
+  const requested = [...new Set(args.targetHandles.map((handle) => handle.trim()).filter(Boolean))];
+  const entities = new Map(document.entities.map((entity) => [entity.handle, entity]));
+  const lockedLayers = new Set(document.layers.filter((layer) => layer.locked).map((layer) => layer.id));
+  const sources: CadEntity[] = [];
+  const rejected: MirrorRejectedTarget[] = [];
+  for (const handle of requested) {
+    const entity = entities.get(handle);
+    if (!entity) {
+      rejected.push({ handle, reason: "missing" });
+      continue;
+    }
+    if (lockedLayers.has(entity.layerId)) {
+      rejected.push({ handle, reason: "locked-layer" });
+      continue;
+    }
+    if (entity.kind === "proxy") {
+      rejected.push({ handle, reason: "unsupported-entity" });
+      continue;
+    }
+    sources.push(entity);
+  }
+  const createdHandles = args.eraseSource ? [] : allocateEntityHandles(document, sources.length);
+  const changes: EntityChange[] = [];
+  const mirroredHandles: string[] = [];
+  for (let index = 0; index < sources.length; index++) {
+    const source = sources[index]!;
+    const mirrored = mirrorCadEntity(source, args.axisStart, args.axisEnd);
+    if (!mirrored) throw new Error(`MIRROR capability changed while mirroring ${source.handle}.`);
+    if (args.eraseSource) {
+      changes.push({ type: "put", entity: mirrored });
+      mirroredHandles.push(source.handle);
+    } else {
+      const handle = createdHandles[index]!;
+      changes.push({ type: "put", entity: { ...mirrored, handle } as CadEntity });
+      mirroredHandles.push(handle);
+    }
+  }
+  return {
+    changes,
+    sourceHandles: sources.map((entity) => entity.handle),
+    mirroredHandles,
+    createdHandles,
+    rejected,
+    eraseSource: args.eraseSource,
+  };
+}
+
 const rectangleCommand: RectangleCommandDefinition = Object.freeze({
   id: "RECTANGLE",
   aliases: Object.freeze(["RECTANG", "RECTANGLE", "REC"]),
@@ -707,9 +905,15 @@ const scaleCommand: ScaleCommandDefinition = Object.freeze({
   execute: executeScale,
 });
 
-export const cadCommandRegistry = Object.freeze([rectangleCommand, eraseCommand, moveCommand, copyCommand, rotateCommand, scaleCommand]);
+const mirrorCommand: MirrorCommandDefinition = Object.freeze({
+  id: "MIRROR",
+  aliases: Object.freeze(["MI", "MIRROR"]),
+  execute: executeMirror,
+});
 
-export function resolveCadCommand(token: string): RectangleCommandDefinition | EraseCommandDefinition | MoveCommandDefinition | CopyCommandDefinition | RotateCommandDefinition | ScaleCommandDefinition | null {
+export const cadCommandRegistry = Object.freeze([rectangleCommand, eraseCommand, moveCommand, copyCommand, rotateCommand, scaleCommand, mirrorCommand]);
+
+export function resolveCadCommand(token: string): RectangleCommandDefinition | EraseCommandDefinition | MoveCommandDefinition | CopyCommandDefinition | RotateCommandDefinition | ScaleCommandDefinition | MirrorCommandDefinition | null {
   const normalized = token.trim().toUpperCase();
   return cadCommandRegistry.find((command) => command.aliases.includes(normalized)) ?? null;
 }

@@ -1,5 +1,5 @@
 import { expect, it } from "vitest";
-import { applyAtomicOperation, createEmptyDocument, executeCopy, executeErase, executeMove, executeRectangle, executeRotate, executeScale } from "../src/index.js";
+import { applyAtomicOperation, createEmptyDocument, executeCopy, executeErase, executeMirror, executeMove, executeRectangle, executeRotate, executeScale } from "../src/index.js";
 
 it("kills the revision-increment mutant", () => {
   const source = createEmptyDocument({ documentId: "mutation" });
@@ -159,6 +159,33 @@ it("kills SCALE ratio, base-point, geometric-size, copy-handle and locked-layer 
     rejected: [{ handle: "12", reason: "locked-layer" }],
     factor: 2,
     copy: true,
+  });
+  expect(document.entities.map((entity) => entity.handle)).toEqual(["10", "11", "12"]);
+});
+
+it("kills MIRROR projection, handedness, source mode, fresh-handle and locked-layer mutants", () => {
+  const document = createEmptyDocument({ documentId: "mirror-mutation" });
+  document.layers.push({ id: "locked", name: "Locked", visible: true, frozen: false, locked: true, plottable: true });
+  document.entities.push(
+    { kind: "polyline", handle: "10", layerId: "0", appearance: { color: "#f00" }, closed: false, vertices: [{ x: 0, y: 0, bulge: 0.5 }, { x: 100, y: 0 }] },
+    { kind: "text", handle: "11", layerId: "0", position: { x: 200, y: 0 }, text: "M", height: 20, rotationRad: 0.25 },
+    { kind: "line", handle: "12", layerId: "locked", start: { x: 0, y: 1000 }, end: { x: 1000, y: 1000 } },
+  );
+  expect(executeMirror(document, {
+    targetHandles: ["10", "10", "11", "12"],
+    axisStart: { x: 150, y: -100 },
+    axisEnd: { x: 150, y: 100 },
+    eraseSource: false,
+  })).toEqual({
+    changes: [
+      { type: "put", entity: { kind: "polyline", handle: "13", layerId: "0", appearance: { color: "#f00" }, closed: false, vertices: [{ x: 300, y: 0, bulge: -0.5 }, { x: 200, y: 0 }] } },
+      { type: "put", entity: { kind: "text", handle: "14", layerId: "0", position: { x: 100, y: 0 }, text: "M", height: 20, rotationRad: Math.PI * 2 - 0.25, extensionData: { kuubikMirrorTextAlign: "end" } } },
+    ],
+    sourceHandles: ["10", "11"],
+    mirroredHandles: ["13", "14"],
+    createdHandles: ["13", "14"],
+    rejected: [{ handle: "12", reason: "locked-layer" }],
+    eraseSource: false,
   });
   expect(document.entities.map((entity) => entity.handle)).toEqual(["10", "11", "12"]);
 });

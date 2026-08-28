@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { allocateEntityHandles, CadCommandInputError, CadSession, createEmptyDocument, parseCartesianPoint, parseCopyDestinations, parseMoveDestination, parseReferenceAngleInput, parseRotationAngleInput, parseScaleFactorInput, parseScaleLengthInput, resolveCadCommand, type CadChange, type CopyRejectedTarget, type MoveRejectedTarget, type RotateAngleSpec, type RotateRejectedTarget, type ScaleFactorSpec, type ScaleRejectedTarget } from "@kuubik/cad-core";
+import { allocateEntityHandles, CadCommandInputError, CadSession, createEmptyDocument, parseCartesianPoint, parseCopyDestinations, parseMoveDestination, parseReferenceAngleInput, parseRotationAngleInput, parseScaleFactorInput, parseScaleLengthInput, resolveCadCommand, type CadChange, type CopyRejectedTarget, type MirrorRejectedTarget, type MoveRejectedTarget, type RotateAngleSpec, type RotateRejectedTarget, type ScaleFactorSpec, type ScaleRejectedTarget } from "@kuubik/cad-core";
 import { exportDxf } from "@kuubik/cad-dxf";
 import { CadCanvasRenderer } from "@kuubik/cad-renderer";
 import type { CadEntity, KDrawDocumentV1 } from "@kuubik/cad-schema";
@@ -82,7 +82,12 @@ export function App() {
   const [scaleCopy, setScaleCopy] = useState(false);
   const [scaleAwaitingSelection, setScaleAwaitingSelection] = useState(false);
   const [lastScaleRejected, setLastScaleRejected] = useState<ScaleRejectedTarget[]>([]);
-  const [previewCommand, setPreviewCommand] = useState<"MOVE" | "COPY" | "ROTATE" | "SCALE">("MOVE");
+  const [mirrorFirstPointInput, setMirrorFirstPointInput] = useState("1500,-500");
+  const [mirrorSecondPointInput, setMirrorSecondPointInput] = useState("1500,1500");
+  const [mirrorEraseSource, setMirrorEraseSource] = useState(false);
+  const [mirrorAwaitingSelection, setMirrorAwaitingSelection] = useState(false);
+  const [lastMirrorRejected, setLastMirrorRejected] = useState<MirrorRejectedTarget[]>([]);
+  const [previewCommand, setPreviewCommand] = useState<"MOVE" | "COPY" | "ROTATE" | "SCALE" | "MIRROR">("MOVE");
   const activeLayer = document.layers.find((layer) => layer.id === document.currentLayerId)!;
   const movePreview = useMemo((): { entities: CadEntity[]; delta: { x: number; y: number } } | null => {
     if (previewCommand !== "MOVE" || selectedHandles.length === 0) return null;
@@ -149,6 +154,23 @@ export function App() {
       return null;
     }
   }, [document, previewCommand, scaleBaseInput, scaleCopy, scaleFactorInput, scaleMode, scaleNewLengthInput, scaleReferenceInput, selectedHandles]);
+  const mirrorPreview = useMemo((): { entities: CadEntity[]; eraseSource: boolean; sourceHandles: string[] } | null => {
+    if (previewCommand !== "MIRROR" || selectedHandles.length === 0) return null;
+    try {
+      const command = resolveCadCommand("MIRROR");
+      if (!command || command.id !== "MIRROR") return null;
+      const axisStart = parseCartesianPoint(mirrorFirstPointInput);
+      const axisEnd = parseCartesianPoint(mirrorSecondPointInput);
+      const result = command.execute(document, { targetHandles: selectedHandles, axisStart, axisEnd, eraseSource: mirrorEraseSource });
+      return {
+        entities: result.changes.flatMap((change) => change.type === "put" ? [change.entity] : []),
+        eraseSource: result.eraseSource,
+        sourceHandles: result.sourceHandles,
+      };
+    } catch {
+      return null;
+    }
+  }, [document, mirrorEraseSource, mirrorFirstPointInput, mirrorSecondPointInput, previewCommand, selectedHandles]);
 
   useEffect(() => {
     let active = true;
@@ -184,8 +206,8 @@ export function App() {
       widthPx: element.clientWidth,
       heightPx: element.clientHeight,
       devicePixelRatio: ratio,
-    }, document.layers, [...(movePreview?.entities ?? []), ...(copyPreview?.entities ?? []), ...(rotatePreview?.entities ?? []), ...(scalePreview?.entities ?? [])]);
-  }, [copyPreview, document, movePreview, rotatePreview, scalePreview]);
+    }, document.layers, [...(movePreview?.entities ?? []), ...(copyPreview?.entities ?? []), ...(rotatePreview?.entities ?? []), ...(scalePreview?.entities ?? []), ...(mirrorPreview?.entities ?? [])], mirrorPreview?.eraseSource ? mirrorPreview.sourceHandles : []);
+  }, [copyPreview, document, mirrorPreview, movePreview, rotatePreview, scalePreview]);
 
   async function recoverFromStorageConflict(error: unknown): Promise<void> {
     if (!(error instanceof StorageRevisionConflictError)) throw error;
@@ -268,7 +290,8 @@ export function App() {
   function selectAll(): void {
     const handles = document.entities.map((entity) => entity.handle);
     setSelectedHandles(handles);
-    if (scaleAwaitingSelection) setStatus(`${handles.length} objekti valitud; SCALE: määra baaspunkt ja mõõtkava`);
+    if (mirrorAwaitingSelection) setStatus(`${handles.length} objekti valitud; MIRROR: määra peegeldusjoon ja lähteobjektide valik`);
+    else if (scaleAwaitingSelection) setStatus(`${handles.length} objekti valitud; SCALE: määra baaspunkt ja mõõtkava`);
     else if (rotateAwaitingSelection) setStatus(`${handles.length} objekti valitud; ROTATE: määra baaspunkt ja nurk`);
     else if (copyAwaitingSelection) setStatus(`${handles.length} objekti valitud; COPY: määra baaspunkt ja sihtpunkt(id)`);
     else if (moveAwaitingSelection) setStatus(`${handles.length} objekti valitud; MOVE: määra baaspunkt ja sihtpunkt`);
@@ -282,6 +305,7 @@ export function App() {
       setCopyAwaitingSelection(false);
       setRotateAwaitingSelection(false);
       setScaleAwaitingSelection(false);
+      setMirrorAwaitingSelection(false);
       setMoveAwaitingSelection(true);
       setStatus("MOVE: vali objektid, seejärel kinnita valik ja punktid");
       return;
@@ -320,6 +344,7 @@ export function App() {
       setMoveAwaitingSelection(false);
       setRotateAwaitingSelection(false);
       setScaleAwaitingSelection(false);
+      setMirrorAwaitingSelection(false);
       setCopyAwaitingSelection(true);
       setStatus("COPY: vali objektid, seejärel kinnita valik ja punktid");
       return;
@@ -364,6 +389,7 @@ export function App() {
       setMoveAwaitingSelection(false);
       setCopyAwaitingSelection(false);
       setScaleAwaitingSelection(false);
+      setMirrorAwaitingSelection(false);
       setRotateAwaitingSelection(true);
       setStatus("ROTATE: vali objektid, seejärel kinnita valik, baaspunkt ja nurk");
       return;
@@ -408,6 +434,7 @@ export function App() {
       setMoveAwaitingSelection(false);
       setCopyAwaitingSelection(false);
       setRotateAwaitingSelection(false);
+      setMirrorAwaitingSelection(false);
       setScaleAwaitingSelection(true);
       setStatus("SCALE: vali objektid, seejärel kinnita valik, baaspunkt ja mõõtkava");
       return;
@@ -453,6 +480,59 @@ export function App() {
     } catch (error) {
       if (error instanceof StorageRevisionConflictError) await recoverFromStorageConflict(error);
       else if (error instanceof CadCommandInputError) setStatus(`SCALE viga: ${error.message}`);
+      else throw error;
+    } finally {
+      committing.current = false;
+    }
+  }
+
+  async function mirrorSelected(): Promise<void> {
+    if (committing.current) return;
+    setPreviewCommand("MIRROR");
+    if (selectedHandles.length === 0) {
+      setMoveAwaitingSelection(false);
+      setCopyAwaitingSelection(false);
+      setRotateAwaitingSelection(false);
+      setScaleAwaitingSelection(false);
+      setMirrorAwaitingSelection(true);
+      setStatus("MIRROR: vali objektid, seejärel kinnita valik ja peegeldusjoon");
+      return;
+    }
+    committing.current = true;
+    try {
+      const command = resolveCadCommand("MIRROR");
+      if (!command || command.id !== "MIRROR") throw new Error("MIRROR command is missing from the registry.");
+      const axisStart = parseCartesianPoint(mirrorFirstPointInput);
+      const axisEnd = parseCartesianPoint(mirrorSecondPointInput);
+      const result = command.execute(document, {
+        targetHandles: selectedHandles,
+        axisStart,
+        axisEnd,
+        eraseSource: mirrorEraseSource,
+      });
+      setLastMirrorRejected(result.rejected);
+      setMirrorAwaitingSelection(false);
+      if (result.changes.length === 0) {
+        const suffix = result.rejected.length ? `; ${result.rejected.length} lukus, puudu või toetamata` : "";
+        setStatus(`MIRROR ei loonud geomeetriat${suffix}`);
+        return;
+      }
+      await commitChanges(
+        command.id,
+        { axisStart, axisEnd, eraseSource: result.eraseSource, mirrtext: 0 },
+        result.changes,
+        result.mirroredHandles,
+        result.sourceHandles,
+      );
+      setSelectedHandles([]);
+      const suffix = result.rejected.length ? `; ${result.rejected.length} jäi muutmata` : "";
+      setStatus(`${result.mirroredHandles.length} objekti peegeldatud; lähteobjektid ${result.eraseSource ? "kustutatud" : "säilitatud"}${suffix}`);
+    } catch (error) {
+      if (error instanceof StorageRevisionConflictError) await recoverFromStorageConflict(error);
+      else if (error instanceof CadCommandInputError) {
+        setMirrorAwaitingSelection(false);
+        setStatus(`MIRROR viga: ${error.message}`);
+      }
       else throw error;
     } finally {
       committing.current = false;
@@ -655,6 +735,19 @@ export function App() {
           <input aria-label="SCALE Copy" type="checkbox" checked={scaleCopy} onFocus={() => setPreviewCommand("SCALE")} onChange={(event) => { setPreviewCommand("SCALE"); setScaleCopy(event.target.checked); }} />
         </label>
         <button type="button" onClick={() => void scaleSelected()}>SCALE</button>
+        <label className="coordinate-input">
+          <span>MIRROR esimene punkt</span>
+          <input aria-label="MIRROR esimene punkt" value={mirrorFirstPointInput} onFocus={() => setPreviewCommand("MIRROR")} onChange={(event) => { setPreviewCommand("MIRROR"); setMirrorFirstPointInput(event.target.value); }} placeholder="x,y" />
+        </label>
+        <label className="coordinate-input">
+          <span>MIRROR teine punkt</span>
+          <input aria-label="MIRROR teine punkt" value={mirrorSecondPointInput} onFocus={() => setPreviewCommand("MIRROR")} onChange={(event) => { setPreviewCommand("MIRROR"); setMirrorSecondPointInput(event.target.value); }} placeholder="x,y" />
+        </label>
+        <label className="coordinate-input">
+          <span>MIRROR kustuta lähteobjektid</span>
+          <input aria-label="MIRROR kustuta lähteobjektid" type="checkbox" checked={mirrorEraseSource} onFocus={() => setPreviewCommand("MIRROR")} onChange={(event) => { setPreviewCommand("MIRROR"); setMirrorEraseSource(event.target.checked); }} />
+        </label>
+        <button type="button" onClick={() => void mirrorSelected()}>MIRROR</button>
         <button type="button" onClick={() => void eraseSelected()} disabled={selectedHandles.length === 0}>ERASE</button>
         <button type="button" onClick={() => void undoLast()} disabled={!session.current.canUndo}>UNDO</button>
         <button type="button" onClick={downloadDxf}>DXF eksport</button>
@@ -664,6 +757,7 @@ export function App() {
         {copyPreview && <span data-testid="copy-preview">COPY eelvaade: {copyPreview.entities.length} · {copyPreview.deltas.length} paigutust</span>}
         {rotatePreview && <span data-testid="rotate-preview">ROTATE eelvaade: {rotatePreview.entities.length} · {rotatePreview.deltaAngleDeg}°</span>}
         {scalePreview && <span data-testid="scale-preview">SCALE eelvaade: {scalePreview.entities.length} · ×{scalePreview.factor}{scalePreview.copy ? " · Copy" : ""}</span>}
+        {mirrorPreview && <span data-testid="mirror-preview" data-hidden-source-count={mirrorPreview.eraseSource ? mirrorPreview.sourceHandles.length : 0}>MIRROR eelvaade: {mirrorPreview.entities.length} · lähteobjektid {mirrorPreview.eraseSource ? "kustutatakse" : "säilivad"}</span>}
         {lastMoveRejected.length > 0 && (
           <span data-testid="move-rejected" data-rejected={JSON.stringify(lastMoveRejected)}>
             MOVE muutmata: {lastMoveRejected.map(({ handle, reason }) => `${handle} (${reason})`).join(", ")}
@@ -682,6 +776,11 @@ export function App() {
         {lastScaleRejected.length > 0 && (
           <span data-testid="scale-rejected" data-rejected={JSON.stringify(lastScaleRejected)}>
             SCALE muutmata: {lastScaleRejected.map(({ handle, reason }) => `${handle} (${reason})`).join(", ")}
+          </span>
+        )}
+        {lastMirrorRejected.length > 0 && (
+          <span data-testid="mirror-rejected" data-rejected={JSON.stringify(lastMirrorRejected)}>
+            MIRROR muutmata: {lastMirrorRejected.map(({ handle, reason }) => `${handle} (${reason})`).join(", ")}
           </span>
         )}
       </section>

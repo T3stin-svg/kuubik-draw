@@ -20,6 +20,7 @@ export interface Canvas2DContext {
   lineWidth: number;
   globalAlpha: number;
   font: string;
+  textAlign: CanvasTextAlign;
 }
 
 export interface Viewport2D {
@@ -152,8 +153,10 @@ function drawEntity(
     case "mtext":
       context.save();
       context.translate(entity.position.x, entity.position.y);
+      context.rotate(entity.rotationRad);
       context.scale(1, -1);
       context.font = `${entity.height}px sans-serif`;
+      context.textAlign = entity.extensionData?.kuubikMirrorTextAlign === "end" ? "right" : "left";
       context.fillText(entity.text, 0, 0);
       context.restore();
       return true;
@@ -212,8 +215,10 @@ export class CadCanvasRenderer {
     viewport: Viewport2D,
     layers: readonly CadLayer[],
     preview: CadEntity | readonly CadEntity[] | null = null,
+    hiddenSourceHandles: readonly string[] = [],
   ): RenderStats {
     const hidden = new Set(layers.filter((layer) => !layer.visible || layer.frozen).map((layer) => layer.id));
+    const hiddenSources = new Set(hiddenSourceHandles);
     const candidates = this.#index.search(viewport.world);
     context.clearRect(0, 0, viewport.widthPx * viewport.devicePixelRatio, viewport.heightPx * viewport.devicePixelRatio);
     context.save();
@@ -228,7 +233,7 @@ export class CadCanvasRenderer {
     let drawnEntities = 0;
     for (const candidate of candidates) {
       const entity = this.#entities.get(candidate.handle);
-      if (!entity || hidden.has(entity.layerId)) continue;
+      if (!entity || hidden.has(entity.layerId) || hiddenSources.has(entity.handle)) continue;
       context.globalAlpha = 1;
       context.strokeStyle = entity.appearance?.color ?? "#e8e8e8";
       context.lineWidth = (entity.appearance?.lineweightMm ?? 0.25) / scale;

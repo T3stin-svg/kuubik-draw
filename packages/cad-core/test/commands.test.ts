@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { allocateEntityHandles, angleBetweenPointsDegrees, CadCommandInputError, createEmptyDocument, distanceBetweenPoints, executeCopy, executeErase, executeMove, executeRectangle, executeRotate, executeScale, parseAngleDegrees, parseCartesianPoint, parseCopyDestinations, parseMoveDestination, parseReferenceAngleInput, parseRotationAngleInput, parseScaleFactorInput, parseScaleLengthInput, resolveCadCommand, rotateCadEntity, rotateCadPoint, scaleCadEntity, scaleCadPoint, translateCadEntity } from "../src/index.js";
+import { allocateEntityHandles, angleBetweenPointsDegrees, CadCommandInputError, createEmptyDocument, distanceBetweenPoints, executeCopy, executeErase, executeMirror, executeMove, executeRectangle, executeRotate, executeScale, mirrorCadEntity, mirrorCadPoint, parseAngleDegrees, parseCartesianPoint, parseCopyDestinations, parseMoveDestination, parseReferenceAngleInput, parseRotationAngleInput, parseScaleFactorInput, parseScaleLengthInput, resolveCadCommand, rotateCadEntity, rotateCadPoint, scaleCadEntity, scaleCadPoint, translateCadEntity } from "../src/index.js";
 
 describe("RECTANGLE command registry", () => {
   it("parses explicit Cartesian coordinate input without mutating a document", () => {
@@ -408,5 +408,89 @@ describe("SCALE command registry", () => {
     expect(() => scaleCadEntity({
       kind: "circle", handle: "20", layerId: "0", center: { x: 0, y: 0 }, radius: 1e-300,
     }, { x: 0, y: 0 }, 1e-300)).toThrow(CadCommandInputError);
+  });
+});
+
+describe("MIRROR command registry", () => {
+  it("resolves MI/MIRROR and reflects points around an arbitrary two-point line", () => {
+    expect(resolveCadCommand("mi")?.id).toBe("MIRROR");
+    expect(resolveCadCommand(" MIRROR ")?.id).toBe("MIRROR");
+    expect(mirrorCadPoint({ x: 1, y: 0 }, { x: 0, y: 0 }, { x: 1, y: 1 })).toEqual({ x: 0, y: 1 });
+    expect(mirrorCadPoint({ x: 10, y: 5 }, { x: 10, y: -5 }, { x: 10, y: 20 })).toEqual({ x: 10, y: 5 });
+    expect(() => mirrorCadPoint({ x: 1, y: 1 }, { x: 0, y: 0 }, { x: 0, y: 0 })).toThrow(CadCommandInputError);
+    expect(() => mirrorCadPoint({ x: Number.POSITIVE_INFINITY, y: 1 }, { x: 0, y: 0 }, { x: 1, y: 0 })).toThrow(CadCommandInputError);
+  });
+
+  it("mirrors all twelve native entity families with handedness and properties preserved", () => {
+    const axisStart = { x: 10, y: -100 };
+    const axisEnd = { x: 10, y: 100 };
+    expect(mirrorCadEntity({ kind: "line", handle: "10", layerId: "0", appearance: { color: "#f00" }, start: { x: 0, y: 0 }, end: { x: 2, y: 1 } }, axisStart, axisEnd)).toMatchObject({ start: { x: 20, y: 0 }, end: { x: 18, y: 1 }, appearance: { color: "#f00" } });
+    expect(mirrorCadEntity({ kind: "polyline", handle: "11", layerId: "0", closed: false, vertices: [{ x: 1, y: 2, bulge: 0.5, startWidth: 4 }, { x: 3, y: 4 }] }, axisStart, axisEnd)).toMatchObject({ vertices: [{ x: 19, y: 2, bulge: -0.5, startWidth: 4 }, { x: 17, y: 4 }] });
+    expect(mirrorCadEntity({ kind: "circle", handle: "12", layerId: "0", center: { x: 2, y: 3 }, radius: 5 }, axisStart, axisEnd)).toMatchObject({ center: { x: 18, y: 3 }, radius: 5 });
+    expect(mirrorCadEntity({ kind: "arc", handle: "13", layerId: "0", center: { x: 4, y: 3 }, radius: 5, startAngleRad: 0, endAngleRad: Math.PI / 2, counterClockwise: true }, axisStart, axisEnd)).toMatchObject({ center: { x: 16, y: 3 }, startAngleRad: Math.PI, endAngleRad: Math.PI / 2, counterClockwise: false });
+    expect(mirrorCadEntity({ kind: "ellipse", handle: "14", layerId: "0", center: { x: 5, y: 3 }, majorAxis: { x: 3, y: 0 }, ratio: 0.5, startParameter: 0, endParameter: Math.PI * 2 }, axisStart, axisEnd)).toMatchObject({ center: { x: 15, y: 3 }, majorAxis: { x: -3, y: 0 }, startParameter: 0, endParameter: Math.PI * 2 });
+    expect(mirrorCadEntity({ kind: "spline", handle: "15", layerId: "0", degree: 2, controlPoints: [{ x: 1, y: 0 }, { x: 2, y: 1 }, { x: 3, y: 0 }], knots: [0, 0, 0, 1, 1, 1], weights: [1, 2, 1], closed: false, periodic: false }, axisStart, axisEnd)).toMatchObject({ controlPoints: [{ x: 19, y: 0 }, { x: 18, y: 1 }, { x: 17, y: 0 }], knots: [0, 0, 0, 1, 1, 1], weights: [1, 2, 1] });
+    expect(mirrorCadEntity({ kind: "text", handle: "16", layerId: "0", position: { x: 3, y: 0 }, text: "READ", height: 20, rotationRad: 0, styleId: "standard" }, axisStart, axisEnd)).toMatchObject({ position: { x: 17, y: 0 }, text: "READ", rotationRad: 0, styleId: "standard" });
+    expect(mirrorCadEntity({ kind: "mtext", handle: "17", layerId: "0", position: { x: 4, y: 0 }, text: "READ", height: 20, rotationRad: 0.25 }, axisStart, axisEnd)).toMatchObject({ position: { x: 16, y: 0 }, rotationRad: Math.PI * 2 - 0.25 });
+    expect(mirrorCadEntity({ kind: "leader", handle: "18", layerId: "0", vertices: [{ x: 1, y: 0 }, { x: 2, y: 2 }], text: "L" }, axisStart, axisEnd)).toMatchObject({ vertices: [{ x: 19, y: 0 }, { x: 18, y: 2 }], text: "L" });
+    expect(mirrorCadEntity({ kind: "dimension", handle: "19", layerId: "0", dimensionKind: "aligned", definitionPoints: [{ x: 1, y: 0 }, { x: 2, y: 0 }, { x: 1, y: 2 }], styleId: "standard" }, axisStart, axisEnd)).toMatchObject({ definitionPoints: [{ x: 19, y: 0 }, { x: 18, y: 0 }, { x: 19, y: 2 }], styleId: "standard" });
+    expect(mirrorCadEntity({ kind: "hatch", handle: "1A", layerId: "0", pattern: "SOLID", associative: true, loops: [{ vertices: [{ x: 1, y: 0 }, { x: 2, y: 0 }, { x: 2, y: 1 }], isHole: false }] }, axisStart, axisEnd)).toMatchObject({ loops: [{ vertices: [{ x: 19, y: 0 }, { x: 18, y: 0 }, { x: 18, y: 1 }], isHole: false }] });
+    expect(mirrorCadEntity({ kind: "blockRef", handle: "1B", layerId: "0", blockId: "B", insertion: { x: 2, y: 0 }, scale: { x: 2, y: 3 }, rotationRad: 0.5, attributes: { TAG: "V" } }, axisStart, axisEnd)).toMatchObject({ insertion: { x: 18, y: 0 }, scale: { x: -2, y: 3 }, rotationRad: Math.PI * 2 - 0.5, attributes: { TAG: "V" } });
+    expect(mirrorCadEntity({ kind: "proxy", handle: "1C", layerId: "0", originalType: "ACAD_PROXY", raw: {} }, axisStart, axisEnd)).toBeNull();
+  });
+
+  it("changes text alignment only when MIRRTEXT=0 readability adds a 180-degree flip", () => {
+    const text = {
+      kind: "text" as const, handle: "10", layerId: "0", position: { x: 3, y: 2 },
+      text: "READ", height: 20, rotationRad: 0, styleId: "standard",
+      extensionData: { kuubikMirrorTextAlign: "start" },
+    };
+    expect(mirrorCadEntity(text, { x: -10, y: 0 }, { x: 10, y: 0 })).toMatchObject({
+      position: { x: 3, y: -2 }, rotationRad: 0,
+      extensionData: { kuubikMirrorTextAlign: "start" },
+    });
+    expect(mirrorCadEntity(text, { x: 0, y: 0 }, { x: 1, y: 1 })).toMatchObject({
+      position: { x: 2, y: 3 }, rotationRad: Math.PI / 2,
+      extensionData: { kuubikMirrorTextAlign: "start" },
+    });
+    expect(mirrorCadEntity(text, { x: 10, y: -10 }, { x: 10, y: 10 })).toMatchObject({
+      position: { x: 17, y: 2 }, rotationRad: 0,
+      extensionData: { kuubikMirrorTextAlign: "end" },
+    });
+  });
+
+  it("preserves sources by default, allocates fresh global handles and reports explicit rejections", () => {
+    const document = createEmptyDocument({ documentId: "mirror-copy" });
+    document.layers.push({ id: "locked", name: "Locked", visible: true, frozen: false, locked: true, plottable: true });
+    document.entities.push(
+      { kind: "line", handle: "10", layerId: "0", start: { x: 0, y: 0 }, end: { x: 1, y: 0 } },
+      { kind: "line", handle: "11", layerId: "locked", start: { x: 0, y: 1 }, end: { x: 1, y: 1 } },
+      { kind: "proxy", handle: "12", layerId: "0", originalType: "X", raw: {} },
+    );
+    document.blocks.push({ id: "B", name: "B", basePoint: { x: 0, y: 0 }, entities: [{ kind: "line", handle: "13", layerId: "0", start: { x: 0, y: 0 }, end: { x: 1, y: 0 } }] });
+    expect(executeMirror(document, {
+      targetHandles: ["10", "10", "11", "12", "missing"], axisStart: { x: 5, y: -1 }, axisEnd: { x: 5, y: 1 }, eraseSource: false,
+    })).toEqual({
+      changes: [{ type: "put", entity: { kind: "line", handle: "14", layerId: "0", start: { x: 10, y: 0 }, end: { x: 9, y: 0 } } }],
+      sourceHandles: ["10"], mirroredHandles: ["14"], createdHandles: ["14"],
+      rejected: [
+        { handle: "11", reason: "locked-layer" },
+        { handle: "12", reason: "unsupported-entity" },
+        { handle: "missing", reason: "missing" },
+      ],
+      eraseSource: false,
+    });
+    expect(document.entities.map((entity) => entity.handle)).toEqual(["10", "11", "12"]);
+  });
+
+  it("replaces editable sources under their stable handles when erase source is Yes", () => {
+    const document = createEmptyDocument({ documentId: "mirror-replace" });
+    document.entities.push({ kind: "line", handle: "10", layerId: "0", start: { x: 0, y: 0 }, end: { x: 2, y: 0 } });
+    expect(executeMirror(document, {
+      targetHandles: ["10"], axisStart: { x: 5, y: -1 }, axisEnd: { x: 5, y: 1 }, eraseSource: true,
+    })).toEqual({
+      changes: [{ type: "put", entity: { kind: "line", handle: "10", layerId: "0", start: { x: 10, y: 0 }, end: { x: 8, y: 0 } } }],
+      sourceHandles: ["10"], mirroredHandles: ["10"], createdHandles: [], rejected: [], eraseSource: true,
+    });
   });
 });

@@ -21,6 +21,7 @@ function fakeContext() {
     lineWidth: 1,
     globalAlpha: 1,
     font: "10px sans-serif",
+    textAlign: "left",
   };
   return { context, calls };
 }
@@ -71,6 +72,22 @@ describe("Canvas2D parity invariants", () => {
     expect(stats.drawnEntities).toBe(1);
   });
 
+  it("renders MIRRTEXT=0 text with its reflected rotation and end alignment", () => {
+    const renderer = new CadCanvasRenderer();
+    renderer.setEntities([{
+      kind: "text", handle: "10", layerId: "0", position: { x: 20, y: 30 },
+      text: "READ", height: 10, rotationRad: Math.PI / 4,
+      extensionData: { kuubikMirrorTextAlign: "end" },
+    }]);
+    const { context, calls } = fakeContext();
+    renderer.render(context, { world: { minX: 0, minY: 0, maxX: 100, maxY: 100 }, widthPx: 100, heightPx: 100, devicePixelRatio: 1 }, [
+      { id: "0", name: "0", visible: true, frozen: false, locked: false, plottable: true },
+    ]);
+    expect(calls).toContainEqual(["translate", 20, 30]);
+    expect(calls).toContainEqual(["rotate", Math.PI / 4]);
+    expect(context.textAlign).toBe("right");
+  });
+
   it("indexes transformed block geometry even when its insertion point is outside the viewport", () => {
     const renderer = new CadCanvasRenderer();
     renderer.setBlocks([{
@@ -102,5 +119,21 @@ describe("Canvas2D parity invariants", () => {
     );
     expect(stats).toEqual({ totalEntities: 1, visibleCandidates: 1, drawnEntities: 3 });
     expect(renderer.visibleHandles({ minX: 15, minY: 15, maxX: 60, maxY: 60 })).toEqual([]);
+  });
+
+  it("hides replaced source geometry while rendering a MIRROR erase-Yes preview", () => {
+    const renderer = new CadCanvasRenderer();
+    renderer.setEntities([{ kind: "line", handle: "10", layerId: "0", start: { x: 10, y: 10 }, end: { x: 20, y: 10 } }]);
+    const { context, calls } = fakeContext();
+    const stats = renderer.render(
+      context,
+      { world: { minX: 0, minY: 0, maxX: 100, maxY: 100 }, widthPx: 100, heightPx: 100, devicePixelRatio: 1 },
+      [{ id: "0", name: "0", visible: true, frozen: false, locked: false, plottable: true }],
+      [{ kind: "line", handle: "10", layerId: "0", start: { x: 90, y: 10 }, end: { x: 80, y: 10 } }],
+      ["10"],
+    );
+    expect(stats).toEqual({ totalEntities: 1, visibleCandidates: 1, drawnEntities: 1 });
+    expect(calls).not.toContainEqual(["move", 10, 10]);
+    expect(calls).toContainEqual(["move", 90, 10]);
   });
 });
