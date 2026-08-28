@@ -1,0 +1,3 @@
+# DXF is emitted with deliberate CRLF records. Preserve its exact bytes on every platform
+# so SHA-256 output evidence is identical in Windows certification and Linux CI.
+*.dxf -text
