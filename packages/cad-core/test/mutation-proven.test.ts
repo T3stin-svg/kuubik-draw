@@ -1,5 +1,5 @@
 import { expect, it } from "vitest";
-import { applyAtomicOperation, createEmptyDocument, executeCopy, executeErase, executeMirror, executeMove, executeOffset, executeRectangle, executeRotate, executeScale, offsetCadEntity } from "../src/index.js";
+import { applyAtomicOperation, copyPaperLayout, createEmptyDocument, createPaperLayout, executeCopy, executeErase, executeMirror, executeMove, executeOffset, executeRectangle, executeRotate, executeScale, offsetCadEntity } from "../src/index.js";
 
 it("kills the revision-increment mutant", () => {
   const source = createEmptyDocument({ documentId: "mutation" });
@@ -267,4 +267,26 @@ it("kills OFFSET overflow and ellipse-cusp acceptance mutants", () => {
     entities: [{ kind: "spline", closed: false }, { kind: "spline", closed: false }],
   });
   expect(collapsedEllipse.entities).toHaveLength(2);
+});
+
+it("kills F-097 shallow-copy, reused-handle and wrong-insertion mutants", () => {
+  const document = createEmptyDocument({ documentId: "F-097-mutation" });
+  const source = createPaperLayout(document, {
+    name: "PLAN",
+    viewports: [{
+      id: "source-vp", center: { x: 10, y: 10 }, width: 20, height: 20,
+      viewCenter: { x: 100, y: 200 }, viewHeight: 500, twistAngleRad: 0.25, locked: true,
+    }],
+    entities: [{ kind: "circle", handle: "20", layerId: "0", center: { x: 5, y: 5 }, radius: 25 }],
+  });
+  const withSource = { ...document, layouts: source.layouts };
+  const copied = copyPaperLayout(withSource, source.layoutId);
+  expect(copied.layouts.map((layout) => layout.name)).toEqual(["Model", "PLAN (2)", "PLAN"]);
+  const sourceLayout = copied.layouts[2]!;
+  const copyLayout = copied.layouts[1]!;
+  expect(copyLayout).not.toBe(sourceLayout);
+  expect(copyLayout.viewports[0]).not.toBe(sourceLayout.viewports[0]);
+  expect(copyLayout.viewports[0]!.id).not.toBe(sourceLayout.viewports[0]!.id);
+  expect(copyLayout.entities![0]).not.toBe(sourceLayout.entities![0]);
+  expect(copyLayout.entities![0]!.handle).not.toBe(sourceLayout.entities![0]!.handle);
 });

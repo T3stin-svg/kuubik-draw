@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { allocateEntityHandles, CadCommandInputError, CadSession, createEmptyDocument, parseCartesianPoint, parseCopyDestinations, parseMoveDestination, parseOffsetDistance, parseOffsetPlacementPoints, parseReferenceAngleInput, parseRotationAngleInput, parseScaleFactorInput, parseScaleLengthInput, resolveCadCommand, type CadChange, type CopyRejectedTarget, type MirrorRejectedTarget, type MoveRejectedTarget, type OffsetLayerMode, type OffsetRejectedTarget, type RotateAngleSpec, type RotateRejectedTarget, type ScaleFactorSpec, type ScaleRejectedTarget } from "@kuubik/cad-core";
+import { allocateEntityHandles, CadCommandInputError, CadSession, LayoutCommandError, copyPaperLayout, createEmptyDocument, createPaperLayout, deletePaperLayout, movePaperLayout, parseCartesianPoint, parseCopyDestinations, parseMoveDestination, parseOffsetDistance, parseOffsetPlacementPoints, parseReferenceAngleInput, parseRotationAngleInput, parseScaleFactorInput, parseScaleLengthInput, renamePaperLayout, resolveCadCommand, serializeKDraw, type CadChange, type CopyRejectedTarget, type MirrorRejectedTarget, type MoveRejectedTarget, type OffsetLayerMode, type OffsetRejectedTarget, type RotateAngleSpec, type RotateRejectedTarget, type ScaleFactorSpec, type ScaleRejectedTarget } from "@kuubik/cad-core";
 import { exportDxf } from "@kuubik/cad-dxf";
 import { CadCanvasRenderer } from "@kuubik/cad-renderer";
 import type { CadEntity, KDrawDocumentV1 } from "@kuubik/cad-schema";
@@ -7,6 +7,7 @@ import { KDrawIndexedDb, StorageRevisionConflictError } from "./indexed-db.js";
 import "./style.css";
 
 const LOCAL_DOCUMENT_ID = "local";
+const MODEL_SPACE_COMMANDS = new Set(["LINE", "RECTANGLE", "MOVE", "COPY", "ROTATE", "SCALE", "MIRROR", "OFFSET", "ERASE"]);
 
 function nextInteractiveHandle(document: KDrawDocumentV1): string {
   const preferred = (document.revision + 16).toString(16).toUpperCase();
@@ -56,6 +57,8 @@ export function App() {
   const committing = useRef(false);
   const [document, setDocument] = useState<KDrawDocumentV1>(session.current.document);
   const [status, setStatus] = useState("Uus kohalik dokument");
+  const [activeLayoutId, setActiveLayoutId] = useState("model");
+  const [layoutRenameInput, setLayoutRenameInput] = useState("");
   const [firstCornerInput, setFirstCornerInput] = useState("100,200");
   const [otherCornerInput, setOtherCornerInput] = useState("600,900");
   const [selectedHandles, setSelectedHandles] = useState<string[]>([]);
@@ -97,6 +100,12 @@ export function App() {
   const [lastOffsetRejected, setLastOffsetRejected] = useState<OffsetRejectedTarget[]>([]);
   const [previewCommand, setPreviewCommand] = useState<"MOVE" | "COPY" | "ROTATE" | "SCALE" | "MIRROR" | "OFFSET">("MOVE");
   const activeLayer = document.layers.find((layer) => layer.id === document.currentLayerId)!;
+  const activeLayout = document.layouts.find((layout) => layout.id === activeLayoutId) ?? document.layouts[0]!;
+  const modelSpaceEditing = activeLayout.kind === "model";
+  const canUndoInActiveLayout = session.current.canUndo && (modelSpaceEditing || session.current.nextUndoCommandId?.startsWith("LAYOUT_") === true);
+  const canRedoInActiveLayout = session.current.canRedo && (modelSpaceEditing || session.current.nextRedoCommandId?.startsWith("LAYOUT_") === true);
+  const paperLayouts = document.layouts.filter((layout) => layout.kind === "paper");
+  const activePaperIndex = paperLayouts.findIndex((layout) => layout.id === activeLayout.id);
   const movePreview = useMemo((): { entities: CadEntity[]; delta: { x: number; y: number } } | null => {
     if (previewCommand !== "MOVE" || selectedHandles.length === 0) return null;
     try {
@@ -224,6 +233,11 @@ export function App() {
   }, [database]);
 
   useEffect(() => {
+    if (document.layouts.some((layout) => layout.id === activeLayoutId)) return;
+    setActiveLayoutId(document.layouts[0]!.id);
+  }, [activeLayoutId, document.layouts]);
+
+  useEffect(() => {
     const element = canvas.current;
     if (!element) return;
     const context = element.getContext("2d");
@@ -233,17 +247,17 @@ export function App() {
     element.height = Math.round(element.clientHeight * ratio);
     const renderer = new CadCanvasRenderer();
     renderer.setBlocks(document.blocks);
-    renderer.setEntities(document.entities);
+    renderer.setEntities(activeLayout.kind === "model" ? document.entities : (activeLayout.entities ?? []));
     renderer.render(context, {
       world: { minX: -500, minY: -500, maxX: 2500, maxY: 2500 },
       widthPx: element.clientWidth,
       heightPx: element.clientHeight,
       devicePixelRatio: ratio,
-    }, document.layers, [...(movePreview?.entities ?? []), ...(copyPreview?.entities ?? []), ...(rotatePreview?.entities ?? []), ...(scalePreview?.entities ?? []), ...(mirrorPreview?.entities ?? []), ...(offsetPreview?.entities ?? [])], [
+    }, document.layers, activeLayout.kind === "model" ? [...(movePreview?.entities ?? []), ...(copyPreview?.entities ?? []), ...(rotatePreview?.entities ?? []), ...(scalePreview?.entities ?? []), ...(mirrorPreview?.entities ?? []), ...(offsetPreview?.entities ?? [])] : [], [
       ...(mirrorPreview?.eraseSource ? mirrorPreview.sourceHandles : []),
       ...(offsetPreview?.eraseSource ? offsetPreview.sourceHandles : []),
     ]);
-  }, [copyPreview, document, mirrorPreview, movePreview, offsetPreview, rotatePreview, scalePreview]);
+  }, [activeLayout, copyPreview, document, mirrorPreview, movePreview, offsetPreview, rotatePreview, scalePreview]);
 
   async function recoverFromStorageConflict(error: unknown): Promise<void> {
     if (!(error instanceof StorageRevisionConflictError)) throw error;
@@ -279,6 +293,9 @@ export function App() {
     resultHandles: string[],
     targetHandles: string[] = [],
   ): Promise<void> {
+    if (activeLayout.kind !== "model" && MODEL_SPACE_COMMANDS.has(commandId)) {
+      throw new CadCommandInputError(`${commandId} cannot mutate hidden Model geometry while a paper layout is active.`);
+    }
     const operation = {
       opId: crypto.randomUUID(),
       baseRevision: document.revision,
@@ -287,7 +304,7 @@ export function App() {
       targetHandles,
       resultHandles,
     };
-    const candidate = new CadSession(document, (await database.operations(document.documentId)).map((entry) => entry.opId));
+    const candidate = session.current.fork();
     candidate.commit(operation, changes);
     const next = candidate.document;
     await database.commitRevision(next, operation);
@@ -324,6 +341,11 @@ export function App() {
   }
 
   function selectAll(): void {
+    if (!modelSpaceEditing) {
+      setSelectedHandles([]);
+      setStatus("PAPER: geomeetria muutmine avaneb viewport/paper-space etappides; Model-objekte ei muudeta");
+      return;
+    }
     const handles = document.entities.map((entity) => entity.handle);
     setSelectedHandles(handles);
     if (offsetAwaitingSelection) setStatus(`${handles.length} objekti valitud; OFFSET: määra režiim, külje-/Through-punkt ja valikud`);
@@ -677,7 +699,7 @@ export function App() {
   }
 
   async function undoLast(): Promise<void> {
-    if (committing.current || !session.current.canUndo) return;
+    if (committing.current || !canUndoInActiveLayout) return;
     committing.current = true;
     try {
       const committed = session.current.undo();
@@ -685,8 +707,28 @@ export function App() {
       const next = session.current.document;
       await database.commitRevision(next, committed.operation);
       setDocument(next);
+      setActiveLayoutId((current) => next.layouts.some((layout) => layout.id === current) ? current : next.layouts[0]!.id);
       setSelectedHandles([]);
       setStatus(`UNDO taastatud, revision ${next.revision}`);
+    } catch (error) {
+      await recoverFromStorageConflict(error);
+    } finally {
+      committing.current = false;
+    }
+  }
+
+  async function redoLast(): Promise<void> {
+    if (committing.current || !canRedoInActiveLayout) return;
+    committing.current = true;
+    try {
+      const committed = session.current.redo();
+      if (!committed) return;
+      const next = session.current.document;
+      await database.commitRevision(next, committed.operation);
+      setDocument(next);
+      setActiveLayoutId((current) => next.layouts.some((layout) => layout.id === current) ? current : next.layouts[0]!.id);
+      setSelectedHandles([]);
+      setStatus(`REDO taastatud, revision ${next.revision}`);
     } catch (error) {
       await recoverFromStorageConflict(error);
     } finally {
@@ -734,6 +776,107 @@ export function App() {
     }
   }
 
+  async function createLayout(): Promise<void> {
+    if (committing.current) return;
+    committing.current = true;
+    try {
+      const result = createPaperLayout(document);
+      await commitChanges("LAYOUT_CREATE", { name: result.layouts.find((layout) => layout.id === result.layoutId)!.name }, result.changes, []);
+      setActiveLayoutId(result.layoutId);
+      setLayoutRenameInput(result.layouts.find((layout) => layout.id === result.layoutId)!.name);
+    } catch (error) {
+      if (error instanceof StorageRevisionConflictError) await recoverFromStorageConflict(error);
+      else if (error instanceof LayoutCommandError) setStatus(`LAYOUT viga: ${error.message}`);
+      else throw error;
+    } finally {
+      committing.current = false;
+    }
+  }
+
+  async function copyLayout(): Promise<void> {
+    if (committing.current || activeLayout.kind !== "paper") return;
+    committing.current = true;
+    try {
+      const result = copyPaperLayout(document, activeLayout.id);
+      const copied = result.layouts.find((layout) => layout.id === result.layoutId)!;
+      await commitChanges(
+        "LAYOUT_COPY",
+        { sourceLayoutId: activeLayout.id, resultLayoutId: copied.id },
+        result.changes,
+        (copied.entities ?? []).map((entity) => entity.handle),
+        (activeLayout.entities ?? []).map((entity) => entity.handle),
+      );
+      setActiveLayoutId(copied.id);
+      setLayoutRenameInput(copied.name);
+    } catch (error) {
+      if (error instanceof StorageRevisionConflictError) await recoverFromStorageConflict(error);
+      else if (error instanceof LayoutCommandError) setStatus(`LAYOUT viga: ${error.message}`);
+      else throw error;
+    } finally {
+      committing.current = false;
+    }
+  }
+
+  async function reorderLayout(delta: -1 | 1): Promise<void> {
+    if (committing.current || activeLayout.kind !== "paper") return;
+    committing.current = true;
+    try {
+      const result = movePaperLayout(document, activeLayout.id, delta);
+      await commitChanges("LAYOUT_REORDER", { layoutId: activeLayout.id, delta }, result.changes, []);
+    } catch (error) {
+      if (error instanceof StorageRevisionConflictError) await recoverFromStorageConflict(error);
+      else if (error instanceof LayoutCommandError) setStatus(`LAYOUT viga: ${error.message}`);
+      else throw error;
+    } finally {
+      committing.current = false;
+    }
+  }
+
+  async function renameLayout(): Promise<void> {
+    if (committing.current || activeLayout.kind !== "paper") return;
+    committing.current = true;
+    try {
+      const result = renamePaperLayout(document, activeLayout.id, layoutRenameInput);
+      const renamed = result.layouts.find((layout) => layout.id === activeLayout.id)!;
+      await commitChanges("LAYOUT_RENAME", { layoutId: activeLayout.id, name: renamed.name }, result.changes, []);
+      setLayoutRenameInput(renamed.name);
+    } catch (error) {
+      if (error instanceof StorageRevisionConflictError) await recoverFromStorageConflict(error);
+      else if (error instanceof LayoutCommandError) setStatus(`LAYOUT viga: ${error.message}`);
+      else throw error;
+    } finally {
+      committing.current = false;
+    }
+  }
+
+  async function deleteLayout(): Promise<void> {
+    if (committing.current || activeLayout.kind !== "paper") return;
+    if (!window.confirm(`Kustuta paigutus “${activeLayout.name}”?`)) return;
+    committing.current = true;
+    try {
+      const deletedHandles = (activeLayout.entities ?? []).map((entity) => entity.handle);
+      const result = deletePaperLayout(document, activeLayout.id);
+      await commitChanges("LAYOUT_DELETE", { layoutId: activeLayout.id }, result.changes, [], deletedHandles);
+      setActiveLayoutId(result.layoutId);
+      setLayoutRenameInput(result.layouts.find((layout) => layout.id === result.layoutId)?.name ?? "");
+    } catch (error) {
+      if (error instanceof StorageRevisionConflictError) await recoverFromStorageConflict(error);
+      else if (error instanceof LayoutCommandError) setStatus(`LAYOUT viga: ${error.message}`);
+      else throw error;
+    } finally {
+      committing.current = false;
+    }
+  }
+
+  function activateLayout(layoutId: string): void {
+    const layout = document.layouts.find((candidate) => candidate.id === layoutId);
+    if (!layout) return;
+    setActiveLayoutId(layoutId);
+    setLayoutRenameInput(layout.name);
+    setSelectedHandles([]);
+    setStatus(`${layout.name}: ${layout.kind === "model" ? "MODEL" : "PAPER"}`);
+  }
+
   function downloadDxf(): void {
     const exported = exportDxf(document);
     if (exported.report.skipped.length) {
@@ -749,6 +892,17 @@ export function App() {
     setStatus(`DXF eksporditud: ${exported.report.emittedHandles.length} objekti`);
   }
 
+  async function downloadKDraw(): Promise<void> {
+    const bytes = await serializeKDraw(document);
+    const url = URL.createObjectURL(new Blob([bytes as Uint8Array<ArrayBuffer>], { type: "application/vnd.kuubik.kdraw+json" }));
+    const anchor = window.document.createElement("a");
+    anchor.href = url;
+    anchor.download = `${document.documentId}-r${document.revision}.kdraw`;
+    anchor.click();
+    URL.revokeObjectURL(url);
+    setStatus(`KDraw eksporditud: revision ${document.revision}`);
+  }
+
   return (
     <main className="app-shell">
       <header className="titlebar">
@@ -756,7 +910,7 @@ export function App() {
         <span>GPL 2D CAD · eksperimentaalne</span>
       </header>
       <section className="ribbon" aria-label="Joonestustööriistad">
-        <button type="button" onClick={() => void addSyntheticLine()} disabled={activeLayer.locked}>LINE test</button>
+        <button type="button" onClick={() => void addSyntheticLine()} disabled={!modelSpaceEditing || activeLayer.locked}>LINE test</button>
         <label className="coordinate-input">
           <span>Esimene nurk</span>
           <input aria-label="Esimene nurk" value={firstCornerInput} onChange={(event) => setFirstCornerInput(event.target.value)} placeholder="x,y" />
@@ -765,10 +919,10 @@ export function App() {
           <span>Teine nurk</span>
           <input aria-label="Teine nurk" value={otherCornerInput} onChange={(event) => setOtherCornerInput(event.target.value)} placeholder="x,y" />
         </label>
-        <button type="button" onClick={() => void addRectangle()} disabled={activeLayer.locked}>RECTANGLE</button>
+        <button type="button" onClick={() => void addRectangle()} disabled={!modelSpaceEditing || activeLayer.locked}>RECTANGLE</button>
         <button type="button" onClick={() => void createLayer()}>Uus kiht</button>
         <button type="button" onClick={() => void toggleActiveLayerLock()}>{activeLayer.locked ? "Ava aktiivne" : "Lukusta aktiivne"}</button>
-        <button type="button" onClick={selectAll} disabled={document.entities.length === 0}>Vali kõik</button>
+        <button type="button" onClick={selectAll} disabled={!modelSpaceEditing || document.entities.length === 0}>Vali kõik</button>
         <label className="coordinate-input">
           <span>MOVE baaspunkt</span>
           <input aria-label="MOVE baaspunkt" value={moveBaseInput} onFocus={() => setPreviewCommand("MOVE")} onChange={(event) => { setPreviewCommand("MOVE"); setMoveBaseInput(event.target.value); }} placeholder="x,y" />
@@ -777,7 +931,7 @@ export function App() {
           <span>MOVE sihtpunkt</span>
           <input aria-label="MOVE sihtpunkt" value={moveDestinationInput} onFocus={() => setPreviewCommand("MOVE")} onChange={(event) => { setPreviewCommand("MOVE"); setMoveDestinationInput(event.target.value); }} placeholder="x,y või @dx,dy" />
         </label>
-        <button type="button" onClick={() => void moveSelected()}>MOVE</button>
+        <button type="button" onClick={() => void moveSelected()} disabled={!modelSpaceEditing}>MOVE</button>
         <label className="coordinate-input">
           <span>COPY baaspunkt</span>
           <input aria-label="COPY baaspunkt" value={copyBaseInput} onFocus={() => setPreviewCommand("COPY")} onChange={(event) => { setPreviewCommand("COPY"); setCopyBaseInput(event.target.value); }} placeholder="x,y" />
@@ -786,7 +940,7 @@ export function App() {
           <span>COPY sihtpunkt(id)</span>
           <input aria-label="COPY sihtpunktid" value={copyDestinationsInput} onFocus={() => setPreviewCommand("COPY")} onChange={(event) => { setPreviewCommand("COPY"); setCopyDestinationsInput(event.target.value); }} placeholder="x,y; @dx,dy" />
         </label>
-        <button type="button" onClick={() => void copySelected()}>COPY</button>
+        <button type="button" onClick={() => void copySelected()} disabled={!modelSpaceEditing}>COPY</button>
         <label className="coordinate-input">
           <span>ROTATE baaspunkt</span>
           <input aria-label="ROTATE baaspunkt" value={rotateBaseInput} onFocus={() => setPreviewCommand("ROTATE")} onChange={(event) => { setPreviewCommand("ROTATE"); setRotateBaseInput(event.target.value); }} placeholder="x,y" />
@@ -815,7 +969,7 @@ export function App() {
             </label>
           </>
         )}
-        <button type="button" onClick={() => void rotateSelected()}>ROTATE</button>
+        <button type="button" onClick={() => void rotateSelected()} disabled={!modelSpaceEditing}>ROTATE</button>
         <label className="coordinate-input">
           <span>SCALE baaspunkt</span>
           <input aria-label="SCALE baaspunkt" value={scaleBaseInput} onFocus={() => setPreviewCommand("SCALE")} onChange={(event) => { setPreviewCommand("SCALE"); setScaleBaseInput(event.target.value); }} placeholder="x,y" />
@@ -848,7 +1002,7 @@ export function App() {
           <span>SCALE Copy</span>
           <input aria-label="SCALE Copy" type="checkbox" checked={scaleCopy} onFocus={() => setPreviewCommand("SCALE")} onChange={(event) => { setPreviewCommand("SCALE"); setScaleCopy(event.target.checked); }} />
         </label>
-        <button type="button" onClick={() => void scaleSelected()}>SCALE</button>
+        <button type="button" onClick={() => void scaleSelected()} disabled={!modelSpaceEditing}>SCALE</button>
         <label className="coordinate-input">
           <span>MIRROR esimene punkt</span>
           <input aria-label="MIRROR esimene punkt" value={mirrorFirstPointInput} onFocus={() => setPreviewCommand("MIRROR")} onChange={(event) => { setPreviewCommand("MIRROR"); setMirrorFirstPointInput(event.target.value); }} placeholder="x,y" />
@@ -861,7 +1015,7 @@ export function App() {
           <span>MIRROR kustuta lähteobjektid</span>
           <input aria-label="MIRROR kustuta lähteobjektid" type="checkbox" checked={mirrorEraseSource} onFocus={() => setPreviewCommand("MIRROR")} onChange={(event) => { setPreviewCommand("MIRROR"); setMirrorEraseSource(event.target.checked); }} />
         </label>
-        <button type="button" onClick={() => void mirrorSelected()}>MIRROR</button>
+        <button type="button" onClick={() => void mirrorSelected()} disabled={!modelSpaceEditing}>MIRROR</button>
         <label className="coordinate-input">
           <span>OFFSET režiim</span>
           <select aria-label="OFFSET režiim" value={offsetMode} onFocus={() => setPreviewCommand("OFFSET")} onChange={(event) => { setPreviewCommand("OFFSET"); setOffsetMode(event.target.value as "distance" | "through"); }}>
@@ -894,11 +1048,13 @@ export function App() {
             <option value="current">Current</option>
           </select>
         </label>
-        <button type="button" onClick={() => void offsetSelected()}>OFFSET</button>
-        <button type="button" onClick={undoOffsetPlacement}>OFFSET Undo</button>
-        <button type="button" onClick={() => void eraseSelected()} disabled={selectedHandles.length === 0}>ERASE</button>
-        <button type="button" onClick={() => void undoLast()} disabled={!session.current.canUndo}>UNDO</button>
+        <button type="button" onClick={() => void offsetSelected()} disabled={!modelSpaceEditing}>OFFSET</button>
+        <button type="button" onClick={undoOffsetPlacement} disabled={!modelSpaceEditing}>OFFSET Undo</button>
+        <button type="button" onClick={() => void eraseSelected()} disabled={!modelSpaceEditing || selectedHandles.length === 0}>ERASE</button>
+        <button type="button" onClick={() => void undoLast()} disabled={!canUndoInActiveLayout}>UNDO</button>
+        <button type="button" onClick={() => void redoLast()} disabled={!canRedoInActiveLayout}>REDO</button>
         <button type="button" onClick={downloadDxf}>DXF eksport</button>
+        <button type="button" onClick={() => void downloadKDraw()}>KDraw eksport</button>
         <button type="button" disabled>TRIM järgmine</button>
         <span>{document.entities.length} objekti · {selectedHandles.length} valitud · {activeLayer.name}{activeLayer.locked ? " 🔒" : ""}</span>
         {movePreview && <span data-testid="move-preview">MOVE eelvaade: {movePreview.entities.length} · Δ{movePreview.delta.x},{movePreview.delta.y}</span>}
@@ -941,9 +1097,34 @@ export function App() {
       <section className="drawing-area">
         <canvas ref={canvas} aria-label="Kuubik Draw joonestusala" />
       </section>
+      <section className="layoutbar" aria-label="Model ja Layout vahelehed">
+        {document.layouts.map((layout) => (
+          <button
+            key={layout.id}
+            type="button"
+            className={layout.id === activeLayout.id ? "layout-tab active" : "layout-tab"}
+            aria-pressed={layout.id === activeLayout.id}
+            onClick={() => activateLayout(layout.id)}
+          >
+            {layout.name}
+          </button>
+        ))}
+        <button type="button" className="layout-action" aria-label="Lisa paigutus" onClick={() => void createLayout()}>+</button>
+        {activeLayout.kind === "paper" && (
+          <span className="layout-actions" aria-label="Layout tegevused">
+            <button type="button" className="layout-action" aria-label="Kopeeri paigutus" onClick={() => void copyLayout()}>Kopeeri</button>
+            <button type="button" className="layout-action" aria-label="Liiguta vasakule" disabled={activePaperIndex <= 0} onClick={() => void reorderLayout(-1)}>←</button>
+            <button type="button" className="layout-action" aria-label="Liiguta paremale" disabled={activePaperIndex < 0 || activePaperIndex >= paperLayouts.length - 1} onClick={() => void reorderLayout(1)}>→</button>
+            <input aria-label="Paigutuse nimi" value={layoutRenameInput} maxLength={255} onChange={(event) => setLayoutRenameInput(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") void renameLayout(); }} />
+            <button type="button" className="layout-action" aria-label="Nimeta paigutus" onClick={() => void renameLayout()}>Nimeta</button>
+            <button type="button" className="layout-action danger" aria-label="Kustuta paigutus" disabled={paperLayouts.length <= 1} onClick={() => void deleteLayout()}>Kustuta</button>
+          </span>
+        )}
+        <span className="layout-space">{activeLayout.kind === "model" ? "MODEL" : "PAPER"}</span>
+      </section>
       <footer className="statusbar">
         <span>{status}</span>
-        <span>MODEL · mm · SNAP</span>
+        <span>{activeLayout.kind === "model" ? "MODEL" : "PAPER"} · mm · SNAP</span>
       </footer>
     </main>
   );

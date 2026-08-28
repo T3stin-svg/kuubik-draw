@@ -18,11 +18,16 @@
   production DXF, independent parser and a fresh AutoCAD 2024 Core Console live workflow.
 - F-015 ERASE mirrored through selectable browser objects, locked-layer refusal, one atomic
   delete/UNDO, empty production DXF and a fresh AutoCAD 2024 Core Console live workflow.
+- F-016…F-021 MOVE/COPY/ROTATE/SCALE/MIRROR/OFFSET mirrored through owned AutoCAD
+  desktop workflows, Chromium, atomic operation logs and independent DXF/KDRAW1 read-back.
+- F-097 Layout tabs mirrored with create/rename/copy-before-source/reorder/delete,
+  independent viewport and paper-entity identifiers, atomic Undo/Redo, IndexedDB reload,
+  production KDRAW1 read-back and an owned AutoCAD native-DWG reopen workflow.
 
 ## Explicitly not certified yet
 
-- the new application has **2/133** locally certified parity rows (**1.5% raw / 1.9% weighted**);
-- 20 of the 22 legacy-certified rows still need mirror workflows and evidence here;
+- the new application has **9/133** locally certified parity rows (**6.8% raw / 8.4% weighted**);
+- 13 of the 22 legacy-certified rows still need mirror workflows and evidence here;
 - F-022 TRIM is not implemented in the new kernel;
 - spline/NURBS rendering is rejected rather than drawn as a misleading control polygon;
 - Unicode PDF text is rejected until a font-embedding path exists;
@@ -32,6 +37,6 @@
 - native DWG/DWT/XREF and PC3/CTB/STB remain deferred;
 - no preview or production deployment has been made.
 
-The next release gate remains parity mirror; F-016 MOVE is the next practical
-kernel vertical. F-022 work starts only after the mirror baseline and oracle-labor
-execution paths are real.
+The next release gate remains parity mirror; F-098 paper-space workspace/grid is
+the next legacy-certified P0 row. F-022 work starts only after the mirror baseline
+and oracle-labor execution paths are real.

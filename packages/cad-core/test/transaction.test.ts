@@ -64,6 +64,23 @@ describe("atomic document transaction", () => {
     expect(session.document.entities.map((entity) => entity.handle)).toEqual(["10", "11"]);
   });
 
+  it("forks a live session without losing its multi-command undo history", () => {
+    const first = new CadSession(createEmptyDocument({ documentId: "fork" }));
+    first.commit(operation(), [{ type: "put", entity: line }]);
+    const fork = first.fork();
+    fork.commit(
+      { ...operation(1), opId: "op-2", resultHandles: ["11"] },
+      [{ type: "put", entity: { ...line, handle: "11" } }],
+    );
+    expect(fork.document.entities.map((entity) => entity.handle)).toEqual(["10", "11"]);
+    expect(fork.nextUndoCommandId).toBe("LINE");
+    fork.undo();
+    expect(fork.nextRedoCommandId).toBe("LINE");
+    fork.undo();
+    expect(fork.document.entities).toEqual([]);
+    expect(first.document.entities.map((entity) => entity.handle)).toEqual(["10"]);
+  });
+
   it("rejects semantic no-ops without incrementing revision", () => {
     const source = createEmptyDocument({ documentId: "d" });
     expect(() => applyAtomicOperation(source, operation(), [])).toThrow(NoOpOperationError);
@@ -105,5 +122,24 @@ describe("atomic document transaction", () => {
     expect(session.document.layers.find((candidate) => candidate.id === layer.id)?.locked).toBe(true);
     session.undo();
     expect(session.document.layers.find((candidate) => candidate.id === layer.id)?.locked).toBe(false);
+  });
+
+  it("rejects an invalid layout collection at the atomic transaction boundary", () => {
+    const source = createEmptyDocument({ documentId: "layout-boundary" });
+    const sourceSnapshot = structuredClone(source);
+    const paper = {
+      id: "layout-1",
+      name: "Layout 1",
+      kind: "paper" as const,
+      viewports: [],
+      entities: [],
+    };
+    const invalidLayouts = [paper, source.layouts[0]!];
+    expect(() => applyAtomicOperation(
+      source,
+      { ...operation(), commandId: "LAYOUT_SET" },
+      [{ type: "set-layouts", layouts: invalidLayouts }],
+    )).toThrow(/model layout must remain first/i);
+    expect(source).toEqual(sourceSnapshot);
   });
 });

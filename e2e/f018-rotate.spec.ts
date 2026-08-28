@@ -196,7 +196,7 @@ test("F-018 ROTATE point angle, clockwise rotation, coincident Reference rejecti
   await expect(page.getByTestId("rotate-preview")).toHaveText("ROTATE eelvaade: 0 · 0°");
   await page.getByRole("button", { name: "ROTATE", exact: true }).click();
   await expect(page.getByText("ROTATE ei muutnud geomeetriat")).toBeVisible();
-  await expect(page.getByRole("button", { name: "UNDO", exact: true })).toBeDisabled();
+  await expect(page.getByRole("button", { name: "UNDO", exact: true })).toBeEnabled();
   const noOpDocument = await readLocalDocument(page);
   expect(noOpDocument.revision).toBe(3);
   expect(noOpDocument.entities[0]).toMatchObject({ start: { x: 10, y: 10 }, end: { x: 180, y: 90 } });

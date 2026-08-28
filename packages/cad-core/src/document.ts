@@ -22,7 +22,7 @@ export function createEmptyDocument(options: NewDocumentOptions): KDrawDocumentV
     textStyles: [],
     dimensionStyles: [],
     blocks: [],
-    layouts: [{ id: "model", name: "Model", kind: "model", viewports: [] }],
+    layouts: [{ id: "model", name: "Model", kind: "model", viewports: [], entities: [] }],
     attachments: [],
     metadata: { createdAt: now, updatedAt: now },
   };

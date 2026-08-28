@@ -2,9 +2,11 @@ import {
   assertKDrawDocumentV1,
   type CadEntity,
   type CadLayer,
+  type CadLayout,
   type CadOperation,
   type KDrawDocumentV1,
 } from "@kuubik/cad-schema";
+import { assertLayoutCollection } from "./layouts.js";
 
 export type EntityChange =
   | { type: "put"; entity: CadEntity }
@@ -15,6 +17,7 @@ export type CadChange =
   | { type: "put-layer"; layer: CadLayer }
   | { type: "delete-layer"; layerId: string }
   | { type: "set-current-layer"; layerId: string }
+  | { type: "set-layouts"; layouts: CadLayout[] }
   | { type: "undo-mark" };
 
 export interface CommittedOperation {
@@ -69,6 +72,7 @@ export function applyAtomicOperation(
   const entities = new Map(source.entities.map((entity) => [entity.handle, cloneEntity(entity)]));
   const layers = new Map(source.layers.map((layer) => [layer.id, structuredClone(layer)]));
   let currentLayerId = source.currentLayerId;
+  let layouts = structuredClone(source.layouts);
   const inverseChanges: CadChange[] = [];
   for (const change of changes) {
     if (change.type === "undo-mark") {
@@ -94,6 +98,12 @@ export function applyAtomicOperation(
       layers.set(change.layer.id, structuredClone(change.layer));
       continue;
     }
+    if (change.type === "set-layouts") {
+      assertLayoutCollection(change.layouts);
+      inverseChanges.unshift({ type: "set-layouts", layouts: structuredClone(layouts) });
+      layouts = structuredClone(change.layouts);
+      continue;
+    }
     if (change.type === "delete-layer") {
       const before = layers.get(change.layerId);
       if (!before) throw new RangeError(`Cannot delete missing layer ${change.layerId}.`);
@@ -114,12 +124,14 @@ export function applyAtomicOperation(
     revision: source.revision + 1,
     entities: [...entities.values()],
     layers: [...layers.values()],
+    layouts,
     currentLayerId,
     metadata: { ...structuredClone(source.metadata), updatedAt: now },
   };
   if (
     JSON.stringify(document.entities) === JSON.stringify(source.entities) &&
     JSON.stringify(document.layers) === JSON.stringify(source.layers) &&
+    JSON.stringify(document.layouts) === JSON.stringify(source.layouts) &&
     document.currentLayerId === source.currentLayerId &&
     !changes.some((change) => change.type === "undo-mark")
   ) throw new NoOpOperationError();
@@ -158,6 +170,22 @@ export class CadSession {
 
   get canRedo(): boolean {
     return this.#redo.length > 0;
+  }
+
+  get nextUndoCommandId(): string | null {
+    return this.#undo.at(-1)?.operation.commandId ?? null;
+  }
+
+  get nextRedoCommandId(): string | null {
+    return this.#redo.at(-1)?.operation.commandId ?? null;
+  }
+
+  fork(): CadSession {
+    const fork = new CadSession(this.#document, this.#appliedOperationIds);
+    fork.#undo = structuredClone(this.#undo);
+    fork.#redo = structuredClone(this.#redo);
+    fork.#sequence = this.#sequence;
+    return fork;
   }
 
   commit(operation: CadOperation, changes: readonly CadChange[], now?: string): CommittedOperation {

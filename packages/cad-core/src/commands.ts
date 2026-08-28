@@ -333,6 +333,7 @@ export function allocateEntityHandles(document: KDrawDocumentV1, count: number):
   const used = new Set([
     ...document.entities.map((entity) => entity.handle.toUpperCase()),
     ...document.blocks.flatMap((block) => block.entities.map((entity) => entity.handle.toUpperCase())),
+    ...document.layouts.flatMap((layout) => (layout.entities ?? []).map((entity) => entity.handle.toUpperCase())),
   ]);
   let maximum = 0xfn;
   for (const handle of used) {

@@ -1,0 +1,158 @@
+{
+  "rowId": "F-097",
+  "status": "PASS",
+  "exportedSha256": "9fbbdfbcce6f6990f98c3df0181d6d1932ff688b3637943232ade0fbe49adb96",
+  "finalRevision": 6,
+  "layouts": [
+    {
+      "id": "model",
+      "name": "Model",
+      "kind": "model",
+      "viewports": [],
+      "entities": []
+    },
+    {
+      "id": "layout-notes",
+      "name": "F097 NOTES",
+      "kind": "paper",
+      "paper": {
+        "widthMm": 297,
+        "heightMm": 210,
+        "marginsMm": {
+          "top": 10,
+          "right": 10,
+          "bottom": 10,
+          "left": 10
+        }
+      },
+      "viewports": [],
+      "entities": []
+    },
+    {
+      "id": "layout-plan",
+      "name": "F097 PLAN",
+      "kind": "paper",
+      "paper": {
+        "widthMm": 420,
+        "heightMm": 297,
+        "marginsMm": {
+          "top": 5,
+          "right": 6,
+          "bottom": 7,
+          "left": 8
+        }
+      },
+      "viewports": [
+        {
+          "id": "f097-plan-vp",
+          "center": {
+            "x": 210,
+            "y": 148.5
+          },
+          "width": 390,
+          "height": 267,
+          "viewCenter": {
+            "x": 1250,
+            "y": -750
+          },
+          "viewHeight": 5000,
+          "twistAngleRad": 0.2617993877991494,
+          "locked": true,
+          "layerOverrides": {
+            "0": {
+              "color": "#336699",
+              "frozen": true
+            }
+          }
+        }
+      ],
+      "entities": [
+        {
+          "kind": "circle",
+          "handle": "20",
+          "layerId": "0",
+          "center": {
+            "x": 50,
+            "y": 50
+          },
+          "radius": 25
+        }
+      ]
+    }
+  ],
+  "operations": [
+    {
+      "opId": "c5d8e9d8-7781-4b57-83ea-30cf85b7080e",
+      "baseRevision": 0,
+      "commandId": "LAYOUT_COPY",
+      "args": {
+        "sourceLayoutId": "layout-plan",
+        "resultLayoutId": "layout-1"
+      },
+      "targetHandles": [
+        "20"
+      ],
+      "resultHandles": [
+        "21"
+      ]
+    },
+    {
+      "opId": "01c7a0a2-0363-496c-83e6-7416de2aa841",
+      "baseRevision": 1,
+      "commandId": "LAYOUT_REORDER",
+      "args": {
+        "layoutId": "layout-notes",
+        "delta": -1
+      },
+      "targetHandles": [],
+      "resultHandles": []
+    },
+    {
+      "opId": "913c6866-63ce-475e-ba2d-555b52e2e10d",
+      "baseRevision": 2,
+      "commandId": "LAYOUT_REORDER",
+      "args": {
+        "layoutId": "layout-notes",
+        "delta": -1
+      },
+      "targetHandles": [],
+      "resultHandles": []
+    },
+    {
+      "opId": "1e3f0d2e-0918-413a-9286-04b0bf9fdce2",
+      "baseRevision": 3,
+      "commandId": "LAYOUT_DELETE",
+      "args": {
+        "layoutId": "layout-1"
+      },
+      "targetHandles": [
+        "21"
+      ],
+      "resultHandles": []
+    },
+    {
+      "opId": "1e3f0d2e-0918-413a-9286-04b0bf9fdce2:undo:1",
+      "baseRevision": 4,
+      "commandId": "UNDO",
+      "args": {
+        "originalOpId": "1e3f0d2e-0918-413a-9286-04b0bf9fdce2"
+      },
+      "targetHandles": [],
+      "resultHandles": [
+        "21"
+      ]
+    },
+    {
+      "opId": "d085bb11-d0d1-4a76-9f0c-3b1b4a74560b",
+      "baseRevision": 5,
+      "commandId": "LAYOUT_DELETE",
+      "args": {
+        "layoutId": "layout-1"
+      },
+      "targetHandles": [
+        "21"
+      ],
+      "resultHandles": []
+    }
+  ]
+}

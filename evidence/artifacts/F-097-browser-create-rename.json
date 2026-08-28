@@ -1,0 +1,556 @@
+{
+  "rowId": "F-097",
+  "status": "PASS",
+  "beforeUndo": {
+    "schemaVersion": 1,
+    "documentId": "local",
+    "revision": 3,
+    "units": {
+      "linear": "mm",
+      "displayPrecision": 4,
+      "angularPrecision": 6
+    },
+    "currentLayerId": "0",
+    "entities": [],
+    "layers": [
+      {
+        "id": "0",
+        "name": "0",
+        "visible": true,
+        "frozen": false,
+        "locked": false,
+        "plottable": true
+      },
+      {
+        "id": "locked",
+        "name": "F016_LOCKED",
+        "visible": true,
+        "frozen": false,
+        "locked": true,
+        "plottable": true
+      }
+    ],
+    "linetypes": [
+      {
+        "id": "DASHED",
+        "name": "DASHED",
+        "description": "Synthetic F-016 fixture",
+        "pattern": [
+          10,
+          -5
+        ]
+      }
+    ],
+    "textStyles": [
+      {
+        "id": "STANDARD",
+        "name": "Standard",
+        "fontFamily": "Arial",
+        "widthFactor": 1,
+        "obliqueAngleRad": 0
+      }
+    ],
+    "dimensionStyles": [
+      {
+        "id": "STANDARD",
+        "name": "Standard",
+        "textStyleId": "STANDARD",
+        "textHeight": 20,
+        "arrowSize": 10,
+        "extensionOffset": 5,
+        "scale": 1
+      }
+    ],
+    "blocks": [
+      {
+        "id": "B1",
+        "name": "F016_BLOCK",
+        "basePoint": {
+          "x": 0,
+          "y": 0
+        },
+        "entities": [
+          {
+            "kind": "line",
+            "handle": "B1-10",
+            "layerId": "0",
+            "start": {
+              "x": 0,
+              "y": 0
+            },
+            "end": {
+              "x": 100,
+              "y": 0
+            }
+          }
+        ]
+      }
+    ],
+    "layouts": [
+      {
+        "id": "model",
+        "name": "Model",
+        "kind": "model",
+        "viewports": [],
+        "entities": []
+      },
+      {
+        "id": "layout-1",
+        "name": "F097 PLAN",
+        "kind": "paper",
+        "paper": {
+          "widthMm": 297,
+          "heightMm": 210,
+          "marginsMm": {
+            "top": 10,
+            "right": 10,
+            "bottom": 10,
+            "left": 10
+          }
+        },
+        "viewports": [
+          {
+            "id": "viewport-1",
+            "center": {
+              "x": 148.5,
+              "y": 105
+            },
+            "width": 277,
+            "height": 190,
+            "viewCenter": {
+              "x": 0,
+              "y": 0
+            },
+            "viewHeight": 190,
+            "twistAngleRad": 0,
+            "locked": false
+          }
+        ],
+        "entities": []
+      },
+      {
+        "id": "layout-2",
+        "name": "Layout 1",
+        "kind": "paper",
+        "paper": {
+          "widthMm": 297,
+          "heightMm": 210,
+          "marginsMm": {
+            "top": 10,
+            "right": 10,
+            "bottom": 10,
+            "left": 10
+          }
+        },
+        "viewports": [
+          {
+            "id": "viewport-2",
+            "center": {
+              "x": 148.5,
+              "y": 105
+            },
+            "width": 277,
+            "height": 190,
+            "viewCenter": {
+              "x": 0,
+              "y": 0
+            },
+            "viewHeight": 190,
+            "twistAngleRad": 0,
+            "locked": false
+          }
+        ],
+        "entities": []
+      }
+    ],
+    "attachments": [],
+    "metadata": {
+      "title": "F-016 standard entity matrix",
+      "createdAt": "2026-08-28T11:30:00.000Z",
+      "updatedAt": "2026-08-28T15:26:47.835Z",
+      "source": "synthetic parity fixture"
+    }
+  },
+  "afterUndo": {
+    "schemaVersion": 1,
+    "documentId": "local",
+    "revision": 5,
+    "units": {
+      "linear": "mm",
+      "displayPrecision": 4,
+      "angularPrecision": 6
+    },
+    "currentLayerId": "0",
+    "entities": [],
+    "layers": [
+      {
+        "id": "0",
+        "name": "0",
+        "visible": true,
+        "frozen": false,
+        "locked": false,
+        "plottable": true
+      },
+      {
+        "id": "locked",
+        "name": "F016_LOCKED",
+        "visible": true,
+        "frozen": false,
+        "locked": true,
+        "plottable": true
+      }
+    ],
+    "linetypes": [
+      {
+        "id": "DASHED",
+        "name": "DASHED",
+        "description": "Synthetic F-016 fixture",
+        "pattern": [
+          10,
+          -5
+        ]
+      }
+    ],
+    "textStyles": [
+      {
+        "id": "STANDARD",
+        "name": "Standard",
+        "fontFamily": "Arial",
+        "widthFactor": 1,
+        "obliqueAngleRad": 0
+      }
+    ],
+    "dimensionStyles": [
+      {
+        "id": "STANDARD",
+        "name": "Standard",
+        "textStyleId": "STANDARD",
+        "textHeight": 20,
+        "arrowSize": 10,
+        "extensionOffset": 5,
+        "scale": 1
+      }
+    ],
+    "blocks": [
+      {
+        "id": "B1",
+        "name": "F016_BLOCK",
+        "basePoint": {
+          "x": 0,
+          "y": 0
+        },
+        "entities": [
+          {
+            "kind": "line",
+            "handle": "B1-10",
+            "layerId": "0",
+            "start": {
+              "x": 0,
+              "y": 0
+            },
+            "end": {
+              "x": 100,
+              "y": 0
+            }
+          }
+        ]
+      }
+    ],
+    "layouts": [
+      {
+        "id": "model",
+        "name": "Model",
+        "kind": "model",
+        "viewports": [],
+        "entities": []
+      },
+      {
+        "id": "layout-1",
+        "name": "Layout 1",
+        "kind": "paper",
+        "paper": {
+          "widthMm": 297,
+          "heightMm": 210,
+          "marginsMm": {
+            "top": 10,
+            "right": 10,
+            "bottom": 10,
+            "left": 10
+          }
+        },
+        "viewports": [
+          {
+            "id": "viewport-1",
+            "center": {
+              "x": 148.5,
+              "y": 105
+            },
+            "width": 277,
+            "height": 190,
+            "viewCenter": {
+              "x": 0,
+              "y": 0
+            },
+            "viewHeight": 190,
+            "twistAngleRad": 0,
+            "locked": false
+          }
+        ],
+        "entities": []
+      }
+    ],
+    "attachments": [],
+    "metadata": {
+      "title": "F-016 standard entity matrix",
+      "createdAt": "2026-08-28T11:30:00.000Z",
+      "updatedAt": "2026-08-28T15:26:48.035Z",
+      "source": "synthetic parity fixture"
+    }
+  },
+  "afterRedo": {
+    "schemaVersion": 1,
+    "documentId": "local",
+    "revision": 7,
+    "units": {
+      "linear": "mm",
+      "displayPrecision": 4,
+      "angularPrecision": 6
+    },
+    "currentLayerId": "0",
+    "entities": [],
+    "layers": [
+      {
+        "id": "0",
+        "name": "0",
+        "visible": true,
+        "frozen": false,
+        "locked": false,
+        "plottable": true
+      },
+      {
+        "id": "locked",
+        "name": "F016_LOCKED",
+        "visible": true,
+        "frozen": false,
+        "locked": true,
+        "plottable": true
+      }
+    ],
+    "linetypes": [
+      {
+        "id": "DASHED",
+        "name": "DASHED",
+        "description": "Synthetic F-016 fixture",
+        "pattern": [
+          10,
+          -5
+        ]
+      }
+    ],
+    "textStyles": [
+      {
+        "id": "STANDARD",
+        "name": "Standard",
+        "fontFamily": "Arial",
+        "widthFactor": 1,
+        "obliqueAngleRad": 0
+      }
+    ],
+    "dimensionStyles": [
+      {
+        "id": "STANDARD",
+        "name": "Standard",
+        "textStyleId": "STANDARD",
+        "textHeight": 20,
+        "arrowSize": 10,
+        "extensionOffset": 5,
+        "scale": 1
+      }
+    ],
+    "blocks": [
+      {
+        "id": "B1",
+        "name": "F016_BLOCK",
+        "basePoint": {
+          "x": 0,
+          "y": 0
+        },
+        "entities": [
+          {
+            "kind": "line",
+            "handle": "B1-10",
+            "layerId": "0",
+            "start": {
+              "x": 0,
+              "y": 0
+            },
+            "end": {
+              "x": 100,
+              "y": 0
+            }
+          }
+        ]
+      }
+    ],
+    "layouts": [
+      {
+        "id": "model",
+        "name": "Model",
+        "kind": "model",
+        "viewports": [],
+        "entities": []
+      },
+      {
+        "id": "layout-1",
+        "name": "F097 PLAN",
+        "kind": "paper",
+        "paper": {
+          "widthMm": 297,
+          "heightMm": 210,
+          "marginsMm": {
+            "top": 10,
+            "right": 10,
+            "bottom": 10,
+            "left": 10
+          }
+        },
+        "viewports": [
+          {
+            "id": "viewport-1",
+            "center": {
+              "x": 148.5,
+              "y": 105
+            },
+            "width": 277,
+            "height": 190,
+            "viewCenter": {
+              "x": 0,
+              "y": 0
+            },
+            "viewHeight": 190,
+            "twistAngleRad": 0,
+            "locked": false
+          }
+        ],
+        "entities": []
+      },
+      {
+        "id": "layout-2",
+        "name": "Layout 1",
+        "kind": "paper",
+        "paper": {
+          "widthMm": 297,
+          "heightMm": 210,
+          "marginsMm": {
+            "top": 10,
+            "right": 10,
+            "bottom": 10,
+            "left": 10
+          }
+        },
+        "viewports": [
+          {
+            "id": "viewport-2",
+            "center": {
+              "x": 148.5,
+              "y": 105
+            },
+            "width": 277,
+            "height": 190,
+            "viewCenter": {
+              "x": 0,
+              "y": 0
+            },
+            "viewHeight": 190,
+            "twistAngleRad": 0,
+            "locked": false
+          }
+        ],
+        "entities": []
+      }
+    ],
+    "attachments": [],
+    "metadata": {
+      "title": "F-016 standard entity matrix",
+      "createdAt": "2026-08-28T11:30:00.000Z",
+      "updatedAt": "2026-08-28T15:26:48.152Z",
+      "source": "synthetic parity fixture"
+    }
+  },
+  "operations": [
+    {
+      "opId": "e545073a-1644-423f-8943-a37c2d491d6c",
+      "baseRevision": 0,
+      "commandId": "LAYOUT_CREATE",
+      "args": {
+        "name": "Layout 1"
+      },
+      "targetHandles": [],
+      "resultHandles": []
+    },
+    {
+      "opId": "48d07aaa-069f-4fde-bd85-39842020af74",
+      "baseRevision": 1,
+      "commandId": "LAYOUT_RENAME",
+      "args": {
+        "layoutId": "layout-1",
+        "name": "F097 PLAN"
+      },
+      "targetHandles": [],
+      "resultHandles": []
+    },
+    {
+      "opId": "714c4180-bd7d-49b3-a20b-dd4767eb160d",
+      "baseRevision": 2,
+      "commandId": "LAYOUT_CREATE",
+      "args": {
+        "name": "Layout 1"
+      },
+      "targetHandles": [],
+      "resultHandles": []
+    },
+    {
+      "opId": "714c4180-bd7d-49b3-a20b-dd4767eb160d:undo:1",
+      "baseRevision": 3,
+      "commandId": "UNDO",
+      "args": {
+        "originalOpId": "714c4180-bd7d-49b3-a20b-dd4767eb160d"
+      },
+      "targetHandles": [],
+      "resultHandles": []
+    },
+    {
+      "opId": "48d07aaa-069f-4fde-bd85-39842020af74:undo:2",
+      "baseRevision": 4,
+      "commandId": "UNDO",
+      "args": {
+        "originalOpId": "48d07aaa-069f-4fde-bd85-39842020af74"
+      },
+      "targetHandles": [],
+      "resultHandles": []
+    },
+    {
+      "opId": "48d07aaa-069f-4fde-bd85-39842020af74:redo:3",
+      "baseRevision": 5,
+      "commandId": "LAYOUT_RENAME",
+      "args": {
+        "layoutId": "layout-1",
+        "name": "F097 PLAN"
+      },
+      "targetHandles": [],
+      "resultHandles": []
+    },
+    {
+      "opId": "714c4180-bd7d-49b3-a20b-dd4767eb160d:redo:4",
+      "baseRevision": 6,
+      "commandId": "LAYOUT_CREATE",
+      "args": {
+        "name": "Layout 1"
+      },
+      "targetHandles": [],
+      "resultHandles": []
+    }
+  ],
+  "duplicateRejected": true,
+  "duplicateError": "LAYOUT viga: Layout name already exists: f097 plan"
+}
