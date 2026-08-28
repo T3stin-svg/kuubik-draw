@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { CadCommandInputError, createEmptyDocument, executeErase, executeMove, executeRectangle, parseCartesianPoint, parseMoveDestination, resolveCadCommand, translateCadEntity } from "../src/index.js";
+import { allocateEntityHandles, CadCommandInputError, createEmptyDocument, executeCopy, executeErase, executeMove, executeRectangle, parseCartesianPoint, parseCopyDestinations, parseMoveDestination, resolveCadCommand, translateCadEntity } from "../src/index.js";
 
 describe("RECTANGLE command registry", () => {
   it("parses explicit Cartesian coordinate input without mutating a document", () => {
@@ -137,6 +137,87 @@ describe("MOVE command registry", () => {
     });
     expect(executeMove(document, { targetHandles: ["10", "missing"], basePoint: { x: 20, y: 30 }, destinationPoint: { x: 20, y: 30 } })).toEqual({
       changes: [], movedHandles: [], rejected: [], delta: { x: 0, y: 0 },
+    });
+  });
+});
+
+describe("COPY command registry", () => {
+  it("resolves CO/CP/COPY and parses one or repeated absolute/@relative destinations", () => {
+    expect(resolveCadCommand("co")?.id).toBe("COPY");
+    expect(resolveCadCommand(" CP ")?.id).toBe("COPY");
+    expect(resolveCadCommand("copy")?.id).toBe("COPY");
+    expect(parseCopyDestinations("600,950; @-300,100\n1100,1700", { x: 100, y: 200 })).toEqual([
+      { x: 600, y: 950 },
+      { x: -200, y: 300 },
+      { x: 1100, y: 1700 },
+    ]);
+    expect(() => parseCopyDestinations(" ; \n", { x: 0, y: 0 })).toThrow(/at least one/);
+  });
+
+  it("allocates deterministic collision-free uppercase hexadecimal handles", () => {
+    const document = createEmptyDocument({ documentId: "handles" });
+    document.entities.push(
+      { kind: "line", handle: "10", layerId: "0", start: { x: 0, y: 0 }, end: { x: 1, y: 0 } },
+      { kind: "line", handle: "legacy-id", layerId: "0", start: { x: 0, y: 1 }, end: { x: 1, y: 1 } },
+      { kind: "line", handle: "1A", layerId: "0", start: { x: 0, y: 2 }, end: { x: 1, y: 2 } },
+    );
+    document.blocks.push({
+      id: "block-1",
+      name: "Handle collision fixture",
+      basePoint: { x: 0, y: 0 },
+      entities: [{ kind: "line", handle: "1B", layerId: "0", start: { x: 0, y: 0 }, end: { x: 1, y: 0 } }],
+    });
+    expect(allocateEntityHandles(document, 3)).toEqual(["1C", "1D", "1E"]);
+    expect(() => allocateEntityHandles(document, -1)).toThrow(CadCommandInputError);
+  });
+
+  it("copies the original pickset to every destination, preserves properties and leaves originals untouched", () => {
+    const document = createEmptyDocument({ documentId: "copy" });
+    document.entities.push(
+      { kind: "line", handle: "10", layerId: "0", appearance: { color: "#f00", lineweightMm: 0.5 }, start: { x: 0, y: 0 }, end: { x: 1000, y: 0 } },
+      { kind: "polyline", handle: "11", layerId: "0", closed: false, vertices: [{ x: 0, y: 1000, bulge: 0.5, startWidth: 2 }, { x: 1000, y: 1000, endWidth: 3 }] },
+    );
+    expect(executeCopy(document, {
+      targetHandles: ["10", "10", "11"],
+      basePoint: { x: 100, y: 200 },
+      destinationPoints: [{ x: 600, y: 950 }, { x: -200, y: 300 }],
+    })).toEqual({
+      changes: [
+        { type: "put", entity: { kind: "line", handle: "12", layerId: "0", appearance: { color: "#f00", lineweightMm: 0.5 }, start: { x: 500, y: 750 }, end: { x: 1500, y: 750 } } },
+        { type: "put", entity: { kind: "polyline", handle: "13", layerId: "0", closed: false, vertices: [{ x: 500, y: 1750, bulge: 0.5, startWidth: 2 }, { x: 1500, y: 1750, endWidth: 3 }] } },
+        { type: "put", entity: { kind: "line", handle: "14", layerId: "0", appearance: { color: "#f00", lineweightMm: 0.5 }, start: { x: -300, y: 100 }, end: { x: 700, y: 100 } } },
+        { type: "put", entity: { kind: "polyline", handle: "15", layerId: "0", closed: false, vertices: [{ x: -300, y: 1100, bulge: 0.5, startWidth: 2 }, { x: 700, y: 1100, endWidth: 3 }] } },
+      ],
+      sourceHandles: ["10", "11"],
+      copiedHandles: ["12", "13", "14", "15"],
+      rejected: [],
+      deltas: [{ x: 500, y: 750 }, { x: -300, y: 100 }],
+    });
+    expect(document.entities.map((entity) => entity.handle)).toEqual(["10", "11"]);
+  });
+
+  it("allows coincident copies and rejects locked, missing and opaque proxy targets once per source", () => {
+    const document = createEmptyDocument({ documentId: "copy-guards" });
+    document.layers.push({ id: "locked", name: "Locked", visible: true, frozen: false, locked: true, plottable: true });
+    document.entities.push(
+      { kind: "line", handle: "10", layerId: "0", start: { x: 1, y: 2 }, end: { x: 3, y: 4 } },
+      { kind: "line", handle: "11", layerId: "locked", start: { x: 0, y: 0 }, end: { x: 1, y: 0 } },
+      { kind: "proxy", handle: "12", layerId: "0", originalType: "CUSTOM", raw: { preserved: true } },
+    );
+    expect(executeCopy(document, {
+      targetHandles: ["10", "11", "12", "missing"],
+      basePoint: { x: 20, y: 30 },
+      destinationPoints: [{ x: 20, y: 30 }],
+    })).toEqual({
+      changes: [{ type: "put", entity: { kind: "line", handle: "13", layerId: "0", start: { x: 1, y: 2 }, end: { x: 3, y: 4 } } }],
+      sourceHandles: ["10"],
+      copiedHandles: ["13"],
+      rejected: [
+        { handle: "11", reason: "locked-layer" },
+        { handle: "12", reason: "unsupported-entity" },
+        { handle: "missing", reason: "missing" },
+      ],
+      deltas: [{ x: 0, y: 0 }],
     });
   });
 });

@@ -12,7 +12,7 @@ const files = execFileSync("git", ["-C", root, "ls-files", "--cached", "--others
   .map((path) => path.replaceAll("\\", "/"));
 
 const blockedNames = /(^|\/)(\.env(?:\.|$)|credentials?|secrets?|service-account)(\/|$)/i;
-const blockedCad = /\.(dwg|dwt|dws|dxf|pdf|fcstd)$/i;
+const blockedCad = /\.(dwg|dwt|dws|dxf|pdf|fcstd|kdraw)$/i;
 const syntheticCadAllowlist = new Set([
   "parity/fixtures/F-003-empty-mm.dxf",
   "evidence/artifacts/F-003-kuubik.dxf",
@@ -26,6 +26,12 @@ const syntheticCadAllowlist = new Set([
   "evidence/artifacts/F-016-browser-moved.dxf",
   "evidence/artifacts/F-016-browser-restored.dxf",
   "evidence/artifacts/F-016-browser-locked.dxf",
+  "evidence/artifacts/F-016-standard-matrix.kdraw",
+  "evidence/artifacts/F-017-kuubik.dxf",
+  "evidence/artifacts/F-017-browser-copied.dxf",
+  "evidence/artifacts/F-017-browser-restored.dxf",
+  "evidence/artifacts/F-017-browser-locked.dxf",
+  "evidence/artifacts/F-017-standard-matrix.kdraw",
 ]);
 const textExtensions = new Set([".ts", ".tsx", ".js", ".mjs", ".json", ".md", ".yml", ".yaml", ".html", ".css", ".txt"]);
 const secretPatterns = [

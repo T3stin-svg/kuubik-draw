@@ -1,0 +1,1487 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-017",
+  "benchmark": "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
+  "engine": "Autodesk AutoCAD 2024 desktop COM",
+  "engineVersion": "24.3s (LMS Tech)",
+  "workflow": "12 native entity families; repeated COPY from base 100,200 to +500,+750 and -300,+100; one U; mixed locked layer",
+  "vectors": [
+    [
+      500,
+      750
+    ],
+    [
+      -300,
+      100
+    ]
+  ],
+  "before": [
+    {
+      "family": "line",
+      "objectName": "AcDbLine",
+      "handle": "283",
+      "layer": "F017_MATRIX",
+      "color": 1,
+      "linetype": "Continuous",
+      "lineweight": 50,
+      "bounds": {
+        "min": [
+          0,
+          0
+        ],
+        "max": [
+          50,
+          0
+        ]
+      }
+    },
+    {
+      "family": "polyline",
+      "objectName": "AcDbPolyline",
+      "handle": "284",
+      "layer": "F017_MATRIX",
+      "color": 1,
+      "linetype": "Continuous",
+      "lineweight": 50,
+      "bounds": {
+        "min": [
+          100,
+          0
+        ],
+        "max": [
+          200,
+          25
+        ]
+      }
+    },
+    {
+      "family": "circle",
+      "objectName": "AcDbCircle",
+      "handle": "285",
+      "layer": "F017_MATRIX",
+      "color": 1,
+      "linetype": "Continuous",
+      "lineweight": 50,
+      "bounds": {
+        "min": [
+          275,
+          -25
+        ],
+        "max": [
+          325,
+          25
+        ]
+      }
+    },
+    {
+      "family": "arc",
+      "objectName": "AcDbArc",
+      "handle": "286",
+      "layer": "F017_MATRIX",
+      "color": 1,
+      "linetype": "Continuous",
+      "lineweight": 50,
+      "bounds": {
+        "min": [
+          500,
+          0
+        ],
+        "max": [
+          530,
+          30
+        ]
+      }
+    },
+    {
+      "family": "ellipse",
+      "objectName": "AcDbEllipse",
+      "handle": "287",
+      "layer": "F017_MATRIX",
+      "color": 1,
+      "linetype": "Continuous",
+      "lineweight": 50,
+      "bounds": {
+        "min": [
+          649.7506218943955,
+          -26.92582403567252
+        ],
+        "max": [
+          750.2493781056045,
+          26.92582403567252
+        ]
+      }
+    },
+    {
+      "family": "spline",
+      "objectName": "AcDbSpline",
+      "handle": "288",
+      "layer": "F017_MATRIX",
+      "color": 1,
+      "linetype": "Continuous",
+      "lineweight": 50,
+      "bounds": {
+        "min": [
+          900,
+          0
+        ],
+        "max": [
+          1000,
+          75.75000002
+        ]
+      }
+    },
+    {
+      "family": "text",
+      "objectName": "AcDbText",
+      "handle": "289",
+      "layer": "F017_MATRIX",
+      "color": 1,
+      "linetype": "Continuous",
+      "lineweight": 50,
+      "bounds": {
+        "min": [
+          1100,
+          -0.34106412005457026
+        ],
+        "max": [
+          1242.8512960436562,
+          20.081855388813096
+        ]
+      }
+    },
+    {
+      "family": "mtext",
+      "objectName": "AcDbMText",
+      "handle": "28A",
+      "layer": "F017_MATRIX",
+      "color": 1,
+      "linetype": "Continuous",
+      "lineweight": 50,
+      "bounds": {
+        "min": [
+          1250,
+          -2.5528649386084585
+        ],
+        "max": [
+          1450,
+          0
+        ]
+      }
+    },
+    {
+      "family": "leader",
+      "objectName": "AcDbLeader",
+      "handle": "28C",
+      "layer": "F017_MATRIX",
+      "color": 1,
+      "linetype": "Continuous",
+      "lineweight": 50,
+      "bounds": {
+        "min": [
+          1400,
+          0
+        ],
+        "max": [
+          1499.375,
+          50
+        ]
+      }
+    },
+    {
+      "family": "dimension",
+      "objectName": "AcDbAlignedDimension",
+      "handle": "28E",
+      "layer": "F017_MATRIX",
+      "color": 1,
+      "linetype": "Continuous",
+      "lineweight": 50,
+      "bounds": {
+        "min": [
+          1550,
+          0
+        ],
+        "max": [
+          1650,
+          53.177864938608465
+        ]
+      }
+    },
+    {
+      "family": "hatch",
+      "objectName": "AcDbHatch",
+      "handle": "2C2",
+      "layer": "F017_MATRIX",
+      "color": 1,
+      "linetype": "Continuous",
+      "lineweight": 50,
+      "bounds": {
+        "min": [
+          1700,
+          0
+        ],
+        "max": [
+          1800,
+          100
+        ]
+      }
+    },
+    {
+      "family": "blockRef",
+      "objectName": "AcDbBlockReference",
+      "handle": "2C7",
+      "layer": "F017_MATRIX",
+      "color": 1,
+      "linetype": "Continuous",
+      "lineweight": 50,
+      "bounds": {
+        "min": [
+          1900,
+          0
+        ],
+        "max": [
+          2045.3368632565966,
+          37.11059388817844
+        ]
+      }
+    }
+  ],
+  "after": [
+    {
+      "family": "line",
+      "states": [
+        {
+          "family": "line",
+          "objectName": "AcDbLine",
+          "handle": "283",
+          "layer": "F017_MATRIX",
+          "color": 1,
+          "linetype": "Continuous",
+          "lineweight": 50,
+          "bounds": {
+            "min": [
+              0,
+              0
+            ],
+            "max": [
+              50,
+              0
+            ]
+          }
+        },
+        {
+          "family": "line",
+          "objectName": "AcDbLine",
+          "handle": "2EC",
+          "layer": "F017_MATRIX",
+          "color": 1,
+          "linetype": "Continuous",
+          "lineweight": 50,
+          "bounds": {
+            "min": [
+              500,
+              750
+            ],
+            "max": [
+              550,
+              750
+            ]
+          }
+        },
+        {
+          "family": "line",
+          "objectName": "AcDbLine",
+          "handle": "30D",
+          "layer": "F017_MATRIX",
+          "color": 1,
+          "linetype": "Continuous",
+          "lineweight": 50,
+          "bounds": {
+            "min": [
+              -300,
+              100
+            ],
+            "max": [
+              -250,
+              100
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "family": "polyline",
+      "states": [
+        {
+          "family": "polyline",
+          "objectName": "AcDbPolyline",
+          "handle": "284",
+          "layer": "F017_MATRIX",
+          "color": 1,
+          "linetype": "Continuous",
+          "lineweight": 50,
+          "bounds": {
+            "min": [
+              100,
+              0
+            ],
+            "max": [
+              200,
+              25
+            ]
+          }
+        },
+        {
+          "family": "polyline",
+          "objectName": "AcDbPolyline",
+          "handle": "2ED",
+          "layer": "F017_MATRIX",
+          "color": 1,
+          "linetype": "Continuous",
+          "lineweight": 50,
+          "bounds": {
+            "min": [
+              600,
+              750
+            ],
+            "max": [
+              700,
+              775
+            ]
+          }
+        },
+        {
+          "family": "polyline",
+          "objectName": "AcDbPolyline",
+          "handle": "30E",
+          "layer": "F017_MATRIX",
+          "color": 1,
+          "linetype": "Continuous",
+          "lineweight": 50,
+          "bounds": {
+            "min": [
+              -200,
+              100
+            ],
+            "max": [
+              -100,
+              125
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "family": "circle",
+      "states": [
+        {
+          "family": "circle",
+          "objectName": "AcDbCircle",
+          "handle": "285",
+          "layer": "F017_MATRIX",
+          "color": 1,
+          "linetype": "Continuous",
+          "lineweight": 50,
+          "bounds": {
+            "min": [
+              275,
+              -25
+            ],
+            "max": [
+              325,
+              25
+            ]
+          }
+        },
+        {
+          "family": "circle",
+          "objectName": "AcDbCircle",
+          "handle": "2EE",
+          "layer": "F017_MATRIX",
+          "color": 1,
+          "linetype": "Continuous",
+          "lineweight": 50,
+          "bounds": {
+            "min": [
+              775,
+              725
+            ],
+            "max": [
+              825,
+              775
+            ]
+          }
+        },
+        {
+          "family": "circle",
+          "objectName": "AcDbCircle",
+          "handle": "30F",
+          "layer": "F017_MATRIX",
+          "color": 1,
+          "linetype": "Continuous",
+          "lineweight": 50,
+          "bounds": {
+            "min": [
+              -25,
+              75
+            ],
+            "max": [
+              25,
+              125
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "family": "arc",
+      "states": [
+        {
+          "family": "arc",
+          "objectName": "AcDbArc",
+          "handle": "286",
+          "layer": "F017_MATRIX",
+          "color": 1,
+          "linetype": "Continuous",
+          "lineweight": 50,
+          "bounds": {
+            "min": [
+              500,
+              0
+            ],
+            "max": [
+              530,
+              30
+            ]
+          }
+        },
+        {
+          "family": "arc",
+          "objectName": "AcDbArc",
+          "handle": "2EF",
+          "layer": "F017_MATRIX",
+          "color": 1,
+          "linetype": "Continuous",
+          "lineweight": 50,
+          "bounds": {
+            "min": [
+              1000,
+              750
+            ],
+            "max": [
+              1030,
+              780
+            ]
+          }
+        },
+        {
+          "family": "arc",
+          "objectName": "AcDbArc",
+          "handle": "310",
+          "layer": "F017_MATRIX",
+          "color": 1,
+          "linetype": "Continuous",
+          "lineweight": 50,
+          "bounds": {
+            "min": [
+              200,
+              100
+            ],
+            "max": [
+              230,
+              130
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "family": "ellipse",
+      "states": [
+        {
+          "family": "ellipse",
+          "objectName": "AcDbEllipse",
+          "handle": "287",
+          "layer": "F017_MATRIX",
+          "color": 1,
+          "linetype": "Continuous",
+          "lineweight": 50,
+          "bounds": {
+            "min": [
+              649.7506218943955,
+              -26.92582403567252
+            ],
+            "max": [
+              750.2493781056045,
+              26.92582403567252
+            ]
+          }
+        },
+        {
+          "family": "ellipse",
+          "objectName": "AcDbEllipse",
+          "handle": "2F0",
+          "layer": "F017_MATRIX",
+          "color": 1,
+          "linetype": "Continuous",
+          "lineweight": 50,
+          "bounds": {
+            "min": [
+              1149.7506218943956,
+              723.0741759643274
+            ],
+            "max": [
+              1250.2493781056044,
+              776.9258240356726
+            ]
+          }
+        },
+        {
+          "family": "ellipse",
+          "objectName": "AcDbEllipse",
+          "handle": "311",
+          "layer": "F017_MATRIX",
+          "color": 1,
+          "linetype": "Continuous",
+          "lineweight": 50,
+          "bounds": {
+            "min": [
+              349.7506218943955,
+              73.07417596432748
+            ],
+            "max": [
+              450.2493781056045,
+              126.92582403567252
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "family": "spline",
+      "states": [
+        {
+          "family": "spline",
+          "objectName": "AcDbSpline",
+          "handle": "288",
+          "layer": "F017_MATRIX",
+          "color": 1,
+          "linetype": "Continuous",
+          "lineweight": 50,
+          "bounds": {
+            "min": [
+              900,
+              0
+            ],
+            "max": [
+              1000,
+              75.75000002
+            ]
+          }
+        },
+        {
+          "family": "spline",
+          "objectName": "AcDbSpline",
+          "handle": "2F1",
+          "layer": "F017_MATRIX",
+          "color": 1,
+          "linetype": "Continuous",
+          "lineweight": 50,
+          "bounds": {
+            "min": [
+              1400,
+              750
+            ],
+            "max": [
+              1500,
+              825.75000002
+            ]
+          }
+        },
+        {
+          "family": "spline",
+          "objectName": "AcDbSpline",
+          "handle": "312",
+          "layer": "F017_MATRIX",
+          "color": 1,
+          "linetype": "Continuous",
+          "lineweight": 50,
+          "bounds": {
+            "min": [
+              600,
+              100
+            ],
+            "max": [
+              700,
+              175.75000002000002
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "family": "text",
+      "states": [
+        {
+          "family": "text",
+          "objectName": "AcDbText",
+          "handle": "289",
+          "layer": "F017_MATRIX",
+          "color": 1,
+          "linetype": "Continuous",
+          "lineweight": 50,
+          "bounds": {
+            "min": [
+              1100,
+              -0.34106412005457026
+            ],
+            "max": [
+              1242.8512960436562,
+              20.081855388813096
+            ]
+          }
+        },
+        {
+          "family": "text",
+          "objectName": "AcDbText",
+          "handle": "2F2",
+          "layer": "F017_MATRIX",
+          "color": 1,
+          "linetype": "Continuous",
+          "lineweight": 50,
+          "bounds": {
+            "min": [
+              1600,
+              749.6589358799454
+            ],
+            "max": [
+              1742.8512960436562,
+              770.0818553888131
+            ]
+          }
+        },
+        {
+          "family": "text",
+          "objectName": "AcDbText",
+          "handle": "313",
+          "layer": "F017_MATRIX",
+          "color": 1,
+          "linetype": "Continuous",
+          "lineweight": 50,
+          "bounds": {
+            "min": [
+              800,
+              99.65893587994543
+            ],
+            "max": [
+              942.8512960436562,
+              120.0818553888131
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "family": "mtext",
+      "states": [
+        {
+          "family": "mtext",
+          "objectName": "AcDbMText",
+          "handle": "28A",
+          "layer": "F017_MATRIX",
+          "color": 1,
+          "linetype": "Continuous",
+          "lineweight": 50,
+          "bounds": {
+            "min": [
+              1250,
+              -2.5528649386084585
+            ],
+            "max": [
+              1450,
+              0
+            ]
+          }
+        },
+        {
+          "family": "mtext",
+          "objectName": "AcDbMText",
+          "handle": "2F3",
+          "layer": "F017_MATRIX",
+          "color": 1,
+          "linetype": "Continuous",
+          "lineweight": 50,
+          "bounds": {
+            "min": [
+              1750,
+              747.4471350613916
+            ],
+            "max": [
+              1950,
+              750
+            ]
+          }
+        },
+        {
+          "family": "mtext",
+          "objectName": "AcDbMText",
+          "handle": "314",
+          "layer": "F017_MATRIX",
+          "color": 1,
+          "linetype": "Continuous",
+          "lineweight": 50,
+          "bounds": {
+            "min": [
+              950,
+              97.44713506139153
+            ],
+            "max": [
+              1150,
+              100
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "family": "leader",
+      "states": [
+        {
+          "family": "leader",
+          "objectName": "AcDbLeader",
+          "handle": "28C",
+          "layer": "F017_MATRIX",
+          "color": 1,
+          "linetype": "Continuous",
+          "lineweight": 50,
+          "bounds": {
+            "min": [
+              1400,
+              0
+            ],
+            "max": [
+              1499.375,
+              50
+            ]
+          }
+        },
+        {
+          "family": "leader",
+          "objectName": "AcDbLeader",
+          "handle": "2F4",
+          "layer": "F017_MATRIX",
+          "color": 1,
+          "linetype": "Continuous",
+          "lineweight": 50,
+          "bounds": {
+            "min": [
+              1900,
+              750
+            ],
+            "max": [
+              1999.375,
+              800
+            ]
+          }
+        },
+        {
+          "family": "leader",
+          "objectName": "AcDbLeader",
+          "handle": "315",
+          "layer": "F017_MATRIX",
+          "color": 1,
+          "linetype": "Continuous",
+          "lineweight": 50,
+          "bounds": {
+            "min": [
+              1100,
+              100
+            ],
+            "max": [
+              1199.375,
+              150
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "family": "dimension",
+      "states": [
+        {
+          "family": "dimension",
+          "objectName": "AcDbAlignedDimension",
+          "handle": "28E",
+          "layer": "F017_MATRIX",
+          "color": 1,
+          "linetype": "Continuous",
+          "lineweight": 50,
+          "bounds": {
+            "min": [
+              1550,
+              0
+            ],
+            "max": [
+              1650,
+              53.177864938608465
+            ]
+          }
+        },
+        {
+          "family": "dimension",
+          "objectName": "AcDbAlignedDimension",
+          "handle": "2F5",
+          "layer": "F017_MATRIX",
+          "color": 1,
+          "linetype": "Continuous",
+          "lineweight": 50,
+          "bounds": {
+            "min": [
+              2050,
+              750
+            ],
+            "max": [
+              2150,
+              803.1778649386085
+            ]
+          }
+        },
+        {
+          "family": "dimension",
+          "objectName": "AcDbAlignedDimension",
+          "handle": "316",
+          "layer": "F017_MATRIX",
+          "color": 1,
+          "linetype": "Continuous",
+          "lineweight": 50,
+          "bounds": {
+            "min": [
+              1250,
+              100
+            ],
+            "max": [
+              1350,
+              153.17786493860848
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "family": "hatch",
+      "states": [
+        {
+          "family": "hatch",
+          "objectName": "AcDbHatch",
+          "handle": "2C2",
+          "layer": "F017_MATRIX",
+          "color": 1,
+          "linetype": "Continuous",
+          "lineweight": 50,
+          "bounds": {
+            "min": [
+              1700,
+              0
+            ],
+            "max": [
+              1800,
+              100
+            ]
+          }
+        },
+        {
+          "family": "hatch",
+          "objectName": "AcDbHatch",
+          "handle": "2F6",
+          "layer": "F017_MATRIX",
+          "color": 1,
+          "linetype": "Continuous",
+          "lineweight": 50,
+          "bounds": {
+            "min": [
+              2200,
+              750
+            ],
+            "max": [
+              2300,
+              850
+            ]
+          }
+        },
+        {
+          "family": "hatch",
+          "objectName": "AcDbHatch",
+          "handle": "317",
+          "layer": "F017_MATRIX",
+          "color": 1,
+          "linetype": "Continuous",
+          "lineweight": 50,
+          "bounds": {
+            "min": [
+              1400,
+              100
+            ],
+            "max": [
+              1500,
+              200
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "family": "blockRef",
+      "states": [
+        {
+          "family": "blockRef",
+          "objectName": "AcDbBlockReference",
+          "handle": "2C7",
+          "layer": "F017_MATRIX",
+          "color": 1,
+          "linetype": "Continuous",
+          "lineweight": 50,
+          "bounds": {
+            "min": [
+              1900,
+              0
+            ],
+            "max": [
+              2045.3368632565966,
+              37.11059388817844
+            ]
+          }
+        },
+        {
+          "family": "blockRef",
+          "objectName": "AcDbBlockReference",
+          "handle": "2F7",
+          "layer": "F017_MATRIX",
+          "color": 1,
+          "linetype": "Continuous",
+          "lineweight": 50,
+          "bounds": {
+            "min": [
+              2400,
+              750
+            ],
+            "max": [
+              2545.3368632565966,
+              787.1105938881784
+            ]
+          }
+        },
+        {
+          "family": "blockRef",
+          "objectName": "AcDbBlockReference",
+          "handle": "318",
+          "layer": "F017_MATRIX",
+          "color": 1,
+          "linetype": "Continuous",
+          "lineweight": 50,
+          "bounds": {
+            "min": [
+              1600,
+              100
+            ],
+            "max": [
+              1745.3368632565966,
+              137.11059388817844
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "afterUndo": [
+    {
+      "family": "line",
+      "states": [
+        {
+          "family": "line",
+          "objectName": "AcDbLine",
+          "handle": "283",
+          "layer": "F017_MATRIX",
+          "color": 1,
+          "linetype": "Continuous",
+          "lineweight": 50,
+          "bounds": {
+            "min": [
+              0,
+              0
+            ],
+            "max": [
+              50,
+              0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "family": "polyline",
+      "states": [
+        {
+          "family": "polyline",
+          "objectName": "AcDbPolyline",
+          "handle": "284",
+          "layer": "F017_MATRIX",
+          "color": 1,
+          "linetype": "Continuous",
+          "lineweight": 50,
+          "bounds": {
+            "min": [
+              100,
+              0
+            ],
+            "max": [
+              200,
+              25
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "family": "circle",
+      "states": [
+        {
+          "family": "circle",
+          "objectName": "AcDbCircle",
+          "handle": "285",
+          "layer": "F017_MATRIX",
+          "color": 1,
+          "linetype": "Continuous",
+          "lineweight": 50,
+          "bounds": {
+            "min": [
+              275,
+              -25
+            ],
+            "max": [
+              325,
+              25
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "family": "arc",
+      "states": [
+        {
+          "family": "arc",
+          "objectName": "AcDbArc",
+          "handle": "286",
+          "layer": "F017_MATRIX",
+          "color": 1,
+          "linetype": "Continuous",
+          "lineweight": 50,
+          "bounds": {
+            "min": [
+              500,
+              0
+            ],
+            "max": [
+              530,
+              30
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "family": "ellipse",
+      "states": [
+        {
+          "family": "ellipse",
+          "objectName": "AcDbEllipse",
+          "handle": "287",
+          "layer": "F017_MATRIX",
+          "color": 1,
+          "linetype": "Continuous",
+          "lineweight": 50,
+          "bounds": {
+            "min": [
+              649.7506218943955,
+              -26.92582403567252
+            ],
+            "max": [
+              750.2493781056045,
+              26.92582403567252
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "family": "spline",
+      "states": [
+        {
+          "family": "spline",
+          "objectName": "AcDbSpline",
+          "handle": "288",
+          "layer": "F017_MATRIX",
+          "color": 1,
+          "linetype": "Continuous",
+          "lineweight": 50,
+          "bounds": {
+            "min": [
+              900,
+              0
+            ],
+            "max": [
+              1000,
+              75.75000002
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "family": "text",
+      "states": [
+        {
+          "family": "text",
+          "objectName": "AcDbText",
+          "handle": "289",
+          "layer": "F017_MATRIX",
+          "color": 1,
+          "linetype": "Continuous",
+          "lineweight": 50,
+          "bounds": {
+            "min": [
+              1100,
+              -0.34106412005457026
+            ],
+            "max": [
+              1242.8512960436562,
+              20.081855388813096
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "family": "mtext",
+      "states": [
+        {
+          "family": "mtext",
+          "objectName": "AcDbMText",
+          "handle": "28A",
+          "layer": "F017_MATRIX",
+          "color": 1,
+          "linetype": "Continuous",
+          "lineweight": 50,
+          "bounds": {
+            "min": [
+              1250,
+              -2.5528649386084585
+            ],
+            "max": [
+              1450,
+              0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "family": "leader",
+      "states": [
+        {
+          "family": "leader",
+          "objectName": "AcDbLeader",
+          "handle": "28C",
+          "layer": "F017_MATRIX",
+          "color": 1,
+          "linetype": "Continuous",
+          "lineweight": 50,
+          "bounds": {
+            "min": [
+              1400,
+              0
+            ],
+            "max": [
+              1499.375,
+              50
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "family": "dimension",
+      "states": [
+        {
+          "family": "dimension",
+          "objectName": "AcDbAlignedDimension",
+          "handle": "28E",
+          "layer": "F017_MATRIX",
+          "color": 1,
+          "linetype": "Continuous",
+          "lineweight": 50,
+          "bounds": {
+            "min": [
+              1550,
+              0
+            ],
+            "max": [
+              1650,
+              53.177864938608465
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "family": "hatch",
+      "states": [
+        {
+          "family": "hatch",
+          "objectName": "AcDbHatch",
+          "handle": "2C2",
+          "layer": "F017_MATRIX",
+          "color": 1,
+          "linetype": "Continuous",
+          "lineweight": 50,
+          "bounds": {
+            "min": [
+              1700,
+              0
+            ],
+            "max": [
+              1800,
+              100
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "family": "blockRef",
+      "states": [
+        {
+          "family": "blockRef",
+          "objectName": "AcDbBlockReference",
+          "handle": "2C7",
+          "layer": "F017_MATRIX",
+          "color": 1,
+          "linetype": "Continuous",
+          "lineweight": 50,
+          "bounds": {
+            "min": [
+              1900,
+              0
+            ],
+            "max": [
+              2045.3368632565966,
+              37.11059388817844
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "family": "line",
+      "count": 3,
+      "originalPresent": true,
+      "firstCopy": true,
+      "secondCopy": true,
+      "propertiesPreserved": true,
+      "uniqueHandles": true,
+      "undoRestored": true
+    },
+    {
+      "family": "polyline",
+      "count": 3,
+      "originalPresent": true,
+      "firstCopy": true,
+      "secondCopy": true,
+      "propertiesPreserved": true,
+      "uniqueHandles": true,
+      "undoRestored": true
+    },
+    {
+      "family": "circle",
+      "count": 3,
+      "originalPresent": true,
+      "firstCopy": true,
+      "secondCopy": true,
+      "propertiesPreserved": true,
+      "uniqueHandles": true,
+      "undoRestored": true
+    },
+    {
+      "family": "arc",
+      "count": 3,
+      "originalPresent": true,
+      "firstCopy": true,
+      "secondCopy": true,
+      "propertiesPreserved": true,
+      "uniqueHandles": true,
+      "undoRestored": true
+    },
+    {
+      "family": "ellipse",
+      "count": 3,
+      "originalPresent": true,
+      "firstCopy": true,
+      "secondCopy": true,
+      "propertiesPreserved": true,
+      "uniqueHandles": true,
+      "undoRestored": true
+    },
+    {
+      "family": "spline",
+      "count": 3,
+      "originalPresent": true,
+      "firstCopy": true,
+      "secondCopy": true,
+      "propertiesPreserved": true,
+      "uniqueHandles": true,
+      "undoRestored": true
+    },
+    {
+      "family": "text",
+      "count": 3,
+      "originalPresent": true,
+      "firstCopy": true,
+      "secondCopy": true,
+      "propertiesPreserved": true,
+      "uniqueHandles": true,
+      "undoRestored": true
+    },
+    {
+      "family": "mtext",
+      "count": 3,
+      "originalPresent": true,
+      "firstCopy": true,
+      "secondCopy": true,
+      "propertiesPreserved": true,
+      "uniqueHandles": true,
+      "undoRestored": true
+    },
+    {
+      "family": "leader",
+      "count": 3,
+      "originalPresent": true,
+      "firstCopy": true,
+      "secondCopy": true,
+      "propertiesPreserved": true,
+      "uniqueHandles": true,
+      "undoRestored": true
+    },
+    {
+      "family": "dimension",
+      "count": 3,
+      "originalPresent": true,
+      "firstCopy": true,
+      "secondCopy": true,
+      "propertiesPreserved": true,
+      "uniqueHandles": true,
+      "undoRestored": true
+    },
+    {
+      "family": "hatch",
+      "count": 3,
+      "originalPresent": true,
+      "firstCopy": true,
+      "secondCopy": true,
+      "propertiesPreserved": true,
+      "uniqueHandles": true,
+      "undoRestored": true
+    },
+    {
+      "family": "blockRef",
+      "count": 3,
+      "originalPresent": true,
+      "firstCopy": true,
+      "secondCopy": true,
+      "propertiesPreserved": true,
+      "uniqueHandles": true,
+      "undoRestored": true
+    }
+  ],
+  "gate": {
+    "checkCount": 12,
+    "failedCount": 0,
+    "failed": [],
+    "allChecksPassed": true,
+    "lockedPassed": true
+  },
+  "mixedLocked": {
+    "editable": [
+      {
+        "family": "editable",
+        "objectName": "AcDbLine",
+        "handle": "32E",
+        "layer": "F017_EDIT",
+        "color": 256,
+        "linetype": "ByLayer",
+        "lineweight": -1,
+        "bounds": {
+          "min": [
+            0,
+            2500
+          ],
+          "max": [
+            1000,
+            2500
+          ]
+        }
+      },
+      {
+        "family": "editable",
+        "objectName": "AcDbLine",
+        "handle": "330",
+        "layer": "F017_EDIT",
+        "color": 256,
+        "linetype": "ByLayer",
+        "lineweight": -1,
+        "bounds": {
+          "min": [
+            100,
+            2550
+          ],
+          "max": [
+            1100,
+            2550
+          ]
+        }
+      }
+    ],
+    "locked": [
+      {
+        "family": "locked",
+        "objectName": "AcDbLine",
+        "handle": "32F",
+        "layer": "F017_LOCKED",
+        "color": 256,
+        "linetype": "ByLayer",
+        "lineweight": -1,
+        "bounds": {
+          "min": [
+            0,
+            2700
+          ],
+          "max": [
+            1000,
+            2700
+          ]
+        }
+      }
+    ],
+    "checks": {
+      "editableCount": 2,
+      "lockedCount": 1,
+      "editableCopied": true,
+      "lockedUnchanged": true
+    }
+  },
+  "cmdNamesAfter": "",
+  "status": "PASS",
+  "scriptSha256": "2d3310b6e02e2d1b6154203e3f10be3f223e9ae1557d6abec91a4b1a8fcf3a03",
+  "matrixScriptSha256": "5de4f0eddec92fc7a697cc40e30c72720a0239c501d1ec62a3c7c267278f22ea",
+  "observedAt": "2026-08-28T11:51:41.203Z"
+}

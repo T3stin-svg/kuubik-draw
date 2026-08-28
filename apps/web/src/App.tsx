@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { CadCommandInputError, CadSession, createEmptyDocument, parseCartesianPoint, parseMoveDestination, resolveCadCommand, type CadChange, type MoveRejectedTarget } from "@kuubik/cad-core";
+import { allocateEntityHandles, CadCommandInputError, CadSession, createEmptyDocument, parseCartesianPoint, parseCopyDestinations, parseMoveDestination, resolveCadCommand, type CadChange, type CopyRejectedTarget, type MoveRejectedTarget } from "@kuubik/cad-core";
 import { exportDxf } from "@kuubik/cad-dxf";
 import { CadCanvasRenderer } from "@kuubik/cad-renderer";
 import type { CadEntity, KDrawDocumentV1 } from "@kuubik/cad-schema";
@@ -7,6 +7,13 @@ import { KDrawIndexedDb, StorageRevisionConflictError } from "./indexed-db.js";
 import "./style.css";
 
 const LOCAL_DOCUMENT_ID = "local";
+
+function nextInteractiveHandle(document: KDrawDocumentV1): string {
+  const preferred = (document.revision + 16).toString(16).toUpperCase();
+  return document.entities.some((entity) => entity.handle.toUpperCase() === preferred)
+    ? allocateEntityHandles(document, 1)[0]!
+    : preferred;
+}
 
 export function App() {
   const canvas = useRef<HTMLCanvasElement>(null);
@@ -22,9 +29,14 @@ export function App() {
   const [moveDestinationInput, setMoveDestinationInput] = useState("600,950");
   const [moveAwaitingSelection, setMoveAwaitingSelection] = useState(false);
   const [lastMoveRejected, setLastMoveRejected] = useState<MoveRejectedTarget[]>([]);
+  const [copyBaseInput, setCopyBaseInput] = useState("100,200");
+  const [copyDestinationsInput, setCopyDestinationsInput] = useState("600,950; -200,300");
+  const [copyAwaitingSelection, setCopyAwaitingSelection] = useState(false);
+  const [lastCopyRejected, setLastCopyRejected] = useState<CopyRejectedTarget[]>([]);
+  const [previewCommand, setPreviewCommand] = useState<"MOVE" | "COPY">("MOVE");
   const activeLayer = document.layers.find((layer) => layer.id === document.currentLayerId)!;
   const movePreview = useMemo((): { entities: CadEntity[]; delta: { x: number; y: number } } | null => {
-    if (selectedHandles.length === 0) return null;
+    if (previewCommand !== "MOVE" || selectedHandles.length === 0) return null;
     try {
       const command = resolveCadCommand("MOVE");
       if (!command || command.id !== "MOVE") return null;
@@ -38,7 +50,23 @@ export function App() {
     } catch {
       return null;
     }
-  }, [document, moveBaseInput, moveDestinationInput, selectedHandles]);
+  }, [document, moveBaseInput, moveDestinationInput, previewCommand, selectedHandles]);
+  const copyPreview = useMemo((): { entities: CadEntity[]; deltas: { x: number; y: number }[] } | null => {
+    if (previewCommand !== "COPY" || selectedHandles.length === 0) return null;
+    try {
+      const command = resolveCadCommand("COPY");
+      if (!command || command.id !== "COPY") return null;
+      const basePoint = parseCartesianPoint(copyBaseInput);
+      const destinationPoints = parseCopyDestinations(copyDestinationsInput, basePoint);
+      const result = command.execute(document, { targetHandles: selectedHandles, basePoint, destinationPoints });
+      return {
+        entities: result.changes.flatMap((change) => change.type === "put" ? [change.entity] : []),
+        deltas: result.deltas,
+      };
+    } catch {
+      return null;
+    }
+  }, [copyBaseInput, copyDestinationsInput, document, previewCommand, selectedHandles]);
 
   useEffect(() => {
     let active = true;
@@ -74,8 +102,8 @@ export function App() {
       widthPx: element.clientWidth,
       heightPx: element.clientHeight,
       devicePixelRatio: ratio,
-    }, document.layers, movePreview?.entities ?? null);
-  }, [document, movePreview]);
+    }, document.layers, [...(movePreview?.entities ?? []), ...(copyPreview?.entities ?? [])]);
+  }, [copyPreview, document, movePreview]);
 
   async function recoverFromStorageConflict(error: unknown): Promise<void> {
     if (!(error instanceof StorageRevisionConflictError)) throw error;
@@ -91,7 +119,7 @@ export function App() {
     if (committing.current) return;
     committing.current = true;
     try {
-      const handle = (document.revision + 16).toString(16).toUpperCase();
+      const handle = nextInteractiveHandle(document);
       const args = { start: { x: 10, y: 10 + document.revision * 5 }, end: { x: 180, y: 90 } };
       await commitChanges("LINE", args, [{
         type: "put",
@@ -134,7 +162,7 @@ export function App() {
     try {
       const command = resolveCadCommand("RECTANG");
       if (!command || command.id !== "RECTANGLE") throw new Error("RECTANGLE command is missing from the registry.");
-      const handle = (document.revision + 16).toString(16).toUpperCase();
+      const handle = nextInteractiveHandle(document);
       const args = {
         handle,
         layerId: document.currentLayerId,
@@ -158,12 +186,16 @@ export function App() {
   function selectAll(): void {
     const handles = document.entities.map((entity) => entity.handle);
     setSelectedHandles(handles);
-    setStatus(moveAwaitingSelection ? `${handles.length} objekti valitud; MOVE: määra baaspunkt ja sihtpunkt` : `${handles.length} objekti valitud`);
+    if (copyAwaitingSelection) setStatus(`${handles.length} objekti valitud; COPY: määra baaspunkt ja sihtpunkt(id)`);
+    else if (moveAwaitingSelection) setStatus(`${handles.length} objekti valitud; MOVE: määra baaspunkt ja sihtpunkt`);
+    else setStatus(`${handles.length} objekti valitud`);
   }
 
   async function moveSelected(): Promise<void> {
     if (committing.current) return;
+    setPreviewCommand("MOVE");
     if (selectedHandles.length === 0) {
+      setCopyAwaitingSelection(false);
       setMoveAwaitingSelection(true);
       setStatus("MOVE: vali objektid, seejärel kinnita valik ja punktid");
       return;
@@ -189,6 +221,48 @@ export function App() {
     } catch (error) {
       if (error instanceof StorageRevisionConflictError) await recoverFromStorageConflict(error);
       else if (error instanceof CadCommandInputError) setStatus(`MOVE viga: ${error.message}`);
+      else throw error;
+    } finally {
+      committing.current = false;
+    }
+  }
+
+  async function copySelected(): Promise<void> {
+    if (committing.current) return;
+    setPreviewCommand("COPY");
+    if (selectedHandles.length === 0) {
+      setMoveAwaitingSelection(false);
+      setCopyAwaitingSelection(true);
+      setStatus("COPY: vali objektid, seejärel kinnita valik ja punktid");
+      return;
+    }
+    committing.current = true;
+    try {
+      const command = resolveCadCommand("COPY");
+      if (!command || command.id !== "COPY") throw new Error("COPY command is missing from the registry.");
+      const basePoint = parseCartesianPoint(copyBaseInput);
+      const destinationPoints = parseCopyDestinations(copyDestinationsInput, basePoint);
+      const result = command.execute(document, { targetHandles: selectedHandles, basePoint, destinationPoints });
+      setLastCopyRejected(result.rejected);
+      setCopyAwaitingSelection(false);
+      if (result.changes.length === 0) {
+        const suffix = result.rejected.length ? `; ${result.rejected.length} lukus, puudu või toetamata` : "";
+        setStatus(`COPY ei loonud geomeetriat${suffix}`);
+        return;
+      }
+      await commitChanges(
+        command.id,
+        { basePoint, destinationPoints },
+        result.changes,
+        result.copiedHandles,
+        result.sourceHandles,
+      );
+      setSelectedHandles([]);
+      const suffix = result.rejected.length ? `; ${result.rejected.length} jäi kopeerimata` : "";
+      setStatus(`${result.copiedHandles.length} koopiat loodud · ${result.deltas.length} paigutust${suffix}`);
+    } catch (error) {
+      if (error instanceof StorageRevisionConflictError) await recoverFromStorageConflict(error);
+      else if (error instanceof CadCommandInputError) setStatus(`COPY viga: ${error.message}`);
       else throw error;
     } finally {
       committing.current = false;
@@ -313,22 +387,37 @@ export function App() {
         <button type="button" onClick={selectAll} disabled={document.entities.length === 0}>Vali kõik</button>
         <label className="coordinate-input">
           <span>MOVE baaspunkt</span>
-          <input aria-label="MOVE baaspunkt" value={moveBaseInput} onChange={(event) => setMoveBaseInput(event.target.value)} placeholder="x,y" />
+          <input aria-label="MOVE baaspunkt" value={moveBaseInput} onFocus={() => setPreviewCommand("MOVE")} onChange={(event) => { setPreviewCommand("MOVE"); setMoveBaseInput(event.target.value); }} placeholder="x,y" />
         </label>
         <label className="coordinate-input">
           <span>MOVE sihtpunkt</span>
-          <input aria-label="MOVE sihtpunkt" value={moveDestinationInput} onChange={(event) => setMoveDestinationInput(event.target.value)} placeholder="x,y või @dx,dy" />
+          <input aria-label="MOVE sihtpunkt" value={moveDestinationInput} onFocus={() => setPreviewCommand("MOVE")} onChange={(event) => { setPreviewCommand("MOVE"); setMoveDestinationInput(event.target.value); }} placeholder="x,y või @dx,dy" />
         </label>
         <button type="button" onClick={() => void moveSelected()}>MOVE</button>
+        <label className="coordinate-input">
+          <span>COPY baaspunkt</span>
+          <input aria-label="COPY baaspunkt" value={copyBaseInput} onFocus={() => setPreviewCommand("COPY")} onChange={(event) => { setPreviewCommand("COPY"); setCopyBaseInput(event.target.value); }} placeholder="x,y" />
+        </label>
+        <label className="coordinate-input">
+          <span>COPY sihtpunkt(id)</span>
+          <input aria-label="COPY sihtpunktid" value={copyDestinationsInput} onFocus={() => setPreviewCommand("COPY")} onChange={(event) => { setPreviewCommand("COPY"); setCopyDestinationsInput(event.target.value); }} placeholder="x,y; @dx,dy" />
+        </label>
+        <button type="button" onClick={() => void copySelected()}>COPY</button>
         <button type="button" onClick={() => void eraseSelected()} disabled={selectedHandles.length === 0}>ERASE</button>
         <button type="button" onClick={() => void undoLast()} disabled={!session.current.canUndo}>UNDO</button>
         <button type="button" onClick={downloadDxf}>DXF eksport</button>
         <button type="button" disabled>TRIM järgmine</button>
         <span>{document.entities.length} objekti · {selectedHandles.length} valitud · {activeLayer.name}{activeLayer.locked ? " 🔒" : ""}</span>
         {movePreview && <span data-testid="move-preview">MOVE eelvaade: {movePreview.entities.length} · Δ{movePreview.delta.x},{movePreview.delta.y}</span>}
+        {copyPreview && <span data-testid="copy-preview">COPY eelvaade: {copyPreview.entities.length} · {copyPreview.deltas.length} paigutust</span>}
         {lastMoveRejected.length > 0 && (
           <span data-testid="move-rejected" data-rejected={JSON.stringify(lastMoveRejected)}>
             MOVE muutmata: {lastMoveRejected.map(({ handle, reason }) => `${handle} (${reason})`).join(", ")}
+          </span>
+        )}
+        {lastCopyRejected.length > 0 && (
+          <span data-testid="copy-rejected" data-rejected={JSON.stringify(lastCopyRejected)}>
+            COPY kopeerimata: {lastCopyRejected.map(({ handle, reason }) => `${handle} (${reason})`).join(", ")}
           </span>
         )}
       </section>

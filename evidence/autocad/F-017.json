@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-017",
+  "kind": "autocad",
+  "authority": "autocad-2024.1.2-live",
+  "status": "PASS",
+  "artifactSha256": "b228c9154c64bc367c8d86e09aa07823fb3348fd13c24099cf83f8b8ef1ff4e7",
+  "observedAt": "2026-08-28T11:51:41.203Z",
+  "workflow": "AutoCAD 24.3 desktop COM creates twelve native standard entity families in a scratch document, drives repeated COPY from base 100,200 to +500,+750 and -300,+100, performs one U, then repeats COPY with an editable and locked-layer line",
+  "result": "Each native family retained its original and produced two new uniquely handled copies at the exact original-relative vectors with layer/color/linetype/lineweight preserved; one U removed both placements, while the locked-layer line was not copied.",
+  "artifact": "evidence/artifacts/F-017-autocad-readback.json"
+}

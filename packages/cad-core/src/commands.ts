@@ -59,6 +59,31 @@ export interface MoveCommandDefinition {
   execute(document: KDrawDocumentV1, args: MoveCommandArgs): MoveCommandResult;
 }
 
+export interface CopyCommandArgs {
+  targetHandles: readonly string[];
+  basePoint: CadPoint2;
+  destinationPoints: readonly CadPoint2[];
+}
+
+export interface CopyRejectedTarget {
+  handle: string;
+  reason: "missing" | "locked-layer" | "unsupported-entity";
+}
+
+export interface CopyCommandResult {
+  changes: EntityChange[];
+  sourceHandles: string[];
+  copiedHandles: string[];
+  rejected: CopyRejectedTarget[];
+  deltas: CadPoint2[];
+}
+
+export interface CopyCommandDefinition {
+  id: "COPY";
+  aliases: readonly string[];
+  execute(document: KDrawDocumentV1, args: CopyCommandArgs): CopyCommandResult;
+}
+
 export class CadCommandInputError extends Error {
   constructor(message: string) {
     super(message);
@@ -88,6 +113,38 @@ export function parseMoveDestination(input: string, basePoint: CadPoint2): CadPo
   if (!trimmed.startsWith("@")) return parseCartesianPoint(trimmed);
   const delta = parseCartesianPoint(trimmed.slice(1));
   return { x: basePoint.x + delta.x, y: basePoint.y + delta.y };
+}
+
+export function parseCopyDestinations(input: string, basePoint: CadPoint2): CadPoint2[] {
+  assertFinitePoint("basePoint", basePoint);
+  const tokens = input.split(/[;\r\n]+/).map((token) => token.trim()).filter(Boolean);
+  if (tokens.length === 0) throw new CadCommandInputError("COPY requires at least one destination point.");
+  return tokens.map((token) => parseMoveDestination(token, basePoint));
+}
+
+export function allocateEntityHandles(document: KDrawDocumentV1, count: number): string[] {
+  if (!Number.isSafeInteger(count) || count < 0) throw new CadCommandInputError("Handle count must be a non-negative safe integer.");
+  const used = new Set([
+    ...document.entities.map((entity) => entity.handle.toUpperCase()),
+    ...document.blocks.flatMap((block) => block.entities.map((entity) => entity.handle.toUpperCase())),
+  ]);
+  let maximum = 0xfn;
+  for (const handle of used) {
+    if (!/^[0-9A-F]+$/.test(handle)) continue;
+    const value = BigInt(`0x${handle}`);
+    if (value > maximum) maximum = value;
+  }
+  const handles: string[] = [];
+  let candidate = maximum + 1n;
+  while (handles.length < count) {
+    const handle = candidate.toString(16).toUpperCase();
+    if (!used.has(handle)) {
+      handles.push(handle);
+      used.add(handle);
+    }
+    candidate += 1n;
+  }
+  return handles;
 }
 
 export function executeRectangle(args: RectangleCommandArgs): EntityChange[] {
@@ -196,6 +253,60 @@ export function executeMove(document: KDrawDocumentV1, args: MoveCommandArgs): M
   return { changes, movedHandles, rejected, delta };
 }
 
+export function executeCopy(document: KDrawDocumentV1, args: CopyCommandArgs): CopyCommandResult {
+  assertFinitePoint("basePoint", args.basePoint);
+  if (args.destinationPoints.length === 0) throw new CadCommandInputError("COPY requires at least one destination point.");
+  const deltas = args.destinationPoints.map((destinationPoint) => {
+    assertFinitePoint("destinationPoint", destinationPoint);
+    return {
+      x: destinationPoint.x - args.basePoint.x,
+      y: destinationPoint.y - args.basePoint.y,
+    };
+  });
+  const requested = [...new Set(args.targetHandles.map((handle) => handle.trim()).filter(Boolean))];
+  const entities = new Map(document.entities.map((entity) => [entity.handle, entity]));
+  const lockedLayers = new Set(document.layers.filter((layer) => layer.locked).map((layer) => layer.id));
+  const sources: CadEntity[] = [];
+  const rejected: CopyRejectedTarget[] = [];
+  for (const handle of requested) {
+    const entity = entities.get(handle);
+    if (!entity) {
+      rejected.push({ handle, reason: "missing" });
+      continue;
+    }
+    if (lockedLayers.has(entity.layerId)) {
+      rejected.push({ handle, reason: "locked-layer" });
+      continue;
+    }
+    if (entity.kind === "proxy") {
+      rejected.push({ handle, reason: "unsupported-entity" });
+      continue;
+    }
+    sources.push(entity);
+  }
+
+  const newHandles = allocateEntityHandles(document, sources.length * deltas.length);
+  const changes: EntityChange[] = [];
+  const copiedHandles: string[] = [];
+  let handleIndex = 0;
+  for (const delta of deltas) {
+    for (const source of sources) {
+      const translated = translateCadEntity(source, delta);
+      if (!translated) throw new Error(`COPY capability changed while copying ${source.handle}.`);
+      const handle = newHandles[handleIndex++]!;
+      changes.push({ type: "put", entity: { ...translated, handle } as CadEntity });
+      copiedHandles.push(handle);
+    }
+  }
+  return {
+    changes,
+    sourceHandles: sources.map((entity) => entity.handle),
+    copiedHandles,
+    rejected,
+    deltas,
+  };
+}
+
 const rectangleCommand: RectangleCommandDefinition = Object.freeze({
   id: "RECTANGLE",
   aliases: Object.freeze(["RECTANG", "RECTANGLE", "REC"]),
@@ -214,9 +325,15 @@ const moveCommand: MoveCommandDefinition = Object.freeze({
   execute: executeMove,
 });
 
-export const cadCommandRegistry = Object.freeze([rectangleCommand, eraseCommand, moveCommand]);
+const copyCommand: CopyCommandDefinition = Object.freeze({
+  id: "COPY",
+  aliases: Object.freeze(["CO", "CP", "COPY"]),
+  execute: executeCopy,
+});
 
-export function resolveCadCommand(token: string): RectangleCommandDefinition | EraseCommandDefinition | MoveCommandDefinition | null {
+export const cadCommandRegistry = Object.freeze([rectangleCommand, eraseCommand, moveCommand, copyCommand]);
+
+export function resolveCadCommand(token: string): RectangleCommandDefinition | EraseCommandDefinition | MoveCommandDefinition | CopyCommandDefinition | null {
   const normalized = token.trim().toUpperCase();
   return cadCommandRegistry.find((command) => command.aliases.includes(normalized)) ?? null;
 }
