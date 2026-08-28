@@ -1,5 +1,5 @@
 import { expect, it } from "vitest";
-import { applyAtomicOperation, createEmptyDocument, executeCopy, executeErase, executeMirror, executeMove, executeRectangle, executeRotate, executeScale } from "../src/index.js";
+import { applyAtomicOperation, createEmptyDocument, executeCopy, executeErase, executeMirror, executeMove, executeOffset, executeRectangle, executeRotate, executeScale, offsetCadEntity } from "../src/index.js";
 
 it("kills the revision-increment mutant", () => {
   const source = createEmptyDocument({ documentId: "mutation" });
@@ -188,4 +188,83 @@ it("kills MIRROR projection, handedness, source mode, fresh-handle and locked-la
     eraseSource: false,
   });
   expect(document.entities.map((entity) => entity.handle)).toEqual(["10", "11", "12"]);
+});
+
+it("kills OFFSET side, progressive-Multiple, Erase, Layer, properties and locked-layer mutants", () => {
+  const document = createEmptyDocument({ documentId: "offset-mutation" });
+  document.layers.push(
+    { id: "current", name: "Current", visible: true, frozen: false, locked: false, plottable: true },
+    { id: "locked", name: "Locked", visible: true, frozen: false, locked: true, plottable: true },
+  );
+  document.currentLayerId = "current";
+  document.entities.push(
+    { kind: "line", handle: "10", layerId: "0", appearance: { color: "#f00", lineweightMm: 0.5 }, extensionData: { keep: true }, start: { x: 0, y: 0 }, end: { x: 1000, y: 0 } },
+    { kind: "line", handle: "11", layerId: "locked", start: { x: 0, y: 1000 }, end: { x: 1000, y: 1000 } },
+  );
+  expect(executeOffset(document, {
+    targetHandles: ["10", "10", "11"],
+    mode: "distance",
+    distance: 100,
+    placementPoints: [{ x: 500, y: 100 }, { x: 500, y: 250 }],
+    multiple: true,
+    eraseSource: true,
+    layerMode: "current",
+  })).toEqual({
+    changes: [
+      { type: "delete", handle: "10" },
+      { type: "put", entity: { kind: "line", handle: "13", layerId: "current", appearance: { color: "#f00", lineweightMm: 0.5 }, extensionData: { keep: true }, start: { x: 0, y: 200 }, end: { x: 1000, y: 200 } } },
+    ],
+    sourceHandles: ["10"],
+    createdHandles: ["13"],
+    rejected: [{ handle: "11", placementIndex: null, reason: "locked-layer" }],
+    steps: [
+      { originalSourceHandle: "10", sourceHandle: "10", resultHandle: "12", placementIndex: 0, signedDistance: 100 },
+      { originalSourceHandle: "10", sourceHandle: "12", resultHandle: "13", placementIndex: 1, signedDistance: 100 },
+    ],
+    mode: "distance",
+    multiple: true,
+    eraseSource: true,
+    layerMode: "current",
+  });
+  expect(document.entities.map((entity) => entity.handle)).toEqual(["10", "11"]);
+});
+
+it("kills OFFSET overflow and ellipse-cusp acceptance mutants", () => {
+  const hugeLine = offsetCadEntity(
+    { kind: "line", handle: "10", layerId: "0", start: { x: 1e308, y: 0 }, end: { x: 1e308, y: 1e308 } },
+    "distance",
+    Number.MAX_VALUE,
+    { x: Number.MAX_VALUE, y: 1 },
+  );
+  expect(hugeLine).toMatchObject({ entity: null, reason: "invalid-offset" });
+
+  const hugeCircle = offsetCadEntity(
+    { kind: "circle", handle: "11", layerId: "0", center: { x: 1e308, y: 0 }, radius: 100 },
+    "distance",
+    Number.MAX_VALUE,
+    { x: 1.1e308, y: 0 },
+  );
+  expect(hugeCircle).toMatchObject({ entity: null, reason: "invalid-offset" });
+
+  const collapsedEllipse = offsetCadEntity(
+    {
+      kind: "ellipse",
+      handle: "12",
+      layerId: "0",
+      center: { x: 0, y: 0 },
+      majorAxis: { x: 200, y: 0 },
+      ratio: 0.5,
+      startParameter: 0,
+      endParameter: Math.PI * 2,
+    },
+    "distance",
+    60,
+    { x: 0, y: 0 },
+  );
+  expect(collapsedEllipse).toMatchObject({
+    signedDistance: 60,
+    entity: { kind: "spline", closed: false },
+    entities: [{ kind: "spline", closed: false }, { kind: "spline", closed: false }],
+  });
+  expect(collapsedEllipse.entities).toHaveLength(2);
 });

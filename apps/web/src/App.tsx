@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { allocateEntityHandles, CadCommandInputError, CadSession, createEmptyDocument, parseCartesianPoint, parseCopyDestinations, parseMoveDestination, parseReferenceAngleInput, parseRotationAngleInput, parseScaleFactorInput, parseScaleLengthInput, resolveCadCommand, type CadChange, type CopyRejectedTarget, type MirrorRejectedTarget, type MoveRejectedTarget, type RotateAngleSpec, type RotateRejectedTarget, type ScaleFactorSpec, type ScaleRejectedTarget } from "@kuubik/cad-core";
+import { allocateEntityHandles, CadCommandInputError, CadSession, createEmptyDocument, parseCartesianPoint, parseCopyDestinations, parseMoveDestination, parseOffsetDistance, parseOffsetPlacementPoints, parseReferenceAngleInput, parseRotationAngleInput, parseScaleFactorInput, parseScaleLengthInput, resolveCadCommand, type CadChange, type CopyRejectedTarget, type MirrorRejectedTarget, type MoveRejectedTarget, type OffsetLayerMode, type OffsetRejectedTarget, type RotateAngleSpec, type RotateRejectedTarget, type ScaleFactorSpec, type ScaleRejectedTarget } from "@kuubik/cad-core";
 import { exportDxf } from "@kuubik/cad-dxf";
 import { CadCanvasRenderer } from "@kuubik/cad-renderer";
 import type { CadEntity, KDrawDocumentV1 } from "@kuubik/cad-schema";
@@ -87,7 +87,15 @@ export function App() {
   const [mirrorEraseSource, setMirrorEraseSource] = useState(false);
   const [mirrorAwaitingSelection, setMirrorAwaitingSelection] = useState(false);
   const [lastMirrorRejected, setLastMirrorRejected] = useState<MirrorRejectedTarget[]>([]);
-  const [previewCommand, setPreviewCommand] = useState<"MOVE" | "COPY" | "ROTATE" | "SCALE" | "MIRROR">("MOVE");
+  const [offsetMode, setOffsetMode] = useState<"distance" | "through">("distance");
+  const [offsetDistanceInput, setOffsetDistanceInput] = useState("200");
+  const [offsetPlacementInput, setOffsetPlacementInput] = useState("500,200");
+  const [offsetMultiple, setOffsetMultiple] = useState(false);
+  const [offsetEraseSource, setOffsetEraseSource] = useState(false);
+  const [offsetLayerMode, setOffsetLayerMode] = useState<OffsetLayerMode>("source");
+  const [offsetAwaitingSelection, setOffsetAwaitingSelection] = useState(false);
+  const [lastOffsetRejected, setLastOffsetRejected] = useState<OffsetRejectedTarget[]>([]);
+  const [previewCommand, setPreviewCommand] = useState<"MOVE" | "COPY" | "ROTATE" | "SCALE" | "MIRROR" | "OFFSET">("MOVE");
   const activeLayer = document.layers.find((layer) => layer.id === document.currentLayerId)!;
   const movePreview = useMemo((): { entities: CadEntity[]; delta: { x: number; y: number } } | null => {
     if (previewCommand !== "MOVE" || selectedHandles.length === 0) return null;
@@ -171,6 +179,31 @@ export function App() {
       return null;
     }
   }, [document, mirrorEraseSource, mirrorFirstPointInput, mirrorSecondPointInput, previewCommand, selectedHandles]);
+  const offsetPreview = useMemo((): { entities: CadEntity[]; eraseSource: boolean; sourceHandles: string[]; steps: number } | null => {
+    if (previewCommand !== "OFFSET" || selectedHandles.length === 0) return null;
+    try {
+      const command = resolveCadCommand("OFFSET");
+      if (!command || command.id !== "OFFSET") return null;
+      const placementPoints = parseOffsetPlacementPoints(offsetPlacementInput);
+      const result = command.execute(document, {
+        targetHandles: selectedHandles,
+        mode: offsetMode,
+        ...(offsetMode === "distance" ? { distance: parseOffsetDistance(offsetDistanceInput) } : {}),
+        placementPoints,
+        multiple: offsetMultiple,
+        eraseSource: offsetEraseSource,
+        layerMode: offsetLayerMode,
+      });
+      return {
+        entities: result.changes.flatMap((change) => change.type === "put" ? [change.entity] : []),
+        eraseSource: result.eraseSource,
+        sourceHandles: result.sourceHandles,
+        steps: result.steps.length,
+      };
+    } catch {
+      return null;
+    }
+  }, [document, offsetDistanceInput, offsetEraseSource, offsetLayerMode, offsetMode, offsetMultiple, offsetPlacementInput, previewCommand, selectedHandles]);
 
   useEffect(() => {
     let active = true;
@@ -206,8 +239,11 @@ export function App() {
       widthPx: element.clientWidth,
       heightPx: element.clientHeight,
       devicePixelRatio: ratio,
-    }, document.layers, [...(movePreview?.entities ?? []), ...(copyPreview?.entities ?? []), ...(rotatePreview?.entities ?? []), ...(scalePreview?.entities ?? []), ...(mirrorPreview?.entities ?? [])], mirrorPreview?.eraseSource ? mirrorPreview.sourceHandles : []);
-  }, [copyPreview, document, mirrorPreview, movePreview, rotatePreview, scalePreview]);
+    }, document.layers, [...(movePreview?.entities ?? []), ...(copyPreview?.entities ?? []), ...(rotatePreview?.entities ?? []), ...(scalePreview?.entities ?? []), ...(mirrorPreview?.entities ?? []), ...(offsetPreview?.entities ?? [])], [
+      ...(mirrorPreview?.eraseSource ? mirrorPreview.sourceHandles : []),
+      ...(offsetPreview?.eraseSource ? offsetPreview.sourceHandles : []),
+    ]);
+  }, [copyPreview, document, mirrorPreview, movePreview, offsetPreview, rotatePreview, scalePreview]);
 
   async function recoverFromStorageConflict(error: unknown): Promise<void> {
     if (!(error instanceof StorageRevisionConflictError)) throw error;
@@ -290,7 +326,8 @@ export function App() {
   function selectAll(): void {
     const handles = document.entities.map((entity) => entity.handle);
     setSelectedHandles(handles);
-    if (mirrorAwaitingSelection) setStatus(`${handles.length} objekti valitud; MIRROR: määra peegeldusjoon ja lähteobjektide valik`);
+    if (offsetAwaitingSelection) setStatus(`${handles.length} objekti valitud; OFFSET: määra režiim, külje-/Through-punkt ja valikud`);
+    else if (mirrorAwaitingSelection) setStatus(`${handles.length} objekti valitud; MIRROR: määra peegeldusjoon ja lähteobjektide valik`);
     else if (scaleAwaitingSelection) setStatus(`${handles.length} objekti valitud; SCALE: määra baaspunkt ja mõõtkava`);
     else if (rotateAwaitingSelection) setStatus(`${handles.length} objekti valitud; ROTATE: määra baaspunkt ja nurk`);
     else if (copyAwaitingSelection) setStatus(`${handles.length} objekti valitud; COPY: määra baaspunkt ja sihtpunkt(id)`);
@@ -539,6 +576,83 @@ export function App() {
     }
   }
 
+  function undoOffsetPlacement(): void {
+    const tokens = offsetPlacementInput.split(/[;\r\n]+/).map((token) => token.trim()).filter(Boolean);
+    if (tokens.length === 0) {
+      setStatus("OFFSET Undo: käsk on täielikult tagasi võetud; globaalset UNDO sammu ei loodud");
+      return;
+    }
+    tokens.pop();
+    setOffsetPlacementInput(tokens.join("; "));
+    setPreviewCommand("OFFSET");
+    setStatus(tokens.length
+      ? `OFFSET Undo: viimane paigutus eemaldatud; ${tokens.length} paigutust jääb`
+      : "OFFSET Undo: kõik paigutused eemaldatud; globaalset UNDO sammu ei loodud");
+  }
+
+  async function offsetSelected(): Promise<void> {
+    if (committing.current) return;
+    setPreviewCommand("OFFSET");
+    if (selectedHandles.length === 0) {
+      setMoveAwaitingSelection(false);
+      setCopyAwaitingSelection(false);
+      setRotateAwaitingSelection(false);
+      setScaleAwaitingSelection(false);
+      setMirrorAwaitingSelection(false);
+      setOffsetAwaitingSelection(true);
+      setStatus("OFFSET: vali objektid, seejärel kinnita valik, režiim ja külje-/Through-punkt");
+      return;
+    }
+    committing.current = true;
+    try {
+      const command = resolveCadCommand("OFFSET");
+      if (!command || command.id !== "OFFSET") throw new Error("OFFSET command is missing from the registry.");
+      const placementPoints = parseOffsetPlacementPoints(offsetPlacementInput);
+      const result = command.execute(document, {
+        targetHandles: selectedHandles,
+        mode: offsetMode,
+        ...(offsetMode === "distance" ? { distance: parseOffsetDistance(offsetDistanceInput) } : {}),
+        placementPoints,
+        multiple: offsetMultiple,
+        eraseSource: offsetEraseSource,
+        layerMode: offsetLayerMode,
+      });
+      setLastOffsetRejected(result.rejected);
+      setOffsetAwaitingSelection(false);
+      if (result.changes.length === 0) {
+        const suffix = result.rejected.length ? `; ${result.rejected.length} lukus, peidetud, puudu või sobimatu` : "";
+        setStatus(`OFFSET ei loonud geomeetriat${suffix}`);
+        return;
+      }
+      await commitChanges(
+        command.id,
+        {
+          mode: result.mode,
+          distance: offsetMode === "distance" ? parseOffsetDistance(offsetDistanceInput) : null,
+          placementPoints,
+          multiple: result.multiple,
+          eraseSource: result.eraseSource,
+          layerMode: result.layerMode,
+          steps: result.steps,
+        },
+        result.changes,
+        result.createdHandles,
+        result.sourceHandles,
+      );
+      setSelectedHandles([]);
+      const suffix = result.rejected.length ? `; ${result.rejected.length} jäi muutmata` : "";
+      setStatus(`${result.createdHandles.length} OFFSET tulemust loodud${result.multiple ? " (Multiple)" : ""}; lähteobjektid ${result.eraseSource ? "kustutatud" : "säilitatud"}${suffix}`);
+    } catch (error) {
+      if (error instanceof StorageRevisionConflictError) await recoverFromStorageConflict(error);
+      else if (error instanceof CadCommandInputError) {
+        setOffsetAwaitingSelection(false);
+        setStatus(`OFFSET viga: ${error.message}`);
+      } else throw error;
+    } finally {
+      committing.current = false;
+    }
+  }
+
   async function eraseSelected(): Promise<void> {
     if (committing.current || selectedHandles.length === 0) return;
     committing.current = true;
@@ -748,6 +862,40 @@ export function App() {
           <input aria-label="MIRROR kustuta lähteobjektid" type="checkbox" checked={mirrorEraseSource} onFocus={() => setPreviewCommand("MIRROR")} onChange={(event) => { setPreviewCommand("MIRROR"); setMirrorEraseSource(event.target.checked); }} />
         </label>
         <button type="button" onClick={() => void mirrorSelected()}>MIRROR</button>
+        <label className="coordinate-input">
+          <span>OFFSET režiim</span>
+          <select aria-label="OFFSET režiim" value={offsetMode} onFocus={() => setPreviewCommand("OFFSET")} onChange={(event) => { setPreviewCommand("OFFSET"); setOffsetMode(event.target.value as "distance" | "through"); }}>
+            <option value="distance">Distance</option>
+            <option value="through">Through</option>
+          </select>
+        </label>
+        {offsetMode === "distance" && (
+          <label className="coordinate-input">
+            <span>OFFSET distants</span>
+            <input aria-label="OFFSET distants" value={offsetDistanceInput} onFocus={() => setPreviewCommand("OFFSET")} onChange={(event) => { setPreviewCommand("OFFSET"); setOffsetDistanceInput(event.target.value); }} placeholder="positiivne distants" />
+          </label>
+        )}
+        <label className="coordinate-input">
+          <span>OFFSET külje-/Through-punkt(id)</span>
+          <input aria-label="OFFSET punktid" value={offsetPlacementInput} onFocus={() => setPreviewCommand("OFFSET")} onChange={(event) => { setPreviewCommand("OFFSET"); setOffsetPlacementInput(event.target.value); }} placeholder="x,y; x,y" />
+        </label>
+        <label className="coordinate-input">
+          <span>OFFSET Multiple</span>
+          <input aria-label="OFFSET Multiple" type="checkbox" checked={offsetMultiple} onFocus={() => setPreviewCommand("OFFSET")} onChange={(event) => { setPreviewCommand("OFFSET"); setOffsetMultiple(event.target.checked); }} />
+        </label>
+        <label className="coordinate-input">
+          <span>OFFSET Erase source</span>
+          <input aria-label="OFFSET kustuta lähteobjektid" type="checkbox" checked={offsetEraseSource} onFocus={() => setPreviewCommand("OFFSET")} onChange={(event) => { setPreviewCommand("OFFSET"); setOffsetEraseSource(event.target.checked); }} />
+        </label>
+        <label className="coordinate-input">
+          <span>OFFSET Layer</span>
+          <select aria-label="OFFSET kiht" value={offsetLayerMode} onFocus={() => setPreviewCommand("OFFSET")} onChange={(event) => { setPreviewCommand("OFFSET"); setOffsetLayerMode(event.target.value as OffsetLayerMode); }}>
+            <option value="source">Source</option>
+            <option value="current">Current</option>
+          </select>
+        </label>
+        <button type="button" onClick={() => void offsetSelected()}>OFFSET</button>
+        <button type="button" onClick={undoOffsetPlacement}>OFFSET Undo</button>
         <button type="button" onClick={() => void eraseSelected()} disabled={selectedHandles.length === 0}>ERASE</button>
         <button type="button" onClick={() => void undoLast()} disabled={!session.current.canUndo}>UNDO</button>
         <button type="button" onClick={downloadDxf}>DXF eksport</button>
@@ -758,6 +906,7 @@ export function App() {
         {rotatePreview && <span data-testid="rotate-preview">ROTATE eelvaade: {rotatePreview.entities.length} · {rotatePreview.deltaAngleDeg}°</span>}
         {scalePreview && <span data-testid="scale-preview">SCALE eelvaade: {scalePreview.entities.length} · ×{scalePreview.factor}{scalePreview.copy ? " · Copy" : ""}</span>}
         {mirrorPreview && <span data-testid="mirror-preview" data-hidden-source-count={mirrorPreview.eraseSource ? mirrorPreview.sourceHandles.length : 0}>MIRROR eelvaade: {mirrorPreview.entities.length} · lähteobjektid {mirrorPreview.eraseSource ? "kustutatakse" : "säilivad"}</span>}
+        {offsetPreview && <span data-testid="offset-preview" data-hidden-source-count={offsetPreview.eraseSource ? offsetPreview.sourceHandles.length : 0}>OFFSET eelvaade: {offsetPreview.entities.length} · {offsetPreview.steps} sammu · lähteobjektid {offsetPreview.eraseSource ? "kustutatakse" : "säilivad"}</span>}
         {lastMoveRejected.length > 0 && (
           <span data-testid="move-rejected" data-rejected={JSON.stringify(lastMoveRejected)}>
             MOVE muutmata: {lastMoveRejected.map(({ handle, reason }) => `${handle} (${reason})`).join(", ")}
@@ -781,6 +930,11 @@ export function App() {
         {lastMirrorRejected.length > 0 && (
           <span data-testid="mirror-rejected" data-rejected={JSON.stringify(lastMirrorRejected)}>
             MIRROR muutmata: {lastMirrorRejected.map(({ handle, reason }) => `${handle} (${reason})`).join(", ")}
+          </span>
+        )}
+        {lastOffsetRejected.length > 0 && (
+          <span data-testid="offset-rejected" data-rejected={JSON.stringify(lastOffsetRejected)}>
+            OFFSET muutmata: {lastOffsetRejected.map(({ handle, placementIndex, reason }) => `${handle}${placementIndex === null ? "" : `#${placementIndex + 1}`} (${reason})`).join(", ")}
           </span>
         )}
       </section>

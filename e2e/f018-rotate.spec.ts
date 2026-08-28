@@ -126,7 +126,7 @@ test("F-018 ROTATE preselection, numeric angle, DXF and atomic UNDO", async ({ p
     { type: "LWPOLYLINE", handle: "11", shape: true, vertices: [{ x: -1000, y: 0 }, { x: -1000, y: 1000 }, { x: -1500, y: 1000 }, { x: -1500, y: 0 }] },
   ]);
 
-  await page.getByRole("button", { name: "UNDO" }).click();
+  await page.getByRole("button", { name: "UNDO", exact: true }).click();
   await expect(page.getByText("UNDO taastatud, revision 4")).toBeVisible();
   await page.reload();
   await expect(page.getByText("Taastatud revision 4")).toBeVisible();
@@ -183,7 +183,7 @@ test("F-018 ROTATE point angle, clockwise rotation, coincident Reference rejecti
   await page.getByRole("button", { name: "ROTATE", exact: true }).click();
   await expect(page.getByText("1 objekti pööratud -90°")).toBeVisible();
   expect((await readLocalDocument(page)).entities[0]).toMatchObject({ start: { x: 10, y: -10 }, end: { x: 90, y: -180 } });
-  await page.getByRole("button", { name: "UNDO" }).click();
+  await page.getByRole("button", { name: "UNDO", exact: true }).click();
 
   await page.getByRole("button", { name: "Vali kõik" }).click();
   await page.getByLabel("ROTATE režiim").selectOption("reference");
@@ -196,7 +196,7 @@ test("F-018 ROTATE point angle, clockwise rotation, coincident Reference rejecti
   await expect(page.getByTestId("rotate-preview")).toHaveText("ROTATE eelvaade: 0 · 0°");
   await page.getByRole("button", { name: "ROTATE", exact: true }).click();
   await expect(page.getByText("ROTATE ei muutnud geomeetriat")).toBeVisible();
-  await expect(page.getByRole("button", { name: "UNDO" })).toBeDisabled();
+  await expect(page.getByRole("button", { name: "UNDO", exact: true })).toBeDisabled();
   const noOpDocument = await readLocalDocument(page);
   expect(noOpDocument.revision).toBe(3);
   expect(noOpDocument.entities[0]).toMatchObject({ start: { x: 10, y: 10 }, end: { x: 180, y: 90 } });
@@ -230,7 +230,7 @@ test("F-018 ROTATE two-point Reference standard matrix persists and undoes atomi
     deltaAngleDeg: 90,
   });
 
-  await page.getByRole("button", { name: "UNDO" }).click();
+  await page.getByRole("button", { name: "UNDO", exact: true }).click();
   await expect(page.getByText("UNDO taastatud, revision 2")).toBeVisible();
   await page.reload();
   await expect(page.getByText("Taastatud revision 2")).toBeVisible();

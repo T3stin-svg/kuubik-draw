@@ -1,5 +1,6 @@
 import type { CadEntity, CadPoint2, CadPolyline, KDrawDocumentV1 } from "@kuubik/cad-schema";
 import type { EntityChange } from "./transaction.js";
+import { offsetCadEntity, type OffsetGeometryMode, type OffsetGeometryRejectReason } from "./offset.js";
 
 export interface RectangleCommandArgs {
   handle: string;
@@ -171,6 +172,50 @@ export interface MirrorCommandDefinition {
   execute(document: KDrawDocumentV1, args: MirrorCommandArgs): MirrorCommandResult;
 }
 
+export type OffsetLayerMode = "source" | "current";
+
+export interface OffsetCommandArgs {
+  targetHandles: readonly string[];
+  mode: OffsetGeometryMode;
+  distance?: number;
+  placementPoints: readonly CadPoint2[];
+  multiple: boolean;
+  eraseSource: boolean;
+  layerMode: OffsetLayerMode;
+}
+
+export interface OffsetRejectedTarget {
+  handle: string;
+  placementIndex: number | null;
+  reason: "missing" | "locked-layer" | "hidden-layer" | OffsetGeometryRejectReason;
+}
+
+export interface OffsetCommandStep {
+  originalSourceHandle: string;
+  sourceHandle: string;
+  resultHandle: string;
+  placementIndex: number;
+  signedDistance: number;
+}
+
+export interface OffsetCommandResult {
+  changes: EntityChange[];
+  sourceHandles: string[];
+  createdHandles: string[];
+  rejected: OffsetRejectedTarget[];
+  steps: OffsetCommandStep[];
+  mode: OffsetGeometryMode;
+  multiple: boolean;
+  eraseSource: boolean;
+  layerMode: OffsetLayerMode;
+}
+
+export interface OffsetCommandDefinition {
+  id: "OFFSET";
+  aliases: readonly string[];
+  execute(document: KDrawDocumentV1, args: OffsetCommandArgs): OffsetCommandResult;
+}
+
 export class CadCommandInputError extends Error {
   constructor(message: string) {
     super(message);
@@ -207,6 +252,16 @@ export function parseCopyDestinations(input: string, basePoint: CadPoint2): CadP
   const tokens = input.split(/[;\r\n]+/).map((token) => token.trim()).filter(Boolean);
   if (tokens.length === 0) throw new CadCommandInputError("COPY requires at least one destination point.");
   return tokens.map((token) => parseMoveDestination(token, basePoint));
+}
+
+export function parseOffsetPlacementPoints(input: string): CadPoint2[] {
+  const tokens = input.split(/[;\r\n]+/).map((token) => token.trim()).filter(Boolean);
+  if (tokens.length === 0) throw new CadCommandInputError("OFFSET requires at least one side or Through point.");
+  return tokens.map(parseCartesianPoint);
+}
+
+export function parseOffsetDistance(input: string): number {
+  return positiveScaleNumber(input, "Offset distance");
 }
 
 export function parseAngleDegrees(input: string): number {
@@ -869,6 +924,104 @@ export function executeMirror(document: KDrawDocumentV1, args: MirrorCommandArgs
   };
 }
 
+export function executeOffset(document: KDrawDocumentV1, args: OffsetCommandArgs): OffsetCommandResult {
+  const requested = [...new Set(args.targetHandles.map((handle) => handle.trim()).filter(Boolean))];
+  if (args.placementPoints.length === 0) throw new CadCommandInputError("OFFSET requires at least one side or Through point.");
+  args.placementPoints.forEach((point) => assertFinitePoint("OFFSET placement point", point));
+  if (args.mode === "distance" && (!Number.isFinite(args.distance) || !(args.distance! > 0))) {
+    throw new CadCommandInputError("Offset distance must be greater than zero.");
+  }
+  const layers = new Map(document.layers.map((layer) => [layer.id, layer]));
+  const entities = new Map(document.entities.map((entity) => [entity.handle, entity]));
+  const rejected: OffsetRejectedTarget[] = [];
+  const sources: CadEntity[] = [];
+  for (const handle of requested) {
+    const entity = entities.get(handle);
+    if (!entity) {
+      rejected.push({ handle, placementIndex: null, reason: "missing" });
+      continue;
+    }
+    const layer = layers.get(entity.layerId);
+    if (layer?.locked) {
+      rejected.push({ handle, placementIndex: null, reason: "locked-layer" });
+      continue;
+    }
+    if (layer && (!layer.visible || layer.frozen)) {
+      rejected.push({ handle, placementIndex: null, reason: "hidden-layer" });
+      continue;
+    }
+    sources.push(entity);
+  }
+
+  const placements = args.multiple ? [...args.placementPoints] : [args.placementPoints[0]!];
+  const handles = allocateEntityHandles(document, sources.length * placements.length * 2);
+  let handleIndex = 0;
+  const puts: EntityChange[] = [];
+  const deletes: EntityChange[] = [];
+  const createdHandles: string[] = [];
+  const steps: OffsetCommandStep[] = [];
+  for (const original of sources) {
+    let current = original;
+    let finalEntities: CadEntity[] = [];
+    let succeeded = 0;
+    for (let placementIndex = 0; placementIndex < placements.length; placementIndex += 1) {
+      const result = offsetCadEntity(current, args.mode, args.distance, placements[placementIndex]!);
+      if (!result.entity || result.signedDistance === null) {
+        rejected.push({
+          handle: original.handle,
+          placementIndex,
+          reason: result.reason ?? "invalid-offset",
+        });
+        break;
+      }
+      const geometryOutputs = result.entities ?? [result.entity];
+      const outputs = geometryOutputs.map((geometry) => {
+        const resultHandle = handles[handleIndex++]!;
+        const output = {
+          ...geometry,
+          handle: resultHandle,
+          layerId: args.layerMode === "current" ? document.currentLayerId : current.layerId,
+        } as CadEntity;
+        steps.push({
+          originalSourceHandle: original.handle,
+          sourceHandle: current.handle,
+          resultHandle,
+          placementIndex,
+          signedDistance: result.signedDistance!,
+        });
+        return output;
+      });
+      succeeded += 1;
+      finalEntities = outputs;
+      current = outputs[0]!;
+      if (!args.eraseSource) {
+        outputs.forEach((output) => {
+          puts.push({ type: "put", entity: output });
+          createdHandles.push(output.handle);
+        });
+      }
+    }
+    if (args.eraseSource && succeeded > 0 && finalEntities.length > 0) {
+      deletes.push({ type: "delete", handle: original.handle });
+      finalEntities.forEach((output) => {
+        puts.push({ type: "put", entity: output });
+        createdHandles.push(output.handle);
+      });
+    }
+  }
+  return {
+    changes: [...deletes, ...puts],
+    sourceHandles: sources.map((entity) => entity.handle),
+    createdHandles,
+    rejected,
+    steps,
+    mode: args.mode,
+    multiple: args.multiple,
+    eraseSource: args.eraseSource,
+    layerMode: args.layerMode,
+  };
+}
+
 const rectangleCommand: RectangleCommandDefinition = Object.freeze({
   id: "RECTANGLE",
   aliases: Object.freeze(["RECTANG", "RECTANGLE", "REC"]),
@@ -911,9 +1064,15 @@ const mirrorCommand: MirrorCommandDefinition = Object.freeze({
   execute: executeMirror,
 });
 
-export const cadCommandRegistry = Object.freeze([rectangleCommand, eraseCommand, moveCommand, copyCommand, rotateCommand, scaleCommand, mirrorCommand]);
+const offsetCommand: OffsetCommandDefinition = Object.freeze({
+  id: "OFFSET",
+  aliases: Object.freeze(["O", "OFFSET"]),
+  execute: executeOffset,
+});
 
-export function resolveCadCommand(token: string): RectangleCommandDefinition | EraseCommandDefinition | MoveCommandDefinition | CopyCommandDefinition | RotateCommandDefinition | ScaleCommandDefinition | MirrorCommandDefinition | null {
+export const cadCommandRegistry = Object.freeze([rectangleCommand, eraseCommand, moveCommand, copyCommand, rotateCommand, scaleCommand, mirrorCommand, offsetCommand]);
+
+export function resolveCadCommand(token: string): RectangleCommandDefinition | EraseCommandDefinition | MoveCommandDefinition | CopyCommandDefinition | RotateCommandDefinition | ScaleCommandDefinition | MirrorCommandDefinition | OffsetCommandDefinition | null {
   const normalized = token.trim().toUpperCase();
   return cadCommandRegistry.find((command) => command.aliases.includes(normalized)) ?? null;
 }

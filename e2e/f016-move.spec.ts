@@ -106,7 +106,7 @@ test("F-016 MOVE preselection preview, exact vector, one-step UNDO and reload", 
     { type: "LWPOLYLINE", handle: "11", shape: true, vertices: [{ x: 500, y: 1750 }, { x: 1500, y: 1750 }, { x: 1500, y: 2250 }, { x: 500, y: 2250 }] },
   ]);
 
-  await page.getByRole("button", { name: "UNDO" }).click();
+  await page.getByRole("button", { name: "UNDO", exact: true }).click();
   await expect(page.getByText("UNDO taastatud, revision 4")).toBeVisible();
   await page.reload();
   await expect(page.getByText("Taastatud revision 4")).toBeVisible();
@@ -160,7 +160,7 @@ test("F-016 MOVE zero displacement is a successful no-op with no undo entry", as
   await expect(page.getByTestId("move-preview")).toHaveText("MOVE eelvaade: 0 · Δ0,0");
   await page.getByRole("button", { name: "MOVE", exact: true }).click();
   await expect(page.getByText("MOVE ei muutnud geomeetriat")).toBeVisible();
-  await expect(page.getByRole("button", { name: "UNDO" })).toBeEnabled();
+  await expect(page.getByRole("button", { name: "UNDO", exact: true })).toBeEnabled();
   await page.reload();
   await expect(page.getByText("Taastatud revision 1")).toBeVisible();
   expect(consoleErrors).toEqual([]);
@@ -200,7 +200,7 @@ test("F-016 MOVE standard entity matrix preview, commit, persistence and atomic 
   expect(operation?.targetHandles).toEqual(f016ExpectedMovedHandles);
   expect(operation?.resultHandles).toEqual(f016ExpectedMovedHandles);
 
-  await page.getByRole("button", { name: "UNDO" }).click();
+  await page.getByRole("button", { name: "UNDO", exact: true }).click();
   await expect(page.getByText("UNDO taastatud, revision 2")).toBeVisible();
   await page.reload();
   await expect(page.getByText("Taastatud revision 2")).toBeVisible();

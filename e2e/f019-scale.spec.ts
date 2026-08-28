@@ -123,7 +123,7 @@ test("F-019 SCALE preselection, numeric factor, DXF and atomic UNDO", async ({ p
     { type: "LWPOLYLINE", handle: "11", shape: true, vertices: [{ x: 0, y: 2000 }, { x: 2000, y: 2000 }, { x: 2000, y: 3000 }, { x: 0, y: 3000 }] },
   ]);
 
-  await page.getByRole("button", { name: "UNDO" }).click();
+  await page.getByRole("button", { name: "UNDO", exact: true }).click();
   await expect(page.getByText("UNDO taastatud, revision 4")).toBeVisible();
   await page.reload();
   await expect(page.getByText("Taastatud revision 4")).toBeVisible();
@@ -189,7 +189,7 @@ test("F-019 SCALE rejects invalid factors and gives factor one an AutoCAD-compat
   await expect(page.getByTestId("scale-preview")).toHaveText("SCALE eelvaade: 0 · ×1");
   await page.getByRole("button", { name: "SCALE", exact: true }).click();
   await expect(page.getByText("SCALE ×1 kinnitatud; geomeetria muutumata")).toBeVisible();
-  await expect(page.getByRole("button", { name: "UNDO" })).toBeEnabled();
+  await expect(page.getByRole("button", { name: "UNDO", exact: true })).toBeEnabled();
   const noOpDocument = await readLocalDocument(page);
   expect(noOpDocument.revision).toBe(2);
   expect(noOpDocument.entities[0]).toMatchObject({ start: { x: 10, y: 10 }, end: { x: 180, y: 90 } });
@@ -199,7 +199,7 @@ test("F-019 SCALE rejects invalid factors and gives factor one an AutoCAD-compat
     commandId: "SCALE", targetHandles: ["10"], resultHandles: [],
     args: { factor: 1, copy: false, geometryNoOp: true },
   });
-  await page.getByRole("button", { name: "UNDO" }).click();
+  await page.getByRole("button", { name: "UNDO", exact: true }).click();
   await expect(page.getByText("UNDO taastatud, revision 3")).toBeVisible();
   const afterOneUndo = await readLocalDocument(page);
   expect(afterOneUndo.entities[0]).toMatchObject({ start: { x: 10, y: 10 }, end: { x: 180, y: 90 } });
@@ -250,7 +250,7 @@ test("F-019 SCALE Copy uses one-point Reference and two-point new length", async
     { handle: "10", vertices: [{ x: 10, y: 10, z: 0 }, { x: 180, y: 90, z: 0 }] },
     { handle: "11", vertices: [{ x: 20, y: 20, z: 0 }, { x: 360, y: 180, z: 0 }] },
   ]);
-  await page.getByRole("button", { name: "UNDO" }).click();
+  await page.getByRole("button", { name: "UNDO", exact: true }).click();
   expect((await readLocalDocument(page)).entities.map((entity) => entity.handle)).toEqual(["10"]);
   expect(consoleErrors).toEqual([]);
 });
@@ -283,7 +283,7 @@ test("F-019 SCALE two-point Reference standard matrix persists and undoes atomic
     copy: false,
   });
 
-  await page.getByRole("button", { name: "UNDO" }).click();
+  await page.getByRole("button", { name: "UNDO", exact: true }).click();
   await expect(page.getByText("UNDO taastatud, revision 2")).toBeVisible();
   await page.reload();
   await expect(page.getByText("Taastatud revision 2")).toBeVisible();

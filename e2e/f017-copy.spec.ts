@@ -132,7 +132,7 @@ test("F-017 COPY preselection, repeated original-relative placements, DXF and at
     { type: "LWPOLYLINE", handle: "15", shape: true, vertices: [{ x: -300, y: 1100 }, { x: 700, y: 1100 }, { x: 700, y: 1600 }, { x: -300, y: 1600 }] },
   ]);
 
-  await page.getByRole("button", { name: "UNDO" }).click();
+  await page.getByRole("button", { name: "UNDO", exact: true }).click();
   await expect(page.getByText("UNDO taastatud, revision 4")).toBeVisible();
   await page.reload();
   await expect(page.getByText("Taastatud revision 4")).toBeVisible();
@@ -216,7 +216,7 @@ test("F-017 COPY standard entity matrix preserves originals/properties, persists
   expect(operation?.resultHandles).toEqual(f017ExpectedCopiedHandles);
   expect(operation?.args).toEqual({ basePoint: f017BasePoint, destinationPoints: f017DestinationPoints });
 
-  await page.getByRole("button", { name: "UNDO" }).click();
+  await page.getByRole("button", { name: "UNDO", exact: true }).click();
   await expect(page.getByText("UNDO taastatud, revision 2")).toBeVisible();
   await page.reload();
   await expect(page.getByText("Taastatud revision 2")).toBeVisible();

@@ -43,7 +43,7 @@ test("F-015 ERASE selection to atomic delete, empty DXF and one-step UNDO", asyn
   expect(parsed?.header?.$INSUNITS).toBe(4);
   expect(parsed?.entities).toEqual([]);
 
-  await page.getByRole("button", { name: "UNDO" }).click();
+  await page.getByRole("button", { name: "UNDO", exact: true }).click();
   await expect(page.getByText("UNDO taastatud, revision 4")).toBeVisible();
   await expect(page.getByText("2 objekti · 0 valitud")).toBeVisible();
   await page.reload();
