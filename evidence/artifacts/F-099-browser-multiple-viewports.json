@@ -1,0 +1,248 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-099",
+  "status": "PASS",
+  "viewport": {
+    "width": 1920,
+    "height": 1080
+  },
+  "action": "PAPER -> rectangular MVIEW -> polygon-clipped MVIEW -> independent cameras -> viewport MODEL -> delete -> PAPER -> undo/redo/undo -> KDRAW1 -> reload",
+  "created": [
+    {
+      "id": "viewport-1",
+      "kind": "rectangle",
+      "context": "paper",
+      "viewCenter": "0,0",
+      "viewHeight": 1200,
+      "frame": {
+        "x": 476.09375,
+        "y": 229.1875,
+        "width": 477.828125,
+        "height": 669.640625
+      },
+      "clipPath": "none",
+      "canvas": {
+        "width": 476,
+        "height": 668,
+        "paintedPixels": 2431
+      }
+    },
+    {
+      "id": "viewport-2",
+      "kind": "polygon",
+      "context": "paper",
+      "viewCenter": "2000,0",
+      "viewHeight": 1200,
+      "frame": {
+        "x": 966.03125,
+        "y": 229.1875,
+        "width": 477.828125,
+        "height": 669.640625
+      },
+      "clipPath": "polygon(0% 78%, 22% 100%, 78% 100%, 100% 62%, 88% 0%, 12% 0%)",
+      "canvas": {
+        "width": 476,
+        "height": 668,
+        "paintedPixels": 2431
+      }
+    }
+  ],
+  "afterModelContextDelete": {
+    "viewportIds": [
+      "viewport-1"
+    ],
+    "space": "PAPER"
+  },
+  "restored": [
+    {
+      "id": "viewport-1",
+      "kind": "rectangle",
+      "context": "paper",
+      "viewCenter": "0,0",
+      "viewHeight": 1200,
+      "frame": {
+        "x": 476.09375,
+        "y": 229.1875,
+        "width": 477.828125,
+        "height": 669.640625
+      },
+      "clipPath": "none",
+      "canvas": {
+        "width": 476,
+        "height": 668,
+        "paintedPixels": 2431
+      }
+    },
+    {
+      "id": "viewport-2",
+      "kind": "polygon",
+      "context": "paper",
+      "viewCenter": "2000,0",
+      "viewHeight": 1200,
+      "frame": {
+        "x": 966.03125,
+        "y": 229.1875,
+        "width": 477.828125,
+        "height": 669.640625
+      },
+      "clipPath": "polygon(0% 78%, 22% 100%, 78% 100%, 100% 62%, 88% 0%, 12% 0%)",
+      "canvas": {
+        "width": 476,
+        "height": 668,
+        "paintedPixels": 2431
+      }
+    }
+  ],
+  "document": {
+    "revision": 6,
+    "layout": {
+      "id": "layout-f099",
+      "name": "F099 VIEWPORTS",
+      "kind": "paper",
+      "paper": {
+        "widthMm": 420,
+        "heightMm": 297,
+        "marginsMm": {
+          "top": 10,
+          "right": 10,
+          "bottom": 10,
+          "left": 10
+        }
+      },
+      "viewports": [
+        {
+          "center": {
+            "x": 108.75,
+            "y": 148.5
+          },
+          "width": 197.5,
+          "height": 277,
+          "viewCenter": {
+            "x": 0,
+            "y": 0
+          },
+          "viewHeight": 1200,
+          "twistAngleRad": 0,
+          "locked": false,
+          "id": "viewport-1"
+        },
+        {
+          "center": {
+            "x": 311.25,
+            "y": 148.5
+          },
+          "width": 197.5,
+          "height": 277,
+          "viewCenter": {
+            "x": 2000,
+            "y": 0
+          },
+          "viewHeight": 1200,
+          "twistAngleRad": 0,
+          "locked": false,
+          "clipBoundary": [
+            {
+              "x": 212.5,
+              "y": 70.94
+            },
+            {
+              "x": 255.95,
+              "y": 10
+            },
+            {
+              "x": 366.55,
+              "y": 10
+            },
+            {
+              "x": 410,
+              "y": 115.25999999999999
+            },
+            {
+              "x": 386.3,
+              "y": 287
+            },
+            {
+              "x": 236.2,
+              "y": 287
+            }
+          ],
+          "id": "viewport-2"
+        }
+      ],
+      "entities": []
+    }
+  },
+  "operations": [
+    {
+      "opId": "fd03da0f-634d-4b76-803a-6d9868e5f9cf",
+      "baseRevision": 0,
+      "commandId": "VIEWPORT_CREATE",
+      "args": {
+        "layoutId": "layout-f099",
+        "kind": "rectangle",
+        "viewportId": "viewport-1"
+      },
+      "targetHandles": [],
+      "resultHandles": []
+    },
+    {
+      "opId": "4adce8c6-83d9-480d-af86-44393656be33",
+      "baseRevision": 1,
+      "commandId": "VIEWPORT_CREATE",
+      "args": {
+        "layoutId": "layout-f099",
+        "kind": "polygon",
+        "viewportId": "viewport-2"
+      },
+      "targetHandles": [],
+      "resultHandles": []
+    },
+    {
+      "opId": "a1c1591a-4f98-4717-a1d5-9159aa4836c7",
+      "baseRevision": 2,
+      "commandId": "VIEWPORT_DELETE",
+      "args": {
+        "layoutId": "layout-f099",
+        "viewportId": "viewport-2"
+      },
+      "targetHandles": [],
+      "resultHandles": []
+    },
+    {
+      "opId": "a1c1591a-4f98-4717-a1d5-9159aa4836c7:undo:1",
+      "baseRevision": 3,
+      "commandId": "UNDO",
+      "args": {
+        "originalOpId": "a1c1591a-4f98-4717-a1d5-9159aa4836c7"
+      },
+      "targetHandles": [],
+      "resultHandles": []
+    },
+    {
+      "opId": "a1c1591a-4f98-4717-a1d5-9159aa4836c7:redo:2",
+      "baseRevision": 4,
+      "commandId": "VIEWPORT_DELETE",
+      "args": {
+        "layoutId": "layout-f099",
+        "viewportId": "viewport-2"
+      },
+      "targetHandles": [],
+      "resultHandles": []
+    },
+    {
+      "opId": "a1c1591a-4f98-4717-a1d5-9159aa4836c7:undo:3",
+      "baseRevision": 5,
+      "commandId": "UNDO",
+      "args": {
+        "originalOpId": "a1c1591a-4f98-4717-a1d5-9159aa4836c7"
+      },
+      "targetHandles": [],
+      "resultHandles": []
+    }
+  ],
+  "exported": {
+    "bytes": 2253,
+    "sha256": "bbba73279aa258e39c5ce6433b55631e8dc95cc0c88c29e9008ee81598b895c0"
+  },
+  "consoleErrors": []
+}

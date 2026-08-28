@@ -12,6 +12,7 @@ export const DEFAULT_PAPER_DEFINITION = Object.freeze({
 export type LayoutCommandErrorCode =
   | "DUPLICATE_NAME"
   | "INVALID_PAPER"
+  | "INVALID_VIEWPORT"
   | "INVALID_NAME"
   | "LAYOUT_LIMIT"
   | "MISSING_LAYOUT"
@@ -35,6 +36,10 @@ export interface LayoutEditResult {
   changes: [LayoutSetChange];
   layoutId: string;
   layouts: CadLayout[];
+}
+
+export interface ViewportEditResult extends LayoutEditResult {
+  viewportId: string | null;
 }
 
 function normalizedName(name: string): string {
@@ -63,6 +68,83 @@ export function resolvePaperDefinition(layout: CadLayout): NonNullable<CadLayout
     margins.top + margins.bottom >= paper.heightMm
   ) throw new LayoutCommandError("INVALID_PAPER", "Paper margins must leave a positive printable area.");
   return paper;
+}
+
+function polygonArea(points: readonly { x: number; y: number }[]): number {
+  return points.reduce((sum, point, index) => {
+    const next = points[(index + 1) % points.length]!;
+    return sum + point.x * next.y - next.x * point.y;
+  }, 0) / 2;
+}
+
+function pointsEqual(a: { x: number; y: number }, b: { x: number; y: number }): boolean {
+  return Math.abs(a.x - b.x) <= 1e-9 && Math.abs(a.y - b.y) <= 1e-9;
+}
+
+function orientation(a: { x: number; y: number }, b: { x: number; y: number }, c: { x: number; y: number }): number {
+  return (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
+}
+
+function pointOnSegment(point: { x: number; y: number }, start: { x: number; y: number }, end: { x: number; y: number }): boolean {
+  return Math.abs(orientation(start, end, point)) <= 1e-9 &&
+    point.x >= Math.min(start.x, end.x) - 1e-9 && point.x <= Math.max(start.x, end.x) + 1e-9 &&
+    point.y >= Math.min(start.y, end.y) - 1e-9 && point.y <= Math.max(start.y, end.y) + 1e-9;
+}
+
+function segmentsIntersect(a: { x: number; y: number }, b: { x: number; y: number }, c: { x: number; y: number }, d: { x: number; y: number }): boolean {
+  const abC = orientation(a, b, c);
+  const abD = orientation(a, b, d);
+  const cdA = orientation(c, d, a);
+  const cdB = orientation(c, d, b);
+  if ([abC, abD, cdA, cdB].some((value) => !Number.isFinite(value))) return true;
+  if ((abC > 1e-9 && abD < -1e-9 || abC < -1e-9 && abD > 1e-9) &&
+      (cdA > 1e-9 && cdB < -1e-9 || cdA < -1e-9 && cdB > 1e-9)) return true;
+  return pointOnSegment(c, a, b) || pointOnSegment(d, a, b) || pointOnSegment(a, c, d) || pointOnSegment(b, c, d);
+}
+
+function isSimplePolygon(points: readonly { x: number; y: number }[]): boolean {
+  for (let index = 0; index < points.length; index += 1) {
+    const next = (index + 1) % points.length;
+    if (pointsEqual(points[index]!, points[next]!)) return false;
+    for (let other = index + 1; other < points.length; other += 1) {
+      const otherNext = (other + 1) % points.length;
+      if (index === other || next === other || otherNext === index) continue;
+      if (segmentsIntersect(points[index]!, points[next]!, points[other]!, points[otherNext]!)) return false;
+    }
+  }
+  return true;
+}
+
+export function assertViewportGeometry(viewport: CadViewport): void {
+  const values = [
+    viewport.center.x, viewport.center.y, viewport.width, viewport.height,
+    viewport.viewCenter.x, viewport.viewCenter.y, viewport.viewHeight, viewport.twistAngleRad,
+  ];
+  if (values.some((value) => !Number.isFinite(value)) || viewport.width <= 0 || viewport.height <= 0 || viewport.viewHeight <= 0) {
+    throw new LayoutCommandError("INVALID_VIEWPORT", "Viewport frame and view dimensions must be finite and positive.");
+  }
+  const minX = viewport.center.x - viewport.width / 2;
+  const maxX = viewport.center.x + viewport.width / 2;
+  const minY = viewport.center.y - viewport.height / 2;
+  const maxY = viewport.center.y + viewport.height / 2;
+  const viewWidth = viewport.viewHeight * (viewport.width / viewport.height);
+  if ([minX, maxX, minY, maxY, viewWidth].some((value) => !Number.isFinite(value)) || viewWidth <= 0) {
+    throw new LayoutCommandError("INVALID_VIEWPORT", "Viewport derived frame and view bounds must remain finite and positive.");
+  }
+  if (viewport.clipBoundary !== undefined) {
+    const points = viewport.clipBoundary;
+    const area = polygonArea(points);
+    if (
+      points.length < 3 ||
+      points.some((point) => !Number.isFinite(point.x) || !Number.isFinite(point.y)) ||
+      !Number.isFinite(area) ||
+      Math.abs(area) <= 1e-9 ||
+      !isSimplePolygon(points)
+    ) throw new LayoutCommandError("INVALID_VIEWPORT", "A clipped viewport requires a finite simple non-collinear polygon with at least three points.");
+    if (points.some((point) => point.x < minX - 1e-9 || point.x > maxX + 1e-9 || point.y < minY - 1e-9 || point.y > maxY + 1e-9)) {
+      throw new LayoutCommandError("INVALID_VIEWPORT", "Viewport clip boundary must stay inside its paper-space frame.");
+    }
+  }
 }
 
 function uniqueId(prefix: string, used: ReadonlySet<string>): string {
@@ -117,8 +199,46 @@ export function assertLayoutCollection(layouts: readonly CadLayout[]): void {
     for (const viewport of layout.viewports) {
       if (!viewport.id || viewports.has(viewport.id)) throw new LayoutCommandError("MISSING_LAYOUT", `Duplicate or empty viewport id: ${viewport.id}`);
       viewports.add(viewport.id);
+      assertViewportGeometry(viewport);
     }
   }
+}
+
+function paperLayoutIndex(document: KDrawDocumentV1, layoutId: string): number {
+  const index = document.layouts.findIndex((layout) => layout.id === layoutId);
+  const layout = document.layouts[index];
+  if (!layout) throw new LayoutCommandError("MISSING_LAYOUT", `Layout not found: ${layoutId}`);
+  if (layout.kind !== "paper") throw new LayoutCommandError("MODEL_LAYOUT_PROTECTED", "Paper viewports cannot be changed in Model layout.");
+  return index;
+}
+
+export function createPaperViewport(
+  document: KDrawDocumentV1,
+  layoutId: string,
+  options: Omit<CadViewport, "id">,
+): ViewportEditResult {
+  const layoutIndex = paperLayoutIndex(document, layoutId);
+  const layouts = structuredClone(document.layouts);
+  const viewport: CadViewport = {
+    ...structuredClone(options),
+    id: uniqueId("viewport", viewportIds(layouts)),
+  };
+  assertViewportGeometry(viewport);
+  layouts[layoutIndex]!.viewports.push(viewport);
+  const edited = result(layouts, layoutId);
+  return { ...edited, viewportId: viewport.id };
+}
+
+export function deletePaperViewport(document: KDrawDocumentV1, layoutId: string, viewportId: string): ViewportEditResult {
+  const layoutIndex = paperLayoutIndex(document, layoutId);
+  const layouts = structuredClone(document.layouts);
+  const viewports = layouts[layoutIndex]!.viewports;
+  const viewportIndex = viewports.findIndex((viewport) => viewport.id === viewportId);
+  if (viewportIndex < 0) throw new LayoutCommandError("INVALID_VIEWPORT", `Viewport not found: ${viewportId}`);
+  viewports.splice(viewportIndex, 1);
+  const nextViewportId = viewports[Math.min(viewportIndex, viewports.length - 1)]?.id ?? null;
+  const edited = result(layouts, layoutId);
+  return { ...edited, viewportId: nextViewportId };
 }
 
 function result(layouts: CadLayout[], layoutId: string): LayoutEditResult {

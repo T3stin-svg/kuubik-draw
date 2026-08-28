@@ -5,9 +5,11 @@ import {
   LayoutCommandError,
   allocateEntityHandles,
   copyPaperLayout,
+  createPaperViewport,
   createEmptyDocument,
   createPaperLayout,
   deletePaperLayout,
+  deletePaperViewport,
   movePaperLayout,
   renamePaperLayout,
   resolvePaperDefinition,
@@ -113,5 +115,62 @@ describe("F-097 layout transactions", () => {
       ...paper,
       paper: { widthMm: 420, heightMm: 297, marginsMm: { top: 10, right: 210, bottom: 10, left: 210 } },
     })).toThrowError(LayoutCommandError);
+  });
+
+  it("creates independent rectangular and polygon-clipped paper viewports and deletes one atomically", () => {
+    const document = createEmptyDocument({ documentId: "F-099-viewports", now: "2026-08-28T00:00:00Z" });
+    const paper = createPaperLayout(document, { name: "F099 PAPER", viewports: [] });
+    const withPaper = { ...document, layouts: paper.layouts };
+    const first = createPaperViewport(withPaper, paper.layoutId, {
+      center: { x: 110, y: 148.5 }, width: 180, height: 247,
+      viewCenter: { x: 0, y: 0 }, viewHeight: 2470, twistAngleRad: 0, locked: false,
+    });
+    const second = createPaperViewport({ ...withPaper, layouts: first.layouts }, paper.layoutId, {
+      center: { x: 310, y: 148.5 }, width: 180, height: 247,
+      viewCenter: { x: 2500, y: -750 }, viewHeight: 4940, twistAngleRad: 0, locked: false,
+      clipBoundary: [{ x: 220, y: 25 }, { x: 400, y: 25 }, { x: 370, y: 272 }, { x: 250, y: 272 }],
+    });
+    const viewports = second.layouts.find((layout) => layout.id === paper.layoutId)!.viewports;
+    expect(viewports).toHaveLength(2);
+    expect(viewports.map((viewport) => viewport.id)).toEqual(["viewport-1", "viewport-2"]);
+    expect(viewports[1]).toMatchObject({
+      center: { x: 310, y: 148.5 }, viewCenter: { x: 2500, y: -750 },
+      clipBoundary: [{ x: 220, y: 25 }, { x: 400, y: 25 }, { x: 370, y: 272 }, { x: 250, y: 272 }],
+    });
+    const deleted = deletePaperViewport({ ...withPaper, layouts: second.layouts }, paper.layoutId, first.viewportId!);
+    expect(deleted.viewportId).toBe(second.viewportId);
+    expect(deleted.layouts.find((layout) => layout.id === paper.layoutId)!.viewports.map((viewport) => viewport.id)).toEqual(["viewport-2"]);
+    expect(() => createPaperViewport(document, "model", {
+      center: { x: 0, y: 0 }, width: 10, height: 10, viewCenter: { x: 0, y: 0 }, viewHeight: 10, twistAngleRad: 0, locked: false,
+    })).toThrowError(LayoutCommandError);
+  });
+
+  it("rejects degenerate or outside non-rectangular viewport clips", () => {
+    const document = createEmptyDocument({ documentId: "F-099-invalid" });
+    const paper = createPaperLayout(document, { name: "F099 PAPER", viewports: [] });
+    const withPaper = { ...document, layouts: paper.layouts };
+    const base = {
+      center: { x: 100, y: 100 }, width: 100, height: 100,
+      viewCenter: { x: 0, y: 0 }, viewHeight: 100, twistAngleRad: 0, locked: false,
+    };
+    expect(() => createPaperViewport(withPaper, paper.layoutId, {
+      ...base, clipBoundary: [{ x: 50, y: 50 }, { x: 75, y: 75 }, { x: 100, y: 100 }],
+    })).toThrowError(LayoutCommandError);
+    expect(() => createPaperViewport(withPaper, paper.layoutId, {
+      ...base, clipBoundary: [{ x: 50, y: 50 }, { x: 151, y: 50 }, { x: 50, y: 150 }],
+    })).toThrowError(LayoutCommandError);
+    expect(() => createPaperViewport(withPaper, paper.layoutId, {
+      ...base, clipBoundary: [{ x: 50, y: 50 }, { x: 150, y: 125 }, { x: 50, y: 150 }, { x: 150, y: 50 }],
+    })).toThrow(/simple/i);
+    const invalidStored = structuredClone(withPaper);
+    invalidStored.layouts[1]!.viewports = [{
+      id: "stored-bow-tie", ...base,
+      clipBoundary: [{ x: 50, y: 50 }, { x: 150, y: 125 }, { x: 50, y: 150 }, { x: 150, y: 50 }],
+    }];
+    expect(() => new CadSession(invalidStored)).toThrow(/simple/i);
+    expect(() => createPaperViewport(withPaper, paper.layoutId, {
+      center: { x: 1.7e308, y: 0 }, width: 1.7e308, height: 1,
+      viewCenter: { x: 0, y: 0 }, viewHeight: 1.7e308, twistAngleRad: 0, locked: false,
+    })).toThrow(/derived frame/i);
   });
 });

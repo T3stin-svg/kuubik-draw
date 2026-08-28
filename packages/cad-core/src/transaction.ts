@@ -156,6 +156,7 @@ export class CadSession {
 
   constructor(document: KDrawDocumentV1, appliedOperationIds: Iterable<string> = []) {
     assertKDrawDocumentV1(document);
+    assertLayoutCollection(document.layouts);
     this.#document = structuredClone(document);
     this.#appliedOperationIds = new Set(appliedOperationIds);
   }

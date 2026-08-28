@@ -1,0 +1,225 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-099",
+  "source": "production viewport transaction kernel and serializer; independent KDRAW1 magic/base64/length/SHA/document reader",
+  "multiple": {
+    "revision": 2,
+    "layout": {
+      "id": "layout-1",
+      "name": "F099 VIEWPORTS",
+      "kind": "paper",
+      "paper": {
+        "widthMm": 420,
+        "heightMm": 297,
+        "marginsMm": {
+          "top": 10,
+          "right": 10,
+          "bottom": 10,
+          "left": 10
+        }
+      },
+      "viewports": [
+        {
+          "center": {
+            "x": 108.75,
+            "y": 148.5
+          },
+          "width": 197.5,
+          "height": 277,
+          "viewCenter": {
+            "x": 0,
+            "y": 0
+          },
+          "viewHeight": 1200,
+          "twistAngleRad": 0,
+          "locked": false,
+          "id": "viewport-1"
+        },
+        {
+          "center": {
+            "x": 311.25,
+            "y": 148.5
+          },
+          "width": 197.5,
+          "height": 277,
+          "viewCenter": {
+            "x": 2000,
+            "y": 0
+          },
+          "viewHeight": 1200,
+          "twistAngleRad": 0,
+          "locked": false,
+          "clipBoundary": [
+            {
+              "x": 212.5,
+              "y": 70.94
+            },
+            {
+              "x": 255.95,
+              "y": 10
+            },
+            {
+              "x": 366.55,
+              "y": 10
+            },
+            {
+              "x": 410,
+              "y": 115.26
+            },
+            {
+              "x": 386.3,
+              "y": 287
+            },
+            {
+              "x": 236.2,
+              "y": 287
+            }
+          ],
+          "id": "viewport-2"
+        }
+      ],
+      "entities": []
+    },
+    "containerSha256": "a2916e878d420cc3be9a2be4a0b74d058b2f99328424c051855ada0ab8ad22fc",
+    "documentSha256": "73917164bd69acb230622c694f8d57add3dfb4d3dbdce3c76781248b1f00572f"
+  },
+  "atomicDelete": {
+    "selectedAfterDelete": "viewport-1",
+    "afterDelete": [
+      {
+        "center": {
+          "x": 108.75,
+          "y": 148.5
+        },
+        "width": 197.5,
+        "height": 277,
+        "viewCenter": {
+          "x": 0,
+          "y": 0
+        },
+        "viewHeight": 1200,
+        "twistAngleRad": 0,
+        "locked": false,
+        "id": "viewport-1"
+      }
+    ],
+    "afterUndo": [
+      {
+        "center": {
+          "x": 108.75,
+          "y": 148.5
+        },
+        "width": 197.5,
+        "height": 277,
+        "viewCenter": {
+          "x": 0,
+          "y": 0
+        },
+        "viewHeight": 1200,
+        "twistAngleRad": 0,
+        "locked": false,
+        "id": "viewport-1"
+      },
+      {
+        "center": {
+          "x": 311.25,
+          "y": 148.5
+        },
+        "width": 197.5,
+        "height": 277,
+        "viewCenter": {
+          "x": 2000,
+          "y": 0
+        },
+        "viewHeight": 1200,
+        "twistAngleRad": 0,
+        "locked": false,
+        "clipBoundary": [
+          {
+            "x": 212.5,
+            "y": 70.94
+          },
+          {
+            "x": 255.95,
+            "y": 10
+          },
+          {
+            "x": 366.55,
+            "y": 10
+          },
+          {
+            "x": 410,
+            "y": 115.26
+          },
+          {
+            "x": 386.3,
+            "y": 287
+          },
+          {
+            "x": 236.2,
+            "y": 287
+          }
+        ],
+        "id": "viewport-2"
+      }
+    ],
+    "afterRedo": [
+      {
+        "center": {
+          "x": 108.75,
+          "y": 148.5
+        },
+        "width": 197.5,
+        "height": 277,
+        "viewCenter": {
+          "x": 0,
+          "y": 0
+        },
+        "viewHeight": 1200,
+        "twistAngleRad": 0,
+        "locked": false,
+        "id": "viewport-1"
+      }
+    ]
+  },
+  "final": {
+    "revision": 5,
+    "layout": {
+      "id": "layout-1",
+      "name": "F099 VIEWPORTS",
+      "kind": "paper",
+      "paper": {
+        "widthMm": 420,
+        "heightMm": 297,
+        "marginsMm": {
+          "top": 10,
+          "right": 10,
+          "bottom": 10,
+          "left": 10
+        }
+      },
+      "viewports": [
+        {
+          "center": {
+            "x": 108.75,
+            "y": 148.5
+          },
+          "width": 197.5,
+          "height": 277,
+          "viewCenter": {
+            "x": 0,
+            "y": 0
+          },
+          "viewHeight": 1200,
+          "twistAngleRad": 0,
+          "locked": false,
+          "id": "viewport-1"
+        }
+      ],
+      "entities": []
+    },
+    "containerSha256": "b42311f2c766afbdcdc93caf1f3745914ca88dba08fc522af6a73faf477a3ed2",
+    "documentSha256": "31f4997a5faa7e0044d83e9f8aa2ab06311f513f422ffa837e8cad926cb79a78"
+  },
+  "status": "PASS"
+}

@@ -1,5 +1,5 @@
 import { expect, it } from "vitest";
-import { applyAtomicOperation, copyPaperLayout, createEmptyDocument, createPaperLayout, executeCopy, executeErase, executeMirror, executeMove, executeOffset, executeRectangle, executeRotate, executeScale, offsetCadEntity, resolvePaperDefinition } from "../src/index.js";
+import { applyAtomicOperation, copyPaperLayout, createEmptyDocument, createPaperLayout, createPaperViewport, deletePaperViewport, executeCopy, executeErase, executeMirror, executeMove, executeOffset, executeRectangle, executeRotate, executeScale, offsetCadEntity, resolvePaperDefinition } from "../src/index.js";
 
 it("kills the revision-increment mutant", () => {
   const source = createEmptyDocument({ documentId: "mutation" });
@@ -303,4 +303,39 @@ it("kills F-098 zero-sheet and collapsed-printable-area mutants", () => {
     ...layout,
     paper: { widthMm: 420, heightMm: 297, marginsMm: { top: 149, right: 10, bottom: 148, left: 10 } },
   })).toThrow(/printable area/i);
+});
+
+it("kills F-099 shared-id, wrong-layout, malformed-clip and wrong-adjacent-selection mutants", () => {
+  const document = createEmptyDocument({ documentId: "F-099-mutation" });
+  const paper = createPaperLayout(document, { name: "F099 PAPER", viewports: [] });
+  const withPaper = { ...document, layouts: paper.layouts };
+  const first = createPaperViewport(withPaper, paper.layoutId, {
+    center: { x: 100, y: 100 }, width: 100, height: 120,
+    viewCenter: { x: 0, y: 0 }, viewHeight: 1000, twistAngleRad: 0, locked: false,
+  });
+  const second = createPaperViewport({ ...withPaper, layouts: first.layouts }, paper.layoutId, {
+    center: { x: 220, y: 100 }, width: 100, height: 120,
+    viewCenter: { x: 2000, y: 0 }, viewHeight: 500, twistAngleRad: 0, locked: true,
+    clipBoundary: [{ x: 170, y: 50 }, { x: 230, y: 40 }, { x: 270, y: 100 }, { x: 230, y: 160 }, { x: 170, y: 150 }],
+  });
+  expect([first.viewportId, second.viewportId]).toEqual(["viewport-1", "viewport-2"]);
+  expect(second.layouts[1]!.viewports).toMatchObject([
+    { id: "viewport-1", viewCenter: { x: 0, y: 0 }, viewHeight: 1000 },
+    { id: "viewport-2", viewCenter: { x: 2000, y: 0 }, viewHeight: 500, locked: true },
+  ]);
+  expect(() => createPaperViewport({ ...withPaper, layouts: second.layouts }, paper.layoutId, {
+    center: { x: 220, y: 100 }, width: 100, height: 120,
+    viewCenter: { x: 0, y: 0 }, viewHeight: 100, twistAngleRad: 0, locked: false,
+    clipBoundary: [{ x: 170, y: 40 }, { x: 270, y: 120 }, { x: 170, y: 160 }, { x: 270, y: 40 }],
+  })).toThrow(/simple/i);
+  const deleted = deletePaperViewport({ ...withPaper, layouts: second.layouts }, paper.layoutId, "viewport-2");
+  expect(deleted.viewportId).toBe("viewport-1");
+  expect(deleted.layouts[1]!.viewports.map((viewport) => viewport.id)).toEqual(["viewport-1"]);
+  expect(() => createPaperViewport(withPaper, "model", {
+    center: { x: 1, y: 1 }, width: 1, height: 1, viewCenter: { x: 0, y: 0 }, viewHeight: 1, twistAngleRad: 0, locked: false,
+  })).toThrow(/Model layout/i);
+  expect(() => createPaperViewport(withPaper, paper.layoutId, {
+    center: { x: 1.7e308, y: 0 }, width: 1.7e308, height: 1,
+    viewCenter: { x: 0, y: 0 }, viewHeight: 1.7e308, twistAngleRad: 0, locked: false,
+  })).toThrow(/finite/i);
 });

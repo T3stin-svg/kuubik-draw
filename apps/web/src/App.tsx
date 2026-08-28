@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { allocateEntityHandles, CadCommandInputError, CadSession, LayoutCommandError, copyPaperLayout, createEmptyDocument, createPaperLayout, deletePaperLayout, movePaperLayout, parseCartesianPoint, parseCopyDestinations, parseMoveDestination, parseOffsetDistance, parseOffsetPlacementPoints, parseReferenceAngleInput, parseRotationAngleInput, parseScaleFactorInput, parseScaleLengthInput, renamePaperLayout, resolveCadCommand, resolvePaperDefinition, serializeKDraw, type CadChange, type CopyRejectedTarget, type MirrorRejectedTarget, type MoveRejectedTarget, type OffsetLayerMode, type OffsetRejectedTarget, type RotateAngleSpec, type RotateRejectedTarget, type ScaleFactorSpec, type ScaleRejectedTarget } from "@kuubik/cad-core";
+import { allocateEntityHandles, CadCommandInputError, CadSession, LayoutCommandError, copyPaperLayout, createEmptyDocument, createPaperLayout, createPaperViewport, deletePaperLayout, deletePaperViewport, movePaperLayout, parseCartesianPoint, parseCopyDestinations, parseMoveDestination, parseOffsetDistance, parseOffsetPlacementPoints, parseReferenceAngleInput, parseRotationAngleInput, parseScaleFactorInput, parseScaleLengthInput, renamePaperLayout, resolveCadCommand, resolvePaperDefinition, serializeKDraw, type CadChange, type CopyRejectedTarget, type MirrorRejectedTarget, type MoveRejectedTarget, type OffsetLayerMode, type OffsetRejectedTarget, type RotateAngleSpec, type RotateRejectedTarget, type ScaleFactorSpec, type ScaleRejectedTarget } from "@kuubik/cad-core";
 import { exportDxf } from "@kuubik/cad-dxf";
 import { CadCanvasRenderer } from "@kuubik/cad-renderer";
-import type { CadEntity, KDrawDocumentV1 } from "@kuubik/cad-schema";
+import type { CadEntity, CadLayout, CadViewport, KDrawDocumentV1 } from "@kuubik/cad-schema";
 import { KDrawIndexedDb, StorageRevisionConflictError } from "./indexed-db.js";
 import "./style.css";
 
@@ -50,6 +50,93 @@ function scaleFactorSpec(
   };
 }
 
+function viewportClipPath(viewport: CadViewport): string | undefined {
+  if (!viewport.clipBoundary) return undefined;
+  const left = viewport.center.x - viewport.width / 2;
+  const bottom = viewport.center.y - viewport.height / 2;
+  return `polygon(${viewport.clipBoundary.map((point) => {
+    const x = ((point.x - left) / viewport.width) * 100;
+    const y = 100 - ((point.y - bottom) / viewport.height) * 100;
+    return `${x}% ${y}%`;
+  }).join(", ")})`;
+}
+
+function PaperViewportCanvas({
+  document,
+  viewport,
+  paper,
+  active,
+  modelContext,
+  onSelect,
+  onEnterModel,
+}: {
+  document: KDrawDocumentV1;
+  viewport: CadViewport;
+  paper: NonNullable<CadLayout["paper"]>;
+  active: boolean;
+  modelContext: boolean;
+  onSelect: () => void;
+  onEnterModel: () => void;
+}) {
+  const canvas = useRef<HTMLCanvasElement>(null);
+  useEffect(() => {
+    const element = canvas.current;
+    const context = element?.getContext("2d");
+    if (!element || !context) return;
+    const renderer = new CadCanvasRenderer();
+    renderer.setBlocks(document.blocks);
+    renderer.setEntities(document.entities);
+    const render = () => {
+      const widthPx = element.clientWidth;
+      const heightPx = element.clientHeight;
+      if (widthPx <= 0 || heightPx <= 0) return;
+      const devicePixelRatio = window.devicePixelRatio || 1;
+      element.width = Math.max(1, Math.round(widthPx * devicePixelRatio));
+      element.height = Math.max(1, Math.round(heightPx * devicePixelRatio));
+      const worldWidth = viewport.viewHeight * (viewport.width / viewport.height);
+      renderer.render(context, {
+        world: {
+          minX: viewport.viewCenter.x - worldWidth / 2,
+          minY: viewport.viewCenter.y - viewport.viewHeight / 2,
+          maxX: viewport.viewCenter.x + worldWidth / 2,
+          maxY: viewport.viewCenter.y + viewport.viewHeight / 2,
+        },
+        widthPx,
+        heightPx,
+        devicePixelRatio,
+      }, document.layers);
+    };
+    render();
+    const observer = new ResizeObserver(render);
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [document.blocks, document.entities, document.layers, viewport]);
+
+  return (
+    <div
+      className={`paper-space-viewport${active ? " selected" : ""}${modelContext ? " model-context" : ""}`}
+      data-testid="paper-space-viewport"
+      data-viewport-id={viewport.id}
+      data-viewport-kind={viewport.clipBoundary ? "polygon" : "rectangle"}
+      data-space-context={modelContext ? "model" : "paper"}
+      data-view-center={`${viewport.viewCenter.x},${viewport.viewCenter.y}`}
+      data-view-height={viewport.viewHeight}
+      style={{
+        left: `${((viewport.center.x - viewport.width / 2) / paper.widthMm) * 100}%`,
+        bottom: `${((viewport.center.y - viewport.height / 2) / paper.heightMm) * 100}%`,
+        width: `${(viewport.width / paper.widthMm) * 100}%`,
+        height: `${(viewport.height / paper.heightMm) * 100}%`,
+        clipPath: viewportClipPath(viewport),
+      }}
+      onClick={(event) => { event.stopPropagation(); onSelect(); }}
+      onDoubleClick={(event) => { event.stopPropagation(); onEnterModel(); }}
+    >
+      <canvas ref={canvas} aria-label={`Viewport ${viewport.id}`} />
+      <span className="paper-space-viewport-label">{viewport.id}</span>
+    </div>
+  );
+}
+
 export function App() {
   const canvas = useRef<HTMLCanvasElement>(null);
   const database = useMemo(() => new KDrawIndexedDb(), []);
@@ -58,6 +145,8 @@ export function App() {
   const [document, setDocument] = useState<KDrawDocumentV1>(session.current.document);
   const [status, setStatus] = useState("Uus kohalik dokument");
   const [activeLayoutId, setActiveLayoutId] = useState("model");
+  const [selectedViewportId, setSelectedViewportId] = useState<string | null>(null);
+  const [modelViewportId, setModelViewportId] = useState<string | null>(null);
   const [layoutRenameInput, setLayoutRenameInput] = useState("");
   const [firstCornerInput, setFirstCornerInput] = useState("100,200");
   const [otherCornerInput, setOtherCornerInput] = useState("600,900");
@@ -101,10 +190,11 @@ export function App() {
   const [previewCommand, setPreviewCommand] = useState<"MOVE" | "COPY" | "ROTATE" | "SCALE" | "MIRROR" | "OFFSET">("MOVE");
   const activeLayer = document.layers.find((layer) => layer.id === document.currentLayerId)!;
   const activeLayout = document.layouts.find((layout) => layout.id === activeLayoutId) ?? document.layouts[0]!;
-  const modelSpaceEditing = activeLayout.kind === "model";
+  const modelSpaceEditing = activeLayout.kind === "model" || modelViewportId !== null;
   const activePaper = useMemo(() => resolvePaperDefinition(activeLayout), [activeLayout]);
-  const canUndoInActiveLayout = session.current.canUndo && (modelSpaceEditing || session.current.nextUndoCommandId?.startsWith("LAYOUT_") === true);
-  const canRedoInActiveLayout = session.current.canRedo && (modelSpaceEditing || session.current.nextRedoCommandId?.startsWith("LAYOUT_") === true);
+  const activeSpace = modelSpaceEditing ? "MODEL" : "PAPER";
+  const canUndoInActiveLayout = session.current.canUndo && (modelSpaceEditing || /^(LAYOUT|VIEWPORT)_/u.test(session.current.nextUndoCommandId ?? ""));
+  const canRedoInActiveLayout = session.current.canRedo && (modelSpaceEditing || /^(LAYOUT|VIEWPORT)_/u.test(session.current.nextRedoCommandId ?? ""));
   const paperLayouts = document.layouts.filter((layout) => layout.kind === "paper");
   const activePaperIndex = paperLayouts.findIndex((layout) => layout.id === activeLayout.id);
   const movePreview = useMemo((): { entities: CadEntity[]; delta: { x: number; y: number } } | null => {
@@ -239,6 +329,17 @@ export function App() {
   }, [activeLayoutId, document.layouts]);
 
   useEffect(() => {
+    if (activeLayout.kind !== "paper") {
+      setSelectedViewportId(null);
+      setModelViewportId(null);
+      return;
+    }
+    const viewportIds = new Set(activeLayout.viewports.map((viewport) => viewport.id));
+    if (selectedViewportId !== null && !viewportIds.has(selectedViewportId)) setSelectedViewportId(null);
+    if (modelViewportId !== null && !viewportIds.has(modelViewportId)) setModelViewportId(null);
+  }, [activeLayout, modelViewportId, selectedViewportId]);
+
+  useEffect(() => {
     const element = canvas.current;
     if (!element) return;
     const context = element.getContext("2d");
@@ -305,7 +406,7 @@ export function App() {
     resultHandles: string[],
     targetHandles: string[] = [],
   ): Promise<void> {
-    if (activeLayout.kind !== "model" && MODEL_SPACE_COMMANDS.has(commandId)) {
+    if (activeLayout.kind !== "model" && modelViewportId === null && MODEL_SPACE_COMMANDS.has(commandId)) {
       throw new CadCommandInputError(`${commandId} cannot mutate hidden Model geometry while a paper layout is active.`);
     }
     const operation = {
@@ -880,12 +981,86 @@ export function App() {
     }
   }
 
+  function viewportPlacement(index: number): { center: { x: number; y: number }; width: number; height: number } {
+    if (!activePaper) throw new LayoutCommandError("INVALID_PAPER", "Paper definition is missing.");
+    const margins = activePaper.marginsMm;
+    const printableWidth = activePaper.widthMm - margins.left - margins.right;
+    const printableHeight = activePaper.heightMm - margins.top - margins.bottom;
+    const gap = Math.min(5, printableWidth / 20);
+    const width = (printableWidth - gap) / 2;
+    const column = index % 2;
+    return {
+      center: {
+        x: margins.left + width / 2 + column * (width + gap),
+        y: margins.bottom + printableHeight / 2,
+      },
+      width,
+      height: printableHeight,
+    };
+  }
+
+  async function addViewport(kind: "rectangle" | "polygon"): Promise<void> {
+    if (committing.current || activeLayout.kind !== "paper" || !activePaper) return;
+    committing.current = true;
+    try {
+      const placement = viewportPlacement(activeLayout.viewports.length);
+      const viewCenter = activeLayout.viewports.length % 2 === 0 ? { x: 0, y: 0 } : { x: 2000, y: 0 };
+      const clipBoundary = kind === "polygon" ? [
+        { x: placement.center.x - placement.width / 2, y: placement.center.y - placement.height * 0.28 },
+        { x: placement.center.x - placement.width * 0.28, y: placement.center.y - placement.height / 2 },
+        { x: placement.center.x + placement.width * 0.28, y: placement.center.y - placement.height / 2 },
+        { x: placement.center.x + placement.width / 2, y: placement.center.y - placement.height * 0.12 },
+        { x: placement.center.x + placement.width * 0.38, y: placement.center.y + placement.height / 2 },
+        { x: placement.center.x - placement.width * 0.38, y: placement.center.y + placement.height / 2 },
+      ] : undefined;
+      const result = createPaperViewport(document, activeLayout.id, {
+        ...placement,
+        viewCenter,
+        viewHeight: 1200,
+        twistAngleRad: 0,
+        locked: false,
+        ...(clipBoundary ? { clipBoundary } : {}),
+      });
+      await commitChanges("VIEWPORT_CREATE", { layoutId: activeLayout.id, kind, viewportId: result.viewportId }, result.changes, []);
+      setSelectedViewportId(result.viewportId);
+      setModelViewportId(null);
+      setStatus(`${kind === "polygon" ? "Polügoon" : "Ristkülik"}viewport ${result.viewportId} loodud`);
+    } catch (error) {
+      if (error instanceof StorageRevisionConflictError) await recoverFromStorageConflict(error);
+      else if (error instanceof LayoutCommandError) setStatus(`VIEWPORT viga: ${error.message}`);
+      else throw error;
+    } finally {
+      committing.current = false;
+    }
+  }
+
+  async function deleteSelectedViewport(): Promise<void> {
+    if (committing.current || activeLayout.kind !== "paper" || selectedViewportId === null) return;
+    committing.current = true;
+    try {
+      const deletedViewportId = selectedViewportId;
+      const result = deletePaperViewport(document, activeLayout.id, deletedViewportId);
+      await commitChanges("VIEWPORT_DELETE", { layoutId: activeLayout.id, viewportId: deletedViewportId }, result.changes, []);
+      setSelectedViewportId(result.viewportId);
+      setModelViewportId(null);
+      setStatus(`Viewport ${deletedViewportId} kustutatud; PAPER aktiivne`);
+    } catch (error) {
+      if (error instanceof StorageRevisionConflictError) await recoverFromStorageConflict(error);
+      else if (error instanceof LayoutCommandError) setStatus(`VIEWPORT viga: ${error.message}`);
+      else throw error;
+    } finally {
+      committing.current = false;
+    }
+  }
+
   function activateLayout(layoutId: string): void {
     const layout = document.layouts.find((candidate) => candidate.id === layoutId);
     if (!layout) return;
     setActiveLayoutId(layoutId);
     setLayoutRenameInput(layout.name);
     setSelectedHandles([]);
+    setSelectedViewportId(null);
+    setModelViewportId(null);
     setStatus(`${layout.name}: ${layout.kind === "model" ? "MODEL" : "PAPER"}`);
   }
 
@@ -1115,8 +1290,32 @@ export function App() {
               data-paper-width-mm={activePaper.widthMm}
               data-paper-height-mm={activePaper.heightMm}
               style={{ aspectRatio: `${activePaper.widthMm} / ${activePaper.heightMm}` }}
+              onClick={() => {
+                if (modelViewportId !== null) setStatus("PAPER aktiivne");
+                setModelViewportId(null);
+              }}
             >
-              <canvas ref={canvas} aria-label={`${activeLayout.name} paberiruum`} />
+              <canvas className="paper-space-entities" ref={canvas} aria-label={`${activeLayout.name} paberiruum`} />
+              {activeLayout.viewports.map((viewport) => (
+                <PaperViewportCanvas
+                  key={viewport.id}
+                  document={document}
+                  viewport={viewport}
+                  paper={activePaper}
+                  active={viewport.id === selectedViewportId}
+                  modelContext={viewport.id === modelViewportId}
+                  onSelect={() => {
+                    setSelectedViewportId(viewport.id);
+                    if (modelViewportId !== viewport.id) setModelViewportId(null);
+                    setStatus(`Viewport ${viewport.id} valitud; PAPER aktiivne`);
+                  }}
+                  onEnterModel={() => {
+                    setSelectedViewportId(viewport.id);
+                    setModelViewportId(viewport.id);
+                    setStatus(`Viewport ${viewport.id}: MODEL aktiivne`);
+                  }}
+                />
+              ))}
             </div>
           </div>
         ) : (
@@ -1139,6 +1338,10 @@ export function App() {
         {activeLayout.kind === "paper" && (
           <span className="layout-actions" aria-label="Layout tegevused">
             <button type="button" className="layout-action" aria-label="Kopeeri paigutus" onClick={() => void copyLayout()}>Kopeeri</button>
+            <button type="button" className="layout-action" aria-label="Lisa ristkülikviewport" onClick={() => void addViewport("rectangle")}>+ View</button>
+            <button type="button" className="layout-action" aria-label="Lisa polügoonviewport" onClick={() => void addViewport("polygon")}>+ Clip</button>
+            <button type="button" className="layout-action danger" aria-label="Kustuta viewport" disabled={selectedViewportId === null} onClick={() => void deleteSelectedViewport()}>− View</button>
+            {modelViewportId !== null && <button type="button" className="layout-action" aria-label="Tagasi PAPER" onClick={() => { setModelViewportId(null); setStatus("PAPER aktiivne"); }}>PAPER</button>}
             <button type="button" className="layout-action" aria-label="Liiguta vasakule" disabled={activePaperIndex <= 0} onClick={() => void reorderLayout(-1)}>←</button>
             <button type="button" className="layout-action" aria-label="Liiguta paremale" disabled={activePaperIndex < 0 || activePaperIndex >= paperLayouts.length - 1} onClick={() => void reorderLayout(1)}>→</button>
             <input aria-label="Paigutuse nimi" value={layoutRenameInput} maxLength={255} onChange={(event) => setLayoutRenameInput(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") void renameLayout(); }} />
@@ -1146,11 +1349,11 @@ export function App() {
             <button type="button" className="layout-action danger" aria-label="Kustuta paigutus" disabled={paperLayouts.length <= 1} onClick={() => void deleteLayout()}>Kustuta</button>
           </span>
         )}
-        <span className="layout-space">{activeLayout.kind === "model" ? "MODEL" : "PAPER"}</span>
+        <span className="layout-space">{activeSpace}</span>
       </section>
       <footer className="statusbar">
         <span>{status}</span>
-        <span>{activeLayout.kind === "model" ? "MODEL" : "PAPER"} · mm · SNAP</span>
+        <span>{activeSpace} · mm · SNAP</span>
       </footer>
     </main>
   );

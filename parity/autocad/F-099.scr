@@ -1,0 +1,7 @@
+; F-099 AutoCAD 2024.1.2 reference workflow.
+; Owned scratch drawing only: switch to an ISO A3 paper layout, remove its
+; template viewport, create two independent MVIEW objects, redefine the second
+; with VPCLIP using a closed paper-space polyline, save/reopen the native DWG,
+; activate the clipped viewport's MODEL context, return to PAPER, delete it,
+; and verify the first viewport remains unchanged.
+_.REGENALL
