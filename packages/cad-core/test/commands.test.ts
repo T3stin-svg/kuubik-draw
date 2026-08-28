@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { CadCommandInputError, executeRectangle, parseCartesianPoint, resolveCadCommand } from "../src/index.js";
+import { CadCommandInputError, createEmptyDocument, executeErase, executeRectangle, parseCartesianPoint, resolveCadCommand } from "../src/index.js";
 
 describe("RECTANGLE command registry", () => {
   it("parses explicit Cartesian coordinate input without mutating a document", () => {
@@ -40,5 +40,30 @@ describe("RECTANGLE command registry", () => {
   it("rejects degenerate and non-finite rectangles before a document mutation", () => {
     expect(() => executeRectangle({ handle: "10", layerId: "0", firstCorner: { x: 0, y: 0 }, otherCorner: { x: 0, y: 5 } })).toThrow(/non-zero/);
     expect(() => executeRectangle({ handle: "10", layerId: "0", firstCorner: { x: 0, y: 0 }, otherCorner: { x: Number.NaN, y: 5 } })).toThrow(/finite/);
+  });
+});
+
+describe("ERASE command registry", () => {
+  it("resolves AutoCAD-compatible aliases", () => {
+    expect(resolveCadCommand("e")?.id).toBe("ERASE");
+    expect(resolveCadCommand("DEL")?.id).toBe("ERASE");
+    expect(resolveCadCommand("delete")?.id).toBe("ERASE");
+  });
+
+  it("deletes each editable handle once and truthfully rejects missing and locked targets", () => {
+    const document = createEmptyDocument({ documentId: "erase" });
+    document.layers.push({ id: "locked", name: "Locked", visible: true, frozen: false, locked: true, plottable: true });
+    document.entities.push(
+      { kind: "line", handle: "10", layerId: "0", start: { x: 0, y: 0 }, end: { x: 100, y: 0 } },
+      { kind: "line", handle: "11", layerId: "locked", start: { x: 0, y: 10 }, end: { x: 100, y: 10 } },
+    );
+    expect(executeErase(document, { targetHandles: ["10", "10", "11", "missing"] })).toEqual({
+      changes: [{ type: "delete", handle: "10" }],
+      erasedHandles: ["10"],
+      rejected: [
+        { handle: "11", reason: "locked-layer" },
+        { handle: "missing", reason: "missing" },
+      ],
+    });
   });
 });

@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-015",
+  "kind": "browser",
+  "authority": "kuubik-draw-browser",
+  "status": "PASS",
+  "artifactSha256": "1217b3e1a5f6c60b65ac28d9cb48bef520bf87256e1ac80cacc6cdb1c212ddb3",
+  "observedAt": "2026-08-28T10:27:24.199Z",
+  "workflow": "Chromium /d/local runs editable selection 2 -> ERASE 0 -> one UNDO 2 with exact-handle/geometry reload; a second live workflow creates Layer 1, draws and locks it, then erases a mixed editable+locked selection and reloads revision 5",
+  "result": "The first workflow restored handles 10/11 and exact LINE/LWPOLYLINE geometry. The mixed workflow deleted only the editable line and preserved locked handle 12 with exact geometry after IndexedDB reload. No console/page errors occurred.",
+  "test": "e2e/f015-erase.spec.ts",
+  "artifact": "evidence/artifacts/F-015-browser-readback.json"
+}

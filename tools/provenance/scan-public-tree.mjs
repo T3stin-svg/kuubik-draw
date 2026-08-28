@@ -16,6 +16,11 @@ const blockedCad = /\.(dwg|dwt|dws|dxf|pdf|fcstd)$/i;
 const syntheticCadAllowlist = new Set([
   "parity/fixtures/F-003-empty-mm.dxf",
   "evidence/artifacts/F-003-kuubik.dxf",
+  "parity/fixtures/F-015-empty-mm.dxf",
+  "evidence/artifacts/F-015-kuubik.dxf",
+  "evidence/artifacts/F-015-browser-empty.dxf",
+  "evidence/artifacts/F-015-browser-restored.dxf",
+  "evidence/artifacts/F-015-browser-locked.dxf",
 ]);
 const textExtensions = new Set([".ts", ".tsx", ".js", ".mjs", ".json", ".md", ".yml", ".yaml", ".html", ".css", ".txt"]);
 const secretPatterns = [

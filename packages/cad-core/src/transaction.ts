@@ -1,6 +1,7 @@
 import {
   assertKDrawDocumentV1,
   type CadEntity,
+  type CadLayer,
   type CadOperation,
   type KDrawDocumentV1,
 } from "@kuubik/cad-schema";
@@ -9,10 +10,16 @@ export type EntityChange =
   | { type: "put"; entity: CadEntity }
   | { type: "delete"; handle: string };
 
+export type CadChange =
+  | EntityChange
+  | { type: "put-layer"; layer: CadLayer }
+  | { type: "delete-layer"; layerId: string }
+  | { type: "set-current-layer"; layerId: string };
+
 export interface CommittedOperation {
   operation: CadOperation;
-  changes: EntityChange[];
-  inverseChanges: EntityChange[];
+  changes: CadChange[];
+  inverseChanges: CadChange[];
   committedRevision: number;
 }
 
@@ -47,7 +54,7 @@ function cloneEntity(entity: CadEntity): CadEntity {
 export function applyAtomicOperation(
   source: KDrawDocumentV1,
   operation: CadOperation,
-  changes: readonly EntityChange[],
+  changes: readonly CadChange[],
   now = new Date().toISOString(),
 ): { document: KDrawDocumentV1; committed: CommittedOperation } {
   if (operation.baseRevision !== source.revision) {
@@ -59,7 +66,9 @@ export function applyAtomicOperation(
   if (changes.length === 0) throw new NoOpOperationError();
 
   const entities = new Map(source.entities.map((entity) => [entity.handle, cloneEntity(entity)]));
-  const inverseChanges: EntityChange[] = [];
+  const layers = new Map(source.layers.map((layer) => [layer.id, structuredClone(layer)]));
+  let currentLayerId = source.currentLayerId;
+  const inverseChanges: CadChange[] = [];
   for (const change of changes) {
     if (change.type === "put") {
       const before = entities.get(change.entity.handle);
@@ -67,19 +76,47 @@ export function applyAtomicOperation(
       entities.set(change.entity.handle, cloneEntity(change.entity));
       continue;
     }
-    const before = entities.get(change.handle);
-    if (!before) throw new RangeError(`Cannot delete missing entity ${change.handle}.`);
-    inverseChanges.unshift({ type: "put", entity: cloneEntity(before) });
-    entities.delete(change.handle);
+    if (change.type === "delete") {
+      const before = entities.get(change.handle);
+      if (!before) throw new RangeError(`Cannot delete missing entity ${change.handle}.`);
+      inverseChanges.unshift({ type: "put", entity: cloneEntity(before) });
+      entities.delete(change.handle);
+      continue;
+    }
+    if (change.type === "put-layer") {
+      const before = layers.get(change.layer.id);
+      inverseChanges.unshift(before ? { type: "put-layer", layer: structuredClone(before) } : { type: "delete-layer", layerId: change.layer.id });
+      layers.set(change.layer.id, structuredClone(change.layer));
+      continue;
+    }
+    if (change.type === "delete-layer") {
+      const before = layers.get(change.layerId);
+      if (!before) throw new RangeError(`Cannot delete missing layer ${change.layerId}.`);
+      if (currentLayerId === change.layerId || [...entities.values()].some((entity) => entity.layerId === change.layerId)) {
+        throw new RangeError(`Cannot delete active or referenced layer ${change.layerId}.`);
+      }
+      inverseChanges.unshift({ type: "put-layer", layer: structuredClone(before) });
+      layers.delete(change.layerId);
+      continue;
+    }
+    if (!layers.has(change.layerId)) throw new RangeError(`Cannot activate missing layer ${change.layerId}.`);
+    inverseChanges.unshift({ type: "set-current-layer", layerId: currentLayerId });
+    currentLayerId = change.layerId;
   }
 
   const document: KDrawDocumentV1 = {
     ...structuredClone(source),
     revision: source.revision + 1,
     entities: [...entities.values()],
+    layers: [...layers.values()],
+    currentLayerId,
     metadata: { ...structuredClone(source.metadata), updatedAt: now },
   };
-  if (JSON.stringify(document.entities) === JSON.stringify(source.entities)) throw new NoOpOperationError();
+  if (
+    JSON.stringify(document.entities) === JSON.stringify(source.entities) &&
+    JSON.stringify(document.layers) === JSON.stringify(source.layers) &&
+    document.currentLayerId === source.currentLayerId
+  ) throw new NoOpOperationError();
   assertKDrawDocumentV1(document);
   return {
     document,
@@ -117,7 +154,7 @@ export class CadSession {
     return this.#redo.length > 0;
   }
 
-  commit(operation: CadOperation, changes: readonly EntityChange[], now?: string): CommittedOperation {
+  commit(operation: CadOperation, changes: readonly CadChange[], now?: string): CommittedOperation {
     if (this.#appliedOperationIds.has(operation.opId)) throw new DuplicateOperationError(operation.opId);
     const result = applyAtomicOperation(this.#document, operation, changes, now);
     this.#document = result.document;

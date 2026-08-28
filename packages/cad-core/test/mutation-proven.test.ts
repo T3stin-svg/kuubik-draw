@@ -1,5 +1,5 @@
 import { expect, it } from "vitest";
-import { applyAtomicOperation, createEmptyDocument, executeRectangle } from "../src/index.js";
+import { applyAtomicOperation, createEmptyDocument, executeErase, executeRectangle } from "../src/index.js";
 
 it("kills the revision-increment mutant", () => {
   const source = createEmptyDocument({ documentId: "mutation" });
@@ -34,5 +34,19 @@ it("kills RECTANGLE open-path, missing-corner and axis-swap mutants", () => {
         { x: 100, y: 900 },
       ],
     },
+  });
+});
+
+it("kills ERASE duplicate-delete and locked-layer bypass mutants", () => {
+  const document = createEmptyDocument({ documentId: "erase-mutation" });
+  document.layers.push({ id: "locked", name: "Locked", visible: true, frozen: false, locked: true, plottable: true });
+  document.entities.push(
+    { kind: "line", handle: "10", layerId: "0", start: { x: 0, y: 0 }, end: { x: 1, y: 0 } },
+    { kind: "line", handle: "11", layerId: "locked", start: { x: 0, y: 1 }, end: { x: 1, y: 1 } },
+  );
+  expect(executeErase(document, { targetHandles: ["10", "10", "11"] })).toEqual({
+    changes: [{ type: "delete", handle: "10" }],
+    erasedHandles: ["10"],
+    rejected: [{ handle: "11", reason: "locked-layer" }],
   });
 });

@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-015",
+  "kind": "readback",
+  "authority": "independent-parser",
+  "status": "PASS",
+  "artifactSha256": "a21cf176d3351299a5d3bdc5a7816e60fcefa09ba52d4bd31d150bf0d6c36bca",
+  "observedAt": "2026-08-28T10:20:08.000Z",
+  "workflow": "Production cad-core ERASE and cad-dxf output parsed by dxf-parser@1.1.2, followed by exact-handle UNDO and a locked-layer kernel matrix",
+  "result": "INSUNITS=4, zero entities after ERASE, handles 10 and 11 restored by one UNDO, locked handle 20 rejected without a change.",
+  "artifact": "evidence/artifacts/F-015-independent-readback.json"
+}

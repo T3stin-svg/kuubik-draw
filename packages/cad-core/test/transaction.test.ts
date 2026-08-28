@@ -75,4 +75,22 @@ describe("atomic document transaction", () => {
     expect(() => session.commit(operation(), [{ type: "put", entity: line }])).toThrow(DuplicateOperationError);
     expect(session.document.revision).toBe(0);
   });
+
+  it("commits layer creation/current-layer/lock changes atomically and undoes them", () => {
+    const session = new CadSession(createEmptyDocument({ documentId: "layers" }));
+    const layer = { id: "layer-1", name: "Layer 1", visible: true, frozen: false, locked: false, plottable: true };
+    session.commit(
+      { opId: "layer-new", baseRevision: 0, commandId: "LAYER_NEW", args: {}, targetHandles: [], resultHandles: [] },
+      [{ type: "put-layer", layer }, { type: "set-current-layer", layerId: layer.id }],
+    );
+    expect(session.document.currentLayerId).toBe("layer-1");
+    expect(session.document.layers).toContainEqual(layer);
+    session.commit(
+      { opId: "layer-lock", baseRevision: 1, commandId: "LAYER_LOCK", args: {}, targetHandles: [], resultHandles: [] },
+      [{ type: "put-layer", layer: { ...layer, locked: true } }],
+    );
+    expect(session.document.layers.find((candidate) => candidate.id === layer.id)?.locked).toBe(true);
+    session.undo();
+    expect(session.document.layers.find((candidate) => candidate.id === layer.id)?.locked).toBe(false);
+  });
 });

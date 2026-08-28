@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-015",
+  "benchmark": "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
+  "engine": "Autodesk AutoCAD Core Console 2024",
+  "engineVersion": "24.3",
+  "command": "ERASE",
+  "result": {
+    "before": 3,
+    "afterErase": 1,
+    "afterUndo": 3,
+    "afterLockedErase": 3,
+    "lockedLayerSurvived": true
+  },
+  "fixtureSha256": "c5dbe35f3ea8fa8f26dee00edace96f0de5f033ec128e8e90ed34ed46d2d1bf6",
+  "scriptSha256": "acfbf6b2523a2283424d24925c2df5a82cf311d32740b79053554cc209a70a77",
+  "observedAt": "2026-08-28T10:19:25.924Z",
+  "status": "PASS"
+}

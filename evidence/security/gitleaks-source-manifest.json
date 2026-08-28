@@ -10,8 +10,8 @@
   "ciArtifactsExcluded": [
     "results.sarif"
   ],
-  "fileCount": 86,
-  "sourceTreeSha256": "d8a876ee07e9dcfb15c7a6f279d7662f31d5606da76d6d16448b9d140c9c293b",
+  "fileCount": 103,
+  "sourceTreeSha256": "7c5a1fd85f01b6f449cd6d4d85fb4fb80f5dc24345e94814513d86c0a7304f50",
   "files": [
     {
       "path": ".gitattributes",
@@ -45,8 +45,8 @@
     },
     {
       "path": "apps/web/src/App.tsx",
-      "size": 7165,
-      "sha256": "c43f3dc4a6008b6458e3ab155046eb66461b4f6123bfae47b5db9f5d1cc48e19"
+      "size": 11295,
+      "sha256": "8a94f95404f1816ec1b7482c5cd9975b6799df7585d3bd3d45dd115db82a46a1"
     },
     {
       "path": "apps/web/src/indexed-db.test.ts",
@@ -66,7 +66,7 @@
     {
       "path": "apps/web/src/style.css",
       "size": 1457,
-      "sha256": "73fde7b055e84e8fccfabad8919cc8ba76e7b9227d303ecd163f482cceb947aa"
+      "sha256": "7244b13ed6f57acf402f9ce4af23297aaca52d840a439a020c1ec2082d8f1de5"
     },
     {
       "path": "apps/web/tsconfig.json",
@@ -89,6 +89,11 @@
       "sha256": "b6045731b6c0be5e7670a7ee2a50cd98e480d93cdbafe9a92e1d888547f1f95e"
     },
     {
+      "path": "e2e/f015-erase.spec.ts",
+      "size": 5531,
+      "sha256": "75b1539d17fff5ebc3a6dc3725e476096d29fbb837818f3ee8410ba33b930842"
+    },
+    {
       "path": "e2e/local-document.spec.ts",
       "size": 1004,
       "sha256": "08b933cfe03eafb1becf407bb56b98e2f5e66316f067936e0092800ecaf5f7a0"
@@ -109,9 +114,49 @@
       "sha256": "213cd5e70fd7956356b2dd43ae7652be362c7562da56158750a645d1ac3c21d8"
     },
     {
+      "path": "evidence/artifacts/F-015-autocad-readback.json",
+      "size": 589,
+      "sha256": "f5a0d307dbcf92fb753352b51b95175ce17ce6284e7090141a8350cf0746f409"
+    },
+    {
+      "path": "evidence/artifacts/F-015-browser-empty.dxf",
+      "size": 122,
+      "sha256": "de2200ebe9dc6db635a197d563291e4f8ecf7de98f2327a31bb1c15a735c640e"
+    },
+    {
+      "path": "evidence/artifacts/F-015-browser-locked.dxf",
+      "size": 290,
+      "sha256": "51a44f8cb815841b9bbaf082c16afb3ed7e5ae1fab969134cc8f4b767c37bc1c"
+    },
+    {
+      "path": "evidence/artifacts/F-015-browser-readback.json",
+      "size": 1793,
+      "sha256": "1217b3e1a5f6c60b65ac28d9cb48bef520bf87256e1ac80cacc6cdb1c212ddb3"
+    },
+    {
+      "path": "evidence/artifacts/F-015-browser-restored.dxf",
+      "size": 375,
+      "sha256": "8d67f5f45e16a8472ece197626aaeecb8d972c4cad3ef2f4fe5784ad088fc677"
+    },
+    {
+      "path": "evidence/artifacts/F-015-independent-readback.json",
+      "size": 470,
+      "sha256": "a21cf176d3351299a5d3bdc5a7816e60fcefa09ba52d4bd31d150bf0d6c36bca"
+    },
+    {
+      "path": "evidence/artifacts/F-015-kuubik.dxf",
+      "size": 122,
+      "sha256": "de2200ebe9dc6db635a197d563291e4f8ecf7de98f2327a31bb1c15a735c640e"
+    },
+    {
       "path": "evidence/autocad/F-003.json",
       "size": 543,
       "sha256": "eb7e21ddb6eb821f4bed726f4804ddc2f1ea4299bbdcc1e55d1a7e1f1a3766d3"
+    },
+    {
+      "path": "evidence/autocad/F-015.json",
+      "size": 583,
+      "sha256": "1100e6fc5132661908e7c8647a51620163be323ef0b58f0a0323dcf1481e0708"
     },
     {
       "path": "evidence/browser/F-003.json",
@@ -119,9 +164,19 @@
       "sha256": "96c91df0baff43cd78ee61b2e72cf76318522e590a5c7423d3c8fb19b7f51548"
     },
     {
+      "path": "evidence/browser/F-015.json",
+      "size": 857,
+      "sha256": "8ac6352393bf45e31c85af2ba517210227a588311bf1000b73d2f46cdc824acf"
+    },
+    {
       "path": "evidence/readback/F-003.json",
       "size": 546,
       "sha256": "792c4a1868e0c7cf9a70e23d961801a8770e04f2d6a176631e96e7b8f983bea3"
+    },
+    {
+      "path": "evidence/readback/F-015.json",
+      "size": 615,
+      "sha256": "b54f1f7d4f2ccb93c045f9c39b7c5bb8d15ce7781a9c06fdd6f3b1a91bd11815"
     },
     {
       "path": "evidence/source-state/kuubik-3d-14475e6-dirty.json",
@@ -130,8 +185,8 @@
     },
     {
       "path": "IMPLEMENTATION_STATUS.md",
-      "size": 2160,
-      "sha256": "d05813253dc46703cbd43a074a719721e082868c89443f057ae564eab2e343bf"
+      "size": 2340,
+      "sha256": "9d94c731085699f66714b86b78cdbac98ffb7abaf3996ed3d76afd5bf458504f"
     },
     {
       "path": "LICENSE",
@@ -165,8 +220,8 @@
     },
     {
       "path": "package.json",
-      "size": 2228,
-      "sha256": "21d468c2f023f2602205a67b16a82d1acd65046e51d3a764a286b64df872e97f"
+      "size": 2516,
+      "sha256": "6c2f5e0fb03bcd35b307f3a1c1fda73e1bfd32bda5382a5466212bef133f5261"
     },
     {
       "path": "packages/cad-core/package.json",
@@ -175,8 +230,8 @@
     },
     {
       "path": "packages/cad-core/src/commands.ts",
-      "size": 2560,
-      "sha256": "ff07cef1b338d81209bbb35173aa9d31f3780cb6411ab433a60240a8eeb653b6"
+      "size": 4176,
+      "sha256": "c8b2a1a309133da4405e7740d891a78fb6294845dfb0e642ecf7941e0c9aef27"
     },
     {
       "path": "packages/cad-core/src/container.ts",
@@ -200,13 +255,13 @@
     },
     {
       "path": "packages/cad-core/src/transaction.ts",
-      "size": 5393,
-      "sha256": "4813b0f3ff9f88f1576f8608c23865376bea044a445d8a2c367b6aa195f6c4ed"
+      "size": 7082,
+      "sha256": "17f4b8cd916ba9068a401846193db3d9d4126186be1e654ab5348d7b8c59a38c"
     },
     {
       "path": "packages/cad-core/test/commands.test.ts",
-      "size": 2044,
-      "sha256": "23c8450fe5c2c8cd6776fdc2c51e147e077df7c31f73dad157e68c076d78e7fe"
+      "size": 3197,
+      "sha256": "504b551bfaf7fc9489ea2d57da546aabd06897c86d5964b6efdf9a962c8a5159"
     },
     {
       "path": "packages/cad-core/test/container.test.ts",
@@ -220,13 +275,13 @@
     },
     {
       "path": "packages/cad-core/test/mutation-proven.test.ts",
-      "size": 1257,
-      "sha256": "2dd9c2ec3fa93b340a0059eb86c7b0e68664bec59cdd9c82c840a6ee63ce430e"
+      "size": 1990,
+      "sha256": "ab8b5d2e009fb2c01e033f0e9e14bf06d71581b0816bad46708edef76ccdc06d"
     },
     {
       "path": "packages/cad-core/test/transaction.test.ts",
-      "size": 2836,
-      "sha256": "e2f8d82b6cba0467e85b17a9c701a509c9bd07e870b39c2ebfa00e919d61ff82"
+      "size": 3928,
+      "sha256": "a1ec2af2c1bf9ac5abf1ef4465f1c199ce6b115beb0c47b5a68d9c77cb45b61d"
     },
     {
       "path": "packages/cad-core/tsconfig.json",
@@ -324,6 +379,11 @@
       "sha256": "5d1b061fdad8c550282b33f08f9ae28889e6666f6b98740bff5d4e872775ba63"
     },
     {
+      "path": "parity/autocad/F-015.scr",
+      "size": 1623,
+      "sha256": "acfbf6b2523a2283424d24925c2df5a82cf311d32740b79053554cc209a70a77"
+    },
+    {
       "path": "parity/check-parity.mjs",
       "size": 6237,
       "sha256": "131ac946f9ba8f6d0d42fa074826bb17e107b2a8b8a6ad5e21cfe7c75719c963"
@@ -334,9 +394,14 @@
       "sha256": "c5dbe35f3ea8fa8f26dee00edace96f0de5f033ec128e8e90ed34ed46d2d1bf6"
     },
     {
+      "path": "parity/fixtures/F-015-empty-mm.dxf",
+      "size": 101,
+      "sha256": "c5dbe35f3ea8fa8f26dee00edace96f0de5f033ec128e8e90ed34ed46d2d1bf6"
+    },
+    {
       "path": "parity/local-certifications.json",
-      "size": 401,
-      "sha256": "5438635e425dfbef007a670c46994f8ec83fec81f8d1cc666f9dba50503278b4"
+      "size": 751,
+      "sha256": "7a46603406f6f548fe980a5fb5f33106a1f1e6fa5668d4c54566ded7e1ea218f"
     },
     {
       "path": "parity/snapshot-lock.json",
@@ -350,8 +415,8 @@
     },
     {
       "path": "README.md",
-      "size": 1572,
-      "sha256": "b0389ea3d36d17999c0323dda868c27f8ab96eb6b5769f6748eef6754ef31fe3"
+      "size": 1594,
+      "sha256": "c9fb01af47387eb83855aa0d986bdb9a5e6db7754dfb724b78c8885d4e6df969"
     },
     {
       "path": "RIGHTS.md",
@@ -372,6 +437,11 @@
       "path": "tools/autocad/run-f003.mjs",
       "size": 3360,
       "sha256": "27f61e6129c12cc865b396e8e8dc5bc2419ba6d3cfd85b8f2d14b6e7325d0163"
+    },
+    {
+      "path": "tools/autocad/run-f015.mjs",
+      "size": 3143,
+      "sha256": "e1fbb6d35fff1b80a8fb1de8027ef2c35e01bf754028cfb8f6a0e0d57140ec22"
     },
     {
       "path": "tools/oracles/freecad-headless.py",
@@ -399,9 +469,24 @@
       "sha256": "6b0aca1881d4316da02c73e4a657acff7df3538c1da2b27c0b7262ef87320aaf"
     },
     {
+      "path": "tools/parity/build-f015-browser-readback.mjs",
+      "size": 2550,
+      "sha256": "b29ebc6fc8204e6e55966024be58bb86f3bc15e50a76c490a1abd88d9f4b86e7"
+    },
+    {
+      "path": "tools/parity/capture-f015-browser.mjs",
+      "size": 837,
+      "sha256": "532609c7bc567233e4419307d3a06b6f162767c84d215ead09a25405ddf2c2c3"
+    },
+    {
       "path": "tools/parity/run-f003-readback.mjs",
       "size": 2467,
       "sha256": "472dba7c93a354fbee40b6f41dcfab0e40cbf505924616eeb0ff1fee071fc8b9"
+    },
+    {
+      "path": "tools/parity/run-f015-readback.mjs",
+      "size": 3542,
+      "sha256": "b13c2e7e919c00883b306a16ba1cbbd21bcb59e7ed869e6cdce75052908fd026"
     },
     {
       "path": "tools/provenance/capture-source-state.mjs",
@@ -425,8 +510,8 @@
     },
     {
       "path": "tools/provenance/scan-public-tree.mjs",
-      "size": 1871,
-      "sha256": "34fcf572d3604fcd4b17ee90057dac493b2912f63e8a023ef772e28a2183cdd3"
+      "size": 2100,
+      "sha256": "5ee4ac253fc611b6fa1a85b3373ea6f10beb90fafcdcc4dcb9cb1dd8924e407d"
     },
     {
       "path": "tsconfig.base.json",
