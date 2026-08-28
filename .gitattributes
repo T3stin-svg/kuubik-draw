@@ -6,6 +6,10 @@
 # conversion change its certified bytes.
 *.kdraw binary
 
+# PDF evidence contains byte offsets and significant trailing spaces in xref
+# records. Treat it as binary so Git never normalizes or whitespace-checks it.
+*.pdf binary
+
 # AutoCAD script files use an empty final response to terminate commands such
 # as repeated COPY; that significant trailing blank line is not whitespace debt.
 *.scr whitespace=-blank-at-eof

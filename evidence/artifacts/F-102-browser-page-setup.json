@@ -1,0 +1,369 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-102",
+  "status": "PASS",
+  "viewport": {
+    "width": 1920,
+    "height": 1080
+  },
+  "action": "A3 Layout -> A4 portrait Window 1:2 -> physical outputs -> undo/redo -> Extents Fit Center -> out-of-sheet Window -> Display current paper view -> restore A3 Layout 1:1 -> reload",
+  "initial": {
+    "center": "210,148.5",
+    "width": 390,
+    "height": 267
+  },
+  "configured": {
+    "center": "210,148.5",
+    "width": 390,
+    "height": 267
+  },
+  "window": {
+    "paper": {
+      "widthMm": 210,
+      "heightMm": 297
+    },
+    "source": {
+      "x": 10,
+      "y": 20,
+      "width": 180,
+      "height": 250
+    },
+    "destination": {
+      "x": 10,
+      "y": 10,
+      "width": 90,
+      "height": 125
+    }
+  },
+  "outsideWindow": {
+    "kind": "window",
+    "window": {
+      "x": -25,
+      "y": -40,
+      "width": 300,
+      "height": 400
+    }
+  },
+  "display": {
+    "plotArea": "display",
+    "source": {
+      "x": -292.418553,
+      "y": -40.150717,
+      "width": 794.735847,
+      "height": 377.499527
+    },
+    "visibleSource": {
+      "x": -292.418553,
+      "y": -40.150717,
+      "width": 794.735847,
+      "height": 377.499527
+    },
+    "svg": {
+      "bytes": 910,
+      "sha256": "5dc077eb5383b72a7c3f40c36c95cd853cf92ce4f2aa62331ca825a37254f0ed",
+      "paperLineDeltaMm": {
+        "x": 43.03316646543565,
+        "y": 59.76828675754951
+      }
+    },
+    "pdf": {
+      "bytes": 717,
+      "sha256": "6bebd6a75739c33265e961d97e86561612ec9598bda9d307838c51f6e3089cc8",
+      "summary": {
+        "version": "1.4",
+        "mediaBoxPt": {
+          "width": 595.275591,
+          "height": 841.889764
+        },
+        "pages": 1,
+        "strokeCommands": 2,
+        "xrefOffsetsValid": true,
+        "paperLineDeltaMm": {
+          "x": 43.033187999999996,
+          "y": 59.768316666666664
+        }
+      }
+    }
+  },
+  "svg": {
+    "bytes": 792,
+    "sha256": "d461bf330f4bbc6532d96a042644219de540d3f0884e73e6d9f52e37a549799c"
+  },
+  "pdf": {
+    "bytes": 707,
+    "sha256": "c6ab88f71605a9c6a0e86788f0fe65563e709befae6895668da202bc7b09821f",
+    "summary": {
+      "version": "1.4",
+      "mediaBoxPt": {
+        "width": 595.275591,
+        "height": 841.889764
+      },
+      "pages": 1,
+      "strokeCommands": 2,
+      "xrefOffsetsValid": true,
+      "paperLineDeltaMm": {
+        "x": 90.0000105,
+        "y": 125.00001458333334
+      }
+    }
+  },
+  "kdraw": {
+    "bytes": 2049,
+    "sha256": "f6931ec316a32a05c849ecc39e07cd2355fdd4478d1e1a44392e48798ee6a22d"
+  },
+  "operations": [
+    {
+      "opId": "7c572f5c-5c55-41c2-b9c1-5f55d2126e01",
+      "baseRevision": 0,
+      "commandId": "PAGESETUP",
+      "args": {
+        "layoutId": "layout-1",
+        "setup": {
+          "mediaName": "ISO_A4",
+          "orientation": "portrait",
+          "plotArea": {
+            "kind": "window",
+            "window": {
+              "x": 10,
+              "y": 20,
+              "width": 180,
+              "height": 250
+            }
+          },
+          "plotScale": {
+            "mode": "custom",
+            "paperUnits": 1,
+            "drawingUnits": 2
+          },
+          "centerPlot": false,
+          "plotOriginMm": {
+            "x": 0,
+            "y": 0
+          }
+        }
+      },
+      "targetHandles": [],
+      "resultHandles": []
+    },
+    {
+      "opId": "7c572f5c-5c55-41c2-b9c1-5f55d2126e01:undo:1",
+      "baseRevision": 1,
+      "commandId": "UNDO",
+      "args": {
+        "originalOpId": "7c572f5c-5c55-41c2-b9c1-5f55d2126e01"
+      },
+      "targetHandles": [],
+      "resultHandles": []
+    },
+    {
+      "opId": "7c572f5c-5c55-41c2-b9c1-5f55d2126e01:redo:2",
+      "baseRevision": 2,
+      "commandId": "PAGESETUP",
+      "args": {
+        "layoutId": "layout-1",
+        "setup": {
+          "mediaName": "ISO_A4",
+          "orientation": "portrait",
+          "plotArea": {
+            "kind": "window",
+            "window": {
+              "x": 10,
+              "y": 20,
+              "width": 180,
+              "height": 250
+            }
+          },
+          "plotScale": {
+            "mode": "custom",
+            "paperUnits": 1,
+            "drawingUnits": 2
+          },
+          "centerPlot": false,
+          "plotOriginMm": {
+            "x": 0,
+            "y": 0
+          }
+        }
+      },
+      "targetHandles": [],
+      "resultHandles": []
+    },
+    {
+      "opId": "4be2cf59-5ca3-465a-9c97-aa42b392872d",
+      "baseRevision": 3,
+      "commandId": "PAGESETUP",
+      "args": {
+        "layoutId": "layout-1",
+        "setup": {
+          "mediaName": "ISO_A4",
+          "orientation": "portrait",
+          "plotArea": {
+            "kind": "extents"
+          },
+          "plotScale": {
+            "mode": "fit"
+          },
+          "centerPlot": true,
+          "plotOriginMm": {
+            "x": 0,
+            "y": 0
+          }
+        }
+      },
+      "targetHandles": [],
+      "resultHandles": []
+    },
+    {
+      "opId": "f1965e7d-dd75-4f30-854f-4850ed30eeee",
+      "baseRevision": 4,
+      "commandId": "PAGESETUP",
+      "args": {
+        "layoutId": "layout-1",
+        "setup": {
+          "mediaName": "ISO_A4",
+          "orientation": "portrait",
+          "plotArea": {
+            "kind": "window",
+            "window": {
+              "x": -25,
+              "y": -40,
+              "width": 300,
+              "height": 400
+            }
+          },
+          "plotScale": {
+            "mode": "custom",
+            "paperUnits": 1,
+            "drawingUnits": 2
+          },
+          "centerPlot": false,
+          "plotOriginMm": {
+            "x": 0,
+            "y": 0
+          }
+        }
+      },
+      "targetHandles": [],
+      "resultHandles": []
+    },
+    {
+      "opId": "8da1c24a-96e5-42bc-a51c-c11122d9181b",
+      "baseRevision": 5,
+      "commandId": "PAGESETUP",
+      "args": {
+        "layoutId": "layout-1",
+        "setup": {
+          "mediaName": "ISO_A4",
+          "orientation": "portrait",
+          "plotArea": {
+            "kind": "display"
+          },
+          "plotScale": {
+            "mode": "fit"
+          },
+          "centerPlot": true,
+          "plotOriginMm": {
+            "x": 0,
+            "y": 0
+          }
+        }
+      },
+      "targetHandles": [],
+      "resultHandles": []
+    },
+    {
+      "opId": "e3a28a1c-4919-40cc-838a-2321ad9ad4a2",
+      "baseRevision": 6,
+      "commandId": "PAGESETUP",
+      "args": {
+        "layoutId": "layout-1",
+        "setup": {
+          "mediaName": "ISO_A3",
+          "orientation": "landscape",
+          "plotArea": {
+            "kind": "layout"
+          },
+          "plotScale": {
+            "mode": "custom",
+            "paperUnits": 1,
+            "drawingUnits": 1
+          },
+          "centerPlot": false,
+          "plotOriginMm": {
+            "x": 0,
+            "y": 0
+          }
+        }
+      },
+      "targetHandles": [],
+      "resultHandles": []
+    }
+  ],
+  "restored": {
+    "id": "layout-1",
+    "name": "F102 PAGE SETUP",
+    "kind": "paper",
+    "paper": {
+      "widthMm": 420,
+      "heightMm": 297,
+      "marginsMm": {
+        "top": 10,
+        "right": 10,
+        "bottom": 10,
+        "left": 10
+      }
+    },
+    "pageSetup": {
+      "mediaName": "ISO_A3",
+      "orientation": "landscape",
+      "plotArea": {
+        "kind": "layout"
+      },
+      "plotScale": {
+        "mode": "custom",
+        "paperUnits": 1,
+        "drawingUnits": 1
+      },
+      "centerPlot": false,
+      "plotOriginMm": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    "viewports": [
+      {
+        "id": "viewport-f102",
+        "center": {
+          "x": 210,
+          "y": 148.5
+        },
+        "width": 390,
+        "height": 267,
+        "viewCenter": {
+          "x": 0,
+          "y": 0
+        },
+        "viewHeight": 5340,
+        "twistAngleRad": 0,
+        "locked": true
+      }
+    ],
+    "entities": [
+      {
+        "kind": "line",
+        "handle": "20",
+        "layerId": "0",
+        "start": {
+          "x": 10,
+          "y": 20
+        },
+        "end": {
+          "x": 190,
+          "y": 270
+        }
+      }
+    ]
+  },
+  "documentRevision": 7,
+  "consoleErrors": []
+}

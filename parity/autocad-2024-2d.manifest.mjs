@@ -1664,7 +1664,7 @@ const certifications = {
   'F-102': {
     currentScore: 1,
     status: 'verified',
-    note: 'AutoCAD PAGESETUP reference certified against Kuubik atomic paper/orientation/area/scale persistence, proportional viewport refit, physical SVG plot placement, and restored 1920x1080 browser read-back.',
+    note: 'AutoCAD PAGESETUP reference certified against Kuubik atomic paper/orientation/area/scale persistence, unchanged viewport paper coordinates, the same measured current-view Display source, physical SVG/PDF plot placement, and restored 1920x1080 browser read-back.',
   },
   'F-103': {
     currentScore: 1,

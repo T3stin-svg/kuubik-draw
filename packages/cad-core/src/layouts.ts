@@ -1,4 +1,4 @@
-import type { CadEntity, CadLayout, CadPoint2, CadViewport, KDrawDocumentV1 } from "@kuubik/cad-schema";
+import type { CadEntity, CadLayout, CadPageSetup, CadPoint2, CadViewport, KDrawDocumentV1 } from "@kuubik/cad-schema";
 import { allocateEntityHandles } from "./commands.js";
 
 export const MAX_PAPER_LAYOUTS = 255;
@@ -7,6 +7,21 @@ export const DEFAULT_PAPER_DEFINITION = Object.freeze({
   widthMm: 297,
   heightMm: 210,
   marginsMm: Object.freeze({ top: 10, right: 10, bottom: 10, left: 10 }),
+});
+export const ISO_PAPER_MEDIA = Object.freeze([
+  { mediaName: "ISO_A4", portraitWidthMm: 210, portraitHeightMm: 297 },
+  { mediaName: "ISO_A3", portraitWidthMm: 297, portraitHeightMm: 420 },
+  { mediaName: "ISO_A2", portraitWidthMm: 420, portraitHeightMm: 594 },
+  { mediaName: "ISO_A1", portraitWidthMm: 594, portraitHeightMm: 841 },
+  { mediaName: "ISO_A0", portraitWidthMm: 841, portraitHeightMm: 1189 },
+]);
+export const DEFAULT_PAGE_SETUP: Readonly<CadPageSetup> = Object.freeze({
+  mediaName: "ISO_A4",
+  orientation: "landscape",
+  plotArea: Object.freeze({ kind: "layout" }),
+  plotScale: Object.freeze({ mode: "custom", paperUnits: 1, drawingUnits: 1 }),
+  centerPlot: false,
+  plotOriginMm: Object.freeze({ x: 0, y: 0 }),
 });
 
 export type LayoutCommandErrorCode =
@@ -82,6 +97,103 @@ export function resolvePaperDefinition(layout: CadLayout): NonNullable<CadLayout
     margins.top + margins.bottom >= paper.heightMm
   ) throw new LayoutCommandError("INVALID_PAPER", "Paper margins must leave a positive printable area.");
   return paper;
+}
+
+function closeNumber(a: number, b: number, tolerance = 1e-9): boolean {
+  return Math.abs(a - b) <= tolerance;
+}
+
+export function paperDefinitionForPageSetup(
+  setup: Pick<CadPageSetup, "mediaName" | "orientation">,
+  marginsMm: NonNullable<CadLayout["paper"]>["marginsMm"] = DEFAULT_PAPER_DEFINITION.marginsMm,
+): NonNullable<CadLayout["paper"]> {
+  const media = ISO_PAPER_MEDIA.find((candidate) => candidate.mediaName === setup.mediaName);
+  if (!media) throw new LayoutCommandError("INVALID_PAPER", `Unsupported paper media: ${setup.mediaName}`);
+  const portrait = setup.orientation === "portrait";
+  const paper = {
+    widthMm: portrait ? media.portraitWidthMm : media.portraitHeightMm,
+    heightMm: portrait ? media.portraitHeightMm : media.portraitWidthMm,
+    marginsMm: structuredClone(marginsMm),
+  };
+  resolvePaperDefinition({ id: "page-setup-paper", name: "Page setup paper", kind: "paper", paper, viewports: [] });
+  return paper;
+}
+
+function inferredPageSetup(layout: CadLayout): CadPageSetup {
+  const paper = resolvePaperDefinition(layout)!;
+  const media = ISO_PAPER_MEDIA.find((candidate) =>
+    closeNumber(Math.min(paper.widthMm, paper.heightMm), candidate.portraitWidthMm) &&
+    closeNumber(Math.max(paper.widthMm, paper.heightMm), candidate.portraitHeightMm));
+  return {
+    ...structuredClone(DEFAULT_PAGE_SETUP),
+    mediaName: media?.mediaName ?? "CUSTOM",
+    orientation: paper.widthMm > paper.heightMm ? "landscape" : "portrait",
+  };
+}
+
+export function resolvePageSetup(layout: CadLayout): CadPageSetup | null {
+  if (layout.kind !== "paper") return null;
+  const paper = resolvePaperDefinition(layout)!;
+  const setup = structuredClone(layout.pageSetup ?? inferredPageSetup(layout));
+  if (setup.mediaName.trim().length === 0 || (setup.orientation !== "portrait" && setup.orientation !== "landscape")) {
+    throw new LayoutCommandError("INVALID_PAPER", "Page setup media and orientation are required.");
+  }
+  const knownMedia = ISO_PAPER_MEDIA.find((candidate) => candidate.mediaName === setup.mediaName);
+  if (knownMedia) {
+    const expectedWidth = setup.orientation === "portrait" ? knownMedia.portraitWidthMm : knownMedia.portraitHeightMm;
+    const expectedHeight = setup.orientation === "portrait" ? knownMedia.portraitHeightMm : knownMedia.portraitWidthMm;
+    if (!closeNumber(paper.widthMm, expectedWidth) || !closeNumber(paper.heightMm, expectedHeight)) {
+      throw new LayoutCommandError("INVALID_PAPER", "Page setup media/orientation and paper dimensions disagree.");
+    }
+  }
+  if (!Number.isFinite(setup.plotOriginMm.x) || !Number.isFinite(setup.plotOriginMm.y)) {
+    throw new LayoutCommandError("INVALID_PAPER", "Plot origin must contain finite millimeter coordinates.");
+  }
+  if (setup.plotArea.kind === "window") {
+    const window = setup.plotArea.window;
+    const values = [window.x, window.y, window.width, window.height];
+    if (values.some((value) => !Number.isFinite(value)) || window.width <= 0 || window.height <= 0) {
+      throw new LayoutCommandError("INVALID_PAPER", "Window plot area must be a finite rectangle with positive dimensions.");
+    }
+  }
+  if (setup.plotScale.mode === "custom" && (
+    !Number.isFinite(setup.plotScale.paperUnits) || setup.plotScale.paperUnits <= 0 ||
+    !Number.isFinite(setup.plotScale.drawingUnits) || setup.plotScale.drawingUnits <= 0
+  )) throw new LayoutCommandError("INVALID_PAPER", "Custom plot scale units must be finite and positive.");
+  if (setup.plotArea.kind === "layout" && (
+    setup.centerPlot || setup.plotScale.mode !== "custom" ||
+    !closeNumber(setup.plotScale.paperUnits, setup.plotScale.drawingUnits) ||
+    !closeNumber(setup.plotOriginMm.x, 0) || !closeNumber(setup.plotOriginMm.y, 0)
+  )) throw new LayoutCommandError("INVALID_PAPER", "Layout plot area uses fixed 1:1 scale, origin 0,0 and cannot be centered.");
+  return setup;
+}
+
+export function plotScaleDenominator(setup: CadPageSetup): number | null {
+  if (setup.plotScale.mode === "fit") return null;
+  const denominator = setup.plotScale.drawingUnits / setup.plotScale.paperUnits;
+  if (!Number.isFinite(denominator) || denominator <= 0) throw new LayoutCommandError("INVALID_PAPER", "Plot scale denominator must be finite and positive.");
+  return denominator;
+}
+
+export function setPaperLayoutPageSetup(document: KDrawDocumentV1, layoutId: string, requested: CadPageSetup): LayoutEditResult {
+  const layoutIndex = paperLayoutIndex(document, layoutId);
+  const layouts = structuredClone(document.layouts);
+  const layout = layouts[layoutIndex]!;
+  const sourcePaper = resolvePaperDefinition(layout)!;
+  const setup: CadPageSetup = structuredClone(requested);
+  if (setup.plotArea.kind === "layout") {
+    setup.centerPlot = false;
+    setup.plotScale = { mode: "custom", paperUnits: 1, drawingUnits: 1 };
+    setup.plotOriginMm = { x: 0, y: 0 };
+  }
+  const destinationPaper = paperDefinitionForPageSetup(setup, sourcePaper.marginsMm);
+  layout.paper = destinationPaper;
+  layout.pageSetup = setup;
+  // AutoCAD 2024 keeps existing paper-space viewport coordinates unchanged
+  // when PAGESETUP changes media or orientation. The sheet can become smaller
+  // than a viewport; that is observable and is not silently repaired here.
+  resolvePageSetup(layout);
+  return result(layouts, layoutId);
 }
 
 function polygonArea(points: readonly { x: number; y: number }[]): number {
@@ -271,6 +383,7 @@ export function assertLayoutCollection(layouts: readonly CadLayout[]): void {
     if (names.has(normalized)) throw new LayoutCommandError("DUPLICATE_NAME", `Layout name already exists: ${name}`);
     names.add(normalized);
     resolvePaperDefinition(layout);
+    resolvePageSetup(layout);
     for (const viewport of layout.viewports) {
       if (!viewport.id || viewports.has(viewport.id)) throw new LayoutCommandError("MISSING_LAYOUT", `Duplicate or empty viewport id: ${viewport.id}`);
       viewports.add(viewport.id);
@@ -449,7 +562,7 @@ function result(layouts: CadLayout[], layoutId: string): LayoutEditResult {
 
 export function createPaperLayout(
   document: KDrawDocumentV1,
-  options: { name?: string; paper?: CadLayout["paper"]; viewports?: CadViewport[]; entities?: CadEntity[] } = {},
+  options: { name?: string; paper?: CadLayout["paper"]; pageSetup?: CadPageSetup; viewports?: CadViewport[]; entities?: CadEntity[] } = {},
 ): LayoutEditResult {
   const papers = document.layouts.filter((layout) => layout.kind === "paper");
   if (papers.length >= MAX_PAPER_LAYOUTS) throw new LayoutCommandError("LAYOUT_LIMIT", `At most ${MAX_PAPER_LAYOUTS} paper layouts are allowed.`);
@@ -476,7 +589,8 @@ export function createPaperLayout(
     id: layoutId,
     name,
     kind: "paper",
-    paper: structuredClone(options.paper ?? DEFAULT_PAPER_DEFINITION),
+    paper: structuredClone(options.pageSetup ? paperDefinitionForPageSetup(options.pageSetup, options.paper?.marginsMm) : options.paper ?? DEFAULT_PAPER_DEFINITION),
+    pageSetup: structuredClone(options.pageSetup ?? (options.paper ? inferredPageSetup({ id: layoutId, name, kind: "paper", paper: options.paper, viewports: [] }) : DEFAULT_PAGE_SETUP)),
     viewports: structuredClone(options.viewports ?? [defaultViewport]),
     entities: structuredClone(options.entities ?? []),
   };

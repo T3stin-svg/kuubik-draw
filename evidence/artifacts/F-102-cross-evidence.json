@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-102",
+  "source": "AutoCAD native PAGESETUP/DWG/PDF, Chromium UI/IndexedDB/downloads, and independent core/SVG/PDF/KDRAW1 read-back",
+  "sourceSha256": {
+    "autocad": "c6f88660120e17b9daa45dffacbf841d49accb2a2d0ccc59621aa94f3fd126c4",
+    "browser": "c3f0ce59aa35074c46261cb109ff00e78acdd36d05c50eb21a2a22d3a390e507",
+    "readback": "14f067abbdc8d4ca7d6cc90d48b58b3a5bf12f885091c96cd223144745332fa5"
+  },
+  "implementationSha256": {
+    "autocadMarker": "82fe5a54be4efcfbd5ce2735ad23147a2d75c093e83ba404d2c3189d3821d23e",
+    "autocadMatrix": "bad9905e44a4a6003206c3b61b34d6f46a832387b108314c581aa8c1abac50f8",
+    "autocadRunner": "2f3f33fd514cf47fe958bf5e255f515d7aac50bf7a72e308bf40b8f580b77a38",
+    "browserE2e": "9982ab92858ec32dc51c311360c0f2f5d66feed2dee0eb1f578d1003d94559eb",
+    "browserCapture": "d0e72670a88c9a3c472008191600e1acfc011c1515e8d7cf0cc4907583b34810",
+    "browserBuilder": "fc2ac13aeae368890491fd8962bc94b8040667fb17d5cc2b2aa7d2b5494731e8",
+    "readbackRunner": "0a61bf5dffb0bc84e8e423a5386fa811687779449473ca05873a73618c2a04b2",
+    "app": "424d6123dc10d4635d065de000dd8fedd5872d2970be0535be3137556e3cc220",
+    "style": "f0c80ef7b28711b633f893a65924f0cb5819b124dd756e4ed86b14bcab740eff",
+    "cadCore": "4ec98c2e4a93e34d21e7a9d3ccac2f4e38a669ab4589119a6462159b41c7bc44",
+    "cadPrint": "f065c2493e2ffe508d7f01f56c1bbeed47aa5111bc441a11a0f032c5ebb78c29",
+    "packageLock": "439cba31032202eb38032f8ff2795907366416bdf21b05799110ac9832588e0d"
+  },
+  "checks": {
+    "threeAuthoritiesPassed": true,
+    "a4Portrait": true,
+    "exactWindow": true,
+    "oneToTwoAndOffset": true,
+    "viewportCoordinatesPersist": true,
+    "dwgAndKdrawPersist": true,
+    "extentsFitCenter": true,
+    "arbitraryWindowCoordinates": true,
+    "displayUsesSameCurrentPaperView": true,
+    "displayVectorSemantics": true,
+    "layoutNormalization": true,
+    "physicalA4Outputs": true,
+    "nativeWindowOneToTwoVectors": true,
+    "evidenceMatchesCurrentSources": true,
+    "noConsoleOrOwnedProcessLeak": true
+  },
+  "status": "PASS"
+}

@@ -1,5 +1,5 @@
 import { expect, it } from "vitest";
-import { CadSession, applyAtomicOperation, copyPaperLayout, createEmptyDocument, createPaperLayout, createPaperViewport, deletePaperViewport, executeCopy, executeErase, executeMirror, executeMove, executeOffset, executeRectangle, executeRotate, executeScale, formatViewportScale, offsetCadEntity, panPaperViewportByPixels, resolvePaperDefinition, setPaperViewportDisplayLocked, setPaperViewportView, viewportModelToNormalized, viewportNormalizedToModel, viewportScaleDenominator, zoomPaperViewportAtModelPoint } from "../src/index.js";
+import { CadSession, applyAtomicOperation, copyPaperLayout, createEmptyDocument, createPaperLayout, createPaperViewport, deletePaperViewport, executeCopy, executeErase, executeMirror, executeMove, executeOffset, executeRectangle, executeRotate, executeScale, formatViewportScale, offsetCadEntity, panPaperViewportByPixels, resolvePageSetup, resolvePaperDefinition, setPaperLayoutPageSetup, setPaperViewportDisplayLocked, setPaperViewportView, viewportModelToNormalized, viewportNormalizedToModel, viewportScaleDenominator, zoomPaperViewportAtModelPoint } from "../src/index.js";
 
 it("kills the revision-increment mutant", () => {
   const source = createEmptyDocument({ documentId: "mutation" });
@@ -407,4 +407,52 @@ it("kills F-101 inverted-lock, camera-mutation, model-edit-block and non-atomic 
   expect(session.document.layouts[1]!.viewports[0]).toEqual(before);
   session.redo();
   expect(session.document.layouts[1]!.viewports[0]!.locked).toBe(true);
+});
+
+it("kills F-102 swapped-paper, viewport-refit, inverted-scale, clamped/invalid-window and split-undo mutants", () => {
+  const document = createEmptyDocument({ documentId: "F-102-mutation" });
+  const paper = createPaperLayout(document, {
+    name: "F102 PAGE SETUP",
+    paper: { widthMm: 420, heightMm: 297, marginsMm: { top: 10, right: 10, bottom: 10, left: 10 } },
+    viewports: [{
+      id: "viewport-f102", center: { x: 210, y: 148.5 }, width: 390, height: 267,
+      viewCenter: { x: 0, y: 0 }, viewHeight: 5340, twistAngleRad: 0, locked: true,
+    }],
+  });
+  const session = new CadSession({ ...document, layouts: paper.layouts });
+  const before = structuredClone(session.document.layouts[1]!);
+  const changed = setPaperLayoutPageSetup(session.document, paper.layoutId, {
+    mediaName: "ISO_A4", orientation: "portrait",
+    plotArea: { kind: "window", window: { x: 10, y: 20, width: 180, height: 250 } },
+    plotScale: { mode: "custom", paperUnits: 1, drawingUnits: 2 }, centerPlot: false, plotOriginMm: { x: 0, y: 0 },
+  });
+  session.commit({ opId: "F102-setup", baseRevision: 0, commandId: "PAGESETUP", args: {}, targetHandles: [], resultHandles: [] }, changed.changes);
+  expect(session.document.layouts[1]).toMatchObject({
+    paper: { widthMm: 210, heightMm: 297 },
+    pageSetup: { plotArea: { kind: "window" }, plotScale: { paperUnits: 1, drawingUnits: 2 } },
+    viewports: [{ center: { x: 210, y: 148.5 }, width: 390, height: 267 }],
+  });
+  expect(resolvePageSetup(session.document.layouts[1])!.plotScale).toEqual({ mode: "custom", paperUnits: 1, drawingUnits: 2 });
+  session.undo();
+  expect(session.document.layouts[1]).toEqual(before);
+  session.redo();
+  expect(session.document.layouts[1]).toEqual(changed.layouts[1]);
+  expect(() => setPaperLayoutPageSetup(session.document, paper.layoutId, {
+    mediaName: "ISO_A4", orientation: "portrait",
+    plotArea: { kind: "window", window: { x: 10, y: 20, width: 0, height: 250 } },
+    plotScale: { mode: "custom", paperUnits: 1, drawingUnits: 2 }, centerPlot: false, plotOriginMm: { x: 0, y: 0 },
+  })).toThrow(/positive dimensions/i);
+  const arbitraryWindow = setPaperLayoutPageSetup(session.document, paper.layoutId, {
+    mediaName: "ISO_A4", orientation: "portrait",
+    plotArea: { kind: "window", window: { x: -25, y: -40, width: 300, height: 400 } },
+    plotScale: { mode: "custom", paperUnits: 1, drawingUnits: 2 }, centerPlot: false, plotOriginMm: { x: 0, y: 0 },
+  }).layouts[1]!;
+  expect(resolvePageSetup(arbitraryWindow)!.plotArea).toEqual({ kind: "window", window: { x: -25, y: -40, width: 300, height: 400 } });
+  const normalized = setPaperLayoutPageSetup(session.document, paper.layoutId, {
+    mediaName: "ISO_A3", orientation: "landscape", plotArea: { kind: "layout" },
+    plotScale: { mode: "fit" }, centerPlot: true, plotOriginMm: { x: 9, y: 7 },
+  }).layouts[1]!;
+  expect(resolvePageSetup(normalized)).toMatchObject({
+    plotArea: { kind: "layout" }, plotScale: { mode: "custom", paperUnits: 1, drawingUnits: 1 }, centerPlot: false, plotOriginMm: { x: 0, y: 0 },
+  });
 });

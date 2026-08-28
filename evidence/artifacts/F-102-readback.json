@@ -1,0 +1,790 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-102",
+  "source": "production cad-core PAGESETUP transaction with AutoCAD viewport-coordinate persistence, cad-print physical SVG/PDF and independent readers",
+  "sourceSha256": {
+    "runner": "0a61bf5dffb0bc84e8e423a5386fa811687779449473ca05873a73618c2a04b2",
+    "browserEvidence": "c3f0ce59aa35074c46261cb109ff00e78acdd36d05c50eb21a2a22d3a390e507"
+  },
+  "window": {
+    "layout": {
+      "id": "layout-1",
+      "name": "F102 PAGE SETUP",
+      "kind": "paper",
+      "paper": {
+        "widthMm": 210,
+        "heightMm": 297,
+        "marginsMm": {
+          "top": 10,
+          "right": 10,
+          "bottom": 10,
+          "left": 10
+        }
+      },
+      "pageSetup": {
+        "mediaName": "ISO_A4",
+        "orientation": "portrait",
+        "plotArea": {
+          "kind": "window",
+          "window": {
+            "x": 10,
+            "y": 20,
+            "width": 180,
+            "height": 250
+          }
+        },
+        "plotScale": {
+          "mode": "custom",
+          "paperUnits": 1,
+          "drawingUnits": 2
+        },
+        "centerPlot": false,
+        "plotOriginMm": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "viewports": [
+        {
+          "id": "viewport-f102",
+          "center": {
+            "x": 210,
+            "y": 148.5
+          },
+          "width": 390,
+          "height": 267,
+          "viewCenter": {
+            "x": 0,
+            "y": 0
+          },
+          "viewHeight": 5340,
+          "twistAngleRad": 0,
+          "locked": true
+        }
+      ],
+      "entities": [
+        {
+          "kind": "line",
+          "handle": "20",
+          "layerId": "0",
+          "start": {
+            "x": 10,
+            "y": 20
+          },
+          "end": {
+            "x": 190,
+            "y": 270
+          }
+        }
+      ]
+    },
+    "placement": {
+      "paper": {
+        "widthMm": 210,
+        "heightMm": 297,
+        "marginsMm": {
+          "top": 10,
+          "right": 10,
+          "bottom": 10,
+          "left": 10
+        }
+      },
+      "setup": {
+        "mediaName": "ISO_A4",
+        "orientation": "portrait",
+        "plotArea": {
+          "kind": "window",
+          "window": {
+            "x": 10,
+            "y": 20,
+            "width": 180,
+            "height": 250
+          }
+        },
+        "plotScale": {
+          "mode": "custom",
+          "paperUnits": 1,
+          "drawingUnits": 2
+        },
+        "centerPlot": false,
+        "plotOriginMm": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "source": {
+        "x": 10,
+        "y": 20,
+        "width": 180,
+        "height": 250
+      },
+      "destination": {
+        "x": 10,
+        "y": 10,
+        "width": 90,
+        "height": 125
+      },
+      "scaleFactor": 0.5
+    }
+  },
+  "outputs": {
+    "svg": {
+      "bytes": 792,
+      "sha256": "d461bf330f4bbc6532d96a042644219de540d3f0884e73e6d9f52e37a549799c",
+      "source": "10,20,180,250",
+      "destination": "10,10,90,125"
+    },
+    "pdf": {
+      "bytes": 707,
+      "sha256": "c6ab88f71605a9c6a0e86788f0fe65563e709befae6895668da202bc7b09821f",
+      "summary": {
+        "version": "1.4",
+        "mediaBoxPt": {
+          "width": 595.275591,
+          "height": 841.889764
+        },
+        "pages": 1,
+        "strokeCommands": 2,
+        "xrefOffsetsValid": true
+      }
+    },
+    "kdraw": {
+      "bytes": 2049,
+      "sha256": "d59c347ecba48cce2d486e74b24184170e4ff4031272db4609296a8d99422491",
+      "documentSha256": "c41c0e671d61bfab401baadee6643394eb44030bed8c9372e75d9bc13cc020a9",
+      "revision": 1,
+      "layout": {
+        "id": "layout-1",
+        "name": "F102 PAGE SETUP",
+        "kind": "paper",
+        "paper": {
+          "widthMm": 210,
+          "heightMm": 297,
+          "marginsMm": {
+            "top": 10,
+            "right": 10,
+            "bottom": 10,
+            "left": 10
+          }
+        },
+        "pageSetup": {
+          "mediaName": "ISO_A4",
+          "orientation": "portrait",
+          "plotArea": {
+            "kind": "window",
+            "window": {
+              "x": 10,
+              "y": 20,
+              "width": 180,
+              "height": 250
+            }
+          },
+          "plotScale": {
+            "mode": "custom",
+            "paperUnits": 1,
+            "drawingUnits": 2
+          },
+          "centerPlot": false,
+          "plotOriginMm": {
+            "x": 0,
+            "y": 0
+          }
+        },
+        "viewports": [
+          {
+            "id": "viewport-f102",
+            "center": {
+              "x": 210,
+              "y": 148.5
+            },
+            "width": 390,
+            "height": 267,
+            "viewCenter": {
+              "x": 0,
+              "y": 0
+            },
+            "viewHeight": 5340,
+            "twistAngleRad": 0,
+            "locked": true
+          }
+        ],
+        "entities": [
+          {
+            "kind": "line",
+            "handle": "20",
+            "layerId": "0",
+            "start": {
+              "x": 10,
+              "y": 20
+            },
+            "end": {
+              "x": 190,
+              "y": 270
+            }
+          }
+        ]
+      }
+    }
+  },
+  "atomic": {
+    "undoCommandId": "UNDO",
+    "redoCommandId": "PAGESETUP",
+    "afterUndo": {
+      "id": "layout-1",
+      "name": "F102 PAGE SETUP",
+      "kind": "paper",
+      "paper": {
+        "widthMm": 420,
+        "heightMm": 297,
+        "marginsMm": {
+          "top": 10,
+          "right": 10,
+          "bottom": 10,
+          "left": 10
+        }
+      },
+      "pageSetup": {
+        "mediaName": "ISO_A3",
+        "orientation": "landscape",
+        "plotArea": {
+          "kind": "layout"
+        },
+        "plotScale": {
+          "mode": "custom",
+          "paperUnits": 1,
+          "drawingUnits": 1
+        },
+        "centerPlot": false,
+        "plotOriginMm": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "viewports": [
+        {
+          "id": "viewport-f102",
+          "center": {
+            "x": 210,
+            "y": 148.5
+          },
+          "width": 390,
+          "height": 267,
+          "viewCenter": {
+            "x": 0,
+            "y": 0
+          },
+          "viewHeight": 5340,
+          "twistAngleRad": 0,
+          "locked": true
+        }
+      ],
+      "entities": [
+        {
+          "kind": "line",
+          "handle": "20",
+          "layerId": "0",
+          "start": {
+            "x": 10,
+            "y": 20
+          },
+          "end": {
+            "x": 190,
+            "y": 270
+          }
+        }
+      ]
+    },
+    "afterRedo": {
+      "id": "layout-1",
+      "name": "F102 PAGE SETUP",
+      "kind": "paper",
+      "paper": {
+        "widthMm": 210,
+        "heightMm": 297,
+        "marginsMm": {
+          "top": 10,
+          "right": 10,
+          "bottom": 10,
+          "left": 10
+        }
+      },
+      "pageSetup": {
+        "mediaName": "ISO_A4",
+        "orientation": "portrait",
+        "plotArea": {
+          "kind": "window",
+          "window": {
+            "x": 10,
+            "y": 20,
+            "width": 180,
+            "height": 250
+          }
+        },
+        "plotScale": {
+          "mode": "custom",
+          "paperUnits": 1,
+          "drawingUnits": 2
+        },
+        "centerPlot": false,
+        "plotOriginMm": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "viewports": [
+        {
+          "id": "viewport-f102",
+          "center": {
+            "x": 210,
+            "y": 148.5
+          },
+          "width": 390,
+          "height": 267,
+          "viewCenter": {
+            "x": 0,
+            "y": 0
+          },
+          "viewHeight": 5340,
+          "twistAngleRad": 0,
+          "locked": true
+        }
+      ],
+      "entities": [
+        {
+          "kind": "line",
+          "handle": "20",
+          "layerId": "0",
+          "start": {
+            "x": 10,
+            "y": 20
+          },
+          "end": {
+            "x": 190,
+            "y": 270
+          }
+        }
+      ]
+    }
+  },
+  "fit": {
+    "layout": {
+      "id": "layout-1",
+      "name": "F102 PAGE SETUP",
+      "kind": "paper",
+      "paper": {
+        "widthMm": 210,
+        "heightMm": 297,
+        "marginsMm": {
+          "top": 10,
+          "right": 10,
+          "bottom": 10,
+          "left": 10
+        }
+      },
+      "pageSetup": {
+        "mediaName": "ISO_A4",
+        "orientation": "portrait",
+        "plotArea": {
+          "kind": "extents"
+        },
+        "plotScale": {
+          "mode": "fit"
+        },
+        "centerPlot": true,
+        "plotOriginMm": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "viewports": [
+        {
+          "id": "viewport-f102",
+          "center": {
+            "x": 210,
+            "y": 148.5
+          },
+          "width": 390,
+          "height": 267,
+          "viewCenter": {
+            "x": 0,
+            "y": 0
+          },
+          "viewHeight": 5340,
+          "twistAngleRad": 0,
+          "locked": true
+        }
+      ],
+      "entities": [
+        {
+          "kind": "line",
+          "handle": "20",
+          "layerId": "0",
+          "start": {
+            "x": 10,
+            "y": 20
+          },
+          "end": {
+            "x": 190,
+            "y": 270
+          }
+        }
+      ]
+    },
+    "placement": {
+      "paper": {
+        "widthMm": 210,
+        "heightMm": 297,
+        "marginsMm": {
+          "top": 10,
+          "right": 10,
+          "bottom": 10,
+          "left": 10
+        }
+      },
+      "setup": {
+        "mediaName": "ISO_A4",
+        "orientation": "portrait",
+        "plotArea": {
+          "kind": "extents"
+        },
+        "plotScale": {
+          "mode": "fit"
+        },
+        "centerPlot": true,
+        "plotOriginMm": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "source": {
+        "x": 10,
+        "y": 15,
+        "width": 395,
+        "height": 267
+      },
+      "destination": {
+        "x": 10,
+        "y": 84.28481012658227,
+        "width": 190,
+        "height": 128.43037974683546
+      },
+      "scaleFactor": 0.4810126582278481
+    }
+  },
+  "outsideWindow": {
+    "layout": {
+      "id": "layout-1",
+      "name": "F102 PAGE SETUP",
+      "kind": "paper",
+      "paper": {
+        "widthMm": 210,
+        "heightMm": 297,
+        "marginsMm": {
+          "top": 10,
+          "right": 10,
+          "bottom": 10,
+          "left": 10
+        }
+      },
+      "pageSetup": {
+        "mediaName": "ISO_A4",
+        "orientation": "portrait",
+        "plotArea": {
+          "kind": "window",
+          "window": {
+            "x": -25,
+            "y": -40,
+            "width": 300,
+            "height": 400
+          }
+        },
+        "plotScale": {
+          "mode": "custom",
+          "paperUnits": 1,
+          "drawingUnits": 2
+        },
+        "centerPlot": false,
+        "plotOriginMm": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "viewports": [
+        {
+          "id": "viewport-f102",
+          "center": {
+            "x": 210,
+            "y": 148.5
+          },
+          "width": 390,
+          "height": 267,
+          "viewCenter": {
+            "x": 0,
+            "y": 0
+          },
+          "viewHeight": 5340,
+          "twistAngleRad": 0,
+          "locked": true
+        }
+      ],
+      "entities": [
+        {
+          "kind": "line",
+          "handle": "20",
+          "layerId": "0",
+          "start": {
+            "x": 10,
+            "y": 20
+          },
+          "end": {
+            "x": 190,
+            "y": 270
+          }
+        }
+      ]
+    },
+    "placement": {
+      "paper": {
+        "widthMm": 210,
+        "heightMm": 297,
+        "marginsMm": {
+          "top": 10,
+          "right": 10,
+          "bottom": 10,
+          "left": 10
+        }
+      },
+      "setup": {
+        "mediaName": "ISO_A4",
+        "orientation": "portrait",
+        "plotArea": {
+          "kind": "window",
+          "window": {
+            "x": -25,
+            "y": -40,
+            "width": 300,
+            "height": 400
+          }
+        },
+        "plotScale": {
+          "mode": "custom",
+          "paperUnits": 1,
+          "drawingUnits": 2
+        },
+        "centerPlot": false,
+        "plotOriginMm": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "source": {
+        "x": -25,
+        "y": -40,
+        "width": 300,
+        "height": 400
+      },
+      "destination": {
+        "x": 10,
+        "y": 10,
+        "width": 150,
+        "height": 200
+      },
+      "scaleFactor": 0.5
+    }
+  },
+  "display": {
+    "layout": {
+      "id": "layout-1",
+      "name": "F102 PAGE SETUP",
+      "kind": "paper",
+      "paper": {
+        "widthMm": 210,
+        "heightMm": 297,
+        "marginsMm": {
+          "top": 10,
+          "right": 10,
+          "bottom": 10,
+          "left": 10
+        }
+      },
+      "pageSetup": {
+        "mediaName": "ISO_A4",
+        "orientation": "portrait",
+        "plotArea": {
+          "kind": "display"
+        },
+        "plotScale": {
+          "mode": "fit"
+        },
+        "centerPlot": true,
+        "plotOriginMm": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "viewports": [
+        {
+          "id": "viewport-f102",
+          "center": {
+            "x": 210,
+            "y": 148.5
+          },
+          "width": 390,
+          "height": 267,
+          "viewCenter": {
+            "x": 0,
+            "y": 0
+          },
+          "viewHeight": 5340,
+          "twistAngleRad": 0,
+          "locked": true
+        }
+      ],
+      "entities": [
+        {
+          "kind": "line",
+          "handle": "20",
+          "layerId": "0",
+          "start": {
+            "x": 10,
+            "y": 20
+          },
+          "end": {
+            "x": 190,
+            "y": 270
+          }
+        }
+      ]
+    },
+    "displayWindow": {
+      "x": -292.418553,
+      "y": -40.150717,
+      "width": 794.735847,
+      "height": 377.499527
+    },
+    "placement": {
+      "paper": {
+        "widthMm": 210,
+        "heightMm": 297,
+        "marginsMm": {
+          "top": 10,
+          "right": 10,
+          "bottom": 10,
+          "left": 10
+        }
+      },
+      "setup": {
+        "mediaName": "ISO_A4",
+        "orientation": "portrait",
+        "plotArea": {
+          "kind": "display"
+        },
+        "plotScale": {
+          "mode": "fit"
+        },
+        "centerPlot": true,
+        "plotOriginMm": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "source": {
+        "x": -292.418553,
+        "y": -40.150717,
+        "width": 794.735847,
+        "height": 377.499527
+      },
+      "destination": {
+        "x": 10,
+        "y": 103.3750000388494,
+        "width": 190,
+        "height": 90.24999992230121
+      },
+      "scaleFactor": 0.23907314703019805
+    },
+    "svg": {
+      "bytes": 910,
+      "sha256": "5dc077eb5383b72a7c3f40c36c95cd853cf92ce4f2aa62331ca825a37254f0ed",
+      "source": "-292.418553,-40.150717,794.735847,377.499527",
+      "destination": "10,103.3750000388494,190,90.24999992230121"
+    },
+    "pdf": {
+      "bytes": 717,
+      "sha256": "6bebd6a75739c33265e961d97e86561612ec9598bda9d307838c51f6e3089cc8",
+      "summary": {
+        "pages": 1,
+        "eof": true,
+        "paperLineDeltaMm": {
+          "x": 43.033187999999996,
+          "y": 59.768316666666664
+        }
+      }
+    }
+  },
+  "final": {
+    "id": "layout-1",
+    "name": "F102 PAGE SETUP",
+    "kind": "paper",
+    "paper": {
+      "widthMm": 420,
+      "heightMm": 297,
+      "marginsMm": {
+        "top": 10,
+        "right": 10,
+        "bottom": 10,
+        "left": 10
+      }
+    },
+    "pageSetup": {
+      "mediaName": "ISO_A3",
+      "orientation": "landscape",
+      "plotArea": {
+        "kind": "layout"
+      },
+      "plotScale": {
+        "mode": "custom",
+        "paperUnits": 1,
+        "drawingUnits": 1
+      },
+      "centerPlot": false,
+      "plotOriginMm": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    "viewports": [
+      {
+        "id": "viewport-f102",
+        "center": {
+          "x": 210,
+          "y": 148.5
+        },
+        "width": 390,
+        "height": 267,
+        "viewCenter": {
+          "x": 0,
+          "y": 0
+        },
+        "viewHeight": 5340,
+        "twistAngleRad": 0,
+        "locked": true
+      }
+    ],
+    "entities": [
+      {
+        "kind": "line",
+        "handle": "20",
+        "layerId": "0",
+        "start": {
+          "x": 10,
+          "y": 20
+        },
+        "end": {
+          "x": 190,
+          "y": 270
+        }
+      }
+    ]
+  },
+  "status": "PASS"
+}

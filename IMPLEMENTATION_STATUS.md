@@ -26,11 +26,21 @@
 - F-098 Visible paper sheet mirrored with validated paper dimensions, deterministic A4
   fallback, exact paper-world rendering, a measured 1920x1080 browser sheet/desk/canvas,
   IndexedDB/KDRAW1 read-back and owned AutoCAD native-DWG/pixel verification.
+- F-099…F-101 mirrored multiple clipped viewports, custom/preset camera transforms,
+  cursor-anchor zoom, rotated pan/twist and the native display-lock lifecycle.
+- F-102 Page setup mirrored ISO paper/orientation, Layout/Window/Extents/Display,
+  Fit/custom scale, center/offset, atomic persistence and physical SVG/PDF output.
+  Native AutoCAD measurement established that media changes preserve existing
+  viewport paper coordinates; the older proportional-refit assumption was removed.
+  Chromium and native AutoCAD Display now consume the same measured paper-view
+  source; PC3 printable-origin parity remains explicitly scoped to F-108.
+  Display now requires the current paper view, arbitrary Window coordinates are
+  accepted and native PDF line endpoints prove the 1:2 physical scale.
 
 ## Explicitly not certified yet
 
-- the new application has **10/133** locally certified parity rows (**7.5% raw / 9.3% weighted**);
-- 12 of the 22 legacy-certified rows still need mirror workflows and evidence here;
+- the new application has **14/133** locally certified parity rows (**10.5% raw / 13.1% weighted**);
+- 8 of the 22 legacy-certified rows still need mirror workflows and evidence here;
 - F-022 TRIM is not implemented in the new kernel;
 - spline/NURBS rendering is rejected rather than drawn as a misleading control polygon;
 - Unicode PDF text is rejected until a font-embedding path exists;
@@ -40,6 +50,6 @@
 - native DWG/DWT/XREF and PC3/CTB/STB remain deferred;
 - no preview or production deployment has been made.
 
-The next release gate remains parity mirror; F-099 paper viewports are the next
-legacy-certified P0 row. F-022 work starts only after the mirror baseline
+The next release gate remains parity mirror; F-103 plot profile, lineweights and
+transparency is the next legacy-certified weight-5 P0 row. F-022 work starts only after the mirror baseline
 and oracle-labor execution paths are real.

@@ -13,8 +13,11 @@ import {
   formatViewportScale,
   movePaperLayout,
   panPaperViewportByPixels,
+  plotScaleDenominator,
   renamePaperLayout,
+  resolvePageSetup,
   resolvePaperDefinition,
+  setPaperLayoutPageSetup,
   setPaperViewportDisplayLocked,
   setPaperViewportView,
   viewportModelToNormalized,
@@ -285,5 +288,76 @@ describe("F-097 layout transactions", () => {
     expect(() => setPaperViewportDisplayLocked(session.document, "model", created.viewportId!, false)).toThrow(/Model layout/i);
     expect(() => setPaperViewportDisplayLocked(session.document, paper.layoutId, "missing", false)).toThrow(/not found/i);
     expect(() => setPaperViewportDisplayLocked(session.document, paper.layoutId, created.viewportId!, "yes" as unknown as boolean)).toThrow(/boolean/i);
+  });
+
+  it("applies A4 portrait Window 1:2 atomically while preserving AutoCAD paper-space viewport coordinates", () => {
+    const document = createEmptyDocument({ documentId: "F-102-page-setup" });
+    const paper = createPaperLayout(document, {
+      name: "F102 SHEET",
+      paper: { widthMm: 420, heightMm: 297, marginsMm: { top: 10, right: 10, bottom: 10, left: 10 } },
+      viewports: [{
+        id: "viewport-f102", center: { x: 210, y: 148.5 }, width: 390, height: 267,
+        viewCenter: { x: 1000, y: 500 }, viewHeight: 5340, twistAngleRad: 0, locked: true,
+        clipBoundary: [{ x: 15, y: 15 }, { x: 405, y: 15 }, { x: 405, y: 282 }, { x: 15, y: 282 }],
+      }],
+    });
+    const session = new CadSession({ ...document, layouts: paper.layouts });
+    const configured = setPaperLayoutPageSetup(session.document, paper.layoutId, {
+      mediaName: "ISO_A4",
+      orientation: "portrait",
+      plotArea: { kind: "window", window: { x: 10, y: 20, width: 180, height: 250 } },
+      plotScale: { mode: "custom", paperUnits: 1, drawingUnits: 2 },
+      centerPlot: false,
+      plotOriginMm: { x: 0, y: 0 },
+    });
+    session.commit(operation(0, "PAGESETUP"), configured.changes);
+    const changed = session.document.layouts[1]!;
+    expect(resolvePaperDefinition(changed)).toEqual({
+      widthMm: 210, heightMm: 297, marginsMm: { top: 10, right: 10, bottom: 10, left: 10 },
+    });
+    expect(resolvePageSetup(changed)).toMatchObject({
+      mediaName: "ISO_A4", orientation: "portrait", plotArea: { kind: "window" },
+      plotScale: { mode: "custom", paperUnits: 1, drawingUnits: 2 }, centerPlot: false,
+    });
+    expect(plotScaleDenominator(resolvePageSetup(changed)!)).toBe(2);
+    expect(changed.viewports[0]).toMatchObject({ center: { x: 210, y: 148.5 }, width: 390, height: 267, locked: true });
+    expect(changed.viewports[0]!.clipBoundary).toEqual([
+      { x: 15, y: 15 }, { x: 405, y: 15 }, { x: 405, y: 282 }, { x: 15, y: 282 },
+    ]);
+    session.undo();
+    expect(session.document.layouts[1]).toMatchObject({
+      paper: { widthMm: 420, heightMm: 297 },
+      pageSetup: { mediaName: "ISO_A3", orientation: "landscape" },
+      viewports: [{ center: { x: 210, y: 148.5 }, width: 390, height: 267 }],
+    });
+    session.redo();
+    expect(session.document.layouts[1]).toEqual(changed);
+  });
+
+  it("normalizes Layout plots to AutoCAD's 1:1 origin, accepts arbitrary Window coordinates and rejects invalid dimensions/scale", () => {
+    const document = createEmptyDocument({ documentId: "F-102-guards" });
+    const paper = createPaperLayout(document, { name: "F102 SHEET", viewports: [] });
+    const source = { ...document, layouts: paper.layouts };
+    const layoutPlot = setPaperLayoutPageSetup(source, paper.layoutId, {
+      mediaName: "ISO_A3", orientation: "landscape", plotArea: { kind: "layout" },
+      plotScale: { mode: "fit" }, centerPlot: true, plotOriginMm: { x: 12, y: 9 },
+    }).layouts[1]!;
+    expect(resolvePageSetup(layoutPlot)).toEqual({
+      mediaName: "ISO_A3", orientation: "landscape", plotArea: { kind: "layout" },
+      plotScale: { mode: "custom", paperUnits: 1, drawingUnits: 1 }, centerPlot: false, plotOriginMm: { x: 0, y: 0 },
+    });
+    const outsideWindow = setPaperLayoutPageSetup(source, paper.layoutId, {
+      mediaName: "ISO_A4", orientation: "portrait", plotArea: { kind: "window", window: { x: -25, y: -40, width: 300, height: 400 } },
+      plotScale: { mode: "custom", paperUnits: 1, drawingUnits: 2 }, centerPlot: false, plotOriginMm: { x: 0, y: 0 },
+    }).layouts[1]!;
+    expect(resolvePageSetup(outsideWindow).plotArea).toEqual({ kind: "window", window: { x: -25, y: -40, width: 300, height: 400 } });
+    expect(() => setPaperLayoutPageSetup(source, paper.layoutId, {
+      mediaName: "ISO_A4", orientation: "portrait", plotArea: { kind: "window", window: { x: -25, y: -40, width: 0, height: 400 } },
+      plotScale: { mode: "custom", paperUnits: 1, drawingUnits: 2 }, centerPlot: false, plotOriginMm: { x: 0, y: 0 },
+    })).toThrow(/positive dimensions/i);
+    expect(() => setPaperLayoutPageSetup(source, paper.layoutId, {
+      mediaName: "ISO_A4", orientation: "portrait", plotArea: { kind: "extents" },
+      plotScale: { mode: "custom", paperUnits: 1, drawingUnits: 0 }, centerPlot: true, plotOriginMm: { x: 0, y: 0 },
+    })).toThrow(/positive/i);
   });
 });
