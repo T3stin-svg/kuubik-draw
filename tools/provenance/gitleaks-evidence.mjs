@@ -18,6 +18,11 @@ function sha256(bytes) {
   return createHash("sha256").update(bytes).digest("hex");
 }
 
+function canonicalSourceBytes(bytes) {
+  if (bytes.includes(0)) return bytes;
+  return Buffer.from(bytes.toString("utf8").replaceAll("\r\n", "\n"), "utf8");
+}
+
 async function collectSourceTree() {
   const listed = execFileSync("git", ["ls-files", "--cached", "--others", "--exclude-standard", "-z"], {
     cwd: root,
@@ -30,7 +35,7 @@ async function collectSourceTree() {
     .filter((path) => !bindingExcludedPaths.has(path))
     .sort((a, b) => a.localeCompare(b, "en"));
   const files = await Promise.all(paths.map(async (path) => {
-    const bytes = await readFile(resolve(root, path));
+    const bytes = canonicalSourceBytes(await readFile(resolve(root, path)));
     return { path, size: bytes.byteLength, sha256: sha256(bytes) };
   }));
   const sourceTreeSha256 = sha256(JSON.stringify(files));
@@ -64,7 +69,16 @@ async function verifyEvidence() {
   const report = JSON.parse(reportBytes.toString("utf8"));
   const run = JSON.parse(runBytes.toString("utf8"));
   const errors = [];
-  if (JSON.stringify(storedManifest) !== JSON.stringify(currentManifest)) errors.push("Public source tree changed after the Gitleaks manifest was written.");
+  if (JSON.stringify(storedManifest) !== JSON.stringify(currentManifest)) {
+    errors.push("Public source tree changed after the Gitleaks manifest was written.");
+    const storedFiles = new Map((storedManifest.files ?? []).map((file) => [file.path, file.sha256]));
+    const currentFiles = new Map(currentManifest.files.map((file) => [file.path, file.sha256]));
+    const changedPaths = [...new Set([...storedFiles.keys(), ...currentFiles.keys()])]
+      .filter((path) => storedFiles.get(path) !== currentFiles.get(path))
+      .sort()
+      .slice(0, 20);
+    if (changedPaths.length) errors.push(`Changed source paths: ${changedPaths.join(", ")}`);
+  }
   if (!Array.isArray(report) || report.length !== 0) errors.push("Gitleaks report is not an empty finding list.");
   if (run.status !== "PASS" || run.leakCount !== 0) errors.push("Gitleaks run metadata is not PASS/0.");
   if (run.command !== expectedCommand) errors.push("Gitleaks command does not match the fixed directory-scan command.");
