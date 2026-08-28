@@ -1,0 +1,89 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-098",
+  "benchmark": "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
+  "engine": "Autodesk AutoCAD 2024 desktop COM/native command + non-retained pixel measurement",
+  "engineVersion": "24.3s (LMS Tech)",
+  "automationProcessId": 3212,
+  "automationProcessOwned": true,
+  "beforeSave": {
+    "layoutName": "F098 PAPER",
+    "layoutKind": "paper",
+    "tileMode": 0,
+    "cvport": 1,
+    "mSpace": false,
+    "activeSpace": 0,
+    "paperUnits": 1,
+    "canonicalMediaName": "ISO_expand_A3_(297.00_x_420.00_MM)",
+    "plotRotation": 1,
+    "rawPaperWidth": 297,
+    "rawPaperHeight": 420,
+    "paperWidth": 420,
+    "paperHeight": 297,
+    "circleCount": 1,
+    "circleHandles": [
+      "27F"
+    ]
+  },
+  "afterReopen": {
+    "layoutName": "F098 PAPER",
+    "layoutKind": "paper",
+    "tileMode": 0,
+    "cvport": 1,
+    "mSpace": false,
+    "activeSpace": 0,
+    "paperUnits": 1,
+    "canonicalMediaName": "ISO_expand_A3_(297.00_x_420.00_MM)",
+    "plotRotation": 1,
+    "rawPaperWidth": 297,
+    "rawPaperHeight": 420,
+    "paperWidth": 420,
+    "paperHeight": 297,
+    "circleCount": 1,
+    "circleHandles": [
+      "27F"
+    ]
+  },
+  "visual": {
+    "window": {
+      "width": 3456,
+      "height": 1416
+    },
+    "detectedLightSheet": {
+      "x": 1578,
+      "y": 212,
+      "width": 1664,
+      "height": 1120,
+      "sampledComponentPixels": 28972,
+      "aspectRatio": 1.4857142857142858,
+      "nativePaperAspectRatio": 1.4141414141414141,
+      "paperAspectError": 0.07157287157287162
+    },
+    "pngSha256": "a2e8d39c8cc4dca3d810e82176a63ff32743a119e7d479d9b1a8cffdd6d2afc4",
+    "retained": false
+  },
+  "checks": {
+    "nativePaperContext": true,
+    "millimeterPaperUnits": true,
+    "exactA3Landscape": true,
+    "paperEntity": true,
+    "visibleLightSheet": true,
+    "reopen": true,
+    "paperSizePersisted": true
+  },
+  "dwg": {
+    "bytes": 32243,
+    "sha256": "ef51c3a83474d17fd5185c8fbbe1055dd4c6e61c1180902467a5d03a239bb9cf",
+    "saveAsType": 64,
+    "retained": false
+  },
+  "status": "PASS",
+  "userDocument": {
+    "isolatedOwnedProcess": true,
+    "blankRestored": true
+  },
+  "automationProcessTerminated": true,
+  "scriptSha256": "c1156f45884a36ac303aaa285ac977d9d1aff48329f752c1faec91b4f4ebb65f",
+  "matrixScriptSha256": "b05d1309fe469736ac38505b567bf0a73bf0249d188e3170bae1661ad9fe0a67",
+  "observedAt": "2026-08-28T15:56:05.745Z"
+}

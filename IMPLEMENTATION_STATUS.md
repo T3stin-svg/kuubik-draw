@@ -23,11 +23,14 @@
 - F-097 Layout tabs mirrored with create/rename/copy-before-source/reorder/delete,
   independent viewport and paper-entity identifiers, atomic Undo/Redo, IndexedDB reload,
   production KDRAW1 read-back and an owned AutoCAD native-DWG reopen workflow.
+- F-098 Visible paper sheet mirrored with validated paper dimensions, deterministic A4
+  fallback, exact paper-world rendering, a measured 1920x1080 browser sheet/desk/canvas,
+  IndexedDB/KDRAW1 read-back and owned AutoCAD native-DWG/pixel verification.
 
 ## Explicitly not certified yet
 
-- the new application has **9/133** locally certified parity rows (**6.8% raw / 8.4% weighted**);
-- 13 of the 22 legacy-certified rows still need mirror workflows and evidence here;
+- the new application has **10/133** locally certified parity rows (**7.5% raw / 9.3% weighted**);
+- 12 of the 22 legacy-certified rows still need mirror workflows and evidence here;
 - F-022 TRIM is not implemented in the new kernel;
 - spline/NURBS rendering is rejected rather than drawn as a misleading control polygon;
 - Unicode PDF text is rejected until a font-embedding path exists;
@@ -37,6 +40,6 @@
 - native DWG/DWT/XREF and PC3/CTB/STB remain deferred;
 - no preview or production deployment has been made.
 
-The next release gate remains parity mirror; F-098 paper-space workspace/grid is
-the next legacy-certified P0 row. F-022 work starts only after the mirror baseline
+The next release gate remains parity mirror; F-099 paper viewports are the next
+legacy-certified P0 row. F-022 work starts only after the mirror baseline
 and oracle-labor execution paths are real.

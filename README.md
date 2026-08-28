@@ -8,7 +8,7 @@ käitumispariteeti, mitte kogu AutoCADi toodet.
 
 - vana Drawi auditi snapshot: **63,9% raw / 68,3% weighted / 60,7% visual**;
 - vana Drawi AutoCADi live-tõendiga read: **22/133**;
-- selle uue eraldatud rakenduse kohalik sertifikaat: **9/133 · 6,8% raw / 8,4% weighted**;
+- selle uue eraldatud rakenduse kohalik sertifikaat: **10/133 · 7,5% raw / 9,3% weighted**;
 - native DWG/DWT/XREF ja PC3/CTB/STB pariteet on veel blokeeritud.
 
 Need arvud on vana Drawi auditi muutmatu snapshot. Uus rakendus ei päri skoori
@@ -24,6 +24,9 @@ native-adapter suudab selle transformatsioonilepingu tõendada.
 F-097 `Layout tabs` lisab revisioneeritud create/copy/reorder/delete töövoo,
 AutoCADi copy-before-source nimekuju, sõltumatud viewport'i ID-d ja paberiruumi
 handle'id, atomaarse Undo/Redo ning IndexedDB/`.kdraw` taastamise.
+F-098 `Visible paper sheet` lisab valideeritud füüsilise paberidomeeni, tumedal
+töölaual nähtava valge lehe, täpse paberisuhtes Canvas2D renderduse ning sama
+lehe IndexedDB/`.kdraw` ja native-DWG taasavamise tõendi.
 
 ## Piirid
 

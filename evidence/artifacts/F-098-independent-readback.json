@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-098",
+  "source": "production cad-core createPaperLayout and serializeKDraw; independent magic/base64/length/SHA/document reader",
+  "container": {
+    "bytes": 1584,
+    "sha256": "1ec23e9c73600a81c965cbde3e3e45ad12c5d5b47c4f18165e81280d5be469aa",
+    "documentBytes": 926,
+    "documentSha256": "31419e48a85a1935d78e5221f5a13f93786200c8229e913c551c2478e4edcea9"
+  },
+  "layout": {
+    "id": "layout-1",
+    "name": "F098 PAPER",
+    "kind": "paper",
+    "paper": {
+      "widthMm": 420,
+      "heightMm": 297,
+      "marginsMm": {
+        "top": 10,
+        "right": 10,
+        "bottom": 10,
+        "left": 10
+      }
+    },
+    "viewports": [
+      {
+        "id": "viewport-1",
+        "center": {
+          "x": 148.5,
+          "y": 105
+        },
+        "width": 277,
+        "height": 190,
+        "viewCenter": {
+          "x": 0,
+          "y": 0
+        },
+        "viewHeight": 190,
+        "twistAngleRad": 0,
+        "locked": false
+      }
+    ],
+    "entities": [
+      {
+        "kind": "circle",
+        "handle": "20",
+        "layerId": "0",
+        "center": {
+          "x": 60,
+          "y": 60
+        },
+        "radius": 30
+      }
+    ]
+  },
+  "paperWorld": {
+    "minX": 0,
+    "minY": 0,
+    "maxX": 420,
+    "maxY": 297
+  },
+  "status": "PASS"
+}

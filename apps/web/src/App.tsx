@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { allocateEntityHandles, CadCommandInputError, CadSession, LayoutCommandError, copyPaperLayout, createEmptyDocument, createPaperLayout, deletePaperLayout, movePaperLayout, parseCartesianPoint, parseCopyDestinations, parseMoveDestination, parseOffsetDistance, parseOffsetPlacementPoints, parseReferenceAngleInput, parseRotationAngleInput, parseScaleFactorInput, parseScaleLengthInput, renamePaperLayout, resolveCadCommand, serializeKDraw, type CadChange, type CopyRejectedTarget, type MirrorRejectedTarget, type MoveRejectedTarget, type OffsetLayerMode, type OffsetRejectedTarget, type RotateAngleSpec, type RotateRejectedTarget, type ScaleFactorSpec, type ScaleRejectedTarget } from "@kuubik/cad-core";
+import { allocateEntityHandles, CadCommandInputError, CadSession, LayoutCommandError, copyPaperLayout, createEmptyDocument, createPaperLayout, deletePaperLayout, movePaperLayout, parseCartesianPoint, parseCopyDestinations, parseMoveDestination, parseOffsetDistance, parseOffsetPlacementPoints, parseReferenceAngleInput, parseRotationAngleInput, parseScaleFactorInput, parseScaleLengthInput, renamePaperLayout, resolveCadCommand, resolvePaperDefinition, serializeKDraw, type CadChange, type CopyRejectedTarget, type MirrorRejectedTarget, type MoveRejectedTarget, type OffsetLayerMode, type OffsetRejectedTarget, type RotateAngleSpec, type RotateRejectedTarget, type ScaleFactorSpec, type ScaleRejectedTarget } from "@kuubik/cad-core";
 import { exportDxf } from "@kuubik/cad-dxf";
 import { CadCanvasRenderer } from "@kuubik/cad-renderer";
 import type { CadEntity, KDrawDocumentV1 } from "@kuubik/cad-schema";
@@ -102,6 +102,7 @@ export function App() {
   const activeLayer = document.layers.find((layer) => layer.id === document.currentLayerId)!;
   const activeLayout = document.layouts.find((layout) => layout.id === activeLayoutId) ?? document.layouts[0]!;
   const modelSpaceEditing = activeLayout.kind === "model";
+  const activePaper = useMemo(() => resolvePaperDefinition(activeLayout), [activeLayout]);
   const canUndoInActiveLayout = session.current.canUndo && (modelSpaceEditing || session.current.nextUndoCommandId?.startsWith("LAYOUT_") === true);
   const canRedoInActiveLayout = session.current.canRedo && (modelSpaceEditing || session.current.nextRedoCommandId?.startsWith("LAYOUT_") === true);
   const paperLayouts = document.layouts.filter((layout) => layout.kind === "paper");
@@ -242,22 +243,33 @@ export function App() {
     if (!element) return;
     const context = element.getContext("2d");
     if (!context) return;
-    const ratio = window.devicePixelRatio || 1;
-    element.width = Math.round(element.clientWidth * ratio);
-    element.height = Math.round(element.clientHeight * ratio);
     const renderer = new CadCanvasRenderer();
     renderer.setBlocks(document.blocks);
     renderer.setEntities(activeLayout.kind === "model" ? document.entities : (activeLayout.entities ?? []));
-    renderer.render(context, {
-      world: { minX: -500, minY: -500, maxX: 2500, maxY: 2500 },
-      widthPx: element.clientWidth,
-      heightPx: element.clientHeight,
-      devicePixelRatio: ratio,
-    }, document.layers, activeLayout.kind === "model" ? [...(movePreview?.entities ?? []), ...(copyPreview?.entities ?? []), ...(rotatePreview?.entities ?? []), ...(scalePreview?.entities ?? []), ...(mirrorPreview?.entities ?? []), ...(offsetPreview?.entities ?? [])] : [], [
-      ...(mirrorPreview?.eraseSource ? mirrorPreview.sourceHandles : []),
-      ...(offsetPreview?.eraseSource ? offsetPreview.sourceHandles : []),
-    ]);
-  }, [activeLayout, copyPreview, document, mirrorPreview, movePreview, offsetPreview, rotatePreview, scalePreview]);
+    const render = () => {
+      const ratio = window.devicePixelRatio || 1;
+      const widthPx = element.clientWidth;
+      const heightPx = element.clientHeight;
+      if (widthPx <= 0 || heightPx <= 0) return;
+      element.width = Math.round(widthPx * ratio);
+      element.height = Math.round(heightPx * ratio);
+      renderer.render(context, {
+        world: activePaper
+          ? { minX: 0, minY: 0, maxX: activePaper.widthMm, maxY: activePaper.heightMm }
+          : { minX: -500, minY: -500, maxX: 2500, maxY: 2500 },
+        widthPx,
+        heightPx,
+        devicePixelRatio: ratio,
+      }, document.layers, activeLayout.kind === "model" ? [...(movePreview?.entities ?? []), ...(copyPreview?.entities ?? []), ...(rotatePreview?.entities ?? []), ...(scalePreview?.entities ?? []), ...(mirrorPreview?.entities ?? []), ...(offsetPreview?.entities ?? [])] : [], [
+        ...(mirrorPreview?.eraseSource ? mirrorPreview.sourceHandles : []),
+        ...(offsetPreview?.eraseSource ? offsetPreview.sourceHandles : []),
+      ]);
+    };
+    render();
+    const observer = new ResizeObserver(render);
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [activeLayout, activePaper, copyPreview, document, mirrorPreview, movePreview, offsetPreview, rotatePreview, scalePreview]);
 
   async function recoverFromStorageConflict(error: unknown): Promise<void> {
     if (!(error instanceof StorageRevisionConflictError)) throw error;
@@ -1094,8 +1106,22 @@ export function App() {
           </span>
         )}
       </section>
-      <section className="drawing-area">
-        <canvas ref={canvas} aria-label="Kuubik Draw joonestusala" />
+      <section className={`drawing-area ${activePaper ? "paper-mode" : "model-mode"}`} data-mode={activePaper ? "paper" : "model"}>
+        {activePaper ? (
+          <div className="paper-space-desk" data-testid="paper-space-desk">
+            <div
+              className="paper-space-sheet"
+              data-testid="paper-space-sheet"
+              data-paper-width-mm={activePaper.widthMm}
+              data-paper-height-mm={activePaper.heightMm}
+              style={{ aspectRatio: `${activePaper.widthMm} / ${activePaper.heightMm}` }}
+            >
+              <canvas ref={canvas} aria-label={`${activeLayout.name} paberiruum`} />
+            </div>
+          </div>
+        ) : (
+          <canvas ref={canvas} aria-label="Kuubik Draw joonestusala" />
+        )}
       </section>
       <section className="layoutbar" aria-label="Model ja Layout vahelehed">
         {document.layouts.map((layout) => (

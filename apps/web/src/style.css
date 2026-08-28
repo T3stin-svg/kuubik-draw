@@ -32,8 +32,33 @@ button { font: inherit; }
 .coordinate-input { display: grid; gap: 2px; color: #b9c2cb; font-size: 10px; }
 .coordinate-input input { width: 92px; height: 26px; padding: 0 7px; color: #edf3f8; background: #1d2329; border: 1px solid #56616d; border-radius: 2px; font: inherit; }
 .coordinate-input input:focus { outline: 1px solid #5da9e9; border-color: #5da9e9; }
-.drawing-area { min-height: 0; padding: 1px; background: #0b0e11; }
+.drawing-area { position: relative; min-height: 0; padding: 1px; overflow: hidden; background: #0b0e11; }
 .drawing-area canvas { display: block; width: 100%; height: 100%; background: #191d21; }
+.drawing-area.paper-mode { padding: 0; background: #343a40; }
+.paper-space-desk {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  padding: 48px;
+  overflow: auto;
+  background: #343a40;
+}
+.paper-space-sheet {
+  position: relative;
+  flex: 0 0 auto;
+  height: min(834px, calc(100% - 96px));
+  max-width: calc(100% - 96px);
+  min-height: 240px;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid #b9bdc2;
+  box-shadow: 0 12px 40px rgb(0 0 0 / 45%);
+}
+.drawing-area .paper-space-sheet canvas { width: 100%; height: 100%; background: #fff; }
 .layoutbar { display: flex; align-items: stretch; min-width: 0; gap: 1px; padding: 2px 8px 0; overflow-x: auto; background: #191f25; border-top: 1px solid #0d1115; }
 .layoutbar button, .layoutbar input { min-height: 27px; color: #dce3e9; background: #2a323a; border: 1px solid #46515c; font-size: 11px; }
 .layout-tab { padding: 0 12px; border-bottom: 0 !important; }

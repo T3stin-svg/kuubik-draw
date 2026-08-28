@@ -1,0 +1,151 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-098",
+  "source": "Chromium 1920x1080 live DOM/canvas measurement plus independently decoded production KDRAW1",
+  "matrix": {
+    "schemaVersion": 1,
+    "rowId": "F-098",
+    "status": "PASS",
+    "action": "Model -> F098 PAPER -> measure -> KDRAW1 download -> reload -> F098 PAPER -> measure",
+    "expectedPaper": {
+      "widthMm": 420,
+      "heightMm": 297
+    },
+    "beforeReload": {
+      "viewport": {
+        "width": 1920,
+        "height": 1080,
+        "devicePixelRatio": 1
+      },
+      "area": {
+        "x": 0,
+        "y": 108,
+        "width": 1920,
+        "height": 912
+      },
+      "desk": {
+        "x": 0,
+        "y": 108,
+        "width": 1920,
+        "height": 912
+      },
+      "sheet": {
+        "x": 450.90625,
+        "y": 204,
+        "width": 1018.171875,
+        "height": 720
+      },
+      "canvas": {
+        "x": 451.90625,
+        "y": 205,
+        "width": 1016.171875,
+        "height": 718
+      },
+      "canvasBitmap": {
+        "width": 1016,
+        "height": 718,
+        "paintedPixels": 812
+      },
+      "paper": {
+        "widthMm": 420,
+        "heightMm": 297
+      },
+      "colors": {
+        "desk": "rgb(52, 58, 64)",
+        "sheet": "rgb(255, 255, 255)",
+        "canvas": "rgb(255, 255, 255)"
+      }
+    },
+    "afterReload": {
+      "viewport": {
+        "width": 1920,
+        "height": 1080,
+        "devicePixelRatio": 1
+      },
+      "area": {
+        "x": 0,
+        "y": 108,
+        "width": 1920,
+        "height": 912
+      },
+      "desk": {
+        "x": 0,
+        "y": 108,
+        "width": 1920,
+        "height": 912
+      },
+      "sheet": {
+        "x": 450.90625,
+        "y": 204,
+        "width": 1018.171875,
+        "height": 720
+      },
+      "canvas": {
+        "x": 451.90625,
+        "y": 205,
+        "width": 1016.171875,
+        "height": 718
+      },
+      "canvasBitmap": {
+        "width": 1016,
+        "height": 718,
+        "paintedPixels": 812
+      },
+      "paper": {
+        "widthMm": 420,
+        "heightMm": 297
+      },
+      "colors": {
+        "desk": "rgb(52, 58, 64)",
+        "sheet": "rgb(255, 255, 255)",
+        "canvas": "rgb(255, 255, 255)"
+      }
+    },
+    "exported": {
+      "bytes": 1444,
+      "sha256": "6560a892a776a1134546f83a7a1fbad31e55c38c90e3f56ec6acaf469541f778"
+    },
+    "consoleErrors": []
+  },
+  "container": {
+    "bytes": 1444,
+    "sha256": "6560a892a776a1134546f83a7a1fbad31e55c38c90e3f56ec6acaf469541f778",
+    "documentSha256": "e06313c0cb1155e2d2e1218742f1ed714413379966ff31d25595d4cd91277a6d"
+  },
+  "document": {
+    "revision": 0,
+    "layout": {
+      "id": "layout-f098",
+      "name": "F098 PAPER",
+      "kind": "paper",
+      "paper": {
+        "widthMm": 420,
+        "heightMm": 297,
+        "marginsMm": {
+          "top": 10,
+          "right": 10,
+          "bottom": 10,
+          "left": 10
+        }
+      },
+      "viewports": [],
+      "entities": [
+        {
+          "kind": "circle",
+          "handle": "20",
+          "layerId": "0",
+          "center": {
+            "x": 60,
+            "y": 60
+          },
+          "radius": 30,
+          "appearance": {
+            "color": "#111111",
+            "lineweightMm": 0.5
+          }
+        }
+      ]
+    }
+  },
+  "status": "PASS"
+}

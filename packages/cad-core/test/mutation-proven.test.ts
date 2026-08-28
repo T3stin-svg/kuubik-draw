@@ -1,5 +1,5 @@
 import { expect, it } from "vitest";
-import { applyAtomicOperation, copyPaperLayout, createEmptyDocument, createPaperLayout, executeCopy, executeErase, executeMirror, executeMove, executeOffset, executeRectangle, executeRotate, executeScale, offsetCadEntity } from "../src/index.js";
+import { applyAtomicOperation, copyPaperLayout, createEmptyDocument, createPaperLayout, executeCopy, executeErase, executeMirror, executeMove, executeOffset, executeRectangle, executeRotate, executeScale, offsetCadEntity, resolvePaperDefinition } from "../src/index.js";
 
 it("kills the revision-increment mutant", () => {
   const source = createEmptyDocument({ documentId: "mutation" });
@@ -289,4 +289,18 @@ it("kills F-097 shallow-copy, reused-handle and wrong-insertion mutants", () => 
   expect(copyLayout.viewports[0]!.id).not.toBe(sourceLayout.viewports[0]!.id);
   expect(copyLayout.entities![0]).not.toBe(sourceLayout.entities![0]);
   expect(copyLayout.entities![0]!.handle).not.toBe(sourceLayout.entities![0]!.handle);
+});
+
+it("kills F-098 zero-sheet and collapsed-printable-area mutants", () => {
+  const document = createEmptyDocument({ documentId: "F-098-mutation" });
+  const layout = createPaperLayout(document, {
+    name: "F098 PAPER",
+    paper: { widthMm: 420, heightMm: 297, marginsMm: { top: 10, right: 10, bottom: 10, left: 10 } },
+  }).layouts[1]!;
+  expect(resolvePaperDefinition(layout)).toMatchObject({ widthMm: 420, heightMm: 297 });
+  expect(() => resolvePaperDefinition({ ...layout, paper: { ...layout.paper!, heightMm: 0 } })).toThrow(/positive/i);
+  expect(() => resolvePaperDefinition({
+    ...layout,
+    paper: { widthMm: 420, heightMm: 297, marginsMm: { top: 149, right: 10, bottom: 148, left: 10 } },
+  })).toThrow(/printable area/i);
 });

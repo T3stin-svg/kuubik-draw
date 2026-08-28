@@ -10,6 +10,7 @@ import {
   deletePaperLayout,
   movePaperLayout,
   renamePaperLayout,
+  resolvePaperDefinition,
 } from "../src/index.js";
 
 function operation(baseRevision: number, commandId: string, args: unknown = {}): CadOperation {
@@ -97,5 +98,20 @@ describe("F-097 layout transactions", () => {
       id: `layout-${index + 1}`, name: `Layout ${index + 1}`, kind: "paper" as const, viewports: [], entities: [],
     }))];
     expect(() => createPaperLayout({ ...document, layouts })).toThrowError(LayoutCommandError);
+  });
+
+  it("resolves a positive default paper sheet and rejects collapsed printable geometry", () => {
+    const document = createEmptyDocument({ documentId: "F-098-paper" });
+    const paper = createPaperLayout(document, { name: "F098 PAPER" }).layouts[1]!;
+    expect(resolvePaperDefinition(paper)).toEqual({
+      widthMm: 297,
+      heightMm: 210,
+      marginsMm: { top: 10, right: 10, bottom: 10, left: 10 },
+    });
+    expect(resolvePaperDefinition({ ...paper, paper: undefined })).toEqual(resolvePaperDefinition(paper));
+    expect(() => resolvePaperDefinition({
+      ...paper,
+      paper: { widthMm: 420, heightMm: 297, marginsMm: { top: 10, right: 210, bottom: 10, left: 210 } },
+    })).toThrowError(LayoutCommandError);
   });
 });

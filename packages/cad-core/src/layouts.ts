@@ -3,9 +3,15 @@ import { allocateEntityHandles } from "./commands.js";
 
 export const MAX_PAPER_LAYOUTS = 255;
 export const MAX_LAYOUT_NAME_LENGTH = 255;
+export const DEFAULT_PAPER_DEFINITION = Object.freeze({
+  widthMm: 297,
+  heightMm: 210,
+  marginsMm: Object.freeze({ top: 10, right: 10, bottom: 10, left: 10 }),
+});
 
 export type LayoutCommandErrorCode =
   | "DUPLICATE_NAME"
+  | "INVALID_PAPER"
   | "INVALID_NAME"
   | "LAYOUT_LIMIT"
   | "MISSING_LAYOUT"
@@ -41,6 +47,22 @@ function validLayoutName(name: string): string {
     throw new LayoutCommandError("INVALID_NAME", `Layout name must contain 1-${MAX_LAYOUT_NAME_LENGTH} valid characters.`);
   }
   return trimmed;
+}
+
+export function resolvePaperDefinition(layout: CadLayout): NonNullable<CadLayout["paper"]> | null {
+  if (layout.kind !== "paper") return null;
+  const paper = structuredClone(layout.paper ?? DEFAULT_PAPER_DEFINITION);
+  const margins = paper.marginsMm;
+  const values = [paper.widthMm, paper.heightMm, margins.top, margins.right, margins.bottom, margins.left];
+  if (values.some((value) => !Number.isFinite(value)) || paper.widthMm <= 0 || paper.heightMm <= 0) {
+    throw new LayoutCommandError("INVALID_PAPER", "Paper dimensions must be finite and positive.");
+  }
+  if (
+    [margins.top, margins.right, margins.bottom, margins.left].some((value) => value < 0) ||
+    margins.left + margins.right >= paper.widthMm ||
+    margins.top + margins.bottom >= paper.heightMm
+  ) throw new LayoutCommandError("INVALID_PAPER", "Paper margins must leave a positive printable area.");
+  return paper;
 }
 
 function uniqueId(prefix: string, used: ReadonlySet<string>): string {
@@ -91,6 +113,7 @@ export function assertLayoutCollection(layouts: readonly CadLayout[]): void {
     const normalized = normalizedName(name);
     if (names.has(normalized)) throw new LayoutCommandError("DUPLICATE_NAME", `Layout name already exists: ${name}`);
     names.add(normalized);
+    resolvePaperDefinition(layout);
     for (const viewport of layout.viewports) {
       if (!viewport.id || viewports.has(viewport.id)) throw new LayoutCommandError("MISSING_LAYOUT", `Duplicate or empty viewport id: ${viewport.id}`);
       viewports.add(viewport.id);
@@ -132,11 +155,7 @@ export function createPaperLayout(
     id: layoutId,
     name,
     kind: "paper",
-    paper: structuredClone(options.paper ?? {
-      widthMm: 297,
-      heightMm: 210,
-      marginsMm: { top: 10, right: 10, bottom: 10, left: 10 },
-    }),
+    paper: structuredClone(options.paper ?? DEFAULT_PAPER_DEFINITION),
     viewports: structuredClone(options.viewports ?? [defaultViewport]),
     entities: structuredClone(options.entities ?? []),
   };
