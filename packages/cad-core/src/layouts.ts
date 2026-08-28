@@ -43,6 +43,11 @@ export interface ViewportEditResult extends LayoutEditResult {
   viewportId: string | null;
 }
 
+export interface ViewportLockResult extends Omit<LayoutEditResult, "changes"> {
+  changes: [] | [LayoutSetChange];
+  viewportId: string;
+}
+
 export interface ViewportViewState {
   viewCenter: CadPoint2;
   scaleDenominator: number;
@@ -125,6 +130,9 @@ function isSimplePolygon(points: readonly { x: number; y: number }[]): boolean {
 }
 
 export function assertViewportGeometry(viewport: CadViewport): void {
+  if (typeof viewport.locked !== "boolean") {
+    throw new LayoutCommandError("INVALID_VIEWPORT", "Viewport display-lock state must be boolean.");
+  }
   const values = [
     viewport.center.x, viewport.center.y, viewport.width, viewport.height,
     viewport.viewCenter.x, viewport.viewCenter.y, viewport.viewHeight, viewport.twistAngleRad,
@@ -284,6 +292,28 @@ function paperViewport(document: KDrawDocumentV1, layoutId: string, viewportId: 
   const viewport = layout.viewports.find((candidate) => candidate.id === viewportId);
   if (!viewport) throw new LayoutCommandError("INVALID_VIEWPORT", `Viewport not found: ${viewportId}`);
   return viewport;
+}
+
+export function setPaperViewportDisplayLocked(
+  document: KDrawDocumentV1,
+  layoutId: string,
+  viewportId: string,
+  locked: boolean,
+): ViewportLockResult {
+  const source = paperViewport(document, layoutId, viewportId);
+  if (typeof locked !== "boolean") {
+    throw new LayoutCommandError("INVALID_VIEWPORT", "Viewport display-lock state must be boolean.");
+  }
+  if (source.locked === locked) {
+    return { changes: [], layoutId, viewportId, layouts: structuredClone(document.layouts) };
+  }
+  const layouts = structuredClone(document.layouts);
+  const layout = layouts[paperLayoutIndex(document, layoutId)]!;
+  const viewport = layout.viewports.find((candidate) => candidate.id === viewportId)!;
+  viewport.locked = locked;
+  assertViewportGeometry(viewport);
+  const edited = result(layouts, layoutId);
+  return { ...edited, viewportId };
 }
 
 export function setPaperViewportView(

@@ -1,0 +1,230 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-101",
+  "status": "PASS",
+  "viewport": {
+    "width": 1920,
+    "height": 1080
+  },
+  "action": "MODEL -> lock -> refused wheel/pan/direct scale-center-twist Apply -> model LINE -> unlock -> wheel/pan -> relock -> refused wheel/pan -> undo/redo -> KDRAW1 -> reload",
+  "initial": {
+    "center": "400,200",
+    "viewHeight": 1385,
+    "scaleDenominator": 5,
+    "locked": false,
+    "navigationEnabled": true,
+    "spaceContext": "model"
+  },
+  "locked": {
+    "center": "400,200",
+    "viewHeight": 1385,
+    "scaleDenominator": 5,
+    "locked": true,
+    "navigationEnabled": false,
+    "spaceContext": "model"
+  },
+  "afterLockedWheel": {
+    "center": "400,200",
+    "viewHeight": 1385,
+    "scaleDenominator": 5,
+    "locked": true,
+    "navigationEnabled": false,
+    "spaceContext": "model"
+  },
+  "afterLockedPan": {
+    "center": "400,200",
+    "viewHeight": 1385,
+    "scaleDenominator": 5,
+    "locked": true,
+    "navigationEnabled": false,
+    "spaceContext": "model"
+  },
+  "afterLockedDirect": {
+    "center": "400,200",
+    "viewHeight": 1385,
+    "scaleDenominator": 5,
+    "locked": true,
+    "navigationEnabled": false,
+    "spaceContext": "model"
+  },
+  "afterLockedEdit": {
+    "revision": 2,
+    "entityCount": 2
+  },
+  "zoomed": {
+    "center": "399.8143585684834,200.00147334469457",
+    "viewHeight": 1259.090909090909,
+    "scaleDenominator": 4.545454545454545,
+    "locked": false,
+    "navigationEnabled": true,
+    "spaceContext": "model"
+  },
+  "panned": {
+    "center": "248.9438618438829,105.70741289181927",
+    "viewHeight": 1259.090909090909,
+    "scaleDenominator": 4.545454545454545,
+    "locked": false,
+    "navigationEnabled": true,
+    "spaceContext": "model"
+  },
+  "relocked": {
+    "center": "248.9438618438829,105.70741289181927",
+    "viewHeight": 1259.090909090909,
+    "scaleDenominator": 4.545454545454545,
+    "locked": true,
+    "navigationEnabled": false,
+    "spaceContext": "model"
+  },
+  "restored": {
+    "center": "248.9438618438829,105.70741289181927",
+    "viewHeight": 1259.090909090909,
+    "scaleDenominator": 4.545454545454545,
+    "locked": true,
+    "navigationEnabled": false,
+    "spaceContext": "model"
+  },
+  "document": {
+    "revision": 8,
+    "entityCount": 2,
+    "viewport": {
+      "id": "viewport-f101",
+      "center": {
+        "x": 210,
+        "y": 148.5
+      },
+      "width": 400,
+      "height": 277,
+      "viewCenter": {
+        "x": 248.9438618438829,
+        "y": 105.70741289181927
+      },
+      "viewHeight": 1259.090909090909,
+      "twistAngleRad": 0,
+      "locked": true
+    }
+  },
+  "operations": [
+    {
+      "opId": "cc58015d-8166-436d-aace-21d4b3255857",
+      "baseRevision": 0,
+      "commandId": "VIEWPORT_LOCK",
+      "args": {
+        "layoutId": "layout-f101",
+        "viewportId": "viewport-f101",
+        "locked": true
+      },
+      "targetHandles": [],
+      "resultHandles": []
+    },
+    {
+      "opId": "619383ab-32b8-4be7-8354-bbca3e5ce477",
+      "baseRevision": 1,
+      "commandId": "LINE",
+      "args": {
+        "start": {
+          "x": 10,
+          "y": 15
+        },
+        "end": {
+          "x": 180,
+          "y": 90
+        }
+      },
+      "targetHandles": [],
+      "resultHandles": [
+        "11"
+      ]
+    },
+    {
+      "opId": "1e97d56b-e00a-445a-b32f-aef6036b4693",
+      "baseRevision": 2,
+      "commandId": "VIEWPORT_LOCK",
+      "args": {
+        "layoutId": "layout-f101",
+        "viewportId": "viewport-f101",
+        "locked": false
+      },
+      "targetHandles": [],
+      "resultHandles": []
+    },
+    {
+      "opId": "483812ce-9402-40c9-9ea1-71c3f6b76bf6",
+      "baseRevision": 3,
+      "commandId": "VIEWPORT_ZOOM",
+      "args": {
+        "layoutId": "layout-f101",
+        "viewportId": "viewport-f101",
+        "anchorModel": {
+          "x": 397.95794425331735,
+          "y": 200.01620679164034
+        },
+        "scaleFactor": 0.9090909090909091,
+        "scaleDenominator": 4.545454545454545
+      },
+      "targetHandles": [],
+      "resultHandles": []
+    },
+    {
+      "opId": "50a67bf3-e122-4f4e-8650-2ba0634ef5f8",
+      "baseRevision": 4,
+      "commandId": "VIEWPORT_PAN",
+      "args": {
+        "layoutId": "layout-f101",
+        "viewportId": "viewport-f101",
+        "deltaPx": {
+          "x": 80,
+          "y": -50
+        },
+        "viewportPx": {
+          "width": 965.78125,
+          "height": 667.640625
+        },
+        "viewCenter": {
+          "x": 248.9438618438829,
+          "y": 105.70741289181927
+        }
+      },
+      "targetHandles": [],
+      "resultHandles": []
+    },
+    {
+      "opId": "9e49f6ec-417f-47c9-b5b0-ed51da35b191",
+      "baseRevision": 5,
+      "commandId": "VIEWPORT_LOCK",
+      "args": {
+        "layoutId": "layout-f101",
+        "viewportId": "viewport-f101",
+        "locked": true
+      },
+      "targetHandles": [],
+      "resultHandles": []
+    },
+    {
+      "opId": "9e49f6ec-417f-47c9-b5b0-ed51da35b191:undo:1",
+      "baseRevision": 6,
+      "commandId": "UNDO",
+      "args": {
+        "originalOpId": "9e49f6ec-417f-47c9-b5b0-ed51da35b191"
+      },
+      "targetHandles": [],
+      "resultHandles": []
+    },
+    {
+      "opId": "9e49f6ec-417f-47c9-b5b0-ed51da35b191:redo:2",
+      "baseRevision": 7,
+      "commandId": "VIEWPORT_LOCK",
+      "args": {
+        "layoutId": "layout-f101",
+        "viewportId": "viewport-f101",
+        "locked": true
+      },
+      "targetHandles": [],
+      "resultHandles": []
+    }
+  ],
+  "exported": {
+    "bytes": 1769,
+    "sha256": "27861496029a6cd9b4c0a5a9c0be7f3d03b6e90e7b0b1121480ee7f24d183504"
+  },
+  "consoleErrors": []
+}

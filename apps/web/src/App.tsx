@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { STANDARD_VIEWPORT_SCALE_DENOMINATORS, allocateEntityHandles, CadCommandInputError, CadSession, LayoutCommandError, copyPaperLayout, createEmptyDocument, createPaperLayout, createPaperViewport, deletePaperLayout, deletePaperViewport, formatViewportScale, movePaperLayout, panPaperViewportByPixels, parseCartesianPoint, parseCopyDestinations, parseMoveDestination, parseOffsetDistance, parseOffsetPlacementPoints, parseReferenceAngleInput, parseRotationAngleInput, parseScaleFactorInput, parseScaleLengthInput, renamePaperLayout, resolveCadCommand, resolvePaperDefinition, serializeKDraw, setPaperViewportView, viewportScaleDenominator, zoomPaperViewportAtModelPoint, type CadChange, type CopyRejectedTarget, type MirrorRejectedTarget, type MoveRejectedTarget, type OffsetLayerMode, type OffsetRejectedTarget, type RotateAngleSpec, type RotateRejectedTarget, type ScaleFactorSpec, type ScaleRejectedTarget } from "@kuubik/cad-core";
+import { STANDARD_VIEWPORT_SCALE_DENOMINATORS, allocateEntityHandles, CadCommandInputError, CadSession, LayoutCommandError, copyPaperLayout, createEmptyDocument, createPaperLayout, createPaperViewport, deletePaperLayout, deletePaperViewport, formatViewportScale, movePaperLayout, panPaperViewportByPixels, parseCartesianPoint, parseCopyDestinations, parseMoveDestination, parseOffsetDistance, parseOffsetPlacementPoints, parseReferenceAngleInput, parseRotationAngleInput, parseScaleFactorInput, parseScaleLengthInput, renamePaperLayout, resolveCadCommand, resolvePaperDefinition, serializeKDraw, setPaperViewportDisplayLocked, setPaperViewportView, viewportScaleDenominator, zoomPaperViewportAtModelPoint, type CadChange, type CopyRejectedTarget, type MirrorRejectedTarget, type MoveRejectedTarget, type OffsetLayerMode, type OffsetRejectedTarget, type RotateAngleSpec, type RotateRejectedTarget, type ScaleFactorSpec, type ScaleRejectedTarget } from "@kuubik/cad-core";
 import { exportDxf } from "@kuubik/cad-dxf";
 import { CadCanvasRenderer, pannedViewportWorldCenter, viewportScreenToWorld, type Viewport2D } from "@kuubik/cad-renderer";
 import type { CadEntity, CadLayout, CadViewport, KDrawDocumentV1 } from "@kuubik/cad-schema";
@@ -167,6 +167,7 @@ function PaperViewportCanvas({
       data-scale-label={formatViewportScale(renderViewport)}
       data-twist-angle-rad={renderViewport.twistAngleRad}
       data-twist-angle-deg={(renderViewport.twistAngleRad * 180) / Math.PI}
+      data-display-locked={viewport.locked ? "true" : "false"}
       data-navigation-enabled={navigationEnabled ? "true" : "false"}
       style={{
         left: `${((viewport.center.x - viewport.width / 2) / paper.widthMm) * 100}%`,
@@ -212,7 +213,7 @@ function PaperViewportCanvas({
       onPointerCancel={() => { panStart.current = null; setDraftCenter(null); }}
     >
       <canvas ref={canvas} aria-label={`Viewport ${viewport.id}`} />
-      <span className="paper-space-viewport-label">{viewport.id} · {formatViewportScale(renderViewport)}</span>
+      <span className="paper-space-viewport-label">{viewport.locked ? "🔒 · " : ""}{viewport.id} · {formatViewportScale(renderViewport)}</span>
     </div>
   );
 }
@@ -1183,6 +1184,23 @@ export function App() {
     }
   }
 
+  async function setSelectedViewportLock(locked: boolean): Promise<void> {
+    if (committing.current || activeLayout.kind !== "paper" || selectedViewport === null || selectedViewport.locked === locked) return;
+    committing.current = true;
+    try {
+      const result = setPaperViewportDisplayLocked(document, activeLayout.id, selectedViewport.id, locked);
+      if (result.changes.length === 0) return;
+      await commitChanges("VIEWPORT_LOCK", { layoutId: activeLayout.id, viewportId: selectedViewport.id, locked }, result.changes, []);
+      setStatus(`${selectedViewport.id}: viewport ${locked ? "lukustatud" : "avatud"}; MODEL ${modelViewportId === selectedViewport.id ? "aktiivne" : "ei ole aktiivne"}`);
+    } catch (error) {
+      if (error instanceof StorageRevisionConflictError) await recoverFromStorageConflict(error);
+      else if (error instanceof LayoutCommandError) setStatus(`VIEWPORT viga: ${error.message}`);
+      else throw error;
+    } finally {
+      committing.current = false;
+    }
+  }
+
   async function zoomViewport(viewportId: string, anchorModel: { x: number; y: number }, scaleFactor: number): Promise<void> {
     if (committing.current || activeLayout.kind !== "paper" || modelViewportId !== viewportId) return;
     committing.current = true;
@@ -1510,6 +1528,14 @@ export function App() {
             <button type="button" className="layout-action danger" aria-label="Kustuta viewport" disabled={selectedViewportId === null} onClick={() => void deleteSelectedViewport()}>− View</button>
             {selectedViewport && (
               <span className="viewport-view-controls" aria-label="Viewport vaate seaded">
+                <button
+                  type="button"
+                  className="layout-action"
+                  aria-label={selectedViewport.locked ? "Ava viewport" : "Lukusta viewport"}
+                  aria-pressed={selectedViewport.locked}
+                  data-testid="viewport-lock-toggle"
+                  onClick={() => void setSelectedViewportLock(!selectedViewport.locked)}
+                >{selectedViewport.locked ? "🔒 Lukus" : "🔓 Avatud"}</button>
                 <select
                   aria-label="Viewport standardmõõtkava"
                   value={selectedViewportPreset}

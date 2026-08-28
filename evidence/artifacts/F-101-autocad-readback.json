@@ -1,0 +1,263 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-101",
+  "benchmark": "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
+  "engine": "Autodesk AutoCAD 2024 desktop COM/native PViewport commands",
+  "engineVersion": "24.3s (LMS Tech)",
+  "automationProcessId": 21296,
+  "automationProcessOwned": true,
+  "handles": {
+    "viewport": "289",
+    "modelLine": "288"
+  },
+  "initial": {
+    "handle": "289",
+    "objectName": "AcDbViewport",
+    "target": {
+      "x": 0,
+      "y": 0
+    },
+    "viewCenter": {
+      "x": 128.5,
+      "y": 97.5
+    },
+    "viewHeight": 1000,
+    "customScale": 0.1,
+    "twistAngleRad": 0,
+    "displayLocked": false,
+    "viewportOn": true,
+    "mSpace": true,
+    "cvport": 3
+  },
+  "locked": {
+    "handle": "289",
+    "objectName": "AcDbViewport",
+    "target": {
+      "x": 0,
+      "y": 0
+    },
+    "viewCenter": {
+      "x": 128.5,
+      "y": 97.5
+    },
+    "viewHeight": 1000,
+    "customScale": 0.1,
+    "twistAngleRad": 0,
+    "displayLocked": true,
+    "viewportOn": true,
+    "mSpace": true,
+    "cvport": 3
+  },
+  "afterLockedZoom": {
+    "handle": "289",
+    "objectName": "AcDbViewport",
+    "target": {
+      "x": 0,
+      "y": 0
+    },
+    "viewCenter": {
+      "x": 128.5,
+      "y": 97.5
+    },
+    "viewHeight": 1000,
+    "customScale": 0.1,
+    "twistAngleRad": 0,
+    "displayLocked": true,
+    "viewportOn": true,
+    "mSpace": true,
+    "cvport": 3
+  },
+  "afterLockedPan": {
+    "handle": "289",
+    "objectName": "AcDbViewport",
+    "target": {
+      "x": 0,
+      "y": 0
+    },
+    "viewCenter": {
+      "x": 128.5,
+      "y": 97.5
+    },
+    "viewHeight": 1000,
+    "customScale": 0.1,
+    "twistAngleRad": 0,
+    "displayLocked": true,
+    "viewportOn": true,
+    "mSpace": true,
+    "cvport": 3
+  },
+  "afterLockedEdit": {
+    "line": {
+      "handle": "288",
+      "start": {
+        "x": 100,
+        "y": 50
+      },
+      "end": {
+        "x": 1100,
+        "y": 50
+      }
+    },
+    "viewport": {
+      "handle": "289",
+      "objectName": "AcDbViewport",
+      "target": {
+        "x": 0,
+        "y": 0
+      },
+      "viewCenter": {
+        "x": 128.5,
+        "y": 97.5
+      },
+      "viewHeight": 1000,
+      "customScale": 0.1,
+      "twistAngleRad": 0,
+      "displayLocked": true,
+      "viewportOn": true,
+      "mSpace": true,
+      "cvport": 3
+    }
+  },
+  "unlocked": {
+    "handle": "289",
+    "objectName": "AcDbViewport",
+    "target": {
+      "x": 0,
+      "y": 0
+    },
+    "viewCenter": {
+      "x": 128.5,
+      "y": 97.5
+    },
+    "viewHeight": 1000,
+    "customScale": 0.1,
+    "twistAngleRad": 0,
+    "displayLocked": false,
+    "viewportOn": true,
+    "mSpace": true,
+    "cvport": 3
+  },
+  "afterUnlockedZoom": {
+    "handle": "289",
+    "objectName": "AcDbViewport",
+    "target": {
+      "x": 0,
+      "y": 0
+    },
+    "viewCenter": {
+      "x": 500,
+      "y": 250
+    },
+    "viewHeight": 500,
+    "customScale": 0.2,
+    "twistAngleRad": 0,
+    "displayLocked": false,
+    "viewportOn": true,
+    "mSpace": true,
+    "cvport": 3
+  },
+  "afterUnlockedPan": {
+    "handle": "289",
+    "objectName": "AcDbViewport",
+    "target": {
+      "x": 0,
+      "y": 0
+    },
+    "viewCenter": {
+      "x": 400,
+      "y": 200
+    },
+    "viewHeight": 500,
+    "customScale": 0.2,
+    "twistAngleRad": 0,
+    "displayLocked": false,
+    "viewportOn": true,
+    "mSpace": true,
+    "cvport": 3
+  },
+  "relocked": {
+    "handle": "289",
+    "objectName": "AcDbViewport",
+    "target": {
+      "x": 0,
+      "y": 0
+    },
+    "viewCenter": {
+      "x": 400,
+      "y": 200
+    },
+    "viewHeight": 500,
+    "customScale": 0.2,
+    "twistAngleRad": 0,
+    "displayLocked": true,
+    "viewportOn": true,
+    "mSpace": true,
+    "cvport": 3
+  },
+  "afterReopen": {
+    "handle": "289",
+    "objectName": "AcDbViewport",
+    "target": {
+      "x": 0,
+      "y": 0
+    },
+    "viewCenter": {
+      "x": 400,
+      "y": 200
+    },
+    "viewHeight": 500,
+    "customScale": 0.2,
+    "twistAngleRad": 0,
+    "displayLocked": true,
+    "viewportOn": true,
+    "mSpace": true,
+    "cvport": 3
+  },
+  "afterReopenPaper": {
+    "mSpace": false,
+    "cvport": 1
+  },
+  "lineAfterReopen": {
+    "handle": "288",
+    "start": {
+      "x": 100,
+      "y": 50
+    },
+    "end": {
+      "x": 1100,
+      "y": 50
+    }
+  },
+  "checks": {
+    "nativeViewport": true,
+    "defaultUnlocked": true,
+    "lockEntersModel": true,
+    "lockedZoomSuppressed": true,
+    "lockedPanSuppressed": true,
+    "modelEditAllowedWhileLocked": true,
+    "unlockedState": true,
+    "unlockedZoomChangesView": true,
+    "unlockedPanChangesView": true,
+    "relockedState": true,
+    "nativeDwgReopen": true,
+    "lockAndCameraPersisted": true,
+    "modelEditPersisted": true,
+    "paperAfterReopen": true
+  },
+  "dwg": {
+    "bytes": 32565,
+    "sha256": "1996a73a96e5a84a1554d795ba7b02a55ff78f67c48f723241dac55e84c2d8b6",
+    "saveAsType": 64,
+    "retained": false
+  },
+  "status": "PASS",
+  "userDocument": {
+    "isolatedOwnedProcess": true,
+    "blankRestored": true
+  },
+  "automationProcessTerminated": true,
+  "noResidualAcadProcesses": true,
+  "scriptSha256": "d415a3174e582671ead5e76a4234fca1ff2e1aebc4f74d27b794c347725dc1ae",
+  "matrixScriptSha256": "19fb15ab194ef1e28d34c36d8a02b9aa935019da3c8c710a8691073a4c92b538",
+  "observedAt": "2026-08-28T17:21:07.759Z"
+}

@@ -15,6 +15,7 @@ import {
   panPaperViewportByPixels,
   renamePaperLayout,
   resolvePaperDefinition,
+  setPaperViewportDisplayLocked,
   setPaperViewportView,
   viewportModelToNormalized,
   viewportNormalizedToModel,
@@ -242,5 +243,47 @@ describe("F-097 layout transactions", () => {
     expect(() => setPaperViewportView(withViewport, paper.layoutId, created.viewportId!, {
       viewCenter: { x: 0, y: 0 }, scaleDenominator: 1.7e308, twistAngleRad: 0,
     })).toThrow(/finite/i);
+  });
+
+  it("locks, unlocks and relocks a viewport without changing its camera or blocking model edits", () => {
+    const document = createEmptyDocument({ documentId: "F-101-lock" });
+    const paper = createPaperLayout(document, { name: "F101 PAPER", viewports: [] });
+    const created = createPaperViewport({ ...document, layouts: paper.layouts }, paper.layoutId, {
+      center: { x: 210, y: 148.5 }, width: 200, height: 100,
+      viewCenter: { x: 400, y: 200 }, viewHeight: 500, twistAngleRad: 0.25, locked: false,
+    });
+    const session = new CadSession({ ...document, layouts: created.layouts });
+    const camera = structuredClone(session.document.layouts[1]!.viewports[0]!);
+    const locked = setPaperViewportDisplayLocked(session.document, paper.layoutId, created.viewportId!, true);
+    session.commit(operation(0, "VIEWPORT_LOCK", { locked: true }), locked.changes);
+    expect(session.document.layouts[1]!.viewports[0]).toEqual({ ...camera, locked: true });
+    expect(() => zoomPaperViewportAtModelPoint(session.document, paper.layoutId, created.viewportId!, { x: 400, y: 200 }, 0.5)).toThrow(/locked/i);
+    expect(() => panPaperViewportByPixels(session.document, paper.layoutId, created.viewportId!, { x: 50, y: 25 }, { width: 400, height: 200 })).toThrow(/locked/i);
+    expect(() => setPaperViewportView(session.document, paper.layoutId, created.viewportId!, {
+      viewCenter: { x: 700, y: 350 }, scaleDenominator: 25, twistAngleRad: Math.PI / 12,
+    })).toThrow(/locked/i);
+
+    session.commit(operation(1, "LINE", {}), [{
+      type: "put", entity: { kind: "line", handle: "10", layerId: "0", start: { x: 100, y: 50 }, end: { x: 1100, y: 50 } },
+    }]);
+    expect(session.document.entities).toHaveLength(1);
+    expect(session.document.layouts[1]!.viewports[0]).toEqual({ ...camera, locked: true });
+    const unlocked = setPaperViewportDisplayLocked(session.document, paper.layoutId, created.viewportId!, false);
+    session.commit(operation(2, "VIEWPORT_LOCK", { locked: false }), unlocked.changes);
+    const changed = setPaperViewportView(session.document, paper.layoutId, created.viewportId!, {
+      viewCenter: { x: 500, y: 250 }, scaleDenominator: 5, twistAngleRad: 0,
+    });
+    session.commit(operation(3, "VIEWPORT_VIEW"), changed.changes);
+    const relocked = setPaperViewportDisplayLocked(session.document, paper.layoutId, created.viewportId!, true);
+    session.commit(operation(4, "VIEWPORT_LOCK", { locked: true }), relocked.changes);
+    expect(session.document.layouts[1]!.viewports[0]).toMatchObject({ locked: true, viewCenter: { x: 500, y: 250 }, viewHeight: 500 });
+    session.undo();
+    expect(session.document.layouts[1]!.viewports[0]!.locked).toBe(false);
+    session.redo();
+    expect(session.document.layouts[1]!.viewports[0]!.locked).toBe(true);
+    expect(setPaperViewportDisplayLocked(session.document, paper.layoutId, created.viewportId!, true).changes).toEqual([]);
+    expect(() => setPaperViewportDisplayLocked(session.document, "model", created.viewportId!, false)).toThrow(/Model layout/i);
+    expect(() => setPaperViewportDisplayLocked(session.document, paper.layoutId, "missing", false)).toThrow(/not found/i);
+    expect(() => setPaperViewportDisplayLocked(session.document, paper.layoutId, created.viewportId!, "yes" as unknown as boolean)).toThrow(/boolean/i);
   });
 });

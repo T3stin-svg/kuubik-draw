@@ -1,5 +1,5 @@
 import { expect, it } from "vitest";
-import { CadSession, applyAtomicOperation, copyPaperLayout, createEmptyDocument, createPaperLayout, createPaperViewport, deletePaperViewport, executeCopy, executeErase, executeMirror, executeMove, executeOffset, executeRectangle, executeRotate, executeScale, formatViewportScale, offsetCadEntity, panPaperViewportByPixels, resolvePaperDefinition, setPaperViewportView, viewportModelToNormalized, viewportNormalizedToModel, viewportScaleDenominator, zoomPaperViewportAtModelPoint } from "../src/index.js";
+import { CadSession, applyAtomicOperation, copyPaperLayout, createEmptyDocument, createPaperLayout, createPaperViewport, deletePaperViewport, executeCopy, executeErase, executeMirror, executeMove, executeOffset, executeRectangle, executeRotate, executeScale, formatViewportScale, offsetCadEntity, panPaperViewportByPixels, resolvePaperDefinition, setPaperViewportDisplayLocked, setPaperViewportView, viewportModelToNormalized, viewportNormalizedToModel, viewportScaleDenominator, zoomPaperViewportAtModelPoint } from "../src/index.js";
 
 it("kills the revision-increment mutant", () => {
   const source = createEmptyDocument({ documentId: "mutation" });
@@ -376,4 +376,35 @@ it("kills F-100 inverse-twist, wrong-scale, drifting-anchor, unrotated-pan and n
   expect(session.document.layouts[1]!.viewports[0]!).toMatchObject({ viewCenter: { x: 1000, y: -500 }, viewHeight: 2000, twistAngleRad: Math.PI / 6 });
   session.redo();
   expect(session.document.layouts[1]!.viewports[0]!.viewCenter).toEqual(afterZoom.viewCenter);
+});
+
+it("kills F-101 inverted-lock, camera-mutation, model-edit-block and non-atomic mutants", () => {
+  const document = createEmptyDocument({ documentId: "F-101-mutation" });
+  const paper = createPaperLayout(document, { name: "F101 PAPER", viewports: [] });
+  const created = createPaperViewport({ ...document, layouts: paper.layouts }, paper.layoutId, {
+    center: { x: 210, y: 148.5 }, width: 200, height: 100,
+    viewCenter: { x: 400, y: 200 }, viewHeight: 500, twistAngleRad: 0.25, locked: false,
+  });
+  const session = new CadSession({ ...document, layouts: created.layouts });
+  const before = structuredClone(session.document.layouts[1]!.viewports[0]!);
+  const locked = setPaperViewportDisplayLocked(session.document, paper.layoutId, created.viewportId!, true);
+  session.commit({ opId: "F101-lock", baseRevision: 0, commandId: "VIEWPORT_LOCK", args: { locked: true }, targetHandles: [], resultHandles: [] }, locked.changes);
+  expect(session.document.layouts[1]!.viewports[0]).toEqual({ ...before, locked: true });
+  expect(() => zoomPaperViewportAtModelPoint(session.document, paper.layoutId, created.viewportId!, { x: 400, y: 200 }, 0.5)).toThrow(/locked/i);
+  expect(() => panPaperViewportByPixels(session.document, paper.layoutId, created.viewportId!, { x: 50, y: 25 }, { width: 400, height: 200 })).toThrow(/locked/i);
+  expect(() => setPaperViewportView(session.document, paper.layoutId, created.viewportId!, {
+    viewCenter: { x: 700, y: 350 }, scaleDenominator: 25, twistAngleRad: Math.PI / 12,
+  })).toThrow(/locked/i);
+  session.commit({ opId: "F101-line", baseRevision: 1, commandId: "LINE", args: {}, targetHandles: [], resultHandles: ["10"] }, [{
+    type: "put", entity: { kind: "line", handle: "10", layerId: "0", start: { x: 100, y: 50 }, end: { x: 1100, y: 50 } },
+  }]);
+  expect(session.document.entities[0]).toMatchObject({ handle: "10", start: { x: 100, y: 50 }, end: { x: 1100, y: 50 } });
+  expect(session.document.layouts[1]!.viewports[0]).toEqual({ ...before, locked: true });
+  session.undo();
+  expect(session.document.entities).toEqual([]);
+  expect(session.document.layouts[1]!.viewports[0]!.locked).toBe(true);
+  session.undo();
+  expect(session.document.layouts[1]!.viewports[0]).toEqual(before);
+  session.redo();
+  expect(session.document.layouts[1]!.viewports[0]!.locked).toBe(true);
 });

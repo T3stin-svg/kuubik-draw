@@ -3,6 +3,7 @@ import {
   type KDrawContainerManifestV1,
   type KDrawDocumentV1,
 } from "@kuubik/cad-schema";
+import { assertLayoutCollection } from "./layouts.js";
 
 const MAGIC = "KDRAW1\n";
 
@@ -40,6 +41,7 @@ export async function serializeKDraw(
   createdAt = new Date().toISOString(),
 ): Promise<Uint8Array> {
   assertKDrawDocumentV1(document);
+  assertLayoutCollection(document.layouts);
   const encoder = new TextEncoder();
   const documentBytes = encoder.encode(`${JSON.stringify(document)}\n`);
   const paths = new Set<string>(["document.json"]);
@@ -101,6 +103,7 @@ export async function deserializeKDraw(bytes: Uint8Array): Promise<{
   if (!documentBytes) throw new TypeError("KDraw document.json is missing.");
   const document = JSON.parse(new TextDecoder().decode(documentBytes)) as unknown;
   assertKDrawDocumentV1(document);
+  assertLayoutCollection(document.layouts);
   decoded.delete(envelope.manifest.documentPath);
   return { document, manifest: envelope.manifest, attachments: decoded };
 }

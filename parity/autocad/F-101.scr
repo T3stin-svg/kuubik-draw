@@ -1,0 +1,7 @@
+; F-101 AutoCAD 2024.1.2 reference workflow.
+; Owned scratch drawing only: create one native paper viewport, lock it,
+; prove ZOOM and PAN cannot change its view while a model entity remains
+; editable, unlock it and prove both view commands work, relock it, then
+; save/reopen the native DWG and read DisplayLocked plus camera state back.
+_.REGENALL
+

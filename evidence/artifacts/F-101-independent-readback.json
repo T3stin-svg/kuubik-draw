@@ -1,0 +1,197 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-101",
+  "source": "production display-lock transaction kernel and serializer; independent KDRAW1 magic/base64/length/SHA/document reader",
+  "initialViewport": {
+    "center": {
+      "x": 210,
+      "y": 148.5
+    },
+    "width": 400,
+    "height": 277,
+    "viewCenter": {
+      "x": 128.5,
+      "y": 97.5
+    },
+    "viewHeight": 1000,
+    "twistAngleRad": 0,
+    "locked": false,
+    "id": "viewport-1"
+  },
+  "lockedViewport": {
+    "center": {
+      "x": 210,
+      "y": 148.5
+    },
+    "width": 400,
+    "height": 277,
+    "viewCenter": {
+      "x": 128.5,
+      "y": 97.5
+    },
+    "viewHeight": 1000,
+    "twistAngleRad": 0,
+    "locked": true,
+    "id": "viewport-1"
+  },
+  "refusals": {
+    "zoom": {
+      "name": "LayoutCommandError",
+      "code": "VIEWPORT_LOCKED",
+      "message": "Viewport is display locked: viewport-1"
+    },
+    "pan": {
+      "name": "LayoutCommandError",
+      "code": "VIEWPORT_LOCKED",
+      "message": "Viewport is display locked: viewport-1"
+    },
+    "direct": {
+      "name": "LayoutCommandError",
+      "code": "VIEWPORT_LOCKED",
+      "message": "Viewport is display locked: viewport-1"
+    },
+    "revisionBefore": 1,
+    "revisionAfter": 1,
+    "cameraUnchanged": true
+  },
+  "modelEdit": {
+    "revision": 2,
+    "entity": {
+      "kind": "line",
+      "handle": "11",
+      "layerId": "0",
+      "start": {
+        "x": 100,
+        "y": 50
+      },
+      "end": {
+        "x": 1100,
+        "y": 50
+      }
+    },
+    "viewport": {
+      "center": {
+        "x": 210,
+        "y": 148.5
+      },
+      "width": 400,
+      "height": 277,
+      "viewCenter": {
+        "x": 128.5,
+        "y": 97.5
+      },
+      "viewHeight": 1000,
+      "twistAngleRad": 0,
+      "locked": true,
+      "id": "viewport-1"
+    }
+  },
+  "unlockedViewport": {
+    "center": {
+      "x": 210,
+      "y": 148.5
+    },
+    "width": 400,
+    "height": 277,
+    "viewCenter": {
+      "x": 128.5,
+      "y": 97.5
+    },
+    "viewHeight": 1000,
+    "twistAngleRad": 0,
+    "locked": false,
+    "id": "viewport-1"
+  },
+  "navigatedViewport": {
+    "center": {
+      "x": 210,
+      "y": 148.5
+    },
+    "width": 400,
+    "height": 277,
+    "viewCenter": {
+      "x": 340,
+      "y": 150
+    },
+    "viewHeight": 1385,
+    "twistAngleRad": 0,
+    "locked": false,
+    "id": "viewport-1"
+  },
+  "relockedViewport": {
+    "center": {
+      "x": 210,
+      "y": 148.5
+    },
+    "width": 400,
+    "height": 277,
+    "viewCenter": {
+      "x": 340,
+      "y": 150
+    },
+    "viewHeight": 1385,
+    "twistAngleRad": 0,
+    "locked": true,
+    "id": "viewport-1"
+  },
+  "atomic": {
+    "afterUndo": {
+      "center": {
+        "x": 210,
+        "y": 148.5
+      },
+      "width": 400,
+      "height": 277,
+      "viewCenter": {
+        "x": 340,
+        "y": 150
+      },
+      "viewHeight": 1385,
+      "twistAngleRad": 0,
+      "locked": false,
+      "id": "viewport-1"
+    },
+    "afterRedo": {
+      "center": {
+        "x": 210,
+        "y": 148.5
+      },
+      "width": 400,
+      "height": 277,
+      "viewCenter": {
+        "x": 340,
+        "y": 150
+      },
+      "viewHeight": 1385,
+      "twistAngleRad": 0,
+      "locked": true,
+      "id": "viewport-1"
+    }
+  },
+  "container": {
+    "bytes": 1721,
+    "sha256": "f6c7a197a11d9c584fc0ef69338236172fb6bbe6a6224c4fd1200b0726870400",
+    "documentSha256": "5771b5811ba5eaa8b21282154296b0850606203d8ccc327bf5624165df04b8b2"
+  },
+  "document": {
+    "revision": 8,
+    "entityCount": 2,
+    "viewport": {
+      "center": {
+        "x": 210,
+        "y": 148.5
+      },
+      "width": 400,
+      "height": 277,
+      "viewCenter": {
+        "x": 340,
+        "y": 150
+      },
+      "viewHeight": 1385,
+      "twistAngleRad": 0,
+      "locked": true,
+      "id": "viewport-1"
+    }
+  },
+  "status": "PASS"
+}
