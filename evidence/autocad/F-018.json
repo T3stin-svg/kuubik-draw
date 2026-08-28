@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-018",
+  "kind": "autocad",
+  "authority": "autocad-2024.1.2-live",
+  "status": "PASS",
+  "artifactSha256": "f66bceb3d14fb4a9f03a55296df8cf3fff500a051ba3c421f4dabaca0c3bd632",
+  "observedAt": "2026-08-28T12:16:54.138Z",
+  "workflow": "AutoCAD 24.3 desktop COM creates twelve native standard entity families in an isolated scratch document, drives ROTATE from base 100,200 through a two-point 45-degree Reference to absolute 135 degrees, performs one U, then exercises numeric, point, negative and numeric-Reference/point-target inputs plus a mixed editable/locked pickset",
+  "result": "All twelve native families retained handles and visible properties, rotated counterclockwise exactly 90 degrees, and returned to their original bounds with one U; all four input variants matched their expected angles and the locked-layer line remained unchanged.",
+  "artifact": "evidence/artifacts/F-018-autocad-readback.json"
+}

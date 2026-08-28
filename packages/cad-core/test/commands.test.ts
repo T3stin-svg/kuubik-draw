@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { allocateEntityHandles, CadCommandInputError, createEmptyDocument, executeCopy, executeErase, executeMove, executeRectangle, parseCartesianPoint, parseCopyDestinations, parseMoveDestination, resolveCadCommand, translateCadEntity } from "../src/index.js";
+import { allocateEntityHandles, angleBetweenPointsDegrees, CadCommandInputError, createEmptyDocument, executeCopy, executeErase, executeMove, executeRectangle, executeRotate, parseAngleDegrees, parseCartesianPoint, parseCopyDestinations, parseMoveDestination, parseReferenceAngleInput, parseRotationAngleInput, resolveCadCommand, rotateCadEntity, rotateCadPoint, translateCadEntity } from "../src/index.js";
 
 describe("RECTANGLE command registry", () => {
   it("parses explicit Cartesian coordinate input without mutating a document", () => {
@@ -219,5 +219,82 @@ describe("COPY command registry", () => {
       ],
       deltas: [{ x: 0, y: 0 }],
     });
+  });
+});
+
+describe("ROTATE command registry", () => {
+  it("resolves RO/ROTATE and parses numeric, point and Reference angle input", () => {
+    expect(resolveCadCommand("ro")?.id).toBe("ROTATE");
+    expect(resolveCadCommand(" ROTATE ")?.id).toBe("ROTATE");
+    expect(parseAngleDegrees("-45.5")).toBe(-45.5);
+    expect(parseRotationAngleInput("135", { x: 100, y: 200 })).toBe(135);
+    expect(parseRotationAngleInput("100,1200", { x: 100, y: 200 })).toBe(90);
+    expect(parseReferenceAngleInput("45", { x: 100, y: 200 })).toBe(45);
+    expect(parseReferenceAngleInput("1100,1200", { x: 100, y: 200 })).toBe(45);
+    expect(parseReferenceAngleInput("100,200; 1100,1200", { x: 0, y: 0 })).toBe(45);
+    expect(angleBetweenPointsDegrees({ x: 0, y: 0 }, { x: 0, y: -10 })).toBe(-90);
+    expect(() => parseAngleDegrees("Infinity")).toThrow(CadCommandInputError);
+    expect(() => parseReferenceAngleInput("100,200; 100,200", { x: 0, y: 0 })).toThrow(/coincide/);
+    expect(() => parseReferenceAngleInput("0,0; 1,0; 2,0", { x: 0, y: 0 })).toThrow(/Reference angle/);
+  });
+
+  it("rotates points and every standard KDraw entity family counterclockwise around a base", () => {
+    const base = { x: 100, y: 200 };
+    const quarterTurn = Math.PI / 2;
+    expect(rotateCadPoint({ x: 1100, y: 200 }, base, quarterTurn)).toEqual({ x: 100, y: 1200 });
+    expect(rotateCadEntity({ kind: "line", handle: "1", layerId: "0", start: { x: 100, y: 200 }, end: { x: 1100, y: 200 } }, base, quarterTurn)).toMatchObject({ start: { x: 100, y: 200 }, end: { x: 100, y: 1200 } });
+    expect(rotateCadEntity({ kind: "polyline", handle: "2", layerId: "0", closed: false, vertices: [{ x: 100, y: 200, bulge: 0.5, startWidth: 2 }, { x: 1100, y: 200, endWidth: 3 }] }, base, quarterTurn)).toMatchObject({ vertices: [{ x: 100, y: 200, bulge: 0.5, startWidth: 2 }, { x: 100, y: 1200, endWidth: 3 }] });
+    expect(rotateCadEntity({ kind: "circle", handle: "3", layerId: "0", center: { x: 300, y: 200 }, radius: 25 }, base, quarterTurn)).toMatchObject({ center: { x: 100, y: 400 }, radius: 25 });
+    expect(rotateCadEntity({ kind: "arc", handle: "4", layerId: "0", center: { x: 500, y: 200 }, radius: 30, startAngleRad: 0, endAngleRad: Math.PI / 2, counterClockwise: true }, base, quarterTurn)).toMatchObject({ center: { x: 100, y: 600 }, startAngleRad: Math.PI / 2, endAngleRad: Math.PI });
+    expect(rotateCadEntity({ kind: "ellipse", handle: "5", layerId: "0", center: { x: 700, y: 200 }, majorAxis: { x: 50, y: 10 }, ratio: 0.5, startParameter: 0, endParameter: Math.PI * 2 }, base, quarterTurn)).toMatchObject({ center: { x: 100, y: 800 }, majorAxis: { x: -10, y: 50 } });
+    expect(rotateCadEntity({ kind: "spline", handle: "6", layerId: "0", degree: 2, controlPoints: [{ x: 100, y: 200 }, { x: 150, y: 275 }, { x: 200, y: 200 }], knots: [0, 0, 0, 1, 1, 1], closed: false, periodic: false }, base, quarterTurn)).toMatchObject({ controlPoints: [{ x: 100, y: 200 }, { x: 25, y: 250 }, { x: 100, y: 300 }] });
+    expect(rotateCadEntity({ kind: "text", handle: "7", layerId: "0", position: { x: 1100, y: 200 }, text: "A", height: 20, rotationRad: 0.25 }, base, quarterTurn)).toMatchObject({ position: { x: 100, y: 1200 }, rotationRad: 0.25 + Math.PI / 2 });
+    expect(rotateCadEntity({ kind: "mtext", handle: "8", layerId: "0", position: { x: 100, y: 300 }, text: "B", height: 20, rotationRad: 0 }, base, quarterTurn)).toMatchObject({ position: { x: 0, y: 200 }, rotationRad: Math.PI / 2 });
+    expect(rotateCadEntity({ kind: "leader", handle: "9", layerId: "0", vertices: [{ x: 100, y: 200 }, { x: 200, y: 300 }] }, base, quarterTurn)).toMatchObject({ vertices: [{ x: 100, y: 200 }, { x: 0, y: 300 }] });
+    expect(rotateCadEntity({ kind: "dimension", handle: "A", layerId: "0", dimensionKind: "aligned", definitionPoints: [{ x: 100, y: 200 }, { x: 200, y: 200 }, { x: 100, y: 250 }], styleId: "STANDARD" }, base, quarterTurn)).toMatchObject({ definitionPoints: [{ x: 100, y: 200 }, { x: 100, y: 300 }, { x: 50, y: 200 }] });
+    expect(rotateCadEntity({ kind: "hatch", handle: "B", layerId: "0", pattern: "SOLID", associative: false, loops: [{ isHole: false, vertices: [{ x: 100, y: 200 }, { x: 200, y: 200 }, { x: 200, y: 300 }] }] }, base, quarterTurn)).toMatchObject({ loops: [{ vertices: [{ x: 100, y: 200 }, { x: 100, y: 300 }, { x: 0, y: 300 }] }] });
+    expect(rotateCadEntity({ kind: "blockRef", handle: "C", layerId: "0", blockId: "b", insertion: { x: 300, y: 200 }, scale: { x: 1.5, y: 0.5 }, rotationRad: 0.25 }, base, quarterTurn)).toMatchObject({ insertion: { x: 100, y: 400 }, rotationRad: 0.25 + Math.PI / 2, scale: { x: 1.5, y: 0.5 } });
+    expect(rotateCadEntity({ kind: "proxy", handle: "D", layerId: "0", originalType: "CUSTOM", raw: { preserved: true } }, base, quarterTurn)).toBeNull();
+  });
+
+  it("applies relative and Reference rotation once while preserving handles/styles and rejecting guarded targets", () => {
+    const document = createEmptyDocument({ documentId: "rotate" });
+    document.layers.push({ id: "locked", name: "Locked", visible: true, frozen: false, locked: true, plottable: true });
+    document.entities.push(
+      { kind: "line", handle: "10", layerId: "0", appearance: { color: "#f00", lineweightMm: 0.5 }, start: { x: 0, y: 0 }, end: { x: 1000, y: 0 } },
+      { kind: "line", handle: "11", layerId: "locked", start: { x: 0, y: 1000 }, end: { x: 1000, y: 1000 } },
+      { kind: "proxy", handle: "12", layerId: "0", originalType: "CUSTOM", raw: {} },
+    );
+    expect(executeRotate(document, {
+      targetHandles: ["10", "10", "11", "12", "missing"],
+      basePoint: { x: 100, y: 200 },
+      angle: { mode: "reference", referenceAngleDeg: 45, newAngleDeg: 135 },
+    })).toEqual({
+      changes: [{ type: "put", entity: { kind: "line", handle: "10", layerId: "0", appearance: { color: "#f00", lineweightMm: 0.5 }, start: { x: 300, y: 100 }, end: { x: 300, y: 1100 } } }],
+      rotatedHandles: ["10"],
+      rejected: [
+        { handle: "11", reason: "locked-layer" },
+        { handle: "12", reason: "unsupported-entity" },
+        { handle: "missing", reason: "missing" },
+      ],
+      deltaAngleDeg: 90,
+    });
+    expect(executeRotate(document, {
+      targetHandles: ["10"], basePoint: { x: 0, y: 0 }, angle: { mode: "relative", angleDeg: -90 },
+    }).changes[0]).toMatchObject({ entity: { end: { x: 0, y: -1000 } } });
+  });
+
+  it("treats zero, full-turn and equal Reference angles as no-op without rejects or undo changes", () => {
+    const document = createEmptyDocument({ documentId: "rotate-noop" });
+    document.entities.push({ kind: "line", handle: "10", layerId: "0", start: { x: 0, y: 0 }, end: { x: 1, y: 0 } });
+    for (const angle of [
+      { mode: "relative", angleDeg: 0 } as const,
+      { mode: "relative", angleDeg: 360 } as const,
+      { mode: "reference", referenceAngleDeg: 45, newAngleDeg: 45 } as const,
+    ]) {
+      expect(executeRotate(document, { targetHandles: ["10", "missing"], basePoint: { x: 0, y: 0 }, angle })).toEqual({
+        changes: [], rotatedHandles: [], rejected: [], deltaAngleDeg: angle.mode === "relative" ? angle.angleDeg : 0,
+      });
+    }
   });
 });

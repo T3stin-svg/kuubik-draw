@@ -1,0 +1,1087 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-018",
+  "parser": "dxf-parser@1.1.2 + independent KDRAW1 envelope parser",
+  "observedAt": "2026-08-28T12:11:59.562Z",
+  "units": 4,
+  "deltaAngleDeg": 90,
+  "rotatedEntities": [
+    {
+      "type": "LINE",
+      "handle": "10",
+      "vertices": [
+        {
+          "x": -10,
+          "y": 10
+        },
+        {
+          "x": -90,
+          "y": 180
+        }
+      ]
+    },
+    {
+      "type": "LWPOLYLINE",
+      "handle": "11",
+      "vertices": [
+        {
+          "x": -1000,
+          "y": 0
+        },
+        {
+          "x": -1000,
+          "y": 1000
+        },
+        {
+          "x": -1500,
+          "y": 1000
+        },
+        {
+          "x": -1500,
+          "y": 0
+        }
+      ]
+    }
+  ],
+  "emittedHandles": [
+    "10",
+    "11"
+  ],
+  "afterUndo": [
+    {
+      "kind": "line",
+      "handle": "10",
+      "layerId": "0",
+      "start": {
+        "x": 10,
+        "y": 10
+      },
+      "end": {
+        "x": 180,
+        "y": 90
+      }
+    },
+    {
+      "kind": "polyline",
+      "handle": "11",
+      "layerId": "0",
+      "closed": true,
+      "vertices": [
+        {
+          "x": 0,
+          "y": 1000
+        },
+        {
+          "x": 1000,
+          "y": 1000
+        },
+        {
+          "x": 1000,
+          "y": 1500
+        },
+        {
+          "x": 0,
+          "y": 1500
+        }
+      ]
+    }
+  ],
+  "mixedLocked": {
+    "changes": [
+      {
+        "type": "put",
+        "entity": {
+          "kind": "line",
+          "handle": "20",
+          "layerId": "0",
+          "start": {
+            "x": 0,
+            "y": 0
+          },
+          "end": {
+            "x": 0,
+            "y": 1000
+          }
+        }
+      }
+    ],
+    "rotatedHandles": [
+      "20"
+    ],
+    "rejected": [
+      {
+        "handle": "21",
+        "reason": "locked-layer"
+      },
+      {
+        "handle": "22",
+        "reason": "unsupported-entity"
+      },
+      {
+        "handle": "missing",
+        "reason": "missing"
+      }
+    ],
+    "deltaAngleDeg": 90
+  },
+  "equalAngleNoOp": {
+    "changes": [],
+    "rotatedHandles": [],
+    "rejected": [],
+    "deltaAngleDeg": 0
+  },
+  "parsedInputs": {
+    "standardNumeric": 90,
+    "standardPoint": -90,
+    "numericReference": 45,
+    "pointReference": 45,
+    "twoPointReference": 45,
+    "pointTarget": 90
+  },
+  "standardMatrix": {
+    "referenceAngleDeg": 45,
+    "newAngleDeg": 135,
+    "deltaAngleDeg": 90,
+    "rotatedHandles": [
+      "10",
+      "11",
+      "12",
+      "13",
+      "14",
+      "15",
+      "16",
+      "17",
+      "18",
+      "19",
+      "1A",
+      "1B"
+    ],
+    "rejected": [
+      {
+        "handle": "1C",
+        "reason": "locked-layer"
+      },
+      {
+        "handle": "1D",
+        "reason": "unsupported-entity"
+      }
+    ],
+    "committedRevision": 1,
+    "committedEntities": [
+      {
+        "kind": "line",
+        "handle": "10",
+        "layerId": "0",
+        "appearance": {
+          "color": "#ff4040",
+          "lineweightMm": 0.5
+        },
+        "start": {
+          "x": 300,
+          "y": 100
+        },
+        "end": {
+          "x": 300,
+          "y": 150
+        }
+      },
+      {
+        "kind": "polyline",
+        "handle": "11",
+        "layerId": "0",
+        "appearance": {
+          "linetypeId": "DASHED"
+        },
+        "closed": false,
+        "vertices": [
+          {
+            "x": 300,
+            "y": 200,
+            "bulge": 0.25,
+            "startWidth": 2
+          },
+          {
+            "x": 275,
+            "y": 250
+          },
+          {
+            "x": 300,
+            "y": 300,
+            "endWidth": 3
+          }
+        ]
+      },
+      {
+        "kind": "circle",
+        "handle": "12",
+        "layerId": "0",
+        "center": {
+          "x": 300,
+          "y": 400
+        },
+        "radius": 25
+      },
+      {
+        "kind": "arc",
+        "handle": "13",
+        "layerId": "0",
+        "center": {
+          "x": 300,
+          "y": 600
+        },
+        "radius": 30,
+        "startAngleRad": 1.5707963267948966,
+        "endAngleRad": 3.141592653589793,
+        "counterClockwise": true
+      },
+      {
+        "kind": "ellipse",
+        "handle": "14",
+        "layerId": "0",
+        "center": {
+          "x": 300,
+          "y": 800
+        },
+        "majorAxis": {
+          "x": -10,
+          "y": 50
+        },
+        "ratio": 0.5,
+        "startParameter": 0,
+        "endParameter": 6.283185307179586
+      },
+      {
+        "kind": "spline",
+        "handle": "15",
+        "layerId": "0",
+        "degree": 2,
+        "controlPoints": [
+          {
+            "x": 300,
+            "y": 1000
+          },
+          {
+            "x": 225,
+            "y": 1050
+          },
+          {
+            "x": 300,
+            "y": 1100
+          }
+        ],
+        "knots": [
+          0,
+          0,
+          0,
+          1,
+          1,
+          1
+        ],
+        "weights": [
+          1,
+          0.75,
+          1
+        ],
+        "closed": false,
+        "periodic": false
+      },
+      {
+        "kind": "text",
+        "handle": "16",
+        "layerId": "0",
+        "position": {
+          "x": 300,
+          "y": 1200
+        },
+        "text": "F016 TEXT",
+        "height": 20,
+        "rotationRad": 1.8207963267948966,
+        "styleId": "STANDARD"
+      },
+      {
+        "kind": "mtext",
+        "handle": "17",
+        "layerId": "0",
+        "position": {
+          "x": 300,
+          "y": 1350
+        },
+        "text": "F016 MTEXT",
+        "height": 20,
+        "rotationRad": 1.5707963267948966,
+        "styleId": "STANDARD"
+      },
+      {
+        "kind": "leader",
+        "handle": "18",
+        "layerId": "0",
+        "vertices": [
+          {
+            "x": 300,
+            "y": 1500
+          },
+          {
+            "x": 250,
+            "y": 1550
+          },
+          {
+            "x": 250,
+            "y": 1600
+          }
+        ],
+        "text": "F016"
+      },
+      {
+        "kind": "dimension",
+        "handle": "19",
+        "layerId": "0",
+        "dimensionKind": "aligned",
+        "definitionPoints": [
+          {
+            "x": 300,
+            "y": 1650
+          },
+          {
+            "x": 300,
+            "y": 1750
+          },
+          {
+            "x": 250,
+            "y": 1650
+          }
+        ],
+        "styleId": "STANDARD",
+        "overrideText": "100"
+      },
+      {
+        "kind": "hatch",
+        "handle": "1A",
+        "layerId": "0",
+        "pattern": "SOLID",
+        "associative": false,
+        "loops": [
+          {
+            "isHole": false,
+            "vertices": [
+              {
+                "x": 300,
+                "y": 1800
+              },
+              {
+                "x": 300,
+                "y": 1900
+              },
+              {
+                "x": 200,
+                "y": 1900
+              },
+              {
+                "x": 200,
+                "y": 1800
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "blockRef",
+        "handle": "1B",
+        "layerId": "0",
+        "blockId": "B1",
+        "insertion": {
+          "x": 300,
+          "y": 2000
+        },
+        "scale": {
+          "x": 1.5,
+          "y": 0.5
+        },
+        "rotationRad": 1.8207963267948966,
+        "attributes": {
+          "TAG": "F016"
+        }
+      },
+      {
+        "kind": "line",
+        "handle": "1C",
+        "layerId": "locked",
+        "start": {
+          "x": 2100,
+          "y": 0
+        },
+        "end": {
+          "x": 2200,
+          "y": 0
+        }
+      },
+      {
+        "kind": "proxy",
+        "handle": "1D",
+        "layerId": "0",
+        "originalType": "THIRD_PARTY_CUSTOM",
+        "raw": {
+          "preserved": true
+        },
+        "bounds": {
+          "min": {
+            "x": 2300,
+            "y": 0
+          },
+          "max": {
+            "x": 2400,
+            "y": 100
+          }
+        }
+      }
+    ],
+    "kdraw": {
+      "format": "application/vnd.kuubik.kdraw+json",
+      "containerVersion": 1,
+      "paths": [
+        "document.json"
+      ],
+      "byteLength": 3409,
+      "sha256": "690c0eb951465cf53337983d42efd0fb3a3b9505d8a849d2797d10a03f782a27",
+      "manifestByteLength": 3409,
+      "manifestSha256": "690c0eb951465cf53337983d42efd0fb3a3b9505d8a849d2797d10a03f782a27",
+      "independentDocument": {
+        "schemaVersion": 1,
+        "documentId": "local",
+        "revision": 1,
+        "units": {
+          "linear": "mm",
+          "displayPrecision": 4,
+          "angularPrecision": 6
+        },
+        "currentLayerId": "0",
+        "entities": [
+          {
+            "kind": "line",
+            "handle": "10",
+            "layerId": "0",
+            "appearance": {
+              "color": "#ff4040",
+              "lineweightMm": 0.5
+            },
+            "start": {
+              "x": 300,
+              "y": 100
+            },
+            "end": {
+              "x": 300,
+              "y": 150
+            }
+          },
+          {
+            "kind": "polyline",
+            "handle": "11",
+            "layerId": "0",
+            "appearance": {
+              "linetypeId": "DASHED"
+            },
+            "closed": false,
+            "vertices": [
+              {
+                "x": 300,
+                "y": 200,
+                "bulge": 0.25,
+                "startWidth": 2
+              },
+              {
+                "x": 275,
+                "y": 250
+              },
+              {
+                "x": 300,
+                "y": 300,
+                "endWidth": 3
+              }
+            ]
+          },
+          {
+            "kind": "circle",
+            "handle": "12",
+            "layerId": "0",
+            "center": {
+              "x": 300,
+              "y": 400
+            },
+            "radius": 25
+          },
+          {
+            "kind": "arc",
+            "handle": "13",
+            "layerId": "0",
+            "center": {
+              "x": 300,
+              "y": 600
+            },
+            "radius": 30,
+            "startAngleRad": 1.5707963267948966,
+            "endAngleRad": 3.141592653589793,
+            "counterClockwise": true
+          },
+          {
+            "kind": "ellipse",
+            "handle": "14",
+            "layerId": "0",
+            "center": {
+              "x": 300,
+              "y": 800
+            },
+            "majorAxis": {
+              "x": -10,
+              "y": 50
+            },
+            "ratio": 0.5,
+            "startParameter": 0,
+            "endParameter": 6.283185307179586
+          },
+          {
+            "kind": "spline",
+            "handle": "15",
+            "layerId": "0",
+            "degree": 2,
+            "controlPoints": [
+              {
+                "x": 300,
+                "y": 1000
+              },
+              {
+                "x": 225,
+                "y": 1050
+              },
+              {
+                "x": 300,
+                "y": 1100
+              }
+            ],
+            "knots": [
+              0,
+              0,
+              0,
+              1,
+              1,
+              1
+            ],
+            "weights": [
+              1,
+              0.75,
+              1
+            ],
+            "closed": false,
+            "periodic": false
+          },
+          {
+            "kind": "text",
+            "handle": "16",
+            "layerId": "0",
+            "position": {
+              "x": 300,
+              "y": 1200
+            },
+            "text": "F016 TEXT",
+            "height": 20,
+            "rotationRad": 1.8207963267948966,
+            "styleId": "STANDARD"
+          },
+          {
+            "kind": "mtext",
+            "handle": "17",
+            "layerId": "0",
+            "position": {
+              "x": 300,
+              "y": 1350
+            },
+            "text": "F016 MTEXT",
+            "height": 20,
+            "rotationRad": 1.5707963267948966,
+            "styleId": "STANDARD"
+          },
+          {
+            "kind": "leader",
+            "handle": "18",
+            "layerId": "0",
+            "vertices": [
+              {
+                "x": 300,
+                "y": 1500
+              },
+              {
+                "x": 250,
+                "y": 1550
+              },
+              {
+                "x": 250,
+                "y": 1600
+              }
+            ],
+            "text": "F016"
+          },
+          {
+            "kind": "dimension",
+            "handle": "19",
+            "layerId": "0",
+            "dimensionKind": "aligned",
+            "definitionPoints": [
+              {
+                "x": 300,
+                "y": 1650
+              },
+              {
+                "x": 300,
+                "y": 1750
+              },
+              {
+                "x": 250,
+                "y": 1650
+              }
+            ],
+            "styleId": "STANDARD",
+            "overrideText": "100"
+          },
+          {
+            "kind": "hatch",
+            "handle": "1A",
+            "layerId": "0",
+            "pattern": "SOLID",
+            "associative": false,
+            "loops": [
+              {
+                "isHole": false,
+                "vertices": [
+                  {
+                    "x": 300,
+                    "y": 1800
+                  },
+                  {
+                    "x": 300,
+                    "y": 1900
+                  },
+                  {
+                    "x": 200,
+                    "y": 1900
+                  },
+                  {
+                    "x": 200,
+                    "y": 1800
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "kind": "blockRef",
+            "handle": "1B",
+            "layerId": "0",
+            "blockId": "B1",
+            "insertion": {
+              "x": 300,
+              "y": 2000
+            },
+            "scale": {
+              "x": 1.5,
+              "y": 0.5
+            },
+            "rotationRad": 1.8207963267948966,
+            "attributes": {
+              "TAG": "F016"
+            }
+          },
+          {
+            "kind": "line",
+            "handle": "1C",
+            "layerId": "locked",
+            "start": {
+              "x": 2100,
+              "y": 0
+            },
+            "end": {
+              "x": 2200,
+              "y": 0
+            }
+          },
+          {
+            "kind": "proxy",
+            "handle": "1D",
+            "layerId": "0",
+            "originalType": "THIRD_PARTY_CUSTOM",
+            "raw": {
+              "preserved": true
+            },
+            "bounds": {
+              "min": {
+                "x": 2300,
+                "y": 0
+              },
+              "max": {
+                "x": 2400,
+                "y": 100
+              }
+            }
+          }
+        ],
+        "layers": [
+          {
+            "id": "0",
+            "name": "0",
+            "visible": true,
+            "frozen": false,
+            "locked": false,
+            "plottable": true
+          },
+          {
+            "id": "locked",
+            "name": "F016_LOCKED",
+            "visible": true,
+            "frozen": false,
+            "locked": true,
+            "plottable": true
+          }
+        ],
+        "linetypes": [
+          {
+            "id": "DASHED",
+            "name": "DASHED",
+            "description": "Synthetic F-016 fixture",
+            "pattern": [
+              10,
+              -5
+            ]
+          }
+        ],
+        "textStyles": [
+          {
+            "id": "STANDARD",
+            "name": "Standard",
+            "fontFamily": "Arial",
+            "widthFactor": 1,
+            "obliqueAngleRad": 0
+          }
+        ],
+        "dimensionStyles": [
+          {
+            "id": "STANDARD",
+            "name": "Standard",
+            "textStyleId": "STANDARD",
+            "textHeight": 20,
+            "arrowSize": 10,
+            "extensionOffset": 5,
+            "scale": 1
+          }
+        ],
+        "blocks": [
+          {
+            "id": "B1",
+            "name": "F016_BLOCK",
+            "basePoint": {
+              "x": 0,
+              "y": 0
+            },
+            "entities": [
+              {
+                "kind": "line",
+                "handle": "B1-10",
+                "layerId": "0",
+                "start": {
+                  "x": 0,
+                  "y": 0
+                },
+                "end": {
+                  "x": 100,
+                  "y": 0
+                }
+              }
+            ]
+          }
+        ],
+        "layouts": [
+          {
+            "id": "model",
+            "name": "Model",
+            "kind": "model",
+            "viewports": []
+          }
+        ],
+        "attachments": [],
+        "metadata": {
+          "title": "F-018 standard entity ROTATE matrix",
+          "createdAt": "2026-08-28T11:30:00.000Z",
+          "updatedAt": "2026-08-28T00:00:02.000Z",
+          "source": "synthetic parity fixture"
+        }
+      }
+    },
+    "undoRevision": 2,
+    "restoredEntities": [
+      {
+        "kind": "line",
+        "handle": "10",
+        "layerId": "0",
+        "appearance": {
+          "color": "#ff4040",
+          "lineweightMm": 0.5
+        },
+        "start": {
+          "x": 0,
+          "y": 0
+        },
+        "end": {
+          "x": 50,
+          "y": 0
+        }
+      },
+      {
+        "kind": "polyline",
+        "handle": "11",
+        "layerId": "0",
+        "appearance": {
+          "linetypeId": "DASHED"
+        },
+        "closed": false,
+        "vertices": [
+          {
+            "x": 100,
+            "y": 0,
+            "bulge": 0.25,
+            "startWidth": 2
+          },
+          {
+            "x": 150,
+            "y": 25
+          },
+          {
+            "x": 200,
+            "y": 0,
+            "endWidth": 3
+          }
+        ]
+      },
+      {
+        "kind": "circle",
+        "handle": "12",
+        "layerId": "0",
+        "center": {
+          "x": 300,
+          "y": 0
+        },
+        "radius": 25
+      },
+      {
+        "kind": "arc",
+        "handle": "13",
+        "layerId": "0",
+        "center": {
+          "x": 500,
+          "y": 0
+        },
+        "radius": 30,
+        "startAngleRad": 0,
+        "endAngleRad": 1.5707963267948966,
+        "counterClockwise": true
+      },
+      {
+        "kind": "ellipse",
+        "handle": "14",
+        "layerId": "0",
+        "center": {
+          "x": 700,
+          "y": 0
+        },
+        "majorAxis": {
+          "x": 50,
+          "y": 10
+        },
+        "ratio": 0.5,
+        "startParameter": 0,
+        "endParameter": 6.283185307179586
+      },
+      {
+        "kind": "spline",
+        "handle": "15",
+        "layerId": "0",
+        "degree": 2,
+        "controlPoints": [
+          {
+            "x": 900,
+            "y": 0
+          },
+          {
+            "x": 950,
+            "y": 75
+          },
+          {
+            "x": 1000,
+            "y": 0
+          }
+        ],
+        "knots": [
+          0,
+          0,
+          0,
+          1,
+          1,
+          1
+        ],
+        "weights": [
+          1,
+          0.75,
+          1
+        ],
+        "closed": false,
+        "periodic": false
+      },
+      {
+        "kind": "text",
+        "handle": "16",
+        "layerId": "0",
+        "position": {
+          "x": 1100,
+          "y": 0
+        },
+        "text": "F016 TEXT",
+        "height": 20,
+        "rotationRad": 0.25,
+        "styleId": "STANDARD"
+      },
+      {
+        "kind": "mtext",
+        "handle": "17",
+        "layerId": "0",
+        "position": {
+          "x": 1250,
+          "y": 0
+        },
+        "text": "F016 MTEXT",
+        "height": 20,
+        "rotationRad": 0,
+        "styleId": "STANDARD"
+      },
+      {
+        "kind": "leader",
+        "handle": "18",
+        "layerId": "0",
+        "vertices": [
+          {
+            "x": 1400,
+            "y": 0
+          },
+          {
+            "x": 1450,
+            "y": 50
+          },
+          {
+            "x": 1500,
+            "y": 50
+          }
+        ],
+        "text": "F016"
+      },
+      {
+        "kind": "dimension",
+        "handle": "19",
+        "layerId": "0",
+        "dimensionKind": "aligned",
+        "definitionPoints": [
+          {
+            "x": 1550,
+            "y": 0
+          },
+          {
+            "x": 1650,
+            "y": 0
+          },
+          {
+            "x": 1550,
+            "y": 50
+          }
+        ],
+        "styleId": "STANDARD",
+        "overrideText": "100"
+      },
+      {
+        "kind": "hatch",
+        "handle": "1A",
+        "layerId": "0",
+        "pattern": "SOLID",
+        "associative": false,
+        "loops": [
+          {
+            "isHole": false,
+            "vertices": [
+              {
+                "x": 1700,
+                "y": 0
+              },
+              {
+                "x": 1800,
+                "y": 0
+              },
+              {
+                "x": 1800,
+                "y": 100
+              },
+              {
+                "x": 1700,
+                "y": 100
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "blockRef",
+        "handle": "1B",
+        "layerId": "0",
+        "blockId": "B1",
+        "insertion": {
+          "x": 1900,
+          "y": 0
+        },
+        "scale": {
+          "x": 1.5,
+          "y": 0.5
+        },
+        "rotationRad": 0.25,
+        "attributes": {
+          "TAG": "F016"
+        }
+      },
+      {
+        "kind": "line",
+        "handle": "1C",
+        "layerId": "locked",
+        "start": {
+          "x": 2100,
+          "y": 0
+        },
+        "end": {
+          "x": 2200,
+          "y": 0
+        }
+      },
+      {
+        "kind": "proxy",
+        "handle": "1D",
+        "layerId": "0",
+        "originalType": "THIRD_PARTY_CUSTOM",
+        "raw": {
+          "preserved": true
+        },
+        "bounds": {
+          "min": {
+            "x": 2300,
+            "y": 0
+          },
+          "max": {
+            "x": 2400,
+            "y": 100
+          }
+        }
+      }
+    ]
+  },
+  "status": "PASS",
+  "dxfSha256": "be1a9715b36246b68c55634f00051567bbd6f0bd7782e32f1ff180b92a2ee8e3",
+  "kdrawSha256": "95b0616e84eb13f07aabaa879a8275b71bf2abf714e858b87a99fd96fa1cd3d3"
+}

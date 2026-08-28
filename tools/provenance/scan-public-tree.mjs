@@ -32,6 +32,11 @@ const syntheticCadAllowlist = new Set([
   "evidence/artifacts/F-017-browser-restored.dxf",
   "evidence/artifacts/F-017-browser-locked.dxf",
   "evidence/artifacts/F-017-standard-matrix.kdraw",
+  "evidence/artifacts/F-018-kuubik.dxf",
+  "evidence/artifacts/F-018-browser-rotated.dxf",
+  "evidence/artifacts/F-018-browser-restored.dxf",
+  "evidence/artifacts/F-018-browser-locked.dxf",
+  "evidence/artifacts/F-018-standard-matrix.kdraw",
 ]);
 const textExtensions = new Set([".ts", ".tsx", ".js", ".mjs", ".json", ".md", ".yml", ".yaml", ".html", ".css", ".txt"]);
 const secretPatterns = [

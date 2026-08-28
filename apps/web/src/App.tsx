@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { allocateEntityHandles, CadCommandInputError, CadSession, createEmptyDocument, parseCartesianPoint, parseCopyDestinations, parseMoveDestination, resolveCadCommand, type CadChange, type CopyRejectedTarget, type MoveRejectedTarget } from "@kuubik/cad-core";
+import { allocateEntityHandles, CadCommandInputError, CadSession, createEmptyDocument, parseCartesianPoint, parseCopyDestinations, parseMoveDestination, parseReferenceAngleInput, parseRotationAngleInput, resolveCadCommand, type CadChange, type CopyRejectedTarget, type MoveRejectedTarget, type RotateAngleSpec, type RotateRejectedTarget } from "@kuubik/cad-core";
 import { exportDxf } from "@kuubik/cad-dxf";
 import { CadCanvasRenderer } from "@kuubik/cad-renderer";
 import type { CadEntity, KDrawDocumentV1 } from "@kuubik/cad-schema";
@@ -13,6 +13,23 @@ function nextInteractiveHandle(document: KDrawDocumentV1): string {
   return document.entities.some((entity) => entity.handle.toUpperCase() === preferred)
     ? allocateEntityHandles(document, 1)[0]!
     : preferred;
+}
+
+function rotateAngleSpec(
+  mode: "relative" | "reference",
+  basePoint: { x: number; y: number },
+  angleInput: string,
+  referenceInput: string,
+  newAngleInput: string,
+): RotateAngleSpec {
+  if (mode === "relative") {
+    return { mode, angleDeg: parseRotationAngleInput(angleInput, basePoint) };
+  }
+  return {
+    mode,
+    referenceAngleDeg: parseReferenceAngleInput(referenceInput, basePoint),
+    newAngleDeg: parseRotationAngleInput(newAngleInput, basePoint),
+  };
 }
 
 export function App() {
@@ -33,7 +50,14 @@ export function App() {
   const [copyDestinationsInput, setCopyDestinationsInput] = useState("600,950; -200,300");
   const [copyAwaitingSelection, setCopyAwaitingSelection] = useState(false);
   const [lastCopyRejected, setLastCopyRejected] = useState<CopyRejectedTarget[]>([]);
-  const [previewCommand, setPreviewCommand] = useState<"MOVE" | "COPY">("MOVE");
+  const [rotateBaseInput, setRotateBaseInput] = useState("100,200");
+  const [rotateMode, setRotateMode] = useState<"relative" | "reference">("relative");
+  const [rotateAngleInput, setRotateAngleInput] = useState("90");
+  const [rotateReferenceInput, setRotateReferenceInput] = useState("100,200; 1100,1200");
+  const [rotateNewAngleInput, setRotateNewAngleInput] = useState("135");
+  const [rotateAwaitingSelection, setRotateAwaitingSelection] = useState(false);
+  const [lastRotateRejected, setLastRotateRejected] = useState<RotateRejectedTarget[]>([]);
+  const [previewCommand, setPreviewCommand] = useState<"MOVE" | "COPY" | "ROTATE">("MOVE");
   const activeLayer = document.layers.find((layer) => layer.id === document.currentLayerId)!;
   const movePreview = useMemo((): { entities: CadEntity[]; delta: { x: number; y: number } } | null => {
     if (previewCommand !== "MOVE" || selectedHandles.length === 0) return null;
@@ -67,6 +91,22 @@ export function App() {
       return null;
     }
   }, [copyBaseInput, copyDestinationsInput, document, previewCommand, selectedHandles]);
+  const rotatePreview = useMemo((): { entities: CadEntity[]; deltaAngleDeg: number } | null => {
+    if (previewCommand !== "ROTATE" || selectedHandles.length === 0) return null;
+    try {
+      const command = resolveCadCommand("ROTATE");
+      if (!command || command.id !== "ROTATE") return null;
+      const basePoint = parseCartesianPoint(rotateBaseInput);
+      const angle = rotateAngleSpec(rotateMode, basePoint, rotateAngleInput, rotateReferenceInput, rotateNewAngleInput);
+      const result = command.execute(document, { targetHandles: selectedHandles, basePoint, angle });
+      return {
+        entities: result.changes.flatMap((change) => change.type === "put" ? [change.entity] : []),
+        deltaAngleDeg: result.deltaAngleDeg,
+      };
+    } catch {
+      return null;
+    }
+  }, [document, previewCommand, rotateAngleInput, rotateBaseInput, rotateMode, rotateNewAngleInput, rotateReferenceInput, selectedHandles]);
 
   useEffect(() => {
     let active = true;
@@ -102,8 +142,8 @@ export function App() {
       widthPx: element.clientWidth,
       heightPx: element.clientHeight,
       devicePixelRatio: ratio,
-    }, document.layers, [...(movePreview?.entities ?? []), ...(copyPreview?.entities ?? [])]);
-  }, [copyPreview, document, movePreview]);
+    }, document.layers, [...(movePreview?.entities ?? []), ...(copyPreview?.entities ?? []), ...(rotatePreview?.entities ?? [])]);
+  }, [copyPreview, document, movePreview, rotatePreview]);
 
   async function recoverFromStorageConflict(error: unknown): Promise<void> {
     if (!(error instanceof StorageRevisionConflictError)) throw error;
@@ -186,7 +226,8 @@ export function App() {
   function selectAll(): void {
     const handles = document.entities.map((entity) => entity.handle);
     setSelectedHandles(handles);
-    if (copyAwaitingSelection) setStatus(`${handles.length} objekti valitud; COPY: määra baaspunkt ja sihtpunkt(id)`);
+    if (rotateAwaitingSelection) setStatus(`${handles.length} objekti valitud; ROTATE: määra baaspunkt ja nurk`);
+    else if (copyAwaitingSelection) setStatus(`${handles.length} objekti valitud; COPY: määra baaspunkt ja sihtpunkt(id)`);
     else if (moveAwaitingSelection) setStatus(`${handles.length} objekti valitud; MOVE: määra baaspunkt ja sihtpunkt`);
     else setStatus(`${handles.length} objekti valitud`);
   }
@@ -196,6 +237,7 @@ export function App() {
     setPreviewCommand("MOVE");
     if (selectedHandles.length === 0) {
       setCopyAwaitingSelection(false);
+      setRotateAwaitingSelection(false);
       setMoveAwaitingSelection(true);
       setStatus("MOVE: vali objektid, seejärel kinnita valik ja punktid");
       return;
@@ -232,6 +274,7 @@ export function App() {
     setPreviewCommand("COPY");
     if (selectedHandles.length === 0) {
       setMoveAwaitingSelection(false);
+      setRotateAwaitingSelection(false);
       setCopyAwaitingSelection(true);
       setStatus("COPY: vali objektid, seejärel kinnita valik ja punktid");
       return;
@@ -263,6 +306,49 @@ export function App() {
     } catch (error) {
       if (error instanceof StorageRevisionConflictError) await recoverFromStorageConflict(error);
       else if (error instanceof CadCommandInputError) setStatus(`COPY viga: ${error.message}`);
+      else throw error;
+    } finally {
+      committing.current = false;
+    }
+  }
+
+  async function rotateSelected(): Promise<void> {
+    if (committing.current) return;
+    setPreviewCommand("ROTATE");
+    if (selectedHandles.length === 0) {
+      setMoveAwaitingSelection(false);
+      setCopyAwaitingSelection(false);
+      setRotateAwaitingSelection(true);
+      setStatus("ROTATE: vali objektid, seejärel kinnita valik, baaspunkt ja nurk");
+      return;
+    }
+    committing.current = true;
+    try {
+      const command = resolveCadCommand("ROTATE");
+      if (!command || command.id !== "ROTATE") throw new Error("ROTATE command is missing from the registry.");
+      const basePoint = parseCartesianPoint(rotateBaseInput);
+      const angle = rotateAngleSpec(rotateMode, basePoint, rotateAngleInput, rotateReferenceInput, rotateNewAngleInput);
+      const result = command.execute(document, { targetHandles: selectedHandles, basePoint, angle });
+      setLastRotateRejected(result.rejected);
+      setRotateAwaitingSelection(false);
+      if (result.changes.length === 0) {
+        const suffix = result.rejected.length ? `; ${result.rejected.length} lukus, puudu või toetamata` : "";
+        setStatus(`ROTATE ei muutnud geomeetriat${suffix}`);
+        return;
+      }
+      await commitChanges(
+        command.id,
+        { basePoint, angle, deltaAngleDeg: result.deltaAngleDeg },
+        result.changes,
+        result.rotatedHandles,
+        result.rotatedHandles,
+      );
+      setSelectedHandles([]);
+      const suffix = result.rejected.length ? `; ${result.rejected.length} jäi muutmata` : "";
+      setStatus(`${result.rotatedHandles.length} objekti pööratud ${result.deltaAngleDeg}°${suffix}`);
+    } catch (error) {
+      if (error instanceof StorageRevisionConflictError) await recoverFromStorageConflict(error);
+      else if (error instanceof CadCommandInputError) setStatus(`ROTATE viga: ${error.message}`);
       else throw error;
     } finally {
       committing.current = false;
@@ -403,6 +489,35 @@ export function App() {
           <input aria-label="COPY sihtpunktid" value={copyDestinationsInput} onFocus={() => setPreviewCommand("COPY")} onChange={(event) => { setPreviewCommand("COPY"); setCopyDestinationsInput(event.target.value); }} placeholder="x,y; @dx,dy" />
         </label>
         <button type="button" onClick={() => void copySelected()}>COPY</button>
+        <label className="coordinate-input">
+          <span>ROTATE baaspunkt</span>
+          <input aria-label="ROTATE baaspunkt" value={rotateBaseInput} onFocus={() => setPreviewCommand("ROTATE")} onChange={(event) => { setPreviewCommand("ROTATE"); setRotateBaseInput(event.target.value); }} placeholder="x,y" />
+        </label>
+        <label className="coordinate-input">
+          <span>ROTATE režiim</span>
+          <select aria-label="ROTATE režiim" value={rotateMode} onFocus={() => setPreviewCommand("ROTATE")} onChange={(event) => { setPreviewCommand("ROTATE"); setRotateMode(event.target.value as "relative" | "reference"); }}>
+            <option value="relative">Nurk</option>
+            <option value="reference">Reference</option>
+          </select>
+        </label>
+        {rotateMode === "relative" ? (
+          <label className="coordinate-input">
+            <span>ROTATE nurk</span>
+            <input aria-label="ROTATE nurk" value={rotateAngleInput} onFocus={() => setPreviewCommand("ROTATE")} onChange={(event) => { setPreviewCommand("ROTATE"); setRotateAngleInput(event.target.value); }} placeholder="kraadi või x,y" />
+          </label>
+        ) : (
+          <>
+            <label className="coordinate-input">
+              <span>ROTATE Reference</span>
+              <input aria-label="ROTATE Reference" value={rotateReferenceInput} onFocus={() => setPreviewCommand("ROTATE")} onChange={(event) => { setPreviewCommand("ROTATE"); setRotateReferenceInput(event.target.value); }} placeholder="kraadi või x,y; x,y" />
+            </label>
+            <label className="coordinate-input">
+              <span>ROTATE uus nurk</span>
+              <input aria-label="ROTATE uus nurk" value={rotateNewAngleInput} onFocus={() => setPreviewCommand("ROTATE")} onChange={(event) => { setPreviewCommand("ROTATE"); setRotateNewAngleInput(event.target.value); }} placeholder="kraadi või x,y" />
+            </label>
+          </>
+        )}
+        <button type="button" onClick={() => void rotateSelected()}>ROTATE</button>
         <button type="button" onClick={() => void eraseSelected()} disabled={selectedHandles.length === 0}>ERASE</button>
         <button type="button" onClick={() => void undoLast()} disabled={!session.current.canUndo}>UNDO</button>
         <button type="button" onClick={downloadDxf}>DXF eksport</button>
@@ -410,6 +525,7 @@ export function App() {
         <span>{document.entities.length} objekti · {selectedHandles.length} valitud · {activeLayer.name}{activeLayer.locked ? " 🔒" : ""}</span>
         {movePreview && <span data-testid="move-preview">MOVE eelvaade: {movePreview.entities.length} · Δ{movePreview.delta.x},{movePreview.delta.y}</span>}
         {copyPreview && <span data-testid="copy-preview">COPY eelvaade: {copyPreview.entities.length} · {copyPreview.deltas.length} paigutust</span>}
+        {rotatePreview && <span data-testid="rotate-preview">ROTATE eelvaade: {rotatePreview.entities.length} · {rotatePreview.deltaAngleDeg}°</span>}
         {lastMoveRejected.length > 0 && (
           <span data-testid="move-rejected" data-rejected={JSON.stringify(lastMoveRejected)}>
             MOVE muutmata: {lastMoveRejected.map(({ handle, reason }) => `${handle} (${reason})`).join(", ")}
@@ -418,6 +534,11 @@ export function App() {
         {lastCopyRejected.length > 0 && (
           <span data-testid="copy-rejected" data-rejected={JSON.stringify(lastCopyRejected)}>
             COPY kopeerimata: {lastCopyRejected.map(({ handle, reason }) => `${handle} (${reason})`).join(", ")}
+          </span>
+        )}
+        {lastRotateRejected.length > 0 && (
+          <span data-testid="rotate-rejected" data-rejected={JSON.stringify(lastRotateRejected)}>
+            ROTATE muutmata: {lastRotateRejected.map(({ handle, reason }) => `${handle} (${reason})`).join(", ")}
           </span>
         )}
       </section>

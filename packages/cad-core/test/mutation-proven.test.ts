@@ -1,5 +1,5 @@
 import { expect, it } from "vitest";
-import { applyAtomicOperation, createEmptyDocument, executeCopy, executeErase, executeMove, executeRectangle } from "../src/index.js";
+import { applyAtomicOperation, createEmptyDocument, executeCopy, executeErase, executeMove, executeRectangle, executeRotate } from "../src/index.js";
 
 it("kills the revision-increment mutant", () => {
   const source = createEmptyDocument({ documentId: "mutation" });
@@ -110,4 +110,27 @@ it("kills the COPY block-space handle-collision mutant", () => {
   });
   expect(result.copiedHandles).toEqual(["12"]);
   expect(result.changes[0]).toMatchObject({ type: "put", entity: { handle: "12" } });
+});
+
+it("kills ROTATE sign, Reference-delta, orientation, duplicate-put and locked-layer mutants", () => {
+  const document = createEmptyDocument({ documentId: "rotate-mutation" });
+  document.layers.push({ id: "locked", name: "Locked", visible: true, frozen: false, locked: true, plottable: true });
+  document.entities.push(
+    { kind: "arc", handle: "10", layerId: "0", appearance: { color: "#f00" }, center: { x: 500, y: 200 }, radius: 30, startAngleRad: 0, endAngleRad: Math.PI / 2, counterClockwise: true },
+    { kind: "text", handle: "11", layerId: "0", position: { x: 1100, y: 200 }, text: "R", height: 20, rotationRad: 0.25 },
+    { kind: "line", handle: "12", layerId: "locked", start: { x: 0, y: 1000 }, end: { x: 1000, y: 1000 } },
+  );
+  expect(executeRotate(document, {
+    targetHandles: ["10", "10", "11", "12"],
+    basePoint: { x: 100, y: 200 },
+    angle: { mode: "reference", referenceAngleDeg: 45, newAngleDeg: 135 },
+  })).toEqual({
+    changes: [
+      { type: "put", entity: { kind: "arc", handle: "10", layerId: "0", appearance: { color: "#f00" }, center: { x: 100, y: 600 }, radius: 30, startAngleRad: Math.PI / 2, endAngleRad: Math.PI, counterClockwise: true } },
+      { type: "put", entity: { kind: "text", handle: "11", layerId: "0", position: { x: 100, y: 1200 }, text: "R", height: 20, rotationRad: 0.25 + Math.PI / 2 } },
+    ],
+    rotatedHandles: ["10", "11"],
+    rejected: [{ handle: "12", reason: "locked-layer" }],
+    deltaAngleDeg: 90,
+  });
 });
