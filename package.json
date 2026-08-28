@@ -19,6 +19,8 @@
     "test:oracles": "node tools/oracles/run-oracles.mjs",
     "gate:dxf": "vitest run packages/cad-dxf",
     "gate:pdf": "vitest run packages/cad-print",
+    "parity:f003:readback": "npm run build -w @kuubik/cad-core && npm run build -w @kuubik/cad-dxf && node tools/parity/run-f003-readback.mjs",
+    "parity:f003:autocad": "node tools/autocad/run-f003.mjs",
     "parity:check": "node parity/check-parity.mjs",
     "license:check": "node tools/provenance/check-licenses.mjs",
     "security:evidence:manifest": "node tools/provenance/gitleaks-evidence.mjs --write",

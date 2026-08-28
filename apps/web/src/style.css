@@ -29,6 +29,9 @@ button { font: inherit; }
 .ribbon { background: #2a3037; border-bottom: 1px solid #12171c; }
 .ribbon button { min-height: 34px; padding: 0 14px; color: #edf3f8; background: #39424c; border: 1px solid #56616d; border-radius: 2px; }
 .ribbon button:disabled { opacity: .45; }
+.coordinate-input { display: grid; gap: 2px; color: #b9c2cb; font-size: 10px; }
+.coordinate-input input { width: 92px; height: 26px; padding: 0 7px; color: #edf3f8; background: #1d2329; border: 1px solid #56616d; border-radius: 2px; font: inherit; }
+.coordinate-input input:focus { outline: 1px solid #5da9e9; border-color: #5da9e9; }
 .drawing-area { min-height: 0; padding: 1px; background: #0b0e11; }
 .drawing-area canvas { display: block; width: 100%; height: 100%; background: #191d21; }
 .statusbar { justify-content: space-between; background: #20262c; border-top: 1px solid #0d1115; font-size: 12px; }

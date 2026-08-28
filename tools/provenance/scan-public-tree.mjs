@@ -13,6 +13,10 @@ const files = execFileSync("git", ["-C", root, "ls-files", "--cached", "--others
 
 const blockedNames = /(^|\/)(\.env(?:\.|$)|credentials?|secrets?|service-account)(\/|$)/i;
 const blockedCad = /\.(dwg|dwt|dws|dxf|pdf|fcstd)$/i;
+const syntheticCadAllowlist = new Set([
+  "parity/fixtures/F-003-empty-mm.dxf",
+  "evidence/artifacts/F-003-kuubik.dxf",
+]);
 const textExtensions = new Set([".ts", ".tsx", ".js", ".mjs", ".json", ".md", ".yml", ".yaml", ".html", ".css", ".txt"]);
 const secretPatterns = [
   /-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----/,
@@ -23,7 +27,7 @@ const secretPatterns = [
 const failures = [];
 for (const path of files) {
   if (blockedNames.test(path)) failures.push(`${path}: blocked sensitive filename`);
-  if (blockedCad.test(path) && !path.startsWith("packages/cad-dxf/test/fixtures/synthetic/")) {
+  if (blockedCad.test(path) && !syntheticCadAllowlist.has(path) && !path.startsWith("packages/cad-dxf/test/fixtures/synthetic/")) {
     failures.push(`${path}: CAD/PDF artifacts require an explicit synthetic-fixture allowlist`);
   }
   if (!textExtensions.has(extname(path).toLowerCase())) continue;

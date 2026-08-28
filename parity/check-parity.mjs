@@ -72,6 +72,21 @@ for (const certification of local.certifications ?? []) {
       ) {
         errors.push(`${certification.rowId}: invalid ${kind} evidence schema.`);
       }
+      if (!new RegExp(`^evidence/artifacts/${certification.rowId}-[A-Za-z0-9._-]+$`).test(evidence.artifact ?? "")) {
+        errors.push(`${certification.rowId}: invalid ${kind} artifact path.`);
+      } else {
+        const artifactBytes = await readFile(new URL(`../${evidence.artifact}`, import.meta.url));
+        const artifactHash = createHash("sha256").update(artifactBytes).digest("hex");
+        if (artifactHash !== evidence.artifactSha256) errors.push(`${certification.rowId}: ${kind} artifact hash mismatch.`);
+      }
+      if (kind === "browser") {
+        const testPrefix = certification.rowId.toLowerCase().replace("-", "");
+        if (!new RegExp(`^e2e/${testPrefix}-[A-Za-z0-9._-]+\\.spec\\.ts$`).test(evidence.test ?? "")) {
+          errors.push(`${certification.rowId}: invalid browser test path.`);
+        } else {
+          await access(new URL(`../${evidence.test}`, import.meta.url));
+        }
+      }
     } catch (error) {
       errors.push(`${certification.rowId}: missing or unreadable local evidence ${ref}: ${error.message}`);
     }

@@ -1,0 +1,13 @@
+_.RECTANG
+125.25,-200.5
+600.75,900.125
+(setq f003:e (entget (entlast)))
+(setq f003:pts (mapcar 'cdr (vl-remove-if-not '(lambda (item) (= (car item) 10)) f003:e)))
+(princ (strcat "\nF003_ACADVER=" (getvar "ACADVER")))
+(princ (strcat "\nF003_TYPE=" (cdr (assoc 0 f003:e))))
+(princ (strcat "\nF003_CLOSED=" (itoa (logand 1 (cdr (assoc 70 f003:e))))))
+(princ (strcat "\nF003_VERTEX_COUNT=" (itoa (length f003:pts))))
+(princ (strcat "\nF003_VERTICES=" (apply 'strcat (mapcar '(lambda (point) (strcat (rtos (car point) 2 6) "," (rtos (cadr point) 2 6) ";")) f003:pts))))
+(princ "\nF003_DONE=1\n")
+_.QUIT
+_Y
