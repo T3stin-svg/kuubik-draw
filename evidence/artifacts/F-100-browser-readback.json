@@ -1,0 +1,268 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-100",
+  "source": "Chromium 1920x1080 live viewport controls/pointer/canvas workflow plus independently decoded production KDRAW1",
+  "matrix": {
+    "schemaVersion": 1,
+    "rowId": "F-100",
+    "status": "PASS",
+    "viewport": {
+      "width": 1920,
+      "height": 1080
+    },
+    "action": "PAPER -> MODEL -> 1:20 + center + 30deg twist -> cursor-anchor wheel zoom -> rotated pointer pan -> undo/redo -> KDRAW1 -> reload",
+    "preset": {
+      "center": {
+        "x": 1000,
+        "y": -500
+      },
+      "viewHeight": 5540,
+      "frameWidth": 400,
+      "frameHeight": 277,
+      "scaleDenominator": 20,
+      "twistAngleRad": 0.5235987755982988,
+      "scaleLabel": "1:20"
+    },
+    "presetPixels": {
+      "paintedPixels": 2381,
+      "slope": -0.5773598521471085
+    },
+    "cursorZoom": {
+      "normalizedCursor": {
+        "x": -0.2800371527533993,
+        "y": 0.15129069250392002
+      },
+      "anchorBefore": {
+        "x": -521.079088067399,
+        "y": 1346.0081811911193
+      },
+      "zoomed": {
+        "center": {
+          "x": 861.7200829029639,
+          "y": -332.181074437171
+        },
+        "viewHeight": 5036.363636363636,
+        "frameWidth": 400,
+        "frameHeight": 277,
+        "scaleDenominator": 18.18181818181818,
+        "twistAngleRad": 0.5235987755982988,
+        "scaleLabel": "1:18.182 (Custom)"
+      },
+      "anchorAfter": {
+        "x": -521.0790880673987,
+        "y": 1346.008181191119
+      },
+      "delta": {
+        "x": 2.2737367544323206e-13,
+        "y": -2.2737367544323206e-13
+      },
+      "markerBefore": {
+        "count": 187,
+        "x": 689.5001852766799,
+        "y": 463.44696873799194,
+        "canvas": {
+          "x": 477.09375,
+          "y": 230.1875,
+          "width": 965.78125,
+          "height": 667.640625
+        }
+      },
+      "markerAfter": {
+        "count": 216,
+        "x": 689.5965439227724,
+        "y": 463.45082881112774,
+        "canvas": {
+          "x": 477.09375,
+          "y": 230.1875,
+          "width": 965.78125,
+          "height": 667.640625
+        }
+      },
+      "markerPixelDelta": {
+        "x": 0.09635864609253986,
+        "y": 0.0038600731357973928
+      }
+    },
+    "pan": {
+      "deltaPx": {
+        "x": 80,
+        "y": -50
+      },
+      "canvas": {
+        "x": 477.09375,
+        "y": 230.1875,
+        "width": 965.78125,
+        "height": 667.640625
+      },
+      "expectedCenter": {
+        "x": 150.5012306168894,
+        "y": -357.0842881006725
+      }
+    },
+    "panned": {
+      "center": {
+        "x": 150.5012306168894,
+        "y": -357.0842881006725
+      },
+      "viewHeight": 5036.363636363636,
+      "frameWidth": 400,
+      "frameHeight": 277,
+      "scaleDenominator": 18.18181818181818,
+      "twistAngleRad": 0.5235987755982988,
+      "scaleLabel": "1:18.182 (Custom)"
+    },
+    "restored": {
+      "center": {
+        "x": 150.5012306168894,
+        "y": -357.0842881006725
+      },
+      "viewHeight": 5036.363636363636,
+      "frameWidth": 400,
+      "frameHeight": 277,
+      "scaleDenominator": 18.18181818181818,
+      "twistAngleRad": 0.5235987755982988,
+      "scaleLabel": "1:18.182 (Custom)"
+    },
+    "document": {
+      "revision": 5,
+      "viewport": {
+        "id": "viewport-f100",
+        "center": {
+          "x": 210,
+          "y": 148.5
+        },
+        "width": 400,
+        "height": 277,
+        "viewCenter": {
+          "x": 150.5012306168894,
+          "y": -357.0842881006725
+        },
+        "viewHeight": 5036.363636363636,
+        "twistAngleRad": 0.5235987755982988,
+        "locked": false
+      }
+    },
+    "operations": [
+      {
+        "opId": "a92db1e0-305a-4f53-a4e3-1d6e8d95811f",
+        "baseRevision": 0,
+        "commandId": "VIEWPORT_VIEW",
+        "args": {
+          "layoutId": "layout-f100",
+          "viewportId": "viewport-f100",
+          "scaleDenominator": 20,
+          "viewCenter": {
+            "x": 1000,
+            "y": -500
+          },
+          "twistAngleRad": 0.5235987755982988
+        },
+        "targetHandles": [],
+        "resultHandles": []
+      },
+      {
+        "opId": "0c1cebc4-67aa-4014-8025-64d8354715ee",
+        "baseRevision": 1,
+        "commandId": "VIEWPORT_ZOOM",
+        "args": {
+          "layoutId": "layout-f100",
+          "viewportId": "viewport-f100",
+          "anchorModel": {
+            "x": -521.0790880673992,
+            "y": 1346.0081811911193
+          },
+          "scaleFactor": 0.9090909090909091,
+          "scaleDenominator": 18.18181818181818
+        },
+        "targetHandles": [],
+        "resultHandles": []
+      },
+      {
+        "opId": "f7b071d4-25a2-4b3f-befa-12b137f5036e",
+        "baseRevision": 2,
+        "commandId": "VIEWPORT_PAN",
+        "args": {
+          "layoutId": "layout-f100",
+          "viewportId": "viewport-f100",
+          "deltaPx": {
+            "x": 80,
+            "y": -50
+          },
+          "viewportPx": {
+            "width": 965.78125,
+            "height": 667.640625
+          },
+          "viewCenter": {
+            "x": 150.5012306168894,
+            "y": -357.0842881006725
+          }
+        },
+        "targetHandles": [],
+        "resultHandles": []
+      },
+      {
+        "opId": "f7b071d4-25a2-4b3f-befa-12b137f5036e:undo:1",
+        "baseRevision": 3,
+        "commandId": "UNDO",
+        "args": {
+          "originalOpId": "f7b071d4-25a2-4b3f-befa-12b137f5036e"
+        },
+        "targetHandles": [],
+        "resultHandles": []
+      },
+      {
+        "opId": "f7b071d4-25a2-4b3f-befa-12b137f5036e:redo:2",
+        "baseRevision": 4,
+        "commandId": "VIEWPORT_PAN",
+        "args": {
+          "layoutId": "layout-f100",
+          "viewportId": "viewport-f100",
+          "deltaPx": {
+            "x": 80,
+            "y": -50
+          },
+          "viewportPx": {
+            "width": 965.78125,
+            "height": 667.640625
+          },
+          "viewCenter": {
+            "x": 150.5012306168894,
+            "y": -357.0842881006725
+          }
+        },
+        "targetHandles": [],
+        "resultHandles": []
+      }
+    ],
+    "exported": {
+      "bytes": 1973,
+      "sha256": "c820fe6280bfac14883d8de6bf17fde247f2f89199b39756904472ca94eab15e"
+    },
+    "consoleErrors": []
+  },
+  "container": {
+    "bytes": 1973,
+    "sha256": "c820fe6280bfac14883d8de6bf17fde247f2f89199b39756904472ca94eab15e",
+    "documentSha256": "b4bee53b603d2127cbb4a4fc15f9f2c7e3255f395557cff4b16c41c61291ff8a"
+  },
+  "document": {
+    "revision": 5,
+    "viewport": {
+      "id": "viewport-f100",
+      "center": {
+        "x": 210,
+        "y": 148.5
+      },
+      "width": 400,
+      "height": 277,
+      "viewCenter": {
+        "x": 150.5012306168894,
+        "y": -357.0842881006725
+      },
+      "viewHeight": 5036.363636363636,
+      "twistAngleRad": 0.5235987755982988,
+      "locked": false
+    }
+  },
+  "status": "PASS"
+}

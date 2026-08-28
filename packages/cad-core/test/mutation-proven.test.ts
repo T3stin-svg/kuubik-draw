@@ -1,5 +1,5 @@
 import { expect, it } from "vitest";
-import { applyAtomicOperation, copyPaperLayout, createEmptyDocument, createPaperLayout, createPaperViewport, deletePaperViewport, executeCopy, executeErase, executeMirror, executeMove, executeOffset, executeRectangle, executeRotate, executeScale, offsetCadEntity, resolvePaperDefinition } from "../src/index.js";
+import { CadSession, applyAtomicOperation, copyPaperLayout, createEmptyDocument, createPaperLayout, createPaperViewport, deletePaperViewport, executeCopy, executeErase, executeMirror, executeMove, executeOffset, executeRectangle, executeRotate, executeScale, formatViewportScale, offsetCadEntity, panPaperViewportByPixels, resolvePaperDefinition, setPaperViewportView, viewportModelToNormalized, viewportNormalizedToModel, viewportScaleDenominator, zoomPaperViewportAtModelPoint } from "../src/index.js";
 
 it("kills the revision-increment mutant", () => {
   const source = createEmptyDocument({ documentId: "mutation" });
@@ -338,4 +338,42 @@ it("kills F-099 shared-id, wrong-layout, malformed-clip and wrong-adjacent-selec
     center: { x: 1.7e308, y: 0 }, width: 1.7e308, height: 1,
     viewCenter: { x: 0, y: 0 }, viewHeight: 1.7e308, twistAngleRad: 0, locked: false,
   })).toThrow(/finite/i);
+});
+
+it("kills F-100 inverse-twist, wrong-scale, drifting-anchor, unrotated-pan and non-atomic mutants", () => {
+  const document = createEmptyDocument({ documentId: "F-100-mutation" });
+  const paper = createPaperLayout(document, { name: "F100 PAPER", viewports: [] });
+  const source = { ...document, layouts: paper.layouts };
+  const created = createPaperViewport(source, paper.layoutId, {
+    center: { x: 210, y: 148.5 }, width: 200, height: 100,
+    viewCenter: { x: 0, y: 0 }, viewHeight: 5000, twistAngleRad: 0, locked: false,
+  });
+  const session = new CadSession({ ...source, layouts: created.layouts });
+  const preset = setPaperViewportView(session.document, paper.layoutId, created.viewportId!, {
+    viewCenter: { x: 1000, y: -500 }, scaleDenominator: 20, twistAngleRad: Math.PI / 6,
+  });
+  session.commit({ opId: "F100-preset", baseRevision: 0, commandId: "VIEWPORT_VIEW", args: {}, targetHandles: [], resultHandles: [] }, preset.changes);
+  const before = session.document.layouts[1]!.viewports[0]!;
+  expect(before.viewHeight).toBe(2000);
+  expect(viewportScaleDenominator(before)).toBe(20);
+  expect(formatViewportScale(before)).toBe("1:20");
+  const anchor = viewportNormalizedToModel(before, { x: 0.27, y: -0.19 });
+  const zoomed = zoomPaperViewportAtModelPoint(session.document, paper.layoutId, created.viewportId!, anchor, 1 / 1.1);
+  session.commit({ opId: "F100-zoom", baseRevision: 1, commandId: "VIEWPORT_ZOOM", args: {}, targetHandles: [], resultHandles: [] }, zoomed.changes);
+  const afterZoom = session.document.layouts[1]!.viewports[0]!;
+  expect(formatViewportScale(afterZoom)).toBe("1:18.182 (Custom)");
+  expect(viewportModelToNormalized(afterZoom, anchor)).toEqual({ x: expect.closeTo(0.27, 12), y: expect.closeTo(-0.19, 12) });
+  const panned = panPaperViewportByPixels(session.document, paper.layoutId, created.viewportId!, { x: 100, y: 50 }, { width: 400, height: 200 });
+  session.commit({ opId: "F100-pan", baseRevision: 2, commandId: "VIEWPORT_PAN", args: {}, targetHandles: [], resultHandles: [] }, panned.changes);
+  const afterPan = session.document.layouts[1]!.viewports[0]!;
+  const localPan = { x: -0.25 * (afterZoom.viewHeight * 2), y: 0.25 * afterZoom.viewHeight };
+  expect(afterPan.viewCenter.x).toBeCloseTo(afterZoom.viewCenter.x + localPan.x * Math.cos(-Math.PI / 6) - localPan.y * Math.sin(-Math.PI / 6), 9);
+  expect(afterPan.viewCenter.y).toBeCloseTo(afterZoom.viewCenter.y + localPan.x * Math.sin(-Math.PI / 6) + localPan.y * Math.cos(-Math.PI / 6), 9);
+  expect(afterPan.twistAngleRad).toBeCloseTo(Math.PI / 6, 12);
+  session.undo();
+  expect(session.document.layouts[1]!.viewports[0]!.viewCenter).toEqual(afterZoom.viewCenter);
+  session.undo();
+  expect(session.document.layouts[1]!.viewports[0]!).toMatchObject({ viewCenter: { x: 1000, y: -500 }, viewHeight: 2000, twistAngleRad: Math.PI / 6 });
+  session.redo();
+  expect(session.document.layouts[1]!.viewports[0]!.viewCenter).toEqual(afterZoom.viewCenter);
 });

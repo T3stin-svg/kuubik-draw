@@ -1,4 +1,4 @@
-import type { CadEntity, CadLayout, CadViewport, KDrawDocumentV1 } from "@kuubik/cad-schema";
+import type { CadEntity, CadLayout, CadPoint2, CadViewport, KDrawDocumentV1 } from "@kuubik/cad-schema";
 import { allocateEntityHandles } from "./commands.js";
 
 export const MAX_PAPER_LAYOUTS = 255;
@@ -18,7 +18,8 @@ export type LayoutCommandErrorCode =
   | "MISSING_LAYOUT"
   | "MODEL_LAYOUT_PROTECTED"
   | "LAST_PAPER_LAYOUT"
-  | "ORDER_LIMIT";
+  | "ORDER_LIMIT"
+  | "VIEWPORT_LOCKED";
 
 export class LayoutCommandError extends Error {
   constructor(readonly code: LayoutCommandErrorCode, message: string) {
@@ -41,6 +42,14 @@ export interface LayoutEditResult {
 export interface ViewportEditResult extends LayoutEditResult {
   viewportId: string | null;
 }
+
+export interface ViewportViewState {
+  viewCenter: CadPoint2;
+  scaleDenominator: number;
+  twistAngleRad: number;
+}
+
+export const STANDARD_VIEWPORT_SCALE_DENOMINATORS = Object.freeze([1, 2, 4, 5, 8, 10, 16, 20, 25, 30, 40, 50, 100]);
 
 function normalizedName(name: string): string {
   return name.toLocaleLowerCase("en-US");
@@ -147,6 +156,64 @@ export function assertViewportGeometry(viewport: CadViewport): void {
   }
 }
 
+function finitePoint(point: CadPoint2, label: string): CadPoint2 {
+  if (!Number.isFinite(point.x) || !Number.isFinite(point.y)) {
+    throw new LayoutCommandError("INVALID_VIEWPORT", `${label} must contain finite coordinates.`);
+  }
+  return { x: point.x, y: point.y };
+}
+
+function normalizedTwist(angle: number): number {
+  if (!Number.isFinite(angle)) throw new LayoutCommandError("INVALID_VIEWPORT", "Viewport twist angle must be finite.");
+  const fullTurn = Math.PI * 2;
+  if (angle >= 0 && angle < fullTurn) return Math.abs(angle) <= 1e-12 ? 0 : angle;
+  const normalized = ((angle % fullTurn) + fullTurn) % fullTurn;
+  return Math.abs(normalized - fullTurn) <= 1e-12 || Math.abs(normalized) <= 1e-12 ? 0 : normalized;
+}
+
+export function viewportScaleDenominator(viewport: CadViewport): number {
+  assertViewportGeometry(viewport);
+  const denominator = viewport.viewHeight / viewport.height;
+  if (!Number.isFinite(denominator) || denominator <= 0) {
+    throw new LayoutCommandError("INVALID_VIEWPORT", "Viewport scale denominator must be finite and positive.");
+  }
+  return denominator;
+}
+
+export function formatViewportScale(viewport: CadViewport): string {
+  const denominator = viewportScaleDenominator(viewport);
+  const standard = STANDARD_VIEWPORT_SCALE_DENOMINATORS.find((candidate) => Math.abs(candidate - denominator) <= Math.max(1, candidate) * 1e-9);
+  return standard === undefined ? `1:${Number(denominator.toFixed(3))} (Custom)` : `1:${standard}`;
+}
+
+export function viewportModelToNormalized(viewport: CadViewport, point: CadPoint2): CadPoint2 {
+  assertViewportGeometry(viewport);
+  finitePoint(point, "Viewport model point");
+  const dx = point.x - viewport.viewCenter.x;
+  const dy = point.y - viewport.viewCenter.y;
+  const cosine = Math.cos(viewport.twistAngleRad);
+  const sine = Math.sin(viewport.twistAngleRad);
+  const viewWidth = viewport.viewHeight * (viewport.width / viewport.height);
+  return {
+    x: (dx * cosine - dy * sine) / viewWidth,
+    y: (dx * sine + dy * cosine) / viewport.viewHeight,
+  };
+}
+
+export function viewportNormalizedToModel(viewport: CadViewport, normalized: CadPoint2): CadPoint2 {
+  assertViewportGeometry(viewport);
+  finitePoint(normalized, "Viewport normalized point");
+  const viewWidth = viewport.viewHeight * (viewport.width / viewport.height);
+  const localX = normalized.x * viewWidth;
+  const localY = normalized.y * viewport.viewHeight;
+  const cosine = Math.cos(-viewport.twistAngleRad);
+  const sine = Math.sin(-viewport.twistAngleRad);
+  return finitePoint({
+    x: viewport.viewCenter.x + localX * cosine - localY * sine,
+    y: viewport.viewCenter.y + localX * sine + localY * cosine,
+  }, "Viewport model point");
+}
+
 function uniqueId(prefix: string, used: ReadonlySet<string>): string {
   let sequence = 1;
   while (used.has(`${prefix}-${sequence}`)) sequence += 1;
@@ -210,6 +277,110 @@ function paperLayoutIndex(document: KDrawDocumentV1, layoutId: string): number {
   if (!layout) throw new LayoutCommandError("MISSING_LAYOUT", `Layout not found: ${layoutId}`);
   if (layout.kind !== "paper") throw new LayoutCommandError("MODEL_LAYOUT_PROTECTED", "Paper viewports cannot be changed in Model layout.");
   return index;
+}
+
+function paperViewport(document: KDrawDocumentV1, layoutId: string, viewportId: string): CadViewport {
+  const layout = document.layouts[paperLayoutIndex(document, layoutId)]!;
+  const viewport = layout.viewports.find((candidate) => candidate.id === viewportId);
+  if (!viewport) throw new LayoutCommandError("INVALID_VIEWPORT", `Viewport not found: ${viewportId}`);
+  return viewport;
+}
+
+export function setPaperViewportView(
+  document: KDrawDocumentV1,
+  layoutId: string,
+  viewportId: string,
+  state: ViewportViewState,
+): ViewportEditResult {
+  const source = paperViewport(document, layoutId, viewportId);
+  if (source.locked) throw new LayoutCommandError("VIEWPORT_LOCKED", `Viewport is display locked: ${viewportId}`);
+  const viewCenter = finitePoint(state.viewCenter, "Viewport view center");
+  if (!Number.isFinite(state.scaleDenominator) || state.scaleDenominator <= 0) {
+    throw new LayoutCommandError("INVALID_VIEWPORT", "Viewport scale denominator must be finite and positive.");
+  }
+  const layouts = structuredClone(document.layouts);
+  const layout = layouts[paperLayoutIndex(document, layoutId)]!;
+  const viewport = layout.viewports.find((candidate) => candidate.id === viewportId)!;
+  viewport.viewCenter = viewCenter;
+  viewport.viewHeight = viewport.height * state.scaleDenominator;
+  viewport.twistAngleRad = normalizedTwist(state.twistAngleRad);
+  assertViewportGeometry(viewport);
+  const edited = result(layouts, layoutId);
+  return { ...edited, viewportId };
+}
+
+/** AutoCAD-style wheel zoom: the model point under the cursor remains under it. */
+export function zoomPaperViewportAtModelPoint(
+  document: KDrawDocumentV1,
+  layoutId: string,
+  viewportId: string,
+  anchorModel: CadPoint2,
+  scaleFactor: number,
+): ViewportEditResult {
+  const viewport = paperViewport(document, layoutId, viewportId);
+  finitePoint(anchorModel, "Viewport zoom anchor");
+  if (!Number.isFinite(scaleFactor) || scaleFactor <= 0) {
+    throw new LayoutCommandError("INVALID_VIEWPORT", "Viewport zoom factor must be finite and positive.");
+  }
+  const anchor = viewportModelToNormalized(viewport, anchorModel);
+  const scaleDenominator = viewportScaleDenominator(viewport) * scaleFactor;
+  const nextViewHeight = viewport.height * scaleDenominator;
+  const nextViewWidth = nextViewHeight * (viewport.width / viewport.height);
+  const localX = anchor.x * nextViewWidth;
+  const localY = anchor.y * nextViewHeight;
+  const cosine = Math.cos(-viewport.twistAngleRad);
+  const sine = Math.sin(-viewport.twistAngleRad);
+  const viewCenter = finitePoint({
+    x: anchorModel.x - (localX * cosine - localY * sine),
+    y: anchorModel.y - (localX * sine + localY * cosine),
+  }, "Viewport zoom center");
+  return setPaperViewportView(document, layoutId, viewportId, {
+    viewCenter,
+    scaleDenominator,
+    twistAngleRad: viewport.twistAngleRad,
+  });
+}
+
+/** Convert a viewport pointer drag to the rotated model-space view center. */
+export function pannedViewportCenter(
+  viewport: CadViewport,
+  deltaPx: CadPoint2,
+  viewportPx: { width: number; height: number },
+): CadPoint2 {
+  assertViewportGeometry(viewport);
+  finitePoint(deltaPx, "Viewport pan delta");
+  if (!Number.isFinite(viewportPx.width) || !Number.isFinite(viewportPx.height) || viewportPx.width <= 0 || viewportPx.height <= 0) {
+    throw new LayoutCommandError("INVALID_VIEWPORT", "Viewport pan pixel dimensions must be finite and positive.");
+  }
+  const viewWidth = viewport.viewHeight * (viewport.width / viewport.height);
+  const pixelsPerModelUnit = Math.min(viewportPx.width / viewWidth, viewportPx.height / viewport.viewHeight);
+  if (!Number.isFinite(pixelsPerModelUnit) || pixelsPerModelUnit <= 0) {
+    throw new LayoutCommandError("INVALID_VIEWPORT", "Viewport pan transform must remain finite and positive.");
+  }
+  const localX = -deltaPx.x / pixelsPerModelUnit;
+  const localY = deltaPx.y / pixelsPerModelUnit;
+  const cosine = Math.cos(-viewport.twistAngleRad);
+  const sine = Math.sin(-viewport.twistAngleRad);
+  return finitePoint({
+    x: viewport.viewCenter.x + localX * cosine - localY * sine,
+    y: viewport.viewCenter.y + localX * sine + localY * cosine,
+  }, "Viewport pan center");
+}
+
+export function panPaperViewportByPixels(
+  document: KDrawDocumentV1,
+  layoutId: string,
+  viewportId: string,
+  deltaPx: CadPoint2,
+  viewportPx: { width: number; height: number },
+): ViewportEditResult {
+  const viewport = paperViewport(document, layoutId, viewportId);
+  const viewCenter = pannedViewportCenter(viewport, deltaPx, viewportPx);
+  return setPaperViewportView(document, layoutId, viewportId, {
+    viewCenter,
+    scaleDenominator: viewportScaleDenominator(viewport),
+    twistAngleRad: viewport.twistAngleRad,
+  });
 }
 
 export function createPaperViewport(

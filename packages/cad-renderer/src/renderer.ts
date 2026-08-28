@@ -28,12 +28,103 @@ export interface Viewport2D {
   widthPx: number;
   heightPx: number;
   devicePixelRatio: number;
+  /** Positive AutoCAD view twist in radians; rendered model geometry turns counter-clockwise on screen. */
+  rotationRad?: number;
 }
 
 export interface RenderStats {
   totalEntities: number;
   visibleCandidates: number;
   drawnEntities: number;
+}
+
+export interface ViewportScreenTransform {
+  worldCenter: CadPoint2;
+  screenCenter: CadPoint2;
+  worldUnitsPerPixel: number;
+  rotationRad: number;
+}
+
+/** The exact aspect-fit transform used by both Canvas2D paint and pointer input. */
+export function viewportScreenTransform(viewport: Viewport2D): ViewportScreenTransform {
+  const rotationRad = viewport.rotationRad ?? 0;
+  const worldWidth = viewport.world.maxX - viewport.world.minX;
+  const worldHeight = viewport.world.maxY - viewport.world.minY;
+  if (
+    !Number.isFinite(rotationRad) || !Number.isFinite(worldWidth) || !Number.isFinite(worldHeight) ||
+    !Number.isFinite(viewport.widthPx) || !Number.isFinite(viewport.heightPx) ||
+    worldWidth <= 0 || worldHeight <= 0 || viewport.widthPx <= 0 || viewport.heightPx <= 0
+  ) throw new Error("Viewport screen transform requires finite positive world and pixel dimensions.");
+  const pixelsPerWorldUnit = Math.min(viewport.widthPx / worldWidth, viewport.heightPx / worldHeight);
+  return {
+    worldCenter: { x: (viewport.world.minX + viewport.world.maxX) / 2, y: (viewport.world.minY + viewport.world.maxY) / 2 },
+    screenCenter: { x: viewport.widthPx / 2, y: viewport.heightPx / 2 },
+    worldUnitsPerPixel: 1 / pixelsPerWorldUnit,
+    rotationRad,
+  };
+}
+
+export function viewportWorldToScreen(viewport: Viewport2D, point: CadPoint2): CadPoint2 {
+  const transform = viewportScreenTransform(viewport);
+  if (!Number.isFinite(point.x) || !Number.isFinite(point.y)) throw new Error("Viewport world point must be finite.");
+  const dx = point.x - transform.worldCenter.x;
+  const dy = point.y - transform.worldCenter.y;
+  const cosine = Math.cos(transform.rotationRad);
+  const sine = Math.sin(transform.rotationRad);
+  const localX = dx * cosine - dy * sine;
+  const localY = dx * sine + dy * cosine;
+  return {
+    x: transform.screenCenter.x + localX / transform.worldUnitsPerPixel,
+    y: transform.screenCenter.y - localY / transform.worldUnitsPerPixel,
+  };
+}
+
+export function viewportScreenToWorld(viewport: Viewport2D, point: CadPoint2): CadPoint2 {
+  const transform = viewportScreenTransform(viewport);
+  if (!Number.isFinite(point.x) || !Number.isFinite(point.y)) throw new Error("Viewport screen point must be finite.");
+  const localX = (point.x - transform.screenCenter.x) * transform.worldUnitsPerPixel;
+  const localY = -(point.y - transform.screenCenter.y) * transform.worldUnitsPerPixel;
+  const cosine = Math.cos(-transform.rotationRad);
+  const sine = Math.sin(-transform.rotationRad);
+  return {
+    x: transform.worldCenter.x + localX * cosine - localY * sine,
+    y: transform.worldCenter.y + localX * sine + localY * cosine,
+  };
+}
+
+export function pannedViewportWorldCenter(viewport: Viewport2D, deltaPx: CadPoint2): CadPoint2 {
+  const transform = viewportScreenTransform(viewport);
+  if (!Number.isFinite(deltaPx.x) || !Number.isFinite(deltaPx.y)) throw new Error("Viewport pan delta must be finite.");
+  const worldAtCenter = viewportScreenToWorld(viewport, transform.screenCenter);
+  const worldAtDraggedCenter = viewportScreenToWorld(viewport, {
+    x: transform.screenCenter.x + deltaPx.x,
+    y: transform.screenCenter.y + deltaPx.y,
+  });
+  return {
+    x: transform.worldCenter.x + worldAtCenter.x - worldAtDraggedCenter.x,
+    y: transform.worldCenter.y + worldAtCenter.y - worldAtDraggedCenter.y,
+  };
+}
+
+function rotatedWorldBounds(world: Bounds2, rotationRad: number): Bounds2 {
+  if (Math.abs(rotationRad) <= 1e-12) return world;
+  const center = { x: (world.minX + world.maxX) / 2, y: (world.minY + world.maxY) / 2 };
+  const half = { x: (world.maxX - world.minX) / 2, y: (world.maxY - world.minY) / 2 };
+  const cosine = Math.cos(rotationRad);
+  const sine = Math.sin(rotationRad);
+  const points = [
+    { x: -half.x, y: -half.y }, { x: half.x, y: -half.y },
+    { x: half.x, y: half.y }, { x: -half.x, y: half.y },
+  ].map((point) => ({
+    x: center.x + point.x * cosine - point.y * sine,
+    y: center.y + point.x * sine + point.y * cosine,
+  }));
+  return {
+    minX: Math.min(...points.map((point) => point.x)),
+    minY: Math.min(...points.map((point) => point.y)),
+    maxX: Math.max(...points.map((point) => point.x)),
+    maxY: Math.max(...points.map((point) => point.y)),
+  };
 }
 
 function drawPolyline(context: Canvas2DContext, points: readonly CadPoint2[], closed = false): void {
@@ -217,19 +308,18 @@ export class CadCanvasRenderer {
     preview: CadEntity | readonly CadEntity[] | null = null,
     hiddenSourceHandles: readonly string[] = [],
   ): RenderStats {
+    const transform = viewportScreenTransform(viewport);
+    const rotationRad = transform.rotationRad;
     const hidden = new Set(layers.filter((layer) => !layer.visible || layer.frozen).map((layer) => layer.id));
     const hiddenSources = new Set(hiddenSourceHandles);
-    const candidates = this.#index.search(viewport.world);
+    const candidates = this.#index.search(rotatedWorldBounds(viewport.world, -rotationRad));
     context.clearRect(0, 0, viewport.widthPx * viewport.devicePixelRatio, viewport.heightPx * viewport.devicePixelRatio);
     context.save();
-    const worldWidth = viewport.world.maxX - viewport.world.minX || 1;
-    const worldHeight = viewport.world.maxY - viewport.world.minY || 1;
-    const scale = Math.min(viewport.widthPx / worldWidth, viewport.heightPx / worldHeight);
-    const offsetX = (viewport.widthPx - worldWidth * scale) / 2;
-    const offsetY = (viewport.heightPx - worldHeight * scale) / 2;
-    context.translate(offsetX * viewport.devicePixelRatio, (viewport.heightPx - offsetY) * viewport.devicePixelRatio);
+    const scale = 1 / transform.worldUnitsPerPixel;
+    context.translate(transform.screenCenter.x * viewport.devicePixelRatio, transform.screenCenter.y * viewport.devicePixelRatio);
     context.scale(scale * viewport.devicePixelRatio, -scale * viewport.devicePixelRatio);
-    context.translate(-viewport.world.minX, -viewport.world.minY);
+    context.rotate(rotationRad);
+    context.translate(-transform.worldCenter.x, -transform.worldCenter.y);
     let drawnEntities = 0;
     for (const candidate of candidates) {
       const entity = this.#entities.get(candidate.handle);

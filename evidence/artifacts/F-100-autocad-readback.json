@@ -1,0 +1,179 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-100",
+  "benchmark": "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
+  "engine": "Autodesk AutoCAD 2024 desktop COM/native PViewport",
+  "engineVersion": "24.3s (LMS Tech)",
+  "automationProcessId": 23612,
+  "automationProcessOwned": true,
+  "viewportHandle": "289",
+  "oneToTwentyStandardScaleEnum": 9,
+  "preset": {
+    "handle": "289",
+    "objectName": "AcDbViewport",
+    "center": {
+      "x": 210,
+      "y": 148.5
+    },
+    "width": 400,
+    "height": 277,
+    "target": {
+      "x": 1000,
+      "y": -500
+    },
+    "standardScale": 9,
+    "customScale": 0.05,
+    "scaleDenominator": 20,
+    "twistAngleRad": 0.5235987755982988,
+    "displayLocked": false,
+    "viewportOn": true,
+    "mSpace": true,
+    "cvport": 3
+  },
+  "nativeTransform": {
+    "authority": "AutoCAD Utility.TranslateCoordinates WCS/DisplayDCS plus native PViewport read-back",
+    "normalizedCursor": {
+      "x": -0.28,
+      "y": 0.15
+    },
+    "anchorWorld": {
+      "x": -524.3969044771427,
+      "y": 1339.6671105448684
+    },
+    "normalizedBefore": {
+      "x": -0.28,
+      "y": 0.15
+    },
+    "normalizedAfter": {
+      "x": -0.27999999999999997,
+      "y": 0.15000000000000002
+    },
+    "axisDevice": {
+      "dx": 866.0254037844388,
+      "dy": 500,
+      "screenSlope": -0.5773502691896256
+    },
+    "zoom": {
+      "magnification": 1.1,
+      "centerInput": {
+        "x": 861.4184632293507,
+        "y": -332.75753540501205
+      },
+      "state": {
+        "handle": "289",
+        "objectName": "AcDbViewport",
+        "center": {
+          "x": 210,
+          "y": 148.5
+        },
+        "width": 400,
+        "height": 277,
+        "target": {
+          "x": 861.4184632293507,
+          "y": -332.75753540501205
+        },
+        "standardScale": 1,
+        "customScale": 0.055,
+        "scaleDenominator": 18.181818181818183,
+        "twistAngleRad": 0.5235987755982988,
+        "displayLocked": false,
+        "viewportOn": true,
+        "mSpace": true,
+        "cvport": 3
+      }
+    },
+    "pan": {
+      "deltaPx": {
+        "x": 80,
+        "y": -50
+      },
+      "viewportPx": {
+        "width": 1000,
+        "height": 692.5
+      },
+      "dcsOffset": {
+        "x": -581.8181818181819,
+        "y": -363.6363636363636
+      },
+      "expectedTarget": {
+        "x": 175.73095557294994,
+        "y": -356.766773144808
+      }
+    }
+  },
+  "customPanned": {
+    "handle": "289",
+    "objectName": "AcDbViewport",
+    "center": {
+      "x": 210,
+      "y": 148.5
+    },
+    "width": 400,
+    "height": 277,
+    "target": {
+      "x": 175.73095557294994,
+      "y": -356.766773144808
+    },
+    "standardScale": 1,
+    "customScale": 0.055,
+    "scaleDenominator": 18.181818181818183,
+    "twistAngleRad": 0.5235987755982988,
+    "displayLocked": false,
+    "viewportOn": true,
+    "mSpace": true,
+    "cvport": 3
+  },
+  "afterReopen": {
+    "handle": "289",
+    "objectName": "AcDbViewport",
+    "center": {
+      "x": 210,
+      "y": 148.5
+    },
+    "width": 400,
+    "height": 277,
+    "target": {
+      "x": 175.73095557294994,
+      "y": -356.766773144808
+    },
+    "standardScale": 1,
+    "customScale": 0.055,
+    "scaleDenominator": 18.181818181818183,
+    "twistAngleRad": 0.5235987755982988,
+    "displayLocked": false,
+    "viewportOn": true,
+    "mSpace": false,
+    "cvport": 1
+  },
+  "checks": {
+    "nativeViewport": true,
+    "modelContext": true,
+    "presetOneToTwenty": true,
+    "presetCenter": true,
+    "counterClockwiseThirtyDegrees": true,
+    "nativeTwistDeviceDirection": true,
+    "cursorAnchorZoom": true,
+    "customScale": true,
+    "nativePannedTarget": true,
+    "panKeepsScaleAndTwist": true,
+    "nativeDwgReopen": true,
+    "statePersisted": true,
+    "paperAfterReopen": true
+  },
+  "dwg": {
+    "bytes": 32628,
+    "sha256": "ec163ca605af1ab10d63ee469a617c8b567669070264e13ad5719ea950b8e61c",
+    "saveAsType": 64,
+    "retained": false
+  },
+  "status": "PASS",
+  "userDocument": {
+    "isolatedOwnedProcess": true,
+    "blankRestored": true
+  },
+  "automationProcessTerminated": true,
+  "noResidualAcadProcesses": true,
+  "scriptSha256": "5163d63acb81f083d2dc7bd7ca549b42c2675654ef900911ea0622a71cb1ce3a",
+  "matrixScriptSha256": "cbc3728d0f65af116c604a77fdf44176658bd1dc4daa8246f53bf0609bea318c",
+  "observedAt": "2026-08-28T17:02:22.220Z"
+}

@@ -10,9 +10,16 @@ import {
   createPaperLayout,
   deletePaperLayout,
   deletePaperViewport,
+  formatViewportScale,
   movePaperLayout,
+  panPaperViewportByPixels,
   renamePaperLayout,
   resolvePaperDefinition,
+  setPaperViewportView,
+  viewportModelToNormalized,
+  viewportNormalizedToModel,
+  viewportScaleDenominator,
+  zoomPaperViewportAtModelPoint,
 } from "../src/index.js";
 
 function operation(baseRevision: number, commandId: string, args: unknown = {}): CadOperation {
@@ -172,5 +179,68 @@ describe("F-097 layout transactions", () => {
       center: { x: 1.7e308, y: 0 }, width: 1.7e308, height: 1,
       viewCenter: { x: 0, y: 0 }, viewHeight: 1.7e308, twistAngleRad: 0, locked: false,
     })).toThrow(/derived frame/i);
+  });
+
+  it("sets preset/custom viewport scale, center and twist with cursor-anchor zoom and rotated pan", () => {
+    const document = createEmptyDocument({ documentId: "F-100-view" });
+    const paper = createPaperLayout(document, { name: "F100 PAPER", viewports: [] });
+    const source = { ...document, layouts: paper.layouts };
+    const created = createPaperViewport(source, paper.layoutId, {
+      center: { x: 210, y: 148.5 }, width: 200, height: 100,
+      viewCenter: { x: 0, y: 0 }, viewHeight: 5000, twistAngleRad: 0, locked: false,
+    });
+    const withViewport = { ...source, layouts: created.layouts };
+    const preset = setPaperViewportView(withViewport, paper.layoutId, created.viewportId!, {
+      viewCenter: { x: 1000, y: -500 }, scaleDenominator: 20, twistAngleRad: Math.PI / 6,
+    });
+    const presetViewport = preset.layouts[1]!.viewports[0]!;
+    expect(viewportScaleDenominator(presetViewport)).toBeCloseTo(20, 12);
+    expect(formatViewportScale(presetViewport)).toBe("1:20");
+    expect(presetViewport).toMatchObject({ viewCenter: { x: 1000, y: -500 }, viewHeight: 2000, twistAngleRad: Math.PI / 6 });
+
+    const anchorModel = viewportNormalizedToModel(presetViewport, { x: -0.31, y: 0.22 });
+    const anchorBefore = viewportModelToNormalized(presetViewport, anchorModel);
+    const zoomed = zoomPaperViewportAtModelPoint({ ...source, layouts: preset.layouts }, paper.layoutId, created.viewportId!, anchorModel, 1 / 1.1);
+    const zoomedViewport = zoomed.layouts[1]!.viewports[0]!;
+    expect(viewportScaleDenominator(zoomedViewport)).toBeCloseTo(18.18181818181818, 12);
+    expect(formatViewportScale(zoomedViewport)).toBe("1:18.182 (Custom)");
+    expect(viewportModelToNormalized(zoomedViewport, anchorModel)).toEqual({
+      x: expect.closeTo(anchorBefore.x, 12),
+      y: expect.closeTo(anchorBefore.y, 12),
+    });
+
+    const panned = panPaperViewportByPixels({ ...source, layouts: zoomed.layouts }, paper.layoutId, created.viewportId!, { x: 80, y: -50 }, { width: 400, height: 200 });
+    const pannedViewport = panned.layouts[1]!.viewports[0]!;
+    expect(pannedViewport.viewCenter).not.toEqual(zoomedViewport.viewCenter);
+    expect(viewportScaleDenominator(pannedViewport)).toBeCloseTo(viewportScaleDenominator(zoomedViewport), 12);
+    expect(pannedViewport.twistAngleRad).toBeCloseTo(Math.PI / 6, 12);
+    expect(viewportNormalizedToModel(presetViewport, viewportModelToNormalized(presetViewport, anchorModel))).toEqual({
+      x: expect.closeTo(anchorModel.x, 12),
+      y: expect.closeTo(anchorModel.y, 12),
+    });
+  });
+
+  it("rejects locked, non-finite and collapsed viewport view changes before mutation", () => {
+    const document = createEmptyDocument({ documentId: "F-100-invalid" });
+    const paper = createPaperLayout(document, { name: "F100 PAPER", viewports: [] });
+    const source = { ...document, layouts: paper.layouts };
+    const created = createPaperViewport(source, paper.layoutId, {
+      center: { x: 100, y: 100 }, width: 100, height: 100,
+      viewCenter: { x: 0, y: 0 }, viewHeight: 1000, twistAngleRad: 0, locked: false,
+    });
+    const withViewport = { ...source, layouts: created.layouts };
+    expect(() => setPaperViewportView(withViewport, paper.layoutId, created.viewportId!, {
+      viewCenter: { x: 0, y: 0 }, scaleDenominator: 0, twistAngleRad: 0,
+    })).toThrow(/positive/i);
+    expect(() => setPaperViewportView(withViewport, paper.layoutId, created.viewportId!, {
+      viewCenter: { x: Number.NaN, y: 0 }, scaleDenominator: 20, twistAngleRad: 0,
+    })).toThrow(/finite/i);
+    expect(() => panPaperViewportByPixels(withViewport, paper.layoutId, created.viewportId!, { x: 1, y: 1 }, { width: 0, height: 100 })).toThrow(/pixel/i);
+    const locked = structuredClone(withViewport);
+    locked.layouts[1]!.viewports[0]!.locked = true;
+    expect(() => zoomPaperViewportAtModelPoint(locked, paper.layoutId, created.viewportId!, { x: 0, y: 0 }, 1.1)).toThrow(/locked/i);
+    expect(() => setPaperViewportView(withViewport, paper.layoutId, created.viewportId!, {
+      viewCenter: { x: 0, y: 0 }, scaleDenominator: 1.7e308, twistAngleRad: 0,
+    })).toThrow(/finite/i);
   });
 });

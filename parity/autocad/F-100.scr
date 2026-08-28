@@ -1,0 +1,6 @@
+; F-100 AutoCAD 2024.1.2 reference workflow.
+; Owned live runner creates a native paper viewport, activates MODEL, applies
+; StandardScale 1:20, Target 1000,-500 and TwistAngle 30 degrees, then applies
+; CustomScale 0.055 with a panned target and verifies native DWG reopen.
+_.PSPACE
+

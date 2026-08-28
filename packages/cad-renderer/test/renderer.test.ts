@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { CadCanvasRenderer, type Canvas2DContext } from "../src/index.js";
+import { CadCanvasRenderer, pannedViewportWorldCenter, viewportScreenToWorld, viewportWorldToScreen, type Canvas2DContext } from "../src/index.js";
 
 function fakeContext() {
   const calls: Array<[string, ...number[]]> = [];
@@ -27,6 +27,27 @@ function fakeContext() {
 }
 
 describe("Canvas2D parity invariants", () => {
+  it("shares one invertible letterboxed screen transform with cursor zoom and rotated pan", () => {
+    const viewport = {
+      world: { minX: -100, minY: -50, maxX: 100, maxY: 50 },
+      widthPx: 400,
+      heightPx: 400,
+      devicePixelRatio: 2,
+      rotationRad: Math.PI / 6,
+    };
+    const world = { x: 30, y: -10 };
+    const screen = viewportWorldToScreen(viewport, world);
+    expect(viewportScreenToWorld(viewport, screen)).toEqual({
+      x: expect.closeTo(world.x, 12),
+      y: expect.closeTo(world.y, 12),
+    });
+    expect(viewportWorldToScreen(viewport, { x: 0, y: 0 })).toEqual({ x: 200, y: 200 });
+    expect(pannedViewportWorldCenter(viewport, { x: 80, y: -50 })).toEqual({
+      x: expect.closeTo(-47.14101615137755, 12),
+      y: expect.closeTo(-1.650635094610969, 12),
+    });
+  });
+
   it("uses one uniform world scale and letterboxes a mismatched viewport", () => {
     const renderer = new CadCanvasRenderer();
     renderer.setEntities([{ kind: "circle", handle: "10", layerId: "0", center: { x: 50, y: 50 }, radius: 10 }]);
@@ -35,7 +56,8 @@ describe("Canvas2D parity invariants", () => {
       { id: "0", name: "0", visible: true, frozen: false, locked: false, plottable: true },
     ]);
     expect(calls).toContainEqual(["scale", 2, -2]);
-    expect(calls).toContainEqual(["translate", 100, 200]);
+    expect(calls).toContainEqual(["translate", 200, 100]);
+    expect(calls).toContainEqual(["translate", -50, -50]);
   });
 
   it("renders a non-zero polyline bulge as an arc and a real NURBS rather than its control polygon", () => {
@@ -86,6 +108,26 @@ describe("Canvas2D parity invariants", () => {
     expect(calls).toContainEqual(["translate", 20, 30]);
     expect(calls).toContainEqual(["rotate", Math.PI / 4]);
     expect(context.textAlign).toBe("right");
+  });
+
+  it("applies an AutoCAD-positive view twist and culls against the rotated world rectangle", () => {
+    const renderer = new CadCanvasRenderer();
+    renderer.setEntities([
+      { kind: "line", handle: "inside", layerId: "0", start: { x: 110, y: 0 }, end: { x: 120, y: 0 } },
+      { kind: "line", handle: "outside", layerId: "0", start: { x: 200, y: 200 }, end: { x: 210, y: 200 } },
+    ]);
+    const { context, calls } = fakeContext();
+    const stats = renderer.render(context, {
+      world: { minX: -100, minY: -50, maxX: 100, maxY: 50 },
+      widthPx: 400,
+      heightPx: 200,
+      devicePixelRatio: 1,
+      rotationRad: Math.PI / 6,
+    }, [{ id: "0", name: "0", visible: true, frozen: false, locked: false, plottable: true }]);
+    expect(calls).toContainEqual(["rotate", Math.PI / 6]);
+    expect(calls).toContainEqual(["move", 110, 0]);
+    expect(calls).not.toContainEqual(["move", 200, 200]);
+    expect(stats.visibleCandidates).toBe(1);
   });
 
   it("indexes transformed block geometry even when its insertion point is outside the viewport", () => {

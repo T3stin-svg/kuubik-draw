@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { allocateEntityHandles, CadCommandInputError, CadSession, LayoutCommandError, copyPaperLayout, createEmptyDocument, createPaperLayout, createPaperViewport, deletePaperLayout, deletePaperViewport, movePaperLayout, parseCartesianPoint, parseCopyDestinations, parseMoveDestination, parseOffsetDistance, parseOffsetPlacementPoints, parseReferenceAngleInput, parseRotationAngleInput, parseScaleFactorInput, parseScaleLengthInput, renamePaperLayout, resolveCadCommand, resolvePaperDefinition, serializeKDraw, type CadChange, type CopyRejectedTarget, type MirrorRejectedTarget, type MoveRejectedTarget, type OffsetLayerMode, type OffsetRejectedTarget, type RotateAngleSpec, type RotateRejectedTarget, type ScaleFactorSpec, type ScaleRejectedTarget } from "@kuubik/cad-core";
+import { STANDARD_VIEWPORT_SCALE_DENOMINATORS, allocateEntityHandles, CadCommandInputError, CadSession, LayoutCommandError, copyPaperLayout, createEmptyDocument, createPaperLayout, createPaperViewport, deletePaperLayout, deletePaperViewport, formatViewportScale, movePaperLayout, panPaperViewportByPixels, parseCartesianPoint, parseCopyDestinations, parseMoveDestination, parseOffsetDistance, parseOffsetPlacementPoints, parseReferenceAngleInput, parseRotationAngleInput, parseScaleFactorInput, parseScaleLengthInput, renamePaperLayout, resolveCadCommand, resolvePaperDefinition, serializeKDraw, setPaperViewportView, viewportScaleDenominator, zoomPaperViewportAtModelPoint, type CadChange, type CopyRejectedTarget, type MirrorRejectedTarget, type MoveRejectedTarget, type OffsetLayerMode, type OffsetRejectedTarget, type RotateAngleSpec, type RotateRejectedTarget, type ScaleFactorSpec, type ScaleRejectedTarget } from "@kuubik/cad-core";
 import { exportDxf } from "@kuubik/cad-dxf";
-import { CadCanvasRenderer } from "@kuubik/cad-renderer";
+import { CadCanvasRenderer, pannedViewportWorldCenter, viewportScreenToWorld, type Viewport2D } from "@kuubik/cad-renderer";
 import type { CadEntity, CadLayout, CadViewport, KDrawDocumentV1 } from "@kuubik/cad-schema";
 import { KDrawIndexedDb, StorageRevisionConflictError } from "./indexed-db.js";
 import "./style.css";
@@ -61,24 +61,56 @@ function viewportClipPath(viewport: CadViewport): string | undefined {
   }).join(", ")})`;
 }
 
+function viewportRender2D(viewport: CadViewport, widthPx: number, heightPx: number, devicePixelRatio = 1): Viewport2D {
+  const worldWidth = viewport.viewHeight * (viewport.width / viewport.height);
+  return {
+    world: {
+      minX: viewport.viewCenter.x - worldWidth / 2,
+      minY: viewport.viewCenter.y - viewport.viewHeight / 2,
+      maxX: viewport.viewCenter.x + worldWidth / 2,
+      maxY: viewport.viewCenter.y + viewport.viewHeight / 2,
+    },
+    widthPx,
+    heightPx,
+    devicePixelRatio,
+    rotationRad: viewport.twistAngleRad,
+  };
+}
+
 function PaperViewportCanvas({
   document,
   viewport,
   paper,
   active,
   modelContext,
+  navigationEnabled,
   onSelect,
   onEnterModel,
+  onZoom,
+  onPan,
 }: {
   document: KDrawDocumentV1;
   viewport: CadViewport;
   paper: NonNullable<CadLayout["paper"]>;
   active: boolean;
   modelContext: boolean;
+  navigationEnabled: boolean;
   onSelect: () => void;
   onEnterModel: () => void;
+  onZoom: (anchorModel: { x: number; y: number }, scaleFactor: number) => void;
+  onPan: (deltaPx: { x: number; y: number }, viewportPx: { width: number; height: number }) => void;
 }) {
+  const container = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
+  const panStart = useRef<{
+    pointerId: number;
+    clientX: number;
+    clientY: number;
+    width: number;
+    height: number;
+  } | null>(null);
+  const [draftCenter, setDraftCenter] = useState<{ x: number; y: number } | null>(null);
+  const renderViewport = draftCenter === null ? viewport : { ...viewport, viewCenter: draftCenter };
   useEffect(() => {
     const element = canvas.current;
     const context = element?.getContext("2d");
@@ -93,34 +125,49 @@ function PaperViewportCanvas({
       const devicePixelRatio = window.devicePixelRatio || 1;
       element.width = Math.max(1, Math.round(widthPx * devicePixelRatio));
       element.height = Math.max(1, Math.round(heightPx * devicePixelRatio));
-      const worldWidth = viewport.viewHeight * (viewport.width / viewport.height);
-      renderer.render(context, {
-        world: {
-          minX: viewport.viewCenter.x - worldWidth / 2,
-          minY: viewport.viewCenter.y - viewport.viewHeight / 2,
-          maxX: viewport.viewCenter.x + worldWidth / 2,
-          maxY: viewport.viewCenter.y + viewport.viewHeight / 2,
-        },
-        widthPx,
-        heightPx,
-        devicePixelRatio,
-      }, document.layers);
+      renderer.render(context, viewportRender2D(renderViewport, widthPx, heightPx, devicePixelRatio), document.layers);
     };
     render();
     const observer = new ResizeObserver(render);
     observer.observe(element);
     return () => observer.disconnect();
-  }, [document.blocks, document.entities, document.layers, viewport]);
+  }, [document.blocks, document.entities, document.layers, renderViewport]);
+
+  useEffect(() => {
+    const element = container.current;
+    if (!element) return;
+    const handleWheel = (event: WheelEvent) => {
+      if (!navigationEnabled) return;
+      event.stopPropagation();
+      event.preventDefault();
+      const canvasElement = canvas.current;
+      if (!canvasElement) return;
+      const rect = canvasElement.getBoundingClientRect();
+      const pointPx = { x: event.clientX - rect.left, y: event.clientY - rect.top };
+      const anchorModel = viewportScreenToWorld(viewportRender2D(viewport, rect.width, rect.height), pointPx);
+      onZoom(anchorModel, event.deltaY > 0 ? 1.1 : 1 / 1.1);
+    };
+    element.addEventListener("wheel", handleWheel, { passive: false });
+    return () => element.removeEventListener("wheel", handleWheel);
+  }, [navigationEnabled, onZoom, viewport]);
 
   return (
     <div
+      ref={container}
       className={`paper-space-viewport${active ? " selected" : ""}${modelContext ? " model-context" : ""}`}
       data-testid="paper-space-viewport"
       data-viewport-id={viewport.id}
       data-viewport-kind={viewport.clipBoundary ? "polygon" : "rectangle"}
       data-space-context={modelContext ? "model" : "paper"}
-      data-view-center={`${viewport.viewCenter.x},${viewport.viewCenter.y}`}
-      data-view-height={viewport.viewHeight}
+      data-view-center={`${renderViewport.viewCenter.x},${renderViewport.viewCenter.y}`}
+      data-view-height={renderViewport.viewHeight}
+      data-frame-width={renderViewport.width}
+      data-frame-height={renderViewport.height}
+      data-scale-denominator={viewportScaleDenominator(renderViewport)}
+      data-scale-label={formatViewportScale(renderViewport)}
+      data-twist-angle-rad={renderViewport.twistAngleRad}
+      data-twist-angle-deg={(renderViewport.twistAngleRad * 180) / Math.PI}
+      data-navigation-enabled={navigationEnabled ? "true" : "false"}
       style={{
         left: `${((viewport.center.x - viewport.width / 2) / paper.widthMm) * 100}%`,
         bottom: `${((viewport.center.y - viewport.height / 2) / paper.heightMm) * 100}%`,
@@ -130,9 +177,42 @@ function PaperViewportCanvas({
       }}
       onClick={(event) => { event.stopPropagation(); onSelect(); }}
       onDoubleClick={(event) => { event.stopPropagation(); onEnterModel(); }}
+      onPointerDown={(event) => {
+        event.stopPropagation();
+        onSelect();
+        if (!navigationEnabled) return;
+        const rect = canvas.current?.getBoundingClientRect();
+        if (!rect) return;
+        event.currentTarget.setPointerCapture(event.pointerId);
+        panStart.current = {
+          pointerId: event.pointerId,
+          clientX: event.clientX,
+          clientY: event.clientY,
+          width: Math.max(1, rect.width),
+          height: Math.max(1, rect.height),
+        };
+      }}
+      onPointerMove={(event) => {
+        const start = panStart.current;
+        if (!start || start.pointerId !== event.pointerId) return;
+        setDraftCenter(pannedViewportWorldCenter(viewportRender2D(viewport, start.width, start.height), {
+          x: event.clientX - start.clientX,
+          y: event.clientY - start.clientY,
+        }));
+      }}
+      onPointerUp={(event) => {
+        const start = panStart.current;
+        if (!start || start.pointerId !== event.pointerId) return;
+        const deltaPx = { x: event.clientX - start.clientX, y: event.clientY - start.clientY };
+        event.currentTarget.releasePointerCapture(event.pointerId);
+        panStart.current = null;
+        setDraftCenter(null);
+        if (deltaPx.x !== 0 || deltaPx.y !== 0) onPan(deltaPx, { width: start.width, height: start.height });
+      }}
+      onPointerCancel={() => { panStart.current = null; setDraftCenter(null); }}
     >
       <canvas ref={canvas} aria-label={`Viewport ${viewport.id}`} />
-      <span className="paper-space-viewport-label">{viewport.id}</span>
+      <span className="paper-space-viewport-label">{viewport.id} · {formatViewportScale(renderViewport)}</span>
     </div>
   );
 }
@@ -147,6 +227,10 @@ export function App() {
   const [activeLayoutId, setActiveLayoutId] = useState("model");
   const [selectedViewportId, setSelectedViewportId] = useState<string | null>(null);
   const [modelViewportId, setModelViewportId] = useState<string | null>(null);
+  const [viewportScaleInput, setViewportScaleInput] = useState("20");
+  const [viewportCenterXInput, setViewportCenterXInput] = useState("0");
+  const [viewportCenterYInput, setViewportCenterYInput] = useState("0");
+  const [viewportTwistInput, setViewportTwistInput] = useState("0");
   const [layoutRenameInput, setLayoutRenameInput] = useState("");
   const [firstCornerInput, setFirstCornerInput] = useState("100,200");
   const [otherCornerInput, setOtherCornerInput] = useState("600,900");
@@ -190,9 +274,14 @@ export function App() {
   const [previewCommand, setPreviewCommand] = useState<"MOVE" | "COPY" | "ROTATE" | "SCALE" | "MIRROR" | "OFFSET">("MOVE");
   const activeLayer = document.layers.find((layer) => layer.id === document.currentLayerId)!;
   const activeLayout = document.layouts.find((layout) => layout.id === activeLayoutId) ?? document.layouts[0]!;
+  const selectedViewport = activeLayout.kind === "paper"
+    ? activeLayout.viewports.find((viewport) => viewport.id === selectedViewportId) ?? null
+    : null;
   const modelSpaceEditing = activeLayout.kind === "model" || modelViewportId !== null;
   const activePaper = useMemo(() => resolvePaperDefinition(activeLayout), [activeLayout]);
   const activeSpace = modelSpaceEditing ? "MODEL" : "PAPER";
+  const pendingViewportScale = Number(viewportScaleInput.trim().replace(",", "."));
+  const selectedViewportPreset = String(STANDARD_VIEWPORT_SCALE_DENOMINATORS.find((candidate) => Math.abs(candidate - pendingViewportScale) <= Math.max(1, candidate) * 1e-9) ?? "custom");
   const canUndoInActiveLayout = session.current.canUndo && (modelSpaceEditing || /^(LAYOUT|VIEWPORT)_/u.test(session.current.nextUndoCommandId ?? ""));
   const canRedoInActiveLayout = session.current.canRedo && (modelSpaceEditing || /^(LAYOUT|VIEWPORT)_/u.test(session.current.nextRedoCommandId ?? ""));
   const paperLayouts = document.layouts.filter((layout) => layout.kind === "paper");
@@ -338,6 +427,14 @@ export function App() {
     if (selectedViewportId !== null && !viewportIds.has(selectedViewportId)) setSelectedViewportId(null);
     if (modelViewportId !== null && !viewportIds.has(modelViewportId)) setModelViewportId(null);
   }, [activeLayout, modelViewportId, selectedViewportId]);
+
+  useEffect(() => {
+    if (!selectedViewport) return;
+    setViewportScaleInput(String(viewportScaleDenominator(selectedViewport)));
+    setViewportCenterXInput(String(selectedViewport.viewCenter.x));
+    setViewportCenterYInput(String(selectedViewport.viewCenter.y));
+    setViewportTwistInput(String((selectedViewport.twistAngleRad * 180) / Math.PI));
+  }, [selectedViewport]);
 
   useEffect(() => {
     const element = canvas.current;
@@ -1053,6 +1150,73 @@ export function App() {
     }
   }
 
+  function viewportNumber(value: string, label: string): number {
+    const parsed = Number(value.trim().replace(",", "."));
+    if (!Number.isFinite(parsed)) throw new LayoutCommandError("INVALID_VIEWPORT", `${label} peab olema lõplik arv.`);
+    return parsed;
+  }
+
+  async function applySelectedViewportView(): Promise<void> {
+    if (committing.current || activeLayout.kind !== "paper" || selectedViewport === null) return;
+    if (modelViewportId !== selectedViewport.id) {
+      setStatus("Ava valitud viewport topeltklõpsuga MODEL-kontekstis.");
+      return;
+    }
+    committing.current = true;
+    try {
+      const scaleDenominator = viewportNumber(viewportScaleInput, "Mõõtkava");
+      const viewCenter = {
+        x: viewportNumber(viewportCenterXInput, "Keskme X"),
+        y: viewportNumber(viewportCenterYInput, "Keskme Y"),
+      };
+      const twistAngleRad = (viewportNumber(viewportTwistInput, "Pöördenurk") * Math.PI) / 180;
+      const result = setPaperViewportView(document, activeLayout.id, selectedViewport.id, { viewCenter, scaleDenominator, twistAngleRad });
+      await commitChanges("VIEWPORT_VIEW", { layoutId: activeLayout.id, viewportId: selectedViewport.id, scaleDenominator, viewCenter, twistAngleRad }, result.changes, []);
+      const changed = result.layouts.find((layout) => layout.id === activeLayout.id)!.viewports.find((viewport) => viewport.id === selectedViewport.id)!;
+      setStatus(`${selectedViewport.id}: ${formatViewportScale(changed)} · keskus ${changed.viewCenter.x},${changed.viewCenter.y} · twist ${Number(((changed.twistAngleRad * 180) / Math.PI).toFixed(6))}°`);
+    } catch (error) {
+      if (error instanceof StorageRevisionConflictError) await recoverFromStorageConflict(error);
+      else if (error instanceof LayoutCommandError) setStatus(`VIEWPORT viga: ${error.message}`);
+      else throw error;
+    } finally {
+      committing.current = false;
+    }
+  }
+
+  async function zoomViewport(viewportId: string, anchorModel: { x: number; y: number }, scaleFactor: number): Promise<void> {
+    if (committing.current || activeLayout.kind !== "paper" || modelViewportId !== viewportId) return;
+    committing.current = true;
+    try {
+      const result = zoomPaperViewportAtModelPoint(document, activeLayout.id, viewportId, anchorModel, scaleFactor);
+      const changed = result.layouts.find((layout) => layout.id === activeLayout.id)!.viewports.find((viewport) => viewport.id === viewportId)!;
+      await commitChanges("VIEWPORT_ZOOM", { layoutId: activeLayout.id, viewportId, anchorModel, scaleFactor, scaleDenominator: viewportScaleDenominator(changed) }, result.changes, []);
+      setStatus(`${viewportId}: kursoriankruga ${formatViewportScale(changed)}`);
+    } catch (error) {
+      if (error instanceof StorageRevisionConflictError) await recoverFromStorageConflict(error);
+      else if (error instanceof LayoutCommandError) setStatus(`VIEWPORT viga: ${error.message}`);
+      else throw error;
+    } finally {
+      committing.current = false;
+    }
+  }
+
+  async function panViewport(viewportId: string, deltaPx: { x: number; y: number }, viewportPx: { width: number; height: number }): Promise<void> {
+    if (committing.current || activeLayout.kind !== "paper" || modelViewportId !== viewportId) return;
+    committing.current = true;
+    try {
+      const result = panPaperViewportByPixels(document, activeLayout.id, viewportId, deltaPx, viewportPx);
+      const changed = result.layouts.find((layout) => layout.id === activeLayout.id)!.viewports.find((viewport) => viewport.id === viewportId)!;
+      await commitChanges("VIEWPORT_PAN", { layoutId: activeLayout.id, viewportId, deltaPx, viewportPx, viewCenter: changed.viewCenter }, result.changes, []);
+      setStatus(`${viewportId}: keskus ${Number(changed.viewCenter.x.toFixed(6))},${Number(changed.viewCenter.y.toFixed(6))}`);
+    } catch (error) {
+      if (error instanceof StorageRevisionConflictError) await recoverFromStorageConflict(error);
+      else if (error instanceof LayoutCommandError) setStatus(`VIEWPORT viga: ${error.message}`);
+      else throw error;
+    } finally {
+      committing.current = false;
+    }
+  }
+
   function activateLayout(layoutId: string): void {
     const layout = document.layouts.find((candidate) => candidate.id === layoutId);
     if (!layout) return;
@@ -1304,6 +1468,7 @@ export function App() {
                   paper={activePaper}
                   active={viewport.id === selectedViewportId}
                   modelContext={viewport.id === modelViewportId}
+                  navigationEnabled={viewport.id === modelViewportId && !viewport.locked}
                   onSelect={() => {
                     setSelectedViewportId(viewport.id);
                     if (modelViewportId !== viewport.id) setModelViewportId(null);
@@ -1314,6 +1479,8 @@ export function App() {
                     setModelViewportId(viewport.id);
                     setStatus(`Viewport ${viewport.id}: MODEL aktiivne`);
                   }}
+                  onZoom={(anchorModel, scaleFactor) => { void zoomViewport(viewport.id, anchorModel, scaleFactor); }}
+                  onPan={(deltaPx, viewportPx) => { void panViewport(viewport.id, deltaPx, viewportPx); }}
                 />
               ))}
             </div>
@@ -1341,6 +1508,30 @@ export function App() {
             <button type="button" className="layout-action" aria-label="Lisa ristkülikviewport" onClick={() => void addViewport("rectangle")}>+ View</button>
             <button type="button" className="layout-action" aria-label="Lisa polügoonviewport" onClick={() => void addViewport("polygon")}>+ Clip</button>
             <button type="button" className="layout-action danger" aria-label="Kustuta viewport" disabled={selectedViewportId === null} onClick={() => void deleteSelectedViewport()}>− View</button>
+            {selectedViewport && (
+              <span className="viewport-view-controls" aria-label="Viewport vaate seaded">
+                <select
+                  aria-label="Viewport standardmõõtkava"
+                  value={selectedViewportPreset}
+                  onChange={(event) => { if (event.target.value !== "custom") setViewportScaleInput(event.target.value); }}
+                >
+                  <option value="custom">Custom</option>
+                  {STANDARD_VIEWPORT_SCALE_DENOMINATORS.map((denominator) => <option key={denominator} value={denominator}>1:{denominator}</option>)}
+                </select>
+                <input aria-label="Viewport mõõtkava nimetaja" inputMode="decimal" value={viewportScaleInput} onChange={(event) => setViewportScaleInput(event.target.value)} />
+                <input aria-label="Viewport keskme X" inputMode="decimal" value={viewportCenterXInput} onChange={(event) => setViewportCenterXInput(event.target.value)} />
+                <input aria-label="Viewport keskme Y" inputMode="decimal" value={viewportCenterYInput} onChange={(event) => setViewportCenterYInput(event.target.value)} />
+                <input aria-label="Viewport pöördenurk" inputMode="decimal" value={viewportTwistInput} onChange={(event) => setViewportTwistInput(event.target.value)} />
+                <button
+                  type="button"
+                  className="layout-action"
+                  aria-label="Rakenda viewport vaade"
+                  disabled={modelViewportId !== selectedViewport.id || selectedViewport.locked}
+                  onClick={() => void applySelectedViewportView()}
+                >Rakenda</button>
+                <span data-testid="viewport-scale-readout">{formatViewportScale(selectedViewport)}</span>
+              </span>
+            )}
             {modelViewportId !== null && <button type="button" className="layout-action" aria-label="Tagasi PAPER" onClick={() => { setModelViewportId(null); setStatus("PAPER aktiivne"); }}>PAPER</button>}
             <button type="button" className="layout-action" aria-label="Liiguta vasakule" disabled={activePaperIndex <= 0} onClick={() => void reorderLayout(-1)}>←</button>
             <button type="button" className="layout-action" aria-label="Liiguta paremale" disabled={activePaperIndex < 0 || activePaperIndex >= paperLayouts.length - 1} onClick={() => void reorderLayout(1)}>→</button>
