@@ -77,7 +77,8 @@ const pdfReadback = {
 };
 const displayPdfText = new TextDecoder("latin1").decode(displayPdf.bytes);
 const displayOuterTransform = displayPdfText.match(/\nq ([-+0-9.]+) 0 0 ([-+0-9.]+) ([-+0-9.]+) ([-+0-9.]+) cm/u);
-const displayPaperLine = displayPdfText.match(/\n([-+0-9.]+) ([-+0-9.]+) m ([-+0-9.]+) ([-+0-9.]+) l S\nQ\nendstream/u);
+const displayPaperLine = [...displayPdfText.matchAll(/([-+0-9.]+) ([-+0-9.]+) m ([-+0-9.]+) ([-+0-9.]+) l S/gu)]
+  .toSorted((a, b) => Math.abs(Number(b[4]) - Number(b[2])) - Math.abs(Number(a[4]) - Number(a[2])))[0] ?? null;
 const displayPdfReadback = {
   pages: (displayPdfText.match(/\/Type \/Page\b/gu) ?? []).length,
   eof: /%%EOF\s*$/u.test(displayPdfText),

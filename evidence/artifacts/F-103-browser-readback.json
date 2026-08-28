@@ -1,0 +1,1280 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-103",
+  "source": "Chromium 1920x1080 live plot-style/undo/redo/reload plus independent SVG, PDF, rendered-pixel and KDRAW1 readers",
+  "sourceSha256": {
+    "e2e": "58f2ba30942d35148700feab37777ace13b34a61f2fc5d6c3e4ed303bde8655a",
+    "capture": "9ac9822d324d56d5d8e8b6558c0764601837e67fc66850028020d12358024295",
+    "builder": "054049ffb1371f3b429a9fd0b1be4cf2276bdeeab28e9a75bc8fcd98a5e9f761",
+    "pixelReader": "f39093021736a82b5cef67656555ceaa026ed2b625315ca7aea1d6e4ed0ff77b",
+    "pdfReader": "be7a9cf4d0e42aafbe738de123f2fccaa770ef8126a5fa12ee6713dae5048400",
+    "app": "63dbb66ee4b295906b3e25a332bf1fbac8ce3874ff8a334ca136051f3c8bcc57",
+    "style": "f0c80ef7b28711b633f893a65924f0cb5819b124dd756e4ed86b14bcab740eff",
+    "cadCoreLayouts": "aa27aeaf9bfcd6eb6bf076bff094a428e941f84b5a2204e72ad3f77f2eca23c4",
+    "cadCorePlotStyle": "09cb7177571f429cd3239b76c3a5f613e6ba71126b02469902276097f549a378",
+    "cadRenderer": "fcd719a8634b16982bcbe61f113e3d1e6e19dd47d79becca883423d5c3fbac57",
+    "cadPrint": "4c62b5daee0aefef816f5a1f29b3a3a039cdd3566b1c467edfea90fc3bba9557",
+    "packageLock": "6a1cc440651b512afd80deb2cb6cb99c3fd1a5637e3548b8676fe6198940c3e3"
+  },
+  "matrix": {
+    "schemaVersion": 1,
+    "rowId": "F-103",
+    "status": "PASS",
+    "viewport": {
+      "width": 1920,
+      "height": 1080
+    },
+    "action": "Source preview OFF -> Color no-LW/no-alpha with preview ON -> reload -> Grayscale LW+alpha -> Color LW+alpha -> Undo/Redo -> Monochrome LW+alpha -> reload",
+    "previewState": {
+      "initialDisplayPlotStyles": false,
+      "afterFirstApply": true,
+      "finalDisplayPlotStyles": true
+    },
+    "pixels": {
+      "initial": {
+        "width": 877,
+        "height": 511,
+        "counts": {
+          "redOpaque": 0,
+          "redAlpha153": 68817,
+          "greenOpaque": 0,
+          "greenAny": 1162,
+          "trueColorBlueAny": 0,
+          "trueColorBlueRange": 1160,
+          "blackOpaque": 0,
+          "blackAlpha153": 0,
+          "grayRedOpaque": 0,
+          "grayRedAlpha153": 0,
+          "grayGreenOpaque": 0,
+          "grayGreenAny": 0
+        },
+        "topColors": [
+          {
+            "rgba": "255,0,0,153",
+            "count": 68817
+          },
+          {
+            "rgba": "9,100,220,191",
+            "count": 579
+          },
+          {
+            "rgba": "8,100,219,64",
+            "count": 579
+          },
+          {
+            "rgba": "0,255,0,68",
+            "count": 578
+          },
+          {
+            "rgba": "0,255,0,19",
+            "count": 578
+          },
+          {
+            "rgba": "255,0,0,121",
+            "count": 373
+          },
+          {
+            "rgba": "255,0,0,57",
+            "count": 341
+          },
+          {
+            "rgba": "255,0,0,114",
+            "count": 339
+          },
+          {
+            "rgba": "255,0,0,77",
+            "count": 339
+          },
+          {
+            "rgba": "255,0,0,120",
+            "count": 290
+          },
+          {
+            "rgba": "255,0,0,132",
+            "count": 203
+          },
+          {
+            "rgba": "255,0,0,58",
+            "count": 119
+          }
+        ]
+      },
+      "colorNoLineweight": {
+        "width": 877,
+        "height": 511,
+        "counts": {
+          "redOpaque": 68817,
+          "redAlpha153": 0,
+          "greenOpaque": 0,
+          "greenAny": 1160,
+          "trueColorBlueAny": 0,
+          "trueColorBlueRange": 1160,
+          "blackOpaque": 0,
+          "blackAlpha153": 0,
+          "grayRedOpaque": 0,
+          "grayRedAlpha153": 0,
+          "grayGreenOpaque": 0,
+          "grayGreenAny": 0
+        },
+        "topColors": [
+          {
+            "rgba": "255,0,0,255",
+            "count": 68817
+          },
+          {
+            "rgba": "255,0,0,191",
+            "count": 918
+          },
+          {
+            "rgba": "9,100,220,191",
+            "count": 579
+          },
+          {
+            "rgba": "8,100,219,64",
+            "count": 579
+          },
+          {
+            "rgba": "0,255,0,191",
+            "count": 579
+          },
+          {
+            "rgba": "0,255,0,64",
+            "count": 579
+          },
+          {
+            "rgba": "255,0,0,64",
+            "count": 579
+          },
+          {
+            "rgba": "255,0,0,128",
+            "count": 339
+          },
+          {
+            "rgba": "255,0,0,221",
+            "count": 203
+          },
+          {
+            "rgba": "255,0,0,203",
+            "count": 203
+          },
+          {
+            "rgba": "0,98,235,13",
+            "count": 2
+          },
+          {
+            "rgba": "0,255,0,13",
+            "count": 2
+          }
+        ]
+      },
+      "grayscale": {
+        "width": 877,
+        "height": 511,
+        "counts": {
+          "redOpaque": 0,
+          "redAlpha153": 0,
+          "greenOpaque": 0,
+          "greenAny": 0,
+          "trueColorBlueAny": 0,
+          "trueColorBlueRange": 1160,
+          "blackOpaque": 0,
+          "blackAlpha153": 0,
+          "grayRedOpaque": 1158,
+          "grayRedAlpha153": 68817,
+          "grayGreenOpaque": 0,
+          "grayGreenAny": 1158
+        },
+        "topColors": [
+          {
+            "rgba": "77,77,77,153",
+            "count": 68817
+          },
+          {
+            "rgba": "76,76,76,255",
+            "count": 1158
+          },
+          {
+            "rgba": "9,100,220,191",
+            "count": 579
+          },
+          {
+            "rgba": "8,100,219,64",
+            "count": 579
+          },
+          {
+            "rgba": "148,148,148,191",
+            "count": 579
+          },
+          {
+            "rgba": "147,147,147,64",
+            "count": 579
+          },
+          {
+            "rgba": "76,76,76,64",
+            "count": 579
+          },
+          {
+            "rgba": "76,76,76,114",
+            "count": 339
+          },
+          {
+            "rgba": "76,76,76,77",
+            "count": 339
+          },
+          {
+            "rgba": "75,75,75,132",
+            "count": 203
+          },
+          {
+            "rgba": "76,76,76,121",
+            "count": 203
+          },
+          {
+            "rgba": "0,98,235,13",
+            "count": 2
+          }
+        ]
+      },
+      "colorAlpha": {
+        "width": 877,
+        "height": 511,
+        "counts": {
+          "redOpaque": 1158,
+          "redAlpha153": 68817,
+          "greenOpaque": 0,
+          "greenAny": 1160,
+          "trueColorBlueAny": 0,
+          "trueColorBlueRange": 1160,
+          "blackOpaque": 0,
+          "blackAlpha153": 0,
+          "grayRedOpaque": 0,
+          "grayRedAlpha153": 0,
+          "grayGreenOpaque": 0,
+          "grayGreenAny": 0
+        },
+        "topColors": [
+          {
+            "rgba": "255,0,0,153",
+            "count": 68817
+          },
+          {
+            "rgba": "255,0,0,255",
+            "count": 1158
+          },
+          {
+            "rgba": "9,100,220,191",
+            "count": 579
+          },
+          {
+            "rgba": "8,100,219,64",
+            "count": 579
+          },
+          {
+            "rgba": "0,255,0,191",
+            "count": 579
+          },
+          {
+            "rgba": "0,255,0,64",
+            "count": 579
+          },
+          {
+            "rgba": "255,0,0,64",
+            "count": 579
+          },
+          {
+            "rgba": "255,0,0,114",
+            "count": 339
+          },
+          {
+            "rgba": "255,0,0,77",
+            "count": 339
+          },
+          {
+            "rgba": "255,0,0,132",
+            "count": 203
+          },
+          {
+            "rgba": "255,0,0,121",
+            "count": 203
+          },
+          {
+            "rgba": "0,98,235,13",
+            "count": 2
+          }
+        ]
+      },
+      "monochrome": {
+        "width": 877,
+        "height": 511,
+        "counts": {
+          "redOpaque": 0,
+          "redAlpha153": 0,
+          "greenOpaque": 0,
+          "greenAny": 0,
+          "trueColorBlueAny": 0,
+          "trueColorBlueRange": 1160,
+          "blackOpaque": 1158,
+          "blackAlpha153": 68817,
+          "grayRedOpaque": 0,
+          "grayRedAlpha153": 0,
+          "grayGreenOpaque": 0,
+          "grayGreenAny": 0
+        },
+        "topColors": [
+          {
+            "rgba": "0,0,0,153",
+            "count": 68817
+          },
+          {
+            "rgba": "0,0,0,64",
+            "count": 1158
+          },
+          {
+            "rgba": "0,0,0,255",
+            "count": 1158
+          },
+          {
+            "rgba": "9,100,220,191",
+            "count": 579
+          },
+          {
+            "rgba": "8,100,219,64",
+            "count": 579
+          },
+          {
+            "rgba": "0,0,0,191",
+            "count": 579
+          },
+          {
+            "rgba": "0,0,0,114",
+            "count": 339
+          },
+          {
+            "rgba": "0,0,0,77",
+            "count": 339
+          },
+          {
+            "rgba": "0,0,0,132",
+            "count": 203
+          },
+          {
+            "rgba": "0,0,0,121",
+            "count": 203
+          },
+          {
+            "rgba": "0,98,235,13",
+            "count": 2
+          },
+          {
+            "rgba": "0,0,0,13",
+            "count": 2
+          }
+        ]
+      }
+    },
+    "outputs": {
+      "F-103-browser-color-no-lineweights.svg": {
+        "bytes": 1594,
+        "sha256": "748a592479f11675759a7ee90d767f1a34984be2fe36526f20e0d5797471f491"
+      },
+      "F-103-browser-color-no-lineweights.pdf": {
+        "bytes": 1030,
+        "sha256": "4ae289169a72a018f1a905604cb6d9f5767c38028c39a75946a5c65681d3ac7e"
+      },
+      "F-103-browser-grayscale.svg": {
+        "bytes": 1602,
+        "sha256": "894d55a00d21c03bb444b0a139b8e0f29af47f74e4e842be63b7dfcee1dddd45"
+      },
+      "F-103-browser-grayscale.pdf": {
+        "bytes": 1249,
+        "sha256": "6036ec3c30b29198890ab75a1a484116f2a945ca8a20841add05d56558e6c5bf"
+      },
+      "F-103-browser-color-alpha.svg": {
+        "bytes": 1598,
+        "sha256": "5ad3d2409e3257404e9362f27dfc6cf1da1cf6e35a8409ca5fbfc7fafef99854"
+      },
+      "F-103-browser-color-alpha.pdf": {
+        "bytes": 1122,
+        "sha256": "95a0aa957101352c83f61a6f04b1c1f8610b40ace0d8e2db6ac4abbe40c2216d"
+      },
+      "F-103-browser-monochrome.svg": {
+        "bytes": 1603,
+        "sha256": "af31ad33a595137ef7cd390ab6e9bc7160e7f56a921365820a8559673b0f29a2"
+      },
+      "F-103-browser-monochrome.pdf": {
+        "bytes": 1122,
+        "sha256": "84dc5ce85de138a78298e5b9dfc708f6cd7a08f930ebfe73067fc4486509e010"
+      },
+      "F-103-browser-plot-style.kdraw": {
+        "bytes": 2845,
+        "sha256": "5e6a553f4ca6d647fe1f302ac56be72f450b12ad64eb47a9e37565ef5099ece1"
+      }
+    },
+    "operators": {
+      "colorNoLineweight": {
+        "version": "1.4",
+        "pages": 1,
+        "eof": true,
+        "red": true,
+        "green": true,
+        "black": false,
+        "grayRed": false,
+        "grayGreen": false,
+        "trueColorBlue": true,
+        "fullLineweight": false,
+        "hairline": true,
+        "alpha60": false,
+        "solidFill": true
+      },
+      "grayscale": {
+        "version": "1.4",
+        "pages": 1,
+        "eof": true,
+        "red": false,
+        "green": false,
+        "black": false,
+        "grayRed": true,
+        "grayGreen": true,
+        "trueColorBlue": true,
+        "fullLineweight": true,
+        "hairline": true,
+        "alpha60": true,
+        "solidFill": true
+      },
+      "colorAlpha": {
+        "version": "1.4",
+        "pages": 1,
+        "eof": true,
+        "red": true,
+        "green": true,
+        "black": false,
+        "grayRed": false,
+        "grayGreen": false,
+        "trueColorBlue": true,
+        "fullLineweight": true,
+        "hairline": true,
+        "alpha60": true,
+        "solidFill": true
+      },
+      "monochrome": {
+        "version": "1.4",
+        "pages": 1,
+        "eof": true,
+        "red": false,
+        "green": false,
+        "black": true,
+        "grayRed": false,
+        "grayGreen": false,
+        "trueColorBlue": true,
+        "fullLineweight": true,
+        "hairline": true,
+        "alpha60": true,
+        "solidFill": true
+      }
+    },
+    "operations": [
+      {
+        "opId": "7cdb349d-4594-4958-a303-60e30d40a5c0",
+        "baseRevision": 0,
+        "commandId": "PAGESETUP",
+        "args": {
+          "layoutId": "layout-1",
+          "setup": {
+            "mediaName": "ISO_A4",
+            "orientation": "landscape",
+            "plotArea": {
+              "kind": "layout"
+            },
+            "plotScale": {
+              "mode": "custom",
+              "paperUnits": 1,
+              "drawingUnits": 1
+            },
+            "centerPlot": false,
+            "plotOriginMm": {
+              "x": 0,
+              "y": 0
+            },
+            "plotStyle": {
+              "profile": "color",
+              "plotLineweights": false,
+              "plotTransparency": false
+            },
+            "displayPlotStyles": true
+          }
+        },
+        "targetHandles": [],
+        "resultHandles": []
+      },
+      {
+        "opId": "170d29f2-0b22-4390-a455-b6da7ea0d790",
+        "baseRevision": 1,
+        "commandId": "PAGESETUP",
+        "args": {
+          "layoutId": "layout-1",
+          "setup": {
+            "mediaName": "ISO_A4",
+            "orientation": "landscape",
+            "plotArea": {
+              "kind": "layout"
+            },
+            "plotScale": {
+              "mode": "custom",
+              "paperUnits": 1,
+              "drawingUnits": 1
+            },
+            "centerPlot": false,
+            "plotOriginMm": {
+              "x": 0,
+              "y": 0
+            },
+            "plotStyle": {
+              "profile": "grayscale",
+              "plotLineweights": true,
+              "plotTransparency": true
+            },
+            "displayPlotStyles": true
+          }
+        },
+        "targetHandles": [],
+        "resultHandles": []
+      },
+      {
+        "opId": "594dcc0b-aecd-4d20-8a1c-be8af62f8d0d",
+        "baseRevision": 2,
+        "commandId": "PAGESETUP",
+        "args": {
+          "layoutId": "layout-1",
+          "setup": {
+            "mediaName": "ISO_A4",
+            "orientation": "landscape",
+            "plotArea": {
+              "kind": "layout"
+            },
+            "plotScale": {
+              "mode": "custom",
+              "paperUnits": 1,
+              "drawingUnits": 1
+            },
+            "centerPlot": false,
+            "plotOriginMm": {
+              "x": 0,
+              "y": 0
+            },
+            "plotStyle": {
+              "profile": "color",
+              "plotLineweights": true,
+              "plotTransparency": true
+            },
+            "displayPlotStyles": true
+          }
+        },
+        "targetHandles": [],
+        "resultHandles": []
+      },
+      {
+        "opId": "594dcc0b-aecd-4d20-8a1c-be8af62f8d0d:undo:1",
+        "baseRevision": 3,
+        "commandId": "UNDO",
+        "args": {
+          "originalOpId": "594dcc0b-aecd-4d20-8a1c-be8af62f8d0d"
+        },
+        "targetHandles": [],
+        "resultHandles": []
+      },
+      {
+        "opId": "594dcc0b-aecd-4d20-8a1c-be8af62f8d0d:redo:2",
+        "baseRevision": 4,
+        "commandId": "PAGESETUP",
+        "args": {
+          "layoutId": "layout-1",
+          "setup": {
+            "mediaName": "ISO_A4",
+            "orientation": "landscape",
+            "plotArea": {
+              "kind": "layout"
+            },
+            "plotScale": {
+              "mode": "custom",
+              "paperUnits": 1,
+              "drawingUnits": 1
+            },
+            "centerPlot": false,
+            "plotOriginMm": {
+              "x": 0,
+              "y": 0
+            },
+            "plotStyle": {
+              "profile": "color",
+              "plotLineweights": true,
+              "plotTransparency": true
+            },
+            "displayPlotStyles": true
+          }
+        },
+        "targetHandles": [],
+        "resultHandles": []
+      },
+      {
+        "opId": "7d662806-b61c-449e-8954-2c17431e44c2",
+        "baseRevision": 5,
+        "commandId": "PAGESETUP",
+        "args": {
+          "layoutId": "layout-1",
+          "setup": {
+            "mediaName": "ISO_A4",
+            "orientation": "landscape",
+            "plotArea": {
+              "kind": "layout"
+            },
+            "plotScale": {
+              "mode": "custom",
+              "paperUnits": 1,
+              "drawingUnits": 1
+            },
+            "centerPlot": false,
+            "plotOriginMm": {
+              "x": 0,
+              "y": 0
+            },
+            "plotStyle": {
+              "profile": "monochrome",
+              "plotLineweights": true,
+              "plotTransparency": true
+            },
+            "displayPlotStyles": true
+          }
+        },
+        "targetHandles": [],
+        "resultHandles": []
+      }
+    ],
+    "finalLayout": {
+      "id": "layout-1",
+      "name": "F103 PLOT STYLE",
+      "kind": "paper",
+      "paper": {
+        "widthMm": 297,
+        "heightMm": 210,
+        "marginsMm": {
+          "top": 10,
+          "right": 10,
+          "bottom": 10,
+          "left": 10
+        }
+      },
+      "pageSetup": {
+        "mediaName": "ISO_A4",
+        "orientation": "landscape",
+        "plotArea": {
+          "kind": "layout"
+        },
+        "plotScale": {
+          "mode": "custom",
+          "paperUnits": 1,
+          "drawingUnits": 1
+        },
+        "centerPlot": false,
+        "plotOriginMm": {
+          "x": 0,
+          "y": 0
+        },
+        "plotStyle": {
+          "profile": "monochrome",
+          "plotLineweights": true,
+          "plotTransparency": true
+        },
+        "displayPlotStyles": true
+      },
+      "viewports": [
+        {
+          "id": "viewport-f103",
+          "center": {
+            "x": 148.5,
+            "y": 105
+          },
+          "width": 257,
+          "height": 150,
+          "viewCenter": {
+            "x": 105,
+            "y": 80
+          },
+          "viewHeight": 150,
+          "twistAngleRad": 0,
+          "locked": true
+        }
+      ],
+      "entities": []
+    },
+    "documentRevision": 6,
+    "consoleErrors": []
+  },
+  "summaries": {
+    "color-no-lineweights": {
+      "svg": {
+        "bytes": 1594,
+        "sha256": "748a592479f11675759a7ee90d767f1a34984be2fe36526f20e0d5797471f491",
+        "profile": "color",
+        "lineweights": "false",
+        "transparency": "false",
+        "entities": [
+          {
+            "handle": "10",
+            "sourceColor": "#ff0000",
+            "plotColor": "#ff0000",
+            "lineweightMm": 0,
+            "opacity": 1
+          },
+          {
+            "handle": "11",
+            "sourceColor": "#00ff00",
+            "plotColor": "#00ff00",
+            "lineweightMm": 0,
+            "opacity": 1
+          },
+          {
+            "handle": "13",
+            "sourceColor": "#0a64dc",
+            "plotColor": "#0a64dc",
+            "lineweightMm": 0,
+            "opacity": 1
+          },
+          {
+            "handle": "12",
+            "sourceColor": "#ff0000",
+            "plotColor": "#ff0000",
+            "lineweightMm": null,
+            "opacity": 1
+          }
+        ],
+        "solidFill": true,
+        "physicalA4Landscape": true
+      },
+      "pdf": {
+        "bytes": 1030,
+        "sha256": "4ae289169a72a018f1a905604cb6d9f5767c38028c39a75946a5c65681d3ac7e",
+        "version": "1.4",
+        "pages": 1,
+        "eof": true,
+        "xrefOffsetsValid": true,
+        "red": true,
+        "green": true,
+        "black": false,
+        "trueColorBlue": true,
+        "grayRed": false,
+        "grayGreen": false,
+        "fullLineweight": false,
+        "hairline": true,
+        "alpha60": false,
+        "solidFill": true
+      }
+    },
+    "grayscale": {
+      "svg": {
+        "bytes": 1602,
+        "sha256": "894d55a00d21c03bb444b0a139b8e0f29af47f74e4e842be63b7dfcee1dddd45",
+        "profile": "grayscale",
+        "lineweights": "true",
+        "transparency": "true",
+        "entities": [
+          {
+            "handle": "10",
+            "sourceColor": "#ff0000",
+            "plotColor": "#4c4c4c",
+            "lineweightMm": 0.7,
+            "opacity": 1
+          },
+          {
+            "handle": "11",
+            "sourceColor": "#00ff00",
+            "plotColor": "#959595",
+            "lineweightMm": 0.35,
+            "opacity": 1
+          },
+          {
+            "handle": "13",
+            "sourceColor": "#0a64dc",
+            "plotColor": "#0a64dc",
+            "lineweightMm": 0,
+            "opacity": 1
+          },
+          {
+            "handle": "12",
+            "sourceColor": "#ff0000",
+            "plotColor": "#4c4c4c",
+            "lineweightMm": null,
+            "opacity": 0.6
+          }
+        ],
+        "solidFill": true,
+        "physicalA4Landscape": true
+      },
+      "pdf": {
+        "bytes": 1249,
+        "sha256": "6036ec3c30b29198890ab75a1a484116f2a945ca8a20841add05d56558e6c5bf",
+        "version": "1.4",
+        "pages": 1,
+        "eof": true,
+        "xrefOffsetsValid": true,
+        "red": false,
+        "green": false,
+        "black": false,
+        "trueColorBlue": true,
+        "grayRed": true,
+        "grayGreen": true,
+        "fullLineweight": true,
+        "hairline": true,
+        "alpha60": true,
+        "solidFill": true
+      }
+    },
+    "color-alpha": {
+      "svg": {
+        "bytes": 1598,
+        "sha256": "5ad3d2409e3257404e9362f27dfc6cf1da1cf6e35a8409ca5fbfc7fafef99854",
+        "profile": "color",
+        "lineweights": "true",
+        "transparency": "true",
+        "entities": [
+          {
+            "handle": "10",
+            "sourceColor": "#ff0000",
+            "plotColor": "#ff0000",
+            "lineweightMm": 0.7,
+            "opacity": 1
+          },
+          {
+            "handle": "11",
+            "sourceColor": "#00ff00",
+            "plotColor": "#00ff00",
+            "lineweightMm": 0.35,
+            "opacity": 1
+          },
+          {
+            "handle": "13",
+            "sourceColor": "#0a64dc",
+            "plotColor": "#0a64dc",
+            "lineweightMm": 0,
+            "opacity": 1
+          },
+          {
+            "handle": "12",
+            "sourceColor": "#ff0000",
+            "plotColor": "#ff0000",
+            "lineweightMm": null,
+            "opacity": 0.6
+          }
+        ],
+        "solidFill": true,
+        "physicalA4Landscape": true
+      },
+      "pdf": {
+        "bytes": 1122,
+        "sha256": "95a0aa957101352c83f61a6f04b1c1f8610b40ace0d8e2db6ac4abbe40c2216d",
+        "version": "1.4",
+        "pages": 1,
+        "eof": true,
+        "xrefOffsetsValid": true,
+        "red": true,
+        "green": true,
+        "black": false,
+        "trueColorBlue": true,
+        "grayRed": false,
+        "grayGreen": false,
+        "fullLineweight": true,
+        "hairline": true,
+        "alpha60": true,
+        "solidFill": true
+      }
+    },
+    "monochrome": {
+      "svg": {
+        "bytes": 1603,
+        "sha256": "af31ad33a595137ef7cd390ab6e9bc7160e7f56a921365820a8559673b0f29a2",
+        "profile": "monochrome",
+        "lineweights": "true",
+        "transparency": "true",
+        "entities": [
+          {
+            "handle": "10",
+            "sourceColor": "#ff0000",
+            "plotColor": "#000000",
+            "lineweightMm": 0.7,
+            "opacity": 1
+          },
+          {
+            "handle": "11",
+            "sourceColor": "#00ff00",
+            "plotColor": "#000000",
+            "lineweightMm": 0.35,
+            "opacity": 1
+          },
+          {
+            "handle": "13",
+            "sourceColor": "#0a64dc",
+            "plotColor": "#0a64dc",
+            "lineweightMm": 0,
+            "opacity": 1
+          },
+          {
+            "handle": "12",
+            "sourceColor": "#ff0000",
+            "plotColor": "#000000",
+            "lineweightMm": null,
+            "opacity": 0.6
+          }
+        ],
+        "solidFill": true,
+        "physicalA4Landscape": true
+      },
+      "pdf": {
+        "bytes": 1122,
+        "sha256": "84dc5ce85de138a78298e5b9dfc708f6cd7a08f930ebfe73067fc4486509e010",
+        "version": "1.4",
+        "pages": 1,
+        "eof": true,
+        "xrefOffsetsValid": true,
+        "red": false,
+        "green": false,
+        "black": true,
+        "trueColorBlue": true,
+        "grayRed": false,
+        "grayGreen": false,
+        "fullLineweight": true,
+        "hairline": true,
+        "alpha60": true,
+        "solidFill": true
+      }
+    }
+  },
+  "renderedPixels": {
+    "schemaVersion": 1,
+    "images": {
+      "color-no-lineweights": {
+        "label": "color-no-lineweights",
+        "width": 1684,
+        "height": 1191,
+        "mode": "RGB",
+        "sha256": "37e4dee479f2e553e922f898ba7d9251bbcd4a2766a652e94c4e2a450a7d188f",
+        "counts": {
+          "black": 0,
+          "red": 193744,
+          "green": 964,
+          "trueColorBlue": 964,
+          "transparentRedOnWhite": 0,
+          "transparentBlackOnWhite": 0,
+          "grayscaleRed": 0,
+          "grayscaleGreen": 0,
+          "white": 1809972,
+          "transparentRedOnWhiteRange": 0,
+          "transparentBlackOnWhiteRange": 0,
+          "trueColorBlueRange": 964
+        },
+        "extrema": [
+          [
+            0,
+            255
+          ],
+          [
+            0,
+            255
+          ],
+          [
+            0,
+            255
+          ]
+        ]
+      },
+      "grayscale": {
+        "label": "grayscale",
+        "width": 1684,
+        "height": 1191,
+        "mode": "RGB",
+        "sha256": "79822a26cc1dcd5834c78f921eea1c2ab7ee684455d2a0df2edc80296956537e",
+        "counts": {
+          "black": 0,
+          "red": 0,
+          "green": 0,
+          "trueColorBlue": 964,
+          "transparentRedOnWhite": 0,
+          "transparentBlackOnWhite": 0,
+          "grayscaleRed": 3856,
+          "grayscaleGreen": 1928,
+          "white": 1806116,
+          "transparentRedOnWhiteRange": 0,
+          "transparentBlackOnWhiteRange": 0,
+          "trueColorBlueRange": 964
+        },
+        "extrema": [
+          [
+            10,
+            255
+          ],
+          [
+            76,
+            255
+          ],
+          [
+            76,
+            255
+          ]
+        ]
+      },
+      "color-alpha": {
+        "label": "color-alpha",
+        "width": 1684,
+        "height": 1191,
+        "mode": "RGB",
+        "sha256": "3dcd69f5762eb49cca37824f906edc30844ea9fbef05ebda9c1273b519a0279f",
+        "counts": {
+          "black": 0,
+          "red": 3856,
+          "green": 1928,
+          "trueColorBlue": 964,
+          "transparentRedOnWhite": 192780,
+          "transparentBlackOnWhite": 0,
+          "grayscaleRed": 0,
+          "grayscaleGreen": 0,
+          "white": 1806116,
+          "transparentRedOnWhiteRange": 192780,
+          "transparentBlackOnWhiteRange": 0,
+          "trueColorBlueRange": 964
+        },
+        "extrema": [
+          [
+            0,
+            255
+          ],
+          [
+            0,
+            255
+          ],
+          [
+            0,
+            255
+          ]
+        ]
+      },
+      "monochrome": {
+        "label": "monochrome",
+        "width": 1684,
+        "height": 1191,
+        "mode": "RGB",
+        "sha256": "91fc8ea98af068875d5bb61ef080757bfa6bc47cc4f6e948da7913799f083da5",
+        "counts": {
+          "black": 5784,
+          "red": 0,
+          "green": 0,
+          "trueColorBlue": 964,
+          "transparentRedOnWhite": 0,
+          "transparentBlackOnWhite": 192780,
+          "grayscaleRed": 0,
+          "grayscaleGreen": 0,
+          "white": 1806116,
+          "transparentRedOnWhiteRange": 0,
+          "transparentBlackOnWhiteRange": 192780,
+          "trueColorBlueRange": 964
+        },
+        "extrema": [
+          [
+            0,
+            255
+          ],
+          [
+            0,
+            255
+          ],
+          [
+            0,
+            255
+          ]
+        ]
+      }
+    }
+  },
+  "independentPdfReadback": {
+    "readers": {
+      "pypdf": "6.10.0",
+      "pdfplumber": "0.11.9"
+    },
+    "documents": {
+      "color-no-lineweights": {
+        "label": "color-no-lineweights",
+        "path": "F-103-browser-color-no-lineweights.pdf",
+        "pypdf": {
+          "pages": 1,
+          "mediaBox": [
+            0,
+            0,
+            841.889764,
+            595.275591
+          ],
+          "xobjects": 0,
+          "images": 0,
+          "operators": {
+            "q": 6,
+            "cm": 2,
+            "re": 1,
+            "W": 1,
+            "n": 1,
+            "RG": 4,
+            "rg": 4,
+            "w": 4,
+            "gs": 4,
+            "m": 4,
+            "l": 6,
+            "S": 3,
+            "Q": 6,
+            "h": 1,
+            "f*": 1
+          }
+        },
+        "pdfplumber": {
+          "pages": 1,
+          "width": 841.889764,
+          "height": 595.275591,
+          "lines": 3,
+          "rects": 1,
+          "curves": 0,
+          "images": 0
+        }
+      },
+      "grayscale": {
+        "label": "grayscale",
+        "path": "F-103-browser-grayscale.pdf",
+        "pypdf": {
+          "pages": 1,
+          "mediaBox": [
+            0,
+            0,
+            841.889764,
+            595.275591
+          ],
+          "xobjects": 0,
+          "images": 0,
+          "operators": {
+            "q": 6,
+            "cm": 2,
+            "re": 1,
+            "W": 1,
+            "n": 1,
+            "RG": 4,
+            "rg": 4,
+            "w": 4,
+            "gs": 4,
+            "m": 4,
+            "l": 6,
+            "S": 3,
+            "Q": 6,
+            "h": 1,
+            "f*": 1
+          }
+        },
+        "pdfplumber": {
+          "pages": 1,
+          "width": 841.889764,
+          "height": 595.275591,
+          "lines": 3,
+          "rects": 1,
+          "curves": 0,
+          "images": 0
+        }
+      },
+      "color-alpha": {
+        "label": "color-alpha",
+        "path": "F-103-browser-color-alpha.pdf",
+        "pypdf": {
+          "pages": 1,
+          "mediaBox": [
+            0,
+            0,
+            841.889764,
+            595.275591
+          ],
+          "xobjects": 0,
+          "images": 0,
+          "operators": {
+            "q": 6,
+            "cm": 2,
+            "re": 1,
+            "W": 1,
+            "n": 1,
+            "RG": 4,
+            "rg": 4,
+            "w": 4,
+            "gs": 4,
+            "m": 4,
+            "l": 6,
+            "S": 3,
+            "Q": 6,
+            "h": 1,
+            "f*": 1
+          }
+        },
+        "pdfplumber": {
+          "pages": 1,
+          "width": 841.889764,
+          "height": 595.275591,
+          "lines": 3,
+          "rects": 1,
+          "curves": 0,
+          "images": 0
+        }
+      },
+      "monochrome": {
+        "label": "monochrome",
+        "path": "F-103-browser-monochrome.pdf",
+        "pypdf": {
+          "pages": 1,
+          "mediaBox": [
+            0,
+            0,
+            841.889764,
+            595.275591
+          ],
+          "xobjects": 0,
+          "images": 0,
+          "operators": {
+            "q": 6,
+            "cm": 2,
+            "re": 1,
+            "W": 1,
+            "n": 1,
+            "RG": 4,
+            "rg": 4,
+            "w": 4,
+            "gs": 4,
+            "m": 4,
+            "l": 6,
+            "S": 3,
+            "Q": 6,
+            "h": 1,
+            "f*": 1
+          }
+        },
+        "pdfplumber": {
+          "pages": 1,
+          "width": 841.889764,
+          "height": 595.275591,
+          "lines": 3,
+          "rects": 1,
+          "curves": 0,
+          "images": 0
+        }
+      }
+    }
+  },
+  "kdraw": {
+    "bytes": 2845,
+    "sha256": "5e6a553f4ca6d647fe1f302ac56be72f450b12ad64eb47a9e37565ef5099ece1",
+    "documentSha256": "8252d18194f2eeec98d8d2e3ec09d1ab4b5489faa4b46dcbbbaaf5dfbe721f88",
+    "revision": 6,
+    "plotStyle": {
+      "profile": "monochrome",
+      "plotLineweights": true,
+      "plotTransparency": true
+    },
+    "displayPlotStyles": true
+  },
+  "status": "PASS"
+}

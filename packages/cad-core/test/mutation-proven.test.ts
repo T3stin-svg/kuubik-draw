@@ -456,3 +456,24 @@ it("kills F-102 swapped-paper, viewport-refit, inverted-scale, clamped/invalid-w
     plotArea: { kind: "layout" }, plotScale: { mode: "custom", paperUnits: 1, drawingUnits: 1 }, centerPlot: false, plotOriginMm: { x: 0, y: 0 },
   });
 });
+
+it("kills F-103 plot-profile, lineweight/transparency flag and split-undo mutants", () => {
+  const document = createEmptyDocument({ documentId: "F-103-mutation" });
+  const paper = createPaperLayout(document, { name: "F103 PLOT STYLE" });
+  const session = new CadSession({ ...document, layouts: paper.layouts });
+  const before = structuredClone(session.document.layouts[1]!);
+  const changed = setPaperLayoutPageSetup(session.document, paper.layoutId, {
+    ...resolvePageSetup(session.document.layouts[1]!)!,
+    plotStyle: { profile: "color", plotLineweights: false, plotTransparency: false },
+    displayPlotStyles: true,
+  });
+  session.commit({ opId: "F103-style", baseRevision: 0, commandId: "PAGESETUP", args: {}, targetHandles: [], resultHandles: [] }, changed.changes);
+  expect(resolvePageSetup(session.document.layouts[1]!)!.plotStyle).toEqual({
+    profile: "color", plotLineweights: false, plotTransparency: false,
+  });
+  expect(resolvePageSetup(session.document.layouts[1]!)!.displayPlotStyles).toBe(true);
+  session.undo();
+  expect(session.document.layouts[1]).toEqual(before);
+  session.redo();
+  expect(session.document.layouts[1]).toEqual(changed.layouts[1]);
+});

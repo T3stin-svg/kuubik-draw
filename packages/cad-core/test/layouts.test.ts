@@ -342,10 +342,12 @@ describe("F-097 layout transactions", () => {
       mediaName: "ISO_A3", orientation: "landscape", plotArea: { kind: "layout" },
       plotScale: { mode: "fit" }, centerPlot: true, plotOriginMm: { x: 12, y: 9 },
     }).layouts[1]!;
-    expect(resolvePageSetup(layoutPlot)).toEqual({
-      mediaName: "ISO_A3", orientation: "landscape", plotArea: { kind: "layout" },
-      plotScale: { mode: "custom", paperUnits: 1, drawingUnits: 1 }, centerPlot: false, plotOriginMm: { x: 0, y: 0 },
-    });
+      expect(resolvePageSetup(layoutPlot)).toEqual({
+        mediaName: "ISO_A3", orientation: "landscape", plotArea: { kind: "layout" },
+        plotScale: { mode: "custom", paperUnits: 1, drawingUnits: 1 }, centerPlot: false, plotOriginMm: { x: 0, y: 0 },
+        plotStyle: { profile: "monochrome", plotLineweights: true, plotTransparency: true },
+        displayPlotStyles: false,
+      });
     const outsideWindow = setPaperLayoutPageSetup(source, paper.layoutId, {
       mediaName: "ISO_A4", orientation: "portrait", plotArea: { kind: "window", window: { x: -25, y: -40, width: 300, height: 400 } },
       plotScale: { mode: "custom", paperUnits: 1, drawingUnits: 2 }, centerPlot: false, plotOriginMm: { x: 0, y: 0 },

@@ -5,6 +5,71 @@ import { exportLayoutSvg, exportLayoutVectorPdf, exportSvg, exportVectorPdf, rea
 const page = { widthMm: 297, heightMm: 210, scaleDenominator: 1, origin: { x: 0, y: 0 } };
 
 describe("vector print output", () => {
+  it("uses one F-103 resolver for ByLayer colour, physical lineweight and solid-hatch alpha in SVG and PDF", () => {
+    const document = createEmptyDocument({ documentId: "F-103" });
+    document.layers[0]!.appearance = { color: "#ff0000", lineweightMm: 0.7 };
+    document.entities = [
+      { kind: "line", handle: "10", layerId: "0", start: { x: -1000, y: 0 }, end: { x: 1000, y: 0 } },
+      {
+        kind: "hatch", handle: "11", layerId: "0", pattern: "SOLID", associative: false,
+        appearance: { transparency: 40 },
+        loops: [{ isHole: false, vertices: [{ x: -500, y: -500 }, { x: 500, y: -500 }, { x: 500, y: 500 }, { x: -500, y: 500 }] }],
+      },
+      {
+        kind: "hatch", handle: "12", layerId: "0", pattern: "ANSI31", associative: false,
+        loops: [{ isHole: false, vertices: [{ x: -100, y: -100 }, { x: 100, y: -100 }, { x: 0, y: 100 }] }],
+      },
+    ];
+    const paper = createPaperLayout(document, {
+      name: "F103 PLOT",
+      pageSetup: {
+        mediaName: "ISO_A4", orientation: "landscape", plotArea: { kind: "layout" },
+        plotScale: { mode: "custom", paperUnits: 1, drawingUnits: 1 }, centerPlot: false, plotOriginMm: { x: 0, y: 0 },
+        plotStyle: { profile: "color", plotLineweights: true, plotTransparency: true },
+      },
+      viewports: [{
+        id: "viewport-f103", center: { x: 148.5, y: 105 }, width: 180, height: 100,
+        viewCenter: { x: 0, y: 0 }, viewHeight: 5000, twistAngleRad: 0, locked: true,
+      }],
+    });
+    let source = { ...document, layouts: paper.layouts };
+    const colorSvgResult = exportLayoutSvg(source, paper.layoutId);
+    const colorSvg = colorSvgResult.text;
+    expect(colorSvgResult.skippedHandles).toContain("12");
+    expect(colorSvg).not.toContain('data-handle="12"');
+    expect(colorSvg).toContain('data-plot-profile="color"');
+    expect(colorSvg).toContain('data-plot-lineweights="true"');
+    expect(colorSvg).toContain('data-plot-transparency="true"');
+    expect(colorSvg).toContain('data-handle="10" data-source-color="#ff0000" data-plot-color="#ff0000" data-lineweight-mm="0.7"');
+    expect(colorSvg).toContain('data-handle="11" data-source-color="#ff0000" data-plot-color="#ff0000" data-opacity="0.6"');
+    expect(colorSvg).toContain('fill-opacity="0.6" fill-rule="evenodd"');
+    const colorPdf = exportLayoutVectorPdf(source, paper.layoutId);
+    expect(colorPdf.skippedHandles).toContain("12");
+    const colorPdfText = new TextDecoder("latin1").decode(colorPdf.bytes);
+    expect(colorPdfText).toContain("1 0 0 RG 1 0 0 rg 35 w /GS100 gs");
+    expect(colorPdfText).toContain("1 0 0 RG 1 0 0 rg 35 w /GS60 gs");
+    expect(colorPdfText).toContain("f*");
+    expect(colorPdfText).toContain("/GS60");
+    expect(colorPdfText).toContain("/CA 0.6 /ca 0.6");
+    expect(readPdfSummary(colorPdf.bytes).xrefOffsetsValid).toBe(true);
+
+    source = structuredClone(source);
+    source.layouts[1]!.pageSetup!.plotStyle = { profile: "monochrome", plotLineweights: false, plotTransparency: false };
+    const monoSvg = exportLayoutSvg(source, paper.layoutId).text;
+    expect(monoSvg).toContain('data-plot-profile="monochrome"');
+    expect(monoSvg).toContain('data-lineweight-mm="0"');
+    expect(monoSvg).toContain('stroke-width="0.001"');
+    expect(monoSvg).toContain('data-plot-color="#000000"');
+    expect(monoSvg).toContain('data-opacity="1"');
+    const monoPdfText = new TextDecoder("latin1").decode(exportLayoutVectorPdf(source, paper.layoutId).bytes);
+    expect(monoPdfText).toContain("0 0 0 RG 0 0 0 rg 0 w /GS100 gs");
+
+    source.layouts[1]!.pageSetup!.plotStyle = { profile: "grayscale", plotLineweights: true, plotTransparency: true };
+    const graySvg = exportLayoutSvg(source, paper.layoutId).text;
+    expect(graySvg).toContain('data-plot-profile="grayscale"');
+    expect(graySvg).toContain('data-plot-color="#4c4c4c"');
+  });
+
   it("emits deterministic SVG with stable handles", () => {
     const document = createEmptyDocument({ documentId: "svg" });
     document.entities = [{ kind: "line", handle: "10", layerId: "0", start: { x: 0.25, y: 1.5 }, end: { x: 100.75, y: 1.5 } }];
@@ -42,6 +107,34 @@ describe("vector print output", () => {
     expect(svg.skippedHandles).toEqual(["10"]);
     expect(svg.text).not.toContain('data-handle="10"');
     expect(svg.text).toContain('transform="translate(10 20) scale(1 -1)"');
+  });
+
+  it("keeps fractional transparency exact in PDF and filters paper-space layers", () => {
+    const document = createEmptyDocument({ documentId: "paper-layer-alpha" });
+    document.layers.push({ id: "no-plot", name: "No plot", visible: true, frozen: false, locked: false, plottable: false });
+    const paper = createPaperLayout(document, {
+      name: "PAPER FILTER",
+      pageSetup: {
+        mediaName: "ISO_A4", orientation: "landscape", plotArea: { kind: "layout" },
+        plotScale: { mode: "custom", paperUnits: 1, drawingUnits: 1 }, centerPlot: false, plotOriginMm: { x: 0, y: 0 },
+        plotStyle: { profile: "color", plotLineweights: true, plotTransparency: true },
+      },
+      entities: [
+        { kind: "line", handle: "20", layerId: "0", start: { x: 10, y: 10 }, end: { x: 20, y: 10 }, appearance: { transparency: 40.4 } },
+        { kind: "line", handle: "21", layerId: "no-plot", start: { x: 10, y: 20 }, end: { x: 20, y: 20 } },
+      ],
+    });
+    const source = { ...document, layouts: paper.layouts };
+    const svg = exportLayoutSvg(source, paper.layoutId);
+    expect(svg.skippedHandles).toEqual(["21"]);
+    expect(svg.text).toContain('data-handle="20"');
+    expect(svg.text).toContain('data-opacity="0.596"');
+    expect(svg.text).not.toContain('data-handle="21"');
+    const pdf = exportLayoutVectorPdf(source, paper.layoutId);
+    const pdfText = new TextDecoder("latin1").decode(pdf.bytes);
+    expect(pdf.skippedHandles).toEqual(["21"]);
+    expect(pdfText).toContain("/GS59_6 gs");
+    expect(pdfText).toContain("/CA 0.596 /ca 0.596");
   });
 
   it("rejects non-ASCII PDF text until a Unicode font is embedded", () => {

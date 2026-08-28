@@ -8,7 +8,7 @@ käitumispariteeti, mitte kogu AutoCADi toodet.
 
 - vana Drawi auditi snapshot: **63,9% raw / 68,3% weighted / 60,7% visual**;
 - vana Drawi AutoCADi live-tõendiga read: **22/133**;
-- selle uue eraldatud rakenduse kohalik sertifikaat: **14/133 · 10,5% raw / 13,1% weighted**;
+- selle uue eraldatud rakenduse kohalik sertifikaat: **15/133 · 11,3% raw / 14,0% weighted**;
 - native DWG/DWT/XREF ja PC3/CTB/STB pariteet on veel blokeeritud.
 
 Need arvud on vana Drawi auditi muutmatu snapshot. Uus rakendus ei päri skoori
@@ -38,6 +38,15 @@ Display kasutab mõlemas programmis sama brauserist mõõdetud paberivaadet; PC3
 prinditava ala absoluutne serv jääb eraldi F-108 töösse.
 Display nõuab aktiivset paberivaadet ja Window lubab AutoCADi kombel ka
 negatiivseid või lehest välja jäävaid layout-koordinaate.
+F-103 `Plot profile, lineweights and transparency` lisab Color/Monochrome/
+Grayscale väljundi, ACI/TrueColor ja ByLayer/explicit omadused, live-testitud
+0,00/0,35/0,70 mm laiused, AutoCADi width-zero hairline'i, täpse murdarvulise
+alpha ning OFF→ON tõendatud püsiva `Display plot styles` preview-valiku.
+Native AutoCADi test loeb ja kirjutab päris `Layout.PlotTransparency` väärtust,
+kasutab override'i `1` ainult Page Setup väärtuse austamiseks, avab DWG uuesti
+ning taastab kõik puudutatud AutoCADi kasutajaseaded; `SECURELOAD` jäetakse
+muutmata. SVG/PDF/KDRAW1, Poppler,
+`pypdf`, `pdfplumber` ja Chromium kontrollivad sama tulemust sõltumatult.
 
 ## Piirid
 

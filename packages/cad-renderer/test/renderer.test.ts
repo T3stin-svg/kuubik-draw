@@ -10,6 +10,7 @@ function fakeContext() {
     arc: (x, y, radius, start, end, ccw) => calls.push([ccw ? "arc-ccw" : "arc-cw", x, y, radius, start, end]),
     ellipse: () => undefined,
     stroke: () => calls.push(["stroke"]),
+    fill: () => calls.push(["fill"]),
     fillText: (_text, x, y) => calls.push(["text", x, y]),
     save: () => calls.push(["save"]),
     restore: () => calls.push(["restore"]),
@@ -18,6 +19,7 @@ function fakeContext() {
     translate: (x, y) => calls.push(["translate", x, y]),
     clearRect: () => undefined,
     strokeStyle: "#fff",
+    fillStyle: "#fff",
     lineWidth: 1,
     globalAlpha: 1,
     font: "10px sans-serif",
@@ -27,6 +29,53 @@ function fakeContext() {
 }
 
 describe("Canvas2D parity invariants", () => {
+  it("uses the shared F-103 plot resolver for ByLayer ink, physical width and solid-hatch alpha", () => {
+    const renderer = new CadCanvasRenderer();
+    renderer.setEntities([
+      { kind: "line", handle: "10", layerId: "INK", start: { x: 0, y: 0 }, end: { x: 10, y: 0 } },
+      { kind: "hatch", handle: "11", layerId: "INK", pattern: "SOLID", associative: false, loops: [{ isHole: false, vertices: [{ x: 0, y: 0 }, { x: 10, y: 0 }, { x: 10, y: 10 }] }] },
+    ]);
+    const { context, calls } = fakeContext();
+    renderer.render(context, { world: { minX: 0, minY: 0, maxX: 20, maxY: 20 }, widthPx: 200, heightPx: 200, devicePixelRatio: 1 }, [
+      { id: "INK", name: "Ink", visible: true, frozen: false, locked: false, plottable: true, appearance: { color: "#f00", lineweightMm: 0.7, transparency: 40 } },
+    ], null, [], {
+      plotStyle: { profile: "monochrome", plotLineweights: true, plotTransparency: true },
+      pixelsPerMillimeter: 4,
+    });
+    expect(calls).toContainEqual(["fill"]);
+    expect(context.strokeStyle).toBe("#000000");
+    expect(context.fillStyle).toBe("#000000");
+    expect(context.lineWidth).toBeCloseTo(0.28, 12);
+    expect(context.globalAlpha).toBeCloseTo(0.6, 12);
+  });
+
+  it("previews AutoCAD zero-width plot output as one device pixel without changing its semantic width", () => {
+    const renderer = new CadCanvasRenderer();
+    renderer.setEntities([{ kind: "line", handle: "10", layerId: "0", start: { x: 0, y: 0 }, end: { x: 10, y: 0 } }]);
+    const { context } = fakeContext();
+    renderer.render(context, { world: { minX: 0, minY: 0, maxX: 20, maxY: 20 }, widthPx: 200, heightPx: 200, devicePixelRatio: 2 }, [
+      { id: "0", name: "0", visible: true, frozen: false, locked: false, plottable: true, appearance: { lineweightMm: 0.7 } },
+    ], null, [], { plotStyle: { profile: "color", plotLineweights: false, plotTransparency: true }, pixelsPerMillimeter: 4 });
+    // 0.05 world units × 10 px/unit × DPR 2 = exactly one device pixel.
+    expect(context.lineWidth).toBeCloseTo(0.05, 12);
+  });
+
+  it("does not misrepresent a patterned hatch as a solid fill", () => {
+    const renderer = new CadCanvasRenderer();
+    renderer.setEntities([{
+      kind: "hatch", handle: "12", layerId: "0", pattern: "ANSI31", associative: false,
+      loops: [{ isHole: false, vertices: [{ x: 0, y: 0 }, { x: 10, y: 0 }, { x: 10, y: 10 }] }],
+    }]);
+    const { context, calls } = fakeContext();
+
+    renderer.render(context, { world: { minX: -1, minY: -1, maxX: 11, maxY: 11 }, widthPx: 120, heightPx: 120, devicePixelRatio: 1 }, [
+      { id: "0", name: "0", visible: true, frozen: false, locked: false, plottable: true },
+    ]);
+
+    expect(calls).not.toContainEqual(["fill"]);
+    expect(calls).toContainEqual(["stroke"]);
+  });
+
   it("shares one invertible letterboxed screen transform with cursor zoom and rotated pan", () => {
     const viewport = {
       world: { minX: -100, minY: -50, maxX: 100, maxY: 50 },

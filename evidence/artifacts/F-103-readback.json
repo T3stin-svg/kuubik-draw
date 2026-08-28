@@ -1,0 +1,503 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-103",
+  "source": "Independent production cad-core PAGESETUP transactions, cad-print SVG/PDF operators and KDRAW1 parser",
+  "sourceSha256": {
+    "runner": "791bb4703b132805ed57bb5090a73a9ff6080dc1dc672b5dd3cbe773c23f3039",
+    "browserEvidence": "ed1e3ba76b54848b6be1079c878ac2f26c2a5ed5cc5f22d49038e603bddb05ac",
+    "plotStyle": "09cb7177571f429cd3239b76c3a5f613e6ba71126b02469902276097f549a378",
+    "layouts": "aa27aeaf9bfcd6eb6bf076bff094a428e941f84b5a2204e72ad3f77f2eca23c4",
+    "cadPrint": "4c62b5daee0aefef816f5a1f29b3a3a039cdd3566b1c467edfea90fc3bba9557"
+  },
+  "outputs": {
+    "colorNoLineweight": {
+      "profile": "color",
+      "lineweights": "false",
+      "transparency": "false",
+      "svgBytes": 1594,
+      "svgSha256": "748a592479f11675759a7ee90d767f1a34984be2fe36526f20e0d5797471f491",
+      "pdfBytes": 1030,
+      "pdfSha256": "4ae289169a72a018f1a905604cb6d9f5767c38028c39a75946a5c65681d3ac7e",
+      "svgRed": true,
+      "svgGreen": true,
+      "svgBlack": false,
+      "svgGrayRed": false,
+      "svgGrayGreen": false,
+      "svgTrueColorBlue": true,
+      "svgFullLineweight": false,
+      "svgHairline": true,
+      "svgAlpha60": false,
+      "pdfVersion": "1.4",
+      "pdfPages": 1,
+      "pdfEof": true,
+      "xrefOffsetsValid": true,
+      "pdfRed": true,
+      "pdfGreen": true,
+      "pdfBlack": false,
+      "pdfGrayRed": false,
+      "pdfGrayGreen": false,
+      "pdfTrueColorBlue": true,
+      "pdfFullLineweight": false,
+      "pdfHairline": true,
+      "pdfAlpha60": false,
+      "pdfSolidFill": true
+    },
+    "grayscale": {
+      "profile": "grayscale",
+      "lineweights": "true",
+      "transparency": "true",
+      "svgBytes": 1602,
+      "svgSha256": "894d55a00d21c03bb444b0a139b8e0f29af47f74e4e842be63b7dfcee1dddd45",
+      "pdfBytes": 1249,
+      "pdfSha256": "6036ec3c30b29198890ab75a1a484116f2a945ca8a20841add05d56558e6c5bf",
+      "svgRed": false,
+      "svgGreen": false,
+      "svgBlack": false,
+      "svgGrayRed": true,
+      "svgGrayGreen": true,
+      "svgTrueColorBlue": true,
+      "svgFullLineweight": true,
+      "svgHairline": true,
+      "svgAlpha60": true,
+      "pdfVersion": "1.4",
+      "pdfPages": 1,
+      "pdfEof": true,
+      "xrefOffsetsValid": true,
+      "pdfRed": false,
+      "pdfGreen": false,
+      "pdfBlack": false,
+      "pdfGrayRed": true,
+      "pdfGrayGreen": true,
+      "pdfTrueColorBlue": true,
+      "pdfFullLineweight": true,
+      "pdfHairline": true,
+      "pdfAlpha60": true,
+      "pdfSolidFill": true
+    },
+    "colorAlpha": {
+      "profile": "color",
+      "lineweights": "true",
+      "transparency": "true",
+      "svgBytes": 1598,
+      "svgSha256": "5ad3d2409e3257404e9362f27dfc6cf1da1cf6e35a8409ca5fbfc7fafef99854",
+      "pdfBytes": 1122,
+      "pdfSha256": "95a0aa957101352c83f61a6f04b1c1f8610b40ace0d8e2db6ac4abbe40c2216d",
+      "svgRed": true,
+      "svgGreen": true,
+      "svgBlack": false,
+      "svgGrayRed": false,
+      "svgGrayGreen": false,
+      "svgTrueColorBlue": true,
+      "svgFullLineweight": true,
+      "svgHairline": true,
+      "svgAlpha60": true,
+      "pdfVersion": "1.4",
+      "pdfPages": 1,
+      "pdfEof": true,
+      "xrefOffsetsValid": true,
+      "pdfRed": true,
+      "pdfGreen": true,
+      "pdfBlack": false,
+      "pdfGrayRed": false,
+      "pdfGrayGreen": false,
+      "pdfTrueColorBlue": true,
+      "pdfFullLineweight": true,
+      "pdfHairline": true,
+      "pdfAlpha60": true,
+      "pdfSolidFill": true
+    },
+    "monochrome": {
+      "profile": "monochrome",
+      "lineweights": "true",
+      "transparency": "true",
+      "svgBytes": 1603,
+      "svgSha256": "af31ad33a595137ef7cd390ab6e9bc7160e7f56a921365820a8559673b0f29a2",
+      "pdfBytes": 1122,
+      "pdfSha256": "84dc5ce85de138a78298e5b9dfc708f6cd7a08f930ebfe73067fc4486509e010",
+      "svgRed": false,
+      "svgGreen": false,
+      "svgBlack": true,
+      "svgGrayRed": false,
+      "svgGrayGreen": false,
+      "svgTrueColorBlue": true,
+      "svgFullLineweight": true,
+      "svgHairline": true,
+      "svgAlpha60": true,
+      "pdfVersion": "1.4",
+      "pdfPages": 1,
+      "pdfEof": true,
+      "xrefOffsetsValid": true,
+      "pdfRed": false,
+      "pdfGreen": false,
+      "pdfBlack": true,
+      "pdfGrayRed": false,
+      "pdfGrayGreen": false,
+      "pdfTrueColorBlue": true,
+      "pdfFullLineweight": true,
+      "pdfHairline": true,
+      "pdfAlpha60": true,
+      "pdfSolidFill": true
+    }
+  },
+  "layouts": {
+    "colorNoLineweight": {
+      "id": "layout-1",
+      "name": "F103 PLOT STYLE",
+      "kind": "paper",
+      "paper": {
+        "widthMm": 297,
+        "heightMm": 210,
+        "marginsMm": {
+          "top": 10,
+          "right": 10,
+          "bottom": 10,
+          "left": 10
+        }
+      },
+      "pageSetup": {
+        "mediaName": "ISO_A4",
+        "orientation": "landscape",
+        "plotArea": {
+          "kind": "layout"
+        },
+        "plotScale": {
+          "mode": "custom",
+          "paperUnits": 1,
+          "drawingUnits": 1
+        },
+        "centerPlot": false,
+        "plotOriginMm": {
+          "x": 0,
+          "y": 0
+        },
+        "plotStyle": {
+          "profile": "color",
+          "plotLineweights": false,
+          "plotTransparency": false
+        },
+        "displayPlotStyles": true
+      },
+      "viewports": [
+        {
+          "id": "viewport-f103",
+          "center": {
+            "x": 148.5,
+            "y": 105
+          },
+          "width": 257,
+          "height": 150,
+          "viewCenter": {
+            "x": 105,
+            "y": 80
+          },
+          "viewHeight": 150,
+          "twistAngleRad": 0,
+          "locked": true
+        }
+      ],
+      "entities": []
+    },
+    "grayscale": {
+      "id": "layout-1",
+      "name": "F103 PLOT STYLE",
+      "kind": "paper",
+      "paper": {
+        "widthMm": 297,
+        "heightMm": 210,
+        "marginsMm": {
+          "top": 10,
+          "right": 10,
+          "bottom": 10,
+          "left": 10
+        }
+      },
+      "pageSetup": {
+        "mediaName": "ISO_A4",
+        "orientation": "landscape",
+        "plotArea": {
+          "kind": "layout"
+        },
+        "plotScale": {
+          "mode": "custom",
+          "paperUnits": 1,
+          "drawingUnits": 1
+        },
+        "centerPlot": false,
+        "plotOriginMm": {
+          "x": 0,
+          "y": 0
+        },
+        "plotStyle": {
+          "profile": "grayscale",
+          "plotLineweights": true,
+          "plotTransparency": true
+        },
+        "displayPlotStyles": true
+      },
+      "viewports": [
+        {
+          "id": "viewport-f103",
+          "center": {
+            "x": 148.5,
+            "y": 105
+          },
+          "width": 257,
+          "height": 150,
+          "viewCenter": {
+            "x": 105,
+            "y": 80
+          },
+          "viewHeight": 150,
+          "twistAngleRad": 0,
+          "locked": true
+        }
+      ],
+      "entities": []
+    },
+    "colorAlpha": {
+      "id": "layout-1",
+      "name": "F103 PLOT STYLE",
+      "kind": "paper",
+      "paper": {
+        "widthMm": 297,
+        "heightMm": 210,
+        "marginsMm": {
+          "top": 10,
+          "right": 10,
+          "bottom": 10,
+          "left": 10
+        }
+      },
+      "pageSetup": {
+        "mediaName": "ISO_A4",
+        "orientation": "landscape",
+        "plotArea": {
+          "kind": "layout"
+        },
+        "plotScale": {
+          "mode": "custom",
+          "paperUnits": 1,
+          "drawingUnits": 1
+        },
+        "centerPlot": false,
+        "plotOriginMm": {
+          "x": 0,
+          "y": 0
+        },
+        "plotStyle": {
+          "profile": "color",
+          "plotLineweights": true,
+          "plotTransparency": true
+        },
+        "displayPlotStyles": true
+      },
+      "viewports": [
+        {
+          "id": "viewport-f103",
+          "center": {
+            "x": 148.5,
+            "y": 105
+          },
+          "width": 257,
+          "height": 150,
+          "viewCenter": {
+            "x": 105,
+            "y": 80
+          },
+          "viewHeight": 150,
+          "twistAngleRad": 0,
+          "locked": true
+        }
+      ],
+      "entities": []
+    },
+    "monochrome": {
+      "id": "layout-1",
+      "name": "F103 PLOT STYLE",
+      "kind": "paper",
+      "paper": {
+        "widthMm": 297,
+        "heightMm": 210,
+        "marginsMm": {
+          "top": 10,
+          "right": 10,
+          "bottom": 10,
+          "left": 10
+        }
+      },
+      "pageSetup": {
+        "mediaName": "ISO_A4",
+        "orientation": "landscape",
+        "plotArea": {
+          "kind": "layout"
+        },
+        "plotScale": {
+          "mode": "custom",
+          "paperUnits": 1,
+          "drawingUnits": 1
+        },
+        "centerPlot": false,
+        "plotOriginMm": {
+          "x": 0,
+          "y": 0
+        },
+        "plotStyle": {
+          "profile": "monochrome",
+          "plotLineweights": true,
+          "plotTransparency": true
+        },
+        "displayPlotStyles": true
+      },
+      "viewports": [
+        {
+          "id": "viewport-f103",
+          "center": {
+            "x": 148.5,
+            "y": 105
+          },
+          "width": 257,
+          "height": 150,
+          "viewCenter": {
+            "x": 105,
+            "y": 80
+          },
+          "viewHeight": 150,
+          "twistAngleRad": 0,
+          "locked": true
+        }
+      ],
+      "entities": []
+    }
+  },
+  "atomic": {
+    "undoCommandId": "UNDO",
+    "redoCommandId": "PAGESETUP",
+    "afterUndo": {
+      "id": "layout-1",
+      "name": "F103 PLOT STYLE",
+      "kind": "paper",
+      "paper": {
+        "widthMm": 297,
+        "heightMm": 210,
+        "marginsMm": {
+          "top": 10,
+          "right": 10,
+          "bottom": 10,
+          "left": 10
+        }
+      },
+      "pageSetup": {
+        "mediaName": "ISO_A4",
+        "orientation": "landscape",
+        "plotArea": {
+          "kind": "layout"
+        },
+        "plotScale": {
+          "mode": "custom",
+          "paperUnits": 1,
+          "drawingUnits": 1
+        },
+        "centerPlot": false,
+        "plotOriginMm": {
+          "x": 0,
+          "y": 0
+        },
+        "plotStyle": {
+          "profile": "grayscale",
+          "plotLineweights": true,
+          "plotTransparency": true
+        },
+        "displayPlotStyles": true
+      },
+      "viewports": [
+        {
+          "id": "viewport-f103",
+          "center": {
+            "x": 148.5,
+            "y": 105
+          },
+          "width": 257,
+          "height": 150,
+          "viewCenter": {
+            "x": 105,
+            "y": 80
+          },
+          "viewHeight": 150,
+          "twistAngleRad": 0,
+          "locked": true
+        }
+      ],
+      "entities": []
+    },
+    "afterRedo": {
+      "id": "layout-1",
+      "name": "F103 PLOT STYLE",
+      "kind": "paper",
+      "paper": {
+        "widthMm": 297,
+        "heightMm": 210,
+        "marginsMm": {
+          "top": 10,
+          "right": 10,
+          "bottom": 10,
+          "left": 10
+        }
+      },
+      "pageSetup": {
+        "mediaName": "ISO_A4",
+        "orientation": "landscape",
+        "plotArea": {
+          "kind": "layout"
+        },
+        "plotScale": {
+          "mode": "custom",
+          "paperUnits": 1,
+          "drawingUnits": 1
+        },
+        "centerPlot": false,
+        "plotOriginMm": {
+          "x": 0,
+          "y": 0
+        },
+        "plotStyle": {
+          "profile": "color",
+          "plotLineweights": true,
+          "plotTransparency": true
+        },
+        "displayPlotStyles": true
+      },
+      "viewports": [
+        {
+          "id": "viewport-f103",
+          "center": {
+            "x": 148.5,
+            "y": 105
+          },
+          "width": 257,
+          "height": 150,
+          "viewCenter": {
+            "x": 105,
+            "y": 80
+          },
+          "viewHeight": 150,
+          "twistAngleRad": 0,
+          "locked": true
+        }
+      ],
+      "entities": []
+    }
+  },
+  "kdraw": {
+    "bytes": 2845,
+    "sha256": "372c882a674644d8e4f1de7b9e9df6edc76daca2b820824561f8b30f82151a35",
+    "documentSha256": "57e0179f157a3f2e7e6dfa475637e298903358e349244e3cf81c00088fc5467f",
+    "revision": 6,
+    "plotStyle": {
+      "profile": "monochrome",
+      "plotLineweights": true,
+      "plotTransparency": true
+    },
+    "displayPlotStyles": true
+  },
+  "status": "PASS"
+}

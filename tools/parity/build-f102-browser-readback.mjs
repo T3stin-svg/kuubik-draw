@@ -25,7 +25,8 @@ function pdfSummary(text) {
   const media = text.match(/\/MediaBox \[0 0 ([0-9.]+) ([0-9.]+)\]/u);
   const xref = text.match(/\nxref\n0 (\d+)\n([\s\S]*?)trailer\n/u);
   const outerTransform = text.match(/\nq ([-+0-9.]+) 0 0 ([-+0-9.]+) ([-+0-9.]+) ([-+0-9.]+) cm/u);
-  const paperLine = text.match(/\n([-+0-9.]+) ([-+0-9.]+) m ([-+0-9.]+) ([-+0-9.]+) l S\nQ\nendstream/u);
+  const paperLine = [...text.matchAll(/([-+0-9.]+) ([-+0-9.]+) m ([-+0-9.]+) ([-+0-9.]+) l S/gu)]
+    .toSorted((a, b) => Math.abs(Number(b[4]) - Number(b[2])) - Math.abs(Number(a[4]) - Number(a[2])))[0] ?? null;
   return {
     version: text.match(/^%PDF-([0-9.]+)/u)?.[1] ?? null,
     mediaBoxPt: media ? { width: Number(media[1]), height: Number(media[2]) } : null,

@@ -59,16 +59,16 @@
       "height": 377.499527
     },
     "svg": {
-      "bytes": 910,
-      "sha256": "5dc077eb5383b72a7c3f40c36c95cd853cf92ce4f2aa62331ca825a37254f0ed",
+      "bytes": 1272,
+      "sha256": "6615899d81a5efda6dc8e5311575911b8a323686f6a0a2bb01d421ea922c630f",
       "paperLineDeltaMm": {
         "x": 43.03316646543565,
         "y": 59.76828675754951
       }
     },
     "pdf": {
-      "bytes": 717,
-      "sha256": "6bebd6a75739c33265e961d97e86561612ec9598bda9d307838c51f6e3089cc8",
+      "bytes": 897,
+      "sha256": "f6931e346a31ac11980d90bc42065d748464975450db4d84827e182c98d8a826",
       "summary": {
         "version": "1.4",
         "mediaBoxPt": {
@@ -86,12 +86,12 @@
     }
   },
   "svg": {
-    "bytes": 792,
-    "sha256": "d461bf330f4bbc6532d96a042644219de540d3f0884e73e6d9f52e37a549799c"
+    "bytes": 1154,
+    "sha256": "d58c43d961feeeddf962c44c891fc3c230fdf4c98b1b4b0eea30c793ef376e9b"
   },
   "pdf": {
-    "bytes": 707,
-    "sha256": "c6ab88f71605a9c6a0e86788f0fe65563e709befae6895668da202bc7b09821f",
+    "bytes": 875,
+    "sha256": "55c3866287240428b0330a9447bc0f8902f012274e389ee4e9eb173ed2516cbd",
     "summary": {
       "version": "1.4",
       "mediaBoxPt": {
@@ -108,12 +108,12 @@
     }
   },
   "kdraw": {
-    "bytes": 2049,
-    "sha256": "f6931ec316a32a05c849ecc39e07cd2355fdd4478d1e1a44392e48798ee6a22d"
+    "bytes": 2193,
+    "sha256": "bb8d8e5f29b85f80033760a3e791c21713c374182cfcf912d683562fbbb50ec1"
   },
   "operations": [
     {
-      "opId": "7c572f5c-5c55-41c2-b9c1-5f55d2126e01",
+      "opId": "57296a35-0d98-41c2-a4e7-8b9db82fe8f7",
       "baseRevision": 0,
       "commandId": "PAGESETUP",
       "args": {
@@ -139,24 +139,30 @@
           "plotOriginMm": {
             "x": 0,
             "y": 0
-          }
+          },
+          "plotStyle": {
+            "profile": "monochrome",
+            "plotLineweights": true,
+            "plotTransparency": true
+          },
+          "displayPlotStyles": false
         }
       },
       "targetHandles": [],
       "resultHandles": []
     },
     {
-      "opId": "7c572f5c-5c55-41c2-b9c1-5f55d2126e01:undo:1",
+      "opId": "57296a35-0d98-41c2-a4e7-8b9db82fe8f7:undo:1",
       "baseRevision": 1,
       "commandId": "UNDO",
       "args": {
-        "originalOpId": "7c572f5c-5c55-41c2-b9c1-5f55d2126e01"
+        "originalOpId": "57296a35-0d98-41c2-a4e7-8b9db82fe8f7"
       },
       "targetHandles": [],
       "resultHandles": []
     },
     {
-      "opId": "7c572f5c-5c55-41c2-b9c1-5f55d2126e01:redo:2",
+      "opId": "57296a35-0d98-41c2-a4e7-8b9db82fe8f7:redo:2",
       "baseRevision": 2,
       "commandId": "PAGESETUP",
       "args": {
@@ -182,14 +188,20 @@
           "plotOriginMm": {
             "x": 0,
             "y": 0
-          }
+          },
+          "plotStyle": {
+            "profile": "monochrome",
+            "plotLineweights": true,
+            "plotTransparency": true
+          },
+          "displayPlotStyles": false
         }
       },
       "targetHandles": [],
       "resultHandles": []
     },
     {
-      "opId": "4be2cf59-5ca3-465a-9c97-aa42b392872d",
+      "opId": "2f8465ad-5fca-49bb-959f-00d1b4b47127",
       "baseRevision": 3,
       "commandId": "PAGESETUP",
       "args": {
@@ -207,14 +219,20 @@
           "plotOriginMm": {
             "x": 0,
             "y": 0
-          }
+          },
+          "plotStyle": {
+            "profile": "monochrome",
+            "plotLineweights": true,
+            "plotTransparency": true
+          },
+          "displayPlotStyles": false
         }
       },
       "targetHandles": [],
       "resultHandles": []
     },
     {
-      "opId": "f1965e7d-dd75-4f30-854f-4850ed30eeee",
+      "opId": "53c39a12-0f9c-4fe6-88b9-bf4295748d63",
       "baseRevision": 4,
       "commandId": "PAGESETUP",
       "args": {
@@ -240,14 +258,20 @@
           "plotOriginMm": {
             "x": 0,
             "y": 0
-          }
+          },
+          "plotStyle": {
+            "profile": "monochrome",
+            "plotLineweights": true,
+            "plotTransparency": true
+          },
+          "displayPlotStyles": false
         }
       },
       "targetHandles": [],
       "resultHandles": []
     },
     {
-      "opId": "8da1c24a-96e5-42bc-a51c-c11122d9181b",
+      "opId": "b78e7757-2545-44b1-b80b-fe0732b9434f",
       "baseRevision": 5,
       "commandId": "PAGESETUP",
       "args": {
@@ -265,14 +289,20 @@
           "plotOriginMm": {
             "x": 0,
             "y": 0
-          }
+          },
+          "plotStyle": {
+            "profile": "monochrome",
+            "plotLineweights": true,
+            "plotTransparency": true
+          },
+          "displayPlotStyles": false
         }
       },
       "targetHandles": [],
       "resultHandles": []
     },
     {
-      "opId": "e3a28a1c-4919-40cc-838a-2321ad9ad4a2",
+      "opId": "b525885f-8744-4adb-995c-8f011fe719f5",
       "baseRevision": 6,
       "commandId": "PAGESETUP",
       "args": {
@@ -292,7 +322,13 @@
           "plotOriginMm": {
             "x": 0,
             "y": 0
-          }
+          },
+          "plotStyle": {
+            "profile": "monochrome",
+            "plotLineweights": true,
+            "plotTransparency": true
+          },
+          "displayPlotStyles": false
         }
       },
       "targetHandles": [],
@@ -328,7 +364,13 @@
       "plotOriginMm": {
         "x": 0,
         "y": 0
-      }
+      },
+      "plotStyle": {
+        "profile": "monochrome",
+        "plotLineweights": true,
+        "plotTransparency": true
+      },
+      "displayPlotStyles": false
     },
     "viewports": [
       {

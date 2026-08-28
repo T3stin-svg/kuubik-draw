@@ -92,7 +92,6 @@ function Set-AcadDrawingAspect {
   if ([double]::IsNaN($TargetAspect) -or [double]::IsInfinity($TargetAspect) -or $TargetAspect -le 0) { throw 'F-102 Display aspect must be positive and finite.' }
   Invoke-ComRetry { $Application.WindowState = 1 } | Out-Null
   Start-Sleep -Milliseconds 400
-  $hwnd = [IntPtr][int64](Invoke-ComRetry { $Application.HWND })
   $target = $null
   for ($attempt = 0; $attempt -lt 5; $attempt++) {
     $screen = Invoke-ComRetry { $Document.GetVariable('SCREENSIZE') }
@@ -112,11 +111,18 @@ function Set-AcadDrawingAspect {
       $target = $best
     }
     if ([int]$screen[0] -eq $target.width -and [int]$screen[1] -eq $target.height) { return $target }
-    $rect = Invoke-ComRetry { [F102WindowProcess]::ReadRect($hwnd) }
-    $outerWidth = $rect.Right - $rect.Left; $outerHeight = $rect.Bottom - $rect.Top
-    $newWidth = $outerWidth + $target.width - [int]$screen[0]
-    $newHeight = $outerHeight + $target.height - [int]$screen[1]
-    [F102WindowProcess]::Resize($hwnd, 0, 0, $newWidth, $newHeight)
+    Invoke-ComRetry {
+      # AutoCAD may recreate its top-level window while layouts or plot devices
+      # are being activated. Always reacquire HWND inside the retry so a stale
+      # handle cannot turn a transient UI transition into a false parity failure.
+      $liveHwnd = [IntPtr][int64]$Application.HWND
+      if ($liveHwnd -eq [IntPtr]::Zero) { throw 'AutoCAD returned an empty HWND.' }
+      $rect = [F102WindowProcess]::ReadRect($liveHwnd)
+      $outerWidth = $rect.Right - $rect.Left; $outerHeight = $rect.Bottom - $rect.Top
+      $newWidth = $outerWidth + $target.width - [int]$screen[0]
+      $newHeight = $outerHeight + $target.height - [int]$screen[1]
+      [F102WindowProcess]::Resize($liveHwnd, 0, 0, $newWidth, $newHeight)
+    } | Out-Null
     Start-Sleep -Milliseconds 400
   }
   $finalScreen = Invoke-ComRetry { $Document.GetVariable('SCREENSIZE') }

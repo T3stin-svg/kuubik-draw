@@ -70,6 +70,13 @@ const syntheticCadAllowlist = new Set([
   "evidence/artifacts/F-102-browser-display.pdf",
   "evidence/artifacts/F-102-page-setup.kdraw",
   "evidence/artifacts/F-102-page-setup.pdf",
+  "evidence/artifacts/F-103-browser-color-alpha.pdf",
+  "evidence/artifacts/F-103-browser-color-no-lineweights.pdf",
+  "evidence/artifacts/F-103-browser-grayscale.pdf",
+  "evidence/artifacts/F-103-browser-monochrome.pdf",
+  "evidence/artifacts/F-103-browser-plot-style.kdraw",
+  "evidence/artifacts/F-103-readback-color-alpha.pdf",
+  "evidence/artifacts/F-103-readback-plot-style.kdraw",
 ]);
 const textExtensions = new Set([".ts", ".tsx", ".js", ".mjs", ".json", ".md", ".yml", ".yaml", ".html", ".css", ".txt"]);
 const secretPatterns = [

@@ -100,7 +100,8 @@ function independentPdfSummary(bytes: Buffer) {
   const xref = text.match(/\nxref\n0 (\d+)\n([\s\S]*?)trailer\n/u);
   const offsetsValid = xref ? xref[2]!.trim().split("\n").slice(1).every((line, index) => text.slice(Number.parseInt(line.slice(0, 10), 10)).startsWith(`${index + 1} 0 obj`)) : false;
   const outerTransform = text.match(/\nq ([-+0-9.]+) 0 0 ([-+0-9.]+) ([-+0-9.]+) ([-+0-9.]+) cm/u);
-  const paperLine = text.match(/\n([-+0-9.]+) ([-+0-9.]+) m ([-+0-9.]+) ([-+0-9.]+) l S\nQ\nendstream/u);
+  const paperLine = [...text.matchAll(/([-+0-9.]+) ([-+0-9.]+) m ([-+0-9.]+) ([-+0-9.]+) l S/gu)]
+    .toSorted((a, b) => Math.abs(Number(b[4]) - Number(b[2])) - Math.abs(Number(a[4]) - Number(a[2])))[0] ?? null;
   return {
     version: text.match(/^%PDF-([0-9.]+)/u)?.[1] ?? null,
     mediaBoxPt: media ? { width: Number(media[1]), height: Number(media[2]) } : null,
@@ -269,6 +270,8 @@ test("F-102 applies/persists Page Setup, preserves viewport paper coordinates an
   expect(stored.layouts[1]!.pageSetup).toEqual({
     mediaName: "ISO_A3", orientation: "landscape", plotArea: { kind: "layout" },
     plotScale: { mode: "custom", paperUnits: 1, drawingUnits: 1 }, centerPlot: false, plotOriginMm: { x: 0, y: 0 },
+    plotStyle: { profile: "monochrome", plotLineweights: true, plotTransparency: true },
+    displayPlotStyles: false,
   });
   expect(errors).toEqual([]);
 

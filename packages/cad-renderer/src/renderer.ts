@@ -1,4 +1,6 @@
 import type { CadBlockDefinition, CadEntity, CadLayer, CadPoint2, CadSpline } from "@kuubik/cad-schema";
+import type { CadPlotStyle } from "@kuubik/cad-schema";
+import { resolveCadAppearance, resolveEntityPlotAppearance } from "@kuubik/cad-core";
 import { entityBounds, type Bounds2 } from "./bounds.js";
 import { RTreeIndex } from "./rtree.js";
 
@@ -9,6 +11,7 @@ export interface Canvas2DContext {
   arc(x: number, y: number, radius: number, startAngle: number, endAngle: number, counterclockwise?: boolean): void;
   ellipse(x: number, y: number, radiusX: number, radiusY: number, rotation: number, startAngle: number, endAngle: number): void;
   stroke(): void;
+  fill(fillRule?: CanvasFillRule): void;
   fillText(text: string, x: number, y: number): void;
   save(): void;
   restore(): void;
@@ -17,6 +20,7 @@ export interface Canvas2DContext {
   translate(x: number, y: number): void;
   clearRect(x: number, y: number, width: number, height: number): void;
   strokeStyle: string | object;
+  fillStyle: string | object;
   lineWidth: number;
   globalAlpha: number;
   font: string;
@@ -36,6 +40,13 @@ export interface RenderStats {
   totalEntities: number;
   visibleCandidates: number;
   drawnEntities: number;
+}
+
+export interface RenderOptions {
+  /** When supplied, the canvas becomes a paper preview of the same resolved plot style used by export. */
+  plotStyle?: CadPlotStyle;
+  /** CSS pixels per paper millimetre; required to preview physical lineweights. */
+  pixelsPerMillimeter?: number;
 }
 
 export interface ViewportScreenTransform {
@@ -253,7 +264,13 @@ function drawEntity(
       return true;
     case "leader": drawPolyline(context, entity.vertices); break;
     case "dimension": drawPolyline(context, entity.definitionPoints); break;
-    case "hatch": entity.loops.forEach((loop) => drawPolyline(context, loop.vertices, true)); break;
+    case "hatch":
+      entity.loops.forEach((loop) => drawPolyline(context, loop.vertices, true));
+      if (entity.pattern.trim().toUpperCase() === "SOLID") {
+        context.fill("evenodd");
+        return true;
+      }
+      break;
     case "blockRef": {
       const block = blocks.get(entity.blockId);
       if (!block || blockTrail.has(block.id)) return false;
@@ -307,6 +324,7 @@ export class CadCanvasRenderer {
     layers: readonly CadLayer[],
     preview: CadEntity | readonly CadEntity[] | null = null,
     hiddenSourceHandles: readonly string[] = [],
+    options: RenderOptions = {},
   ): RenderStats {
     const transform = viewportScreenTransform(viewport);
     const rotationRad = transform.rotationRad;
@@ -324,9 +342,27 @@ export class CadCanvasRenderer {
     for (const candidate of candidates) {
       const entity = this.#entities.get(candidate.handle);
       if (!entity || hidden.has(entity.layerId) || hiddenSources.has(entity.handle)) continue;
-      context.globalAlpha = 1;
-      context.strokeStyle = entity.appearance?.color ?? "#e8e8e8";
-      context.lineWidth = (entity.appearance?.lineweightMm ?? 0.25) / scale;
+      const sourceAppearance = resolveCadAppearance(entity, layers);
+      const appearance = options.plotStyle
+        ? resolveEntityPlotAppearance(entity, layers, options.plotStyle)
+        : {
+            ...sourceAppearance,
+            color: entity.appearance?.color || layers.find((layer) => layer.id === entity.layerId)?.appearance?.color
+              ? sourceAppearance.color
+              : "#e8e8e8",
+            opacity: 1 - sourceAppearance.transparencyPercent / 100,
+          };
+      const previewScale = options.plotStyle ? options.pixelsPerMillimeter ?? Number.NaN : 1;
+      if (!Number.isFinite(previewScale) || previewScale <= 0) throw new TypeError("Paper preview requires positive pixelsPerMillimeter.");
+      context.globalAlpha = appearance.opacity;
+      context.strokeStyle = appearance.color;
+      context.fillStyle = appearance.color;
+      // Canvas ignores lineWidth=0. Preview the PDF/SVG hairline as one device
+      // pixel while retaining the shared semantic lineweight of exactly zero.
+      const previewWidthPx = appearance.lineweightMm === 0
+        ? 1 / viewport.devicePixelRatio
+        : appearance.lineweightMm * previewScale;
+      context.lineWidth = previewWidthPx / scale;
       if (drawEntity(context, entity, this.#blocks)) drawnEntities += 1;
     }
     const previews = preview ? (Array.isArray(preview) ? preview : [preview]) : [];
@@ -334,6 +370,7 @@ export class CadCanvasRenderer {
       if (hidden.has(previewEntity.layerId)) continue;
       context.globalAlpha = 0.65;
       context.strokeStyle = "#56a8ff";
+      context.fillStyle = "#56a8ff";
       context.lineWidth = (previewEntity.appearance?.lineweightMm ?? 0.25) / scale;
       if (drawEntity(context, previewEntity, this.#blocks)) drawnEntities += 1;
     }

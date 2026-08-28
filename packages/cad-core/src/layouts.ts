@@ -1,5 +1,6 @@
 import type { CadEntity, CadLayout, CadPageSetup, CadPoint2, CadViewport, KDrawDocumentV1 } from "@kuubik/cad-schema";
 import { allocateEntityHandles } from "./commands.js";
+import { DEFAULT_PLOT_STYLE, resolvePlotStyle } from "./plot-style.js";
 
 export const MAX_PAPER_LAYOUTS = 255;
 export const MAX_LAYOUT_NAME_LENGTH = 255;
@@ -22,6 +23,8 @@ export const DEFAULT_PAGE_SETUP: Readonly<CadPageSetup> = Object.freeze({
   plotScale: Object.freeze({ mode: "custom", paperUnits: 1, drawingUnits: 1 }),
   centerPlot: false,
   plotOriginMm: Object.freeze({ x: 0, y: 0 }),
+  plotStyle: DEFAULT_PLOT_STYLE,
+  displayPlotStyles: false,
 });
 
 export type LayoutCommandErrorCode =
@@ -135,6 +138,8 @@ export function resolvePageSetup(layout: CadLayout): CadPageSetup | null {
   if (layout.kind !== "paper") return null;
   const paper = resolvePaperDefinition(layout)!;
   const setup = structuredClone(layout.pageSetup ?? inferredPageSetup(layout));
+  setup.plotStyle = resolvePlotStyle(setup.plotStyle);
+  setup.displayPlotStyles = setup.displayPlotStyles === true;
   if (setup.mediaName.trim().length === 0 || (setup.orientation !== "portrait" && setup.orientation !== "landscape")) {
     throw new LayoutCommandError("INVALID_PAPER", "Page setup media and orientation are required.");
   }

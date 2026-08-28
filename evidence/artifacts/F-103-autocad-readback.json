@@ -1,0 +1,829 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-103",
+  "benchmark": "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
+  "engine": "Autodesk AutoCAD 2024 desktop COM/native PlotToFile",
+  "engineVersion": "24.3s (LMS Tech)",
+  "automationProcessId": 12804,
+  "automationProcessOwned": true,
+  "media": "ISO_expand_A4_(210.00_x_297.00_MM)",
+  "plotStyleTables": [
+    "acad.stb",
+    "Autodesk-Color.stb",
+    "Autodesk-MONO.stb",
+    "monochrome.stb",
+    "acad.ctb",
+    "DWF Virtual Pens.ctb",
+    "Fill Patterns.ctb",
+    "Grayscale.ctb",
+    "monochrome.ctb",
+    "Screening 100%.ctb",
+    "Screening 25%.ctb",
+    "Screening 50%.ctb",
+    "Screening 75%.ctb"
+  ],
+  "handles": {
+    "byLayerLine": "28A",
+    "explicitLine": "28B",
+    "trueColorLine": "28C",
+    "hatch": "28E"
+  },
+  "objectsBefore": {
+    "byLayerLine": {
+      "handle": "28A",
+      "layer": "F103_BYLAYER",
+      "colorIndex": 256,
+      "lineweight": -1,
+      "transparency": "ByLayer",
+      "trueColor": {
+        "method": 192,
+        "red": 0,
+        "green": 0,
+        "blue": 0
+      }
+    },
+    "explicitLine": {
+      "handle": "28B",
+      "layer": "0",
+      "colorIndex": 3,
+      "lineweight": 35,
+      "transparency": "ByLayer",
+      "trueColor": {
+        "method": 195,
+        "red": 0,
+        "green": 255,
+        "blue": 0
+      }
+    },
+    "trueColorLine": {
+      "handle": "28C",
+      "layer": "0",
+      "colorIndex": 152,
+      "lineweight": 0,
+      "transparency": "ByLayer",
+      "trueColor": {
+        "method": 194,
+        "red": 10,
+        "green": 100,
+        "blue": 220
+      }
+    },
+    "hatch": {
+      "handle": "28E",
+      "layer": "0",
+      "colorIndex": 1,
+      "lineweight": 25,
+      "transparency": "40",
+      "trueColor": {
+        "method": 195,
+        "red": 255,
+        "green": 0,
+        "blue": 0
+      }
+    }
+  },
+  "objectsAfter": {
+    "byLayerLine": {
+      "handle": "28A",
+      "layer": "F103_BYLAYER",
+      "colorIndex": 256,
+      "lineweight": -1,
+      "transparency": "ByLayer",
+      "trueColor": {
+        "method": 192,
+        "red": 0,
+        "green": 0,
+        "blue": 0
+      }
+    },
+    "explicitLine": {
+      "handle": "28B",
+      "layer": "0",
+      "colorIndex": 3,
+      "lineweight": 35,
+      "transparency": "ByLayer",
+      "trueColor": {
+        "method": 195,
+        "red": 0,
+        "green": 255,
+        "blue": 0
+      }
+    },
+    "trueColorLine": {
+      "handle": "28C",
+      "layer": "0",
+      "colorIndex": 152,
+      "lineweight": 0,
+      "transparency": "ByLayer",
+      "trueColor": {
+        "method": 194,
+        "red": 10,
+        "green": 100,
+        "blue": 220
+      }
+    },
+    "hatch": {
+      "handle": "28E",
+      "layer": "0",
+      "colorIndex": 1,
+      "lineweight": 25,
+      "transparency": "40",
+      "trueColor": {
+        "method": 195,
+        "red": 255,
+        "green": 0,
+        "blue": 0
+      }
+    }
+  },
+  "profiles": {
+    "color": {
+      "name": "color",
+      "layout": {
+        "configName": "DWG To PDF.pc3",
+        "canonicalMediaName": "ISO_expand_A4_(210.00_x_297.00_MM)",
+        "plotType": 5,
+        "plotWithPlotStyles": false,
+        "styleSheet": "",
+        "plotWithLineweights": true,
+        "plotTransparency": false,
+        "plotTransparencyOverride": 1,
+        "showPlotStyles": false
+      },
+      "pdf": {
+        "bytes": 2230,
+        "sha256": "0dc8f844eb1776a669d1de894abcf645c358b7a5cfd94838a73971ba1675f1ab",
+        "retained": false
+      }
+    },
+    "monochrome": {
+      "name": "monochrome",
+      "layout": {
+        "configName": "DWG To PDF.pc3",
+        "canonicalMediaName": "ISO_expand_A4_(210.00_x_297.00_MM)",
+        "plotType": 5,
+        "plotWithPlotStyles": true,
+        "styleSheet": "monochrome.ctb",
+        "plotWithLineweights": true,
+        "plotTransparency": false,
+        "plotTransparencyOverride": 1,
+        "showPlotStyles": true
+      },
+      "pdf": {
+        "bytes": 2221,
+        "sha256": "480dd70b52b7be4fc8b4c6bcaa42c8a435d109506f6101b6ef92c5b8a5664dbd",
+        "retained": false
+      }
+    },
+    "grayscale": {
+      "name": "grayscale",
+      "layout": {
+        "configName": "DWG To PDF.pc3",
+        "canonicalMediaName": "ISO_expand_A4_(210.00_x_297.00_MM)",
+        "plotType": 5,
+        "plotWithPlotStyles": true,
+        "styleSheet": "Grayscale.ctb",
+        "plotWithLineweights": true,
+        "plotTransparency": false,
+        "plotTransparencyOverride": 1,
+        "showPlotStyles": true
+      },
+      "pdf": {
+        "bytes": 2246,
+        "sha256": "606e64edc6363a2e134b38dffdf63e3247b492d5ab82bb8c1cc13862229b8f5d",
+        "retained": false
+      }
+    },
+    "noLineweights": {
+      "name": "noLineweights",
+      "layout": {
+        "configName": "DWG To PDF.pc3",
+        "canonicalMediaName": "ISO_expand_A4_(210.00_x_297.00_MM)",
+        "plotType": 5,
+        "plotWithPlotStyles": false,
+        "styleSheet": "Grayscale.ctb",
+        "plotWithLineweights": false,
+        "plotTransparency": false,
+        "plotTransparencyOverride": 1,
+        "showPlotStyles": false
+      },
+      "pdf": {
+        "bytes": 2224,
+        "sha256": "a5ede9121c6d245c750600f40cba4d5827a0a6dc6c1e64cd16734f7377342486",
+        "retained": false
+      }
+    },
+    "transparent": {
+      "name": "transparent",
+      "layout": {
+        "configName": "DWG To PDF.pc3",
+        "canonicalMediaName": "ISO_expand_A4_(210.00_x_297.00_MM)",
+        "plotType": 5,
+        "plotWithPlotStyles": false,
+        "styleSheet": "Grayscale.ctb",
+        "plotWithLineweights": true,
+        "plotTransparency": true,
+        "plotTransparencyOverride": 1,
+        "showPlotStyles": false
+      },
+      "pdf": {
+        "bytes": 6289,
+        "sha256": "7a8c2d0d5f337283104a4f93533334545fe2dc6d060e25f479c0fa56d0d55275",
+        "retained": false
+      }
+    }
+  },
+  "savedLayout": {
+    "configName": "DWG To PDF.pc3",
+    "canonicalMediaName": "ISO_expand_A4_(210.00_x_297.00_MM)",
+    "plotType": 5,
+    "plotWithPlotStyles": true,
+    "styleSheet": "monochrome.ctb",
+    "plotWithLineweights": true,
+    "plotTransparency": true,
+    "plotTransparencyOverride": 1,
+    "showPlotStyles": true
+  },
+  "reopenedLayout": {
+    "configName": "DWG To PDF.pc3",
+    "canonicalMediaName": "ISO_expand_A4_(210.00_x_297.00_MM)",
+    "plotType": 5,
+    "plotWithPlotStyles": true,
+    "styleSheet": "monochrome.ctb",
+    "plotWithLineweights": true,
+    "plotTransparency": true,
+    "plotTransparencyOverride": 1,
+    "showPlotStyles": true
+  },
+  "checks": {
+    "ownedBlankScratch": true,
+    "plotStyleTablesAvailable": true,
+    "byLayerLine": true,
+    "explicitLine": true,
+    "trueColorAndExplicitZero": true,
+    "fortyPercentTransparency": true,
+    "colorProfile": true,
+    "monochromeProfile": true,
+    "grayscaleProfile": true,
+    "lineweightToggle": true,
+    "transparencyToggle": true,
+    "allPdfOutputs": true,
+    "dwgReopen": true,
+    "layoutPersisted": true,
+    "objectAppearancePersisted": true,
+    "userSettingsRestored": true
+  },
+  "dwg": {
+    "bytes": 32980,
+    "sha256": "6b7d4cf4fdc31f6d50ebd48788f0bf2b29d2fff7a76408ac5a6d3f80ab3b0a40",
+    "saveAsType": 64,
+    "retained": false
+  },
+  "status": "PASS",
+  "userDocument": {
+    "isolatedOwnedProcess": true,
+    "blankRestored": true
+  },
+  "userSettings": {
+    "original": {
+      "backgroundPlot": 0,
+      "plotTransparencyOverride": 2,
+      "secureLoad": 0
+    },
+    "restored": true
+  },
+  "automationProcessTerminated": true,
+  "noResidualAcadProcesses": true,
+  "pdfReadback": {
+    "color": {
+      "version": "1.7",
+      "pages": 1,
+      "eof": true,
+      "decodedStreams": 1,
+      "decodedStreamSha256": "698d1e6febdeec483a922bf306a9b6233b80522357e5209f2d7aa67fba9c1070",
+      "widthValues": [
+        0,
+        8,
+        17
+      ],
+      "strokeColors": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0.03922,
+          0.39216,
+          0.86275
+        ],
+        [
+          1,
+          0,
+          0
+        ]
+      ],
+      "fillColors": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0.03922,
+          0.39216,
+          0.86275
+        ],
+        [
+          1,
+          0,
+          0
+        ]
+      ],
+      "imageObjects": 0,
+      "softMasks": 0,
+      "extGStates": 2
+    },
+    "monochrome": {
+      "version": "1.7",
+      "pages": 1,
+      "eof": true,
+      "decodedStreams": 1,
+      "decodedStreamSha256": "3685257362b0c810e0808815f4b87e97682c60e1b632394de07e3ff1fd0c5fb6",
+      "widthValues": [
+        0,
+        8,
+        17
+      ],
+      "strokeColors": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0.03922,
+          0.39216,
+          0.86275
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "fillColors": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0.03922,
+          0.39216,
+          0.86275
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "imageObjects": 0,
+      "softMasks": 0,
+      "extGStates": 2
+    },
+    "grayscale": {
+      "version": "1.7",
+      "pages": 1,
+      "eof": true,
+      "decodedStreams": 1,
+      "decodedStreamSha256": "7b7f5fc6e3ad71e774a539876c84fd87e04610e5a95baef2ca69e7be0e798970",
+      "widthValues": [
+        0,
+        8,
+        17
+      ],
+      "strokeColors": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0.29804,
+          0.29804,
+          0.29804
+        ],
+        [
+          0.58431,
+          0.58431,
+          0.58431
+        ],
+        [
+          0.03922,
+          0.39216,
+          0.86275
+        ],
+        [
+          0.29804,
+          0.29804,
+          0.29804
+        ]
+      ],
+      "fillColors": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0.29804,
+          0.29804,
+          0.29804
+        ],
+        [
+          0.58431,
+          0.58431,
+          0.58431
+        ],
+        [
+          0.03922,
+          0.39216,
+          0.86275
+        ],
+        [
+          0.29804,
+          0.29804,
+          0.29804
+        ]
+      ],
+      "imageObjects": 0,
+      "softMasks": 0,
+      "extGStates": 2
+    },
+    "noLineweights": {
+      "version": "1.7",
+      "pages": 1,
+      "eof": true,
+      "decodedStreams": 1,
+      "decodedStreamSha256": "099e8fe5da95bd4447dca9475554aefaa8235f8429b1851fd5f95313ba030d9d",
+      "widthValues": [
+        0
+      ],
+      "strokeColors": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0.03922,
+          0.39216,
+          0.86275
+        ],
+        [
+          1,
+          0,
+          0
+        ]
+      ],
+      "fillColors": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0.03922,
+          0.39216,
+          0.86275
+        ],
+        [
+          1,
+          0,
+          0
+        ]
+      ],
+      "imageObjects": 0,
+      "softMasks": 0,
+      "extGStates": 2
+    },
+    "transparent": {
+      "version": "1.7",
+      "pages": 1,
+      "eof": true,
+      "decodedStreams": 4,
+      "decodedStreamSha256": "1ee6d58eebd3e179039eb94474378621a1f7bf8218bba9bbad8703028e7643dc",
+      "widthValues": [
+        0,
+        8,
+        17
+      ],
+      "strokeColors": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0.03922,
+          0.39216,
+          0.86275
+        ]
+      ],
+      "fillColors": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0.03922,
+          0.39216,
+          0.86275
+        ]
+      ],
+      "imageObjects": 2,
+      "softMasks": 1,
+      "extGStates": 2
+    }
+  },
+  "pngReadback": {
+    "color": {
+      "bytes": 8918,
+      "sha256": "e48f0fde2734cc4387eaeb52a9808f47988bbc6cb4a6285174bcfef919d6c87c",
+      "artifactPath": "evidence/artifacts/F-103-autocad-color.png"
+    },
+    "monochrome": {
+      "bytes": 8917,
+      "sha256": "17317fd68408d8b72b423a47080a37d6eb7f2584252c70a4f143753e0b1a7ffe",
+      "artifactPath": "evidence/artifacts/F-103-autocad-monochrome.png"
+    },
+    "grayscale": {
+      "bytes": 8947,
+      "sha256": "dea2bb7b3b744efa3764d29c92a855a4888edfb6b2eda4aefaf7db5381047ec8",
+      "artifactPath": "evidence/artifacts/F-103-autocad-grayscale.png"
+    },
+    "noLineweights": {
+      "bytes": 8876,
+      "sha256": "7c713dca8bf38667955b7087d186087959863e11276a48df1397ddbf48f3e05f",
+      "artifactPath": "evidence/artifacts/F-103-autocad-no-lineweights.png"
+    },
+    "transparent": {
+      "bytes": 11144,
+      "sha256": "dfa5b02c124c669f1bfef71571f913d407d9874b9aa806b1e3638a9cfe26ef70",
+      "artifactPath": "evidence/artifacts/F-103-autocad-transparent.png"
+    }
+  },
+  "renderedPixels": {
+    "schemaVersion": 1,
+    "images": {
+      "color": {
+        "label": "color",
+        "width": 1684,
+        "height": 1190,
+        "mode": "RGB",
+        "sha256": "e48f0fde2734cc4387eaeb52a9808f47988bbc6cb4a6285174bcfef919d6c87c",
+        "counts": {
+          "black": 3245,
+          "red": 197326,
+          "green": 1818,
+          "trueColorBlue": 910,
+          "transparentRedOnWhite": 0,
+          "transparentBlackOnWhite": 0,
+          "grayscaleRed": 0,
+          "grayscaleGreen": 0,
+          "white": 1800647,
+          "transparentRedOnWhiteRange": 0,
+          "transparentBlackOnWhiteRange": 0,
+          "trueColorBlueRange": 910
+        },
+        "extrema": [
+          [
+            0,
+            255
+          ],
+          [
+            0,
+            255
+          ],
+          [
+            0,
+            255
+          ]
+        ]
+      },
+      "monochrome": {
+        "label": "monochrome",
+        "width": 1684,
+        "height": 1190,
+        "mode": "RGB",
+        "sha256": "17317fd68408d8b72b423a47080a37d6eb7f2584252c70a4f143753e0b1a7ffe",
+        "counts": {
+          "black": 202395,
+          "red": 0,
+          "green": 0,
+          "trueColorBlue": 910,
+          "transparentRedOnWhite": 0,
+          "transparentBlackOnWhite": 0,
+          "grayscaleRed": 0,
+          "grayscaleGreen": 0,
+          "white": 1800647,
+          "transparentRedOnWhiteRange": 0,
+          "transparentBlackOnWhiteRange": 0,
+          "trueColorBlueRange": 910
+        },
+        "extrema": [
+          [
+            0,
+            255
+          ],
+          [
+            0,
+            255
+          ],
+          [
+            0,
+            255
+          ]
+        ]
+      },
+      "grayscale": {
+        "label": "grayscale",
+        "width": 1684,
+        "height": 1190,
+        "mode": "RGB",
+        "sha256": "dea2bb7b3b744efa3764d29c92a855a4888edfb6b2eda4aefaf7db5381047ec8",
+        "counts": {
+          "black": 3245,
+          "red": 0,
+          "green": 0,
+          "trueColorBlue": 910,
+          "transparentRedOnWhite": 0,
+          "transparentBlackOnWhite": 0,
+          "grayscaleRed": 197326,
+          "grayscaleGreen": 1818,
+          "white": 1800647,
+          "transparentRedOnWhiteRange": 0,
+          "transparentBlackOnWhiteRange": 0,
+          "trueColorBlueRange": 910
+        },
+        "extrema": [
+          [
+            0,
+            255
+          ],
+          [
+            0,
+            255
+          ],
+          [
+            0,
+            255
+          ]
+        ]
+      },
+      "noLineweights": {
+        "label": "noLineweights",
+        "width": 1684,
+        "height": 1190,
+        "mode": "RGB",
+        "sha256": "7c713dca8bf38667955b7087d186087959863e11276a48df1397ddbf48f3e05f",
+        "counts": {
+          "black": 3249,
+          "red": 194598,
+          "green": 910,
+          "trueColorBlue": 910,
+          "transparentRedOnWhite": 0,
+          "transparentBlackOnWhite": 0,
+          "grayscaleRed": 0,
+          "grayscaleGreen": 0,
+          "white": 1804293,
+          "transparentRedOnWhiteRange": 0,
+          "transparentBlackOnWhiteRange": 0,
+          "trueColorBlueRange": 910
+        },
+        "extrema": [
+          [
+            0,
+            255
+          ],
+          [
+            0,
+            255
+          ],
+          [
+            0,
+            255
+          ]
+        ]
+      },
+      "transparent": {
+        "label": "transparent",
+        "width": 1684,
+        "height": 1190,
+        "mode": "RGB",
+        "sha256": "dfa5b02c124c669f1bfef71571f913d407d9874b9aa806b1e3638a9cfe26ef70",
+        "counts": {
+          "black": 3245,
+          "red": 3638,
+          "green": 1818,
+          "trueColorBlue": 910,
+          "transparentRedOnWhite": 0,
+          "transparentBlackOnWhite": 0,
+          "grayscaleRed": 0,
+          "grayscaleGreen": 0,
+          "white": 1800079,
+          "transparentRedOnWhiteRange": 194256,
+          "transparentBlackOnWhiteRange": 0,
+          "trueColorBlueRange": 910
+        },
+        "extrema": [
+          [
+            0,
+            255
+          ],
+          [
+            0,
+            255
+          ],
+          [
+            0,
+            255
+          ]
+        ]
+      }
+    }
+  },
+  "documentation": [
+    "https://help.autodesk.com/cloudhelp/2020/ENG/AutoCAD-Core/files/GUID-38F03A2C-6D36-4AD9-BBE0-9CA574BEF218.htm",
+    "https://help.autodesk.com/cloudhelp/2024/ENU/AutoCAD-LT-MAC/files/GUID-D2820944-F8F0-4810-9E85-C41604FF58D9.htm"
+  ],
+  "scriptSha256": "50fd1ed9d7db585a31b14070de949ceee4e1a2cbff65300069893346d05c9b19",
+  "matrixScriptSha256": "d9ab18f5b0fa3dbe29b4d09ab0fe6ce2ec8da521f8e475ba662552bc2dc99c21",
+  "managedPluginSourceSha256": "27a0e013d178a8d4ffbb3d9d976d2670de0f3bd0e7a1e8589b08db320ba96067",
+  "runnerScriptSha256": "08b1a9042cff68e6f70b5539885227760dd240758bed21a70b7ea91ea0b0088c",
+  "renderedPixelReaderSha256": "f39093021736a82b5cef67656555ceaa026ed2b625315ca7aea1d6e4ed0ff77b",
+  "observedAt": "2026-08-28T19:59:21.359Z"
+}

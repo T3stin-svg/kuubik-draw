@@ -1,0 +1,693 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-103",
+  "status": "PASS",
+  "viewport": {
+    "width": 1920,
+    "height": 1080
+  },
+  "action": "Source preview OFF -> Color no-LW/no-alpha with preview ON -> reload -> Grayscale LW+alpha -> Color LW+alpha -> Undo/Redo -> Monochrome LW+alpha -> reload",
+  "previewState": {
+    "initialDisplayPlotStyles": false,
+    "afterFirstApply": true,
+    "finalDisplayPlotStyles": true
+  },
+  "pixels": {
+    "initial": {
+      "width": 877,
+      "height": 511,
+      "counts": {
+        "redOpaque": 0,
+        "redAlpha153": 68817,
+        "greenOpaque": 0,
+        "greenAny": 1162,
+        "trueColorBlueAny": 0,
+        "trueColorBlueRange": 1160,
+        "blackOpaque": 0,
+        "blackAlpha153": 0,
+        "grayRedOpaque": 0,
+        "grayRedAlpha153": 0,
+        "grayGreenOpaque": 0,
+        "grayGreenAny": 0
+      },
+      "topColors": [
+        {
+          "rgba": "255,0,0,153",
+          "count": 68817
+        },
+        {
+          "rgba": "9,100,220,191",
+          "count": 579
+        },
+        {
+          "rgba": "8,100,219,64",
+          "count": 579
+        },
+        {
+          "rgba": "0,255,0,68",
+          "count": 578
+        },
+        {
+          "rgba": "0,255,0,19",
+          "count": 578
+        },
+        {
+          "rgba": "255,0,0,121",
+          "count": 373
+        },
+        {
+          "rgba": "255,0,0,57",
+          "count": 341
+        },
+        {
+          "rgba": "255,0,0,114",
+          "count": 339
+        },
+        {
+          "rgba": "255,0,0,77",
+          "count": 339
+        },
+        {
+          "rgba": "255,0,0,120",
+          "count": 290
+        },
+        {
+          "rgba": "255,0,0,132",
+          "count": 203
+        },
+        {
+          "rgba": "255,0,0,58",
+          "count": 119
+        }
+      ]
+    },
+    "colorNoLineweight": {
+      "width": 877,
+      "height": 511,
+      "counts": {
+        "redOpaque": 68817,
+        "redAlpha153": 0,
+        "greenOpaque": 0,
+        "greenAny": 1160,
+        "trueColorBlueAny": 0,
+        "trueColorBlueRange": 1160,
+        "blackOpaque": 0,
+        "blackAlpha153": 0,
+        "grayRedOpaque": 0,
+        "grayRedAlpha153": 0,
+        "grayGreenOpaque": 0,
+        "grayGreenAny": 0
+      },
+      "topColors": [
+        {
+          "rgba": "255,0,0,255",
+          "count": 68817
+        },
+        {
+          "rgba": "255,0,0,191",
+          "count": 918
+        },
+        {
+          "rgba": "9,100,220,191",
+          "count": 579
+        },
+        {
+          "rgba": "8,100,219,64",
+          "count": 579
+        },
+        {
+          "rgba": "0,255,0,191",
+          "count": 579
+        },
+        {
+          "rgba": "0,255,0,64",
+          "count": 579
+        },
+        {
+          "rgba": "255,0,0,64",
+          "count": 579
+        },
+        {
+          "rgba": "255,0,0,128",
+          "count": 339
+        },
+        {
+          "rgba": "255,0,0,221",
+          "count": 203
+        },
+        {
+          "rgba": "255,0,0,203",
+          "count": 203
+        },
+        {
+          "rgba": "0,98,235,13",
+          "count": 2
+        },
+        {
+          "rgba": "0,255,0,13",
+          "count": 2
+        }
+      ]
+    },
+    "grayscale": {
+      "width": 877,
+      "height": 511,
+      "counts": {
+        "redOpaque": 0,
+        "redAlpha153": 0,
+        "greenOpaque": 0,
+        "greenAny": 0,
+        "trueColorBlueAny": 0,
+        "trueColorBlueRange": 1160,
+        "blackOpaque": 0,
+        "blackAlpha153": 0,
+        "grayRedOpaque": 1158,
+        "grayRedAlpha153": 68817,
+        "grayGreenOpaque": 0,
+        "grayGreenAny": 1158
+      },
+      "topColors": [
+        {
+          "rgba": "77,77,77,153",
+          "count": 68817
+        },
+        {
+          "rgba": "76,76,76,255",
+          "count": 1158
+        },
+        {
+          "rgba": "9,100,220,191",
+          "count": 579
+        },
+        {
+          "rgba": "8,100,219,64",
+          "count": 579
+        },
+        {
+          "rgba": "148,148,148,191",
+          "count": 579
+        },
+        {
+          "rgba": "147,147,147,64",
+          "count": 579
+        },
+        {
+          "rgba": "76,76,76,64",
+          "count": 579
+        },
+        {
+          "rgba": "76,76,76,114",
+          "count": 339
+        },
+        {
+          "rgba": "76,76,76,77",
+          "count": 339
+        },
+        {
+          "rgba": "75,75,75,132",
+          "count": 203
+        },
+        {
+          "rgba": "76,76,76,121",
+          "count": 203
+        },
+        {
+          "rgba": "0,98,235,13",
+          "count": 2
+        }
+      ]
+    },
+    "colorAlpha": {
+      "width": 877,
+      "height": 511,
+      "counts": {
+        "redOpaque": 1158,
+        "redAlpha153": 68817,
+        "greenOpaque": 0,
+        "greenAny": 1160,
+        "trueColorBlueAny": 0,
+        "trueColorBlueRange": 1160,
+        "blackOpaque": 0,
+        "blackAlpha153": 0,
+        "grayRedOpaque": 0,
+        "grayRedAlpha153": 0,
+        "grayGreenOpaque": 0,
+        "grayGreenAny": 0
+      },
+      "topColors": [
+        {
+          "rgba": "255,0,0,153",
+          "count": 68817
+        },
+        {
+          "rgba": "255,0,0,255",
+          "count": 1158
+        },
+        {
+          "rgba": "9,100,220,191",
+          "count": 579
+        },
+        {
+          "rgba": "8,100,219,64",
+          "count": 579
+        },
+        {
+          "rgba": "0,255,0,191",
+          "count": 579
+        },
+        {
+          "rgba": "0,255,0,64",
+          "count": 579
+        },
+        {
+          "rgba": "255,0,0,64",
+          "count": 579
+        },
+        {
+          "rgba": "255,0,0,114",
+          "count": 339
+        },
+        {
+          "rgba": "255,0,0,77",
+          "count": 339
+        },
+        {
+          "rgba": "255,0,0,132",
+          "count": 203
+        },
+        {
+          "rgba": "255,0,0,121",
+          "count": 203
+        },
+        {
+          "rgba": "0,98,235,13",
+          "count": 2
+        }
+      ]
+    },
+    "monochrome": {
+      "width": 877,
+      "height": 511,
+      "counts": {
+        "redOpaque": 0,
+        "redAlpha153": 0,
+        "greenOpaque": 0,
+        "greenAny": 0,
+        "trueColorBlueAny": 0,
+        "trueColorBlueRange": 1160,
+        "blackOpaque": 1158,
+        "blackAlpha153": 68817,
+        "grayRedOpaque": 0,
+        "grayRedAlpha153": 0,
+        "grayGreenOpaque": 0,
+        "grayGreenAny": 0
+      },
+      "topColors": [
+        {
+          "rgba": "0,0,0,153",
+          "count": 68817
+        },
+        {
+          "rgba": "0,0,0,64",
+          "count": 1158
+        },
+        {
+          "rgba": "0,0,0,255",
+          "count": 1158
+        },
+        {
+          "rgba": "9,100,220,191",
+          "count": 579
+        },
+        {
+          "rgba": "8,100,219,64",
+          "count": 579
+        },
+        {
+          "rgba": "0,0,0,191",
+          "count": 579
+        },
+        {
+          "rgba": "0,0,0,114",
+          "count": 339
+        },
+        {
+          "rgba": "0,0,0,77",
+          "count": 339
+        },
+        {
+          "rgba": "0,0,0,132",
+          "count": 203
+        },
+        {
+          "rgba": "0,0,0,121",
+          "count": 203
+        },
+        {
+          "rgba": "0,98,235,13",
+          "count": 2
+        },
+        {
+          "rgba": "0,0,0,13",
+          "count": 2
+        }
+      ]
+    }
+  },
+  "outputs": {
+    "F-103-browser-color-no-lineweights.svg": {
+      "bytes": 1594,
+      "sha256": "748a592479f11675759a7ee90d767f1a34984be2fe36526f20e0d5797471f491"
+    },
+    "F-103-browser-color-no-lineweights.pdf": {
+      "bytes": 1030,
+      "sha256": "4ae289169a72a018f1a905604cb6d9f5767c38028c39a75946a5c65681d3ac7e"
+    },
+    "F-103-browser-grayscale.svg": {
+      "bytes": 1602,
+      "sha256": "894d55a00d21c03bb444b0a139b8e0f29af47f74e4e842be63b7dfcee1dddd45"
+    },
+    "F-103-browser-grayscale.pdf": {
+      "bytes": 1249,
+      "sha256": "6036ec3c30b29198890ab75a1a484116f2a945ca8a20841add05d56558e6c5bf"
+    },
+    "F-103-browser-color-alpha.svg": {
+      "bytes": 1598,
+      "sha256": "5ad3d2409e3257404e9362f27dfc6cf1da1cf6e35a8409ca5fbfc7fafef99854"
+    },
+    "F-103-browser-color-alpha.pdf": {
+      "bytes": 1122,
+      "sha256": "95a0aa957101352c83f61a6f04b1c1f8610b40ace0d8e2db6ac4abbe40c2216d"
+    },
+    "F-103-browser-monochrome.svg": {
+      "bytes": 1603,
+      "sha256": "af31ad33a595137ef7cd390ab6e9bc7160e7f56a921365820a8559673b0f29a2"
+    },
+    "F-103-browser-monochrome.pdf": {
+      "bytes": 1122,
+      "sha256": "84dc5ce85de138a78298e5b9dfc708f6cd7a08f930ebfe73067fc4486509e010"
+    },
+    "F-103-browser-plot-style.kdraw": {
+      "bytes": 2845,
+      "sha256": "5e6a553f4ca6d647fe1f302ac56be72f450b12ad64eb47a9e37565ef5099ece1"
+    }
+  },
+  "operators": {
+    "colorNoLineweight": {
+      "version": "1.4",
+      "pages": 1,
+      "eof": true,
+      "red": true,
+      "green": true,
+      "black": false,
+      "grayRed": false,
+      "grayGreen": false,
+      "trueColorBlue": true,
+      "fullLineweight": false,
+      "hairline": true,
+      "alpha60": false,
+      "solidFill": true
+    },
+    "grayscale": {
+      "version": "1.4",
+      "pages": 1,
+      "eof": true,
+      "red": false,
+      "green": false,
+      "black": false,
+      "grayRed": true,
+      "grayGreen": true,
+      "trueColorBlue": true,
+      "fullLineweight": true,
+      "hairline": true,
+      "alpha60": true,
+      "solidFill": true
+    },
+    "colorAlpha": {
+      "version": "1.4",
+      "pages": 1,
+      "eof": true,
+      "red": true,
+      "green": true,
+      "black": false,
+      "grayRed": false,
+      "grayGreen": false,
+      "trueColorBlue": true,
+      "fullLineweight": true,
+      "hairline": true,
+      "alpha60": true,
+      "solidFill": true
+    },
+    "monochrome": {
+      "version": "1.4",
+      "pages": 1,
+      "eof": true,
+      "red": false,
+      "green": false,
+      "black": true,
+      "grayRed": false,
+      "grayGreen": false,
+      "trueColorBlue": true,
+      "fullLineweight": true,
+      "hairline": true,
+      "alpha60": true,
+      "solidFill": true
+    }
+  },
+  "operations": [
+    {
+      "opId": "7cdb349d-4594-4958-a303-60e30d40a5c0",
+      "baseRevision": 0,
+      "commandId": "PAGESETUP",
+      "args": {
+        "layoutId": "layout-1",
+        "setup": {
+          "mediaName": "ISO_A4",
+          "orientation": "landscape",
+          "plotArea": {
+            "kind": "layout"
+          },
+          "plotScale": {
+            "mode": "custom",
+            "paperUnits": 1,
+            "drawingUnits": 1
+          },
+          "centerPlot": false,
+          "plotOriginMm": {
+            "x": 0,
+            "y": 0
+          },
+          "plotStyle": {
+            "profile": "color",
+            "plotLineweights": false,
+            "plotTransparency": false
+          },
+          "displayPlotStyles": true
+        }
+      },
+      "targetHandles": [],
+      "resultHandles": []
+    },
+    {
+      "opId": "170d29f2-0b22-4390-a455-b6da7ea0d790",
+      "baseRevision": 1,
+      "commandId": "PAGESETUP",
+      "args": {
+        "layoutId": "layout-1",
+        "setup": {
+          "mediaName": "ISO_A4",
+          "orientation": "landscape",
+          "plotArea": {
+            "kind": "layout"
+          },
+          "plotScale": {
+            "mode": "custom",
+            "paperUnits": 1,
+            "drawingUnits": 1
+          },
+          "centerPlot": false,
+          "plotOriginMm": {
+            "x": 0,
+            "y": 0
+          },
+          "plotStyle": {
+            "profile": "grayscale",
+            "plotLineweights": true,
+            "plotTransparency": true
+          },
+          "displayPlotStyles": true
+        }
+      },
+      "targetHandles": [],
+      "resultHandles": []
+    },
+    {
+      "opId": "594dcc0b-aecd-4d20-8a1c-be8af62f8d0d",
+      "baseRevision": 2,
+      "commandId": "PAGESETUP",
+      "args": {
+        "layoutId": "layout-1",
+        "setup": {
+          "mediaName": "ISO_A4",
+          "orientation": "landscape",
+          "plotArea": {
+            "kind": "layout"
+          },
+          "plotScale": {
+            "mode": "custom",
+            "paperUnits": 1,
+            "drawingUnits": 1
+          },
+          "centerPlot": false,
+          "plotOriginMm": {
+            "x": 0,
+            "y": 0
+          },
+          "plotStyle": {
+            "profile": "color",
+            "plotLineweights": true,
+            "plotTransparency": true
+          },
+          "displayPlotStyles": true
+        }
+      },
+      "targetHandles": [],
+      "resultHandles": []
+    },
+    {
+      "opId": "594dcc0b-aecd-4d20-8a1c-be8af62f8d0d:undo:1",
+      "baseRevision": 3,
+      "commandId": "UNDO",
+      "args": {
+        "originalOpId": "594dcc0b-aecd-4d20-8a1c-be8af62f8d0d"
+      },
+      "targetHandles": [],
+      "resultHandles": []
+    },
+    {
+      "opId": "594dcc0b-aecd-4d20-8a1c-be8af62f8d0d:redo:2",
+      "baseRevision": 4,
+      "commandId": "PAGESETUP",
+      "args": {
+        "layoutId": "layout-1",
+        "setup": {
+          "mediaName": "ISO_A4",
+          "orientation": "landscape",
+          "plotArea": {
+            "kind": "layout"
+          },
+          "plotScale": {
+            "mode": "custom",
+            "paperUnits": 1,
+            "drawingUnits": 1
+          },
+          "centerPlot": false,
+          "plotOriginMm": {
+            "x": 0,
+            "y": 0
+          },
+          "plotStyle": {
+            "profile": "color",
+            "plotLineweights": true,
+            "plotTransparency": true
+          },
+          "displayPlotStyles": true
+        }
+      },
+      "targetHandles": [],
+      "resultHandles": []
+    },
+    {
+      "opId": "7d662806-b61c-449e-8954-2c17431e44c2",
+      "baseRevision": 5,
+      "commandId": "PAGESETUP",
+      "args": {
+        "layoutId": "layout-1",
+        "setup": {
+          "mediaName": "ISO_A4",
+          "orientation": "landscape",
+          "plotArea": {
+            "kind": "layout"
+          },
+          "plotScale": {
+            "mode": "custom",
+            "paperUnits": 1,
+            "drawingUnits": 1
+          },
+          "centerPlot": false,
+          "plotOriginMm": {
+            "x": 0,
+            "y": 0
+          },
+          "plotStyle": {
+            "profile": "monochrome",
+            "plotLineweights": true,
+            "plotTransparency": true
+          },
+          "displayPlotStyles": true
+        }
+      },
+      "targetHandles": [],
+      "resultHandles": []
+    }
+  ],
+  "finalLayout": {
+    "id": "layout-1",
+    "name": "F103 PLOT STYLE",
+    "kind": "paper",
+    "paper": {
+      "widthMm": 297,
+      "heightMm": 210,
+      "marginsMm": {
+        "top": 10,
+        "right": 10,
+        "bottom": 10,
+        "left": 10
+      }
+    },
+    "pageSetup": {
+      "mediaName": "ISO_A4",
+      "orientation": "landscape",
+      "plotArea": {
+        "kind": "layout"
+      },
+      "plotScale": {
+        "mode": "custom",
+        "paperUnits": 1,
+        "drawingUnits": 1
+      },
+      "centerPlot": false,
+      "plotOriginMm": {
+        "x": 0,
+        "y": 0
+      },
+      "plotStyle": {
+        "profile": "monochrome",
+        "plotLineweights": true,
+        "plotTransparency": true
+      },
+      "displayPlotStyles": true
+    },
+    "viewports": [
+      {
+        "id": "viewport-f103",
+        "center": {
+          "x": 148.5,
+          "y": 105
+        },
+        "width": 257,
+        "height": 150,
+        "viewCenter": {
+          "x": 105,
+          "y": 80
+        },
+        "viewHeight": 150,
+        "twistAngleRad": 0,
+        "locked": true
+      }
+    ],
+    "entities": []
+  },
+  "documentRevision": 6,
+  "consoleErrors": []
+}

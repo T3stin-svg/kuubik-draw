@@ -3,8 +3,8 @@
   "rowId": "F-102",
   "source": "production cad-core PAGESETUP transaction with AutoCAD viewport-coordinate persistence, cad-print physical SVG/PDF and independent readers",
   "sourceSha256": {
-    "runner": "0a61bf5dffb0bc84e8e423a5386fa811687779449473ca05873a73618c2a04b2",
-    "browserEvidence": "c3f0ce59aa35074c46261cb109ff00e78acdd36d05c50eb21a2a22d3a390e507"
+    "runner": "2354b1588e1c2dc82e9874e0c0f8debf7fa785de9e76e824ab7e79da245046ff",
+    "browserEvidence": "3672397e92890793332c02b62dce34765a523b6e222ecd177554c741d3993c66"
   },
   "window": {
     "layout": {
@@ -129,14 +129,14 @@
   },
   "outputs": {
     "svg": {
-      "bytes": 792,
-      "sha256": "d461bf330f4bbc6532d96a042644219de540d3f0884e73e6d9f52e37a549799c",
+      "bytes": 1154,
+      "sha256": "d58c43d961feeeddf962c44c891fc3c230fdf4c98b1b4b0eea30c793ef376e9b",
       "source": "10,20,180,250",
       "destination": "10,10,90,125"
     },
     "pdf": {
-      "bytes": 707,
-      "sha256": "c6ab88f71605a9c6a0e86788f0fe65563e709befae6895668da202bc7b09821f",
+      "bytes": 875,
+      "sha256": "55c3866287240428b0330a9447bc0f8902f012274e389ee4e9eb173ed2516cbd",
       "summary": {
         "version": "1.4",
         "mediaBoxPt": {
@@ -258,7 +258,13 @@
         "plotOriginMm": {
           "x": 0,
           "y": 0
-        }
+        },
+        "plotStyle": {
+          "profile": "monochrome",
+          "plotLineweights": true,
+          "plotTransparency": true
+        },
+        "displayPlotStyles": false
       },
       "viewports": [
         {
@@ -703,14 +709,14 @@
       "scaleFactor": 0.23907314703019805
     },
     "svg": {
-      "bytes": 910,
-      "sha256": "5dc077eb5383b72a7c3f40c36c95cd853cf92ce4f2aa62331ca825a37254f0ed",
+      "bytes": 1272,
+      "sha256": "6615899d81a5efda6dc8e5311575911b8a323686f6a0a2bb01d421ea922c630f",
       "source": "-292.418553,-40.150717,794.735847,377.499527",
       "destination": "10,103.3750000388494,190,90.24999992230121"
     },
     "pdf": {
-      "bytes": 717,
-      "sha256": "6bebd6a75739c33265e961d97e86561612ec9598bda9d307838c51f6e3089cc8",
+      "bytes": 897,
+      "sha256": "f6931e346a31ac11980d90bc42065d748464975450db4d84827e182c98d8a826",
       "summary": {
         "pages": 1,
         "eof": true,

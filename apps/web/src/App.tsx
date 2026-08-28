@@ -3,7 +3,7 @@ import { ISO_PAPER_MEDIA, STANDARD_VIEWPORT_SCALE_DENOMINATORS, allocateEntityHa
 import { exportDxf } from "@kuubik/cad-dxf";
 import { exportLayoutSvg, exportLayoutVectorPdf } from "@kuubik/cad-print";
 import { CadCanvasRenderer, pannedViewportWorldCenter, viewportScreenToWorld, type Viewport2D } from "@kuubik/cad-renderer";
-import type { CadEntity, CadLayout, CadPageSetup, CadPaperRect, CadViewport, KDrawDocumentV1 } from "@kuubik/cad-schema";
+import type { CadEntity, CadLayout, CadPageSetup, CadPaperRect, CadPlotStyle, CadViewport, KDrawDocumentV1 } from "@kuubik/cad-schema";
 import { KDrawIndexedDb, StorageRevisionConflictError } from "./indexed-db.js";
 import "./style.css";
 
@@ -85,6 +85,7 @@ function PaperViewportCanvas({
   active,
   modelContext,
   navigationEnabled,
+  plotStyle,
   onSelect,
   onEnterModel,
   onZoom,
@@ -96,6 +97,7 @@ function PaperViewportCanvas({
   active: boolean;
   modelContext: boolean;
   navigationEnabled: boolean;
+  plotStyle: CadPlotStyle | undefined;
   onSelect: () => void;
   onEnterModel: () => void;
   onZoom: (anchorModel: { x: number; y: number }, scaleFactor: number) => void;
@@ -126,13 +128,16 @@ function PaperViewportCanvas({
       const devicePixelRatio = window.devicePixelRatio || 1;
       element.width = Math.max(1, Math.round(widthPx * devicePixelRatio));
       element.height = Math.max(1, Math.round(heightPx * devicePixelRatio));
-      renderer.render(context, viewportRender2D(renderViewport, widthPx, heightPx, devicePixelRatio), document.layers);
+      renderer.render(context, viewportRender2D(renderViewport, widthPx, heightPx, devicePixelRatio), document.layers, null, [], plotStyle ? {
+        plotStyle,
+        pixelsPerMillimeter: widthPx / viewport.width,
+      } : {});
     };
     render();
     const observer = new ResizeObserver(render);
     observer.observe(element);
     return () => observer.disconnect();
-  }, [document.blocks, document.entities, document.layers, renderViewport]);
+  }, [document.blocks, document.entities, document.layers, plotStyle, renderViewport, viewport.width]);
 
   useEffect(() => {
     const element = container.current;
@@ -248,6 +253,10 @@ export function App() {
   const [plotWindowYInput, setPlotWindowYInput] = useState("20");
   const [plotWindowWidthInput, setPlotWindowWidthInput] = useState("180");
   const [plotWindowHeightInput, setPlotWindowHeightInput] = useState("250");
+  const [plotProfileInput, setPlotProfileInput] = useState<CadPlotStyle["profile"]>("monochrome");
+  const [plotLineweightsInput, setPlotLineweightsInput] = useState(true);
+  const [plotTransparencyInput, setPlotTransparencyInput] = useState(true);
+  const [displayPlotStylesInput, setDisplayPlotStylesInput] = useState(false);
   const [layoutRenameInput, setLayoutRenameInput] = useState("");
   const [firstCornerInput, setFirstCornerInput] = useState("100,200");
   const [otherCornerInput, setOtherCornerInput] = useState("600,900");
@@ -466,6 +475,10 @@ export function App() {
     setCenterPlotInput(activePageSetup.centerPlot);
     setPlotOriginXInput(String(activePageSetup.plotOriginMm.x));
     setPlotOriginYInput(String(activePageSetup.plotOriginMm.y));
+    setPlotProfileInput(activePageSetup.plotStyle?.profile ?? "monochrome");
+    setPlotLineweightsInput(activePageSetup.plotStyle?.plotLineweights ?? true);
+    setPlotTransparencyInput(activePageSetup.plotStyle?.plotTransparency ?? true);
+    setDisplayPlotStylesInput(activePageSetup.displayPlotStyles === true);
     const window = activePageSetup.plotArea.kind === "window" ? activePageSetup.plotArea.window : {
       x: activePaper.marginsMm.left,
       y: activePaper.marginsMm.bottom,
@@ -503,13 +516,16 @@ export function App() {
       }, document.layers, activeLayout.kind === "model" ? [...(movePreview?.entities ?? []), ...(copyPreview?.entities ?? []), ...(rotatePreview?.entities ?? []), ...(scalePreview?.entities ?? []), ...(mirrorPreview?.entities ?? []), ...(offsetPreview?.entities ?? [])] : [], [
         ...(mirrorPreview?.eraseSource ? mirrorPreview.sourceHandles : []),
         ...(offsetPreview?.eraseSource ? offsetPreview.sourceHandles : []),
-      ]);
+      ], activePaper && activePageSetup?.displayPlotStyles ? {
+        plotStyle: activePageSetup.plotStyle ?? { profile: "monochrome", plotLineweights: true, plotTransparency: true },
+        pixelsPerMillimeter: widthPx / activePaper.widthMm,
+      } : {});
     };
     render();
     const observer = new ResizeObserver(render);
     observer.observe(element);
     return () => observer.disconnect();
-  }, [activeLayout, activePaper, copyPreview, document, mirrorPreview, movePreview, offsetPreview, rotatePreview, scalePreview]);
+  }, [activeLayout, activePageSetup, activePaper, copyPreview, document, mirrorPreview, movePreview, offsetPreview, rotatePreview, scalePreview]);
 
   async function recoverFromStorageConflict(error: unknown): Promise<void> {
     if (!(error instanceof StorageRevisionConflictError)) throw error;
@@ -1313,11 +1329,13 @@ export function App() {
         plotScale: plotScaleModeInput === "fit" ? { mode: "fit" } : { mode: "custom", paperUnits: 1, drawingUnits: denominator },
         centerPlot: centerPlotInput,
         plotOriginMm: { x: pageNumber(plotOriginXInput, "Plot offset X"), y: pageNumber(plotOriginYInput, "Plot offset Y") },
+        plotStyle: { profile: plotProfileInput, plotLineweights: plotLineweightsInput, plotTransparency: plotTransparencyInput },
+        displayPlotStyles: displayPlotStylesInput,
       };
       const result = setPaperLayoutPageSetup(document, activeLayout.id, setup);
       await commitChanges("PAGESETUP", { layoutId: activeLayout.id, setup }, result.changes, []);
       setModelViewportId(null);
-      setStatus(`${activeLayout.name}: ${pageMediaInput} ${pageOrientationInput}, ${plotAreaInput}, ${plotScaleModeInput === "fit" ? "Fit" : `1:${denominator}`}`);
+      setStatus(`${activeLayout.name}: ${pageMediaInput} ${pageOrientationInput}, ${plotAreaInput}, ${plotScaleModeInput === "fit" ? "Fit" : `1:${denominator}`}, ${plotProfileInput}, LW ${plotLineweightsInput ? "ON" : "OFF"}, transparency ${plotTransparencyInput ? "ON" : "OFF"}, preview ${displayPlotStylesInput ? "ON" : "OFF"}`);
     } catch (error) {
       if (error instanceof StorageRevisionConflictError) await recoverFromStorageConflict(error);
       else if (error instanceof LayoutCommandError) setStatus(`PAGESETUP viga: ${error.message}`);
@@ -1611,6 +1629,10 @@ export function App() {
               data-page-orientation={activePageSetup?.orientation}
               data-plot-area={activePageSetup?.plotArea.kind}
               data-plot-scale={activePageSetup?.plotScale.mode === "fit" ? "fit" : activePageSetup ? String(activePageSetup.plotScale.drawingUnits / activePageSetup.plotScale.paperUnits) : ""}
+              data-plot-profile={activePageSetup?.plotStyle?.profile ?? "monochrome"}
+              data-plot-lineweights={(activePageSetup?.plotStyle?.plotLineweights ?? true) ? "true" : "false"}
+              data-plot-transparency={(activePageSetup?.plotStyle?.plotTransparency ?? true) ? "true" : "false"}
+              data-display-plot-styles={activePageSetup?.displayPlotStyles ? "true" : "false"}
               style={{ aspectRatio: `${activePaper.widthMm} / ${activePaper.heightMm}` }}
               onClick={() => {
                 if (modelViewportId !== null) setStatus("PAPER aktiivne");
@@ -1627,6 +1649,7 @@ export function App() {
                   active={viewport.id === selectedViewportId}
                   modelContext={viewport.id === modelViewportId}
                   navigationEnabled={viewport.id === modelViewportId && !viewport.locked}
+                  plotStyle={activePageSetup?.displayPlotStyles ? (activePageSetup.plotStyle ?? { profile: "monochrome", plotLineweights: true, plotTransparency: true }) : undefined}
                   onSelect={() => {
                     setSelectedViewportId(viewport.id);
                     if (modelViewportId !== viewport.id) setModelViewportId(null);
@@ -1672,6 +1695,10 @@ export function App() {
               data-plot-scale={activePageSetup?.plotScale.mode === "fit" ? "fit" : activePageSetup ? String(activePageSetup.plotScale.drawingUnits / activePageSetup.plotScale.paperUnits) : ""}
               data-center-plot={activePageSetup?.centerPlot ? "true" : "false"}
               data-plot-origin={activePageSetup ? `${activePageSetup.plotOriginMm.x},${activePageSetup.plotOriginMm.y}` : ""}
+              data-plot-profile={activePageSetup?.plotStyle?.profile ?? "monochrome"}
+              data-plot-lineweights={(activePageSetup?.plotStyle?.plotLineweights ?? true) ? "true" : "false"}
+              data-plot-transparency={(activePageSetup?.plotStyle?.plotTransparency ?? true) ? "true" : "false"}
+              data-display-plot-styles={activePageSetup?.displayPlotStyles ? "true" : "false"}
             >
               <select aria-label="Paper media" value={pageMediaInput} onChange={(event) => setPageMediaInput(event.target.value)}>
                 {ISO_PAPER_MEDIA.map((paper) => <option key={paper.mediaName} value={paper.mediaName}>{paper.mediaName.replace("ISO_", "")}</option>)}
@@ -1695,6 +1722,12 @@ export function App() {
               <label><input aria-label="Center plot" type="checkbox" disabled={plotAreaInput === "layout"} checked={centerPlotInput} onChange={(event) => setCenterPlotInput(event.target.checked)} />Center</label>
               <input aria-label="Plot offset X" inputMode="decimal" disabled={plotAreaInput === "layout" || centerPlotInput} value={plotOriginXInput} onChange={(event) => setPlotOriginXInput(event.target.value)} />
               <input aria-label="Plot offset Y" inputMode="decimal" disabled={plotAreaInput === "layout" || centerPlotInput} value={plotOriginYInput} onChange={(event) => setPlotOriginYInput(event.target.value)} />
+              <select aria-label="Plot profile" value={plotProfileInput} onChange={(event) => setPlotProfileInput(event.target.value as CadPlotStyle["profile"])}>
+                <option value="color">Color</option><option value="monochrome">Monochrome</option><option value="grayscale">Grayscale</option>
+              </select>
+              <label><input aria-label="Lineweights" type="checkbox" checked={plotLineweightsInput} onChange={(event) => setPlotLineweightsInput(event.target.checked)} />LW</label>
+              <label><input aria-label="Transparency" type="checkbox" checked={plotTransparencyInput} onChange={(event) => setPlotTransparencyInput(event.target.checked)} />Alpha</label>
+              <label><input aria-label="Display plot styles" type="checkbox" checked={displayPlotStylesInput} onChange={(event) => setDisplayPlotStylesInput(event.target.checked)} />View</label>
               {plotAreaInput === "window" && <>
                 <input aria-label="Plot window X" inputMode="decimal" value={plotWindowXInput} onChange={(event) => setPlotWindowXInput(event.target.value)} />
                 <input aria-label="Plot window Y" inputMode="decimal" value={plotWindowYInput} onChange={(event) => setPlotWindowYInput(event.target.value)} />

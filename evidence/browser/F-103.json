@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-103",
+  "kind": "browser",
+  "authority": "kuubik-draw-browser",
+  "status": "PASS",
+  "artifactSha256": "ed1e3ba76b54848b6be1079c878ac2f26c2a5ed5cc5f22d49038e603bddb05ac",
+  "observedAt": "2026-08-28T20:00:15.106Z",
+  "workflow": "Chromium at 1920x1080 proves source preview OFF, switches plot preview ON, runs Color, Grayscale and Monochrome states with reload and Undo/Redo, then reads final IndexedDB state.",
+  "result": "Canvas2D, SVG and PDF shared the resolver for ACI red/green, TrueColor blue explicit 0.00 mm, 0.70/0.35 mm weights and a 40% SOLID hatch. Independent pypdf/pdfplumber operators, Poppler pixels and KDRAW1 read-back proved OFF/ON preview, CTB semantics, width-zero output, 0.60 vector alpha, six atomic revisions and zero console/page errors.",
+  "test": "e2e/f103-plot-style.spec.ts",
+  "artifact": "evidence/artifacts/F-103-browser-readback.json"
+}
