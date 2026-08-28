@@ -69,10 +69,633 @@
         0,
         2000
       ]
+    },
+    "standardMatrix": {
+      "schemaVersion": 1,
+      "rowId": "F-016",
+      "benchmark": "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
+      "engine": "Autodesk AutoCAD 2024 desktop COM",
+      "engineVersion": "24.3s (LMS Tech)",
+      "workflow": "12 standard native entity families selected by layer; MOVE base 100,200 to destination 600,950; one-command UNDO",
+      "vector": [
+        500,
+        750
+      ],
+      "before": [
+        {
+          "family": "line",
+          "objectName": "AcDbLine",
+          "handle": "281",
+          "bounds": {
+            "min": [
+              0,
+              0
+            ],
+            "max": [
+              50,
+              0
+            ]
+          }
+        },
+        {
+          "family": "polyline",
+          "objectName": "AcDbPolyline",
+          "handle": "282",
+          "bounds": {
+            "min": [
+              100,
+              0
+            ],
+            "max": [
+              200,
+              25
+            ]
+          }
+        },
+        {
+          "family": "circle",
+          "objectName": "AcDbCircle",
+          "handle": "283",
+          "bounds": {
+            "min": [
+              275,
+              -25
+            ],
+            "max": [
+              325,
+              25
+            ]
+          }
+        },
+        {
+          "family": "arc",
+          "objectName": "AcDbArc",
+          "handle": "284",
+          "bounds": {
+            "min": [
+              500,
+              0
+            ],
+            "max": [
+              530,
+              30
+            ]
+          }
+        },
+        {
+          "family": "ellipse",
+          "objectName": "AcDbEllipse",
+          "handle": "285",
+          "bounds": {
+            "min": [
+              649.7506218943955,
+              -26.92582403567252
+            ],
+            "max": [
+              750.2493781056045,
+              26.92582403567252
+            ]
+          }
+        },
+        {
+          "family": "spline",
+          "objectName": "AcDbSpline",
+          "handle": "286",
+          "bounds": {
+            "min": [
+              900,
+              0
+            ],
+            "max": [
+              1000,
+              75.75000002
+            ]
+          }
+        },
+        {
+          "family": "text",
+          "objectName": "AcDbText",
+          "handle": "287",
+          "bounds": {
+            "min": [
+              1100,
+              -0.34106412005457026
+            ],
+            "max": [
+              1242.8512960436562,
+              20.081855388813096
+            ]
+          }
+        },
+        {
+          "family": "mtext",
+          "objectName": "AcDbMText",
+          "handle": "288",
+          "bounds": {
+            "min": [
+              1250,
+              -2.5528649386084585
+            ],
+            "max": [
+              1450,
+              0
+            ]
+          }
+        },
+        {
+          "family": "leader",
+          "objectName": "AcDbLeader",
+          "handle": "28A",
+          "bounds": {
+            "min": [
+              1400,
+              0
+            ],
+            "max": [
+              1499.375,
+              50
+            ]
+          }
+        },
+        {
+          "family": "dimension",
+          "objectName": "AcDbAlignedDimension",
+          "handle": "28C",
+          "bounds": {
+            "min": [
+              1550,
+              0
+            ],
+            "max": [
+              1650,
+              53.177864938608465
+            ]
+          }
+        },
+        {
+          "family": "hatch",
+          "objectName": "AcDbHatch",
+          "handle": "2C0",
+          "bounds": {
+            "min": [
+              1700,
+              0
+            ],
+            "max": [
+              1800,
+              100
+            ]
+          }
+        },
+        {
+          "family": "blockRef",
+          "objectName": "AcDbBlockReference",
+          "handle": "2C5",
+          "bounds": {
+            "min": [
+              1900,
+              0
+            ],
+            "max": [
+              2045.3368632565966,
+              37.11059388817844
+            ]
+          }
+        }
+      ],
+      "after": [
+        {
+          "family": "line",
+          "objectName": "AcDbLine",
+          "handle": "281",
+          "bounds": {
+            "min": [
+              500,
+              750
+            ],
+            "max": [
+              550,
+              750
+            ]
+          }
+        },
+        {
+          "family": "polyline",
+          "objectName": "AcDbPolyline",
+          "handle": "282",
+          "bounds": {
+            "min": [
+              600,
+              750
+            ],
+            "max": [
+              700,
+              775
+            ]
+          }
+        },
+        {
+          "family": "circle",
+          "objectName": "AcDbCircle",
+          "handle": "283",
+          "bounds": {
+            "min": [
+              775,
+              725
+            ],
+            "max": [
+              825,
+              775
+            ]
+          }
+        },
+        {
+          "family": "arc",
+          "objectName": "AcDbArc",
+          "handle": "284",
+          "bounds": {
+            "min": [
+              1000,
+              750
+            ],
+            "max": [
+              1030,
+              780
+            ]
+          }
+        },
+        {
+          "family": "ellipse",
+          "objectName": "AcDbEllipse",
+          "handle": "285",
+          "bounds": {
+            "min": [
+              1149.7506218943956,
+              723.0741759643274
+            ],
+            "max": [
+              1250.2493781056044,
+              776.9258240356726
+            ]
+          }
+        },
+        {
+          "family": "spline",
+          "objectName": "AcDbSpline",
+          "handle": "286",
+          "bounds": {
+            "min": [
+              1400,
+              750
+            ],
+            "max": [
+              1500,
+              825.75000002
+            ]
+          }
+        },
+        {
+          "family": "text",
+          "objectName": "AcDbText",
+          "handle": "287",
+          "bounds": {
+            "min": [
+              1600,
+              749.6589358799454
+            ],
+            "max": [
+              1742.8512960436562,
+              770.0818553888131
+            ]
+          }
+        },
+        {
+          "family": "mtext",
+          "objectName": "AcDbMText",
+          "handle": "288",
+          "bounds": {
+            "min": [
+              1750,
+              747.4471350613916
+            ],
+            "max": [
+              1950,
+              750
+            ]
+          }
+        },
+        {
+          "family": "leader",
+          "objectName": "AcDbLeader",
+          "handle": "28A",
+          "bounds": {
+            "min": [
+              1900,
+              750
+            ],
+            "max": [
+              1999.375,
+              800
+            ]
+          }
+        },
+        {
+          "family": "dimension",
+          "objectName": "AcDbAlignedDimension",
+          "handle": "28C",
+          "bounds": {
+            "min": [
+              2050,
+              750
+            ],
+            "max": [
+              2150,
+              803.1778649386085
+            ]
+          }
+        },
+        {
+          "family": "hatch",
+          "objectName": "AcDbHatch",
+          "handle": "2C0",
+          "bounds": {
+            "min": [
+              2200,
+              750
+            ],
+            "max": [
+              2300,
+              850
+            ]
+          }
+        },
+        {
+          "family": "blockRef",
+          "objectName": "AcDbBlockReference",
+          "handle": "2C5",
+          "bounds": {
+            "min": [
+              2400,
+              750
+            ],
+            "max": [
+              2545.3368632565966,
+              787.1105938881784
+            ]
+          }
+        }
+      ],
+      "afterUndo": [
+        {
+          "family": "line",
+          "objectName": "AcDbLine",
+          "handle": "281",
+          "bounds": {
+            "min": [
+              0,
+              0
+            ],
+            "max": [
+              50,
+              0
+            ]
+          }
+        },
+        {
+          "family": "polyline",
+          "objectName": "AcDbPolyline",
+          "handle": "282",
+          "bounds": {
+            "min": [
+              100,
+              0
+            ],
+            "max": [
+              200,
+              25
+            ]
+          }
+        },
+        {
+          "family": "circle",
+          "objectName": "AcDbCircle",
+          "handle": "283",
+          "bounds": {
+            "min": [
+              275,
+              -25
+            ],
+            "max": [
+              325,
+              25
+            ]
+          }
+        },
+        {
+          "family": "arc",
+          "objectName": "AcDbArc",
+          "handle": "284",
+          "bounds": {
+            "min": [
+              500,
+              0
+            ],
+            "max": [
+              530,
+              30
+            ]
+          }
+        },
+        {
+          "family": "ellipse",
+          "objectName": "AcDbEllipse",
+          "handle": "285",
+          "bounds": {
+            "min": [
+              649.7506218943955,
+              -26.92582403567252
+            ],
+            "max": [
+              750.2493781056045,
+              26.92582403567252
+            ]
+          }
+        },
+        {
+          "family": "spline",
+          "objectName": "AcDbSpline",
+          "handle": "286",
+          "bounds": {
+            "min": [
+              900,
+              0
+            ],
+            "max": [
+              1000,
+              75.75000002
+            ]
+          }
+        },
+        {
+          "family": "text",
+          "objectName": "AcDbText",
+          "handle": "287",
+          "bounds": {
+            "min": [
+              1100,
+              -0.34106412005457026
+            ],
+            "max": [
+              1242.8512960436562,
+              20.081855388813096
+            ]
+          }
+        },
+        {
+          "family": "mtext",
+          "objectName": "AcDbMText",
+          "handle": "288",
+          "bounds": {
+            "min": [
+              1250,
+              -2.5528649386084585
+            ],
+            "max": [
+              1450,
+              0
+            ]
+          }
+        },
+        {
+          "family": "leader",
+          "objectName": "AcDbLeader",
+          "handle": "28A",
+          "bounds": {
+            "min": [
+              1400,
+              0
+            ],
+            "max": [
+              1499.375,
+              50
+            ]
+          }
+        },
+        {
+          "family": "dimension",
+          "objectName": "AcDbAlignedDimension",
+          "handle": "28C",
+          "bounds": {
+            "min": [
+              1550,
+              0
+            ],
+            "max": [
+              1650,
+              53.177864938608465
+            ]
+          }
+        },
+        {
+          "family": "hatch",
+          "objectName": "AcDbHatch",
+          "handle": "2C0",
+          "bounds": {
+            "min": [
+              1700,
+              0
+            ],
+            "max": [
+              1800,
+              100
+            ]
+          }
+        },
+        {
+          "family": "blockRef",
+          "objectName": "AcDbBlockReference",
+          "handle": "2C5",
+          "bounds": {
+            "min": [
+              1900,
+              0
+            ],
+            "max": [
+              2045.3368632565966,
+              37.11059388817844
+            ]
+          }
+        }
+      ],
+      "checks": [
+        {
+          "family": "line",
+          "translated": true,
+          "restored": true
+        },
+        {
+          "family": "polyline",
+          "translated": true,
+          "restored": true
+        },
+        {
+          "family": "circle",
+          "translated": true,
+          "restored": true
+        },
+        {
+          "family": "arc",
+          "translated": true,
+          "restored": true
+        },
+        {
+          "family": "ellipse",
+          "translated": true,
+          "restored": true
+        },
+        {
+          "family": "spline",
+          "translated": true,
+          "restored": true
+        },
+        {
+          "family": "text",
+          "translated": true,
+          "restored": true
+        },
+        {
+          "family": "mtext",
+          "translated": true,
+          "restored": true
+        },
+        {
+          "family": "leader",
+          "translated": true,
+          "restored": true
+        },
+        {
+          "family": "dimension",
+          "translated": true,
+          "restored": true
+        },
+        {
+          "family": "hatch",
+          "translated": true,
+          "restored": true
+        },
+        {
+          "family": "blockRef",
+          "translated": true,
+          "restored": true
+        }
+      ],
+      "cmdNamesAfter": "",
+      "status": "PASS"
     }
   },
   "fixtureSha256": "c5dbe35f3ea8fa8f26dee00edace96f0de5f033ec128e8e90ed34ed46d2d1bf6",
   "scriptSha256": "2a49c20a5ad4fb1009dbfcfc8c5fa627a94dfd2f0a729d298cfb3e6e60ff466b",
-  "observedAt": "2026-08-28T10:59:10.364Z",
+  "matrixScriptSha256": "021ddabc811f27f2241286f84326c61e658c06bce41038c1139808fb97ae2ac7",
+  "observedAt": "2026-08-28T11:23:02.075Z",
   "status": "PASS"
 }

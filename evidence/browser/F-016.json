@@ -4,10 +4,10 @@
   "kind": "browser",
   "authority": "kuubik-draw-browser",
   "status": "PASS",
-  "artifactSha256": "5d58b374a691059da6a0939d4c9595ef86738bcf01cff0925cd3c1a228a3823c",
-  "observedAt": "2026-08-28T10:59:09.650Z",
-  "workflow": "Chromium /d/local exercises LINE+closed-LWPOLYLINE preselection with a non-mutating two-entity preview and exact +500,+750 MOVE, one-step UNDO/reload, then postselection with @100,50 and a mixed editable+locked selection, plus a zero-delta no-revision workflow",
-  "result": "Three live browser workflows preserved exact handles, LINE endpoints and LWPOLYLINE vertices across production DXF downloads and IndexedDB reload; locked handle 12 stayed fixed, the editable line moved, zero delta kept revision 1, and no console/page errors occurred.",
+  "artifactSha256": "6c381fb8154161ea83d6138b2a13696dce226858b1b1340a2767dc5a477eb359",
+  "observedAt": "2026-08-28T11:28:51.438Z",
+  "workflow": "Chromium /d/local runs preselection, postselection, @relative input, preview, locked-layer and zero-delta flows, then seeds the full 14-object IndexedDB fixture, moves all eligible standard families by +500,+750, reads revision 1, performs one UNDO and reloads revision 2",
+  "result": "Twelve standard entity families matched their exact expected coordinates and preserved handles/properties through real UI commit, persistence and one-step UNDO; the locked entity and opaque proxy stayed unchanged with truthful rejection reasons, and no console/page errors occurred.",
   "test": "e2e/f016-move.spec.ts",
   "artifact": "evidence/artifacts/F-016-browser-readback.json"
 }

@@ -4,9 +4,9 @@
   "kind": "autocad",
   "authority": "autocad-2024.1.2-live",
   "status": "PASS",
-  "artifactSha256": "5bf44dfff0e62ada8de1f08d860a0478a0ccf22ddb70ea6305929ac1334f4d40",
-  "observedAt": "2026-08-28T10:59:10.364Z",
-  "workflow": "AutoCAD 24.3 scratch document: MOVE one LINE and one closed LWPOLYLINE from base 100,200 to destination 600,950; one-command U; then MOVE the same editable objects with a locked-layer LINE by 100,50",
-  "result": "Both editable entity families moved by exact vector +500,+750, U restored exact endpoints/vertices, and the mixed workflow moved only editable entities while the locked-layer line remained at y=2000.",
+  "artifactSha256": "feca2ba30a7fe8b8dc0e3d7cb2801514227c24f6dc6cc96b9be408b77b79c0ac",
+  "observedAt": "2026-08-28T11:23:02.075Z",
+  "workflow": "AutoCAD 24.3 scratch documents: Core Console verifies LINE/LWPOLYLINE MOVE, one-command U and mixed locked-layer behavior; desktop COM drives the real MOVE command over 12 standard native families from base 100,200 to destination 600,950 and then one U",
+  "result": "LINE, LWPOLYLINE, CIRCLE, ARC, ELLIPSE, SPLINE, TEXT, MTEXT, LEADER, aligned DIMENSION, HATCH and BLOCK REFERENCE retained their handles, shifted exact bounding boxes by +500,+750 and were all restored by one U; the locked-layer line stayed fixed.",
   "artifact": "evidence/artifacts/F-016-autocad-readback.json"
 }

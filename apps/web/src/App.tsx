@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { CadCommandInputError, CadSession, createEmptyDocument, parseCartesianPoint, parseMoveDestination, resolveCadCommand, type CadChange } from "@kuubik/cad-core";
+import { CadCommandInputError, CadSession, createEmptyDocument, parseCartesianPoint, parseMoveDestination, resolveCadCommand, type CadChange, type MoveRejectedTarget } from "@kuubik/cad-core";
 import { exportDxf } from "@kuubik/cad-dxf";
 import { CadCanvasRenderer } from "@kuubik/cad-renderer";
 import type { CadEntity, KDrawDocumentV1 } from "@kuubik/cad-schema";
@@ -21,6 +21,7 @@ export function App() {
   const [moveBaseInput, setMoveBaseInput] = useState("100,200");
   const [moveDestinationInput, setMoveDestinationInput] = useState("600,950");
   const [moveAwaitingSelection, setMoveAwaitingSelection] = useState(false);
+  const [lastMoveRejected, setLastMoveRejected] = useState<MoveRejectedTarget[]>([]);
   const activeLayer = document.layers.find((layer) => layer.id === document.currentLayerId)!;
   const movePreview = useMemo((): { entities: CadEntity[]; delta: { x: number; y: number } } | null => {
     if (selectedHandles.length === 0) return null;
@@ -174,6 +175,7 @@ export function App() {
       const basePoint = parseCartesianPoint(moveBaseInput);
       const destinationPoint = parseMoveDestination(moveDestinationInput, basePoint);
       const result = command.execute(document, { targetHandles: selectedHandles, basePoint, destinationPoint });
+      setLastMoveRejected(result.rejected);
       setMoveAwaitingSelection(false);
       if (result.changes.length === 0) {
         const suffix = result.rejected.length ? `; ${result.rejected.length} lukus, puudu või toetamata` : "";
@@ -324,6 +326,11 @@ export function App() {
         <button type="button" disabled>TRIM järgmine</button>
         <span>{document.entities.length} objekti · {selectedHandles.length} valitud · {activeLayer.name}{activeLayer.locked ? " 🔒" : ""}</span>
         {movePreview && <span data-testid="move-preview">MOVE eelvaade: {movePreview.entities.length} · Δ{movePreview.delta.x},{movePreview.delta.y}</span>}
+        {lastMoveRejected.length > 0 && (
+          <span data-testid="move-rejected" data-rejected={JSON.stringify(lastMoveRejected)}>
+            MOVE muutmata: {lastMoveRejected.map(({ handle, reason }) => `${handle} (${reason})`).join(", ")}
+          </span>
+        )}
       </section>
       <section className="drawing-area">
         <canvas ref={canvas} aria-label="Kuubik Draw joonestusala" />

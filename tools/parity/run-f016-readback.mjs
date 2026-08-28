@@ -3,11 +3,20 @@ import { createHash } from "node:crypto";
 import { mkdir, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import DxfParser from "dxf-parser";
-import { CadSession, createEmptyDocument, resolveCadCommand } from "../../packages/cad-core/dist/index.js";
+import { CadSession, createEmptyDocument, resolveCadCommand, serializeKDraw } from "../../packages/cad-core/dist/index.js";
 import { exportDxf } from "../../packages/cad-dxf/dist/index.js";
+import {
+  f016BasePoint,
+  f016DestinationPoint,
+  f016ExpectedCommittedEntities,
+  f016ExpectedMovedHandles,
+  f016ExpectedRejected,
+  f016StandardDocument,
+} from "../../parity/fixtures/f016-standard-fixture.mjs";
 
 const root = process.cwd();
 const dxfPath = resolve(root, "evidence/artifacts/F-016-kuubik.dxf");
+const kdrawPath = resolve(root, "evidence/artifacts/F-016-standard-matrix.kdraw");
 const readbackPath = resolve(root, "evidence/artifacts/F-016-independent-readback.json");
 const line = (handle, layerId, y) => ({ kind: "line", handle, layerId, start: { x: 0, y }, end: { x: 1000, y } });
 const browserLine = { kind: "line", handle: "10", layerId: "0", start: { x: 10, y: 10 }, end: { x: 180, y: 90 } };
@@ -54,10 +63,40 @@ const mixed = command.execute(mixedDocument, {
 const noOp = command.execute(mixedDocument, {
   targetHandles: ["20", "21"], basePoint: { x: 200, y: 300 }, destinationPoint: { x: 200, y: 300 },
 });
+
+// Full standard-object matrix: commit through cad-core, serialize through the production
+// .kdraw writer, then independently parse and verify the container envelope and checksum.
+const matrixSession = new CadSession(structuredClone(f016StandardDocument));
+const matrixMove = command.execute(matrixSession.document, {
+  targetHandles: f016StandardDocument.entities.map((entity) => entity.handle),
+  basePoint: f016BasePoint,
+  destinationPoint: f016DestinationPoint,
+});
+matrixSession.commit({
+  opId: "F-016-standard-matrix",
+  baseRevision: 0,
+  commandId: command.id,
+  args: { basePoint: f016BasePoint, destinationPoint: f016DestinationPoint },
+  targetHandles: matrixMove.movedHandles,
+  resultHandles: matrixMove.movedHandles,
+}, matrixMove.changes, "2026-08-28T00:00:02.000Z");
+const matrixCommitted = structuredClone(matrixSession.document);
+const kdrawBytes = await serializeKDraw(matrixCommitted, [], "2026-08-28T00:00:02.000Z");
+const kdrawText = new TextDecoder().decode(kdrawBytes);
+if (!kdrawText.startsWith("KDRAW1\n")) throw new Error("F-016 .kdraw magic mismatch.");
+const envelope = JSON.parse(kdrawText.slice("KDRAW1\n".length));
+const documentEntry = envelope.manifest?.entries?.find((entry) => entry.path === "document.json");
+const documentBytes = Buffer.from(envelope.files?.["document.json"] ?? "", "base64");
+const documentSha256 = createHash("sha256").update(documentBytes).digest("hex");
+const independentDocument = JSON.parse(documentBytes.toString("utf8"));
+const matrixUndo = matrixSession.undo("2026-08-28T00:00:03.000Z");
+const matrixRestored = structuredClone(matrixSession.document);
+
 const result = {
   schemaVersion: 1,
   rowId: "F-016",
   parser: "dxf-parser@1.1.2",
+  observedAt: new Date().toISOString(),
   units: parsed?.header?.$INSUNITS,
   vector: moved.delta,
   movedEntities,
@@ -65,6 +104,25 @@ const result = {
   afterUndo: restored,
   mixedLocked: mixed,
   zeroDelta: noOp,
+  standardMatrix: {
+    vector: matrixMove.delta,
+    movedHandles: matrixMove.movedHandles,
+    rejected: matrixMove.rejected,
+    committedRevision: matrixCommitted.revision,
+    committedEntities: matrixCommitted.entities,
+    kdraw: {
+      format: envelope.format,
+      containerVersion: envelope.manifest?.containerVersion,
+      paths: envelope.manifest?.entries?.map((entry) => entry.path),
+      byteLength: documentBytes.byteLength,
+      sha256: documentSha256,
+      manifestByteLength: documentEntry?.byteLength,
+      manifestSha256: documentEntry?.sha256,
+      independentDocument,
+    },
+    undoRevision: matrixRestored.revision,
+    restoredEntities: matrixRestored.entities,
+  },
   status: "PASS",
 };
 const expectedMoved = [
@@ -79,13 +137,24 @@ if (
     { handle: "11", kind: "polyline", start: null, end: null, vertices: [{ x: 0, y: 1000 }, { x: 1000, y: 1000 }, { x: 1000, y: 1500 }, { x: 0, y: 1500 }] },
   ]) ||
   mixed.changes.length !== 1 || mixed.movedHandles[0] !== "20" || mixed.rejected[0]?.reason !== "locked-layer" ||
-  noOp.changes.length !== 0 || noOp.movedHandles.length !== 0 || noOp.rejected.length !== 0
+  noOp.changes.length !== 0 || noOp.movedHandles.length !== 0 || noOp.rejected.length !== 0 ||
+  JSON.stringify(matrixMove.movedHandles) !== JSON.stringify(f016ExpectedMovedHandles) ||
+  JSON.stringify(matrixMove.rejected) !== JSON.stringify(f016ExpectedRejected) ||
+  matrixCommitted.revision !== 1 ||
+  JSON.stringify(matrixCommitted.entities) !== JSON.stringify(f016ExpectedCommittedEntities) ||
+  envelope.format !== "application/vnd.kuubik.kdraw+json" || envelope.manifest?.containerVersion !== 1 ||
+  documentEntry?.byteLength !== documentBytes.byteLength || documentEntry?.sha256 !== documentSha256 ||
+  JSON.stringify(independentDocument.entities) !== JSON.stringify(f016ExpectedCommittedEntities) ||
+  independentDocument.revision !== 1 || !matrixUndo || matrixRestored.revision !== 2 ||
+  JSON.stringify(matrixRestored.entities) !== JSON.stringify(f016StandardDocument.entities)
 ) throw new Error(`F-016 independent read-back mismatch: ${JSON.stringify(result)}`);
 
 await mkdir(dirname(dxfPath), { recursive: true });
 await writeFile(dxfPath, exported.text, "utf8");
+await writeFile(kdrawPath, kdrawBytes);
 await writeFile(readbackPath, `${JSON.stringify({
   ...result,
   dxfSha256: createHash("sha256").update(exported.text).digest("hex"),
+  kdrawSha256: createHash("sha256").update(kdrawBytes).digest("hex"),
 }, null, 2)}\n`, "utf8");
-console.log("F-016 Kuubik atomic MOVE + production DXF + UNDO/locked/no-op read-back PASS.");
+console.log("F-016 Kuubik atomic MOVE + DXF + independent .kdraw 12-entity matrix + UNDO read-back PASS.");
