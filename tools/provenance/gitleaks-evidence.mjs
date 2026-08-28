@@ -10,6 +10,8 @@ const manifestPath = `${evidenceDirectory}/gitleaks-source-manifest.json`;
 const reportPath = `${evidenceDirectory}/gitleaks-report.json`;
 const runPath = `${evidenceDirectory}/gitleaks-run.json`;
 const generatedPaths = new Set([manifestPath, reportPath, runPath]);
+const ciGeneratedPaths = new Set(["results.sarif"]);
+const bindingExcludedPaths = new Set([...generatedPaths, ...ciGeneratedPaths]);
 const expectedCommand = "gitleaks dir --no-banner --redact --config .gitleaks.toml --report-format json --report-path evidence/security/gitleaks-report.json .";
 
 function sha256(bytes) {
@@ -25,7 +27,7 @@ async function collectSourceTree() {
     .split("\0")
     .filter(Boolean)
     .map((path) => path.replaceAll("\\", "/"))
-    .filter((path) => !generatedPaths.has(path))
+    .filter((path) => !bindingExcludedPaths.has(path))
     .sort((a, b) => a.localeCompare(b, "en"));
   const files = await Promise.all(paths.map(async (path) => {
     const bytes = await readFile(resolve(root, path));
@@ -37,6 +39,7 @@ async function collectSourceTree() {
     algorithm: "sha256",
     fileSelection: "git ls-files --cached --others --exclude-standard",
     generatedEvidenceExcluded: [...generatedPaths].sort(),
+    ciArtifactsExcluded: [...ciGeneratedPaths].sort(),
     fileCount: files.length,
     sourceTreeSha256,
     files,

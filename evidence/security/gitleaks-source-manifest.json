@@ -7,8 +7,11 @@
     "evidence/security/gitleaks-run.json",
     "evidence/security/gitleaks-source-manifest.json"
   ],
+  "ciArtifactsExcluded": [
+    "results.sarif"
+  ],
   "fileCount": 72,
-  "sourceTreeSha256": "0922f5a56557b95a4152fc20abd284cad3f5e077bd5234a7e78e682809470303",
+  "sourceTreeSha256": "8e812a18c897e43f4ea4d7da54a3ba9d4330d0d98903a34758733e6e1bb4c769",
   "files": [
     {
       "path": ".github/workflows/ci.yml",
@@ -342,8 +345,8 @@
     },
     {
       "path": "tools/provenance/gitleaks-evidence.mjs",
-      "size": 4054,
-      "sha256": "c43cc597475577b197302ba9fe5ccb45ee11b757f7af15d3de552a27c7d5a7c4"
+      "size": 4248,
+      "sha256": "6abf7c80f82c9cd61eb43064f648e93d771dfb2eb5e357a573ad407b68276902"
     },
     {
       "path": "tools/provenance/import-parity-snapshot.mjs",
