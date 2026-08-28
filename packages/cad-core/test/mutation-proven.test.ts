@@ -1,5 +1,5 @@
 import { expect, it } from "vitest";
-import { applyAtomicOperation, createEmptyDocument, executeCopy, executeErase, executeMove, executeRectangle, executeRotate } from "../src/index.js";
+import { applyAtomicOperation, createEmptyDocument, executeCopy, executeErase, executeMove, executeRectangle, executeRotate, executeScale } from "../src/index.js";
 
 it("kills the revision-increment mutant", () => {
   const source = createEmptyDocument({ documentId: "mutation" });
@@ -133,4 +133,32 @@ it("kills ROTATE sign, Reference-delta, orientation, duplicate-put and locked-la
     rejected: [{ handle: "12", reason: "locked-layer" }],
     deltaAngleDeg: 90,
   });
+});
+
+it("kills SCALE ratio, base-point, geometric-size, copy-handle and locked-layer mutants", () => {
+  const document = createEmptyDocument({ documentId: "scale-mutation" });
+  document.layers.push({ id: "locked", name: "Locked", visible: true, frozen: false, locked: true, plottable: true });
+  document.entities.push(
+    { kind: "circle", handle: "10", layerId: "0", appearance: { color: "#f00" }, center: { x: 300, y: 0 }, radius: 25 },
+    { kind: "text", handle: "11", layerId: "0", position: { x: 1100, y: 0 }, text: "S", height: 20, rotationRad: 0.25 },
+    { kind: "line", handle: "12", layerId: "locked", start: { x: 0, y: 1000 }, end: { x: 1000, y: 1000 } },
+  );
+  expect(executeScale(document, {
+    targetHandles: ["10", "10", "11", "12"],
+    basePoint: { x: 100, y: 200 },
+    scale: { mode: "reference", referenceLength: 1000, newLength: 2000 },
+    copy: true,
+  })).toEqual({
+    changes: [
+      { type: "put", entity: { kind: "circle", handle: "13", layerId: "0", appearance: { color: "#f00" }, center: { x: 500, y: -200 }, radius: 50 } },
+      { type: "put", entity: { kind: "text", handle: "14", layerId: "0", position: { x: 2100, y: -200 }, text: "S", height: 40, rotationRad: 0.25 } },
+    ],
+    sourceHandles: ["10", "11"],
+    scaledHandles: [],
+    createdHandles: ["13", "14"],
+    rejected: [{ handle: "12", reason: "locked-layer" }],
+    factor: 2,
+    copy: true,
+  });
+  expect(document.entities.map((entity) => entity.handle)).toEqual(["10", "11", "12"]);
 });

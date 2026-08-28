@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { allocateEntityHandles, angleBetweenPointsDegrees, CadCommandInputError, createEmptyDocument, executeCopy, executeErase, executeMove, executeRectangle, executeRotate, parseAngleDegrees, parseCartesianPoint, parseCopyDestinations, parseMoveDestination, parseReferenceAngleInput, parseRotationAngleInput, resolveCadCommand, rotateCadEntity, rotateCadPoint, translateCadEntity } from "../src/index.js";
+import { allocateEntityHandles, angleBetweenPointsDegrees, CadCommandInputError, createEmptyDocument, distanceBetweenPoints, executeCopy, executeErase, executeMove, executeRectangle, executeRotate, executeScale, parseAngleDegrees, parseCartesianPoint, parseCopyDestinations, parseMoveDestination, parseReferenceAngleInput, parseRotationAngleInput, parseScaleFactorInput, parseScaleLengthInput, resolveCadCommand, rotateCadEntity, rotateCadPoint, scaleCadEntity, scaleCadPoint, translateCadEntity } from "../src/index.js";
 
 describe("RECTANGLE command registry", () => {
   it("parses explicit Cartesian coordinate input without mutating a document", () => {
@@ -296,5 +296,117 @@ describe("ROTATE command registry", () => {
         changes: [], rotatedHandles: [], rejected: [], deltaAngleDeg: angle.mode === "relative" ? angle.angleDeg : 0,
       });
     }
+  });
+});
+
+describe("SCALE command registry", () => {
+  it("resolves SC/SCALE and parses a positive numeric factor and Reference lengths", () => {
+    const base = { x: 100, y: 200 };
+    expect(resolveCadCommand("sc")?.id).toBe("SCALE");
+    expect(resolveCadCommand(" SCALE ")?.id).toBe("SCALE");
+    expect(parseScaleFactorInput("2.5", base)).toBe(2.5);
+    expect(() => parseScaleFactorInput("100,1200", base)).toThrow(CadCommandInputError);
+    expect(parseScaleLengthInput("1000", base)).toBe(1000);
+    expect(parseScaleLengthInput("1100,200", base)).toBe(1000);
+    expect(parseScaleLengthInput("100,200; 1100,200", { x: 0, y: 0 })).toBe(1000);
+    expect(distanceBetweenPoints({ x: 0, y: 0 }, { x: 3, y: 4 })).toBe(5);
+    for (const value of ["0", "-2", "Infinity", "NaN", ""]) {
+      expect(() => parseScaleFactorInput(value, base)).toThrow(CadCommandInputError);
+    }
+    expect(() => parseScaleLengthInput("100,200;100,200", base)).toThrow(/coincide/);
+    expect(() => parseScaleLengthInput("0,0;1,0;2,0", base)).toThrow(/Scale length/);
+  });
+
+  it("scales points and every standard KDraw entity family around a base", () => {
+    const base = { x: 100, y: 200 };
+    expect(scaleCadPoint({ x: 1100, y: 1200 }, base, 2)).toEqual({ x: 2100, y: 2200 });
+    expect(scaleCadEntity({ kind: "line", handle: "1", layerId: "0", start: { x: 0, y: 0 }, end: { x: 50, y: 0 } }, base, 2)).toMatchObject({ start: { x: -100, y: -200 }, end: { x: 0, y: -200 } });
+    expect(scaleCadEntity({ kind: "polyline", handle: "2", layerId: "0", closed: false, vertices: [{ x: 100, y: 0, bulge: 0.5, startWidth: 2 }, { x: 200, y: 0, endWidth: 3 }] }, base, 2)).toMatchObject({ vertices: [{ x: 100, y: -200, bulge: 0.5, startWidth: 4 }, { x: 300, y: -200, endWidth: 6 }] });
+    expect(scaleCadEntity({ kind: "circle", handle: "3", layerId: "0", center: { x: 300, y: 0 }, radius: 25 }, base, 2)).toMatchObject({ center: { x: 500, y: -200 }, radius: 50 });
+    expect(scaleCadEntity({ kind: "arc", handle: "4", layerId: "0", center: { x: 500, y: 0 }, radius: 30, startAngleRad: 0.25, endAngleRad: 1.5, counterClockwise: true }, base, 2)).toMatchObject({ center: { x: 900, y: -200 }, radius: 60, startAngleRad: 0.25, endAngleRad: 1.5 });
+    expect(scaleCadEntity({ kind: "ellipse", handle: "5", layerId: "0", center: { x: 700, y: 0 }, majorAxis: { x: 50, y: 10 }, ratio: 0.5, startParameter: 0, endParameter: Math.PI * 2 }, base, 2)).toMatchObject({ center: { x: 1300, y: -200 }, majorAxis: { x: 100, y: 20 }, ratio: 0.5 });
+    expect(scaleCadEntity({ kind: "spline", handle: "6", layerId: "0", degree: 2, controlPoints: [{ x: 900, y: 0 }, { x: 950, y: 75 }, { x: 1000, y: 0 }], knots: [0, 0, 0, 1, 1, 1], weights: [1, 0.75, 1], closed: false, periodic: false }, base, 2)).toMatchObject({ controlPoints: [{ x: 1700, y: -200 }, { x: 1800, y: -50 }, { x: 1900, y: -200 }], knots: [0, 0, 0, 1, 1, 1], weights: [1, 0.75, 1] });
+    expect(scaleCadEntity({ kind: "text", handle: "7", layerId: "0", position: { x: 1100, y: 0 }, text: "A", height: 20, rotationRad: 0.25 }, base, 2)).toMatchObject({ position: { x: 2100, y: -200 }, height: 40, rotationRad: 0.25 });
+    expect(scaleCadEntity({ kind: "mtext", handle: "8", layerId: "0", position: { x: 1250, y: 0 }, text: "B", height: 20, rotationRad: 0 }, base, 2)).toMatchObject({ position: { x: 2400, y: -200 }, height: 40 });
+    expect(scaleCadEntity({ kind: "leader", handle: "9", layerId: "0", vertices: [{ x: 1400, y: 0 }, { x: 1450, y: 50 }] }, base, 2)).toMatchObject({ vertices: [{ x: 2700, y: -200 }, { x: 2800, y: -100 }] });
+    expect(scaleCadEntity({ kind: "dimension", handle: "A", layerId: "0", dimensionKind: "aligned", definitionPoints: [{ x: 1550, y: 0 }, { x: 1650, y: 0 }, { x: 1550, y: 50 }], styleId: "STANDARD" }, base, 2)).toMatchObject({ definitionPoints: [{ x: 3000, y: -200 }, { x: 3200, y: -200 }, { x: 3000, y: -100 }] });
+    expect(scaleCadEntity({ kind: "hatch", handle: "B", layerId: "0", pattern: "SOLID", associative: false, loops: [{ isHole: false, vertices: [{ x: 1700, y: 0 }, { x: 1800, y: 0 }, { x: 1800, y: 100 }] }] }, base, 2)).toMatchObject({ loops: [{ vertices: [{ x: 3300, y: -200 }, { x: 3500, y: -200 }, { x: 3500, y: 0 }] }] });
+    expect(scaleCadEntity({ kind: "blockRef", handle: "C", layerId: "0", blockId: "b", insertion: { x: 1900, y: 0 }, scale: { x: 1.5, y: -0.5 }, rotationRad: 0.25 }, base, 2)).toMatchObject({ insertion: { x: 3700, y: -200 }, scale: { x: 3, y: -1 }, rotationRad: 0.25 });
+    expect(scaleCadEntity({ kind: "proxy", handle: "D", layerId: "0", originalType: "CUSTOM", raw: { preserved: true } }, base, 2)).toBeNull();
+  });
+
+  it("applies Reference scale once while preserving handles/styles and rejecting guarded targets", () => {
+    const document = createEmptyDocument({ documentId: "scale" });
+    document.layers.push({ id: "locked", name: "Locked", visible: true, frozen: false, locked: true, plottable: true });
+    document.entities.push(
+      { kind: "line", handle: "10", layerId: "0", appearance: { color: "#f00", lineweightMm: 0.5 }, start: { x: 0, y: 0 }, end: { x: 1000, y: 0 } },
+      { kind: "line", handle: "11", layerId: "locked", start: { x: 0, y: 1000 }, end: { x: 1000, y: 1000 } },
+      { kind: "proxy", handle: "12", layerId: "0", originalType: "CUSTOM", raw: {} },
+    );
+    expect(executeScale(document, {
+      targetHandles: ["10", "10", "11", "12", "missing"],
+      basePoint: { x: 100, y: 200 },
+      scale: { mode: "reference", referenceLength: 1000, newLength: 2000 },
+      copy: false,
+    })).toEqual({
+      changes: [{ type: "put", entity: { kind: "line", handle: "10", layerId: "0", appearance: { color: "#f00", lineweightMm: 0.5 }, start: { x: -100, y: -200 }, end: { x: 1900, y: -200 } } }],
+      sourceHandles: ["10"],
+      scaledHandles: ["10"],
+      createdHandles: [],
+      rejected: [
+        { handle: "11", reason: "locked-layer" },
+        { handle: "12", reason: "unsupported-entity" },
+        { handle: "missing", reason: "missing" },
+      ],
+      factor: 2,
+      copy: false,
+    });
+  });
+
+  it("creates a same-factor scaled copy with a fresh global handle and leaves sources unchanged", () => {
+    const document = createEmptyDocument({ documentId: "scale-copy" });
+    document.entities.push({ kind: "line", handle: "10", layerId: "0", start: { x: 0, y: 0 }, end: { x: 1000, y: 0 } });
+    document.blocks.push({ id: "B", name: "B", basePoint: { x: 0, y: 0 }, entities: [{ kind: "line", handle: "11", layerId: "0", start: { x: 0, y: 0 }, end: { x: 1, y: 0 } }] });
+    expect(executeScale(document, {
+      targetHandles: ["10"], basePoint: { x: 0, y: 0 }, scale: { mode: "factor", factor: 1 }, copy: true,
+    })).toEqual({
+      changes: [{ type: "put", entity: { kind: "line", handle: "12", layerId: "0", start: { x: 0, y: 0 }, end: { x: 1000, y: 0 } } }],
+      sourceHandles: ["10"], scaledHandles: [], createdHandles: ["12"], rejected: [], factor: 1, copy: true,
+    });
+    expect(document.entities).toHaveLength(1);
+  });
+
+  it("treats factor one as a no-op and rejects zero, negative or invalid Reference ratios", () => {
+    const document = createEmptyDocument({ documentId: "scale-noop" });
+    document.entities.push({ kind: "line", handle: "10", layerId: "0", start: { x: 0, y: 0 }, end: { x: 1, y: 0 } });
+    expect(executeScale(document, {
+      targetHandles: ["10", "missing"], basePoint: { x: 0, y: 0 }, scale: { mode: "factor", factor: 1 }, copy: false,
+    })).toEqual({
+      changes: [], sourceHandles: ["10"], scaledHandles: [], createdHandles: [],
+      rejected: [{ handle: "missing", reason: "missing" }], factor: 1, copy: false,
+    });
+    for (const scale of [
+      { mode: "factor", factor: 0 } as const,
+      { mode: "factor", factor: -1 } as const,
+      { mode: "reference", referenceLength: 0, newLength: 1 } as const,
+      { mode: "reference", referenceLength: 1, newLength: 0 } as const,
+    ]) {
+      expect(() => executeScale(document, { targetHandles: ["10"], basePoint: { x: 0, y: 0 }, scale, copy: false })).toThrow(/greater than zero/);
+    }
+  });
+
+  it("rejects scale operations that overflow or collapse finite geometry", () => {
+    const document = createEmptyDocument({ documentId: "scale-extremes" });
+    document.entities.push({ kind: "line", handle: "10", layerId: "0", start: { x: 1, y: 1 }, end: { x: 2, y: 2 } });
+
+    expect(() => executeScale(document, {
+      targetHandles: ["10"], basePoint: { x: 0, y: 0 }, scale: { mode: "factor", factor: 1e308 }, copy: false,
+    })).toThrow(CadCommandInputError);
+    expect(() => executeScale(document, {
+      targetHandles: ["10"], basePoint: { x: 1, y: 1 }, scale: { mode: "factor", factor: Number.MIN_VALUE }, copy: false,
+    })).toThrow(CadCommandInputError);
+    expect(() => scaleCadEntity({
+      kind: "circle", handle: "20", layerId: "0", center: { x: 0, y: 0 }, radius: 1e-300,
+    }, { x: 0, y: 0 }, 1e-300)).toThrow(CadCommandInputError);
   });
 });

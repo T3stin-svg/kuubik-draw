@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { allocateEntityHandles, CadCommandInputError, CadSession, createEmptyDocument, parseCartesianPoint, parseCopyDestinations, parseMoveDestination, parseReferenceAngleInput, parseRotationAngleInput, resolveCadCommand, type CadChange, type CopyRejectedTarget, type MoveRejectedTarget, type RotateAngleSpec, type RotateRejectedTarget } from "@kuubik/cad-core";
+import { allocateEntityHandles, CadCommandInputError, CadSession, createEmptyDocument, parseCartesianPoint, parseCopyDestinations, parseMoveDestination, parseReferenceAngleInput, parseRotationAngleInput, parseScaleFactorInput, parseScaleLengthInput, resolveCadCommand, type CadChange, type CopyRejectedTarget, type MoveRejectedTarget, type RotateAngleSpec, type RotateRejectedTarget, type ScaleFactorSpec, type ScaleRejectedTarget } from "@kuubik/cad-core";
 import { exportDxf } from "@kuubik/cad-dxf";
 import { CadCanvasRenderer } from "@kuubik/cad-renderer";
 import type { CadEntity, KDrawDocumentV1 } from "@kuubik/cad-schema";
@@ -32,6 +32,23 @@ function rotateAngleSpec(
   };
 }
 
+function scaleFactorSpec(
+  mode: "factor" | "reference",
+  basePoint: { x: number; y: number },
+  factorInput: string,
+  referenceInput: string,
+  newLengthInput: string,
+): ScaleFactorSpec {
+  if (mode === "factor") {
+    return { mode, factor: parseScaleFactorInput(factorInput, basePoint) };
+  }
+  return {
+    mode,
+    referenceLength: parseScaleLengthInput(referenceInput, basePoint),
+    newLength: parseScaleLengthInput(newLengthInput, basePoint),
+  };
+}
+
 export function App() {
   const canvas = useRef<HTMLCanvasElement>(null);
   const database = useMemo(() => new KDrawIndexedDb(), []);
@@ -57,7 +74,15 @@ export function App() {
   const [rotateNewAngleInput, setRotateNewAngleInput] = useState("135");
   const [rotateAwaitingSelection, setRotateAwaitingSelection] = useState(false);
   const [lastRotateRejected, setLastRotateRejected] = useState<RotateRejectedTarget[]>([]);
-  const [previewCommand, setPreviewCommand] = useState<"MOVE" | "COPY" | "ROTATE">("MOVE");
+  const [scaleBaseInput, setScaleBaseInput] = useState("100,200");
+  const [scaleMode, setScaleMode] = useState<"factor" | "reference">("factor");
+  const [scaleFactorInput, setScaleFactorInput] = useState("2");
+  const [scaleReferenceInput, setScaleReferenceInput] = useState("100,200; 1100,200");
+  const [scaleNewLengthInput, setScaleNewLengthInput] = useState("2000");
+  const [scaleCopy, setScaleCopy] = useState(false);
+  const [scaleAwaitingSelection, setScaleAwaitingSelection] = useState(false);
+  const [lastScaleRejected, setLastScaleRejected] = useState<ScaleRejectedTarget[]>([]);
+  const [previewCommand, setPreviewCommand] = useState<"MOVE" | "COPY" | "ROTATE" | "SCALE">("MOVE");
   const activeLayer = document.layers.find((layer) => layer.id === document.currentLayerId)!;
   const movePreview = useMemo((): { entities: CadEntity[]; delta: { x: number; y: number } } | null => {
     if (previewCommand !== "MOVE" || selectedHandles.length === 0) return null;
@@ -107,6 +132,23 @@ export function App() {
       return null;
     }
   }, [document, previewCommand, rotateAngleInput, rotateBaseInput, rotateMode, rotateNewAngleInput, rotateReferenceInput, selectedHandles]);
+  const scalePreview = useMemo((): { entities: CadEntity[]; factor: number; copy: boolean } | null => {
+    if (previewCommand !== "SCALE" || selectedHandles.length === 0) return null;
+    try {
+      const command = resolveCadCommand("SCALE");
+      if (!command || command.id !== "SCALE") return null;
+      const basePoint = parseCartesianPoint(scaleBaseInput);
+      const scale = scaleFactorSpec(scaleMode, basePoint, scaleFactorInput, scaleReferenceInput, scaleNewLengthInput);
+      const result = command.execute(document, { targetHandles: selectedHandles, basePoint, scale, copy: scaleCopy });
+      return {
+        entities: result.changes.flatMap((change) => change.type === "put" ? [change.entity] : []),
+        factor: result.factor,
+        copy: result.copy,
+      };
+    } catch {
+      return null;
+    }
+  }, [document, previewCommand, scaleBaseInput, scaleCopy, scaleFactorInput, scaleMode, scaleNewLengthInput, scaleReferenceInput, selectedHandles]);
 
   useEffect(() => {
     let active = true;
@@ -142,8 +184,8 @@ export function App() {
       widthPx: element.clientWidth,
       heightPx: element.clientHeight,
       devicePixelRatio: ratio,
-    }, document.layers, [...(movePreview?.entities ?? []), ...(copyPreview?.entities ?? []), ...(rotatePreview?.entities ?? [])]);
-  }, [copyPreview, document, movePreview, rotatePreview]);
+    }, document.layers, [...(movePreview?.entities ?? []), ...(copyPreview?.entities ?? []), ...(rotatePreview?.entities ?? []), ...(scalePreview?.entities ?? [])]);
+  }, [copyPreview, document, movePreview, rotatePreview, scalePreview]);
 
   async function recoverFromStorageConflict(error: unknown): Promise<void> {
     if (!(error instanceof StorageRevisionConflictError)) throw error;
@@ -226,7 +268,8 @@ export function App() {
   function selectAll(): void {
     const handles = document.entities.map((entity) => entity.handle);
     setSelectedHandles(handles);
-    if (rotateAwaitingSelection) setStatus(`${handles.length} objekti valitud; ROTATE: määra baaspunkt ja nurk`);
+    if (scaleAwaitingSelection) setStatus(`${handles.length} objekti valitud; SCALE: määra baaspunkt ja mõõtkava`);
+    else if (rotateAwaitingSelection) setStatus(`${handles.length} objekti valitud; ROTATE: määra baaspunkt ja nurk`);
     else if (copyAwaitingSelection) setStatus(`${handles.length} objekti valitud; COPY: määra baaspunkt ja sihtpunkt(id)`);
     else if (moveAwaitingSelection) setStatus(`${handles.length} objekti valitud; MOVE: määra baaspunkt ja sihtpunkt`);
     else setStatus(`${handles.length} objekti valitud`);
@@ -238,6 +281,7 @@ export function App() {
     if (selectedHandles.length === 0) {
       setCopyAwaitingSelection(false);
       setRotateAwaitingSelection(false);
+      setScaleAwaitingSelection(false);
       setMoveAwaitingSelection(true);
       setStatus("MOVE: vali objektid, seejärel kinnita valik ja punktid");
       return;
@@ -275,6 +319,7 @@ export function App() {
     if (selectedHandles.length === 0) {
       setMoveAwaitingSelection(false);
       setRotateAwaitingSelection(false);
+      setScaleAwaitingSelection(false);
       setCopyAwaitingSelection(true);
       setStatus("COPY: vali objektid, seejärel kinnita valik ja punktid");
       return;
@@ -318,6 +363,7 @@ export function App() {
     if (selectedHandles.length === 0) {
       setMoveAwaitingSelection(false);
       setCopyAwaitingSelection(false);
+      setScaleAwaitingSelection(false);
       setRotateAwaitingSelection(true);
       setStatus("ROTATE: vali objektid, seejärel kinnita valik, baaspunkt ja nurk");
       return;
@@ -349,6 +395,64 @@ export function App() {
     } catch (error) {
       if (error instanceof StorageRevisionConflictError) await recoverFromStorageConflict(error);
       else if (error instanceof CadCommandInputError) setStatus(`ROTATE viga: ${error.message}`);
+      else throw error;
+    } finally {
+      committing.current = false;
+    }
+  }
+
+  async function scaleSelected(): Promise<void> {
+    if (committing.current) return;
+    setPreviewCommand("SCALE");
+    if (selectedHandles.length === 0) {
+      setMoveAwaitingSelection(false);
+      setCopyAwaitingSelection(false);
+      setRotateAwaitingSelection(false);
+      setScaleAwaitingSelection(true);
+      setStatus("SCALE: vali objektid, seejärel kinnita valik, baaspunkt ja mõõtkava");
+      return;
+    }
+    committing.current = true;
+    try {
+      const command = resolveCadCommand("SCALE");
+      if (!command || command.id !== "SCALE") throw new Error("SCALE command is missing from the registry.");
+      const basePoint = parseCartesianPoint(scaleBaseInput);
+      const scale = scaleFactorSpec(scaleMode, basePoint, scaleFactorInput, scaleReferenceInput, scaleNewLengthInput);
+      const result = command.execute(document, { targetHandles: selectedHandles, basePoint, scale, copy: scaleCopy });
+      setLastScaleRejected(result.rejected);
+      setScaleAwaitingSelection(false);
+      if (result.changes.length === 0) {
+        if (result.factor === 1 && !result.copy && result.sourceHandles.length > 0) {
+          await commitChanges(
+            command.id,
+            { basePoint, scale, factor: result.factor, copy: false, geometryNoOp: true },
+            [{ type: "undo-mark" }],
+            [],
+            result.sourceHandles,
+          );
+          setSelectedHandles([]);
+          const suffix = result.rejected.length ? `; ${result.rejected.length} jäi muutmata` : "";
+          setStatus(`SCALE ×1 kinnitatud; geomeetria muutumata${suffix}`);
+          return;
+        }
+        const suffix = result.rejected.length ? `; ${result.rejected.length} lukus, puudu või toetamata` : "";
+        setStatus(`SCALE ei muutnud geomeetriat${suffix}`);
+        return;
+      }
+      const resultHandles = result.copy ? result.createdHandles : result.scaledHandles;
+      await commitChanges(
+        command.id,
+        { basePoint, scale, factor: result.factor, copy: result.copy },
+        result.changes,
+        resultHandles,
+        result.sourceHandles,
+      );
+      setSelectedHandles([]);
+      const suffix = result.rejected.length ? `; ${result.rejected.length} jäi muutmata` : "";
+      setStatus(`${resultHandles.length} objekti ${result.copy ? "kopeeritud ja " : ""}skaleeritud ×${result.factor}${suffix}`);
+    } catch (error) {
+      if (error instanceof StorageRevisionConflictError) await recoverFromStorageConflict(error);
+      else if (error instanceof CadCommandInputError) setStatus(`SCALE viga: ${error.message}`);
       else throw error;
     } finally {
       committing.current = false;
@@ -518,6 +622,39 @@ export function App() {
           </>
         )}
         <button type="button" onClick={() => void rotateSelected()}>ROTATE</button>
+        <label className="coordinate-input">
+          <span>SCALE baaspunkt</span>
+          <input aria-label="SCALE baaspunkt" value={scaleBaseInput} onFocus={() => setPreviewCommand("SCALE")} onChange={(event) => { setPreviewCommand("SCALE"); setScaleBaseInput(event.target.value); }} placeholder="x,y" />
+        </label>
+        <label className="coordinate-input">
+          <span>SCALE režiim</span>
+          <select aria-label="SCALE režiim" value={scaleMode} onFocus={() => setPreviewCommand("SCALE")} onChange={(event) => { setPreviewCommand("SCALE"); setScaleMode(event.target.value as "factor" | "reference"); }}>
+            <option value="factor">Kordaja</option>
+            <option value="reference">Reference</option>
+          </select>
+        </label>
+        {scaleMode === "factor" ? (
+          <label className="coordinate-input">
+            <span>SCALE kordaja</span>
+            <input aria-label="SCALE kordaja" value={scaleFactorInput} onFocus={() => setPreviewCommand("SCALE")} onChange={(event) => { setPreviewCommand("SCALE"); setScaleFactorInput(event.target.value); }} placeholder="positiivne kordaja" />
+          </label>
+        ) : (
+          <>
+            <label className="coordinate-input">
+              <span>SCALE Reference</span>
+              <input aria-label="SCALE Reference" value={scaleReferenceInput} onFocus={() => setPreviewCommand("SCALE")} onChange={(event) => { setPreviewCommand("SCALE"); setScaleReferenceInput(event.target.value); }} placeholder="pikkus või x,y; x,y" />
+            </label>
+            <label className="coordinate-input">
+              <span>SCALE uus pikkus</span>
+              <input aria-label="SCALE uus pikkus" value={scaleNewLengthInput} onFocus={() => setPreviewCommand("SCALE")} onChange={(event) => { setPreviewCommand("SCALE"); setScaleNewLengthInput(event.target.value); }} placeholder="pikkus või x,y; x,y" />
+            </label>
+          </>
+        )}
+        <label className="coordinate-input">
+          <span>SCALE Copy</span>
+          <input aria-label="SCALE Copy" type="checkbox" checked={scaleCopy} onFocus={() => setPreviewCommand("SCALE")} onChange={(event) => { setPreviewCommand("SCALE"); setScaleCopy(event.target.checked); }} />
+        </label>
+        <button type="button" onClick={() => void scaleSelected()}>SCALE</button>
         <button type="button" onClick={() => void eraseSelected()} disabled={selectedHandles.length === 0}>ERASE</button>
         <button type="button" onClick={() => void undoLast()} disabled={!session.current.canUndo}>UNDO</button>
         <button type="button" onClick={downloadDxf}>DXF eksport</button>
@@ -526,6 +663,7 @@ export function App() {
         {movePreview && <span data-testid="move-preview">MOVE eelvaade: {movePreview.entities.length} · Δ{movePreview.delta.x},{movePreview.delta.y}</span>}
         {copyPreview && <span data-testid="copy-preview">COPY eelvaade: {copyPreview.entities.length} · {copyPreview.deltas.length} paigutust</span>}
         {rotatePreview && <span data-testid="rotate-preview">ROTATE eelvaade: {rotatePreview.entities.length} · {rotatePreview.deltaAngleDeg}°</span>}
+        {scalePreview && <span data-testid="scale-preview">SCALE eelvaade: {scalePreview.entities.length} · ×{scalePreview.factor}{scalePreview.copy ? " · Copy" : ""}</span>}
         {lastMoveRejected.length > 0 && (
           <span data-testid="move-rejected" data-rejected={JSON.stringify(lastMoveRejected)}>
             MOVE muutmata: {lastMoveRejected.map(({ handle, reason }) => `${handle} (${reason})`).join(", ")}
@@ -539,6 +677,11 @@ export function App() {
         {lastRotateRejected.length > 0 && (
           <span data-testid="rotate-rejected" data-rejected={JSON.stringify(lastRotateRejected)}>
             ROTATE muutmata: {lastRotateRejected.map(({ handle, reason }) => `${handle} (${reason})`).join(", ")}
+          </span>
+        )}
+        {lastScaleRejected.length > 0 && (
+          <span data-testid="scale-rejected" data-rejected={JSON.stringify(lastScaleRejected)}>
+            SCALE muutmata: {lastScaleRejected.map(({ handle, reason }) => `${handle} (${reason})`).join(", ")}
           </span>
         )}
       </section>

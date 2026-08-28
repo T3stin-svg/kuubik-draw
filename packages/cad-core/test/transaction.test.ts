@@ -70,6 +70,19 @@ describe("atomic document transaction", () => {
     expect(source.revision).toBe(0);
   });
 
+  it("records and consumes an explicit undo marker without changing geometry", () => {
+    const source = createEmptyDocument({ documentId: "undo-marker" });
+    source.entities.push(line);
+    const session = new CadSession(source);
+    const markerOperation = { ...operation(), commandId: "SCALE", targetHandles: ["10"], resultHandles: [] };
+    session.commit(markerOperation, [{ type: "undo-mark" }]);
+    expect(session.document).toMatchObject({ revision: 1, entities: [line] });
+    expect(session.canUndo).toBe(true);
+    expect(session.undo()?.changes).toEqual([{ type: "undo-mark" }]);
+    expect(session.document).toMatchObject({ revision: 2, entities: [line] });
+    expect(session.canRedo).toBe(true);
+  });
+
   it("rejects an already-applied opId after session recovery", () => {
     const session = new CadSession(createEmptyDocument({ documentId: "d" }), ["op-1"]);
     expect(() => session.commit(operation(), [{ type: "put", entity: line }])).toThrow(DuplicateOperationError);

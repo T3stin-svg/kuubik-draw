@@ -14,7 +14,8 @@ export type CadChange =
   | EntityChange
   | { type: "put-layer"; layer: CadLayer }
   | { type: "delete-layer"; layerId: string }
-  | { type: "set-current-layer"; layerId: string };
+  | { type: "set-current-layer"; layerId: string }
+  | { type: "undo-mark" };
 
 export interface CommittedOperation {
   operation: CadOperation;
@@ -70,6 +71,10 @@ export function applyAtomicOperation(
   let currentLayerId = source.currentLayerId;
   const inverseChanges: CadChange[] = [];
   for (const change of changes) {
+    if (change.type === "undo-mark") {
+      inverseChanges.unshift({ type: "undo-mark" });
+      continue;
+    }
     if (change.type === "put") {
       const before = entities.get(change.entity.handle);
       inverseChanges.unshift(before ? { type: "put", entity: cloneEntity(before) } : { type: "delete", handle: change.entity.handle });
@@ -115,7 +120,8 @@ export function applyAtomicOperation(
   if (
     JSON.stringify(document.entities) === JSON.stringify(source.entities) &&
     JSON.stringify(document.layers) === JSON.stringify(source.layers) &&
-    document.currentLayerId === source.currentLayerId
+    document.currentLayerId === source.currentLayerId &&
+    !changes.some((change) => change.type === "undo-mark")
   ) throw new NoOpOperationError();
   assertKDrawDocumentV1(document);
   return {

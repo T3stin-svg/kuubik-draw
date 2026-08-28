@@ -1,0 +1,140 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-019",
+  "source": "Chromium IndexedDB read-back after LINE, factor-one SCALE and one UNDO",
+  "factorOne": {
+    "revision": 2,
+    "entities": [
+      {
+        "kind": "line",
+        "handle": "10",
+        "layerId": "0",
+        "start": {
+          "x": 10,
+          "y": 10
+        },
+        "end": {
+          "x": 180,
+          "y": 90
+        }
+      }
+    ],
+    "operations": [
+      {
+        "opId": "f34c1dac-c23c-48ae-87a6-9ffd6967b6b2",
+        "baseRevision": 0,
+        "commandId": "LINE",
+        "args": {
+          "start": {
+            "x": 10,
+            "y": 10
+          },
+          "end": {
+            "x": 180,
+            "y": 90
+          }
+        },
+        "targetHandles": [],
+        "resultHandles": [
+          "10"
+        ]
+      },
+      {
+        "opId": "2241f39a-73b1-4657-846f-03cb304b76e1",
+        "baseRevision": 1,
+        "commandId": "SCALE",
+        "args": {
+          "basePoint": {
+            "x": 0,
+            "y": 0
+          },
+          "scale": {
+            "mode": "factor",
+            "factor": 1
+          },
+          "factor": 1,
+          "copy": false,
+          "geometryNoOp": true
+        },
+        "targetHandles": [
+          "10"
+        ],
+        "resultHandles": []
+      }
+    ]
+  },
+  "afterOneUndo": {
+    "revision": 3,
+    "entities": [
+      {
+        "kind": "line",
+        "handle": "10",
+        "layerId": "0",
+        "start": {
+          "x": 10,
+          "y": 10
+        },
+        "end": {
+          "x": 180,
+          "y": 90
+        }
+      }
+    ],
+    "operations": [
+      {
+        "opId": "f34c1dac-c23c-48ae-87a6-9ffd6967b6b2",
+        "baseRevision": 0,
+        "commandId": "LINE",
+        "args": {
+          "start": {
+            "x": 10,
+            "y": 10
+          },
+          "end": {
+            "x": 180,
+            "y": 90
+          }
+        },
+        "targetHandles": [],
+        "resultHandles": [
+          "10"
+        ]
+      },
+      {
+        "opId": "2241f39a-73b1-4657-846f-03cb304b76e1",
+        "baseRevision": 1,
+        "commandId": "SCALE",
+        "args": {
+          "basePoint": {
+            "x": 0,
+            "y": 0
+          },
+          "scale": {
+            "mode": "factor",
+            "factor": 1
+          },
+          "factor": 1,
+          "copy": false,
+          "geometryNoOp": true
+        },
+        "targetHandles": [
+          "10"
+        ],
+        "resultHandles": []
+      },
+      {
+        "opId": "2241f39a-73b1-4657-846f-03cb304b76e1:undo:1",
+        "baseRevision": 2,
+        "commandId": "UNDO",
+        "args": {
+          "originalOpId": "2241f39a-73b1-4657-846f-03cb304b76e1"
+        },
+        "targetHandles": [],
+        "resultHandles": [
+          "10"
+        ]
+      }
+    ]
+  },
+  "status": "PASS"
+}
