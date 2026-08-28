@@ -16,6 +16,8 @@ enne, kui sama töövoog on siin reprodutseeritud ja tõendatud. LibreCADi või
 FreeCADi roheline tulemus üksi ei tõsta ühtegi rida skoorile `1,00`.
 Mirror-read F-003 `RECTANGLE` ja F-015 `ERASE` on värskelt tõendatud AutoCAD
 2024, Chromiumi ning sõltumatu DXF-parseri sama geomeetria/objektiarvuga.
+F-016 `MOVE` LINE/LWPOLYLINE osamaatriks on kolmekülgselt tõendatud, kuid rida
+ei ole veel täisskooril enne kõigi standardobjektide kordustõendamist.
 
 ## Piirid
 

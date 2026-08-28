@@ -21,6 +21,11 @@ const syntheticCadAllowlist = new Set([
   "evidence/artifacts/F-015-browser-empty.dxf",
   "evidence/artifacts/F-015-browser-restored.dxf",
   "evidence/artifacts/F-015-browser-locked.dxf",
+  "parity/fixtures/F-016-empty-mm.dxf",
+  "evidence/artifacts/F-016-kuubik.dxf",
+  "evidence/artifacts/F-016-browser-moved.dxf",
+  "evidence/artifacts/F-016-browser-restored.dxf",
+  "evidence/artifacts/F-016-browser-locked.dxf",
 ]);
 const textExtensions = new Set([".ts", ".tsx", ".js", ".mjs", ".json", ".md", ".yml", ".yaml", ".html", ".css", ".txt"]);
 const secretPatterns = [

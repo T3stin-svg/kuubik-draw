@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { CadCommandInputError, createEmptyDocument, executeErase, executeRectangle, parseCartesianPoint, resolveCadCommand } from "../src/index.js";
+import { CadCommandInputError, createEmptyDocument, executeErase, executeMove, executeRectangle, parseCartesianPoint, parseMoveDestination, resolveCadCommand, translateCadEntity } from "../src/index.js";
 
 describe("RECTANGLE command registry", () => {
   it("parses explicit Cartesian coordinate input without mutating a document", () => {
@@ -64,6 +64,79 @@ describe("ERASE command registry", () => {
         { handle: "11", reason: "locked-layer" },
         { handle: "missing", reason: "missing" },
       ],
+    });
+  });
+});
+
+describe("MOVE command registry", () => {
+  it("resolves M/MOVE and parses absolute or @relative destination coordinates", () => {
+    expect(resolveCadCommand("m")?.id).toBe("MOVE");
+    expect(resolveCadCommand(" MOVE ")?.id).toBe("MOVE");
+    expect(parseMoveDestination("600,950", { x: 100, y: 200 })).toEqual({ x: 600, y: 950 });
+    expect(parseMoveDestination("@500,750", { x: 100, y: 200 })).toEqual({ x: 600, y: 950 });
+    expect(() => parseMoveDestination("@500", { x: 100, y: 200 })).toThrow(CadCommandInputError);
+  });
+
+  it("moves an editable multi-selection once and preserves handles, style and polyline vertex data", () => {
+    const document = createEmptyDocument({ documentId: "move" });
+    document.entities.push(
+      { kind: "line", handle: "10", layerId: "0", appearance: { color: "#f00", lineweightMm: 0.5 }, start: { x: 0, y: 0 }, end: { x: 1000, y: 0 } },
+      { kind: "polyline", handle: "11", layerId: "0", closed: false, vertices: [{ x: 0, y: 1000, bulge: 0.5, startWidth: 2 }, { x: 1000, y: 1000, endWidth: 3 }] },
+    );
+    expect(executeMove(document, {
+      targetHandles: ["10", "10", "11"],
+      basePoint: { x: 100, y: 200 },
+      destinationPoint: { x: 600, y: 950 },
+    })).toEqual({
+      changes: [
+        { type: "put", entity: { kind: "line", handle: "10", layerId: "0", appearance: { color: "#f00", lineweightMm: 0.5 }, start: { x: 500, y: 750 }, end: { x: 1500, y: 750 } } },
+        { type: "put", entity: { kind: "polyline", handle: "11", layerId: "0", closed: false, vertices: [{ x: 500, y: 1750, bulge: 0.5, startWidth: 2 }, { x: 1500, y: 1750, endWidth: 3 }] } },
+      ],
+      movedHandles: ["10", "11"],
+      rejected: [],
+      delta: { x: 500, y: 750 },
+    });
+  });
+
+  it("translates every standard KDraw entity family exactly and refuses opaque proxies", () => {
+    const delta = { x: 5, y: -2 };
+    expect(translateCadEntity({ kind: "line", handle: "1", layerId: "0", start: { x: 0, y: 0 }, end: { x: 2, y: 3 } }, delta)).toEqual({
+      kind: "line", handle: "1", layerId: "0", start: { x: 5, y: -2 }, end: { x: 7, y: 1 },
+    });
+    expect(translateCadEntity({ kind: "polyline", handle: "2", layerId: "0", closed: true, vertices: [{ x: 0, y: 0, bulge: 0.5 }, { x: 2, y: 3, startWidth: 4, endWidth: 6 }] }, delta)).toEqual({
+      kind: "polyline", handle: "2", layerId: "0", closed: true, vertices: [{ x: 5, y: -2, bulge: 0.5 }, { x: 7, y: 1, startWidth: 4, endWidth: 6 }],
+    });
+    expect(translateCadEntity({ kind: "circle", handle: "3", layerId: "0", center: { x: 1, y: 2 }, radius: 3 }, delta)).toEqual({ kind: "circle", handle: "3", layerId: "0", center: { x: 6, y: 0 }, radius: 3 });
+    expect(translateCadEntity({ kind: "arc", handle: "4", layerId: "0", center: { x: 2, y: 3 }, radius: 4, startAngleRad: 0, endAngleRad: 1, counterClockwise: true }, delta)).toMatchObject({ center: { x: 7, y: 1 }, radius: 4, startAngleRad: 0, endAngleRad: 1 });
+    expect(translateCadEntity({ kind: "ellipse", handle: "5", layerId: "0", center: { x: 3, y: 4 }, majorAxis: { x: 5, y: 0 }, ratio: 0.5, startParameter: 0, endParameter: 6.28 }, delta)).toMatchObject({ center: { x: 8, y: 2 }, majorAxis: { x: 5, y: 0 } });
+    expect(translateCadEntity({ kind: "spline", handle: "6", layerId: "0", degree: 2, controlPoints: [{ x: 0, y: 0 }, { x: 1, y: 1 }, { x: 2, y: 0 }], knots: [0, 0, 0, 1, 1, 1], closed: false, periodic: false }, delta)).toMatchObject({ controlPoints: [{ x: 5, y: -2 }, { x: 6, y: -1 }, { x: 7, y: -2 }], knots: [0, 0, 0, 1, 1, 1] });
+    expect(translateCadEntity({ kind: "mtext", handle: "7", layerId: "0", position: { x: 5, y: 6 }, text: "A", height: 2, rotationRad: 0 }, delta)).toMatchObject({ position: { x: 10, y: 4 }, text: "A" });
+    expect(translateCadEntity({ kind: "leader", handle: "8", layerId: "0", vertices: [{ x: 0, y: 0 }, { x: 1, y: 2 }] }, delta)).toMatchObject({ vertices: [{ x: 5, y: -2 }, { x: 6, y: 0 }] });
+    expect(translateCadEntity({ kind: "dimension", handle: "9", layerId: "0", dimensionKind: "linear", definitionPoints: [{ x: 0, y: 0 }, { x: 4, y: 0 }], styleId: "standard" }, delta)).toMatchObject({ definitionPoints: [{ x: 5, y: -2 }, { x: 9, y: -2 }] });
+    expect(translateCadEntity({ kind: "hatch", handle: "A", layerId: "0", pattern: "SOLID", associative: false, loops: [{ isHole: false, vertices: [{ x: 0, y: 0 }, { x: 2, y: 0 }, { x: 2, y: 2 }] }] }, delta)).toMatchObject({ loops: [{ isHole: false, vertices: [{ x: 5, y: -2 }, { x: 7, y: -2 }, { x: 7, y: 0 }] }] });
+    expect(translateCadEntity({ kind: "blockRef", handle: "B", layerId: "0", blockId: "b", insertion: { x: 10, y: 20 }, scale: { x: 1, y: 1 }, rotationRad: 0 }, delta)).toMatchObject({ insertion: { x: 15, y: 18 }, blockId: "b" });
+    expect(translateCadEntity({ kind: "proxy", handle: "C", layerId: "0", originalType: "ACAD_PROXY", raw: {} }, delta)).toBeNull();
+  });
+
+  it("rejects locked, missing and unsupported targets and treats zero displacement as a no-op", () => {
+    const document = createEmptyDocument({ documentId: "move-guard" });
+    document.layers.push({ id: "locked", name: "Locked", visible: true, frozen: false, locked: true, plottable: true });
+    document.entities.push(
+      { kind: "line", handle: "10", layerId: "locked", start: { x: 0, y: 0 }, end: { x: 1, y: 0 } },
+      { kind: "proxy", handle: "11", layerId: "0", originalType: "CUSTOM", raw: {} },
+    );
+    expect(executeMove(document, { targetHandles: ["10", "11", "missing"], basePoint: { x: 0, y: 0 }, destinationPoint: { x: 1, y: 1 } })).toEqual({
+      changes: [],
+      movedHandles: [],
+      rejected: [
+        { handle: "10", reason: "locked-layer" },
+        { handle: "11", reason: "unsupported-entity" },
+        { handle: "missing", reason: "missing" },
+      ],
+      delta: { x: 1, y: 1 },
+    });
+    expect(executeMove(document, { targetHandles: ["10", "missing"], basePoint: { x: 20, y: 30 }, destinationPoint: { x: 20, y: 30 } })).toEqual({
+      changes: [], movedHandles: [], rejected: [], delta: { x: 0, y: 0 },
     });
   });
 });

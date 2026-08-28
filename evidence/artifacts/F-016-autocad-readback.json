@@ -1,0 +1,78 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-016",
+  "benchmark": "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
+  "engine": "Autodesk AutoCAD Core Console 2024",
+  "engineVersion": "24.3",
+  "command": "MOVE",
+  "result": {
+    "vector": [
+      500,
+      750
+    ],
+    "after": [
+      {
+        "start": [
+          510,
+          760
+        ],
+        "end": [
+          680,
+          840
+        ]
+      },
+      {
+        "start": [
+          500,
+          1750
+        ],
+        "end": [
+          1500,
+          2250
+        ]
+      }
+    ],
+    "afterUndo": [
+      {
+        "start": [
+          10,
+          10
+        ],
+        "end": [
+          180,
+          90
+        ]
+      },
+      {
+        "start": [
+          0,
+          1000
+        ],
+        "end": [
+          1000,
+          1500
+        ]
+      }
+    ],
+    "mixed": {
+      "editableStarts": [
+        [
+          110,
+          60
+        ],
+        [
+          100,
+          1050
+        ]
+      ],
+      "lockedStart": [
+        0,
+        2000
+      ]
+    }
+  },
+  "fixtureSha256": "c5dbe35f3ea8fa8f26dee00edace96f0de5f033ec128e8e90ed34ed46d2d1bf6",
+  "scriptSha256": "2a49c20a5ad4fb1009dbfcfc8c5fa627a94dfd2f0a729d298cfb3e6e60ff466b",
+  "observedAt": "2026-08-28T10:59:10.364Z",
+  "status": "PASS"
+}

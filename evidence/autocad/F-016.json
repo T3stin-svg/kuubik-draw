@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-016",
+  "kind": "autocad",
+  "authority": "autocad-2024.1.2-live",
+  "status": "PASS",
+  "artifactSha256": "5bf44dfff0e62ada8de1f08d860a0478a0ccf22ddb70ea6305929ac1334f4d40",
+  "observedAt": "2026-08-28T10:59:10.364Z",
+  "workflow": "AutoCAD 24.3 scratch document: MOVE one LINE and one closed LWPOLYLINE from base 100,200 to destination 600,950; one-command U; then MOVE the same editable objects with a locked-layer LINE by 100,50",
+  "result": "Both editable entity families moved by exact vector +500,+750, U restored exact endpoints/vertices, and the mixed workflow moved only editable entities while the locked-layer line remained at y=2000.",
+  "artifact": "evidence/artifacts/F-016-autocad-readback.json"
+}

@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { CadCommandInputError, CadSession, createEmptyDocument, parseCartesianPoint, resolveCadCommand, type CadChange } from "@kuubik/cad-core";
+import { CadCommandInputError, CadSession, createEmptyDocument, parseCartesianPoint, parseMoveDestination, resolveCadCommand, type CadChange } from "@kuubik/cad-core";
 import { exportDxf } from "@kuubik/cad-dxf";
 import { CadCanvasRenderer } from "@kuubik/cad-renderer";
-import type { KDrawDocumentV1 } from "@kuubik/cad-schema";
+import type { CadEntity, KDrawDocumentV1 } from "@kuubik/cad-schema";
 import { KDrawIndexedDb, StorageRevisionConflictError } from "./indexed-db.js";
 import "./style.css";
 
@@ -18,7 +18,26 @@ export function App() {
   const [firstCornerInput, setFirstCornerInput] = useState("100,200");
   const [otherCornerInput, setOtherCornerInput] = useState("600,900");
   const [selectedHandles, setSelectedHandles] = useState<string[]>([]);
+  const [moveBaseInput, setMoveBaseInput] = useState("100,200");
+  const [moveDestinationInput, setMoveDestinationInput] = useState("600,950");
+  const [moveAwaitingSelection, setMoveAwaitingSelection] = useState(false);
   const activeLayer = document.layers.find((layer) => layer.id === document.currentLayerId)!;
+  const movePreview = useMemo((): { entities: CadEntity[]; delta: { x: number; y: number } } | null => {
+    if (selectedHandles.length === 0) return null;
+    try {
+      const command = resolveCadCommand("MOVE");
+      if (!command || command.id !== "MOVE") return null;
+      const basePoint = parseCartesianPoint(moveBaseInput);
+      const destinationPoint = parseMoveDestination(moveDestinationInput, basePoint);
+      const result = command.execute(document, { targetHandles: selectedHandles, basePoint, destinationPoint });
+      return {
+        entities: result.changes.flatMap((change) => change.type === "put" ? [change.entity] : []),
+        delta: result.delta,
+      };
+    } catch {
+      return null;
+    }
+  }, [document, moveBaseInput, moveDestinationInput, selectedHandles]);
 
   useEffect(() => {
     let active = true;
@@ -47,14 +66,15 @@ export function App() {
     element.width = Math.round(element.clientWidth * ratio);
     element.height = Math.round(element.clientHeight * ratio);
     const renderer = new CadCanvasRenderer();
+    renderer.setBlocks(document.blocks);
     renderer.setEntities(document.entities);
     renderer.render(context, {
-      world: { minX: 0, minY: 0, maxX: 1000, maxY: 1000 },
+      world: { minX: -500, minY: -500, maxX: 2500, maxY: 2500 },
       widthPx: element.clientWidth,
       heightPx: element.clientHeight,
       devicePixelRatio: ratio,
-    }, document.layers);
-  }, [document]);
+    }, document.layers, movePreview?.entities ?? null);
+  }, [document, movePreview]);
 
   async function recoverFromStorageConflict(error: unknown): Promise<void> {
     if (!(error instanceof StorageRevisionConflictError)) throw error;
@@ -74,7 +94,7 @@ export function App() {
       const args = { start: { x: 10, y: 10 + document.revision * 5 }, end: { x: 180, y: 90 } };
       await commitChanges("LINE", args, [{
         type: "put",
-        entity: { kind: "line", handle, layerId: "0", start: args.start, end: args.end },
+        entity: { kind: "line", handle, layerId: document.currentLayerId, start: args.start, end: args.end },
       }], [handle]);
     } catch (error) {
       await recoverFromStorageConflict(error);
@@ -137,7 +157,40 @@ export function App() {
   function selectAll(): void {
     const handles = document.entities.map((entity) => entity.handle);
     setSelectedHandles(handles);
-    setStatus(`${handles.length} objekti valitud`);
+    setStatus(moveAwaitingSelection ? `${handles.length} objekti valitud; MOVE: määra baaspunkt ja sihtpunkt` : `${handles.length} objekti valitud`);
+  }
+
+  async function moveSelected(): Promise<void> {
+    if (committing.current) return;
+    if (selectedHandles.length === 0) {
+      setMoveAwaitingSelection(true);
+      setStatus("MOVE: vali objektid, seejärel kinnita valik ja punktid");
+      return;
+    }
+    committing.current = true;
+    try {
+      const command = resolveCadCommand("MOVE");
+      if (!command || command.id !== "MOVE") throw new Error("MOVE command is missing from the registry.");
+      const basePoint = parseCartesianPoint(moveBaseInput);
+      const destinationPoint = parseMoveDestination(moveDestinationInput, basePoint);
+      const result = command.execute(document, { targetHandles: selectedHandles, basePoint, destinationPoint });
+      setMoveAwaitingSelection(false);
+      if (result.changes.length === 0) {
+        const suffix = result.rejected.length ? `; ${result.rejected.length} lukus, puudu või toetamata` : "";
+        setStatus(`MOVE ei muutnud geomeetriat${suffix}`);
+        return;
+      }
+      await commitChanges(command.id, { basePoint, destinationPoint }, result.changes, result.movedHandles, result.movedHandles);
+      setSelectedHandles([]);
+      const suffix = result.rejected.length ? `; ${result.rejected.length} jäi muutmata` : "";
+      setStatus(`${result.movedHandles.length} objekti nihutatud Δ${result.delta.x},${result.delta.y}${suffix}`);
+    } catch (error) {
+      if (error instanceof StorageRevisionConflictError) await recoverFromStorageConflict(error);
+      else if (error instanceof CadCommandInputError) setStatus(`MOVE viga: ${error.message}`);
+      else throw error;
+    } finally {
+      committing.current = false;
+    }
   }
 
   async function eraseSelected(): Promise<void> {
@@ -256,11 +309,21 @@ export function App() {
         <button type="button" onClick={() => void createLayer()}>Uus kiht</button>
         <button type="button" onClick={() => void toggleActiveLayerLock()}>{activeLayer.locked ? "Ava aktiivne" : "Lukusta aktiivne"}</button>
         <button type="button" onClick={selectAll} disabled={document.entities.length === 0}>Vali kõik</button>
+        <label className="coordinate-input">
+          <span>MOVE baaspunkt</span>
+          <input aria-label="MOVE baaspunkt" value={moveBaseInput} onChange={(event) => setMoveBaseInput(event.target.value)} placeholder="x,y" />
+        </label>
+        <label className="coordinate-input">
+          <span>MOVE sihtpunkt</span>
+          <input aria-label="MOVE sihtpunkt" value={moveDestinationInput} onChange={(event) => setMoveDestinationInput(event.target.value)} placeholder="x,y või @dx,dy" />
+        </label>
+        <button type="button" onClick={() => void moveSelected()}>MOVE</button>
         <button type="button" onClick={() => void eraseSelected()} disabled={selectedHandles.length === 0}>ERASE</button>
         <button type="button" onClick={() => void undoLast()} disabled={!session.current.canUndo}>UNDO</button>
         <button type="button" onClick={downloadDxf}>DXF eksport</button>
         <button type="button" disabled>TRIM järgmine</button>
         <span>{document.entities.length} objekti · {selectedHandles.length} valitud · {activeLayer.name}{activeLayer.locked ? " 🔒" : ""}</span>
+        {movePreview && <span data-testid="move-preview">MOVE eelvaade: {movePreview.entities.length} · Δ{movePreview.delta.x},{movePreview.delta.y}</span>}
       </section>
       <section className="drawing-area">
         <canvas ref={canvas} aria-label="Kuubik Draw joonestusala" />

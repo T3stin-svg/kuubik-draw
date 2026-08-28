@@ -1,4 +1,4 @@
-import type { CadEntity, CadPoint2 } from "@kuubik/cad-schema";
+import type { CadBlockDefinition, CadEntity, CadPoint2 } from "@kuubik/cad-schema";
 
 export interface Bounds2 {
   minX: number;
@@ -31,7 +31,22 @@ export function unionBounds(items: readonly Bounds2[]): Bounds2 {
   };
 }
 
-export function entityBounds(entity: CadEntity): Bounds2 | null {
+function transformedBlockPoint(point: CadPoint2, block: CadBlockDefinition, reference: Extract<CadEntity, { kind: "blockRef" }>): CadPoint2 {
+  const x = (point.x - block.basePoint.x) * reference.scale.x;
+  const y = (point.y - block.basePoint.y) * reference.scale.y;
+  const cosine = Math.cos(reference.rotationRad);
+  const sine = Math.sin(reference.rotationRad);
+  return {
+    x: reference.insertion.x + x * cosine - y * sine,
+    y: reference.insertion.y + x * sine + y * cosine,
+  };
+}
+
+export function entityBounds(
+  entity: CadEntity,
+  blocks: ReadonlyMap<string, CadBlockDefinition> = new Map(),
+  blockTrail: ReadonlySet<string> = new Set(),
+): Bounds2 | null {
   switch (entity.kind) {
     case "line": return boundsFromPoints([entity.start, entity.end]);
     case "polyline": return boundsFromPoints(entity.vertices);
@@ -58,7 +73,25 @@ export function entityBounds(entity: CadEntity): Bounds2 | null {
     case "leader": return boundsFromPoints(entity.vertices);
     case "dimension": return boundsFromPoints(entity.definitionPoints);
     case "hatch": return boundsFromPoints(entity.loops.flatMap((loop) => loop.vertices));
-    case "blockRef": return { minX: entity.insertion.x, minY: entity.insertion.y, maxX: entity.insertion.x, maxY: entity.insertion.y };
+    case "blockRef": {
+      const block = blocks.get(entity.blockId);
+      if (!block || blockTrail.has(block.id)) {
+        return { minX: entity.insertion.x, minY: entity.insertion.y, maxX: entity.insertion.x, maxY: entity.insertion.y };
+      }
+      const nextTrail = new Set(blockTrail).add(block.id);
+      const childBounds = block.entities.flatMap((child) => {
+        const bounds = entityBounds(child, blocks, nextTrail);
+        return bounds ? [bounds] : [];
+      });
+      if (childBounds.length === 0) return null;
+      const local = unionBounds(childBounds);
+      return boundsFromPoints([
+        transformedBlockPoint({ x: local.minX, y: local.minY }, block, entity),
+        transformedBlockPoint({ x: local.maxX, y: local.minY }, block, entity),
+        transformedBlockPoint({ x: local.maxX, y: local.maxY }, block, entity),
+        transformedBlockPoint({ x: local.minX, y: local.maxY }, block, entity),
+      ]);
+    }
     case "proxy": return entity.bounds
       ? { minX: entity.bounds.min.x, minY: entity.bounds.min.y, maxX: entity.bounds.max.x, maxY: entity.bounds.max.y }
       : null;

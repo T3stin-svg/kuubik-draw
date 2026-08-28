@@ -26,7 +26,7 @@ button { font: inherit; }
 
 .titlebar { background: #171b20; border-bottom: 1px solid #0c0f12; }
 .titlebar span { color: #98a2ad; font-size: 12px; }
-.ribbon { background: #2a3037; border-bottom: 1px solid #12171c; }
+.ribbon { overflow-x: auto; background: #2a3037; border-bottom: 1px solid #12171c; }
 .ribbon button { min-height: 34px; padding: 0 14px; color: #edf3f8; background: #39424c; border: 1px solid #56616d; border-radius: 2px; }
 .ribbon button:disabled { opacity: .45; }
 .coordinate-input { display: grid; gap: 2px; color: #b9c2cb; font-size: 10px; }

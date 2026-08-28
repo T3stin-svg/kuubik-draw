@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-016",
+  "kind": "browser",
+  "authority": "kuubik-draw-browser",
+  "status": "PASS",
+  "artifactSha256": "5d58b374a691059da6a0939d4c9595ef86738bcf01cff0925cd3c1a228a3823c",
+  "observedAt": "2026-08-28T10:59:09.650Z",
+  "workflow": "Chromium /d/local exercises LINE+closed-LWPOLYLINE preselection with a non-mutating two-entity preview and exact +500,+750 MOVE, one-step UNDO/reload, then postselection with @100,50 and a mixed editable+locked selection, plus a zero-delta no-revision workflow",
+  "result": "Three live browser workflows preserved exact handles, LINE endpoints and LWPOLYLINE vertices across production DXF downloads and IndexedDB reload; locked handle 12 stayed fixed, the editable line moved, zero delta kept revision 1, and no console/page errors occurred.",
+  "test": "e2e/f016-move.spec.ts",
+  "artifact": "evidence/artifacts/F-016-browser-readback.json"
+}

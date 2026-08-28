@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-016",
+  "kind": "readback",
+  "authority": "independent-parser",
+  "status": "PASS",
+  "artifactSha256": "79d90d880c74c13db64fee0b6344a8ca1a8a99cade089321e0e8b7f803babe5d",
+  "observedAt": "2026-08-28T10:59:55.000Z",
+  "workflow": "Production cad-core MOVE and cad-dxf output parsed by dxf-parser@1.1.2, followed by exact-handle one-step UNDO, a mixed locked-layer kernel matrix and zero-delta no-op check",
+  "result": "INSUNITS=4; LINE handle 10 and LWPOLYLINE handle 11 read back at exact +500,+750 endpoints/vertices, one UNDO restored both original entities, locked handle 21 was rejected, and zero displacement produced no changes.",
+  "artifact": "evidence/artifacts/F-016-independent-readback.json"
+}
