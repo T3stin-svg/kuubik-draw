@@ -1,0 +1,463 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-104",
+  "benchmark": "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
+  "engine": "Autodesk AutoCAD 2024 desktop COM/native viewports, VPCLIP, DWG To PDF.pc3 and DWG reopen",
+  "engineVersion": "24.3s (LMS Tech)",
+  "automationProcessId": 23604,
+  "automationProcessOwned": true,
+  "media": "ISO_expand_A3_(297.00_x_420.00_MM)",
+  "handles": {
+    "systemViewport": "281",
+    "firstViewport": "294",
+    "secondViewport": "296",
+    "polygonBoundary": "298"
+  },
+  "beforeSave": {
+    "layoutName": "F104 VECTOR OUTPUT",
+    "configName": "DWG To PDF.pc3",
+    "canonicalMediaName": "ISO_expand_A3_(297.00_x_420.00_MM)",
+    "paper": {
+      "widthMm": 420,
+      "heightMm": 297,
+      "rawWidthMm": 297,
+      "rawHeightMm": 420,
+      "rotation": 1
+    },
+    "plotType": 5,
+    "plotWithLineweights": true,
+    "plotWithPlotStyles": false,
+    "tileMode": 0,
+    "cvport": 1,
+    "mSpace": false,
+    "viewportCount": 2,
+    "viewports": [
+      {
+        "handle": "294",
+        "center": {
+          "x": 108.75,
+          "y": 148.5
+        },
+        "width": 185,
+        "height": 247,
+        "target": {
+          "x": 0,
+          "y": 0
+        },
+        "customScale": 0.02,
+        "twistAngle": 0,
+        "clipped": false,
+        "displayLocked": true,
+        "viewportOn": true
+      },
+      {
+        "handle": "296",
+        "center": {
+          "x": 311.25,
+          "y": 148.5
+        },
+        "width": 185,
+        "height": 247,
+        "target": {
+          "x": 20000,
+          "y": 0
+        },
+        "customScale": 0.01,
+        "twistAngle": 0,
+        "clipped": true,
+        "displayLocked": true,
+        "viewportOn": true
+      }
+    ],
+    "expectedHandles": {
+      "first": "294",
+      "second": "296",
+      "polygonBoundary": "298"
+    },
+    "boundaryPresent": true,
+    "paperText": [
+      "KUUBIK F-104 VECTOR LAYOUT",
+      "A3 420x297 | 1:50 + 1:100"
+    ]
+  },
+  "afterReopen": {
+    "layoutName": "F104 VECTOR OUTPUT",
+    "configName": "DWG To PDF.pc3",
+    "canonicalMediaName": "ISO_expand_A3_(297.00_x_420.00_MM)",
+    "paper": {
+      "widthMm": 420,
+      "heightMm": 297,
+      "rawWidthMm": 297,
+      "rawHeightMm": 420,
+      "rotation": 1
+    },
+    "plotType": 5,
+    "plotWithLineweights": true,
+    "plotWithPlotStyles": false,
+    "tileMode": 0,
+    "cvport": 1,
+    "mSpace": false,
+    "viewportCount": 2,
+    "viewports": [
+      {
+        "handle": "294",
+        "center": {
+          "x": 108.75,
+          "y": 148.5
+        },
+        "width": 185,
+        "height": 247,
+        "target": {
+          "x": 0,
+          "y": 0
+        },
+        "customScale": 0.02,
+        "twistAngle": 0,
+        "clipped": false,
+        "displayLocked": true,
+        "viewportOn": true
+      },
+      {
+        "handle": "296",
+        "center": {
+          "x": 311.25,
+          "y": 148.5
+        },
+        "width": 185,
+        "height": 247,
+        "target": {
+          "x": 20000,
+          "y": 0
+        },
+        "customScale": 0.01,
+        "twistAngle": 0,
+        "clipped": true,
+        "displayLocked": true,
+        "viewportOn": true
+      }
+    ],
+    "expectedHandles": {
+      "first": "294",
+      "second": "296",
+      "polygonBoundary": "298"
+    },
+    "boundaryPresent": true,
+    "paperText": [
+      "KUUBIK F-104 VECTOR LAYOUT",
+      "A3 420x297 | 1:50 + 1:100"
+    ]
+  },
+  "checks": {
+    "nativeA3Layout": true,
+    "twoNativeViewports": true,
+    "exactFrames": true,
+    "exactScalesAndTargets": true,
+    "rectangleAndPolygonClip": true,
+    "lockedAndDisplayed": true,
+    "paperTitle": true,
+    "nativePdfPlot": true,
+    "nativeDwgReopen": true,
+    "statePersisted": true,
+    "reopenedNativePdfPlot": true,
+    "paperSpaceRestored": true
+  },
+  "dwg": {
+    "bytes": 33555,
+    "sha256": "f53301faebd1a5b10646c585c0074f90ddf867e3cd7e7abd258c74d32c4309e5",
+    "saveAsType": 64,
+    "retained": false
+  },
+  "pdf": {
+    "bytes": 89958,
+    "sha256": "50e3b82ac49b5746a0d3015ef5b9284a3f95efaaad0ada723d0a7ee9b34ff968",
+    "retained": false
+  },
+  "reopenPdf": {
+    "bytes": 89958,
+    "sha256": "ae49b247c02f66c7b3f4ac74a96a0346603f19bbd0d8082b547ccd1694c19927",
+    "retained": false
+  },
+  "status": "PASS",
+  "userDocument": {
+    "isolatedOwnedProcess": true,
+    "blankRestored": true
+  },
+  "automationProcessTerminated": true,
+  "processSetRestored": true,
+  "preExistingProcessIds": [],
+  "independentPdfReadback": {
+    "readers": {
+      "pypdf": "6.10.0",
+      "pdfplumber": "0.11.9"
+    },
+    "documents": {
+      "native": {
+        "label": "native",
+        "path": "KuubikDraw-F104-a5b12dba-7fb9-47ef-9d25-5e2d6aaf4042.pdf",
+        "pypdf": {
+          "pages": 1,
+          "mediaBox": [
+            0,
+            0,
+            842,
+            1191
+          ],
+          "xobjects": 0,
+          "imageXObjects": 0,
+          "images": 0,
+          "operators": {
+            "cm": 2,
+            "q": 5,
+            "m": 9,
+            "l": 23,
+            "W": 4,
+            "n": 4,
+            "RG": 3,
+            "rg": 3,
+            "gs": 2,
+            "w": 3,
+            "j": 3,
+            "J": 3,
+            "BDC": 4,
+            "S": 5,
+            "EMC": 4,
+            "Q": 5,
+            "Tf": 4,
+            "BT": 4,
+            "Tm": 4,
+            "Tc": 4,
+            "Tz": 4,
+            "Tr": 4,
+            "Tj": 4,
+            "ET": 4,
+            "c": 4
+          },
+          "matrices": [
+            [
+              0.12,
+              0,
+              0,
+              0.12,
+              14,
+              28
+            ],
+            [
+              0,
+              -1,
+              1,
+              0,
+              2986.5,
+              2832.5
+            ]
+          ],
+          "clipPaths": [
+            "m:95.0,5396.0|l:5927.0,5396.0|l:5927.0,9447.0|l:95.0,9447.0|l:95.0,5396.0",
+            "m:95.0,5396.0|l:5927.0,5396.0|l:5927.0,9447.0|l:95.0,9447.0|l:95.0,5396.0",
+            "m:105.0,613.0|l:5927.0,1126.0|l:5927.0,4468.0|l:105.0,4981.0|l:95.0,4981.0|l:95.0,613.0|l:105.0,613.0",
+            "m:0.0,0.0|l:6779.0,0.0|l:6779.0,9448.0|l:0.0,9448.0|l:0.0,0.0"
+          ],
+          "strictParsed": false,
+          "strictError": "PdfReadError: Multiple definitions in dictionary at byte 0x15b2f for key /PageMode"
+        },
+        "pdfplumber": {
+          "pages": 1,
+          "width": 1191,
+          "height": 842,
+          "lines": 3,
+          "rects": 0,
+          "curves": 2,
+          "images": 0,
+          "words": [
+            "VIEW",
+            "1",
+            "SCALE",
+            "1:50",
+            "VIEW",
+            "2",
+            "SCALE",
+            "1:100",
+            "KUUBIK",
+            "F-104",
+            "VECTOR",
+            "LAYOUT",
+            "A3",
+            "420x297",
+            "|",
+            "1:50",
+            "+",
+            "1:100"
+          ]
+        }
+      },
+      "reopen": {
+        "label": "reopen",
+        "path": "KuubikDraw-F104-a5b12dba-7fb9-47ef-9d25-5e2d6aaf4042.reopen.pdf",
+        "pypdf": {
+          "pages": 1,
+          "mediaBox": [
+            0,
+            0,
+            842,
+            1191
+          ],
+          "xobjects": 0,
+          "imageXObjects": 0,
+          "images": 0,
+          "operators": {
+            "cm": 2,
+            "q": 5,
+            "m": 9,
+            "l": 23,
+            "W": 4,
+            "n": 4,
+            "RG": 3,
+            "rg": 3,
+            "gs": 2,
+            "w": 3,
+            "j": 3,
+            "J": 3,
+            "BDC": 4,
+            "S": 5,
+            "EMC": 4,
+            "Q": 5,
+            "Tf": 4,
+            "BT": 4,
+            "Tm": 4,
+            "Tc": 4,
+            "Tz": 4,
+            "Tr": 4,
+            "Tj": 4,
+            "ET": 4,
+            "c": 4
+          },
+          "matrices": [
+            [
+              0.12,
+              0,
+              0,
+              0.12,
+              14,
+              28
+            ],
+            [
+              0,
+              -1,
+              1,
+              0,
+              2986.5,
+              2832.5
+            ]
+          ],
+          "clipPaths": [
+            "m:95.0,5396.0|l:5927.0,5396.0|l:5927.0,9447.0|l:95.0,9447.0|l:95.0,5396.0",
+            "m:95.0,5396.0|l:5927.0,5396.0|l:5927.0,9447.0|l:95.0,9447.0|l:95.0,5396.0",
+            "m:105.0,613.0|l:5927.0,1126.0|l:5927.0,4468.0|l:105.0,4981.0|l:95.0,4981.0|l:95.0,613.0|l:105.0,613.0",
+            "m:0.0,0.0|l:6779.0,0.0|l:6779.0,9448.0|l:0.0,9448.0|l:0.0,0.0"
+          ],
+          "strictParsed": false,
+          "strictError": "PdfReadError: Multiple definitions in dictionary at byte 0x15b2f for key /PageMode"
+        },
+        "pdfplumber": {
+          "pages": 1,
+          "width": 1191,
+          "height": 842,
+          "lines": 3,
+          "rects": 0,
+          "curves": 2,
+          "images": 0,
+          "words": [
+            "VIEW",
+            "1",
+            "SCALE",
+            "1:50",
+            "VIEW",
+            "2",
+            "SCALE",
+            "1:100",
+            "KUUBIK",
+            "F-104",
+            "VECTOR",
+            "LAYOUT",
+            "A3",
+            "420x297",
+            "|",
+            "1:50",
+            "+",
+            "1:100"
+          ]
+        }
+      }
+    }
+  },
+  "renderedPixels": {
+    "schemaVersion": 1,
+    "images": {
+      "native": {
+        "label": "native",
+        "width": 2382,
+        "height": 1684,
+        "mode": "RGB",
+        "sha256": "7ef56c762945b505c78fa074381d529b5f19a3a2aade23476b7bd0afcff3f79c",
+        "counts": {
+          "red": 10415,
+          "redAlphaOnWhite": 827,
+          "blue": 8620,
+          "black": 6104,
+          "nonWhite": 34752,
+          "leftRed": 10415,
+          "rightBlue": 8620
+        },
+        "extrema": [
+          [
+            0,
+            255
+          ],
+          [
+            0,
+            255
+          ],
+          [
+            0,
+            255
+          ]
+        ]
+      },
+      "reopen": {
+        "label": "reopen",
+        "width": 2382,
+        "height": 1684,
+        "mode": "RGB",
+        "sha256": "7ef56c762945b505c78fa074381d529b5f19a3a2aade23476b7bd0afcff3f79c",
+        "counts": {
+          "red": 10415,
+          "redAlphaOnWhite": 827,
+          "blue": 8620,
+          "black": 6104,
+          "nonWhite": 34752,
+          "leftRed": 10415,
+          "rightBlue": 8620
+        },
+        "extrema": [
+          [
+            0,
+            255
+          ],
+          [
+            0,
+            255
+          ],
+          [
+            0,
+            255
+          ]
+        ]
+      }
+    }
+  },
+  "scriptSha256": "62df9e6699ee6d10244d5790ada188a0c401c7744d0dc2e96bae89c9652d36fc",
+  "matrixScriptSha256": "81e65af9d65da9b2ed619274e4207cc404be8fb6ed62a7a586b473186c22403c",
+  "runnerScriptSha256": "db7915b0a295c7d4a068c582f93a9c855413d360b23ca8ebc22235392012f3c2",
+  "pdfReaderSha256": "d29a89cb4a35425198436619356b3497c1a5d107adee669414ae258ec6382025",
+  "pixelReaderSha256": "952e09b669d31675204170186a821e85889f748c640f6d439ffa04d71c3314dc",
+  "observedAt": "2026-08-28T20:27:38.753Z"
+}

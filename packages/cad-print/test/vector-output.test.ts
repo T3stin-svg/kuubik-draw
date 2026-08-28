@@ -1,10 +1,50 @@
 import { describe, expect, it } from "vitest";
 import { createEmptyDocument, createPaperLayout } from "../../cad-core/src/index.js";
+import { createF104Document, F104_LAYOUT_ID, F104_VIEWPORT_IDS } from "../../../parity/fixtures/f104-document.js";
 import { exportLayoutSvg, exportLayoutVectorPdf, exportSvg, exportVectorPdf, readPdfSummary, resolveLayoutPlotPlacement } from "../src/index.js";
 
 const page = { widthMm: 297, heightMm: 210, scaleDenominator: 1, origin: { x: 0, y: 0 } };
 
 describe("vector print output", () => {
+  it("emits a deterministic F-104 A3 layout with two independently clipped vector viewports", () => {
+    const document = createF104Document();
+    const firstSvg = exportLayoutSvg(document, F104_LAYOUT_ID);
+    const secondSvg = exportLayoutSvg(structuredClone(document), F104_LAYOUT_ID);
+    expect(secondSvg.text).toBe(firstSvg.text);
+    expect(firstSvg.skippedHandles).toEqual([]);
+    expect(firstSvg.placement).toMatchObject({
+      paper: { widthMm: 420, heightMm: 297 },
+      source: { x: 0, y: 0, width: 420, height: 297 },
+      destination: { x: 0, y: 0, width: 420, height: 297 },
+      scaleFactor: 1,
+    });
+    expect(firstSvg.text).toContain('width="420mm" height="297mm"');
+    expect(firstSvg.text).toContain(`<g data-viewport-id="${F104_VIEWPORT_IDS[0]}"`);
+    expect(firstSvg.text).toContain(`<g data-viewport-id="${F104_VIEWPORT_IDS[1]}"`);
+    expect(firstSvg.text).toContain('<clipPath id="viewport-clip-0"><rect x="16.25" y="25" width="185" height="247"/></clipPath>');
+    expect(firstSvg.text).toContain('<clipPath id="viewport-clip-1"><polygon points="218.75,25 403.75,25 382,272 240.5,272"/></clipPath>');
+    expect(firstSvg.text).toContain(`<g data-viewport-id="${F104_VIEWPORT_IDS[0]}" clip-path="url(#viewport-clip-0)"><g transform="`);
+    expect(firstSvg.text).toContain(`<g data-viewport-id="${F104_VIEWPORT_IDS[1]}" clip-path="url(#viewport-clip-1)"><g transform="`);
+    expect(firstSvg.text).not.toMatch(/data-viewport-id="[^"]+"[^>]+clip-path="[^"]+"[^>]+transform=/u);
+    expect(firstSvg.text).toContain('scale(0.02) rotate(0) translate(0 0)');
+    expect(firstSvg.text).toContain('scale(0.01) rotate(0) translate(-20000 0)');
+    expect(firstSvg.text).toContain('data-handle="32"');
+    expect(firstSvg.text).toContain('KUUBIK F-104 VECTOR LAYOUT');
+    expect(firstSvg.text).toContain('data-opacity="0.6"');
+
+    const firstPdf = exportLayoutVectorPdf(document, F104_LAYOUT_ID);
+    const secondPdf = exportLayoutVectorPdf(structuredClone(document), F104_LAYOUT_ID);
+    expect(secondPdf.bytes).toEqual(firstPdf.bytes);
+    expect(firstPdf.skippedHandles).toEqual([]);
+    expect(readPdfSummary(firstPdf.bytes)).toMatchObject({ version: "1.4", pages: 1, hasXref: true, xrefOffsetsValid: true });
+    const pdfText = new TextDecoder("latin1").decode(firstPdf.bytes);
+    expect(pdfText).toContain("/MediaBox [0 0 1190.551181 841.889764]");
+    expect(pdfText).toContain("16.25 25 185 247 re W n 0.02 0 0 0.02 108.75 148.5 cm");
+    expect(pdfText).toContain("218.75 25 m 403.75 25 l 382 272 l 240.5 272 l h W n 0.01 0 0 0.01 111.25 148.5 cm");
+    expect(pdfText).toContain("(KUUBIK F-104 VECTOR LAYOUT) Tj");
+    expect(pdfText).toContain("/GS60 gs");
+    expect(pdfText).not.toContain("/Subtype /Image");
+  });
   it("uses one F-103 resolver for ByLayer colour, physical lineweight and solid-hatch alpha in SVG and PDF", () => {
     const document = createEmptyDocument({ documentId: "F-103" });
     document.layers[0]!.appearance = { color: "#ff0000", lineweightMm: 0.7 };

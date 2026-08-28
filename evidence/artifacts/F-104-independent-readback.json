@@ -1,0 +1,403 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-104",
+  "source": "Production cad-print deterministic SVG/PDF, KDRAW1 round-trip, mutation sensitivity, pypdf/pdfplumber and Poppler rendered pixels",
+  "sourceSha256": {
+    "runner": "ff9ab0e9184db1f9399892047110ec5a5c05322a8c87ed963d52f8a9176e6bd5",
+    "fixture": "3c86c29e15361c90e79e5080ee3f5d035455334b4d347f55c9197d467b2ce759",
+    "browserEvidence": "1762de343fdb9dfb3ad471a05851a52bcbad12ec184d728c55a2140a061319b0",
+    "cadCore": "3b5e60e644ff3752da94e436f9784f9de9735c5304244e6c1cfa2b3228961169",
+    "cadPrint": "42f3bbec5086e42889095a462c4e7b3fd8a053ef80bd3c2e59aefaa55fc799b4",
+    "svgRenderer": "951e70aa363ae189920695d452b4a4425d0bff6c9bf3811ff9f5f9ef4d203c80",
+    "pdfReader": "d29a89cb4a35425198436619356b3497c1a5d107adee669414ae258ec6382025",
+    "pixelReader": "952e09b669d31675204170186a821e85889f748c640f6d439ffa04d71c3314dc"
+  },
+  "outputs": {
+    "svg": {
+      "bytes": 4773,
+      "sha256": "8a557f0916d21a4d0c99dd36c309a1aa0ae4d58f5dcae22bf71f102efff045b0",
+      "skippedHandles": [],
+      "viewportIds": [
+        "viewport-f104-50",
+        "viewport-f104-100"
+      ],
+      "rectClips": 1,
+      "polygonClips": 1
+    },
+    "pdf": {
+      "bytes": 2725,
+      "sha256": "434072b08ed825d4e51f277d88d4d4f5b46d0be8192174fb1b84b6a76a84a489",
+      "skippedHandles": [],
+      "summary": {
+        "version": "1.4",
+        "pages": 1,
+        "vectorStrokeCommands": 8,
+        "hasXref": true,
+        "xrefOffsetsValid": true
+      },
+      "images": 0
+    },
+    "deterministic": {
+      "svg": "8a557f0916d21a4d0c99dd36c309a1aa0ae4d58f5dcae22bf71f102efff045b0",
+      "pdf": "434072b08ed825d4e51f277d88d4d4f5b46d0be8192174fb1b84b6a76a84a489"
+    },
+    "mutations": {
+      "scale": {
+        "svg": "c20e1775f904e822f4fadfb93d671d1463dddaa26923193649f6899bf2f2c4df",
+        "pdf": "c283747df0fb7bc2e92fe7bd0d000fce8ded97b79d06e9339814e39ba0e00482"
+      },
+      "clip": {
+        "svg": "cb5528f2b833474d7c20ae4bd2ca240a17d25fbaebf9d9916cb88e5b11a1bd57",
+        "pdf": "9c35b4e953aa491c7cf52b74689b9337469e49f71d0ba22e4b25a46c3147f20c"
+      }
+    }
+  },
+  "independentPdfReadback": {
+    "readers": {
+      "pypdf": "6.10.0",
+      "pdfplumber": "0.11.9"
+    },
+    "documents": {
+      "independent": {
+        "label": "independent",
+        "path": "F-104-independent-layout.pdf",
+        "pypdf": {
+          "pages": 1,
+          "mediaBox": [
+            0,
+            0,
+            1190.551181,
+            841.889764
+          ],
+          "xobjects": 0,
+          "imageXObjects": 0,
+          "images": 0,
+          "operators": {
+            "q": 19,
+            "cm": 3,
+            "re": 1,
+            "W": 2,
+            "n": 2,
+            "RG": 16,
+            "rg": 16,
+            "w": 16,
+            "gs": 16,
+            "m": 11,
+            "l": 17,
+            "S": 8,
+            "Q": 19,
+            "h": 4,
+            "f*": 2,
+            "BT": 6,
+            "Tf": 6,
+            "Td": 6,
+            "Tj": 6,
+            "ET": 6,
+            "c": 8
+          },
+          "matrices": [
+            [
+              2.834646,
+              0,
+              0,
+              2.834646,
+              0,
+              0
+            ],
+            [
+              0.02,
+              0,
+              0,
+              0.02,
+              108.75,
+              148.5
+            ],
+            [
+              0.01,
+              0,
+              0,
+              0.01,
+              111.25,
+              148.5
+            ]
+          ],
+          "clipPaths": [
+            "re:16.25,25.0,185.0,247.0",
+            "m:218.75,25.0|l:403.75,25.0|l:382.0,272.0|l:240.5,272.0|h:"
+          ],
+          "strictParsed": true,
+          "strictError": null
+        },
+        "pdfplumber": {
+          "pages": 1,
+          "width": 1190.551181,
+          "height": 841.889764,
+          "lines": 5,
+          "rects": 3,
+          "curves": 2,
+          "images": 0,
+          "words": [
+            "VIEW",
+            "2",
+            "SCALE",
+            "1:100",
+            "VIEW",
+            "1",
+            "SCALE",
+            "1:50",
+            "VIEW",
+            "2",
+            "SCALE",
+            "1:100",
+            "VIEW",
+            "1",
+            "SCALE",
+            "1:50",
+            "KUUBIK",
+            "F-104",
+            "VECTOR",
+            "LAYOUT",
+            "A3",
+            "420x297",
+            "|",
+            "1:50",
+            "+",
+            "1:100"
+          ]
+        }
+      }
+    }
+  },
+  "renderedPixels": {
+    "schemaVersion": 1,
+    "images": {
+      "independentPdf": {
+        "label": "independentPdf",
+        "width": 2382,
+        "height": 1684,
+        "mode": "RGB",
+        "sha256": "327fb9c4f4eec59e844d240e419c53a473a594dc2aac9cf90420791ee170c622",
+        "counts": {
+          "red": 8446,
+          "redAlphaOnWhite": 109748,
+          "blue": 6778,
+          "black": 14138,
+          "nonWhite": 148209,
+          "leftRed": 8446,
+          "rightBlue": 6778
+        },
+        "extrema": [
+          [
+            0,
+            255
+          ],
+          [
+            0,
+            255
+          ],
+          [
+            0,
+            255
+          ]
+        ]
+      },
+      "independentSvg": {
+        "label": "independentSvg",
+        "width": 2381,
+        "height": 1684,
+        "mode": "RGB",
+        "sha256": "7cff7f36c67ba99073dddad767739610f41ae5615890c53eb65bbde17a82c76c",
+        "counts": {
+          "red": 3609,
+          "redAlphaOnWhite": 110657,
+          "blue": 3167,
+          "black": 1541,
+          "nonWhite": 147292,
+          "leftRed": 3609,
+          "rightBlue": 3090
+        },
+        "extrema": [
+          [
+            0,
+            255
+          ],
+          [
+            0,
+            255
+          ],
+          [
+            0,
+            255
+          ]
+        ]
+      }
+    }
+  },
+  "kdraw": {
+    "bytes": 4529,
+    "sha256": "812d56db5c6cc24d78b44b2f9647211bc14a08f920894bc0003d2904f00ddf19",
+    "documentSha256": "c74bef93176e023ffe098ddd170bfd73a1117052678431da6a52c3fa4a32fa6d",
+    "entry": {
+      "path": "document.json",
+      "mediaType": "application/json",
+      "byteLength": 3133,
+      "sha256": "c74bef93176e023ffe098ddd170bfd73a1117052678431da6a52c3fa4a32fa6d"
+    },
+    "revision": 0,
+    "layout": {
+      "id": "layout-1",
+      "name": "F104 VECTOR OUTPUT",
+      "kind": "paper",
+      "paper": {
+        "widthMm": 420,
+        "heightMm": 297,
+        "marginsMm": {
+          "top": 10,
+          "right": 10,
+          "bottom": 10,
+          "left": 10
+        }
+      },
+      "pageSetup": {
+        "mediaName": "ISO_A3",
+        "orientation": "landscape",
+        "plotArea": {
+          "kind": "layout"
+        },
+        "plotScale": {
+          "mode": "custom",
+          "paperUnits": 1,
+          "drawingUnits": 1
+        },
+        "centerPlot": false,
+        "plotOriginMm": {
+          "x": 0,
+          "y": 0
+        },
+        "plotStyle": {
+          "profile": "color",
+          "plotLineweights": true,
+          "plotTransparency": true
+        },
+        "displayPlotStyles": true
+      },
+      "viewports": [
+        {
+          "id": "viewport-f104-50",
+          "center": {
+            "x": 108.75,
+            "y": 148.5
+          },
+          "width": 185,
+          "height": 247,
+          "viewCenter": {
+            "x": 0,
+            "y": 0
+          },
+          "viewHeight": 12350,
+          "twistAngleRad": 0,
+          "locked": true
+        },
+        {
+          "id": "viewport-f104-100",
+          "center": {
+            "x": 311.25,
+            "y": 148.5
+          },
+          "width": 185,
+          "height": 247,
+          "viewCenter": {
+            "x": 20000,
+            "y": 0
+          },
+          "viewHeight": 24700,
+          "twistAngleRad": 0,
+          "locked": true,
+          "clipBoundary": [
+            {
+              "x": 218.75,
+              "y": 25
+            },
+            {
+              "x": 403.75,
+              "y": 25
+            },
+            {
+              "x": 382,
+              "y": 272
+            },
+            {
+              "x": 240.5,
+              "y": 272
+            }
+          ]
+        }
+      ],
+      "entities": [
+        {
+          "kind": "polyline",
+          "handle": "30",
+          "layerId": "0",
+          "closed": true,
+          "vertices": [
+            {
+              "x": 10,
+              "y": 10
+            },
+            {
+              "x": 410,
+              "y": 10
+            },
+            {
+              "x": 410,
+              "y": 287
+            },
+            {
+              "x": 10,
+              "y": 287
+            }
+          ]
+        },
+        {
+          "kind": "line",
+          "handle": "31",
+          "layerId": "0",
+          "start": {
+            "x": 210,
+            "y": 10
+          },
+          "end": {
+            "x": 210,
+            "y": 287
+          }
+        },
+        {
+          "kind": "text",
+          "handle": "32",
+          "layerId": "0",
+          "position": {
+            "x": 15,
+            "y": 17
+          },
+          "text": "KUUBIK F-104 VECTOR LAYOUT",
+          "height": 5,
+          "rotationRad": 0
+        },
+        {
+          "kind": "text",
+          "handle": "33",
+          "layerId": "0",
+          "position": {
+            "x": 255,
+            "y": 17
+          },
+          "text": "A3 420x297 | 1:50 + 1:100",
+          "height": 4,
+          "rotationRad": 0
+        }
+      ]
+    }
+  },
+  "browserEvidenceSha256": "1762de343fdb9dfb3ad471a05851a52bcbad12ec184d728c55a2140a061319b0",
+  "status": "PASS"
+}

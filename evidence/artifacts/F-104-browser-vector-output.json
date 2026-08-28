@@ -1,0 +1,293 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-104",
+  "status": "PASS",
+  "viewport": {
+    "width": 1920,
+    "height": 1080
+  },
+  "action": "Open persisted A3 paper layout -> inspect locked 1:50 rectangular and 1:100 polygon-clipped viewports -> SVG/PDF/KDRAW1 export -> reload -> exact SVG/PDF re-export",
+  "before": [
+    {
+      "id": "viewport-f104-50",
+      "kind": "rectangle",
+      "context": "paper",
+      "viewCenter": "0,0",
+      "viewHeight": 12350,
+      "locked": "true",
+      "clipPath": "none",
+      "frame": {
+        "x": 491.21875,
+        "y": 265.453125,
+        "width": 447.59375,
+        "height": 597.109375
+      },
+      "canvas": {
+        "width": 446,
+        "height": 595,
+        "paintedPixels": 22531,
+        "redPixels": 22531,
+        "bluePixels": 0
+      }
+    },
+    {
+      "id": "viewport-f104-100",
+      "kind": "polygon",
+      "context": "paper",
+      "viewCenter": "20000,0",
+      "viewHeight": 24700,
+      "locked": "true",
+      "clipPath": "polygon(0% 100%, 100% 100%, 88.2432% 0%, 11.7568% 0%)",
+      "frame": {
+        "x": 981.15625,
+        "y": 265.453125,
+        "width": 447.59375,
+        "height": 597.109375
+      },
+      "canvas": {
+        "width": 446,
+        "height": 595,
+        "paintedPixels": 2562,
+        "redPixels": 0,
+        "bluePixels": 2562
+      }
+    }
+  ],
+  "after": [
+    {
+      "id": "viewport-f104-50",
+      "kind": "rectangle",
+      "context": "paper",
+      "viewCenter": "0,0",
+      "viewHeight": 12350,
+      "locked": "true",
+      "clipPath": "none",
+      "frame": {
+        "x": 491.21875,
+        "y": 265.453125,
+        "width": 447.59375,
+        "height": 597.109375
+      },
+      "canvas": {
+        "width": 446,
+        "height": 595,
+        "paintedPixels": 22531,
+        "redPixels": 22531,
+        "bluePixels": 0
+      }
+    },
+    {
+      "id": "viewport-f104-100",
+      "kind": "polygon",
+      "context": "paper",
+      "viewCenter": "20000,0",
+      "viewHeight": 24700,
+      "locked": "true",
+      "clipPath": "polygon(0% 100%, 100% 100%, 88.2432% 0%, 11.7568% 0%)",
+      "frame": {
+        "x": 981.15625,
+        "y": 265.453125,
+        "width": 447.59375,
+        "height": 597.109375
+      },
+      "canvas": {
+        "width": 446,
+        "height": 595,
+        "paintedPixels": 2562,
+        "redPixels": 0,
+        "bluePixels": 2562
+      }
+    }
+  ],
+  "outputs": {
+    "svg": {
+      "bytes": 4773,
+      "sha256": "8a557f0916d21a4d0c99dd36c309a1aa0ae4d58f5dcae22bf71f102efff045b0",
+      "suggestedFilename": "local-F104 VECTOR OUTPUT.svg"
+    },
+    "pdf": {
+      "bytes": 2725,
+      "sha256": "434072b08ed825d4e51f277d88d4d4f5b46d0be8192174fb1b84b6a76a84a489",
+      "suggestedFilename": "local-F104 VECTOR OUTPUT.pdf",
+      "operators": {
+        "version": "1.4",
+        "pages": 1,
+        "a3": true,
+        "rectangularClip": true,
+        "polygonClip": true,
+        "scale50": true,
+        "scale100": true,
+        "red": true,
+        "blue": true,
+        "alpha60": true,
+        "title": true,
+        "images": 0,
+        "eof": true
+      }
+    },
+    "kdraw": {
+      "bytes": 4529,
+      "sha256": "57528df384b42736b848daa1f6a39aeb41a71149eebbded4be1c8beb5e079778",
+      "suggestedFilename": "local-r0.kdraw",
+      "revision": 0
+    }
+  },
+  "deterministicReload": {
+    "svgSha256": "8a557f0916d21a4d0c99dd36c309a1aa0ae4d58f5dcae22bf71f102efff045b0",
+    "pdfSha256": "434072b08ed825d4e51f277d88d4d4f5b46d0be8192174fb1b84b6a76a84a489"
+  },
+  "layout": {
+    "id": "layout-1",
+    "name": "F104 VECTOR OUTPUT",
+    "kind": "paper",
+    "paper": {
+      "widthMm": 420,
+      "heightMm": 297,
+      "marginsMm": {
+        "top": 10,
+        "right": 10,
+        "bottom": 10,
+        "left": 10
+      }
+    },
+    "pageSetup": {
+      "mediaName": "ISO_A3",
+      "orientation": "landscape",
+      "plotArea": {
+        "kind": "layout"
+      },
+      "plotScale": {
+        "mode": "custom",
+        "paperUnits": 1,
+        "drawingUnits": 1
+      },
+      "centerPlot": false,
+      "plotOriginMm": {
+        "x": 0,
+        "y": 0
+      },
+      "plotStyle": {
+        "profile": "color",
+        "plotLineweights": true,
+        "plotTransparency": true
+      },
+      "displayPlotStyles": true
+    },
+    "viewports": [
+      {
+        "id": "viewport-f104-50",
+        "center": {
+          "x": 108.75,
+          "y": 148.5
+        },
+        "width": 185,
+        "height": 247,
+        "viewCenter": {
+          "x": 0,
+          "y": 0
+        },
+        "viewHeight": 12350,
+        "twistAngleRad": 0,
+        "locked": true
+      },
+      {
+        "id": "viewport-f104-100",
+        "center": {
+          "x": 311.25,
+          "y": 148.5
+        },
+        "width": 185,
+        "height": 247,
+        "viewCenter": {
+          "x": 20000,
+          "y": 0
+        },
+        "viewHeight": 24700,
+        "twistAngleRad": 0,
+        "locked": true,
+        "clipBoundary": [
+          {
+            "x": 218.75,
+            "y": 25
+          },
+          {
+            "x": 403.75,
+            "y": 25
+          },
+          {
+            "x": 382,
+            "y": 272
+          },
+          {
+            "x": 240.5,
+            "y": 272
+          }
+        ]
+      }
+    ],
+    "entities": [
+      {
+        "kind": "polyline",
+        "handle": "30",
+        "layerId": "0",
+        "closed": true,
+        "vertices": [
+          {
+            "x": 10,
+            "y": 10
+          },
+          {
+            "x": 410,
+            "y": 10
+          },
+          {
+            "x": 410,
+            "y": 287
+          },
+          {
+            "x": 10,
+            "y": 287
+          }
+        ]
+      },
+      {
+        "kind": "line",
+        "handle": "31",
+        "layerId": "0",
+        "start": {
+          "x": 210,
+          "y": 10
+        },
+        "end": {
+          "x": 210,
+          "y": 287
+        }
+      },
+      {
+        "kind": "text",
+        "handle": "32",
+        "layerId": "0",
+        "position": {
+          "x": 15,
+          "y": 17
+        },
+        "text": "KUUBIK F-104 VECTOR LAYOUT",
+        "height": 5,
+        "rotationRad": 0
+      },
+      {
+        "kind": "text",
+        "handle": "33",
+        "layerId": "0",
+        "position": {
+          "x": 255,
+          "y": 17
+        },
+        "text": "A3 420x297 | 1:50 + 1:100",
+        "height": 4,
+        "rotationRad": 0
+      }
+    ]
+  },
+  "consoleErrors": []
+}

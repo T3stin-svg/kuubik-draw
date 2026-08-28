@@ -8,7 +8,7 @@ käitumispariteeti, mitte kogu AutoCADi toodet.
 
 - vana Drawi auditi snapshot: **63,9% raw / 68,3% weighted / 60,7% visual**;
 - vana Drawi AutoCADi live-tõendiga read: **22/133**;
-- selle uue eraldatud rakenduse kohalik sertifikaat: **15/133 · 11,3% raw / 14,0% weighted**;
+- selle uue eraldatud rakenduse kohalik sertifikaat: **16/133 · 12,0% raw / 15,0% weighted**;
 - native DWG/DWT/XREF ja PC3/CTB/STB pariteet on veel blokeeritud.
 
 Need arvud on vana Drawi auditi muutmatu snapshot. Uus rakendus ei päri skoori
@@ -47,6 +47,16 @@ kasutab override'i `1` ainult Page Setup väärtuse austamiseks, avab DWG uuesti
 ning taastab kõik puudutatud AutoCADi kasutajaseaded; `SECURELOAD` jäetakse
 muutmata. SVG/PDF/KDRAW1, Poppler,
 `pypdf`, `pdfplumber` ja Chromium kontrollivad sama tulemust sõltumatult.
+F-104 `Layout vector PDF/SVG` lisab ühe A3 lehe kahe sõltumatu lukustatud
+viewport'iga: ristkülik 1:50 ja `VPCLIP`-iga polügoon 1:100. Chromiumi SVG/PDF
+on pärast IndexedDB taasavamist bititäpselt deterministlik ning tootmispaketi
+väljundiga identne; XML, päris SVG Chromiumi raster, range `pypdf`, `pdfplumber`
+ja Poppler kinnitavad kaks clip'i, mõlema viewport'i sisu, füüsilise A3 formaadi,
+paberiruumi raamkirja ja null rasterpilti.
+AutoCAD 2024 live-värav salvestab ja avab native DWG uuesti ning plotib mõlemad
+olekud `DWG To PDF.pc3` kaudu. AutoCADi enda PDF-kataloogi dubleeritud
+`/PageMode` võti on tõendis ausalt kirjas; tolerantne tagasilugemine ja Poppler
+kinnitavad muutumatu vektortulemuse.
 
 ## Piirid
 

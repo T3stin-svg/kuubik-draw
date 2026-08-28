@@ -1,0 +1,7 @@
+; F-104 AutoCAD 2024.1.2 live workflow marker.
+; The owned-process harness creates an A3 layout with two locked native
+; viewports (1:50 rectangular and 1:100 VPCLIP), paper-space title geometry,
+; plots through DWG To PDF.pc3, saves/reopens the DWG and plots again.
+_.PSPACE
+_.PLOT
+; See tools/autocad/f104-vector-output.ps1 for the executable matrix.

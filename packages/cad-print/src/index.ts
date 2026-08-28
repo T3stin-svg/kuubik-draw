@@ -299,7 +299,7 @@ function svgViewport(document: KDrawDocumentV1, viewport: CadViewport, index: nu
   const angle = viewport.twistAngleRad * 180 / Math.PI;
   return {
     definition: clip.definition,
-    body: `<g data-viewport-id="${xml(viewport.id)}" clip-path="${clip.reference}" transform="translate(${viewport.center.x} ${viewport.center.y}) scale(${scale}) rotate(${angle}) translate(${-viewport.viewCenter.x} ${-viewport.viewCenter.y})">${body}</g>`,
+    body: `<g data-viewport-id="${xml(viewport.id)}" clip-path="${clip.reference}"><g transform="translate(${viewport.center.x} ${viewport.center.y}) scale(${scale}) rotate(${angle}) translate(${-viewport.viewCenter.x} ${-viewport.viewCenter.y})">${body}</g></g>`,
   };
 }
 
