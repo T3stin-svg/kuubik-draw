@@ -22,6 +22,7 @@ const expected = await json("parity/expected/F-022.json");
 
 const sourcePaths = [
   "apps/web/src/App.tsx",
+  "apps/web/src/workflows/modify-command.ts",
   "packages/cad-core/src/commands.ts",
   "packages/cad-core/src/index.ts",
   "packages/cad-core/src/transaction.ts",
@@ -47,9 +48,6 @@ const sourcePaths = [
   "tools/oracles/probe-tools.mjs",
   "tools/oracles/run-fixtures.mjs",
   "tools/oracles/run-f022-oracles.mjs",
-  ".github/workflows/ci.yml",
-  "tools/provenance/scan-public-tree.mjs",
-  "package.json",
   "package-lock.json",
   "parity/F-022-scope.md",
   "parity/expected/F-022.json",

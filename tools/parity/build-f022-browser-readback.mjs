@@ -9,6 +9,7 @@ const artifactRoot = resolve(root, "evidence/artifacts");
 const sha256 = (bytes) => createHash("sha256").update(bytes).digest("hex");
 const sourcePaths = [
   "apps/web/src/App.tsx",
+  "apps/web/src/workflows/modify-command.ts",
   "packages/cad-core/src/commands.ts",
   "packages/cad-core/src/index.ts",
   "packages/cad-core/src/transaction.ts",
@@ -19,9 +20,6 @@ const sourcePaths = [
   "e2e/f022-trim.spec.ts",
   "tools/parity/capture-f022-browser.mjs",
   "tools/parity/build-f022-browser-readback.mjs",
-  ".github/workflows/ci.yml",
-  "tools/provenance/scan-public-tree.mjs",
-  "package.json",
   "package-lock.json",
 ];
 const json = async (name) => JSON.parse(await readFile(resolve(artifactRoot, name), "utf8"));

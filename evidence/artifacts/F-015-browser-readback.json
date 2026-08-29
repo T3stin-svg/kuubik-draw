@@ -2,16 +2,32 @@
   "schemaVersion": 1,
   "rowId": "F-015",
   "source": "Chromium downloads captured by e2e/f015-erase.spec.ts with PARITY_CAPTURE_DIR",
-  "observedAt": "2026-08-29T03:51:18.547Z",
+  "observedAt": "2026-08-29T10:42:45.255Z",
   "empty": {
     "sha256": "c0770b074d573c97a5d8e7d6732bc609e3f1f5f9dbba783cf4b859b403c3a131",
     "units": 4,
     "entities": []
   },
   "restored": {
-    "sha256": "5f517e48ffd6065a696c9ecea3aca881af16a9b4d634aa374aee9565d6f200f1",
+    "sha256": "23e16c5d14a89d3f50328567af8a018a3e7cffe15f7a5b2b70ff1643a04b7e8d",
     "units": 4,
     "entities": [
+      {
+        "type": "LINE",
+        "handle": "10",
+        "layer": "0",
+        "closed": false,
+        "vertices": [
+          {
+            "x": 10,
+            "y": 10
+          },
+          {
+            "x": 180,
+            "y": 90
+          }
+        ]
+      },
       {
         "type": "LWPOLYLINE",
         "handle": "11",
@@ -33,22 +49,6 @@
           {
             "x": 125.25,
             "y": 900.125
-          }
-        ]
-      },
-      {
-        "type": "LINE",
-        "handle": "10",
-        "layer": "0",
-        "closed": false,
-        "vertices": [
-          {
-            "x": 10,
-            "y": 10
-          },
-          {
-            "x": 180,
-            "y": 90
           }
         ]
       }

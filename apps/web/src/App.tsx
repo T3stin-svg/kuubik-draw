@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ISO_PAPER_MEDIA, MAX_PAGE_SETUP_TEMPLATE_BYTES, STANDARD_VIEWPORT_SCALE_DENOMINATORS, allocateEntityHandles, applyNamedPageSetup, buildLayoutPublishPlan, CadCommandInputError, CadSession, clearNamedPageSetupAssignment, createPageSetupTemplate, LayoutCommandError, LayoutPublishSettingsError, NoOpOperationError, PageSetupLibraryError, copyPaperLayout, createEmptyDocument, createPaperLayout, createPaperViewport, deleteNamedPageSetup, deletePaperLayout, deletePaperViewport, formatViewportScale, importPageSetupTemplate, metadataWithLayoutPublishSettings, movePaperLayout, panPaperViewportByPixels, paperDefinitionForPageSetup, parseCadHandleList, parseCartesianPoint, parseCopyDestinations, parseMoveDestination, parseOffsetDistance, parseOffsetPlacementPoints, parsePageSetupTemplate, parseReferenceAngleInput, parseRotationAngleInput, parseScaleFactorInput, parseScaleLengthInput, parseTrimTargetPicks, renameNamedPageSetup, renamePaperLayout, replaceDrawingContentPreservingLayouts, resolveCadCommand, resolveLayoutPublishSettings, resolveModelPageSetup, resolvePageSetup, resolvePageSetupLibrary, resolvePaperDefinition, sanitizePdfFileStem, saveNamedPageSetup, serializeKDraw, serializePageSetupTemplate, setModelLayoutPageSetup, setPaperLayoutPageSetup, setPaperViewportDisplayLocked, setPaperViewportView, viewportScaleDenominator, zoomPaperViewportAtModelPoint, type CadChange, type CopyRejectedTarget, type LayoutPublishSettingsV1, type MirrorRejectedTarget, type MoveRejectedTarget, type OffsetLayerMode, type OffsetRejectedTarget, type RotateAngleSpec, type RotateRejectedTarget, type ScaleFactorSpec, type ScaleRejectedTarget, type TrimEdgeMode, type TrimMode, type TrimProjectMode, type TrimRejectedTarget, type TrimTargetAction } from "@kuubik/cad-core";
+import { ISO_PAPER_MEDIA, MAX_PAGE_SETUP_TEMPLATE_BYTES, STANDARD_VIEWPORT_SCALE_DENOMINATORS, allocateEntityHandles, applyNamedPageSetup, buildLayoutPublishPlan, CadCommandInputError, CadSession, clearNamedPageSetupAssignment, createPageSetupTemplate, LayoutCommandError, LayoutPublishSettingsError, NoOpOperationError, PageSetupLibraryError, copyPaperLayout, createEmptyDocument, createPaperLayout, createPaperViewport, deleteNamedPageSetup, deletePaperLayout, deletePaperViewport, formatViewportScale, importPageSetupTemplate, metadataWithLayoutPublishSettings, movePaperLayout, panPaperViewportByPixels, paperDefinitionForPageSetup, parseCartesianPoint, parsePageSetupTemplate, renameNamedPageSetup, renamePaperLayout, replaceDrawingContentPreservingLayouts, resolveCadCommand, resolveLayoutPublishSettings, resolveModelPageSetup, resolvePageSetup, resolvePageSetupLibrary, resolvePaperDefinition, sanitizePdfFileStem, saveNamedPageSetup, serializeKDraw, serializePageSetupTemplate, setModelLayoutPageSetup, setPaperLayoutPageSetup, setPaperViewportDisplayLocked, setPaperViewportView, viewportScaleDenominator, zoomPaperViewportAtModelPoint, type CadChange, type CopyRejectedTarget, type LayoutPublishSettingsV1, type MirrorRejectedTarget, type MoveRejectedTarget, type OffsetLayerMode, type OffsetRejectedTarget, type RotateRejectedTarget, type ScaleRejectedTarget, type TrimEdgeMode, type TrimMode, type TrimProjectMode, type TrimRejectedTarget, type TrimTargetAction } from "@kuubik/cad-core";
 import { DxfImportError, MAX_DXF_IMPORT_BYTES, exportDxf, importDxf } from "@kuubik/cad-dxf";
 import { exportLayoutSvg, exportLayoutsVectorPdf, exportLayoutVectorPdf, exportModelSvg, exportModelVectorPdf, type LayoutPlotOptions, type ModelPlotOptions } from "@kuubik/cad-print";
 import { CadCanvasRenderer, pickCadEntity, pannedViewportWorldCenter, selectCadEntityHitsByCrossingPolygon, selectCadEntityHitsByFence, viewportScreenToWorld, viewportScreenTransform, type Viewport2D } from "@kuubik/cad-renderer";
 import type { CadEntity, CadLayout, CadPageSetup, CadPaperRect, CadPlotStyle, CadViewport, KDrawDocumentV1 } from "@kuubik/cad-schema";
 import { KDrawIndexedDb, StorageRevisionConflictError } from "./indexed-db.js";
+import { prepareCopy, prepareMirror, prepareMove, prepareOffset, prepareRotate, prepareScale, prepareTrim, putEntities } from "./workflows/modify-command.js";
 import "./style.css";
 
 const LOCAL_DOCUMENT_ID = "local";
@@ -16,40 +17,6 @@ function nextInteractiveHandle(document: KDrawDocumentV1): string {
   return document.entities.some((entity) => entity.handle.toUpperCase() === preferred)
     ? allocateEntityHandles(document, 1)[0]!
     : preferred;
-}
-
-function rotateAngleSpec(
-  mode: "relative" | "reference",
-  basePoint: { x: number; y: number },
-  angleInput: string,
-  referenceInput: string,
-  newAngleInput: string,
-): RotateAngleSpec {
-  if (mode === "relative") {
-    return { mode, angleDeg: parseRotationAngleInput(angleInput, basePoint) };
-  }
-  return {
-    mode,
-    referenceAngleDeg: parseReferenceAngleInput(referenceInput, basePoint),
-    newAngleDeg: parseRotationAngleInput(newAngleInput, basePoint),
-  };
-}
-
-function scaleFactorSpec(
-  mode: "factor" | "reference",
-  basePoint: { x: number; y: number },
-  factorInput: string,
-  referenceInput: string,
-  newLengthInput: string,
-): ScaleFactorSpec {
-  if (mode === "factor") {
-    return { mode, factor: parseScaleFactorInput(factorInput, basePoint) };
-  }
-  return {
-    mode,
-    referenceLength: parseScaleLengthInput(referenceInput, basePoint),
-    newLength: parseScaleLengthInput(newLengthInput, basePoint),
-  };
 }
 
 function viewportClipPath(viewport: CadViewport): string | undefined {
@@ -335,13 +302,9 @@ export function App() {
   const movePreview = useMemo((): { entities: CadEntity[]; delta: { x: number; y: number } } | null => {
     if (previewCommand !== "MOVE" || selectedHandles.length === 0) return null;
     try {
-      const command = resolveCadCommand("MOVE");
-      if (!command || command.id !== "MOVE") return null;
-      const basePoint = parseCartesianPoint(moveBaseInput);
-      const destinationPoint = parseMoveDestination(moveDestinationInput, basePoint);
-      const result = command.execute(document, { targetHandles: selectedHandles, basePoint, destinationPoint });
+      const { result } = prepareMove(document, { targetHandles: selectedHandles, baseInput: moveBaseInput, destinationInput: moveDestinationInput });
       return {
-        entities: result.changes.flatMap((change) => change.type === "put" ? [change.entity] : []),
+        entities: putEntities(result.changes),
         delta: result.delta,
       };
     } catch {
@@ -351,13 +314,9 @@ export function App() {
   const copyPreview = useMemo((): { entities: CadEntity[]; deltas: { x: number; y: number }[] } | null => {
     if (previewCommand !== "COPY" || selectedHandles.length === 0) return null;
     try {
-      const command = resolveCadCommand("COPY");
-      if (!command || command.id !== "COPY") return null;
-      const basePoint = parseCartesianPoint(copyBaseInput);
-      const destinationPoints = parseCopyDestinations(copyDestinationsInput, basePoint);
-      const result = command.execute(document, { targetHandles: selectedHandles, basePoint, destinationPoints });
+      const { result } = prepareCopy(document, { targetHandles: selectedHandles, baseInput: copyBaseInput, destinationsInput: copyDestinationsInput });
       return {
-        entities: result.changes.flatMap((change) => change.type === "put" ? [change.entity] : []),
+        entities: putEntities(result.changes),
         deltas: result.deltas,
       };
     } catch {
@@ -367,13 +326,16 @@ export function App() {
   const rotatePreview = useMemo((): { entities: CadEntity[]; deltaAngleDeg: number } | null => {
     if (previewCommand !== "ROTATE" || selectedHandles.length === 0) return null;
     try {
-      const command = resolveCadCommand("ROTATE");
-      if (!command || command.id !== "ROTATE") return null;
-      const basePoint = parseCartesianPoint(rotateBaseInput);
-      const angle = rotateAngleSpec(rotateMode, basePoint, rotateAngleInput, rotateReferenceInput, rotateNewAngleInput);
-      const result = command.execute(document, { targetHandles: selectedHandles, basePoint, angle });
+      const { result } = prepareRotate(document, {
+        targetHandles: selectedHandles,
+        baseInput: rotateBaseInput,
+        mode: rotateMode,
+        angleInput: rotateAngleInput,
+        referenceInput: rotateReferenceInput,
+        newAngleInput: rotateNewAngleInput,
+      });
       return {
-        entities: result.changes.flatMap((change) => change.type === "put" ? [change.entity] : []),
+        entities: putEntities(result.changes),
         deltaAngleDeg: result.deltaAngleDeg,
       };
     } catch {
@@ -383,13 +345,17 @@ export function App() {
   const scalePreview = useMemo((): { entities: CadEntity[]; factor: number; copy: boolean } | null => {
     if (previewCommand !== "SCALE" || selectedHandles.length === 0) return null;
     try {
-      const command = resolveCadCommand("SCALE");
-      if (!command || command.id !== "SCALE") return null;
-      const basePoint = parseCartesianPoint(scaleBaseInput);
-      const scale = scaleFactorSpec(scaleMode, basePoint, scaleFactorInput, scaleReferenceInput, scaleNewLengthInput);
-      const result = command.execute(document, { targetHandles: selectedHandles, basePoint, scale, copy: scaleCopy });
+      const { result } = prepareScale(document, {
+        targetHandles: selectedHandles,
+        baseInput: scaleBaseInput,
+        mode: scaleMode,
+        factorInput: scaleFactorInput,
+        referenceInput: scaleReferenceInput,
+        newLengthInput: scaleNewLengthInput,
+        copy: scaleCopy,
+      });
       return {
-        entities: result.changes.flatMap((change) => change.type === "put" ? [change.entity] : []),
+        entities: putEntities(result.changes),
         factor: result.factor,
         copy: result.copy,
       };
@@ -400,13 +366,14 @@ export function App() {
   const mirrorPreview = useMemo((): { entities: CadEntity[]; eraseSource: boolean; sourceHandles: string[] } | null => {
     if (previewCommand !== "MIRROR" || selectedHandles.length === 0) return null;
     try {
-      const command = resolveCadCommand("MIRROR");
-      if (!command || command.id !== "MIRROR") return null;
-      const axisStart = parseCartesianPoint(mirrorFirstPointInput);
-      const axisEnd = parseCartesianPoint(mirrorSecondPointInput);
-      const result = command.execute(document, { targetHandles: selectedHandles, axisStart, axisEnd, eraseSource: mirrorEraseSource });
+      const { result } = prepareMirror(document, {
+        targetHandles: selectedHandles,
+        firstPointInput: mirrorFirstPointInput,
+        secondPointInput: mirrorSecondPointInput,
+        eraseSource: mirrorEraseSource,
+      });
       return {
-        entities: result.changes.flatMap((change) => change.type === "put" ? [change.entity] : []),
+        entities: putEntities(result.changes),
         eraseSource: result.eraseSource,
         sourceHandles: result.sourceHandles,
       };
@@ -417,20 +384,17 @@ export function App() {
   const offsetPreview = useMemo((): { entities: CadEntity[]; eraseSource: boolean; sourceHandles: string[]; steps: number } | null => {
     if (previewCommand !== "OFFSET" || selectedHandles.length === 0) return null;
     try {
-      const command = resolveCadCommand("OFFSET");
-      if (!command || command.id !== "OFFSET") return null;
-      const placementPoints = parseOffsetPlacementPoints(offsetPlacementInput);
-      const result = command.execute(document, {
+      const { result } = prepareOffset(document, {
         targetHandles: selectedHandles,
         mode: offsetMode,
-        ...(offsetMode === "distance" ? { distance: parseOffsetDistance(offsetDistanceInput) } : {}),
-        placementPoints,
+        distanceInput: offsetDistanceInput,
+        placementInput: offsetPlacementInput,
         multiple: offsetMultiple,
         eraseSource: offsetEraseSource,
         layerMode: offsetLayerMode,
       });
       return {
-        entities: result.changes.flatMap((change) => change.type === "put" ? [change.entity] : []),
+        entities: putEntities(result.changes),
         eraseSource: result.eraseSource,
         sourceHandles: result.sourceHandles,
         steps: result.steps.length,
@@ -442,17 +406,16 @@ export function App() {
   const trimPreview = useMemo((): { entities: CadEntity[]; sourceHandles: string[]; steps: number } | null => {
     if (previewCommand !== "TRIM") return null;
     try {
-      const command = resolveCadCommand("TRIM");
-      if (!command || command.id !== "TRIM") return null;
-      const result = command.execute(document, {
+      const { result } = prepareTrim(document, {
         mode: trimMode,
-        cuttingEdgeHandles: parseCadHandleList(trimCuttingHandlesInput),
-        targets: parseTrimTargetPicks(trimTargetsInput, trimTargetAction),
+        cuttingHandlesInput: trimCuttingHandlesInput,
+        targetsInput: trimTargetsInput,
+        targetAction: trimTargetAction,
         edgeMode: trimEdgeMode,
         projectMode: trimProjectMode,
       });
       return {
-        entities: result.changes.flatMap((change) => change.type === "put" ? [change.entity] : []),
+        entities: putEntities(result.changes),
         sourceHandles: result.steps.map((step) => step.sourceHandle),
         steps: result.steps.length,
       };
@@ -699,11 +662,8 @@ export function App() {
     }
     committing.current = true;
     try {
-      const command = resolveCadCommand("MOVE");
-      if (!command || command.id !== "MOVE") throw new Error("MOVE command is missing from the registry.");
-      const basePoint = parseCartesianPoint(moveBaseInput);
-      const destinationPoint = parseMoveDestination(moveDestinationInput, basePoint);
-      const result = command.execute(document, { targetHandles: selectedHandles, basePoint, destinationPoint });
+      const prepared = prepareMove(document, { targetHandles: selectedHandles, baseInput: moveBaseInput, destinationInput: moveDestinationInput });
+      const { result } = prepared;
       setLastMoveRejected(result.rejected);
       setMoveAwaitingSelection(false);
       if (result.changes.length === 0) {
@@ -711,7 +671,7 @@ export function App() {
         setStatus(`MOVE ei muutnud geomeetriat${suffix}`);
         return;
       }
-      await commitChanges(command.id, { basePoint, destinationPoint }, result.changes, result.movedHandles, result.movedHandles);
+      await commitChanges(prepared.commandId, prepared.operationArgs, result.changes, result.movedHandles, result.movedHandles);
       setSelectedHandles([]);
       const suffix = result.rejected.length ? `; ${result.rejected.length} jäi muutmata` : "";
       setStatus(`${result.movedHandles.length} objekti nihutatud Δ${result.delta.x},${result.delta.y}${suffix}`);
@@ -738,11 +698,8 @@ export function App() {
     }
     committing.current = true;
     try {
-      const command = resolveCadCommand("COPY");
-      if (!command || command.id !== "COPY") throw new Error("COPY command is missing from the registry.");
-      const basePoint = parseCartesianPoint(copyBaseInput);
-      const destinationPoints = parseCopyDestinations(copyDestinationsInput, basePoint);
-      const result = command.execute(document, { targetHandles: selectedHandles, basePoint, destinationPoints });
+      const prepared = prepareCopy(document, { targetHandles: selectedHandles, baseInput: copyBaseInput, destinationsInput: copyDestinationsInput });
+      const { result } = prepared;
       setLastCopyRejected(result.rejected);
       setCopyAwaitingSelection(false);
       if (result.changes.length === 0) {
@@ -751,8 +708,8 @@ export function App() {
         return;
       }
       await commitChanges(
-        command.id,
-        { basePoint, destinationPoints },
+        prepared.commandId,
+        prepared.operationArgs,
         result.changes,
         result.copiedHandles,
         result.sourceHandles,
@@ -783,11 +740,15 @@ export function App() {
     }
     committing.current = true;
     try {
-      const command = resolveCadCommand("ROTATE");
-      if (!command || command.id !== "ROTATE") throw new Error("ROTATE command is missing from the registry.");
-      const basePoint = parseCartesianPoint(rotateBaseInput);
-      const angle = rotateAngleSpec(rotateMode, basePoint, rotateAngleInput, rotateReferenceInput, rotateNewAngleInput);
-      const result = command.execute(document, { targetHandles: selectedHandles, basePoint, angle });
+      const prepared = prepareRotate(document, {
+        targetHandles: selectedHandles,
+        baseInput: rotateBaseInput,
+        mode: rotateMode,
+        angleInput: rotateAngleInput,
+        referenceInput: rotateReferenceInput,
+        newAngleInput: rotateNewAngleInput,
+      });
+      const { result } = prepared;
       setLastRotateRejected(result.rejected);
       setRotateAwaitingSelection(false);
       if (result.changes.length === 0) {
@@ -796,8 +757,8 @@ export function App() {
         return;
       }
       await commitChanges(
-        command.id,
-        { basePoint, angle, deltaAngleDeg: result.deltaAngleDeg },
+        prepared.commandId,
+        prepared.operationArgs,
         result.changes,
         result.rotatedHandles,
         result.rotatedHandles,
@@ -828,18 +789,23 @@ export function App() {
     }
     committing.current = true;
     try {
-      const command = resolveCadCommand("SCALE");
-      if (!command || command.id !== "SCALE") throw new Error("SCALE command is missing from the registry.");
-      const basePoint = parseCartesianPoint(scaleBaseInput);
-      const scale = scaleFactorSpec(scaleMode, basePoint, scaleFactorInput, scaleReferenceInput, scaleNewLengthInput);
-      const result = command.execute(document, { targetHandles: selectedHandles, basePoint, scale, copy: scaleCopy });
+      const prepared = prepareScale(document, {
+        targetHandles: selectedHandles,
+        baseInput: scaleBaseInput,
+        mode: scaleMode,
+        factorInput: scaleFactorInput,
+        referenceInput: scaleReferenceInput,
+        newLengthInput: scaleNewLengthInput,
+        copy: scaleCopy,
+      });
+      const { result } = prepared;
       setLastScaleRejected(result.rejected);
       setScaleAwaitingSelection(false);
       if (result.changes.length === 0) {
         if (result.factor === 1 && !result.copy && result.sourceHandles.length > 0) {
           await commitChanges(
-            command.id,
-            { basePoint, scale, factor: result.factor, copy: false, geometryNoOp: true },
+            prepared.commandId,
+            { ...prepared.operationArgs, geometryNoOp: true },
             [{ type: "undo-mark" }],
             [],
             result.sourceHandles,
@@ -855,8 +821,8 @@ export function App() {
       }
       const resultHandles = result.copy ? result.createdHandles : result.scaledHandles;
       await commitChanges(
-        command.id,
-        { basePoint, scale, factor: result.factor, copy: result.copy },
+        prepared.commandId,
+        prepared.operationArgs,
         result.changes,
         resultHandles,
         result.sourceHandles,
@@ -887,16 +853,13 @@ export function App() {
     }
     committing.current = true;
     try {
-      const command = resolveCadCommand("MIRROR");
-      if (!command || command.id !== "MIRROR") throw new Error("MIRROR command is missing from the registry.");
-      const axisStart = parseCartesianPoint(mirrorFirstPointInput);
-      const axisEnd = parseCartesianPoint(mirrorSecondPointInput);
-      const result = command.execute(document, {
+      const prepared = prepareMirror(document, {
         targetHandles: selectedHandles,
-        axisStart,
-        axisEnd,
+        firstPointInput: mirrorFirstPointInput,
+        secondPointInput: mirrorSecondPointInput,
         eraseSource: mirrorEraseSource,
       });
+      const { result } = prepared;
       setLastMirrorRejected(result.rejected);
       setMirrorAwaitingSelection(false);
       if (result.changes.length === 0) {
@@ -905,8 +868,8 @@ export function App() {
         return;
       }
       await commitChanges(
-        command.id,
-        { axisStart, axisEnd, eraseSource: result.eraseSource, mirrtext: 0 },
+        prepared.commandId,
+        prepared.operationArgs,
         result.changes,
         result.mirroredHandles,
         result.sourceHandles,
@@ -955,18 +918,16 @@ export function App() {
     }
     committing.current = true;
     try {
-      const command = resolveCadCommand("OFFSET");
-      if (!command || command.id !== "OFFSET") throw new Error("OFFSET command is missing from the registry.");
-      const placementPoints = parseOffsetPlacementPoints(offsetPlacementInput);
-      const result = command.execute(document, {
+      const prepared = prepareOffset(document, {
         targetHandles: selectedHandles,
         mode: offsetMode,
-        ...(offsetMode === "distance" ? { distance: parseOffsetDistance(offsetDistanceInput) } : {}),
-        placementPoints,
+        distanceInput: offsetDistanceInput,
+        placementInput: offsetPlacementInput,
         multiple: offsetMultiple,
         eraseSource: offsetEraseSource,
         layerMode: offsetLayerMode,
       });
+      const { result } = prepared;
       setLastOffsetRejected(result.rejected);
       setOffsetAwaitingSelection(false);
       if (result.changes.length === 0) {
@@ -975,16 +936,8 @@ export function App() {
         return;
       }
       await commitChanges(
-        command.id,
-        {
-          mode: result.mode,
-          distance: offsetMode === "distance" ? parseOffsetDistance(offsetDistanceInput) : null,
-          placementPoints,
-          multiple: result.multiple,
-          eraseSource: result.eraseSource,
-          layerMode: result.layerMode,
-          steps: result.steps,
-        },
+        prepared.commandId,
+        prepared.operationArgs,
         result.changes,
         result.createdHandles,
         result.sourceHandles,
@@ -1074,17 +1027,15 @@ export function App() {
     setPreviewCommand("TRIM");
     committing.current = true;
     try {
-      const command = resolveCadCommand("TRIM");
-      if (!command || command.id !== "TRIM") throw new Error("TRIM command is missing from the registry.");
-      const targets = parseTrimTargetPicks(trimTargetsInput, trimTargetAction);
-      const cuttingEdgeHandles = parseCadHandleList(trimCuttingHandlesInput);
-      const result = command.execute(document, {
+      const prepared = prepareTrim(document, {
         mode: trimMode,
-        cuttingEdgeHandles,
-        targets,
+        cuttingHandlesInput: trimCuttingHandlesInput,
+        targetsInput: trimTargetsInput,
+        targetAction: trimTargetAction,
         edgeMode: trimEdgeMode,
         projectMode: trimProjectMode,
       });
+      const { result } = prepared;
       setLastTrimRejected(result.rejected);
       if (result.changes.length === 0) {
         const suffix = result.rejected.length ? `; ${result.rejected.length} lukus, peidetud, puudu või sobimatu` : "";
@@ -1092,15 +1043,8 @@ export function App() {
         return;
       }
       await commitChanges(
-        command.id,
-        {
-          mode: result.mode,
-          cuttingEdgeHandles,
-          targets,
-          edgeMode: result.edgeMode,
-          projectMode: result.projectMode,
-          steps: result.steps,
-        },
+        prepared.commandId,
+        prepared.operationArgs,
         result.changes,
         result.resultHandles,
         result.targetHandles,

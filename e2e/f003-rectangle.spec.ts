@@ -1,4 +1,5 @@
-import { readFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { resolve } from "node:path";
 import { expect, test } from "@playwright/test";
 import DxfParser from "dxf-parser";
 
@@ -22,7 +23,12 @@ test("F-003 RECTANGLE registry to browser commit and independent DXF read-back",
   expect(download.suggestedFilename()).toBe("local-r1.dxf");
   const path = await download.path();
   expect(path).not.toBeNull();
-  const dxf = await readFile(path!, "utf8");
+  const dxfBytes = await readFile(path!);
+  if (process.env.PARITY_CAPTURE_DIR) {
+    await mkdir(resolve(process.env.PARITY_CAPTURE_DIR), { recursive: true });
+    await writeFile(resolve(process.env.PARITY_CAPTURE_DIR, "F-003-browser.dxf"), dxfBytes);
+  }
+  const dxf = dxfBytes.toString("utf8");
   const parsed = new DxfParser().parseSync(dxf);
   expect(parsed?.header?.$INSUNITS).toBe(4);
   expect(parsed?.entities).toHaveLength(1);

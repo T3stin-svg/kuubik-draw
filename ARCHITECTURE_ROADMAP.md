@@ -39,8 +39,9 @@ selles teekaardis teadlikult `Won't have`.
    AutoCAD 2024.1.2, Chromiumi ning sõltumatu DXF/KDRAW1 read-back'i.
 3. Sõltumatu review lõppes `0 P0 / 0 P1`; commit `30a9c2a` läbis avaliku
    GitHub Actions run'i `33247396359` kogu `npm run check` värava.
-4. Kohustuslik architecture-efficiency gate on nüüd aktiivne; järgmist F-rida
-   enne selle vastuvõtukriteeriumide täitmist ei alustata.
+4. Architecture-efficiency gate on lokaalselt teostatud ja ootab avaliku CI
+   kinnitust: MOVE…TRIM kasutavad ühist workflow-moodulit, 23 sertifitseeritud
+   rida on deklaratiivses parity-kit'is ning kogu täpne ratchet on taastatud.
 
 ## Next — architecture-efficiency gate
 
@@ -66,9 +67,28 @@ Värav on läbitud, kui uue sünteetilise F-rea lisamine ei vaja kopeeritud chec
 seoseta UI-mooduli muudatus ei aegunda selle tõendit, timestamp-only rerun ei
 muuda sisuräsi ning täielik senine parity-ratchet jääb roheliseks.
 
+Lokaalne vastuvõtt 2026-08-29:
+
+- sünteetiline F-023 stage-spec töötab ilma cross-checkerita;
+- `apps/web/src/workflows/modify-command.ts` kaardistub ainult F-015…F-022-le,
+  mitte plot/PDF reale F-114;
+- JSON-i ja lahtipakitud KDRAW1 dokumendi timestamp-only muutus säilitab
+  semantilise SHA-256;
+- `npm run parity:row -- F-100 --portable` läbis browser → read-back → cross →
+  descriptor/ratchet → content-address → full parity jada;
+- kõik 22 browser-artifact'i ja 23 sõltumatut read-back'i loodi pärast
+  `App.tsx` ühekordset refaktorit uuesti;
+- F-102 native AutoCAD live-run leidis ja sulges fixture'i kaks
+  ebadeterminismi (viewporti stabiliseerimine ja COM media-listi retry) ning
+  läbis native PAGESETUP/PlotToFile/DWG reopen värava.
+
+Avalik GitHub Actions run ja sõltumatu P0/P1 diff-review on enne värava lõplikku
+sulgemist veel kohustuslikud.
+
 ## Later
 
-1. Jätkata pärast F-022 mõjupõhises P0 → P1 → P2 järjekorras kuni 133/133.
+1. Pärast arhitektuurivärava avalikku kinnitust rakendada F-023 `EXTEND`, siis
+   jätkata mõjupõhises P0 → P1 → P2 järjekorras kuni 133/133.
 2. Native DWG/DWT/XREF ja PC3/CTB/STB ainult litsentsitud ODA/RealDWG teega.
 3. Pärast funktsionaalset 133/133 väravat viia kõik viis visuaalkategooriat
    eraldi `100,0%` peale.

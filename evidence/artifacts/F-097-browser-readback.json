@@ -5,7 +5,7 @@
   "matrix": {
     "rowId": "F-097",
     "status": "PASS",
-    "exportedSha256": "9fbbdfbcce6f6990f98c3df0181d6d1932ff688b3637943232ade0fbe49adb96",
+    "exportedSha256": "c7667f488ed66a89b698ed4203a627ecf6db91795746f1c20e9e72a9bd2e5096",
     "finalRevision": 6,
     "layouts": [
       {
@@ -86,7 +86,7 @@
     ],
     "operations": [
       {
-        "opId": "c5d8e9d8-7781-4b57-83ea-30cf85b7080e",
+        "opId": "8d558061-4dd4-4778-a197-6b703ee5fb0e",
         "baseRevision": 0,
         "commandId": "LAYOUT_COPY",
         "args": {
@@ -101,7 +101,7 @@
         ]
       },
       {
-        "opId": "01c7a0a2-0363-496c-83e6-7416de2aa841",
+        "opId": "a90e6d69-77b1-42b5-aeb2-6eb8f35c4376",
         "baseRevision": 1,
         "commandId": "LAYOUT_REORDER",
         "args": {
@@ -112,7 +112,7 @@
         "resultHandles": []
       },
       {
-        "opId": "913c6866-63ce-475e-ba2d-555b52e2e10d",
+        "opId": "3fdeee0c-e23d-4932-a72d-890a1e1c59c3",
         "baseRevision": 2,
         "commandId": "LAYOUT_REORDER",
         "args": {
@@ -123,7 +123,7 @@
         "resultHandles": []
       },
       {
-        "opId": "1e3f0d2e-0918-413a-9286-04b0bf9fdce2",
+        "opId": "116468cb-23b5-45c0-a0cf-ce99cc2cbdbb",
         "baseRevision": 3,
         "commandId": "LAYOUT_DELETE",
         "args": {
@@ -135,11 +135,11 @@
         "resultHandles": []
       },
       {
-        "opId": "1e3f0d2e-0918-413a-9286-04b0bf9fdce2:undo:1",
+        "opId": "116468cb-23b5-45c0-a0cf-ce99cc2cbdbb:undo:1",
         "baseRevision": 4,
         "commandId": "UNDO",
         "args": {
-          "originalOpId": "1e3f0d2e-0918-413a-9286-04b0bf9fdce2"
+          "originalOpId": "116468cb-23b5-45c0-a0cf-ce99cc2cbdbb"
         },
         "targetHandles": [],
         "resultHandles": [
@@ -147,7 +147,7 @@
         ]
       },
       {
-        "opId": "d085bb11-d0d1-4a76-9f0c-3b1b4a74560b",
+        "opId": "6f471c8b-710d-4a74-a73f-36ebf62f1c5a",
         "baseRevision": 5,
         "commandId": "LAYOUT_DELETE",
         "args": {
@@ -270,6 +270,29 @@
               "left": 10
             }
           },
+          "pageSetup": {
+            "mediaName": "ISO_A4",
+            "orientation": "landscape",
+            "plotArea": {
+              "kind": "layout"
+            },
+            "plotScale": {
+              "mode": "custom",
+              "paperUnits": 1,
+              "drawingUnits": 1
+            },
+            "centerPlot": false,
+            "plotOriginMm": {
+              "x": 0,
+              "y": 0
+            },
+            "plotStyle": {
+              "profile": "monochrome",
+              "plotLineweights": true,
+              "plotTransparency": true
+            },
+            "displayPlotStyles": false
+          },
           "viewports": [
             {
               "id": "viewport-1",
@@ -304,6 +327,29 @@
               "left": 10
             }
           },
+          "pageSetup": {
+            "mediaName": "ISO_A4",
+            "orientation": "landscape",
+            "plotArea": {
+              "kind": "layout"
+            },
+            "plotScale": {
+              "mode": "custom",
+              "paperUnits": 1,
+              "drawingUnits": 1
+            },
+            "centerPlot": false,
+            "plotOriginMm": {
+              "x": 0,
+              "y": 0
+            },
+            "plotStyle": {
+              "profile": "monochrome",
+              "plotLineweights": true,
+              "plotTransparency": true
+            },
+            "displayPlotStyles": false
+          },
           "viewports": [
             {
               "id": "viewport-2",
@@ -329,7 +375,7 @@
       "metadata": {
         "title": "F-016 standard entity matrix",
         "createdAt": "2026-08-28T11:30:00.000Z",
-        "updatedAt": "2026-08-28T15:26:47.835Z",
+        "updatedAt": "2026-08-29T10:43:41.209Z",
         "source": "synthetic parity fixture"
       }
     },
@@ -440,6 +486,29 @@
               "left": 10
             }
           },
+          "pageSetup": {
+            "mediaName": "ISO_A4",
+            "orientation": "landscape",
+            "plotArea": {
+              "kind": "layout"
+            },
+            "plotScale": {
+              "mode": "custom",
+              "paperUnits": 1,
+              "drawingUnits": 1
+            },
+            "centerPlot": false,
+            "plotOriginMm": {
+              "x": 0,
+              "y": 0
+            },
+            "plotStyle": {
+              "profile": "monochrome",
+              "plotLineweights": true,
+              "plotTransparency": true
+            },
+            "displayPlotStyles": false
+          },
           "viewports": [
             {
               "id": "viewport-1",
@@ -465,7 +534,7 @@
       "metadata": {
         "title": "F-016 standard entity matrix",
         "createdAt": "2026-08-28T11:30:00.000Z",
-        "updatedAt": "2026-08-28T15:26:48.035Z",
+        "updatedAt": "2026-08-29T10:43:41.492Z",
         "source": "synthetic parity fixture"
       }
     },
@@ -576,6 +645,29 @@
               "left": 10
             }
           },
+          "pageSetup": {
+            "mediaName": "ISO_A4",
+            "orientation": "landscape",
+            "plotArea": {
+              "kind": "layout"
+            },
+            "plotScale": {
+              "mode": "custom",
+              "paperUnits": 1,
+              "drawingUnits": 1
+            },
+            "centerPlot": false,
+            "plotOriginMm": {
+              "x": 0,
+              "y": 0
+            },
+            "plotStyle": {
+              "profile": "monochrome",
+              "plotLineweights": true,
+              "plotTransparency": true
+            },
+            "displayPlotStyles": false
+          },
           "viewports": [
             {
               "id": "viewport-1",
@@ -610,6 +702,29 @@
               "left": 10
             }
           },
+          "pageSetup": {
+            "mediaName": "ISO_A4",
+            "orientation": "landscape",
+            "plotArea": {
+              "kind": "layout"
+            },
+            "plotScale": {
+              "mode": "custom",
+              "paperUnits": 1,
+              "drawingUnits": 1
+            },
+            "centerPlot": false,
+            "plotOriginMm": {
+              "x": 0,
+              "y": 0
+            },
+            "plotStyle": {
+              "profile": "monochrome",
+              "plotLineweights": true,
+              "plotTransparency": true
+            },
+            "displayPlotStyles": false
+          },
           "viewports": [
             {
               "id": "viewport-2",
@@ -635,13 +750,13 @@
       "metadata": {
         "title": "F-016 standard entity matrix",
         "createdAt": "2026-08-28T11:30:00.000Z",
-        "updatedAt": "2026-08-28T15:26:48.152Z",
+        "updatedAt": "2026-08-29T10:43:41.658Z",
         "source": "synthetic parity fixture"
       }
     },
     "operations": [
       {
-        "opId": "e545073a-1644-423f-8943-a37c2d491d6c",
+        "opId": "eb246833-5590-479e-84e9-571bdbd58899",
         "baseRevision": 0,
         "commandId": "LAYOUT_CREATE",
         "args": {
@@ -651,7 +766,7 @@
         "resultHandles": []
       },
       {
-        "opId": "48d07aaa-069f-4fde-bd85-39842020af74",
+        "opId": "680e7be4-68c8-4e4f-93e4-f84cfa10ea68",
         "baseRevision": 1,
         "commandId": "LAYOUT_RENAME",
         "args": {
@@ -662,7 +777,7 @@
         "resultHandles": []
       },
       {
-        "opId": "714c4180-bd7d-49b3-a20b-dd4767eb160d",
+        "opId": "07c98f6d-1219-4933-baf6-e70944477886",
         "baseRevision": 2,
         "commandId": "LAYOUT_CREATE",
         "args": {
@@ -672,27 +787,27 @@
         "resultHandles": []
       },
       {
-        "opId": "714c4180-bd7d-49b3-a20b-dd4767eb160d:undo:1",
+        "opId": "07c98f6d-1219-4933-baf6-e70944477886:undo:1",
         "baseRevision": 3,
         "commandId": "UNDO",
         "args": {
-          "originalOpId": "714c4180-bd7d-49b3-a20b-dd4767eb160d"
+          "originalOpId": "07c98f6d-1219-4933-baf6-e70944477886"
         },
         "targetHandles": [],
         "resultHandles": []
       },
       {
-        "opId": "48d07aaa-069f-4fde-bd85-39842020af74:undo:2",
+        "opId": "680e7be4-68c8-4e4f-93e4-f84cfa10ea68:undo:2",
         "baseRevision": 4,
         "commandId": "UNDO",
         "args": {
-          "originalOpId": "48d07aaa-069f-4fde-bd85-39842020af74"
+          "originalOpId": "680e7be4-68c8-4e4f-93e4-f84cfa10ea68"
         },
         "targetHandles": [],
         "resultHandles": []
       },
       {
-        "opId": "48d07aaa-069f-4fde-bd85-39842020af74:redo:3",
+        "opId": "680e7be4-68c8-4e4f-93e4-f84cfa10ea68:redo:3",
         "baseRevision": 5,
         "commandId": "LAYOUT_RENAME",
         "args": {
@@ -703,7 +818,7 @@
         "resultHandles": []
       },
       {
-        "opId": "714c4180-bd7d-49b3-a20b-dd4767eb160d:redo:4",
+        "opId": "07c98f6d-1219-4933-baf6-e70944477886:redo:4",
         "baseRevision": 6,
         "commandId": "LAYOUT_CREATE",
         "args": {
@@ -901,7 +1016,7 @@
       "metadata": {
         "title": "F-016 standard entity matrix",
         "createdAt": "2026-08-28T11:30:00.000Z",
-        "updatedAt": "2026-08-28T15:26:48.552Z",
+        "updatedAt": "2026-08-29T10:43:42.176Z",
         "source": "synthetic parity fixture"
       }
     },
@@ -1085,7 +1200,7 @@
       "metadata": {
         "title": "F-016 standard entity matrix",
         "createdAt": "2026-08-28T11:30:00.000Z",
-        "updatedAt": "2026-08-28T15:26:48.552Z",
+        "updatedAt": "2026-08-29T10:43:42.176Z",
         "source": "synthetic parity fixture"
       }
     },
@@ -1255,7 +1370,7 @@
       "metadata": {
         "title": "F-016 standard entity matrix",
         "createdAt": "2026-08-28T11:30:00.000Z",
-        "updatedAt": "2026-08-28T15:26:48.702Z",
+        "updatedAt": "2026-08-29T10:43:42.425Z",
         "source": "synthetic parity fixture"
       }
     },
@@ -1425,14 +1540,14 @@
       "metadata": {
         "title": "F-016 standard entity matrix",
         "createdAt": "2026-08-28T11:30:00.000Z",
-        "updatedAt": "2026-08-28T15:26:48.702Z",
+        "updatedAt": "2026-08-29T10:43:42.425Z",
         "source": "synthetic parity fixture"
       }
     }
   },
   "container": {
-    "sha256": "9fbbdfbcce6f6990f98c3df0181d6d1932ff688b3637943232ade0fbe49adb96",
-    "documentSha256": "954f3cef8240869084fe5c7deec4371de71d755908b669b6fe29b542069da658",
+    "sha256": "c7667f488ed66a89b698ed4203a627ecf6db91795746f1c20e9e72a9bd2e5096",
+    "documentSha256": "69f0df9e3bedc98cbe423e7f5f09fee68d117d7d4a5856de9b47ae360e0f087f",
     "bytes": 2769
   },
   "document": {
@@ -1601,7 +1716,7 @@
     "metadata": {
       "title": "F-016 standard entity matrix",
       "createdAt": "2026-08-28T11:30:00.000Z",
-      "updatedAt": "2026-08-28T15:26:47.088Z",
+      "updatedAt": "2026-08-29T10:43:40.210Z",
       "source": "synthetic parity fixture"
     }
   },

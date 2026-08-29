@@ -4,12 +4,13 @@
   "source": "AutoCAD 2024.1.2 physical desktop workflow + Chromium physical Shift-click workflow + production DXF/KDRAW1 read-back + secondary LibreCAD/FreeCAD reports",
   "sourceSha256": {
     "autocad": "b5b126495823a37229b19d71b46ac7bbafdf249070dd84c631791c2b2e4bf53a",
-    "browser": "0b2b08fcfb4eed510ff03f6da9d0bf047e0ce894751e7bca3e11391dfb5054b6",
-    "readback": "2b5ce9dc1f99893bcb355b9f21735879c50bad8fdff58a644f335bd5d32e0d42",
+    "browser": "7f22ace26ada1736db50dbf5ad417182eb2537e9b8e35493c5bf91e169f775ec",
+    "readback": "602b6ea410bee43df698892cf85538e903d835189c057814a62a019ffc4f9d1b",
     "oracles": "ba42016eb83a598752643c881914daa5a8114f59e5f1fd6bf3f366e6e8c21d12"
   },
   "implementationSha256": {
-    "apps/web/src/App.tsx": "4deb9be5dbc33d0da1f6860722028f988d84ede4abd8ae1e176774f74b29d075",
+    "apps/web/src/App.tsx": "b46b198a1cc4c0fdecdccc025b0bcbb6284869bfc08248ad34a1e9c407428f47",
+    "apps/web/src/workflows/modify-command.ts": "9e0c91ebe4de8eece7da7b915725599275429d2bf52a5c4dbe2570435ab68e1a",
     "packages/cad-core/src/commands.ts": "d70542980a4d26fafdcd6dedbe0f96722f6a52fcb455f48a95e0048d15e2067f",
     "packages/cad-core/src/index.ts": "53e77dcdfe65d0e0d9a3e26be5201e6743fb14b8c9e38e111c7148242344ad02",
     "packages/cad-core/src/transaction.ts": "e250aa2906e63905202a4b9591367632830745acbf731884f8e711d165750599",
@@ -28,20 +29,17 @@
     "tools/autocad/run-f022.mjs": "09dabb65acce43bbfb1bee5e5d2d2be2760c79883c6372bf286c556e8cc91a32",
     "tools/autocad/process-ownership.test.mjs": "703375745c55b8fccfc64c3e88990cb43639a1f7986b1f07b7cbbbc5220c8636",
     "tools/parity/capture-f022-browser.mjs": "a394553b2a5422b0dc4a8c7b2237bd6def10617f9201654678e3a937a1fa4fda",
-    "tools/parity/build-f022-browser-readback.mjs": "87bc6dc1c3a38ffea61cb42b4541b73826b73c705de709d9c782920327bfba33",
+    "tools/parity/build-f022-browser-readback.mjs": "7cb5b9675bea593c19d696f79fec49feca902769cb5d351853d9252e0f2de52a",
     "tools/parity/run-f022-readback.mjs": "a36edc34ec177a5385e76a802b375e4f98b246f50d92a675594280c91f3f5ef7",
     "tools/oracles/freecad-headless.py": "741125586fbcceebfe23a5e736462d98c3b61f22d68061c47c80b078bde8e56c",
     "tools/oracles/network-isolation.mjs": "3fb18e9ad145b76e53ed241a0a529bb2ccd4eabe784b04e915d77cdd9203d415",
     "tools/oracles/probe-tools.mjs": "86b118cdf03da095214901d4f5f3b4460d9994b1280ae991904aedb0b992883e",
     "tools/oracles/run-fixtures.mjs": "0a97574ac92ef761f092b2c2d2990f5401a652b8f261b243c9724f49f4fa2800",
     "tools/oracles/run-f022-oracles.mjs": "4d68ff336003ef39c43fa39c80e195458ee797a17f51cbae8a9094ed07e6efe2",
-    ".github/workflows/ci.yml": "e29698e157a2bd165288a12ba1d836d4dce5734106e4ae7805bc74a5d85c33c1",
-    "tools/provenance/scan-public-tree.mjs": "e7e96d79583d7da6c7445939ecc78edf4c0931d33bfabee836b97fff550ce9e4",
-    "package.json": "64fb98347a5331f0c9c3e663ef19334322e9559610909f122fd4c1bbf42ae7a7",
     "package-lock.json": "9756bf28708c3933c83c0ace8e9dbd9fe4cad9b9d6cec58670758c545f02e584",
     "parity/F-022-scope.md": "374a24187e7244765db5e5970419685d08b5f76f068a336c4562f8037bd8267b",
     "parity/expected/F-022.json": "65bfc53ded8575220da98a1ebd78196b50dc9b3202ab9ee01d7caf9552757dfe",
-    "tools/parity/check-f022-cross-evidence.mjs": "8a61f1fd3a83778d1257b1d3b8e7191afd6796a897755f25ff90498208ca9a52"
+    "tools/parity/check-f022-cross-evidence.mjs": "6771afbc436559824beacd4e1fd56193982d564abc5a570bce67d12d4d2d3032"
   },
   "checks": {
     "exactAuthoritiesPassed": true,

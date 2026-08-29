@@ -15,6 +15,10 @@
 - developer-only pinned LibreCAD/FreeCAD fixtures with executable-SHA checks,
   disposable profiles and independent geometry read-back; they never certify an AutoCAD row;
 - dependency-license, public-tree, Gitleaks, build, unit, mutation and Chromium gates.
+- declarative parity-kit with source-to-row dependency mapping, fail-closed
+  runtime coverage, semantic JSON/KDRAW1 content addresses, one-row execution
+  and fast/row/full CI tiers; MOVE…TRIM preview and commit now share one typed
+  web workflow module instead of duplicated parsing/execution branches.
 - F-003 RECTANGLE mirrored through command registry, atomic browser commit, IndexedDB reload,
   production DXF, independent parser and a fresh AutoCAD 2024 Core Console live workflow.
 - F-015 ERASE mirrored through selectable browser objects, locked-layer refusal, one atomic
@@ -87,8 +91,9 @@ runner variables are not enabled; the F-022 certification therefore remains
 bound to its checked-in licensed local AutoCAD live evidence and independent
 read-back, not to a claimed public native rerun.
 
-The next mandatory gate is the architecture-efficiency wave in
-`ARCHITECTURE_ROADMAP.md`: command workflow extraction, declarative parity-kit,
-source-to-row dependency mapping, content-addressed evidence and tiered CI.
-F-108 native PC3/CTB/STB remains blocked on a licensed adapter. No production
-deployment is authorized.
+The architecture-efficiency wave in `ARCHITECTURE_ROADMAP.md` is locally green
+and awaits public CI plus P0/P1 diff review. Its one-time App-shell refactor was
+followed by all 22 browser captures, 23 independent read-backs and a fresh
+F-102 native AutoCAD live run. After that public gate, the next functional row
+is F-023 EXTEND. F-108 native PC3/CTB/STB remains blocked on a licensed adapter.
+No production deployment is authorized.

@@ -3,10 +3,10 @@
   "rowId": "F-098",
   "source": "production cad-core createPaperLayout and serializeKDraw; independent magic/base64/length/SHA/document reader",
   "container": {
-    "bytes": 1584,
-    "sha256": "1ec23e9c73600a81c965cbde3e3e45ad12c5d5b47c4f18165e81280d5be469aa",
-    "documentBytes": 926,
-    "documentSha256": "31419e48a85a1935d78e5221f5a13f93786200c8229e913c551c2478e4edcea9"
+    "bytes": 1997,
+    "sha256": "8383ede70878050d9e688b3f5c2222ccfcb30bbe48afb170ae247ee86a252d20",
+    "documentBytes": 1236,
+    "documentSha256": "40c81de782a445f9a1f698b1d076be9bc1180d4336e50a2333b504dd70058df2"
   },
   "layout": {
     "id": "layout-1",
@@ -21,6 +21,29 @@
         "bottom": 10,
         "left": 10
       }
+    },
+    "pageSetup": {
+      "mediaName": "ISO_A3",
+      "orientation": "landscape",
+      "plotArea": {
+        "kind": "layout"
+      },
+      "plotScale": {
+        "mode": "custom",
+        "paperUnits": 1,
+        "drawingUnits": 1
+      },
+      "centerPlot": false,
+      "plotOriginMm": {
+        "x": 0,
+        "y": 0
+      },
+      "plotStyle": {
+        "profile": "monochrome",
+        "plotLineweights": true,
+        "plotTransparency": true
+      },
+      "displayPlotStyles": false
     },
     "viewports": [
       {

@@ -30,6 +30,7 @@ const vertices = rectangle?.vertices?.map(({ x, y }) => [x, y]) ?? [];
 const result = {
   schemaVersion: 1,
   rowId: "F-003",
+  observedAt: new Date().toISOString(),
   parser: "dxf-parser@1.1.2",
   units: parsed?.header?.$INSUNITS,
   entityCount: parsed?.entities.length,

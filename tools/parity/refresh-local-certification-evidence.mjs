@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { createHash } from "node:crypto";
-import { readFile, stat, writeFile } from "node:fs/promises";
+import { readFile, writeFile } from "node:fs/promises";
 import { resolve, sep } from "node:path";
 
 const root = process.cwd();
@@ -28,10 +28,17 @@ for (const rowId of rowIds) {
       throw new Error(`${rowId} ${kind} artifact escaped the evidence directory.`);
     }
     const artifactBytes = await readFile(artifactPath);
-    const artifact = JSON.parse(artifactBytes.toString("utf8"));
-    if (artifact.status !== "PASS" && artifact.passed !== true) throw new Error(`${rowId} ${kind} artifact is not PASS.`);
+    if (artifactBytes.byteLength === 0) throw new Error(`${rowId} ${kind} artifact is empty.`);
+    let artifact = null;
+    if (descriptor.artifact.toLowerCase().endsWith(".json")) {
+      artifact = JSON.parse(artifactBytes.toString("utf8"));
+      if (artifact.status !== "PASS" && artifact.passed !== true) throw new Error(`${rowId} ${kind} artifact is not PASS.`);
+    }
     descriptor.artifactSha256 = sha256(artifactBytes);
-    descriptor.observedAt = artifact.observedAt ?? (await stat(artifactPath)).mtime.toISOString();
+    if (artifact?.observedAt) descriptor.observedAt = artifact.observedAt;
+    else if (!Number.isFinite(Date.parse(descriptor.observedAt ?? ""))) {
+      throw new Error(`${rowId} ${kind} binary artifact has no trustworthy observation timestamp.`);
+    }
     const descriptorBytes = Buffer.from(`${JSON.stringify(descriptor, null, 2)}\n`, "utf8");
     await writeFile(descriptorPath, descriptorBytes);
     certification.evidenceSha256[kind] = sha256(descriptorBytes);

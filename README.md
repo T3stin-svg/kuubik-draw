@@ -140,6 +140,22 @@ npm install
 npm run check
 ```
 
+Pariteedi arhitektuurikäsud:
+
+```bash
+npm run parity:affected
+npm run parity:row -- F-100 --portable
+npm run parity:kit:validate
+npm run check:fast
+npm run check:full
+```
+
+`parity:affected` kasutab vaikimisi Git HEAD + tööpuu diffi ja keeldub uuest
+kaardistamata runtime-failist. `parity:row` juhib ühe sertifitseeritud rea
+browser/read-back/oracle/AutoCAD/cross samme, uuendab SHA-seosed ning käivitab
+lõpliku 133-rea ratchet'i; `--portable` jätab litsentsitud AutoCADi ja kohaliku
+oracle-runneri ausalt vahele.
+
 Rakendus: `apps/web`. Tuum, renderdus ning failiadapterid on eraldi pakettides.
 Avalik failiskeem elab MIT-litsentsiga projektis
 [`T3stin-svg/kuubik-cad-schema`](https://github.com/T3stin-svg/kuubik-cad-schema).

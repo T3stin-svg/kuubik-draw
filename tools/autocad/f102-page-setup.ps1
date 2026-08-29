@@ -132,7 +132,9 @@ function Set-AcadDrawingAspect {
 function Set-IsoMedia {
   param([Parameter(Mandatory = $true)]$Layout, [Parameter(Mandatory = $true)][string]$IsoName, [Parameter(Mandatory = $true)][string]$Orientation)
   $dimensions = if ($IsoName -eq 'A4') { @('210', '297') } elseif ($IsoName -eq 'A3') { @('297', '420') } else { throw "Unsupported ISO media $IsoName" }
-  $media = @($Layout.GetCanonicalMediaNames() | Where-Object {
+  Invoke-ComRetry { $Layout.RefreshPlotDeviceInfo() } -TimeoutSeconds 30 | Out-Null
+  $canonicalMediaNames = @(Invoke-ComRetry { @($Layout.GetCanonicalMediaNames()) } -TimeoutSeconds 30)
+  $media = @($canonicalMediaNames | Where-Object {
     [string]$_ -match "(?i)$IsoName" -and [string]$_ -match $dimensions[0] -and [string]$_ -match $dimensions[1]
   } | Sort-Object { [string]$_ -match '(?i)full.?bleed' } | Select-Object -First 1)
   if ($media.Count -ne 1) { throw "DWG To PDF.pc3 did not expose ISO $IsoName." }
@@ -189,6 +191,31 @@ function Get-PlotSnapshot {
   }
 }
 
+function Wait-ViewportGeometry {
+  param(
+    [Parameter(Mandatory = $true)]$Viewport,
+    [Parameter(Mandatory = $true)][double[]]$Center,
+    [Parameter(Mandatory = $true)][double]$Width,
+    [Parameter(Mandatory = $true)][double]$Height,
+    [int]$TimeoutSeconds = 20
+  )
+  $deadline = [DateTime]::UtcNow.AddSeconds($TimeoutSeconds)
+  do {
+    try {
+      $actualCenter = Get-Point2 $Viewport.Center
+      $actualWidth = [double]$Viewport.Width
+      $actualHeight = [double]$Viewport.Height
+      if ([Math]::Abs($actualCenter.x - $Center[0]) -le 0.001 -and
+          [Math]::Abs($actualCenter.y - $Center[1]) -le 0.001 -and
+          [Math]::Abs($actualWidth - $Width) -le 0.001 -and
+          [Math]::Abs($actualHeight - $Height) -le 0.001) { return }
+      $Viewport.Center = $Center; $Viewport.Width = $Width; $Viewport.Height = $Height; $Viewport.Update()
+    } catch {}
+    Start-Sleep -Milliseconds 150
+  } while ([DateTime]::UtcNow -lt $deadline)
+  throw "F-102 viewport geometry did not stabilize at $Width x $Height."
+}
+
 $preExistingProcessIds = @(Get-Process -Name 'acad' -ErrorAction SilentlyContinue | ForEach-Object { [int]$_.Id })
 $acad = $null; $scratch = $null; $reopened = $null; $result = $null; $automationProcessId = 0; $owned = $false
 $tempDwg = [IO.Path]::GetFullPath($TempDwgPath); $tempPdf = [IO.Path]::GetFullPath($TempPdfPath); $displayPdf = [IO.Path]::ChangeExtension($tempPdf, '.display.pdf'); $pidFile = [IO.Path]::GetFullPath($PidPath)
@@ -219,10 +246,12 @@ try {
   [double[]]$lineStart = @(10, 20, 0); [double[]]$lineEnd = @(190, 270, 0)
   Invoke-ComRetry { $scratch.PaperSpace.AddLine($lineStart, $lineEnd) } | Out-Null
   Invoke-ComRetry {
-    $viewport.Display($true); $viewport.DisplayLocked = $true
+    $viewport.Center = $viewportCenter; $viewport.Width = 390; $viewport.Height = 267
+    $viewport.Display($true); $viewport.DisplayLocked = $true; $viewport.Update()
     $paper.PlotType = 1; $paper.CenterPlot = $false; $paper.UseStandardScale = $false; $paper.SetCustomScale(1.0, 1.0); $paper.PlotOrigin = [double[]]@(0, 0); $paper.PlotType = 5
     $scratch.Regen(1)
   } | Out-Null
+  Wait-ViewportGeometry $viewport $viewportCenter 390 267
   $baseline = Get-PlotSnapshot $paper $viewport
 
   $a4Media = Set-IsoMedia $paper 'A4' 'portrait'
