@@ -81,8 +81,9 @@
 
 ## Certified state and explicit remaining limits
 
-- the new application has **24/133** locally certified parity rows
-  (**18.0% raw / 21.7% weighted**); F-023 public CI verification is pending;
+- the new application has **24/133** publicly certified parity rows
+  (**18.0% raw / 21.7% weighted**); F-023 feature commit `1f4a96c` and CI
+  portability fix `7e252de` passed GitHub Actions run `33260160549`;
 - all 22 legacy-certified rows and the first two new rows F-022/F-023 are
   locally mirrored;
 - spline/NURBS rendering is rejected rather than drawn as a misleading control polygon;
@@ -94,11 +95,14 @@
 - native DWG/DWT/XREF and PC3/CTB/STB remain deferred;
 - no preview or production deployment has been made.
 
-The F-023 local full gate passed 38 test files / 276 Vitest tests, 39 mutation
-tests, 32 DXF tests, 19 PDF tests and 66 Chromium E2E tests. The checked-in
-licensed AutoCAD evidence is fresh for F-022/F-023/F-109/F-111; public CI is
-still pending for this wave. LibreCAD/FreeCAD remain secondary oracles and
-report `FIXTURE_PASS_NOT_NETWORK_ISOLATED`, not certification authority.
+The F-023 final local full gate passed 38 test files / 277 Vitest tests,
+39 mutation tests, 32 DXF tests, 19 PDF tests and 66 Chromium E2E tests.
+GitHub Actions run `33260160549` passed both `fast` and full `verify` jobs on
+the exact public commit `7e252de`; the preceding shallow-checkout failure is
+ratcheted by requiring every checkout step to fetch the pinned schema-v3
+migration base. The checked-in licensed AutoCAD evidence is fresh for
+F-022/F-023/F-109/F-111. LibreCAD/FreeCAD remain secondary oracles and report
+`FIXTURE_PASS_NOT_NETWORK_ISOLATED`, not certification authority.
 
 The architecture-efficiency wave in `ARCHITECTURE_ROADMAP.md` is closed with
 public Ubuntu CI and an independent `0 P0 / 0 P1` review. Its App-shell refactor

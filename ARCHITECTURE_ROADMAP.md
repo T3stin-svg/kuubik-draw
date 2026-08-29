@@ -33,13 +33,12 @@ selles teekaardis teadlikult `Won't have`.
 
 ## Now
 
-1. F-023 lokaalne sertifikaat on valmis: **24/133 · 18,0% raw / 21,7% weighted**;
-   avalik CI-kinnitus on pooleli.
+1. F-023 on avalikult sertifitseeritud: **24/133 · 18,0% raw / 21,7% weighted**.
 2. Quick/Standard TRIM ja EXTEND, closed bulge/width polyline, hidden/locked target,
    ignored HATCH loop, nested block layer-semantika ja rational SPLINE läbivad
    AutoCAD 2024.1.2, Chromiumi ning sõltumatu DXF/KDRAW1 read-back'i.
-3. Sõltumatu review lõppes `0 P0 / 0 P1`; commit `30a9c2a` läbis avaliku
-   GitHub Actions run'i `33247396359` kogu `npm run check` värava.
+3. F-023 feature-commit `1f4a96c` ja CI portability fix `7e252de` läbisid
+   GitHub Actions run'i `33260160549`; sõltumatu lõppreview oli `0 P0 / 0 P1`.
 4. Architecture-efficiency gate on avalikult suletud: MOVE…TRIM kasutavad
    ühist workflow-moodulit, 23 sertifitseeritud rida on deklaratiivses
    parity-kit'is ning täpne ratchet töötab võrdselt Windowsis ja Linuxis.
@@ -48,7 +47,9 @@ selles teekaardis teadlikult `Won't have`.
 5. F-023 laine schema-v4 package-ratchet seob iga rea ainult tema transitiivsete
    npm authority-etappidega, hoides dependency- ja globaalse CI-pinna eraldi
    fail-closed kontrollis. Ühekordne v3→v4 receipt tõendab, et varasema 23 rea
-   etapikäsud ning `package-lock.json` ei muutunud.
+   etapikäsud ning `package-lock.json` ei muutunud. Kõik CI checkout-stepid
+   peavad fetchima pinned migratsioonibaasi täieliku ajaloo; step-aware test
+   keeldub shallow, named-shallow ja valesse `env` scope'i pandud seadetest.
 
 ## Suletud — architecture-efficiency gate
 
@@ -106,8 +107,8 @@ ainult pärast kõigi tõendite ja sõltumatu P0/P1 review läbimist.
 
 ## Later
 
-1. Pärast F-023 avalikku kinnitust rakendada F-024 `FILLET`, siis jätkata
-   mõjupõhises P0 → P1 → P2 järjekorras kuni 133/133.
+1. Rakendada F-024 `FILLET`, siis jätkata mõjupõhises P0 → P1 → P2 järjekorras
+   kuni 133/133.
 2. Native DWG/DWT/XREF ja PC3/CTB/STB ainult litsentsitud ODA/RealDWG teega.
 3. Pärast funktsionaalset 133/133 väravat viia kõik viis visuaalkategooriat
    eraldi `100,0%` peale.
