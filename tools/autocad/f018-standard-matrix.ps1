@@ -1,4 +1,12 @@
 $ErrorActionPreference = 'Stop'
+Add-Type @'
+using System;
+using System.Runtime.InteropServices;
+public static class F018WindowProcess {
+  [DllImport("user32.dll")]
+  public static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint processId);
+}
+'@
 
 function Invoke-ComRetry {
   param([Parameter(Mandatory = $true)][scriptblock]$Action, [int]$TimeoutSeconds = 20)
@@ -8,6 +16,43 @@ function Invoke-ComRetry {
       if ([DateTime]::UtcNow -ge $deadline) { throw }
       Start-Sleep -Milliseconds 150
     }
+  } while ($true)
+}
+
+function Invoke-NonEmptyCom {
+  param([Parameter(Mandatory = $true)][scriptblock]$Action, [string]$Label = 'COM value', [int]$TimeoutSeconds = 20)
+  $deadline = [DateTime]::UtcNow.AddSeconds($TimeoutSeconds)
+  do {
+    try {
+      $value = [string](& $Action)
+      if (-not [string]::IsNullOrWhiteSpace($value)) { return $value }
+    } catch {
+      if ([DateTime]::UtcNow -ge $deadline) { throw }
+    }
+    if ([DateTime]::UtcNow -ge $deadline) { throw "$Label remained empty for $TimeoutSeconds seconds." }
+    Start-Sleep -Milliseconds 150
+  } while ($true)
+}
+
+function Get-EntityByHandle {
+  param(
+    [Parameter(Mandatory = $true)]$Document,
+    [Parameter(Mandatory = $true)][string]$Handle,
+    [int]$TimeoutSeconds = 20
+  )
+  $deadline = [DateTime]::UtcNow.AddSeconds($TimeoutSeconds)
+  do {
+    try {
+      $entity = $Document.HandleToObject($Handle)
+      if ($entity -and [string]$entity.Handle -eq $Handle) { return $entity }
+    } catch {}
+    try {
+      foreach ($candidate in $Document.ModelSpace) {
+        if ([string]$candidate.Handle -eq $Handle) { return $candidate }
+      }
+    } catch {}
+    if ([DateTime]::UtcNow -ge $deadline) { throw "AutoCAD could not resolve model-space handle $Handle." }
+    Start-Sleep -Milliseconds 150
   } while ($true)
 }
 
@@ -36,7 +81,7 @@ function Get-EntityState {
   return [ordered]@{
     family = $Family
     objectName = [string](Invoke-ComRetry { $Entity.ObjectName })
-    handle = [string](Invoke-ComRetry { $Entity.Handle })
+    handle = Invoke-NonEmptyCom { $Entity.Handle } "$Family handle"
     layer = [string](Invoke-ComRetry { $Entity.Layer })
     color = [int](Invoke-ComRetry { $Entity.Color })
     linetype = [string](Invoke-ComRetry { $Entity.Linetype })
@@ -111,10 +156,18 @@ function Invoke-RotateHandle {
   Wait-AcadIdle $Document
 }
 
+$preExistingAcadProcessIds = @(Get-Process -Name 'acad' -ErrorAction SilentlyContinue | ForEach-Object { [int]$_.Id })
 $acad = $null; $scratch = $null; $reusedBlank = $false; $result = $null
+$automationProcessId = 0; $automationProcessOwned = $false
 try {
-  $acad = New-Object -ComObject AutoCAD.Application.24.3
+  $acad = Invoke-ComRetry { New-Object -ComObject AutoCAD.Application.24.3 } -TimeoutSeconds 30
   Invoke-ComRetry { $acad.Visible = $true } | Out-Null
+  [uint32]$resolvedAutomationProcessId = 0
+  [void][F018WindowProcess]::GetWindowThreadProcessId([IntPtr][int64](Invoke-ComRetry { $acad.HWND }), [ref]$resolvedAutomationProcessId)
+  $automationProcessId = [int]$resolvedAutomationProcessId
+  $automationProcessOwned = $automationProcessId -gt 0 -and $preExistingAcadProcessIds -notcontains $automationProcessId
+  Write-Host "[F-018] automation-process pid=$automationProcessId owned=$automationProcessOwned"
+  if (-not $automationProcessOwned) { throw 'F-018 refuses to use a pre-existing AutoCAD process.' }
   $initialCount = [int](Invoke-ComRetry { $acad.Documents.Count })
   if ($initialCount -gt 0) {
     $candidate = Invoke-ComRetry { $acad.ActiveDocument }
@@ -167,18 +220,18 @@ try {
   $hatchBoundary = Invoke-ComRetry { $scratch.ModelSpace.AddLightWeightPolyline($hatchBoundaryPoints) }
   Invoke-ComRetry { $hatchBoundary.Closed = $true } | Out-Null
   Invoke-ComRetry { $hatchBoundary.Layer = 'F018_AUX' } | Out-Null
-  $boundaryHandle = [string](Invoke-ComRetry { $hatchBoundary.Handle })
+  $boundaryHandle = Invoke-NonEmptyCom { $hatchBoundary.Handle } 'Hatch boundary handle'
   $hatchLisp = "(progn (vl-load-com) (setq f018:ms (vla-get-ModelSpace (vla-get-ActiveDocument (vlax-get-acad-object)))) (setq f018:h (vla-AddHatch f018:ms 0 `"SOLID`" :vlax-false 0)) (setq f018:loop (vlax-make-safearray vlax-vbObject '(0 . 0))) (vlax-safearray-put-element f018:loop 0 (vlax-ename->vla-object (handent `"$boundaryHandle`"))) (vla-AppendOuterLoop f018:h f018:loop) (vla-Evaluate f018:h) (vla-put-Layer f018:h `"F018_MATRIX`") (setvar `"USERS1`" (vla-get-Handle f018:h)) (princ))`n"
   Invoke-ComRetry { $scratch.SendCommand($hatchLisp) } | Out-Null
   Wait-AcadIdle $scratch
-  $hatchHandle = [string](Invoke-ComRetry { $scratch.GetVariable('USERS1') })
-  $entities.hatch = Invoke-ComRetry { $scratch.HandleToObject($hatchHandle) }
+  $hatchHandle = Invoke-NonEmptyCom { $scratch.GetVariable('USERS1') } 'Hatch handle'
+  $entities.hatch = Get-EntityByHandle $scratch $hatchHandle
 
   $blockLisp = "(progn (vl-load-com) (setq f018:doc (vla-get-ActiveDocument (vlax-get-acad-object))) (setq f018:block (vla-Add (vla-get-Blocks f018:doc) (vlax-3d-point '(0.0 0.0 0.0)) `"F018_BLOCK`")) (vla-AddLine f018:block (vlax-3d-point '(0.0 0.0 0.0)) (vlax-3d-point '(100.0 0.0 0.0))) (setq f018:insert (vla-InsertBlock (vla-get-ModelSpace f018:doc) (vlax-3d-point '(1900.0 0.0 0.0)) `"F018_BLOCK`" 1.5 0.5 1.0 0.25)) (vla-put-Layer f018:insert `"F018_MATRIX`") (setvar `"USERS2`" (vla-get-Handle f018:insert)) (princ))`n"
   Invoke-ComRetry { $scratch.SendCommand($blockLisp) } | Out-Null
   Wait-AcadIdle $scratch
-  $blockHandle = [string](Invoke-ComRetry { $scratch.GetVariable('USERS2') })
-  $entities.blockRef = Invoke-ComRetry { $scratch.HandleToObject($blockHandle) }
+  $blockHandle = Invoke-NonEmptyCom { $scratch.GetVariable('USERS2') } 'Block reference handle'
+  $entities.blockRef = Get-EntityByHandle $scratch $blockHandle
 
   foreach ($entity in $entities.Values) {
     Invoke-ComRetry { $entity.Layer = 'F018_MATRIX' } | Out-Null
@@ -196,7 +249,7 @@ try {
   $after = @()
   $checks = @()
   foreach ($prior in $before) {
-    $entity = Invoke-ComRetry { $scratch.HandleToObject($prior.handle) }
+    $entity = Get-EntityByHandle $scratch $prior.handle
     $state = Get-EntityState $entity $prior.family
     $expected = Get-RotatedBounds $prior.bounds 100 200 90
     $after += $state
@@ -212,7 +265,7 @@ try {
   Wait-AcadIdle $scratch
   $afterUndo = @()
   foreach ($prior in $before) {
-    $state = Get-EntityState (Invoke-ComRetry { $scratch.HandleToObject($prior.handle) }) $prior.family
+    $state = Get-EntityState (Get-EntityByHandle $scratch $prior.handle) $prior.family
     $afterUndo += $state
     $check = @($checks | Where-Object { $_.family -eq $prior.family })[0]
     $check.undoRestored = (Test-Bounds $state.bounds $prior.bounds) -and (Test-Properties $prior $state)
@@ -221,25 +274,25 @@ try {
   $standardLine = New-Line $scratch 'F018_STANDARD' 1000 0 2000 0
   $standardBefore = Get-EntityState $standardLine 'standardNumeric'
   Invoke-RotateHandle $scratch $standardBefore.handle '0,0' '90'
-  $standardAfter = Get-EntityState (Invoke-ComRetry { $scratch.HandleToObject($standardBefore.handle) }) 'standardNumeric'
+  $standardAfter = Get-EntityState (Get-EntityByHandle $scratch $standardBefore.handle) 'standardNumeric'
   $standardPassed = Test-Bounds $standardAfter.bounds (Get-RotatedBounds $standardBefore.bounds 0 0 90)
 
   $pointLine = New-Line $scratch 'F018_POINT' 1000 0 2000 0
   $pointBefore = Get-EntityState $pointLine 'standardPoint'
   Invoke-RotateHandle $scratch $pointBefore.handle '0,0' '0,1000'
-  $pointAfter = Get-EntityState (Invoke-ComRetry { $scratch.HandleToObject($pointBefore.handle) }) 'standardPoint'
+  $pointAfter = Get-EntityState (Get-EntityByHandle $scratch $pointBefore.handle) 'standardPoint'
   $pointPassed = Test-Bounds $pointAfter.bounds (Get-RotatedBounds $pointBefore.bounds 0 0 90)
 
   $referenceLine = New-Line $scratch 'F018_REFERENCE' 1000 0 2000 0
   $referenceBefore = Get-EntityState $referenceLine 'numericReferencePointTarget'
   Invoke-RotateHandle $scratch $referenceBefore.handle '0,0' '0,1000' '45'
-  $referenceAfter = Get-EntityState (Invoke-ComRetry { $scratch.HandleToObject($referenceBefore.handle) }) 'numericReferencePointTarget'
+  $referenceAfter = Get-EntityState (Get-EntityByHandle $scratch $referenceBefore.handle) 'numericReferencePointTarget'
   $referencePassed = Test-Bounds $referenceAfter.bounds (Get-RotatedBounds $referenceBefore.bounds 0 0 45)
 
   $negativeLine = New-Line $scratch 'F018_NEGATIVE' 1000 0 2000 0
   $negativeBefore = Get-EntityState $negativeLine 'negativeNumeric'
   Invoke-RotateHandle $scratch $negativeBefore.handle '0,0' '-90'
-  $negativeAfter = Get-EntityState (Invoke-ComRetry { $scratch.HandleToObject($negativeBefore.handle) }) 'negativeNumeric'
+  $negativeAfter = Get-EntityState (Get-EntityByHandle $scratch $negativeBefore.handle) 'negativeNumeric'
   $negativePassed = Test-Bounds $negativeAfter.bounds (Get-RotatedBounds $negativeBefore.bounds 0 0 -90)
 
   $editable = New-Line $scratch 'F018_EDIT' 0 2500 1000 2500
@@ -251,8 +304,8 @@ try {
   $mixedRotate = "(setq f018:mixed (ssadd))`n(ssadd (handent `"$editableHandle`") f018:mixed)`n(ssadd (handent `"$lockedHandle`") f018:mixed)`n_.ROTATE`n!f018:mixed`n`n0,0`n90`n"
   Invoke-ComRetry { $scratch.SendCommand($mixedRotate) } | Out-Null
   Wait-AcadIdle $scratch
-  $editableAfter = Get-EntityState (Invoke-ComRetry { $scratch.HandleToObject($editableHandle) }) 'editable'
-  $lockedAfter = Get-EntityState (Invoke-ComRetry { $scratch.HandleToObject($lockedHandle) }) 'locked'
+  $editableAfter = Get-EntityState (Get-EntityByHandle $scratch $editableHandle) 'editable'
+  $lockedAfter = Get-EntityState (Get-EntityByHandle $scratch $lockedHandle) 'locked'
   $mixedPassed = (Test-Bounds $editableAfter.bounds (Get-RotatedBounds $editableBefore.bounds 0 0 90)) -and
     (Test-Bounds $lockedAfter.bounds $lockedBefore.bounds) -and (Test-Properties $lockedBefore $lockedAfter)
 
@@ -287,7 +340,6 @@ try {
   }
 } finally {
   if ($scratch) { try { Invoke-ComRetry { $scratch.Close($false) } -TimeoutSeconds 10 | Out-Null } catch {} }
-  if ($reusedBlank -and $acad) { try { Invoke-ComRetry { $acad.Documents.Add() } -TimeoutSeconds 10 | Out-Null } catch {} }
 }
 
 if (-not $result) { throw 'F-018 standard AutoCAD matrix produced no result.' }
@@ -301,21 +353,30 @@ $activeNameAfter = ''
 $activeFullNameAfter = ''
 $activeSavedAfter = $true
 $activeEntityCountAfter = 0
+$ownedDocumentsClean = $true
+foreach ($ownedDocument in $acad.Documents) {
+  $ownedFullName = [string](Invoke-ComRetry { $ownedDocument.FullName })
+  $ownedSaved = [bool](Invoke-ComRetry { $ownedDocument.Saved })
+  $ownedEntityCount = [int](Invoke-ComRetry { $ownedDocument.ModelSpace.Count })
+  if (-not [string]::IsNullOrWhiteSpace($ownedFullName) -or -not $ownedSaved -or $ownedEntityCount -ne 0) { $ownedDocumentsClean = $false }
+}
 if ($openDocumentsAfter -gt 0) {
   $activeNameAfter = [string](Invoke-ComRetry { $acad.ActiveDocument.Name })
   $activeFullNameAfter = [string](Invoke-ComRetry { $acad.ActiveDocument.FullName })
   $activeSavedAfter = [bool](Invoke-ComRetry { $acad.ActiveDocument.Saved })
   $activeEntityCountAfter = [int](Invoke-ComRetry { $acad.ActiveDocument.ModelSpace.Count })
 }
-$blankRestored = $openDocumentsAfter -eq 1 -and [string]::IsNullOrWhiteSpace($activeFullNameAfter) -and
-  $activeSavedAfter -and $activeEntityCountAfter -eq 0
+$blankRestored = $automationProcessOwned -and $ownedDocumentsClean
 $result.userDocument = [ordered]@{
   reusedBlank = $reusedBlank
+  isolatedOwnedProcess = $automationProcessOwned
+  automationProcessId = $automationProcessId
   openDocumentsAfter = $openDocumentsAfter
   activeNameAfter = $activeNameAfter
   activeFullNameAfter = $activeFullNameAfter
   activeSavedAfter = $activeSavedAfter
   activeEntityCountAfter = $activeEntityCountAfter
+  ownedDocumentsClean = $ownedDocumentsClean
   blankRestored = $blankRestored
 }
 if (-not $blankRestored) { $result.status = 'FAIL' }

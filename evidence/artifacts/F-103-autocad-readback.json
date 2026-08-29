@@ -4,7 +4,7 @@
   "benchmark": "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
   "engine": "Autodesk AutoCAD 2024 desktop COM/native PlotToFile",
   "engineVersion": "24.3s (LMS Tech)",
-  "automationProcessId": 23300,
+  "automationProcessId": 31484,
   "automationProcessOwned": true,
   "media": "ISO_expand_A4_(210.00_x_297.00_MM)",
   "plotStyleTables": [
@@ -152,7 +152,7 @@
       },
       "pdf": {
         "bytes": 2230,
-        "sha256": "d7aeb39effc100d6604c598ac99bac0cdc61c7ddcd840f52dd4f29fd80a4f924",
+        "sha256": "1851a5ecb54ae4a4c9ddc41371f95a17cf647ac4add4cbdc43b68b2778faf273",
         "retained": false
       }
     },
@@ -171,7 +171,7 @@
       },
       "pdf": {
         "bytes": 2221,
-        "sha256": "47383f047d2d2519da82846da81da79394383e087245bb0e3818cc0a17f5461f",
+        "sha256": "26bbdd60dac8cfd5be373084b13358cf535a2031bdff61147bf4ac50a3f4f6f1",
         "retained": false
       }
     },
@@ -190,7 +190,7 @@
       },
       "pdf": {
         "bytes": 2246,
-        "sha256": "19164a383dd32ce16ea15b91cba41c7112ebccc0fc8e16b1b63488c7ee4fbfa2",
+        "sha256": "76cd94c47986c0a13ffa2788c459e45118be9678adb0630063c418f3558d7607",
         "retained": false
       }
     },
@@ -209,7 +209,7 @@
       },
       "pdf": {
         "bytes": 2224,
-        "sha256": "ec8343a80bb40383bccf2678c984a9b9a1cf463ab5cd4b52d094530954036e95",
+        "sha256": "e04681a99ae27f5cb934d5897ab09aaff79f4c304c9070c97fa1b39562c8ac98",
         "retained": false
       }
     },
@@ -228,7 +228,7 @@
       },
       "pdf": {
         "bytes": 6289,
-        "sha256": "c2227b74a832da3f7ff80ab976bd349556fab4104bf0675eaf52c39085a9ab77",
+        "sha256": "2dabdf782eb082c62d4a792b3093b9ddd36f754401c7e77bb78109f9dde9ad42",
         "retained": false
       }
     }
@@ -275,7 +275,7 @@
   },
   "dwg": {
     "bytes": 32980,
-    "sha256": "c5b11f804d5c435a945dbc47fe287e957ace9309b39f09b07e766dfe4285e77b",
+    "sha256": "800ad72947f69c63959283dba6b38ca0684fecbdcfea5bb822fe1f960d74400e",
     "saveAsType": 64,
     "retained": false
   },
@@ -293,7 +293,14 @@
     "restored": true
   },
   "automationProcessTerminated": true,
-  "noResidualAcadProcesses": true,
+  "processSetRestored": true,
+  "preExistingProcessIds": [
+    11276,
+    22952,
+    23180,
+    25848,
+    28152
+  ],
   "pdfReadback": {
     "color": {
       "version": "1.7",
@@ -821,9 +828,9 @@
     "https://help.autodesk.com/cloudhelp/2024/ENU/AutoCAD-LT-MAC/files/GUID-D2820944-F8F0-4810-9E85-C41604FF58D9.htm"
   ],
   "scriptSha256": "50fd1ed9d7db585a31b14070de949ceee4e1a2cbff65300069893346d05c9b19",
-  "matrixScriptSha256": "d9ab18f5b0fa3dbe29b4d09ab0fe6ce2ec8da521f8e475ba662552bc2dc99c21",
+  "matrixScriptSha256": "42ee320f1826ac63f60b493af7a0395520c9c8db1ca2e4dd2d367e00596cedbd",
   "managedPluginSourceSha256": "27a0e013d178a8d4ffbb3d9d976d2670de0f3bd0e7a1e8589b08db320ba96067",
-  "runnerScriptSha256": "08b1a9042cff68e6f70b5539885227760dd240758bed21a70b7ea91ea0b0088c",
+  "runnerScriptSha256": "70fe40c8b5e4241acb0e0ba164c44aa890bef2bf88076c46c9b0a2c283356c63",
   "renderedPixelReaderSha256": "f39093021736a82b5cef67656555ceaa026ed2b625315ca7aea1d6e4ed0ff77b",
-  "observedAt": "2026-08-28T20:43:23.855Z"
+  "observedAt": "2026-08-29T03:47:59.707Z"
 }

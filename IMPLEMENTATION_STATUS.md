@@ -12,7 +12,8 @@
 - Canvas2D renderer with uniform world scale, R-tree culling and bulged polyline arcs;
 - initial DXF writer with deterministic valid handles and independent `dxf-parser` read-back;
 - initial SVG/vector-PDF writer with plottable-layer filtering and xref verification;
-- developer-only LibreCAD/FreeCAD executable probes that return `NOT_RUN`, never a fake PASS;
+- developer-only pinned LibreCAD/FreeCAD fixtures with executable-SHA checks,
+  disposable profiles and independent geometry read-back; they never certify an AutoCAD row;
 - dependency-license, public-tree, Gitleaks, build, unit, mutation and Chromium gates.
 - F-003 RECTANGLE mirrored through command registry, atomic browser commit, IndexedDB reload,
   production DXF, independent parser and a fresh AutoCAD 2024 Core Console live workflow.
@@ -55,22 +56,25 @@
   dangling/stale assignments, unknown nested keys and oversized files before commit;
   semantic equality is independent of JSON object-key order. Independent final
   review closed at 0 P0 / 0 P1 / 0 P2.
+- F-109 DXF export mirrored 40 production entities, layer/style semantics,
+  255 exact ACI colors and native aligned dimensions through Chromium, strict
+  ezdxf, AutoCAD Core Console and an owned desktop AutoCAD read-back.
 
 ## Explicitly not certified yet
 
-- the new application has **19/133** locally certified parity rows (**14.3% raw / 17.0% weighted**);
-- 3 of the 22 legacy-certified rows still need mirror workflows and evidence here;
+- the new application has **20/133** locally certified parity rows (**15.0% raw / 17.9% weighted**);
+- 2 of the 22 legacy-certified rows still need mirror workflows and evidence here;
 - F-022 TRIM is not implemented in the new kernel;
 - spline/NURBS rendering is rejected rather than drawn as a misleading control polygon;
 - Unicode PDF text is rejected until a font-embedding path exists;
-- LibreCAD/FreeCAD geometry fixtures, sandboxing and read-back are not implemented;
+- LibreCAD/FreeCAD fixtures pass locally, but the machine has no signed OS
+  egress-deny attestation, so the strict required-oracle gate remains honestly red;
 - crash-recovery operation replay and cloud storage are not complete;
 - 50,000-entity R-tree query passes, but 30 FPS browser pan/zoom is not yet proved;
 - native DWG/DWT/XREF and PC3/CTB/STB remain deferred;
 - no preview or production deployment has been made.
 
 The next release gate remains parity mirror. F-108 native PC3/CTB/STB remains
-blocked on a licensed adapter, so F-109 DXF export is the next directly testable
-legacy-certified row, followed by F-111 roundtrip fidelity and F-114 PDF vector
-output. F-022 work starts only after the mirror baseline and oracle-labor
-execution paths are real.
+blocked on a licensed adapter. F-111 roundtrip fidelity is the next directly
+testable legacy-certified row, followed by F-114 PDF vector output. F-022 work
+starts after both remaining mirror rows are independently certified.

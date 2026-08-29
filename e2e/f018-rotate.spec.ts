@@ -167,7 +167,7 @@ test("F-018 ROTATE postselection, numeric Reference, point target and mixed lock
   const mixed = new DxfParser().parseSync((await downloadBytes(await mixedDownload, "F-018-browser-locked.dxf")).toString("utf8"));
   expect(mixed?.entities.map((entity) => ({ handle: entity.handle, layer: entity.layer, vertices: entity.vertices }))).toEqual([
     { handle: "10", layer: "0", vertices: [{ x: -10, y: 10, z: 0 }, { x: -90, y: 180, z: 0 }] },
-    { handle: "12", layer: "layer-1", vertices: [{ x: 10, y: 20, z: 0 }, { x: 180, y: 90, z: 0 }] },
+    { handle: "12", layer: "Layer 1", vertices: [{ x: 10, y: 20, z: 0 }, { x: 180, y: 90, z: 0 }] },
   ]);
   expect(consoleErrors).toEqual([]);
 });

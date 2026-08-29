@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "rowId": "F-021",
   "parser": "dxf-parser@1.1.2 + independent KDRAW1 envelope parser",
-  "observedAt": "2026-08-28T14:51:57.359Z",
+  "observedAt": "2026-08-29T03:52:22.104Z",
   "units": 4,
   "multiple": {
     "command": {
@@ -6148,7 +6148,8 @@
             "id": "model",
             "name": "Model",
             "kind": "model",
-            "viewports": []
+            "viewports": [],
+            "entities": []
           }
         ],
         "attachments": [],
@@ -6241,7 +6242,8 @@
             "id": "model",
             "name": "Model",
             "kind": "model",
-            "viewports": []
+            "viewports": [],
+            "entities": []
           }
         ],
         "attachments": [],
@@ -6255,10 +6257,10 @@
   "kdraw": {
     "format": "application/vnd.kuubik.kdraw+json",
     "containerVersion": 1,
-    "byteLength": 20925,
-    "sha256": "3d161a198f8671e3431232b892f87594608b8b5f939e704e5be3b421a2450f69",
-    "manifestByteLength": 20925,
-    "manifestSha256": "3d161a198f8671e3431232b892f87594608b8b5f939e704e5be3b421a2450f69",
+    "byteLength": 20939,
+    "sha256": "61ee9b5f731ac033e2257a7ce15eb68b2260fc1f8b150e09679d5421ba34837f",
+    "manifestByteLength": 20939,
+    "manifestSha256": "61ee9b5f731ac033e2257a7ce15eb68b2260fc1f8b150e09679d5421ba34837f",
     "independentDocument": {
       "schemaVersion": 1,
       "documentId": "F-021-five-family",
@@ -8372,7 +8374,8 @@
           "id": "model",
           "name": "Model",
           "kind": "model",
-          "viewports": []
+          "viewports": [],
+          "entities": []
         }
       ],
       "attachments": [],
@@ -8383,9 +8386,9 @@
     }
   },
   "status": "PASS",
-  "dxfSha256": "3d139724c4b31493337e7b72413312be53c335965bc921950053e9457987d0dd",
-  "kdrawSha256": "5952af29c426adb423440816611d5c6975a00ce182dd6594b641e4b51d7c5913",
-  "edgeDxfSha256": "330098646aac95639c7495212b07d14f7e6e9eb35c8fe9cd7f500ca3b1e15d92",
-  "edgeKdrawSha256": "441d4dbbbe495b9c41bc397dd0dd57ed9c9825c45f90765411ecb192003e74c2",
-  "concaveKdrawSha256": "e2744cb1276a3eba82fafca732b4638a3a7e7b6e3e6f62fe540a2055b137b562"
+  "dxfSha256": "71f785c2fb961f896823d9b57c03d5bd40882257c9a1e3afe11bd6b0aa0f7e1f",
+  "kdrawSha256": "12ecefc4d6286b8d8442b8c4e1b44619b79592c733a4142b03d10018f1cd6836",
+  "edgeDxfSha256": "abf7f3fb20c552494a7dd279728d462da7f2cbde06a530814e2e9eed5168c94d",
+  "edgeKdrawSha256": "75cccbea031c10977b6546d79c278215d19b2f9352c1e69ccd2201d6498cab3a",
+  "concaveKdrawSha256": "32f67a93aaa220ae5f98a7ef8468db6d3c052700e93ca369089c64fb733808b8"
 }

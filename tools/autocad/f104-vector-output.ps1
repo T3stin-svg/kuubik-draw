@@ -27,6 +27,21 @@ function Invoke-ComRetry {
   } while ($true)
 }
 
+function Invoke-NonEmptyCom {
+  param([Parameter(Mandatory = $true)][scriptblock]$Action, [string]$Label = 'COM value', [int]$TimeoutSeconds = 20)
+  $deadline = [DateTime]::UtcNow.AddSeconds($TimeoutSeconds)
+  do {
+    try {
+      $value = [string](& $Action)
+      if (-not [string]::IsNullOrWhiteSpace($value)) { return $value }
+    } catch {
+      if ([DateTime]::UtcNow -ge $deadline) { throw }
+    }
+    if ([DateTime]::UtcNow -ge $deadline) { throw "$Label remained empty for $TimeoutSeconds seconds." }
+    Start-Sleep -Milliseconds 150
+  } while ($true)
+}
+
 function Wait-AcadIdle {
   param([Parameter(Mandatory = $true)]$Document, [int]$TimeoutSeconds = 30)
   $deadline = [DateTime]::UtcNow.AddSeconds($TimeoutSeconds)
@@ -94,9 +109,9 @@ function Get-LayoutSnapshot {
     } | Sort-Object { [string]$_.Handle })
   } -TimeoutSeconds 30)
   return [ordered]@{
-    layoutName = [string](Invoke-ComRetry { $Layout.Name })
-    configName = [string](Invoke-ComRetry { $Layout.ConfigName })
-    canonicalMediaName = [string](Invoke-ComRetry { $Layout.CanonicalMediaName })
+    layoutName = Invoke-NonEmptyCom { $Layout.Name } 'Layout name'
+    configName = Invoke-NonEmptyCom { $Layout.ConfigName } 'Plot configuration name'
+    canonicalMediaName = Invoke-NonEmptyCom { $Layout.CanonicalMediaName } 'Canonical media name'
     paper = [ordered]@{ widthMm = $paperWidth; heightMm = $paperHeight; rawWidthMm = $rawWidth; rawHeightMm = $rawHeight; rotation = $rotation }
     plotType = [int](Invoke-ComRetry { $Layout.PlotType })
     plotWithLineweights = [bool](Invoke-ComRetry { $Layout.PlotWithLineweights })
@@ -108,7 +123,7 @@ function Get-LayoutSnapshot {
     viewports = @($viewports | ForEach-Object {
       $viewport = $_
       [ordered]@{
-        handle = [string](Invoke-ComRetry { $viewport.Handle }); center = Invoke-ComRetry { Get-Point2 $viewport.Center }
+        handle = Invoke-NonEmptyCom { $viewport.Handle } 'Viewport handle'; center = Invoke-ComRetry { Get-Point2 $viewport.Center }
         width = [double](Invoke-ComRetry { $value = [double]$viewport.Width; if ($value -le 0) { throw 'Viewport width is transiently unavailable.' }; $value })
         height = [double](Invoke-ComRetry { $value = [double]$viewport.Height; if ($value -le 0) { throw 'Viewport height is transiently unavailable.' }; $value })
         target = Invoke-ComRetry { Get-Point2 $viewport.Target }; customScale = [double](Invoke-ComRetry { $viewport.CustomScale }); twistAngle = [double](Invoke-ComRetry { $viewport.TwistAngle })
@@ -169,7 +184,7 @@ try {
 
   $templateViewports = @(Invoke-ComRetry { @($paper.Block | Where-Object { [string]$_.ObjectName -eq 'AcDbViewport' }) })
   if ($templateViewports.Count -lt 1) { throw 'F-104 paper layout did not expose its system viewport.' }
-  $systemViewportHandle = [string](Invoke-ComRetry { $templateViewports[0].Handle })
+  $systemViewportHandle = Invoke-NonEmptyCom { $templateViewports[0].Handle } 'System viewport handle'
   foreach ($extraViewport in @($templateViewports | Select-Object -Skip 1)) { Invoke-ComRetry { $extraViewport.Delete() } | Out-Null }
   $first = Invoke-ComRetry { $scratch.PaperSpace.AddPViewport([double[]]@(108.75, 148.5, 0), 185, 247) }
   $second = Invoke-ComRetry { $scratch.PaperSpace.AddPViewport([double[]]@(311.25, 148.5, 0), 185, 247) }
@@ -177,12 +192,23 @@ try {
     $first.Layer = 'F104 VIEWPORTS'; $first.Target = [double[]]@(0, 0, 0); $first.CustomScale = 0.02; $first.Display($true); $first.DisplayLocked = $true
     $second.Layer = 'F104 VIEWPORTS'; $second.Target = [double[]]@(20000, 0, 0); $second.CustomScale = 0.01; $second.Display($true); $second.DisplayLocked = $true
   } | Out-Null
-  $firstHandle = [string](Invoke-ComRetry { $first.Handle }); $secondHandle = [string](Invoke-ComRetry { $second.Handle })
+  $firstHandle = Invoke-NonEmptyCom { $first.Handle } 'First viewport handle'; $secondHandle = Invoke-NonEmptyCom { $second.Handle } 'Second viewport handle'
   $boundary = Invoke-ComRetry { $scratch.PaperSpace.AddLightWeightPolyline([double[]]@(218.75, 25, 403.75, 25, 382, 272, 240.5, 272)) }
   Invoke-ComRetry { $boundary.Closed = $true; $boundary.Layer = 'F104 VIEWPORTS' } | Out-Null
-  $boundaryHandle = [string](Invoke-ComRetry { $boundary.Handle })
+  $boundaryHandle = Invoke-NonEmptyCom { $boundary.Handle } 'Viewport clip boundary handle'
   Send-AcadCommand $scratch "_.VPCLIP`n(handent `"$secondHandle`")`n(handent `"$boundaryHandle`")`n"
-  Invoke-ComRetry { $scratch.MSpace = $false; $scratch.Regen(1) } | Out-Null
+  # VPCLIP can transiently reset the active layout's plot area to Display.
+  # Reacquire the native layout and both viewports, then restore their persisted
+  # display/lock state and Layout plot type before evidence capture.
+  $paper = Invoke-ComRetry { $scratch.Layouts.Item('F104 VECTOR OUTPUT') }
+  $first = Invoke-ComRetry { $scratch.HandleToObject($firstHandle) }
+  $second = Invoke-ComRetry { $scratch.HandleToObject($secondHandle) }
+  Invoke-ComRetry {
+    $scratch.ActiveLayout = $paper; $scratch.MSpace = $false
+    $first.Display($true); $first.DisplayLocked = $true
+    $second.Display($true); $second.DisplayLocked = $true
+    $paper.PlotType = 5; $scratch.Regen(1)
+  } | Out-Null
   Start-Sleep -Milliseconds 500
   $beforeSave = Invoke-ComRetry { Get-LayoutSnapshot $scratch $paper $systemViewportHandle $firstHandle $secondHandle $boundaryHandle } -TimeoutSeconds 30
   $plotSucceeded = [bool](Invoke-ComRetry { $scratch.Plot.PlotToFile($tempPdf) } -TimeoutSeconds 60)

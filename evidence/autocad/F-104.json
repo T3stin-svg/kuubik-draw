@@ -4,8 +4,8 @@
   "kind": "autocad",
   "authority": "autocad-2024.1.2-live",
   "status": "PASS",
-  "artifactSha256": "c07650fc2f74cf6672fc18619497294b00f710676d9482fa592cc372a153f92f",
-  "observedAt": "08/28/2026 20:27:38",
+  "artifactSha256": "92fc770b5a4c6137835efff336b0ae87592f20af0f4e6a6cbc951d90cc50a8dc",
+  "observedAt": "2026-08-29T03:48:26.835Z",
   "workflow": "An owned isolated AutoCAD 24.3 scratch process creates an ISO A3 landscape paper layout, locked rectangular 1:50 and VPCLIP polygon 1:100 viewports, paper-space title geometry, then plots through DWG To PDF.pc3, saves DWG, reopens it and plots again.",
   "result": "Native COM read-back proved both cameras, scales, locks and VPCLIP before save and after DWG reopen. Both one-page PDFs contained vector/text operators and zero image XObjects; Poppler renders were pixel-identical. AutoCAD's duplicate /PageMode catalog key is explicitly recorded by strict pypdf, while tolerant pypdf, pdfplumber and Poppler completed the read-back. The owned process terminated and the pre-existing process set was restored.",
   "artifact": "evidence/artifacts/F-104-autocad-readback.json"

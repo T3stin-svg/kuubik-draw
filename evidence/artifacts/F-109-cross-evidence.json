@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-109",
+  "source": "Exact Kuubik browser production DXF bytes cross-read by strict ezdxf, AutoCAD 2024 Core Console and an owned visible AutoCAD 2024 desktop process",
+  "sourceSha256": {
+    "autocad": "f684518f9eade38b9e503a4503ff14417391d698b1e623a6e2b61c490fdfe395",
+    "browser": "62d7be4b434903583248e12b93401415e75bc487bb6fd646ce09aebc9c3a42e9",
+    "readback": "db90de15001fd43c4bc88455afa4c964edaac828635320b394589b81b321eb73"
+  },
+  "implementationSha256": {
+    "exporter": "d771dd0502c82cc64c881c78833baac951507569f07b1537d3b6fa161dc174c4",
+    "plotStyle": "8666d356c63f6737618513ecb030641cf71c1ccd0fd38b410f7cb10a7e37d17f",
+    "aciPalette": "a36541fb69f48c92f8e35ce4dfbd961ff870b18241e4a05712a08484bc03553e",
+    "exportTests": "fcf4c1064784be2ed12848a1ff4993261867f621176f69fe219216e0d6569cda",
+    "mutationTests": "71a1e2f9b4082596e981b1ff99fc0ef183ab84ab43eb791cf554e82474ac448e",
+    "fixture": "6125e54db81b099e7c4e10c1ee66b720792994de896a778a3d8a65d8676bbc60",
+    "expected": "f13b358680c9aafe68b2ace52570a7d9a34d408bd93110d9b0a91c960f0a2852",
+    "autocadScript": "7d75185bc666b3214dae4751915b409d0a10c0b6621b85608de55be8935f7623",
+    "autocadCore": "7940e529cd8ab5671cdcdc2fafb9294e8b69e3e984a927fd67c1d802cdd91e9b",
+    "autocadDesktopMatrix": "61e9892de68f75d9402d067eb51ca7b3dba1ca91d3d9dfd1d98bf5232a0f10ab",
+    "autocadDesktop": "9a89b7b08f4e572f486fa560616c2f979903622878f7de177060b2bd8eee18f3",
+    "autocadAciMatrix": "b09d1a34decf15946d22475e1f251952a3d02465b401fa67ba309c33b5efd9ad",
+    "autocadAciRunner": "9ad5fbb2fe47d23477e3777e0275484351c70eb8d33caee3b49496531f59c889",
+    "autocadAll": "c5a9efed9c33909099b04278e88316ca13666f851c5b8100db791016543d7558",
+    "browserE2e": "9030f51b4647687a8208c673c6a163010902444626e9443c340f3f65f6ce0acf",
+    "browserCapture": "28e86d9a5566b0e1241b097a2202dbd28a82d59d38a001b8a25e779eb9482029",
+    "browserBuilder": "fdbe8d474830b106aa417da6da850253e5306af3f12242c52c71b73c3e772d57",
+    "independentReader": "85c183ac4a2978f87a139efbfb53bb7bae738ec64914aefc0bf986efb675fa5c",
+    "readbackRunner": "d57f3a0b431f657544e29db8cdb19aee8530c6c25485bee2961a5a0514938172",
+    "scope": "02eed9548e100d3c8a83447a14f0f2f9f440c0ed057b47617749713f76e7d8ae",
+    "app": "4c82cab9053c857973894d212606cd608cbcf7cad8e61a1b398137d35dccee2c",
+    "packageLock": "9756bf28708c3933c83c0ace8e9dbd9fe4cad9b9d6cec58670758c545f02e584",
+    "crossChecker": "c9720f6e99a80b5c8ea4f2f13a09d17bfd13c630c32cfb4bf91be8c2e236a617",
+    "semanticNormalizer": "c5340b6853042aaebbe7fc8eec63271a62ce12bc0368598341b2518602d364e5"
+  },
+  "productionDxf": {
+    "bytes": 13679,
+    "sha256": "28de58b3aa9e7a2c44bcf4d17b297b1cc64b08fbbbea448a33720b0d14c601ac"
+  },
+  "checks": {
+    "threeAuthoritiesPassed": true,
+    "exactSameProductionBytes": true,
+    "exactFortyEntityManifest": true,
+    "unitsBulgesAndStyles": true,
+    "layersAgree": true,
+    "strictIndependentAudit": true,
+    "visibleBrowserExactByteWorkflow": true,
+    "nativeCoreAndDesktop": true,
+    "exactSemanticGolden": true,
+    "allNativeHandlesAndGeometryAgree": true,
+    "exactNativeHatchTopology": true,
+    "extentsAreNativeAndHeaderIsNotStale": true,
+    "exactAutoCadProperties": true,
+    "exactLiveAciPalette": true,
+    "desktopProcessSafety": true,
+    "mutationAndCurrentSources": true
+  },
+  "status": "PASS"
+}

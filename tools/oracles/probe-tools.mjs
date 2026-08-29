@@ -3,6 +3,8 @@ import { execFileSync } from "node:child_process";
 import { access, readFile } from "node:fs/promises";
 import { delimiter, join } from "node:path";
 
+const pins = JSON.parse(await readFile(new URL("./pins.json", import.meta.url), "utf8"));
+
 async function existing(path) {
   try {
     await access(path);
@@ -12,9 +14,9 @@ async function existing(path) {
   }
 }
 
-async function findExecutable(configured, names, commonPaths) {
+async function findExecutable(configured, names, commonPaths, environment) {
   if (configured) return existing(configured);
-  for (const directory of (process.env.PATH ?? "").split(delimiter).filter(Boolean)) {
+  for (const directory of (environment.PATH ?? "").split(delimiter).filter(Boolean)) {
     for (const name of names) {
       const found = await existing(join(directory, name));
       if (found) return found;
@@ -54,44 +56,57 @@ export async function probeOracles(environment = process.env) {
       "C:\\Program Files\\LibreCAD\\LibreCAD.exe",
       "C:\\Program Files (x86)\\LibreCAD\\LibreCAD.exe",
     ],
+    environment,
   );
   const freeCad = await findExecutable(
     environment.FREECAD_CMD,
     ["FreeCADCmd.exe", "FreeCADCmd", "freecadcmd"],
     [
+      join(environment.LOCALAPPDATA ?? "", "Programs", "FreeCAD 1.1", "bin", "freecadcmd.exe"),
       "C:\\Program Files\\FreeCAD 1.1\\bin\\FreeCADCmd.exe",
       "C:\\Program Files\\FreeCAD 1.1.3\\bin\\FreeCADCmd.exe",
     ],
+    environment,
   );
 
   const report = [];
   if (!libreCad) {
     report.push({ oracle: "librecad", expected: "2.2.1.5", status: "NOT_RUN", certificationAuthority: false, reason: "Executable not found." });
   } else {
-    const output = versionOutput(libreCad, ["--version"]);
+    const executableSha256 = await sha256(libreCad);
+    const executableSha256MatchesPin = executableSha256 === pins.librecad.executableSha256;
+    const output = executableSha256MatchesPin ? versionOutput(libreCad, ["dxf2pdf", "--version"]) : "NOT_EXECUTED_UNAPPROVED_SHA256";
+    const versionMatchesPin = executableSha256MatchesPin && /LibreCAD\s+v?2\.2\.1\.5\b/u.test(output);
     report.push({
       oracle: "librecad",
       expected: "2.2.1.5",
-      status: "AVAILABLE_UNVERIFIED",
-      versionMatchesPin: output.includes("2.2.1.5"),
+      status: versionMatchesPin && executableSha256MatchesPin ? "AVAILABLE" : "AVAILABLE_UNVERIFIED",
+      versionMatchesPin,
+      executableSha256MatchesPin,
       certificationAuthority: false,
       executable: libreCad,
-      executableSha256: await sha256(libreCad),
+      executableSha256,
+      expectedExecutableSha256: pins.librecad.executableSha256,
       versionOutput: output,
     });
   }
   if (!freeCad) {
     report.push({ oracle: "freecad", expected: "1.1.3", status: "NOT_RUN", certificationAuthority: false, reason: "Executable not found." });
   } else {
-    const output = versionOutput(freeCad, ["--version"]);
+    const executableSha256 = await sha256(freeCad);
+    const executableSha256MatchesPin = executableSha256 === pins.freecad.executableSha256;
+    const output = executableSha256MatchesPin ? versionOutput(freeCad, ["--version"]) : "NOT_EXECUTED_UNAPPROVED_SHA256";
+    const versionMatchesPin = executableSha256MatchesPin && /FreeCAD\s+1\.1\.3\b/u.test(output);
     report.push({
       oracle: "freecad",
       expected: "1.1.3",
-      status: "AVAILABLE_UNVERIFIED",
-      versionMatchesPin: output.includes("1.1.3"),
+      status: versionMatchesPin && executableSha256MatchesPin ? "AVAILABLE" : "AVAILABLE_UNVERIFIED",
+      versionMatchesPin,
+      executableSha256MatchesPin,
       certificationAuthority: false,
       executable: freeCad,
-      executableSha256: await sha256(freeCad),
+      executableSha256,
+      expectedExecutableSha256: pins.freecad.executableSha256,
       versionOutput: output,
     });
   }

@@ -4,7 +4,7 @@
   "benchmark": "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
   "engine": "Autodesk AutoCAD 2024 desktop COM Model PlotToFile/DWG To PDF.pc3",
   "engineVersion": "24.3s (LMS Tech)",
-  "automationProcessId": 6584,
+  "automationProcessId": 13520,
   "automationProcessOwned": true,
   "backgroundPlot": 0,
   "reopenDeviceRefreshed": true,
@@ -39,16 +39,16 @@
     "window": null,
     "modelView": {
       "center": {
-        "x": 2630.0487816683817,
-        "y": 2230.970471028925
+        "x": 3627.5367641336225,
+        "y": 1440.6840662687866
       },
-      "width": 33590.783242749014,
-      "height": 19100.325404346248,
+      "width": 4055.313819686169,
+      "height": 2305.9246047639685,
       "window": {
-        "x": -14165.342839706125,
-        "y": -7319.192231144199,
-        "width": 33590.783242749014,
-        "height": 19100.325404346248
+        "x": 1599.8798542905379,
+        "y": 287.72176388680236,
+        "width": 4055.313819686169,
+        "height": 2305.9246047639685
       },
       "screenPixels": {
         "width": 2084,
@@ -89,16 +89,16 @@
     },
     "modelView": {
       "center": {
-        "x": 2630.0487816683817,
-        "y": 2230.970471028925
+        "x": 3627.5367641336225,
+        "y": 1440.6840662687866
       },
-      "width": 33590.783242749014,
-      "height": 19100.325404346248,
+      "width": 4055.313819686169,
+      "height": 2305.9246047639685,
       "window": {
-        "x": -14165.342839706125,
-        "y": -7319.192231144199,
-        "width": 33590.783242749014,
-        "height": 19100.325404346248
+        "x": 1599.8798542905379,
+        "y": 287.72176388680236,
+        "width": 4055.313819686169,
+        "height": 2305.9246047639685
       },
       "screenPixels": {
         "width": 2084,
@@ -199,24 +199,24 @@
   },
   "outputs": {
     "extents": {
-      "fullName": "C:\\temp\\KuubikDraw-F106-5Db82C\\pdf\\extents.pdf",
+      "fullName": "C:\\temp\\KuubikDraw-F106-JZYOfQ\\pdf\\extents.pdf",
       "bytes": 77041,
-      "sha256": "c3c8a5181ede57bcc79d11860c056133a7f09eabaf2ddd201a6a0c97e1d6104b"
+      "sha256": "b567a9d145d6036413344d2cf112614111a4ca1a338c5967f85c4c2a4905cc2b"
     },
     "window": {
-      "fullName": "C:\\temp\\KuubikDraw-F106-5Db82C\\pdf\\window.pdf",
+      "fullName": "C:\\temp\\KuubikDraw-F106-JZYOfQ\\pdf\\window.pdf",
       "bytes": 2223,
-      "sha256": "648a7b78abf9d197a7c9ae179ad551efc4b4f81f874ddc1e7e2b0afdc10b4036"
+      "sha256": "059612b50834dd7487da8076dc1b6a25590b76fea5bb8edfedfd19bd3d84b68f"
     },
     "display": {
-      "fullName": "C:\\temp\\KuubikDraw-F106-5Db82C\\pdf\\display.pdf",
+      "fullName": "C:\\temp\\KuubikDraw-F106-JZYOfQ\\pdf\\display.pdf",
       "bytes": 1913,
-      "sha256": "0963f2520fae3241333d3817d2a5a953a268bf92e37a0fddae3b44aa702e4faf"
+      "sha256": "e1e70b882e65de50e64012b4bd3453f60665e4b5047a0e1f7c2bc5c652e5833c"
     }
   },
   "dwg": {
     "bytes": 32436,
-    "sha256": "08bd46529f2a30f8987b401d6c5448f52606690c4673ab037ba0b632d964b830",
+    "sha256": "0100f17dd32f3a823172333ba13cae802a6baffdbcd259a8b5d44f3e6d28ce5c",
     "saveAsType": 64,
     "retained": false
   },
@@ -235,7 +235,13 @@
   },
   "automationProcessTerminated": true,
   "processSetRestored": true,
-  "preExistingProcessIds": [],
+  "preExistingProcessIds": [
+    11276,
+    22952,
+    23180,
+    25848,
+    28152
+  ],
   "independentPdfReadback": {
     "readers": {
       "pypdf": "6.10.0",
@@ -642,5 +648,5 @@
   "runnerScriptSha256": "c51e5b8e0f06f380ee641d055d6b65849ed5a5f44e73bf500bd1bd0450a1f690",
   "pdfReaderSha256": "d16e7fc10f2f054d18aec11fe4b2c2f5221c67286a6645f6d932ea3737d2bcd2",
   "pixelReaderSha256": "50407f2a470f97909f205e7f46a3818bb15d8c1f9700b120ff880de5e739de9a",
-  "observedAt": "2026-08-28T22:30:56.600Z"
+  "observedAt": "2026-08-29T03:50:28.086Z"
 }

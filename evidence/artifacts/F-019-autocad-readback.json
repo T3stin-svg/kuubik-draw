@@ -4,7 +4,7 @@
   "benchmark": "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
   "engine": "Autodesk AutoCAD 2024 desktop COM",
   "engineVersion": "24.3s (LMS Tech)",
-  "automationProcessId": 2764,
+  "automationProcessId": 24292,
   "automationProcessOwned": true,
   "workflow": "12 native entity families; SCALE base 100,200, two-point Reference 1000 to 2000; U; Copy/U; factor/point/Points/no-op plus undo sentinel/refused inputs; mixed locked layer",
   "referenceLength": 1000,
@@ -1603,8 +1603,8 @@
       },
       "commandResult": {
         "cancelHelperExitCode": 0,
-        "cancelTargetProcessId": 2764,
-        "sendCommandBlockedMs": 1335,
+        "cancelTargetProcessId": 24292,
+        "sendCommandBlockedMs": 1365,
         "invalidPromptRemainedActive": true,
         "idleAfterCancel": true
       },
@@ -1653,8 +1653,8 @@
       },
       "commandResult": {
         "cancelHelperExitCode": 0,
-        "cancelTargetProcessId": 2764,
-        "sendCommandBlockedMs": 1287,
+        "cancelTargetProcessId": 24292,
+        "sendCommandBlockedMs": 1346,
         "invalidPromptRemainedActive": true,
         "idleAfterCancel": true
       },
@@ -1703,8 +1703,8 @@
       },
       "commandResult": {
         "cancelHelperExitCode": 0,
-        "cancelTargetProcessId": 2764,
-        "sendCommandBlockedMs": 1318,
+        "cancelTargetProcessId": 24292,
+        "sendCommandBlockedMs": 1352,
         "invalidPromptRemainedActive": true,
         "idleAfterCancel": true
       },
@@ -1820,8 +1820,16 @@
     "blankRestored": true
   },
   "automationProcessTerminated": true,
+  "processSetRestored": true,
+  "preExistingProcessIds": [
+    11276,
+    22952,
+    23180,
+    25848,
+    28152
+  ],
   "scriptSha256": "d82e999d2bef147e86af7c44099e3bd3dc5e23102578c0c3d6c7923055fe0866",
-  "matrixScriptSha256": "7e6d68dc4251bffdeeb002d5adfedc9d62a5a7f21025a9e29054a69b19aea0c4",
+  "matrixScriptSha256": "cb9c070f90c2cef6f80f48cd552a9ae57bdfd7a411fb7a6b507789df1431fd56",
   "escapeHelperSha256": "e86d024998ce09c5c0d14a7dde9be1ce5bc3caa0fde4021e2f8d38c594e358b6",
-  "observedAt": "2026-08-28T13:30:03.333Z"
+  "observedAt": "2026-08-29T03:59:31.990Z"
 }

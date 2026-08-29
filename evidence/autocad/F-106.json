@@ -4,8 +4,8 @@
   "kind": "autocad",
   "authority": "autocad-2024.1.2-live",
   "status": "PASS",
-  "artifactSha256": "8e5b398bd235ddda8b7b3553814317cf88fb27b955f5fdcc61170730abfd0541",
-  "observedAt": "08/28/2026 22:30:56",
+  "artifactSha256": "d4609609f0737af67b55d461ed52dcb7946841420b36aa638902ab39c3ead518",
+  "observedAt": "2026-08-29T03:50:28.086Z",
   "workflow": "An owned isolated AutoCAD 24.3 process creates three Model entities, plots Extents on A4 portrait at fixed 1:50 centered, Window on A3 landscape Fit with a 4/6 mm offset, and the live Display on A4 portrait at fixed 1:100 centered through DWG To PDF.pc3, then saves and reopens the synthetic DWG.",
   "result": "All native page-setup modes and three PlotToFile calls passed. The reopened DWG preserved the final Display setup; pypdf/pdfplumber found one vector-only page and zero image XObjects in every PDF, Poppler rendered painted geometry, and the owned process terminated with the pre-existing process set restored.",
   "artifact": "evidence/artifacts/F-106-autocad-readback.json"

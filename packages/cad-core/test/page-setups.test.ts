@@ -145,6 +145,16 @@ describe("F-107 geometry-free page setup templates", () => {
     staleMargins.layouts[1]!.paper!.marginsMm.left += 1;
     expect(() => parsePageSetupTemplate(JSON.stringify(staleMargins))).toThrowError(/does not match its named page setup/u);
 
+    const orphanAci = createPageSetupTemplate(namedSource, "Orphan ACI override");
+    orphanAci.layouts[1]!.viewports[0]!.layerOverrides = { "0": { aciIndex: 1 } };
+    expect(() => parsePageSetupTemplate(JSON.stringify(orphanAci))).toThrowError(/requires an RGB render color/u);
+    const pairedAci = createPageSetupTemplate(namedSource, "Paired ACI override");
+    pairedAci.layouts[1]!.viewports[0]!.layerOverrides = { "0": { color: "#00ff00", colorMethod: "aci", aciIndex: 1 } };
+    expect(() => parsePageSetupTemplate(JSON.stringify(pairedAci))).not.toThrow();
+    const invalidLinetype = createPageSetupTemplate(namedSource, "Invalid linetype override");
+    invalidLinetype.layouts[1]!.viewports[0]!.layerOverrides = { "0": { linetypeId: "" } };
+    expect(() => parsePageSetupTemplate(JSON.stringify(invalidLinetype))).toThrowError(/linetype ID/u);
+
     const reordered = createPageSetupTemplate(namedSource, "Reordered fields");
     const setup = reordered.layouts[1]!.pageSetup;
     reordered.layouts[1]!.pageSetup = {

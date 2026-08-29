@@ -50,7 +50,7 @@ if (
   ]) ||
   result.mixedLocked.units !== 4 || JSON.stringify(result.mixedLocked.entities) !== JSON.stringify([
     { type: "LINE", handle: "10", layer: "0", vertices: [{ x: 20, y: 20 }, { x: 360, y: 180 }] },
-    { type: "LINE", handle: "12", layer: "layer-1", vertices: [{ x: 10, y: 20 }, { x: 180, y: 90 }] },
+    { type: "LINE", handle: "12", layer: "Layer 1", vertices: [{ x: 10, y: 20 }, { x: 180, y: 90 }] },
   ]) ||
   result.copied.units !== 4 || JSON.stringify(result.copied.entities) !== JSON.stringify([
     { type: "LINE", handle: "10", layer: "0", vertices: [{ x: 10, y: 10 }, { x: 180, y: 90 }] },

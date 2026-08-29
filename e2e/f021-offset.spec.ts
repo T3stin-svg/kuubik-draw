@@ -139,9 +139,9 @@ test("F-021 OFFSET Distance Multiple previews, commits once, exports and undoes 
   await expect(page.getByText("2 OFFSET tulemust loodud (Multiple); lähteobjektid säilitatud")).toBeVisible();
   const dxf = await downloadedDxf(page, "F-021-browser-distance-multiple.dxf");
   expect(dxf?.entities.map((entity) => ({ handle: entity.handle, layer: entity.layer, vertices: entity.vertices }))).toEqual([
-    { handle: "10", layer: "0", vertices: [{ x: 0, y: 0, z: 0 }, { x: 1000, y: 0, z: 0 }] },
-    { handle: "11", layer: "0", vertices: [{ x: 0, y: 100, z: 0 }, { x: 1000, y: 100, z: 0 }] },
-    { handle: "12", layer: "0", vertices: [{ x: 0, y: 200, z: 0 }, { x: 1000, y: 200, z: 0 }] },
+    { handle: "10", layer: "F021_SOURCE", vertices: [{ x: 0, y: 0, z: 0 }, { x: 1000, y: 0, z: 0 }] },
+    { handle: "11", layer: "F021_SOURCE", vertices: [{ x: 0, y: 100, z: 0 }, { x: 1000, y: 100, z: 0 }] },
+    { handle: "12", layer: "F021_SOURCE", vertices: [{ x: 0, y: 200, z: 0 }, { x: 1000, y: 200, z: 0 }] },
   ]);
   const operation = (await readOperations(page))[0]!;
   expect(operation).toMatchObject({ commandId: "OFFSET", targetHandles: ["10"], resultHandles: ["11", "12"], args: { mode: "distance", distance: 100, multiple: true, eraseSource: false, layerMode: "source" } });

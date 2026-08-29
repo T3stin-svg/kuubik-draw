@@ -145,7 +145,7 @@ test("F-016 MOVE postselection, @relative input and mixed locked-layer selection
   const mixed = new DxfParser().parseSync((await downloadBytes(await mixedDownload, "F-016-browser-locked.dxf")).toString("utf8"));
   expect(mixed?.entities.map((entity) => ({ handle: entity.handle, layer: entity.layer, vertices: entity.vertices }))).toEqual([
     { handle: "10", layer: "0", vertices: [{ x: 110, y: 60, z: 0 }, { x: 280, y: 140, z: 0 }] },
-    { handle: "12", layer: "layer-1", vertices: [{ x: 10, y: 20, z: 0 }, { x: 180, y: 90, z: 0 }] },
+    { handle: "12", layer: "Layer 1", vertices: [{ x: 10, y: 20, z: 0 }, { x: 180, y: 90, z: 0 }] },
   ]);
   expect(consoleErrors).toEqual([]);
 });

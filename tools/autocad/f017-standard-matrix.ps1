@@ -11,6 +11,47 @@ function Invoke-ComRetry {
   } while ($true)
 }
 
+function Invoke-NonEmptyCom {
+  param([Parameter(Mandatory = $true)][scriptblock]$Action, [string]$Label = 'COM value', [int]$TimeoutSeconds = 20)
+  $deadline = [DateTime]::UtcNow.AddSeconds($TimeoutSeconds)
+  do {
+    try {
+      $value = [string](& $Action)
+      if (-not [string]::IsNullOrWhiteSpace($value)) { return $value }
+    } catch {
+      if ([DateTime]::UtcNow -ge $deadline) { throw }
+    }
+    if ([DateTime]::UtcNow -ge $deadline) { throw "$Label remained empty for $TimeoutSeconds seconds." }
+    Start-Sleep -Milliseconds 150
+  } while ($true)
+}
+
+function Set-F017PropertiesVerified {
+  param(
+    [Parameter(Mandatory = $true)]$Document,
+    [Parameter(Mandatory = $true)][string]$Handle,
+    [int]$TimeoutSeconds = 20
+  )
+  $deadline = [DateTime]::UtcNow.AddSeconds($TimeoutSeconds)
+  do {
+    try {
+      $entity = $Document.HandleToObject($Handle)
+      $entity.Layer = 'F017_MATRIX'
+      $entity.Color = 1
+      $entity.Linetype = 'Continuous'
+      $entity.Lineweight = 50
+      $entity.Update()
+      $entity = $Document.HandleToObject($Handle)
+      if ([string]$entity.Layer -eq 'F017_MATRIX' -and [int]$entity.Color -eq 1 -and
+        [string]$entity.Linetype -eq 'Continuous' -and [int]$entity.Lineweight -eq 50) { return }
+    } catch {
+      if ([DateTime]::UtcNow -ge $deadline) { throw }
+    }
+    if ([DateTime]::UtcNow -ge $deadline) { throw "F-017 properties did not persist for handle $Handle." }
+    Start-Sleep -Milliseconds 150
+  } while ($true)
+}
+
 function Wait-AcadIdle {
   param([Parameter(Mandatory = $true)]$Document, [int]$TimeoutSeconds = 30)
   $deadline = [DateTime]::UtcNow.AddSeconds($TimeoutSeconds)
@@ -60,13 +101,27 @@ function Test-Properties {
     $Before.lineweight -eq $After.lineweight
 }
 
-function Get-LayerEntities {
+function Get-LayerEntityHandles {
   param($Document, [string]$Layer)
   $items = @()
   foreach ($entity in $Document.ModelSpace) {
-    if ([string]$entity.Layer -eq $Layer) { $items += $entity }
+    if ([string](Invoke-ComRetry { $entity.Layer }) -eq $Layer) {
+      $items += [string](Invoke-ComRetry { $entity.Handle })
+    }
   }
   return @($items)
+}
+
+function Get-LayerFamilyStates {
+  param($Document, [string[]]$Handles, [string]$ObjectName, [string]$Family)
+  $states = @()
+  foreach ($handle in $Handles) {
+    $entity = Invoke-ComRetry { $Document.HandleToObject($handle) }
+    if ([string](Invoke-ComRetry { $entity.ObjectName }) -eq $ObjectName) {
+      $states += Get-EntityState $entity $Family
+    }
+  }
+  return @($states)
 }
 
 function New-Line {
@@ -133,28 +188,34 @@ try {
   $hatchBoundary = Invoke-ComRetry { $scratch.ModelSpace.AddLightWeightPolyline($hatchBoundaryPoints) }
   Invoke-ComRetry { $hatchBoundary.Closed = $true } | Out-Null
   Invoke-ComRetry { $hatchBoundary.Layer = 'F017_AUX' } | Out-Null
-  $boundaryHandle = [string](Invoke-ComRetry { $hatchBoundary.Handle })
+  $boundaryHandle = Invoke-NonEmptyCom { $hatchBoundary.Handle } 'Hatch boundary handle'
   $hatchLisp = "(progn (vl-load-com) (setq f017:ms (vla-get-ModelSpace (vla-get-ActiveDocument (vlax-get-acad-object)))) (setq f017:h (vla-AddHatch f017:ms 0 `"SOLID`" :vlax-false 0)) (setq f017:loop (vlax-make-safearray vlax-vbObject '(0 . 0))) (vlax-safearray-put-element f017:loop 0 (vlax-ename->vla-object (handent `"$boundaryHandle`"))) (vla-AppendOuterLoop f017:h f017:loop) (vla-Evaluate f017:h) (vla-put-Layer f017:h `"F017_MATRIX`") (setvar `"USERS1`" (vla-get-Handle f017:h)) (princ))`n"
   Invoke-ComRetry { $scratch.SendCommand($hatchLisp) } | Out-Null
   Wait-AcadIdle $scratch
-  $hatchHandle = [string](Invoke-ComRetry { $scratch.GetVariable('USERS1') })
+  $hatchHandle = Invoke-NonEmptyCom { $scratch.GetVariable('USERS1') } 'Hatch handle'
   $entities.hatch = Invoke-ComRetry { $scratch.HandleToObject($hatchHandle) }
 
   $blockLisp = "(progn (vl-load-com) (setq f017:doc (vla-get-ActiveDocument (vlax-get-acad-object))) (setq f017:block (vla-Add (vla-get-Blocks f017:doc) (vlax-3d-point '(0.0 0.0 0.0)) `"F017_BLOCK`")) (vla-AddLine f017:block (vlax-3d-point '(0.0 0.0 0.0)) (vlax-3d-point '(100.0 0.0 0.0))) (setq f017:insert (vla-InsertBlock (vla-get-ModelSpace f017:doc) (vlax-3d-point '(1900.0 0.0 0.0)) `"F017_BLOCK`" 1.5 0.5 1.0 0.25)) (vla-put-Layer f017:insert `"F017_MATRIX`") (setvar `"USERS2`" (vla-get-Handle f017:insert)) (princ))`n"
   Invoke-ComRetry { $scratch.SendCommand($blockLisp) } | Out-Null
   Wait-AcadIdle $scratch
-  $blockHandle = [string](Invoke-ComRetry { $scratch.GetVariable('USERS2') })
+  $blockHandle = Invoke-NonEmptyCom { $scratch.GetVariable('USERS2') } 'Block reference handle'
   $entities.blockRef = Invoke-ComRetry { $scratch.HandleToObject($blockHandle) }
 
-  foreach ($entity in $entities.Values) {
-    Invoke-ComRetry { $entity.Layer = 'F017_MATRIX' } | Out-Null
-    Invoke-ComRetry { $entity.Color = 1 } | Out-Null
-    Invoke-ComRetry { $entity.Linetype = 'Continuous' } | Out-Null
-    Invoke-ComRetry { $entity.Lineweight = 50 } | Out-Null
+  $entityHandles = [ordered]@{}
+  foreach ($entry in $entities.GetEnumerator()) {
+    $entityHandles[$entry.Key] = Invoke-NonEmptyCom { $entry.Value.Handle } "$($entry.Key) handle"
+  }
+  foreach ($handle in $entityHandles.Values) {
+    Set-F017PropertiesVerified $scratch $handle
   }
   Invoke-ComRetry { $scratch.Regen(1) } | Out-Null
   Wait-AcadIdle $scratch
-  $before = @($entities.GetEnumerator() | ForEach-Object { Get-EntityState $_.Value $_.Key })
+  $before = @()
+  foreach ($entry in $entityHandles.GetEnumerator()) {
+    $handle = [string]$entry.Value
+    $entity = Invoke-ComRetry { $scratch.HandleToObject($handle) }
+    $before += Get-EntityState $entity ([string]$entry.Key)
+  }
 
   $copy = "(setq f017:ss (ssget `"_X`" '((8 . `"F017_MATRIX`"))))`n_.COPY`n!f017:ss`n`n100,200`n600,950`n-200,300`n`n"
   Invoke-ComRetry { $scratch.SendCommand($copy) } | Out-Null
@@ -167,10 +228,10 @@ try {
   }
   $after = @()
   $checks = @()
-  $afterEntities = @(Get-LayerEntities $scratch 'F017_MATRIX')
+  $afterHandles = @(Get-LayerEntityHandles $scratch 'F017_MATRIX')
   foreach ($prior in $before) {
     $family = [string]$prior.family; $objectName = [string]$objectNames[$family]
-    $states = @($afterEntities | Where-Object { [string]$_.ObjectName -eq $objectName } | ForEach-Object { Get-EntityState $_ $family })
+    $states = @(Get-LayerFamilyStates $scratch $afterHandles $objectName $family)
     $after += [ordered]@{ family = $family; states = $states }
     $original = @($states | Where-Object { $_.handle -eq $prior.handle -and (Test-TranslatedBounds $prior.bounds $_.bounds 0 0) })
     $first = @($states | Where-Object { (Test-TranslatedBounds $prior.bounds $_.bounds 500 750) })
@@ -195,10 +256,10 @@ try {
   Invoke-ComRetry { $scratch.Regen(1) } | Out-Null
   Wait-AcadIdle $scratch
   $afterUndo = @()
-  $undoEntities = @(Get-LayerEntities $scratch 'F017_MATRIX')
+  $undoHandles = @(Get-LayerEntityHandles $scratch 'F017_MATRIX')
   foreach ($prior in $before) {
     $family = [string]$prior.family; $objectName = [string]$objectNames[$family]
-    $states = @($undoEntities | Where-Object { [string]$_.ObjectName -eq $objectName } | ForEach-Object { Get-EntityState $_ $family })
+    $states = @(Get-LayerFamilyStates $scratch $undoHandles $objectName $family)
     $afterUndo += [ordered]@{ family = $family; states = $states }
     $check = @($checks | Where-Object { $_.family -eq $family })[0]
     $check.undoRestored = $states.Count -eq 1 -and $states[0].handle -eq $prior.handle -and
@@ -214,10 +275,10 @@ try {
   Wait-AcadIdle $scratch
   Invoke-ComRetry { $scratch.Regen(1) } | Out-Null
   Wait-AcadIdle $scratch
-  $mixedEntities = @()
-  foreach ($entity in $scratch.ModelSpace) { $mixedEntities += $entity }
-  $editableStates = @($mixedEntities | Where-Object { [string]$_.Layer -eq 'F017_EDIT' } | ForEach-Object { Get-EntityState $_ 'editable' })
-  $lockedStates = @($mixedEntities | Where-Object { [string]$_.Layer -eq 'F017_LOCKED' } | ForEach-Object { Get-EntityState $_ 'locked' })
+  $editableHandles = @(Get-LayerEntityHandles $scratch 'F017_EDIT')
+  $lockedHandles = @(Get-LayerEntityHandles $scratch 'F017_LOCKED')
+  $editableStates = @(Get-LayerFamilyStates $scratch $editableHandles 'AcDbLine' 'editable')
+  $lockedStates = @(Get-LayerFamilyStates $scratch $lockedHandles 'AcDbLine' 'locked')
   $lockedCheck = [ordered]@{
     editableCount = $editableStates.Count
     lockedCount = $lockedStates.Count

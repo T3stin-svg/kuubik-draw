@@ -141,7 +141,7 @@ test("F-020 MIRROR postselection supports erase Yes and rejects a mixed locked-l
   const mirrored = await downloadedDxf(page, "F-020-browser-erased-locked.dxf");
   expect(mirrored?.entities.map((entity) => ({ handle: entity.handle, layer: entity.layer, vertices: entity.vertices }))).toEqual([
     { handle: "10", layer: "0", vertices: [{ x: 190, y: 10, z: 0 }, { x: 20, y: 90, z: 0 }] },
-    { handle: "12", layer: "layer-1", vertices: [{ x: 10, y: 20, z: 0 }, { x: 180, y: 90, z: 0 }] },
+    { handle: "12", layer: "Layer 1", vertices: [{ x: 10, y: 20, z: 0 }, { x: 180, y: 90, z: 0 }] },
   ]);
   expect(consoleErrors).toEqual([]);
 });

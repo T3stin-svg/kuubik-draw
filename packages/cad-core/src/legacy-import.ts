@@ -9,6 +9,7 @@ import type {
 } from "@kuubik/cad-schema";
 import { assertKDrawDocumentV1 } from "@kuubik/cad-schema";
 import { createEmptyDocument } from "./document.js";
+import { aciColor } from "./plot-style.js";
 
 type UnknownRecord = Record<string, unknown>;
 
@@ -47,7 +48,24 @@ function point(value: unknown): { x: number; y: number } {
 
 function appearance(value: UnknownRecord): CadAppearance | undefined {
   const output: CadAppearance = {};
-  if (typeof value.color === "string") output.color = value.color;
+  const sourceColor = typeof value.color === "string" && /^#[0-9a-f]{3}(?:[0-9a-f]{3})?$/iu.test(value.color) ? value.color : undefined;
+  const sourceAci = typeof value.aciIndex === "number" && Number.isInteger(value.aciIndex) && value.aciIndex >= 1 && value.aciIndex <= 255
+    ? value.aciIndex
+    : undefined;
+  if (value.colorMethod === "trueColor" && sourceColor !== undefined) {
+    output.color = sourceColor;
+    output.colorMethod = "trueColor";
+    if (sourceAci !== undefined) output.aciIndex = sourceAci;
+  } else if (sourceAci !== undefined) {
+    // Legacy indexed colour is authoritative: derive the RGB render fallback so
+    // the renderer, plot output and native DXF group 62 cannot disagree.
+    output.color = aciColor(sourceAci);
+    output.colorMethod = "aci";
+    output.aciIndex = sourceAci;
+  } else if (sourceColor !== undefined) {
+    output.color = sourceColor;
+    if (value.colorMethod === "aci" || value.colorMethod === "trueColor") output.colorMethod = value.colorMethod;
+  }
   if (typeof value.lwMm === "number" && Number.isFinite(value.lwMm)) output.lineweightMm = value.lwMm;
   if (typeof value.lt === "string") output.linetypeId = value.lt;
   return Object.keys(output).length > 0 ? output : undefined;

@@ -1,3 +1,8 @@
+param(
+  [Parameter(Mandatory = $true)][string]$PidPath,
+  [Parameter(Mandatory = $true)][string]$OwnershipToken
+)
+
 $ErrorActionPreference = 'Stop'
 
 Add-Type @'
@@ -217,8 +222,9 @@ $preExistingAcadProcessIds = @(Get-Process -Name 'acad' -ErrorAction SilentlyCon
 $acad = $null; $scratch = $null; $reusedBlank = $false; $result = $null
 $automationProcessId = 0; $automationProcessOwned = $false
 try {
-  $acad = Invoke-ComRetry { New-Object -ComObject AutoCAD.Application.24.3 } -TimeoutSeconds 30
-  Invoke-ComRetry { $acad.Visible = $true } | Out-Null
+  # Creating the COM server is deliberately single-shot. Retrying New-Object can
+  # launch several orphan acad.exe processes when the COM registration is slow.
+  $acad = New-Object -ComObject AutoCAD.Application.24.3
   $automationWindowHandle = [int64](Invoke-ComRetry { $acad.HWND })
   [uint32]$resolvedAutomationProcessId = 0
   [void][F019WindowProcess]::GetWindowThreadProcessId([IntPtr]$automationWindowHandle, [ref]$resolvedAutomationProcessId)
@@ -229,6 +235,8 @@ try {
   if (-not $automationProcessOwned) {
     throw "F-019 refuses to use pre-existing AutoCAD process $automationProcessId."
   }
+  [ordered]@{ schemaVersion = 1; processId = $automationProcessId; owned = $true; token = $OwnershipToken } | ConvertTo-Json -Compress | Set-Content -LiteralPath $PidPath -Encoding ascii
+  Invoke-ComRetry { $acad.Visible = $true } | Out-Null
   $initialCount = [int](Invoke-ComRetry { $acad.Documents.Count })
   if ($initialCount -gt 0) {
     $candidate = Invoke-ComRetry { $acad.ActiveDocument }

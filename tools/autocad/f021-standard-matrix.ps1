@@ -1,3 +1,8 @@
+param(
+  [Parameter(Mandatory = $true)][string]$PidPath,
+  [Parameter(Mandatory = $true)][string]$OwnershipToken
+)
+
 $ErrorActionPreference = 'Stop'
 
 Add-Type @'
@@ -17,6 +22,36 @@ function Invoke-ComRetry {
       if ([DateTime]::UtcNow -ge $deadline) { throw }
       Start-Sleep -Milliseconds 150
     }
+  } while ($true)
+}
+
+function Invoke-NonNullCom {
+  param([Parameter(Mandatory = $true)][scriptblock]$Action, [string]$Label = 'COM value', [int]$TimeoutSeconds = 20)
+  $deadline = [DateTime]::UtcNow.AddSeconds($TimeoutSeconds)
+  do {
+    try {
+      $value = & $Action
+      if ($null -ne $value) { return $value }
+    } catch {
+      if ([DateTime]::UtcNow -ge $deadline) { throw }
+    }
+    if ([DateTime]::UtcNow -ge $deadline) { throw "$Label remained null for $TimeoutSeconds seconds." }
+    Start-Sleep -Milliseconds 150
+  } while ($true)
+}
+
+function Invoke-NonEmptyCom {
+  param([Parameter(Mandatory = $true)][scriptblock]$Action, [string]$Label = 'COM value', [int]$TimeoutSeconds = 20)
+  $deadline = [DateTime]::UtcNow.AddSeconds($TimeoutSeconds)
+  do {
+    try {
+      $value = [string](& $Action)
+      if (-not [string]::IsNullOrWhiteSpace($value)) { return $value }
+    } catch {
+      if ([DateTime]::UtcNow -ge $deadline) { throw }
+    }
+    if ([DateTime]::UtcNow -ge $deadline) { throw "$Label remained empty for $TimeoutSeconds seconds." }
+    Start-Sleep -Milliseconds 150
   } while ($true)
 }
 
@@ -50,8 +85,14 @@ function New-Line {
 
 function Get-Bounds {
   param($Entity)
-  $minimum = $null; $maximum = $null
-  Invoke-ComRetry { $Entity.GetBoundingBox([ref]$minimum, [ref]$maximum) } | Out-Null
+  $deadline = [DateTime]::UtcNow.AddSeconds(20)
+  do {
+    $minimum = $null; $maximum = $null
+    try { $Entity.GetBoundingBox([ref]$minimum, [ref]$maximum) } catch {}
+    if ($null -ne $minimum -and $null -ne $maximum) { break }
+    if ([DateTime]::UtcNow -ge $deadline) { throw 'Entity bounds remained null for 20 seconds.' }
+    Start-Sleep -Milliseconds 150
+  } while ($true)
   return [ordered]@{ min = @([double]$minimum[0], [double]$minimum[1]); max = @([double]$maximum[0], [double]$maximum[1]) }
 }
 
@@ -66,40 +107,45 @@ function Convert-FlatPoints {
 
 function Get-EntityState {
   param($Entity)
-  $objectName = [string](Invoke-ComRetry { $Entity.ObjectName })
+  $objectName = Invoke-NonEmptyCom { $Entity.ObjectName } 'Entity ObjectName'
   $details = [ordered]@{}
   switch ($objectName) {
-    'AcDbLine' { $details.start = Get-Point2 (Invoke-ComRetry { $Entity.StartPoint }); $details.end = Get-Point2 (Invoke-ComRetry { $Entity.EndPoint }) }
+    'AcDbLine' { $details.start = Get-Point2 (Invoke-NonNullCom { $Entity.StartPoint } 'Line StartPoint'); $details.end = Get-Point2 (Invoke-NonNullCom { $Entity.EndPoint } 'Line EndPoint') }
     'AcDbPolyline' {
-      $details.vertices = Convert-FlatPoints (Invoke-ComRetry { $Entity.Coordinates }) 2
+      $details.vertices = Convert-FlatPoints (Invoke-NonNullCom { $Entity.Coordinates } 'Polyline Coordinates') 2
       $details.closed = [bool](Invoke-ComRetry { $Entity.Closed })
       $details.bulges = @()
       for ($vertexIndex = 0; $vertexIndex -lt $details.vertices.Count; $vertexIndex += 1) {
         $details.bulges += [double](Invoke-ComRetry { $Entity.GetBulge($vertexIndex) })
       }
     }
-    'AcDbCircle' { $details.center = Get-Point2 (Invoke-ComRetry { $Entity.Center }); $details.radius = [double](Invoke-ComRetry { $Entity.Radius }) }
-    'AcDbArc' { $details.center = Get-Point2 (Invoke-ComRetry { $Entity.Center }); $details.radius = [double](Invoke-ComRetry { $Entity.Radius }); $details.startAngle = [double](Invoke-ComRetry { $Entity.StartAngle }); $details.endAngle = [double](Invoke-ComRetry { $Entity.EndAngle }) }
-    'AcDbEllipse' { $details.center = Get-Point2 (Invoke-ComRetry { $Entity.Center }); $details.majorAxis = Get-Point2 (Invoke-ComRetry { $Entity.MajorAxis }); $details.radiusRatio = [double](Invoke-ComRetry { $Entity.RadiusRatio }) }
-    'AcDbSpline' { $details.degree = [int](Invoke-ComRetry { $Entity.Degree }); $details.closed = [bool](Invoke-ComRetry { $Entity.Closed }); $details.controlPoints = Convert-FlatPoints (Invoke-ComRetry { $Entity.ControlPoints }) 3 }
+    'AcDbCircle' { $details.center = Get-Point2 (Invoke-NonNullCom { $Entity.Center } 'Circle Center'); $details.radius = [double](Invoke-ComRetry { $Entity.Radius }) }
+    'AcDbArc' { $details.center = Get-Point2 (Invoke-NonNullCom { $Entity.Center } 'Arc Center'); $details.radius = [double](Invoke-ComRetry { $Entity.Radius }); $details.startAngle = [double](Invoke-ComRetry { $Entity.StartAngle }); $details.endAngle = [double](Invoke-ComRetry { $Entity.EndAngle }) }
+    'AcDbEllipse' { $details.center = Get-Point2 (Invoke-NonNullCom { $Entity.Center } 'Ellipse Center'); $details.majorAxis = Get-Point2 (Invoke-NonNullCom { $Entity.MajorAxis } 'Ellipse MajorAxis'); $details.radiusRatio = [double](Invoke-ComRetry { $Entity.RadiusRatio }) }
+    'AcDbSpline' { $details.degree = [int](Invoke-ComRetry { $Entity.Degree }); $details.closed = [bool](Invoke-ComRetry { $Entity.Closed }); $details.controlPoints = Convert-FlatPoints (Invoke-NonNullCom { $Entity.ControlPoints } 'Spline ControlPoints') 3 }
   }
   return [ordered]@{
-    objectName = $objectName; handle = [string](Invoke-ComRetry { $Entity.Handle }); layer = [string](Invoke-ComRetry { $Entity.Layer })
+    objectName = $objectName; handle = Invoke-NonEmptyCom { $Entity.Handle } 'Entity Handle'; layer = Invoke-NonEmptyCom { $Entity.Layer } 'Entity Layer'
     color = [int](Invoke-ComRetry { $Entity.Color }); linetype = [string](Invoke-ComRetry { $Entity.Linetype }); lineweight = [int](Invoke-ComRetry { $Entity.Lineweight })
     bounds = Get-Bounds $Entity; details = $details
   }
 }
 
-function Get-LayerEntities {
+function Get-LayerHandles {
   param($Document, [string]$Layer)
-  $items = @(); foreach ($entity in $Document.ModelSpace) { if ([string]$entity.Layer -eq $Layer) { $items += $entity } }
+  $items = @(); foreach ($entity in $Document.ModelSpace) {
+    if ([string](Invoke-ComRetry { $entity.Layer }) -eq $Layer) { $items += Invoke-NonEmptyCom { $entity.Handle } 'Layer entity handle' }
+  }
   return @($items)
 }
 
 function Get-LineStates {
   param($Document)
-  $states = @(); foreach ($entity in $Document.ModelSpace) {
-    if ([string]$entity.ObjectName -ne 'AcDbLine') { continue }
+  $handles = @(); foreach ($candidate in $Document.ModelSpace) {
+    if ([string](Invoke-ComRetry { $candidate.ObjectName }) -eq 'AcDbLine') { $handles += Invoke-NonEmptyCom { $candidate.Handle } 'Line Handle' }
+  }
+  $states = @(); foreach ($handle in $handles) {
+    $entity = Invoke-ComRetry { $Document.HandleToObject($handle) }
     $state = Get-EntityState $entity
     $states += [ordered]@{ handle = $state.handle; layer = $state.layer; start = $state.details.start; end = $state.details.end }
   }
@@ -124,10 +170,12 @@ function Invoke-Offset {
 
 function Invoke-FamilyOffset {
   param($Document, [string]$Layer, [string]$PickPoint, [string]$SidePoint, [string]$Distance = '20')
-  $before = @(Get-LayerEntities $Document $Layer | ForEach-Object { Get-EntityState $_ })
+  $beforeHandles = @(Get-LayerHandles $Document $Layer)
+  $before = @($beforeHandles | ForEach-Object { $handle = $_; Get-EntityState (Invoke-ComRetry { $Document.HandleToObject($handle) }) })
   Invoke-ComRetry { $Document.SendCommand("_.OFFSET`n_Layer`n_Source`n$Distance`n$PickPoint`n$SidePoint`n_Exit`n") } | Out-Null
   Wait-AcadIdle $Document
-  $after = @(Get-LayerEntities $Document $Layer | ForEach-Object { Get-EntityState $_ })
+  $afterHandles = @(Get-LayerHandles $Document $Layer)
+  $after = @($afterHandles | ForEach-Object { $handle = $_; Get-EntityState (Invoke-ComRetry { $Document.HandleToObject($handle) }) })
   $created = @($after | Where-Object { $before.handle -notcontains $_.handle })
   return [ordered]@{ before = $before; after = $after; created = $created }
 }
@@ -135,14 +183,18 @@ function Invoke-FamilyOffset {
 $preExistingProcessIds = @(Get-Process -Name 'acad' -ErrorAction SilentlyContinue | ForEach-Object { [int]$_.Id })
 $acad = $null; $scratch = $null; $result = $null; $automationProcessId = 0; $owned = $false
 try {
-  $acad = Invoke-ComRetry { New-Object -ComObject AutoCAD.Application.24.3 } -TimeoutSeconds 30
-  Invoke-ComRetry { $acad.Visible = $true } | Out-Null
+  # Keep COM activation single-shot so a slow registration response cannot
+  # create multiple unauthenticated AutoCAD processes.
+  $acad = New-Object -ComObject AutoCAD.Application.24.3
   [uint32]$resolvedProcessId = 0
   [void][F021WindowProcess]::GetWindowThreadProcessId([IntPtr][int64](Invoke-ComRetry { $acad.HWND }), [ref]$resolvedProcessId)
   $automationProcessId = [int]$resolvedProcessId
+  if ($automationProcessId -le 0) { throw 'Could not resolve the F-021 AutoCAD automation process.' }
   $owned = $automationProcessId -gt 0 -and $preExistingProcessIds -notcontains $automationProcessId
   Write-Host "[F-021] automation-process pid=$automationProcessId owned=$owned"
   if (-not $owned) { throw 'F-021 refuses to use a pre-existing AutoCAD process.' }
+  [ordered]@{ schemaVersion = 1; processId = $automationProcessId; owned = $true; token = $OwnershipToken } | ConvertTo-Json -Compress | Set-Content -LiteralPath $PidPath -Encoding ascii
+  Invoke-ComRetry { $acad.Visible = $true } | Out-Null
   $scratch = if ([int](Invoke-ComRetry { $acad.Documents.Count }) -gt 0) { Invoke-ComRetry { $acad.ActiveDocument } } else { Invoke-ComRetry { $acad.Documents.Add() } }
   if ([string](Invoke-ComRetry { $scratch.FullName }) -or [int](Invoke-ComRetry { $scratch.ModelSpace.Count }) -ne 0) { throw 'F-021 refuses a saved or non-blank drawing.' }
   Invoke-ComRetry { $scratch.Activate() } | Out-Null
@@ -215,7 +267,8 @@ try {
   $lockedSource = New-Line $scratch 'F021_LOCKED' 0 6000 1000 6000
   Invoke-ComRetry { $lockedLayer.Lock = $true } | Out-Null; Set-TestView $acad
   Invoke-ComRetry { $scratch.SendCommand("_.OFFSET`n_Layer`n_Source`n100`n500,6000`n500,6200`n_Exit`n") } | Out-Null; Wait-AcadIdle $scratch
-  $lockedStates = @(Get-LayerEntities $scratch 'F021_LOCKED' | ForEach-Object { Get-EntityState $_ })
+  $lockedHandles = @(Get-LayerHandles $scratch 'F021_LOCKED')
+  $lockedStates = @($lockedHandles | ForEach-Object { $handle = $_; Get-EntityState (Invoke-ComRetry { $scratch.HandleToObject($handle) }) })
 
   $distancePassed = (Count-Line $afterDistance 0 0 1000 0) -eq 1 -and (Count-Line $afterDistance 0 200 1000 200) -eq 1
   $throughPassed = (Count-Line $afterThrough 0 1000 1000 1000) -eq 1 -and (Count-Line $afterThrough 0 1375 1000 1375) -eq 1

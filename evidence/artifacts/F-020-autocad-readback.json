@@ -4,7 +4,7 @@
   "benchmark": "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
   "engine": "Autodesk AutoCAD 2024 desktop COM",
   "engineVersion": "24.3s (LMS Tech)",
-  "automationProcessId": 21388,
+  "automationProcessId": 33860,
   "automationProcessOwned": true,
   "workflow": "MIRRTEXT=0; 12 native families with semantic fields; vertical axis default No/U and Yes/U; 45-degree line/text/block axis; mixed locked layer; coincident-axis refusal",
   "mirrtext": 0,
@@ -385,7 +385,7 @@
       {
         "family": "line",
         "objectName": "AcDbLine",
-        "handle": "2F0",
+        "handle": "2F9",
         "layer": "F020_MATRIX",
         "color": 1,
         "linetype": "Continuous",
@@ -414,7 +414,7 @@
       {
         "family": "polyline",
         "objectName": "AcDbPolyline",
-        "handle": "2F1",
+        "handle": "2FA",
         "layer": "F020_MATRIX",
         "color": 1,
         "linetype": "Continuous",
@@ -451,7 +451,7 @@
       {
         "family": "circle",
         "objectName": "AcDbCircle",
-        "handle": "2F2",
+        "handle": "2FB",
         "layer": "F020_MATRIX",
         "color": 1,
         "linetype": "Continuous",
@@ -477,7 +477,7 @@
       {
         "family": "arc",
         "objectName": "AcDbArc",
-        "handle": "2F3",
+        "handle": "2FC",
         "layer": "F020_MATRIX",
         "color": 1,
         "linetype": "Continuous",
@@ -505,7 +505,7 @@
       {
         "family": "ellipse",
         "objectName": "AcDbEllipse",
-        "handle": "2F4",
+        "handle": "2FD",
         "layer": "F020_MATRIX",
         "color": 1,
         "linetype": "Continuous",
@@ -537,7 +537,7 @@
       {
         "family": "spline",
         "objectName": "AcDbSpline",
-        "handle": "2F5",
+        "handle": "2FE",
         "layer": "F020_MATRIX",
         "color": 1,
         "linetype": "Continuous",
@@ -574,7 +574,7 @@
       {
         "family": "text",
         "objectName": "AcDbText",
-        "handle": "2F6",
+        "handle": "2FF",
         "layer": "F020_MATRIX",
         "color": 1,
         "linetype": "Continuous",
@@ -602,7 +602,7 @@
       {
         "family": "mtext",
         "objectName": "AcDbMText",
-        "handle": "2F7",
+        "handle": "300",
         "layer": "F020_MATRIX",
         "color": 1,
         "linetype": "Continuous",
@@ -630,7 +630,7 @@
       {
         "family": "leader",
         "objectName": "AcDbLeader",
-        "handle": "2F8",
+        "handle": "301",
         "layer": "F020_MATRIX",
         "color": 1,
         "linetype": "Continuous",
@@ -665,7 +665,7 @@
       {
         "family": "dimension",
         "objectName": "AcDbAlignedDimension",
-        "handle": "2F9",
+        "handle": "302",
         "layer": "F020_MATRIX",
         "color": 1,
         "linetype": "Continuous",
@@ -695,7 +695,7 @@
       {
         "family": "hatch",
         "objectName": "AcDbHatch",
-        "handle": "2FA",
+        "handle": "303",
         "layer": "F020_MATRIX",
         "color": 1,
         "linetype": "Continuous",
@@ -719,7 +719,7 @@
       {
         "family": "blockRef",
         "objectName": "AcDbBlockReference",
-        "handle": "2FB",
+        "handle": "304",
         "layer": "F020_MATRIX",
         "color": 1,
         "linetype": "Continuous",
@@ -1315,7 +1315,7 @@
       "line": {
         "family": "line",
         "objectName": "AcDbLine",
-        "handle": "31A",
+        "handle": "323",
         "layer": "F020_TILT_LINE",
         "color": 256,
         "linetype": "ByLayer",
@@ -1344,7 +1344,7 @@
       "text": {
         "family": "text",
         "objectName": "AcDbText",
-        "handle": "31B",
+        "handle": "324",
         "layer": "F020_TILT_TEXT",
         "color": 256,
         "linetype": "ByLayer",
@@ -1372,7 +1372,7 @@
       "blockRef": {
         "family": "blockRef",
         "objectName": "AcDbBlockReference",
-        "handle": "31C",
+        "handle": "325",
         "layer": "F020_TILT_BLOCK",
         "color": 256,
         "linetype": "ByLayer",
@@ -1402,7 +1402,7 @@
       "line": {
         "family": "line",
         "objectName": "AcDbLine",
-        "handle": "31D",
+        "handle": "326",
         "layer": "F020_TILT_LINE",
         "color": 256,
         "linetype": "ByLayer",
@@ -1431,7 +1431,7 @@
       "text": {
         "family": "text",
         "objectName": "AcDbText",
-        "handle": "31E",
+        "handle": "327",
         "layer": "F020_TILT_TEXT",
         "color": 256,
         "linetype": "ByLayer",
@@ -1459,7 +1459,7 @@
       "blockRef": {
         "family": "blockRef",
         "objectName": "AcDbBlockReference",
-        "handle": "31F",
+        "handle": "328",
         "layer": "F020_TILT_BLOCK",
         "color": 256,
         "linetype": "ByLayer",
@@ -1495,7 +1495,7 @@
       {
         "family": "editable",
         "objectName": "AcDbLine",
-        "handle": "320",
+        "handle": "329",
         "layer": "F020_EDIT",
         "color": 256,
         "linetype": "ByLayer",
@@ -1515,7 +1515,7 @@
       {
         "family": "editable",
         "objectName": "AcDbLine",
-        "handle": "322",
+        "handle": "32B",
         "layer": "F020_EDIT",
         "color": 256,
         "linetype": "ByLayer",
@@ -1536,7 +1536,7 @@
     "lockedBefore": {
       "family": "locked",
       "objectName": "AcDbLine",
-      "handle": "321",
+      "handle": "32A",
       "layer": "F020_LOCKED",
       "color": 256,
       "linetype": "ByLayer",
@@ -1556,7 +1556,7 @@
     "lockedAfter": {
       "family": "locked",
       "objectName": "AcDbLine",
-      "handle": "321",
+      "handle": "32A",
       "layer": "F020_LOCKED",
       "color": 256,
       "linetype": "ByLayer",
@@ -1579,7 +1579,7 @@
     "before": {
       "family": "coincident",
       "objectName": "AcDbLine",
-      "handle": "323",
+      "handle": "32C",
       "layer": "F020_BAD",
       "color": 256,
       "linetype": "ByLayer",
@@ -1599,7 +1599,7 @@
     "after": {
       "family": "coincident",
       "objectName": "AcDbLine",
-      "handle": "323",
+      "handle": "32C",
       "layer": "F020_BAD",
       "color": 256,
       "linetype": "ByLayer",
@@ -1629,8 +1629,17 @@
     "blankRestored": true
   },
   "automationProcessTerminated": true,
+  "processSetRestored": true,
+  "preExistingProcessIds": [
+    11276,
+    22952,
+    23180,
+    25848,
+    28152
+  ],
   "scriptSha256": "ce55243a622ca3acb8d183ca12c520d78c9525450bdeb054c05cd1b1ad6b214e",
-  "matrixScriptSha256": "0ae86e166ab0388550dd1404f9a6665cc7cfeaebd71ce64d62d761e51fcb84cf",
+  "matrixScriptSha256": "5e7f4e5e1840a1042177973f19c5c2a5cda918af7e7e4985d85840e45289a7fe",
+  "runnerScriptSha256": "5a8aeacdb8e65db93c46b70cf71e0fe657ce6cb5013a9e6ea0fc02d6868bd73e",
   "escapeHelperSha256": "e86d024998ce09c5c0d14a7dde9be1ce5bc3caa0fde4021e2f8d38c594e358b6",
-  "observedAt": "2026-08-28T14:11:12.087Z"
+  "observedAt": "2026-08-29T04:22:00.145Z"
 }

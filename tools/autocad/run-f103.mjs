@@ -26,6 +26,7 @@ const temporaryPaths = {
 };
 const pdfNames = ["color", "monochrome", "grayscale", "no-lineweights", "transparent"];
 const sha256 = (bytes) => createHash("sha256").update(bytes).digest("hex");
+const preExistingProcessIds = acadProcessIds();
 
 async function resolveOwnedProcessId() {
   try {
@@ -50,12 +51,13 @@ async function terminateOwnedProcess(processId) {
 
 function acadProcessIds() {
   const output = execFileSync("powershell.exe", ["-NoProfile", "-Command", "@(Get-Process acad -ErrorAction SilentlyContinue | ForEach-Object { $_.Id }) -join [Environment]::NewLine"], { windowsHide: true, encoding: "utf8" }).trim();
-  return output ? output.split(/\r?\n/u).map(Number).filter((value) => Number.isInteger(value) && value > 0) : [];
+  return output ? output.split(/\r?\n/u).map(Number).filter((value) => Number.isInteger(value) && value > 0).toSorted((a, b) => a - b) : [];
 }
 
-async function waitForNoResidualAcadProcesses() {
-  for (let attempt = 0; attempt < 60; attempt += 1) {
-    if (acadProcessIds().length === 0) return true;
+async function waitForOriginalProcessSet() {
+  const expected = preExistingProcessIds.join("|");
+  for (let attempt = 0; attempt < 80; attempt += 1) {
+    if (acadProcessIds().join("|") === expected) return true;
     await new Promise((resolveDelay) => setTimeout(resolveDelay, 100));
   }
   return false;
@@ -162,8 +164,8 @@ async function runMatrix() {
     ownedProcessId = await resolveOwnedProcessId();
     const automationProcessTerminated = await terminateOwnedProcess(ownedProcessId);
     if (ownedProcessId > 0 && !automationProcessTerminated) throw new Error(`Owned AutoCAD process ${ownedProcessId} remained after F-103.`);
-    const noResidualAcadProcesses = await waitForNoResidualAcadProcesses();
-    if (!noResidualAcadProcesses) throw new Error("An AutoCAD process remained after F-103.");
+    const processSetRestored = await waitForOriginalProcessSet();
+    if (!processSetRestored) throw new Error("The original AutoCAD process set was not restored after F-103.");
     if (childResult.timedOut) throw new Error("AutoCAD F-103 matrix exceeded the 240 second timeout.");
     if (childResult.code !== 0) throw new Error(`AutoCAD F-103 matrix exited ${childResult.code}: ${childResult.errorText || childResult.output}`);
     const start = childResult.output.indexOf("{");
@@ -185,7 +187,7 @@ async function runMatrix() {
     }
     const renderedPixels = readRenderedPixels(pngReadback);
     for (const value of Object.values(pngReadback)) delete value.absolutePath;
-    return { ...matrix, automationProcessTerminated, noResidualAcadProcesses, pdfReadback, pngReadback, renderedPixels };
+    return { ...matrix, automationProcessTerminated, processSetRestored, preExistingProcessIds, pdfReadback, pngReadback, renderedPixels };
   } finally {
     try {
       if (ownedProcessId <= 0) ownedProcessId = await resolveOwnedProcessId();
@@ -208,7 +210,7 @@ const hasColor = (colors, expected, tolerance = 1e-5) => colors?.some((color) =>
   color.length === 3 && color.every((value, index) => Math.abs(value - expected[index]) <= tolerance));
 if (
   matrix.schemaVersion !== 1 || matrix.rowId !== "F-103" || !matrix.engineVersion?.startsWith("24.3") ||
-  !matrix.automationProcessOwned || !matrix.automationProcessTerminated || !matrix.noResidualAcadProcesses ||
+  !matrix.automationProcessOwned || !matrix.automationProcessTerminated || !matrix.processSetRestored ||
   Object.values(matrix.checks ?? {}).some((value) => value !== true) ||
   matrix.objectsBefore?.byLayerLine?.colorIndex !== 256 || matrix.objectsBefore?.byLayerLine?.lineweight !== -1 ||
   matrix.objectsBefore?.explicitLine?.colorIndex !== 3 || matrix.objectsBefore?.explicitLine?.lineweight !== 35 ||

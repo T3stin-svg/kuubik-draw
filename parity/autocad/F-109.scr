@@ -1,0 +1,47 @@
+(setvar "FILEDIA" 0)
+(defun f109-count (typ / set) (if (setq set (ssget "_X" (list (cons 0 typ)))) (sslength set) 0))
+(defun f109-has-bulge (items / item) (if items (progn (setq item (car items)) (if (and (= (car item) 42) (> (abs (cdr item)) 1e-9)) T (f109-has-bulge (cdr items)))) nil))
+(defun f109-bulged (/ set index count data) (setq count 0) (if (setq set (ssget "_X" (list (cons 0 "LWPOLYLINE")))) (progn (setq index 0) (repeat (sslength set) (setq data (entget (ssname set index))) (if (f109-has-bulge data) (setq count (1+ count))) (setq index (1+ index))))) count)
+(defun f109-code (code data fallback / item) (if (setq item (assoc code data)) (cdr item) fallback))
+(defun f109-xdata-code (code data fallback / group payload item) (setq group (assoc -3 data)) (if (and group (setq payload (cadr group)) (setq item (assoc code (cdr payload)))) (cdr item) fallback))
+(defun f109-layer (name / entity row) (setq entity (tblobjname "LAYER" name)) (if entity (progn (setq row (entget entity '("AcCmTransparency"))) (strcat (itoa (f109-code 62 row 7)) "|" (itoa (f109-code 370 row -3)) "|" (strcase (f109-code 6 row "CONTINUOUS")) "|" (itoa (f109-code 420 row -1)) "|" (itoa (f109-xdata-code 1071 row -1)))) "MISSING"))
+(defun f109-point (code row / value) (setq value (f109-code code row '(0.0 0.0 0.0))) (strcat (rtos (car value) 2 6) "|" (rtos (cadr value) 2 6)))
+(defun f109-line (handle / row) (setq row (entget (handent handle))) (strcat (f109-code 0 row "MISSING") "|" (f109-code 8 row "MISSING") "|" (itoa (f109-code 62 row 256)) "|" (itoa (f109-code 420 row -1)) "|" (strcase (f109-code 6 row "BYLAYER")) "|" (itoa (f109-code 370 row -1)) "|" (itoa (f109-code 440 row -1)) "|" (f109-point 10 row) "|" (f109-point 11 row)))
+(defun f109-text (handle / row) (setq row (entget (handent handle))) (f109-code 1 row "MISSING"))
+(defun f109-hatch (handle / row started result item code value)
+  (setq row (entget (handent handle)) started nil result "")
+  (foreach item row
+    (setq code (car item) value (cdr item))
+    (if (= code 91) (setq started T))
+    (if (and started (member code '(91 92 72 73 93 10 42 97)))
+      (setq result
+        (strcat result
+          (if (> (strlen result) 0) ";" "")
+          (itoa code) ":"
+          (cond
+            ((= code 10) (strcat (rtos (car value) 2 6) "," (rtos (cadr value) 2 6)))
+            ((= code 42) (rtos value 2 12))
+            (T (itoa value)))))))
+  result)
+(defun f109-dimstyle-text-handle (/ row text-style) (setq row (entget (tblobjname "DIMSTYLE" "Standard")) text-style (f109-code 340 row nil)) (if text-style (cdr (assoc 5 (entget text-style))) "MISSING"))
+(princ (strcat "\nF109_ACADVER=" (getvar "ACADVER")))
+(princ (strcat "\nF109_UNITS=" (itoa (getvar "INSUNITS"))))
+(setq f109-all (ssget "_X"))
+(princ (strcat "\nF109_TOTAL=" (itoa (if f109-all (sslength f109-all) 0))))
+(foreach typ '("CIRCLE" "DIMENSION" "HATCH" "LINE" "LWPOLYLINE" "TEXT") (princ (strcat "\nF109_ENTITY_" typ "=" (itoa (f109-count typ)))))
+(princ (strcat "\nF109_BULGED=" (itoa (f109-bulged))))
+(foreach name '("JOONED" "TELJED" "SEINAD" "VIIRUTUS") (princ (strcat "\nF109_LAYER_" name "=" (f109-layer name))))
+(foreach name '("NORMAL" "STANDARD") (princ (strcat "\nF109_STYLE_" name "=" (if (tblsearch "STYLE" name) "PRESENT" "MISSING"))))
+(princ (strcat "\nF109_SEM_1000=" (f109-line "1000")))
+(princ (strcat "\nF109_SEM_1001=" (f109-line "1001")))
+(princ (strcat "\nF109_TEXT_1209=" (f109-text "1209")))
+(foreach handle '("1300" "1301" "1302" "1303" "1304" "1305" "1306") (princ (strcat "\nF109_HATCH_" handle "=" (f109-hatch handle))))
+(princ (strcat "\nF109_DIMSTYLE_TEXT_HANDLE=" (f109-dimstyle-text-handle)))
+_.ZOOM
+_E
+(setq f109-min (getvar "EXTMIN") f109-max (getvar "EXTMAX"))
+(princ (strcat "\nF109_EXTMIN=" (rtos (car f109-min) 2 4) "|" (rtos (cadr f109-min) 2 4)))
+(princ (strcat "\nF109_EXTMAX=" (rtos (car f109-max) 2 4) "|" (rtos (cadr f109-max) 2 4)))
+(princ "\nF109_DONE=1\n")
+_.QUIT
+_Y

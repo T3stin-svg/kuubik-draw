@@ -1,3 +1,8 @@
+param(
+  [Parameter(Mandatory = $true)][string]$PidPath,
+  [Parameter(Mandatory = $true)][string]$OwnershipToken
+)
+
 $ErrorActionPreference = 'Stop'
 
 Add-Type @'
@@ -20,6 +25,16 @@ function Invoke-ComRetry {
   } while ($true)
 }
 
+function Get-ComRequiredString {
+  param([Parameter(Mandatory = $true)][scriptblock]$Action, [string]$Name)
+  $readValue = $Action
+  return [string](Invoke-ComRetry {
+    $value = [string](& $readValue)
+    if ([string]::IsNullOrWhiteSpace($value)) { throw "AutoCAD returned an empty $Name." }
+    return $value
+  })
+}
+
 function Wait-AcadIdle {
   param([Parameter(Mandatory = $true)]$Document, [int]$TimeoutSeconds = 30)
   $deadline = [DateTime]::UtcNow.AddSeconds($TimeoutSeconds)
@@ -30,6 +45,55 @@ function Wait-AcadIdle {
     } catch {}
   } while ([DateTime]::UtcNow -lt $deadline)
   throw 'AutoCAD did not return to an idle command state.'
+}
+
+function Set-RotationAndVerify {
+  param(
+    [Parameter(Mandatory = $true)]$Document,
+    [Parameter(Mandatory = $true)]$Entity,
+    [Parameter(Mandatory = $true)][double]$Expected
+  )
+  $handle = [string](Invoke-ComRetry { $Entity.Handle })
+  Invoke-ComRetry { $Entity.Rotation = $Expected; $Entity.Update() } | Out-Null
+  Invoke-ComRetry { $Document.Regen(1) } | Out-Null
+  Wait-AcadIdle $Document
+  return Invoke-ComRetry {
+    $resolved = $Document.HandleToObject($handle)
+    $actual = [double]$resolved.Rotation
+    if ([Math]::Abs($actual - $Expected) -ge 0.000001) {
+      throw "AutoCAD returned stale rotation $actual for handle $handle; expected $Expected."
+    }
+    return $resolved
+  }
+}
+
+function Set-CommonPropertiesAndVerify {
+  param(
+    [Parameter(Mandatory = $true)]$Document,
+    [Parameter(Mandatory = $true)]$Entity,
+    [Parameter(Mandatory = $true)][string]$Layer
+  )
+  $handle = [string](Invoke-ComRetry { $Entity.Handle })
+  Invoke-ComRetry {
+    $Entity.Layer = $Layer
+    $Entity.Color = 1
+    $Entity.Linetype = 'Continuous'
+    $Entity.Lineweight = 50
+    $Entity.Update()
+  } | Out-Null
+  Invoke-ComRetry { $Document.Regen(1) } | Out-Null
+  Wait-AcadIdle $Document
+  return Invoke-ComRetry {
+    $resolved = $Document.HandleToObject($handle)
+    $actualLayer = [string]$resolved.Layer
+    $actualColor = [int]$resolved.Color
+    $actualLinetype = [string]$resolved.Linetype
+    $actualLineweight = [int]$resolved.Lineweight
+    if ($actualLayer -ne $Layer -or $actualColor -ne 1 -or $actualLinetype -ne 'Continuous' -or $actualLineweight -ne 50) {
+      throw "AutoCAD returned stale properties for handle ${handle}: layer='$actualLayer', color=$actualColor, linetype='$actualLinetype', lineweight=$actualLineweight."
+    }
+    return $resolved
+  }
 }
 
 function Get-Bounds {
@@ -264,14 +328,18 @@ function Invoke-RefusedCoincidentMirror {
 $preExistingProcessIds = @(Get-Process -Name 'acad' -ErrorAction SilentlyContinue | ForEach-Object { [int]$_.Id })
 $acad = $null; $scratch = $null; $result = $null; $automationProcessId = 0; $owned = $false
 try {
-  $acad = Invoke-ComRetry { New-Object -ComObject AutoCAD.Application.24.3 } -TimeoutSeconds 30
-  Invoke-ComRetry { $acad.Visible = $true } | Out-Null
+  # Creating the COM server is deliberately single-shot. Retrying New-Object can
+  # launch several orphan acad.exe processes when COM registration is slow.
+  $acad = New-Object -ComObject AutoCAD.Application.24.3
   [uint32]$resolvedProcessId = 0
   [void][F020WindowProcess]::GetWindowThreadProcessId([IntPtr][int64](Invoke-ComRetry { $acad.HWND }), [ref]$resolvedProcessId)
   $automationProcessId = [int]$resolvedProcessId
+  if ($automationProcessId -le 0) { throw 'Could not resolve the F-020 AutoCAD automation process.' }
   $owned = $automationProcessId -gt 0 -and $preExistingProcessIds -notcontains $automationProcessId
   Write-Host "[F-020] automation-process pid=$automationProcessId owned=$owned"
   if (-not $owned) { throw 'F-020 refuses to use a pre-existing AutoCAD process.' }
+  [ordered]@{ schemaVersion = 1; processId = $automationProcessId; owned = $true; token = $OwnershipToken } | ConvertTo-Json -Compress | Set-Content -LiteralPath $PidPath -Encoding ascii
+  Invoke-ComRetry { $acad.Visible = $true } | Out-Null
   $scratch = if ([int](Invoke-ComRetry { $acad.Documents.Count }) -gt 0) { Invoke-ComRetry { $acad.ActiveDocument } } else { Invoke-ComRetry { $acad.Documents.Add() } }
   if ([string](Invoke-ComRetry { $scratch.FullName }) -or -not [bool](Invoke-ComRetry { $scratch.Saved }) -or [int](Invoke-ComRetry { $scratch.ModelSpace.Count }) -ne 0) {
     throw 'F-020 standard matrix refuses a non-blank drawing.'
@@ -295,7 +363,7 @@ try {
   [double[]]$fitPoints = @(900, 0, 0, 950, 75, 0, 1000, 0, 0); [double[]]$startTangent = @(50, 75, 0); [double[]]$endTangent = @(50, -75, 0)
   $entities.spline = Invoke-ComRetry { $scratch.ModelSpace.AddSpline($fitPoints, $startTangent, $endTangent) }
   [double[]]$textPoint = @(1100, 0, 0); $entities.text = Invoke-ComRetry { $scratch.ModelSpace.AddText('F020 TEXT', $textPoint, 20) }
-  Invoke-ComRetry { $entities.text.Rotation = 0.25 } | Out-Null
+  $entities.text = Set-RotationAndVerify $scratch $entities.text 0.25
   [double[]]$mtextPoint = @(1250, 0, 0); $entities.mtext = Invoke-ComRetry { $scratch.ModelSpace.AddMText($mtextPoint, 200, 'F020 MTEXT') }
   [double[]]$leaderPoints = @(1400, 0, 0, 1450, 50, 0, 1500, 50, 0); [double[]]$leaderAnnotationPoint = @(1500, 50, 0)
   $leaderAnnotation = Invoke-ComRetry { $scratch.ModelSpace.AddMText($leaderAnnotationPoint, 100, 'F020 LEADER') }
@@ -313,8 +381,8 @@ try {
   $blockLisp = "(progn (vl-load-com) (setq f020:doc (vla-get-ActiveDocument (vlax-get-acad-object))) (setq f020:block (vla-Add (vla-get-Blocks f020:doc) (vlax-3d-point '(0.0 0.0 0.0)) `"F020_BLOCK`")) (vla-AddLine f020:block (vlax-3d-point '(0.0 0.0 0.0)) (vlax-3d-point '(100.0 0.0 0.0))) (setq f020:insert (vla-InsertBlock (vla-get-ModelSpace f020:doc) (vlax-3d-point '(1900.0 0.0 0.0)) `"F020_BLOCK`" 1.5 0.5 1.0 0.25)) (vla-put-Layer f020:insert `"F020_MATRIX`") (setvar `"USERS2`" (vla-get-Handle f020:insert)) (princ))`n"
   Invoke-ComRetry { $scratch.SendCommand($blockLisp) } | Out-Null; Wait-AcadIdle $scratch
   $entities.blockRef = Invoke-ComRetry { $scratch.HandleToObject([string](Invoke-ComRetry { $scratch.GetVariable('USERS2') })) }
-  foreach ($entity in $entities.Values) {
-    Invoke-ComRetry { $entity.Layer = 'F020_MATRIX'; $entity.Color = 1; $entity.Linetype = 'Continuous'; $entity.Lineweight = 50 } | Out-Null
+  foreach ($family in @($entities.Keys)) {
+    $entities[$family] = Set-CommonPropertiesAndVerify $scratch $entities[$family] 'F020_MATRIX'
   }
   Invoke-ComRetry { $scratch.Regen(1) } | Out-Null; Wait-AcadIdle $scratch
   $before = @($entities.GetEnumerator() | ForEach-Object { Get-EntityState $_.Value $_.Key })
@@ -355,7 +423,8 @@ try {
   $tiltLine = New-Line $scratch 'F020_TILT_LINE' 100 0 200 0
   [double[]]$tiltTextPoint = @(300, 0, 0)
   $tiltText = Invoke-ComRetry { $scratch.ModelSpace.AddText('F020 TILTED', $tiltTextPoint, 20) }
-  Invoke-ComRetry { $tiltText.Layer = 'F020_TILT_TEXT'; $tiltText.Rotation = 0.25 } | Out-Null
+  Invoke-ComRetry { $tiltText.Layer = 'F020_TILT_TEXT' } | Out-Null
+  $tiltText = Set-RotationAndVerify $scratch $tiltText 0.25
   [double[]]$tiltBlockPoint = @(400, 0, 0)
   $tiltBlock = Invoke-ComRetry { $scratch.ModelSpace.InsertBlock($tiltBlockPoint, 'F020_BLOCK', 1.5, 0.5, 1.0, 0.25) }
   Invoke-ComRetry { $tiltBlock.Layer = 'F020_TILT_BLOCK' } | Out-Null
@@ -427,7 +496,7 @@ try {
   }
   $result = [ordered]@{
     schemaVersion = 1; rowId = 'F-020'; benchmark = 'AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation'
-    engine = 'Autodesk AutoCAD 2024 desktop COM'; engineVersion = [string](Invoke-ComRetry { $acad.Version })
+    engine = 'Autodesk AutoCAD 2024 desktop COM'; engineVersion = Get-ComRequiredString { $acad.Version } 'Version'
     automationProcessId = $automationProcessId; automationProcessOwned = $owned
     workflow = 'MIRRTEXT=0; 12 native families with semantic fields; vertical axis default No/U and Yes/U; 45-degree line/text/block axis; mixed locked layer; coincident-axis refusal'
     mirrtext = [int](Invoke-ComRetry { $scratch.GetVariable('MIRRTEXT') })

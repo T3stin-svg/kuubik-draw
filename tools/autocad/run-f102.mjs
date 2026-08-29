@@ -31,6 +31,7 @@ const samePageSetup = (left, right) =>
   close(left?.viewport?.width, right?.viewport?.width, 0.001) && close(left?.viewport?.height, right?.viewport?.height, 0.001);
 const temporaryStem = resolve(tmpdir(), `KuubikDraw-F102-${randomUUID()}`); const ownershipToken = randomUUID();
 const temporaryPaths = { dwg: `${temporaryStem}.dwg`, bak: `${temporaryStem}.bak`, pdf: `${temporaryStem}.pdf`, displayPdf: `${temporaryStem}.display.pdf`, pid: `${temporaryStem}.pid` };
+const preExistingProcessIds = acadProcessIds();
 const browserEvidenceBytes = await readFile(browserEvidencePath);
 const browserEvidence = JSON.parse(browserEvidenceBytes.toString("utf8"));
 const requestedDisplayWindow = browserEvidence.matrix?.display?.source;
@@ -58,12 +59,13 @@ async function terminateOwnedProcess(processId) {
 
 function acadProcessIds() {
   const output = execFileSync("powershell.exe", ["-NoProfile", "-Command", "@(Get-Process acad -ErrorAction SilentlyContinue | ForEach-Object { $_.Id }) -join [Environment]::NewLine"], { windowsHide: true, encoding: "utf8" }).trim();
-  return output ? output.split(/\r?\n/u).map(Number).filter((value) => Number.isInteger(value) && value > 0) : [];
+  return output ? output.split(/\r?\n/u).map(Number).filter((value) => Number.isInteger(value) && value > 0).toSorted((a, b) => a - b) : [];
 }
 
-async function waitForNoResidualAcadProcesses() {
-  for (let attempt = 0; attempt < 60; attempt += 1) {
-    if (acadProcessIds().length === 0) return true;
+async function waitForOriginalProcessSet() {
+  const expected = preExistingProcessIds.join("|");
+  for (let attempt = 0; attempt < 80; attempt += 1) {
+    if (acadProcessIds().join("|") === expected) return true;
     await new Promise((resolveDelay) => setTimeout(resolveDelay, 100));
   }
   return false;
@@ -142,8 +144,8 @@ async function runMatrix() {
     });
     ownedProcessId = await resolveOwnedProcessId(); const automationProcessTerminated = await terminateOwnedProcess(ownedProcessId);
     if (ownedProcessId > 0 && !automationProcessTerminated) throw new Error(`Owned AutoCAD process ${ownedProcessId} remained after F-102.`);
-    const noResidualAcadProcesses = await waitForNoResidualAcadProcesses();
-    if (!noResidualAcadProcesses) throw new Error("An AutoCAD process remained after F-102.");
+    const processSetRestored = await waitForOriginalProcessSet();
+    if (!processSetRestored) throw new Error("The original AutoCAD process set was not restored after F-102.");
     if (childResult.timedOut) throw new Error("AutoCAD F-102 matrix exceeded the 240 second timeout.");
     if (childResult.code !== 0) throw new Error(`AutoCAD F-102 matrix exited ${childResult.code}: ${childResult.errorText || childResult.output}`);
     const start = childResult.output.indexOf("{"); const end = childResult.output.lastIndexOf("}");
@@ -154,7 +156,7 @@ async function runMatrix() {
     const displayPdfBytes = await readFile(temporaryPaths.displayPdf); const displayPdfReadback = independentPdfSummary(displayPdfBytes);
     if (matrix.pdf?.bytes !== pdfBytes.byteLength || matrix.pdf?.sha256 !== sha256(pdfBytes)) throw new Error("AutoCAD PDF hash/length read-back mismatch.");
     if (matrix.displayPdf?.bytes !== displayPdfBytes.byteLength || matrix.displayPdf?.sha256 !== sha256(displayPdfBytes)) throw new Error("AutoCAD Display PDF hash/length read-back mismatch.");
-    return { ...matrix, automationProcessTerminated, noResidualAcadProcesses, pdfReadback, displayPdfReadback };
+    return { ...matrix, automationProcessTerminated, processSetRestored, preExistingProcessIds, pdfReadback, displayPdfReadback };
   } finally {
     try { if (ownedProcessId <= 0) ownedProcessId = await resolveOwnedProcessId(); if (ownedProcessId > 0) await terminateOwnedProcess(ownedProcessId); }
     finally { await removeTemporaryFiles(); }
@@ -164,7 +166,7 @@ async function runMatrix() {
 const matrix = await runMatrix();
 if (
   matrix.schemaVersion !== 1 || matrix.rowId !== "F-102" || !matrix.engineVersion?.startsWith("24.3") ||
-  !matrix.automationProcessOwned || !matrix.automationProcessTerminated || !matrix.noResidualAcadProcesses ||
+  !matrix.automationProcessOwned || !matrix.automationProcessTerminated || !matrix.processSetRestored ||
   Object.values(matrix.checks ?? {}).some((value) => value !== true) ||
   matrix.baseline?.plotType !== 5 || Math.abs(matrix.baseline?.paper?.widthMm - 420) > 0.001 || Math.abs(matrix.baseline?.paper?.heightMm - 297) > 0.001 ||
   matrix.configured?.plotType !== 4 || Math.abs(matrix.configured?.paper?.widthMm - 210) > 0.001 || Math.abs(matrix.configured?.paper?.heightMm - 297) > 0.001 ||

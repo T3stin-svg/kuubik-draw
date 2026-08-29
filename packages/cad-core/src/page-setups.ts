@@ -1,4 +1,5 @@
 import type {
+  CadAppearance,
   CadLayout,
   CadPageSetup,
   CadViewport,
@@ -14,6 +15,7 @@ import {
   setPaperLayoutPageSetup,
 } from "./layouts.js";
 import type { CadChange } from "./transaction.js";
+import { assertCadAppearance } from "./plot-style.js";
 
 export const PAGE_SETUP_LIBRARY_EXTENSION_KEY = "kuubikDraw.pageSetupLibrary.v1";
 export const PAGE_SETUP_TEMPLATE_FORMAT = "kuubik-draw-page-setup-template";
@@ -195,7 +197,13 @@ function exactPaperShape(value: unknown, label: string): void {
 
 function exactAppearanceShape(value: unknown, label: string): void {
   if (!record(value)) throw new PageSetupLibraryError("INVALID_TEMPLATE", `${label} must be an appearance object.`);
-  exactKeys(value, ["color", "colorMethod", "linetypeId", "lineweightMm", "transparency", "frozen"], label);
+  exactKeys(value, ["color", "colorMethod", "aciIndex", "linetypeId", "lineweightMm", "transparency", "frozen"], label);
+  try {
+    assertCadAppearance(value as CadAppearance, label);
+    if (value.frozen !== undefined && typeof value.frozen !== "boolean") throw new TypeError(`${label} frozen flag must be boolean.`);
+  } catch (error) {
+    throw new PageSetupLibraryError("INVALID_TEMPLATE", error instanceof Error ? error.message : String(error));
+  }
 }
 
 function exactViewportShape(value: unknown, label: string): void {

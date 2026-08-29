@@ -1707,18 +1707,27 @@ export function App() {
   }
 
   function downloadDxf(): void {
-    const exported = exportDxf(document);
-    if (exported.report.skipped.length) {
-      setStatus(`DXF peatatud: ${exported.report.skipped.length} toetamata objekti`);
-      return;
+    try {
+      const exported = exportDxf(document);
+      if (exported.report.skipped.length) {
+        setStatus(`DXF peatatud: ${exported.report.skipped.length} toetamata objekti`);
+        return;
+      }
+      const url = URL.createObjectURL(new Blob([exported.bytes as Uint8Array<ArrayBuffer>], { type: "application/dxf" }));
+      try {
+        const anchor = window.document.createElement("a");
+        anchor.href = url;
+        anchor.download = `${sanitizePdfFileStem(document.documentId)}-r${document.revision}.dxf`;
+        anchor.click();
+      } finally {
+        URL.revokeObjectURL(url);
+      }
+      setStatus(`DXF eksporditud: ${exported.report.emittedHandles.length} objekti`);
+    } catch (error) {
+      if (error instanceof LayoutPublishSettingsError || error instanceof RangeError || error instanceof TypeError) {
+        setStatus(`DXF viga: ${error.message}`);
+      } else throw error;
     }
-    const url = URL.createObjectURL(new Blob([exported.text], { type: "application/dxf" }));
-    const anchor = window.document.createElement("a");
-    anchor.href = url;
-    anchor.download = `${document.documentId}-r${document.revision}.dxf`;
-    anchor.click();
-    URL.revokeObjectURL(url);
-    setStatus(`DXF eksporditud: ${exported.report.emittedHandles.length} objekti`);
   }
 
   async function downloadKDraw(): Promise<void> {

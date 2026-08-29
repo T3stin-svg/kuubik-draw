@@ -66,9 +66,9 @@ if (
   throw new Error(`F-015 independent read-back mismatch: ${JSON.stringify(result)}`);
 }
 await mkdir(dirname(dxfPath), { recursive: true });
-await writeFile(dxfPath, exported.text, "utf8");
+await writeFile(dxfPath, exported.bytes);
 await writeFile(readbackPath, `${JSON.stringify({
   ...result,
-  dxfSha256: createHash("sha256").update(exported.text).digest("hex"),
+  dxfSha256: createHash("sha256").update(exported.bytes).digest("hex"),
 }, null, 2)}\n`, "utf8");
 console.log("F-015 Kuubik atomic ERASE + empty production DXF + UNDO read-back PASS.");

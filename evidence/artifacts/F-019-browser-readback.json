@@ -2,9 +2,9 @@
   "schemaVersion": 1,
   "rowId": "F-019",
   "source": "Chromium downloads captured by e2e/f019-scale.spec.ts with PARITY_CAPTURE_DIR",
-  "observedAt": "2026-08-28T13:31:57.463Z",
+  "observedAt": "2026-08-29T03:51:58.440Z",
   "scaled": {
-    "sha256": "531c4a67114157c0d8b2ab1ec1bd927a6c7254231faa91216a98c5b7531d4056",
+    "sha256": "bbe56c058c5b37b04c26de02fd7bf04bc7f8d621f5a8762050a8042b13e06950",
     "units": 4,
     "entities": [
       {
@@ -48,7 +48,7 @@
     ]
   },
   "restored": {
-    "sha256": "33c2c6bc11b773b8d5eb60f26d5c2a05473af0b902416ed89fd37d5f4940e7d1",
+    "sha256": "35e3587d4afc452baef7387bd200fd176e8b7b115494251cf1eeb4fe4e07b9b1",
     "units": 4,
     "entities": [
       {
@@ -92,7 +92,7 @@
     ]
   },
   "mixedLocked": {
-    "sha256": "8b2e16f51ee582cdd2d43b5c7355fe11265aa817f7a15f64b1710048047e47b7",
+    "sha256": "93dce80eef3426cb146b07941022f2f6a97d31da17479792d00537006fe5da01",
     "units": 4,
     "entities": [
       {
@@ -113,7 +113,7 @@
       {
         "type": "LINE",
         "handle": "12",
-        "layer": "layer-1",
+        "layer": "Layer 1",
         "vertices": [
           {
             "x": 10,
@@ -128,7 +128,7 @@
     ]
   },
   "copied": {
-    "sha256": "9c0621346df290c4b342dc1b19fb462f1cb438969559b5202add0eca2daf46ed",
+    "sha256": "90534c4051f930672a6a0133b9467f79858cbd13d3ad8ee6dc3d65230424740b",
     "units": 4,
     "entities": [
       {
@@ -186,7 +186,7 @@
       ],
       "operations": [
         {
-          "opId": "f34c1dac-c23c-48ae-87a6-9ffd6967b6b2",
+          "opId": "09fab3cc-f853-4afa-bd4d-5055364cc222",
           "baseRevision": 0,
           "commandId": "LINE",
           "args": {
@@ -205,7 +205,7 @@
           ]
         },
         {
-          "opId": "2241f39a-73b1-4657-846f-03cb304b76e1",
+          "opId": "a97c06d1-7e66-45ac-92c1-ee54f4df596c",
           "baseRevision": 1,
           "commandId": "SCALE",
           "args": {
@@ -247,7 +247,7 @@
       ],
       "operations": [
         {
-          "opId": "f34c1dac-c23c-48ae-87a6-9ffd6967b6b2",
+          "opId": "09fab3cc-f853-4afa-bd4d-5055364cc222",
           "baseRevision": 0,
           "commandId": "LINE",
           "args": {
@@ -266,7 +266,7 @@
           ]
         },
         {
-          "opId": "2241f39a-73b1-4657-846f-03cb304b76e1",
+          "opId": "a97c06d1-7e66-45ac-92c1-ee54f4df596c",
           "baseRevision": 1,
           "commandId": "SCALE",
           "args": {
@@ -288,11 +288,11 @@
           "resultHandles": []
         },
         {
-          "opId": "2241f39a-73b1-4657-846f-03cb304b76e1:undo:1",
+          "opId": "a97c06d1-7e66-45ac-92c1-ee54f4df596c:undo:1",
           "baseRevision": 2,
           "commandId": "UNDO",
           "args": {
-            "originalOpId": "2241f39a-73b1-4657-846f-03cb304b76e1"
+            "originalOpId": "a97c06d1-7e66-45ac-92c1-ee54f4df596c"
           },
           "targetHandles": [],
           "resultHandles": [

@@ -191,16 +191,16 @@ if (
 ) throw new Error(`F-021 independent read-back mismatch: ${JSON.stringify(result)}`);
 
 await mkdir(dirname(dxfPath), { recursive: true });
-await writeFile(dxfPath, exported.text, "utf8");
+await writeFile(dxfPath, exported.bytes);
 await writeFile(kdrawPath, kdrawBytes);
-await writeFile(edgeDxfPath, edgeDxfExport.text, "utf8");
+await writeFile(edgeDxfPath, edgeDxfExport.bytes);
 await writeFile(edgeKdrawPath, edgeKdrawBytes);
 await writeFile(concaveKdrawPath, concaveKdrawBytes);
 await writeFile(readbackPath, `${JSON.stringify({
   ...result,
-  dxfSha256: createHash("sha256").update(exported.text).digest("hex"),
+  dxfSha256: createHash("sha256").update(exported.bytes).digest("hex"),
   kdrawSha256: createHash("sha256").update(kdrawBytes).digest("hex"),
-  edgeDxfSha256: createHash("sha256").update(edgeDxfExport.text).digest("hex"),
+  edgeDxfSha256: createHash("sha256").update(edgeDxfExport.bytes).digest("hex"),
   edgeKdrawSha256: createHash("sha256").update(edgeKdrawBytes).digest("hex"),
   concaveKdrawSha256: createHash("sha256").update(concaveKdrawBytes).digest("hex"),
 }, null, 2)}\n`, "utf8");

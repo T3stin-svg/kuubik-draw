@@ -26,6 +26,43 @@ function Invoke-ComRetry {
   } while ($true)
 }
 
+function Invoke-NonEmptyCom {
+  param([Parameter(Mandatory = $true)][scriptblock]$Action, [string]$Label = 'COM value', [int]$TimeoutSeconds = 20)
+  $deadline = [DateTime]::UtcNow.AddSeconds($TimeoutSeconds)
+  do {
+    try {
+      $value = [string](& $Action)
+      if (-not [string]::IsNullOrWhiteSpace($value)) { return $value }
+    } catch {
+      if ([DateTime]::UtcNow -ge $deadline) { throw }
+    }
+    if ([DateTime]::UtcNow -ge $deadline) { throw "$Label remained empty for $TimeoutSeconds seconds." }
+    Start-Sleep -Milliseconds 150
+  } while ($true)
+}
+
+function Get-EntityByHandle {
+  param(
+    [Parameter(Mandatory = $true)]$Document,
+    [Parameter(Mandatory = $true)][string]$Handle,
+    [int]$TimeoutSeconds = 20
+  )
+  $deadline = [DateTime]::UtcNow.AddSeconds($TimeoutSeconds)
+  do {
+    try {
+      $entity = $Document.HandleToObject($Handle)
+      if ($entity -and [string]$entity.Handle -eq $Handle) { return $entity }
+    } catch {}
+    try {
+      foreach ($candidate in $Document.PaperSpace) {
+        if ([string]$candidate.Handle -eq $Handle) { return $candidate }
+      }
+    } catch {}
+    if ([DateTime]::UtcNow -ge $deadline) { throw "AutoCAD could not resolve paper-space handle $Handle." }
+    Start-Sleep -Milliseconds 150
+  } while ($true)
+}
+
 function Wait-AcadIdle {
   param([Parameter(Mandatory = $true)]$Document, [int]$TimeoutSeconds = 30)
   $deadline = [DateTime]::UtcNow.AddSeconds($TimeoutSeconds)
@@ -219,18 +256,18 @@ try {
   Invoke-ComRetry { $trueColor.SetRGB(10, 100, 220); $trueColorLine.TrueColor = $trueColor; $trueColorLine.Lineweight = 0 } | Out-Null
   $boundary = Invoke-ComRetry { $scratch.PaperSpace.AddLightWeightPolyline([double[]]@(50, 70, 150, 70, 150, 130, 50, 130)) }
   Invoke-ComRetry { $boundary.Closed = $true; $boundary.Layer = 'F103_BOUNDARY' } | Out-Null
-  $boundaryHandle = [string](Invoke-ComRetry { $boundary.Handle })
+  $boundaryHandle = Invoke-NonEmptyCom { $boundary.Handle } 'Boundary handle'
   $hatchLisp = "(progn (vl-load-com) (setq f103:ps (vla-get-PaperSpace (vla-get-ActiveDocument (vlax-get-acad-object)))) (setq f103:h (vla-AddHatch f103:ps 0 `"SOLID`" :vlax-false 0)) (setq f103:loop (vlax-make-safearray vlax-vbObject '(0 . 0))) (vlax-safearray-put-element f103:loop 0 (vlax-ename->vla-object (handent `"$boundaryHandle`"))) (vla-AppendOuterLoop f103:h f103:loop) (vla-Evaluate f103:h) (setvar `"USERS1`" (vla-get-Handle f103:h)) (princ))`n"
   Invoke-ComRetry { $scratch.SendCommand($hatchLisp) } | Out-Null
   Wait-AcadIdle $scratch
-  $hatchHandle = [string](Invoke-ComRetry { $scratch.GetVariable('USERS1') })
+  $hatchHandle = Invoke-NonEmptyCom { $scratch.GetVariable('USERS1') } 'Hatch handle'
   $hatch = Invoke-ComRetry { $scratch.HandleToObject($hatchHandle) }
   Invoke-ComRetry { $hatch.Color = 1; $hatch.Lineweight = 25; $hatch.EntityTransparency = '40'; $hatch.Evaluate() } | Out-Null
   Invoke-ComRetry { $scratch.Regen(1) } | Out-Null
   $handles = [ordered]@{
-    byLayerLine = [string](Invoke-ComRetry { $byLayerLine.Handle })
-    explicitLine = [string](Invoke-ComRetry { $explicitLine.Handle })
-    trueColorLine = [string](Invoke-ComRetry { $trueColorLine.Handle })
+    byLayerLine = Invoke-NonEmptyCom { $byLayerLine.Handle } 'ByLayer line handle'
+    explicitLine = Invoke-NonEmptyCom { $explicitLine.Handle } 'Explicit line handle'
+    trueColorLine = Invoke-NonEmptyCom { $trueColorLine.Handle } 'TrueColor line handle'
     hatch = $hatchHandle
   }
 
@@ -251,11 +288,16 @@ try {
     $paper.PlotWithPlotStyles = $true; $paper.StyleSheet = $monochromeName; $paper.PlotWithLineweights = $true; $scratch.SetVariable('PLOTTRANSPARENCYOVERRIDE', $plotTransparencyByPageSetup); $paper.ShowPlotStyles = $true
     $scratch.Regen(1); $scratch.SaveAs($tempDwg, 64)
   } | Out-Null
+  Wait-AcadIdle $scratch
+  $scratch = Invoke-ComRetry { $acad.ActiveDocument }
+  if ([IO.Path]::GetFullPath([string](Invoke-ComRetry { $scratch.FullName })) -ne [IO.Path]::GetFullPath($tempDwg)) {
+    throw 'F-103 lost ownership of the saved scratch drawing.'
+  }
   $objectsBefore = [ordered]@{
-    byLayerLine = Get-EntitySnapshot (Invoke-ComRetry { $scratch.HandleToObject($handles.byLayerLine) })
-    explicitLine = Get-EntitySnapshot (Invoke-ComRetry { $scratch.HandleToObject($handles.explicitLine) })
-    trueColorLine = Get-EntitySnapshot (Invoke-ComRetry { $scratch.HandleToObject($handles.trueColorLine) })
-    hatch = Get-EntitySnapshot (Invoke-ComRetry { $scratch.HandleToObject($handles.hatch) })
+    byLayerLine = Get-EntitySnapshot (Get-EntityByHandle $scratch $handles.byLayerLine)
+    explicitLine = Get-EntitySnapshot (Get-EntityByHandle $scratch $handles.explicitLine)
+    trueColorLine = Get-EntitySnapshot (Get-EntityByHandle $scratch $handles.trueColorLine)
+    hatch = Get-EntitySnapshot (Get-EntityByHandle $scratch $handles.hatch)
   }
   $savedLayout = Get-LayoutSnapshot $paper $scratch
   Invoke-ComRetry { $scratch.Close($false) } | Out-Null; $scratch = $null
@@ -265,10 +307,10 @@ try {
   Invoke-ComRetry { $reopened.Activate() } | Out-Null; Wait-AcadIdle $reopened
   $paper = Invoke-ComRetry { $reopened.Layouts.Item('F103 PLOT STYLE') }
   $objectsAfter = [ordered]@{
-    byLayerLine = Get-EntitySnapshot (Invoke-ComRetry { $reopened.HandleToObject($handles.byLayerLine) })
-    explicitLine = Get-EntitySnapshot (Invoke-ComRetry { $reopened.HandleToObject($handles.explicitLine) })
-    trueColorLine = Get-EntitySnapshot (Invoke-ComRetry { $reopened.HandleToObject($handles.trueColorLine) })
-    hatch = Get-EntitySnapshot (Invoke-ComRetry { $reopened.HandleToObject($handles.hatch) })
+    byLayerLine = Get-EntitySnapshot (Get-EntityByHandle $reopened $handles.byLayerLine)
+    explicitLine = Get-EntitySnapshot (Get-EntityByHandle $reopened $handles.explicitLine)
+    trueColorLine = Get-EntitySnapshot (Get-EntityByHandle $reopened $handles.trueColorLine)
+    hatch = Get-EntitySnapshot (Get-EntityByHandle $reopened $handles.hatch)
   }
   $reopenedLayout = Get-LayoutSnapshot $paper $reopened
 

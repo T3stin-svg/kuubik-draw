@@ -47,7 +47,7 @@ if (
   line?.handle !== "10" || JSON.stringify(line.vertices) !== JSON.stringify([{ x: 10, y: 10 }, { x: 180, y: 90 }]) ||
   rectangle?.handle !== "11" || rectangle.layer !== "0" || !rectangle.closed ||
   result.locked.units !== 4 || result.locked.entities.length !== 1 ||
-  locked?.handle !== "12" || locked.layer !== "layer-1" || !locked.closed ||
+  locked?.handle !== "12" || locked.layer !== "Layer 1" || !locked.closed ||
   JSON.stringify(locked.vertices) !== JSON.stringify([
     { x: 125.25, y: -200.5 }, { x: 600.75, y: -200.5 },
     { x: 600.75, y: 900.125 }, { x: 125.25, y: 900.125 },

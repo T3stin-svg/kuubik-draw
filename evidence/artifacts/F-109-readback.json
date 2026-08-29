@@ -1,0 +1,2512 @@
+{
+  "featureId": "F-109",
+  "checkedAt": "2026-08-29T03:35:59.379Z",
+  "sourceCommit": "539c673e74905ef6205206a3acec963f8b910ffc",
+  "workingTreeWave": "F-109 DXF core export certification",
+  "productionPath": "App.downloadDxf -> @kuubik/cad-dxf.exportDxf",
+  "artifact": "evidence/artifacts/F-109-production.dxf",
+  "bytes": 13679,
+  "sha256": "28de58b3aa9e7a2c44bcf4d17b297b1cc64b08fbbbea448a33720b0d14c601ac",
+  "exportReport": {
+    "emittedHandles": [
+      "1000",
+      "1001",
+      "1002",
+      "1003",
+      "1004",
+      "1005",
+      "1006",
+      "1007",
+      "1008",
+      "1009",
+      "100a",
+      "100b",
+      "1100",
+      "1101",
+      "1102",
+      "1103",
+      "1104",
+      "1105",
+      "1106",
+      "1107",
+      "1108",
+      "1200",
+      "1201",
+      "1202",
+      "1203",
+      "1204",
+      "1205",
+      "1206",
+      "1207",
+      "1208",
+      "1209",
+      "1300",
+      "1301",
+      "1302",
+      "1303",
+      "1304",
+      "1305",
+      "1306",
+      "1400",
+      "1500"
+    ],
+    "handleMap": {
+      "1000": "1000",
+      "1001": "1001",
+      "1002": "1002",
+      "1003": "1003",
+      "1004": "1004",
+      "1005": "1005",
+      "1006": "1006",
+      "1007": "1007",
+      "1008": "1008",
+      "1009": "1009",
+      "1100": "1100",
+      "1101": "1101",
+      "1102": "1102",
+      "1103": "1103",
+      "1104": "1104",
+      "1105": "1105",
+      "1106": "1106",
+      "1107": "1107",
+      "1108": "1108",
+      "1200": "1200",
+      "1201": "1201",
+      "1202": "1202",
+      "1203": "1203",
+      "1204": "1204",
+      "1205": "1205",
+      "1206": "1206",
+      "1207": "1207",
+      "1208": "1208",
+      "1209": "1209",
+      "1300": "1300",
+      "1301": "1301",
+      "1302": "1302",
+      "1303": "1303",
+      "1304": "1304",
+      "1305": "1305",
+      "1306": "1306",
+      "1400": "1400",
+      "1500": "1500",
+      "100a": "100A",
+      "100b": "100B"
+    },
+    "skipped": []
+  },
+  "independent": {
+    "auditErrors": 0,
+    "auditFixes": 0,
+    "bulgedPolylines": 2,
+    "bytes": 13679,
+    "dimensionStyleRecords": {
+      "Standard": {
+        "arrowSize": 250,
+        "extensionOffset": 62.5,
+        "handle": "500",
+        "scale": 1,
+        "textHeight": 250,
+        "textStyle": "Standard",
+        "textStyleHandle": "401"
+      }
+    },
+    "dimensionStyles": [
+      "Standard"
+    ],
+    "dxfVersion": "AC1018",
+    "encoding": "cp1252",
+    "entities": {
+      "CIRCLE": 1,
+      "DIMENSION": 1,
+      "HATCH": 7,
+      "LINE": 12,
+      "LWPOLYLINE": 9,
+      "TEXT": 10
+    },
+    "extents": {
+      "max": [
+        10265.893587994542,
+        4580
+      ],
+      "min": [
+        -200,
+        -600
+      ]
+    },
+    "ezdxfVersion": "1.4.3",
+    "handseed": "1501",
+    "headerExtents": null,
+    "layers": {
+      "0": {
+        "color": 7,
+        "frozen": false,
+        "linetype": "Continuous",
+        "lineweight": -3,
+        "locked": false,
+        "on": true,
+        "plottable": true,
+        "transparencyPercent": 0,
+        "transparencyRaw": null,
+        "trueColor": null
+      },
+      "Defpoints": {
+        "color": 7,
+        "frozen": false,
+        "linetype": "Continuous",
+        "lineweight": -3,
+        "locked": false,
+        "on": true,
+        "plottable": false,
+        "transparencyPercent": 0,
+        "transparencyRaw": null,
+        "trueColor": null
+      },
+      "JOONED": {
+        "color": 7,
+        "frozen": false,
+        "linetype": "Continuous",
+        "lineweight": 25,
+        "locked": false,
+        "on": true,
+        "plottable": true,
+        "transparencyPercent": 0,
+        "transparencyRaw": null,
+        "trueColor": null
+      },
+      "SEINAD": {
+        "color": 6,
+        "frozen": false,
+        "linetype": "DASHED",
+        "lineweight": 50,
+        "locked": false,
+        "on": true,
+        "plottable": true,
+        "transparencyPercent": 0,
+        "transparencyRaw": null,
+        "trueColor": null
+      },
+      "TELJED": {
+        "color": 4,
+        "frozen": false,
+        "linetype": "DASHDOT",
+        "lineweight": 13,
+        "locked": false,
+        "on": true,
+        "plottable": true,
+        "transparencyPercent": 0,
+        "transparencyRaw": null,
+        "trueColor": null
+      },
+      "VIIRUTUS": {
+        "color": 9,
+        "frozen": false,
+        "linetype": "Continuous",
+        "lineweight": 13,
+        "locked": false,
+        "on": true,
+        "plottable": true,
+        "transparencyPercent": 20,
+        "transparencyRaw": 33554636,
+        "trueColor": 12632256
+      }
+    },
+    "linetypes": [
+      "ByBlock",
+      "ByLayer",
+      "Continuous",
+      "DASHDOT",
+      "DASHED"
+    ],
+    "passed": true,
+    "reader": "ezdxf",
+    "semanticEntities": {
+      "1000": {
+        "color": 30,
+        "end": [
+          5000,
+          -600
+        ],
+        "layer": "TELJED",
+        "linetype": "DASHED",
+        "lineweight": 70,
+        "start": [
+          -200,
+          -600
+        ],
+        "transparencyPercent": 40,
+        "trueColor": null,
+        "type": "LINE"
+      },
+      "1001": {
+        "color": 152,
+        "end": [
+          5000,
+          250
+        ],
+        "layer": "JOONED",
+        "linetype": "BYLAYER",
+        "lineweight": 35,
+        "start": [
+          0,
+          250
+        ],
+        "transparencyPercent": 14.901960784314,
+        "trueColor": 681180,
+        "type": "LINE"
+      },
+      "1002": {
+        "color": 256,
+        "end": [
+          5000,
+          500
+        ],
+        "layer": "JOONED",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "start": [
+          0,
+          500
+        ],
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "LINE"
+      },
+      "1003": {
+        "color": 256,
+        "end": [
+          5000,
+          750
+        ],
+        "layer": "TELJED",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "start": [
+          0,
+          750
+        ],
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "LINE"
+      },
+      "1004": {
+        "color": 256,
+        "end": [
+          5000,
+          1000
+        ],
+        "layer": "JOONED",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "start": [
+          0,
+          1000
+        ],
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "LINE"
+      },
+      "1005": {
+        "color": 256,
+        "end": [
+          5000,
+          1250
+        ],
+        "layer": "JOONED",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "start": [
+          0,
+          1250
+        ],
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "LINE"
+      },
+      "1006": {
+        "color": 256,
+        "end": [
+          5000,
+          1500
+        ],
+        "layer": "TELJED",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "start": [
+          0,
+          1500
+        ],
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "LINE"
+      },
+      "1007": {
+        "color": 256,
+        "end": [
+          5000,
+          1750
+        ],
+        "layer": "JOONED",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "start": [
+          0,
+          1750
+        ],
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "LINE"
+      },
+      "1008": {
+        "color": 256,
+        "end": [
+          5000,
+          2000
+        ],
+        "layer": "JOONED",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "start": [
+          0,
+          2000
+        ],
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "LINE"
+      },
+      "1009": {
+        "color": 256,
+        "end": [
+          5000,
+          2250
+        ],
+        "layer": "TELJED",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "start": [
+          0,
+          2250
+        ],
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "LINE"
+      },
+      "1100": {
+        "closed": true,
+        "color": 256,
+        "layer": "SEINAD",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "LWPOLYLINE",
+        "vertices": [
+          [
+            0,
+            3000,
+            0,
+            0,
+            0.414213562373
+          ],
+          [
+            300,
+            3300,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            3600,
+            0,
+            0,
+            0
+          ]
+        ]
+      },
+      "1101": {
+        "closed": true,
+        "color": 256,
+        "layer": "SEINAD",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "LWPOLYLINE",
+        "vertices": [
+          [
+            450,
+            3000,
+            0,
+            0,
+            0.414213562373
+          ],
+          [
+            750,
+            3300,
+            0,
+            0,
+            -0.414213562373
+          ],
+          [
+            450,
+            3600,
+            0,
+            0,
+            0
+          ]
+        ]
+      },
+      "1102": {
+        "closed": true,
+        "color": 256,
+        "layer": "SEINAD",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "LWPOLYLINE",
+        "vertices": [
+          [
+            900,
+            3000,
+            0,
+            0,
+            0
+          ],
+          [
+            1200,
+            3000,
+            0,
+            0,
+            0
+          ],
+          [
+            1200,
+            3300,
+            0,
+            0,
+            0
+          ],
+          [
+            900,
+            3300,
+            0,
+            0,
+            0
+          ]
+        ]
+      },
+      "1103": {
+        "closed": true,
+        "color": 256,
+        "layer": "SEINAD",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "LWPOLYLINE",
+        "vertices": [
+          [
+            1350,
+            3000,
+            0,
+            0,
+            0
+          ],
+          [
+            1650,
+            3000,
+            0,
+            0,
+            0
+          ],
+          [
+            1650,
+            3300,
+            0,
+            0,
+            0
+          ],
+          [
+            1350,
+            3300,
+            0,
+            0,
+            0
+          ]
+        ]
+      },
+      "1104": {
+        "closed": true,
+        "color": 256,
+        "layer": "SEINAD",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "LWPOLYLINE",
+        "vertices": [
+          [
+            1800,
+            3000,
+            0,
+            0,
+            0
+          ],
+          [
+            2100,
+            3000,
+            0,
+            0,
+            0
+          ],
+          [
+            2100,
+            3300,
+            0,
+            0,
+            0
+          ],
+          [
+            1800,
+            3300,
+            0,
+            0,
+            0
+          ]
+        ]
+      },
+      "1105": {
+        "closed": true,
+        "color": 256,
+        "layer": "SEINAD",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "LWPOLYLINE",
+        "vertices": [
+          [
+            2250,
+            3000,
+            0,
+            0,
+            0
+          ],
+          [
+            2550,
+            3000,
+            0,
+            0,
+            0
+          ],
+          [
+            2550,
+            3300,
+            0,
+            0,
+            0
+          ],
+          [
+            2250,
+            3300,
+            0,
+            0,
+            0
+          ]
+        ]
+      },
+      "1106": {
+        "closed": true,
+        "color": 256,
+        "layer": "SEINAD",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "LWPOLYLINE",
+        "vertices": [
+          [
+            2700,
+            3000,
+            0,
+            0,
+            0
+          ],
+          [
+            3000,
+            3000,
+            0,
+            0,
+            0
+          ],
+          [
+            3000,
+            3300,
+            0,
+            0,
+            0
+          ],
+          [
+            2700,
+            3300,
+            0,
+            0,
+            0
+          ]
+        ]
+      },
+      "1107": {
+        "closed": true,
+        "color": 256,
+        "layer": "SEINAD",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "LWPOLYLINE",
+        "vertices": [
+          [
+            3150,
+            3000,
+            0,
+            0,
+            0
+          ],
+          [
+            3450,
+            3000,
+            0,
+            0,
+            0
+          ],
+          [
+            3450,
+            3300,
+            0,
+            0,
+            0
+          ],
+          [
+            3150,
+            3300,
+            0,
+            0,
+            0
+          ]
+        ]
+      },
+      "1108": {
+        "closed": false,
+        "color": 256,
+        "layer": "SEINAD",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "LWPOLYLINE",
+        "vertices": [
+          [
+            3600,
+            3000,
+            0,
+            0,
+            0
+          ],
+          [
+            3900,
+            3000,
+            0,
+            0,
+            0
+          ],
+          [
+            3900,
+            3300,
+            0,
+            0,
+            0
+          ],
+          [
+            3600,
+            3300,
+            0,
+            0,
+            0
+          ]
+        ]
+      },
+      "1200": {
+        "color": 256,
+        "height": 180,
+        "insert": [
+          0,
+          3900
+        ],
+        "layer": "JOONED",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "rotation": 0,
+        "style": "Standard",
+        "text": "F109 TEXT 1",
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "TEXT"
+      },
+      "1201": {
+        "color": 256,
+        "height": 180,
+        "insert": [
+          500,
+          3900
+        ],
+        "layer": "JOONED",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "rotation": 0,
+        "style": "NORMAL",
+        "text": "F109 TEXT 2",
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "TEXT"
+      },
+      "1202": {
+        "color": 256,
+        "height": 180,
+        "insert": [
+          1000,
+          3900
+        ],
+        "layer": "JOONED",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "rotation": 0,
+        "style": "Standard",
+        "text": "F109 TEXT 3",
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "TEXT"
+      },
+      "1203": {
+        "color": 256,
+        "height": 180,
+        "insert": [
+          1500,
+          3900
+        ],
+        "layer": "JOONED",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "rotation": 0,
+        "style": "NORMAL",
+        "text": "F109 TEXT 4",
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "TEXT"
+      },
+      "1204": {
+        "color": 256,
+        "height": 180,
+        "insert": [
+          2000,
+          3900
+        ],
+        "layer": "JOONED",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "rotation": 0,
+        "style": "Standard",
+        "text": "F109 TEXT 5",
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "TEXT"
+      },
+      "1205": {
+        "color": 256,
+        "height": 180,
+        "insert": [
+          2500,
+          3900
+        ],
+        "layer": "JOONED",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "rotation": 0,
+        "style": "NORMAL",
+        "text": "F109 TEXT 6",
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "TEXT"
+      },
+      "1206": {
+        "color": 256,
+        "height": 180,
+        "insert": [
+          3000,
+          3900
+        ],
+        "layer": "JOONED",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "rotation": 0,
+        "style": "Standard",
+        "text": "F109 TEXT 7",
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "TEXT"
+      },
+      "1207": {
+        "color": 256,
+        "height": 180,
+        "insert": [
+          3500,
+          3900
+        ],
+        "layer": "JOONED",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "rotation": 0,
+        "style": "NORMAL",
+        "text": "F109 TEXT 8",
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "TEXT"
+      },
+      "1208": {
+        "color": 256,
+        "height": 180,
+        "insert": [
+          4000,
+          3900
+        ],
+        "layer": "JOONED",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "rotation": 0,
+        "style": "Standard",
+        "text": "F109 TEXT 9",
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "TEXT"
+      },
+      "1209": {
+        "color": 256,
+        "height": 180,
+        "insert": [
+          4500,
+          4400
+        ],
+        "layer": "JOONED",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "rotation": 0,
+        "style": "NORMAL",
+        "text": "MÕÕT ŠŽ€ 10",
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "TEXT"
+      },
+      "1300": {
+        "associative": false,
+        "color": 256,
+        "layer": "VIIRUTUS",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "loops": [
+          {
+            "closed": true,
+            "flags": 3,
+            "vertices": [
+              [
+                5200,
+                3000,
+                0
+              ],
+              [
+                5380,
+                3000,
+                0
+              ],
+              [
+                5380,
+                3240,
+                0
+              ],
+              [
+                5200,
+                3240,
+                0
+              ]
+            ]
+          }
+        ],
+        "pattern": "SOLID",
+        "solid": true,
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "HATCH"
+      },
+      "1301": {
+        "associative": false,
+        "color": 256,
+        "layer": "VIIRUTUS",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "loops": [
+          {
+            "closed": true,
+            "flags": 3,
+            "vertices": [
+              [
+                5450,
+                3000,
+                0
+              ],
+              [
+                5630,
+                3000,
+                0
+              ],
+              [
+                5630,
+                3240,
+                0
+              ],
+              [
+                5450,
+                3240,
+                0
+              ]
+            ]
+          }
+        ],
+        "pattern": "F109_1",
+        "solid": false,
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "HATCH"
+      },
+      "1302": {
+        "associative": false,
+        "color": 256,
+        "layer": "VIIRUTUS",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "loops": [
+          {
+            "closed": true,
+            "flags": 3,
+            "vertices": [
+              [
+                5700,
+                3000,
+                0
+              ],
+              [
+                5880,
+                3000,
+                0
+              ],
+              [
+                5880,
+                3240,
+                0
+              ],
+              [
+                5700,
+                3240,
+                0
+              ]
+            ]
+          }
+        ],
+        "pattern": "F109_2",
+        "solid": false,
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "HATCH"
+      },
+      "1303": {
+        "associative": false,
+        "color": 256,
+        "layer": "VIIRUTUS",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "loops": [
+          {
+            "closed": true,
+            "flags": 3,
+            "vertices": [
+              [
+                5950,
+                3000,
+                0
+              ],
+              [
+                6130,
+                3000,
+                0
+              ],
+              [
+                6130,
+                3240,
+                0
+              ],
+              [
+                5950,
+                3240,
+                0
+              ]
+            ]
+          }
+        ],
+        "pattern": "F109_3",
+        "solid": false,
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "HATCH"
+      },
+      "1304": {
+        "associative": false,
+        "color": 256,
+        "layer": "VIIRUTUS",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "loops": [
+          {
+            "closed": true,
+            "flags": 3,
+            "vertices": [
+              [
+                6200,
+                3000,
+                0
+              ],
+              [
+                6380,
+                3000,
+                0
+              ],
+              [
+                6380,
+                3240,
+                0
+              ],
+              [
+                6200,
+                3240,
+                0
+              ]
+            ]
+          }
+        ],
+        "pattern": "F109_4",
+        "solid": false,
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "HATCH"
+      },
+      "1305": {
+        "associative": false,
+        "color": 256,
+        "layer": "VIIRUTUS",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "loops": [
+          {
+            "closed": true,
+            "flags": 3,
+            "vertices": [
+              [
+                6450,
+                3000,
+                0
+              ],
+              [
+                6630,
+                3000,
+                0
+              ],
+              [
+                6630,
+                3240,
+                0
+              ],
+              [
+                6450,
+                3240,
+                0
+              ]
+            ]
+          }
+        ],
+        "pattern": "F109_5",
+        "solid": false,
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "HATCH"
+      },
+      "1306": {
+        "associative": false,
+        "color": 256,
+        "layer": "VIIRUTUS",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "loops": [
+          {
+            "closed": true,
+            "flags": 3,
+            "vertices": [
+              [
+                6700,
+                3000,
+                0
+              ],
+              [
+                6880,
+                3000,
+                0
+              ],
+              [
+                6880,
+                3240,
+                0
+              ],
+              [
+                6700,
+                3240,
+                0
+              ]
+            ]
+          }
+        ],
+        "pattern": "F109_6",
+        "solid": false,
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "HATCH"
+      },
+      "1400": {
+        "center": [
+          7500,
+          0
+        ],
+        "color": 256,
+        "layer": "JOONED",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "radius": 366.6667,
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "CIRCLE"
+      },
+      "1500": {
+        "color": 256,
+        "definition": [
+          0,
+          4400
+        ],
+        "first": [
+          0,
+          4000
+        ],
+        "layer": "JOONED",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "measurement": 5000,
+        "second": [
+          5000,
+          4000
+        ],
+        "style": "Standard",
+        "text": "<>",
+        "textPosition": [
+          2500,
+          4400
+        ],
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "DIMENSION"
+      },
+      "100A": {
+        "color": 256,
+        "end": [
+          5000,
+          2500
+        ],
+        "layer": "JOONED",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "start": [
+          0,
+          2500
+        ],
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "LINE"
+      },
+      "100B": {
+        "color": 256,
+        "end": [
+          5000,
+          2750
+        ],
+        "layer": "JOONED",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "start": [
+          0,
+          2750
+        ],
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "LINE"
+      }
+    },
+    "sha256": "28de58b3aa9e7a2c44bcf4d17b297b1cc64b08fbbbea448a33720b0d14c601ac",
+    "source": "F-109-production.dxf",
+    "styles": [
+      "NORMAL",
+      "Standard"
+    ],
+    "totalEntities": 40,
+    "units": 4
+  },
+  "browserIndependent": {
+    "auditErrors": 0,
+    "auditFixes": 0,
+    "bulgedPolylines": 2,
+    "bytes": 13679,
+    "dimensionStyleRecords": {
+      "Standard": {
+        "arrowSize": 250,
+        "extensionOffset": 62.5,
+        "handle": "500",
+        "scale": 1,
+        "textHeight": 250,
+        "textStyle": "Standard",
+        "textStyleHandle": "401"
+      }
+    },
+    "dimensionStyles": [
+      "Standard"
+    ],
+    "dxfVersion": "AC1018",
+    "encoding": "cp1252",
+    "entities": {
+      "CIRCLE": 1,
+      "DIMENSION": 1,
+      "HATCH": 7,
+      "LINE": 12,
+      "LWPOLYLINE": 9,
+      "TEXT": 10
+    },
+    "extents": {
+      "max": [
+        10265.893587994542,
+        4580
+      ],
+      "min": [
+        -200,
+        -600
+      ]
+    },
+    "ezdxfVersion": "1.4.3",
+    "handseed": "1501",
+    "headerExtents": null,
+    "layers": {
+      "0": {
+        "color": 7,
+        "frozen": false,
+        "linetype": "Continuous",
+        "lineweight": -3,
+        "locked": false,
+        "on": true,
+        "plottable": true,
+        "transparencyPercent": 0,
+        "transparencyRaw": null,
+        "trueColor": null
+      },
+      "Defpoints": {
+        "color": 7,
+        "frozen": false,
+        "linetype": "Continuous",
+        "lineweight": -3,
+        "locked": false,
+        "on": true,
+        "plottable": false,
+        "transparencyPercent": 0,
+        "transparencyRaw": null,
+        "trueColor": null
+      },
+      "JOONED": {
+        "color": 7,
+        "frozen": false,
+        "linetype": "Continuous",
+        "lineweight": 25,
+        "locked": false,
+        "on": true,
+        "plottable": true,
+        "transparencyPercent": 0,
+        "transparencyRaw": null,
+        "trueColor": null
+      },
+      "SEINAD": {
+        "color": 6,
+        "frozen": false,
+        "linetype": "DASHED",
+        "lineweight": 50,
+        "locked": false,
+        "on": true,
+        "plottable": true,
+        "transparencyPercent": 0,
+        "transparencyRaw": null,
+        "trueColor": null
+      },
+      "TELJED": {
+        "color": 4,
+        "frozen": false,
+        "linetype": "DASHDOT",
+        "lineweight": 13,
+        "locked": false,
+        "on": true,
+        "plottable": true,
+        "transparencyPercent": 0,
+        "transparencyRaw": null,
+        "trueColor": null
+      },
+      "VIIRUTUS": {
+        "color": 9,
+        "frozen": false,
+        "linetype": "Continuous",
+        "lineweight": 13,
+        "locked": false,
+        "on": true,
+        "plottable": true,
+        "transparencyPercent": 20,
+        "transparencyRaw": 33554636,
+        "trueColor": 12632256
+      }
+    },
+    "linetypes": [
+      "ByBlock",
+      "ByLayer",
+      "Continuous",
+      "DASHDOT",
+      "DASHED"
+    ],
+    "passed": true,
+    "reader": "ezdxf",
+    "semanticEntities": {
+      "1000": {
+        "color": 30,
+        "end": [
+          5000,
+          -600
+        ],
+        "layer": "TELJED",
+        "linetype": "DASHED",
+        "lineweight": 70,
+        "start": [
+          -200,
+          -600
+        ],
+        "transparencyPercent": 40,
+        "trueColor": null,
+        "type": "LINE"
+      },
+      "1001": {
+        "color": 152,
+        "end": [
+          5000,
+          250
+        ],
+        "layer": "JOONED",
+        "linetype": "BYLAYER",
+        "lineweight": 35,
+        "start": [
+          0,
+          250
+        ],
+        "transparencyPercent": 14.901960784314,
+        "trueColor": 681180,
+        "type": "LINE"
+      },
+      "1002": {
+        "color": 256,
+        "end": [
+          5000,
+          500
+        ],
+        "layer": "JOONED",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "start": [
+          0,
+          500
+        ],
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "LINE"
+      },
+      "1003": {
+        "color": 256,
+        "end": [
+          5000,
+          750
+        ],
+        "layer": "TELJED",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "start": [
+          0,
+          750
+        ],
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "LINE"
+      },
+      "1004": {
+        "color": 256,
+        "end": [
+          5000,
+          1000
+        ],
+        "layer": "JOONED",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "start": [
+          0,
+          1000
+        ],
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "LINE"
+      },
+      "1005": {
+        "color": 256,
+        "end": [
+          5000,
+          1250
+        ],
+        "layer": "JOONED",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "start": [
+          0,
+          1250
+        ],
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "LINE"
+      },
+      "1006": {
+        "color": 256,
+        "end": [
+          5000,
+          1500
+        ],
+        "layer": "TELJED",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "start": [
+          0,
+          1500
+        ],
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "LINE"
+      },
+      "1007": {
+        "color": 256,
+        "end": [
+          5000,
+          1750
+        ],
+        "layer": "JOONED",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "start": [
+          0,
+          1750
+        ],
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "LINE"
+      },
+      "1008": {
+        "color": 256,
+        "end": [
+          5000,
+          2000
+        ],
+        "layer": "JOONED",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "start": [
+          0,
+          2000
+        ],
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "LINE"
+      },
+      "1009": {
+        "color": 256,
+        "end": [
+          5000,
+          2250
+        ],
+        "layer": "TELJED",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "start": [
+          0,
+          2250
+        ],
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "LINE"
+      },
+      "1100": {
+        "closed": true,
+        "color": 256,
+        "layer": "SEINAD",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "LWPOLYLINE",
+        "vertices": [
+          [
+            0,
+            3000,
+            0,
+            0,
+            0.414213562373
+          ],
+          [
+            300,
+            3300,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            3600,
+            0,
+            0,
+            0
+          ]
+        ]
+      },
+      "1101": {
+        "closed": true,
+        "color": 256,
+        "layer": "SEINAD",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "LWPOLYLINE",
+        "vertices": [
+          [
+            450,
+            3000,
+            0,
+            0,
+            0.414213562373
+          ],
+          [
+            750,
+            3300,
+            0,
+            0,
+            -0.414213562373
+          ],
+          [
+            450,
+            3600,
+            0,
+            0,
+            0
+          ]
+        ]
+      },
+      "1102": {
+        "closed": true,
+        "color": 256,
+        "layer": "SEINAD",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "LWPOLYLINE",
+        "vertices": [
+          [
+            900,
+            3000,
+            0,
+            0,
+            0
+          ],
+          [
+            1200,
+            3000,
+            0,
+            0,
+            0
+          ],
+          [
+            1200,
+            3300,
+            0,
+            0,
+            0
+          ],
+          [
+            900,
+            3300,
+            0,
+            0,
+            0
+          ]
+        ]
+      },
+      "1103": {
+        "closed": true,
+        "color": 256,
+        "layer": "SEINAD",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "LWPOLYLINE",
+        "vertices": [
+          [
+            1350,
+            3000,
+            0,
+            0,
+            0
+          ],
+          [
+            1650,
+            3000,
+            0,
+            0,
+            0
+          ],
+          [
+            1650,
+            3300,
+            0,
+            0,
+            0
+          ],
+          [
+            1350,
+            3300,
+            0,
+            0,
+            0
+          ]
+        ]
+      },
+      "1104": {
+        "closed": true,
+        "color": 256,
+        "layer": "SEINAD",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "LWPOLYLINE",
+        "vertices": [
+          [
+            1800,
+            3000,
+            0,
+            0,
+            0
+          ],
+          [
+            2100,
+            3000,
+            0,
+            0,
+            0
+          ],
+          [
+            2100,
+            3300,
+            0,
+            0,
+            0
+          ],
+          [
+            1800,
+            3300,
+            0,
+            0,
+            0
+          ]
+        ]
+      },
+      "1105": {
+        "closed": true,
+        "color": 256,
+        "layer": "SEINAD",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "LWPOLYLINE",
+        "vertices": [
+          [
+            2250,
+            3000,
+            0,
+            0,
+            0
+          ],
+          [
+            2550,
+            3000,
+            0,
+            0,
+            0
+          ],
+          [
+            2550,
+            3300,
+            0,
+            0,
+            0
+          ],
+          [
+            2250,
+            3300,
+            0,
+            0,
+            0
+          ]
+        ]
+      },
+      "1106": {
+        "closed": true,
+        "color": 256,
+        "layer": "SEINAD",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "LWPOLYLINE",
+        "vertices": [
+          [
+            2700,
+            3000,
+            0,
+            0,
+            0
+          ],
+          [
+            3000,
+            3000,
+            0,
+            0,
+            0
+          ],
+          [
+            3000,
+            3300,
+            0,
+            0,
+            0
+          ],
+          [
+            2700,
+            3300,
+            0,
+            0,
+            0
+          ]
+        ]
+      },
+      "1107": {
+        "closed": true,
+        "color": 256,
+        "layer": "SEINAD",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "LWPOLYLINE",
+        "vertices": [
+          [
+            3150,
+            3000,
+            0,
+            0,
+            0
+          ],
+          [
+            3450,
+            3000,
+            0,
+            0,
+            0
+          ],
+          [
+            3450,
+            3300,
+            0,
+            0,
+            0
+          ],
+          [
+            3150,
+            3300,
+            0,
+            0,
+            0
+          ]
+        ]
+      },
+      "1108": {
+        "closed": false,
+        "color": 256,
+        "layer": "SEINAD",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "LWPOLYLINE",
+        "vertices": [
+          [
+            3600,
+            3000,
+            0,
+            0,
+            0
+          ],
+          [
+            3900,
+            3000,
+            0,
+            0,
+            0
+          ],
+          [
+            3900,
+            3300,
+            0,
+            0,
+            0
+          ],
+          [
+            3600,
+            3300,
+            0,
+            0,
+            0
+          ]
+        ]
+      },
+      "1200": {
+        "color": 256,
+        "height": 180,
+        "insert": [
+          0,
+          3900
+        ],
+        "layer": "JOONED",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "rotation": 0,
+        "style": "Standard",
+        "text": "F109 TEXT 1",
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "TEXT"
+      },
+      "1201": {
+        "color": 256,
+        "height": 180,
+        "insert": [
+          500,
+          3900
+        ],
+        "layer": "JOONED",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "rotation": 0,
+        "style": "NORMAL",
+        "text": "F109 TEXT 2",
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "TEXT"
+      },
+      "1202": {
+        "color": 256,
+        "height": 180,
+        "insert": [
+          1000,
+          3900
+        ],
+        "layer": "JOONED",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "rotation": 0,
+        "style": "Standard",
+        "text": "F109 TEXT 3",
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "TEXT"
+      },
+      "1203": {
+        "color": 256,
+        "height": 180,
+        "insert": [
+          1500,
+          3900
+        ],
+        "layer": "JOONED",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "rotation": 0,
+        "style": "NORMAL",
+        "text": "F109 TEXT 4",
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "TEXT"
+      },
+      "1204": {
+        "color": 256,
+        "height": 180,
+        "insert": [
+          2000,
+          3900
+        ],
+        "layer": "JOONED",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "rotation": 0,
+        "style": "Standard",
+        "text": "F109 TEXT 5",
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "TEXT"
+      },
+      "1205": {
+        "color": 256,
+        "height": 180,
+        "insert": [
+          2500,
+          3900
+        ],
+        "layer": "JOONED",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "rotation": 0,
+        "style": "NORMAL",
+        "text": "F109 TEXT 6",
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "TEXT"
+      },
+      "1206": {
+        "color": 256,
+        "height": 180,
+        "insert": [
+          3000,
+          3900
+        ],
+        "layer": "JOONED",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "rotation": 0,
+        "style": "Standard",
+        "text": "F109 TEXT 7",
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "TEXT"
+      },
+      "1207": {
+        "color": 256,
+        "height": 180,
+        "insert": [
+          3500,
+          3900
+        ],
+        "layer": "JOONED",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "rotation": 0,
+        "style": "NORMAL",
+        "text": "F109 TEXT 8",
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "TEXT"
+      },
+      "1208": {
+        "color": 256,
+        "height": 180,
+        "insert": [
+          4000,
+          3900
+        ],
+        "layer": "JOONED",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "rotation": 0,
+        "style": "Standard",
+        "text": "F109 TEXT 9",
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "TEXT"
+      },
+      "1209": {
+        "color": 256,
+        "height": 180,
+        "insert": [
+          4500,
+          4400
+        ],
+        "layer": "JOONED",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "rotation": 0,
+        "style": "NORMAL",
+        "text": "MÕÕT ŠŽ€ 10",
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "TEXT"
+      },
+      "1300": {
+        "associative": false,
+        "color": 256,
+        "layer": "VIIRUTUS",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "loops": [
+          {
+            "closed": true,
+            "flags": 3,
+            "vertices": [
+              [
+                5200,
+                3000,
+                0
+              ],
+              [
+                5380,
+                3000,
+                0
+              ],
+              [
+                5380,
+                3240,
+                0
+              ],
+              [
+                5200,
+                3240,
+                0
+              ]
+            ]
+          }
+        ],
+        "pattern": "SOLID",
+        "solid": true,
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "HATCH"
+      },
+      "1301": {
+        "associative": false,
+        "color": 256,
+        "layer": "VIIRUTUS",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "loops": [
+          {
+            "closed": true,
+            "flags": 3,
+            "vertices": [
+              [
+                5450,
+                3000,
+                0
+              ],
+              [
+                5630,
+                3000,
+                0
+              ],
+              [
+                5630,
+                3240,
+                0
+              ],
+              [
+                5450,
+                3240,
+                0
+              ]
+            ]
+          }
+        ],
+        "pattern": "F109_1",
+        "solid": false,
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "HATCH"
+      },
+      "1302": {
+        "associative": false,
+        "color": 256,
+        "layer": "VIIRUTUS",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "loops": [
+          {
+            "closed": true,
+            "flags": 3,
+            "vertices": [
+              [
+                5700,
+                3000,
+                0
+              ],
+              [
+                5880,
+                3000,
+                0
+              ],
+              [
+                5880,
+                3240,
+                0
+              ],
+              [
+                5700,
+                3240,
+                0
+              ]
+            ]
+          }
+        ],
+        "pattern": "F109_2",
+        "solid": false,
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "HATCH"
+      },
+      "1303": {
+        "associative": false,
+        "color": 256,
+        "layer": "VIIRUTUS",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "loops": [
+          {
+            "closed": true,
+            "flags": 3,
+            "vertices": [
+              [
+                5950,
+                3000,
+                0
+              ],
+              [
+                6130,
+                3000,
+                0
+              ],
+              [
+                6130,
+                3240,
+                0
+              ],
+              [
+                5950,
+                3240,
+                0
+              ]
+            ]
+          }
+        ],
+        "pattern": "F109_3",
+        "solid": false,
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "HATCH"
+      },
+      "1304": {
+        "associative": false,
+        "color": 256,
+        "layer": "VIIRUTUS",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "loops": [
+          {
+            "closed": true,
+            "flags": 3,
+            "vertices": [
+              [
+                6200,
+                3000,
+                0
+              ],
+              [
+                6380,
+                3000,
+                0
+              ],
+              [
+                6380,
+                3240,
+                0
+              ],
+              [
+                6200,
+                3240,
+                0
+              ]
+            ]
+          }
+        ],
+        "pattern": "F109_4",
+        "solid": false,
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "HATCH"
+      },
+      "1305": {
+        "associative": false,
+        "color": 256,
+        "layer": "VIIRUTUS",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "loops": [
+          {
+            "closed": true,
+            "flags": 3,
+            "vertices": [
+              [
+                6450,
+                3000,
+                0
+              ],
+              [
+                6630,
+                3000,
+                0
+              ],
+              [
+                6630,
+                3240,
+                0
+              ],
+              [
+                6450,
+                3240,
+                0
+              ]
+            ]
+          }
+        ],
+        "pattern": "F109_5",
+        "solid": false,
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "HATCH"
+      },
+      "1306": {
+        "associative": false,
+        "color": 256,
+        "layer": "VIIRUTUS",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "loops": [
+          {
+            "closed": true,
+            "flags": 3,
+            "vertices": [
+              [
+                6700,
+                3000,
+                0
+              ],
+              [
+                6880,
+                3000,
+                0
+              ],
+              [
+                6880,
+                3240,
+                0
+              ],
+              [
+                6700,
+                3240,
+                0
+              ]
+            ]
+          }
+        ],
+        "pattern": "F109_6",
+        "solid": false,
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "HATCH"
+      },
+      "1400": {
+        "center": [
+          7500,
+          0
+        ],
+        "color": 256,
+        "layer": "JOONED",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "radius": 366.6667,
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "CIRCLE"
+      },
+      "1500": {
+        "color": 256,
+        "definition": [
+          0,
+          4400
+        ],
+        "first": [
+          0,
+          4000
+        ],
+        "layer": "JOONED",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "measurement": 5000,
+        "second": [
+          5000,
+          4000
+        ],
+        "style": "Standard",
+        "text": "<>",
+        "textPosition": [
+          2500,
+          4400
+        ],
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "DIMENSION"
+      },
+      "100A": {
+        "color": 256,
+        "end": [
+          5000,
+          2500
+        ],
+        "layer": "JOONED",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "start": [
+          0,
+          2500
+        ],
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "LINE"
+      },
+      "100B": {
+        "color": 256,
+        "end": [
+          5000,
+          2750
+        ],
+        "layer": "JOONED",
+        "linetype": "BYLAYER",
+        "lineweight": -1,
+        "start": [
+          0,
+          2750
+        ],
+        "transparencyPercent": 0,
+        "trueColor": null,
+        "type": "LINE"
+      }
+    },
+    "sha256": "28de58b3aa9e7a2c44bcf4d17b297b1cc64b08fbbbea448a33720b0d14c601ac",
+    "source": "F-109-browser.dxf",
+    "styles": [
+      "NORMAL",
+      "Standard"
+    ],
+    "totalEntities": 40,
+    "units": 4
+  },
+  "semanticSha256ByHandle": {
+    "1000": "7e82e8795032770765a0afbfcb47f2ca5b96f1f92b8831c99cd9fad9b097d2ed",
+    "1001": "89265a1d6caf32aadba4035cdac61f301d28cadab7bdd2633cb560f81c53888c",
+    "1002": "22ab66aa06422f784859c3dd5507363e6bb94a377156643351cc4af51f94c311",
+    "1003": "61f5b72e91f525dbb09704f40025f504893549793a4c90044a352884297442cd",
+    "1004": "68970de3d2c960134305416ac72f2c188b3f354ffefa2e4e1404f59c9d931c47",
+    "1005": "c786cc00fcd7db134a19ebffc496fb8fef7e62145bc42388f4011bc4131ca460",
+    "1006": "1565d77d2cd5c49f701fb0f8e7f2d64c45bb25ed00ba2b157dd7512b3155f02f",
+    "1007": "2912d97a228b83697ee0ba3575f7fd3ba4b7b5c9d697a616656e7d2e5a3dbcdf",
+    "1008": "c965b63dea552a3871a3a1c336655f816932d4759dac171f788255aa72c0538c",
+    "1009": "5856bb82adf7302c276bded792eb513fffd19ee401f64d0540d11af1c6e51c5e",
+    "1100": "abbf4f27008a79c2d5c58066c49fae754a325dff64d6552dd4cb62c8c843234f",
+    "1101": "65439de58a07f69c8c1243e6a7766e1a13e5b4dab9f34e9fefc3544220bcbae4",
+    "1102": "85a7dfb6e6bf4b2ea442802523e5125ca7683c0c70df6a0e76576124b5b4fff2",
+    "1103": "c83b219af601eb6f3ffc7fb7edd9fa710b83bed1d8096fc536d9e44324470493",
+    "1104": "43edcf462ac01226d2d2a460286812946ecb928f514358cead122b3dce3d00f8",
+    "1105": "8669e7faf7a1755684325e59c75a159e37d91a46821d9895310b63a6a412e7a4",
+    "1106": "4c203abf951740c050425d30283d5c4e964309a2e7ea6ee5d65721eba2991509",
+    "1107": "3f6ca880ef0bace6643a4e013566952f913b1de0156c35e4345a6ba4556ef17d",
+    "1108": "9e915f0a2b8efebcf17f45c99b50d96059266b688b0b3450076160ded542aec9",
+    "1200": "fea29fc914d9d403753717694679a817c21450fd4326b5e65d280947aa39a972",
+    "1201": "c608c80e6d4b429c15e52b9b247f3bc0967d721c50ed7af3b194dad384783c19",
+    "1202": "e31252523eb1c10f5f2654b9f52c7797e25056e622ab5a5df31cdd53df0661e0",
+    "1203": "bcc53d845b47ee7a96457b870c1dc363e87aa13378988bc13da48a2e5e3ccd97",
+    "1204": "f89639816ae31de0f5d9daa0e8ba0d3473fa8d1949fc3f212573c430b7bfe306",
+    "1205": "0e2c30981471aaaec843d1cc25db142e12f5ea5cf08fb3fd405a401df752d49b",
+    "1206": "f3d8eb2fefee7079b041bd8d08defefda087831f00efa78f2b033b02f298cd9e",
+    "1207": "17c2be5864756a118932f689c668da399ac1dddbd99c8014d49274e048513f11",
+    "1208": "1e4336006133c2d67f3845d2e086a943e3d29f9d916ad001910d97a4f783b6bd",
+    "1209": "491a977f321c4e14c2fe3c780dafa6dc38a9109b2974345e76d1f4abb142f86a",
+    "1300": "f7b9f911e5d478d04e9f66ae40bab10ab27c832af396189356199370e487520d",
+    "1301": "2e9aed1a209352e2f38f8f8b662a9abcbd0630aa7e2c2f60d3eec2d616ad71fd",
+    "1302": "d774e3fb5102bcc263dd3be6b80d8cd9bd065fa4e2415fc49eabc3efeb9f2b4a",
+    "1303": "0db3459bf028a473fffed032d397ef7bdd69a0918a4560567d9366cfdde2e188",
+    "1304": "5baabeab87550e2be8371cacd12e292b3b86836fb27d6756e4dcd87ad7883dff",
+    "1305": "3ee5b75ac999415e8287717c99007165c656d8cf5e813253cff2edac28d2d37f",
+    "1306": "5a3440f6795f4c90f66c5a0363f5dcf7b6f9ee08c1b6aa4da6d35b1bf5f27ef5",
+    "1400": "f49083bc71e0167d14fd79052f237b8393d7c52f233080adaaee22568e7fc63f",
+    "1500": "a76a28afe53185c5cce21a06b0925482d6625c6e2643cd1da433aa18bdcc27e9",
+    "100A": "3ebf4a732c8353994bfa58968946175fddfdfc8c61d7e332b9636b44989679b4",
+    "100B": "8c845ab09e3ad721db851faef96d0dab30c2a9f61a2c11706b1bb50932cbcd0a"
+  },
+  "sourceSha256": {
+    "exporter": "d771dd0502c82cc64c881c78833baac951507569f07b1537d3b6fa161dc174c4",
+    "plotStyle": "8666d356c63f6737618513ecb030641cf71c1ccd0fd38b410f7cb10a7e37d17f",
+    "aciPalette": "a36541fb69f48c92f8e35ce4dfbd961ff870b18241e4a05712a08484bc03553e",
+    "exportTests": "fcf4c1064784be2ed12848a1ff4993261867f621176f69fe219216e0d6569cda",
+    "mutationTests": "71a1e2f9b4082596e981b1ff99fc0ef183ab84ab43eb791cf554e82474ac448e",
+    "fixture": "6125e54db81b099e7c4e10c1ee66b720792994de896a778a3d8a65d8676bbc60",
+    "expected": "f13b358680c9aafe68b2ace52570a7d9a34d408bd93110d9b0a91c960f0a2852",
+    "independentReader": "85c183ac4a2978f87a139efbfb53bb7bae738ec64914aefc0bf986efb675fa5c",
+    "readbackRunner": "d57f3a0b431f657544e29db8cdb19aee8530c6c25485bee2961a5a0514938172",
+    "crossChecker": "c9720f6e99a80b5c8ea4f2f13a09d17bfd13c630c32cfb4bf91be8c2e236a617",
+    "semanticNormalizer": "c5340b6853042aaebbe7fc8eec63271a62ce12bc0368598341b2518602d364e5",
+    "packageLock": "9756bf28708c3933c83c0ace8e9dbd9fe4cad9b9d6cec58670758c545f02e584",
+    "scope": "02eed9548e100d3c8a83447a14f0f2f9f440c0ed057b47617749713f76e7d8ae"
+  },
+  "browserExactByteMatch": true,
+  "passed": true
+}

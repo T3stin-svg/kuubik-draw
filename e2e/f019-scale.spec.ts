@@ -164,7 +164,7 @@ test("F-019 SCALE postselection, numeric Reference, point new length and mixed l
   const mixed = new DxfParser().parseSync((await downloadBytes(await mixedDownload, "F-019-browser-locked.dxf")).toString("utf8"));
   expect(mixed?.entities.map((entity) => ({ handle: entity.handle, layer: entity.layer, vertices: entity.vertices }))).toEqual([
     { handle: "10", layer: "0", vertices: [{ x: 20, y: 20, z: 0 }, { x: 360, y: 180, z: 0 }] },
-    { handle: "12", layer: "layer-1", vertices: [{ x: 10, y: 20, z: 0 }, { x: 180, y: 90, z: 0 }] },
+    { handle: "12", layer: "Layer 1", vertices: [{ x: 10, y: 20, z: 0 }, { x: 180, y: 90, z: 0 }] },
   ]);
   expect(consoleErrors).toEqual([]);
 });

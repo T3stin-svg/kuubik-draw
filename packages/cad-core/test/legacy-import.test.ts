@@ -64,4 +64,22 @@ describe("read-only legacy Draw import", () => {
       extents: { minX: 0.25, minY: 1.5, maxX: 50.75, maxY: 1.5 },
     });
   });
+
+  it("derives authoritative RGB for orphan and mismatched legacy ACI on entities and layers", () => {
+    const legacy = { floors: [
+      { k: "drawLayers", layers: [
+        { id: "0", name: "0", aciIndex: 4 },
+        { id: "paired", name: "Paired", color: "#00ff00", aciIndex: 1 },
+      ] },
+      { k: "draw", ents: [
+        { id: "orphan-entity", layerId: "0", aciIndex: 10, g: { t: "line", a: { x: 0, y: 0 }, b: { x: 1, y: 0 } } },
+        { id: "paired-entity", layerId: "paired", color: "#00ff00", aciIndex: 1, g: { t: "line", a: { x: 0, y: 1 }, b: { x: 1, y: 1 } } },
+      ] },
+    ] };
+    const { document } = importLegacyDrawProject(legacy, "legacy-aci", "2026-08-29T00:00:00Z");
+    expect(document.layers.find((layer) => layer.id === "0")?.appearance).toMatchObject({ color: "#00ffff", colorMethod: "aci", aciIndex: 4 });
+    expect(document.layers.find((layer) => layer.id === "paired")?.appearance).toMatchObject({ color: "#ff0000", colorMethod: "aci", aciIndex: 1 });
+    expect(document.entities.find((entity) => entity.handle === "orphan-entity")?.appearance).toMatchObject({ color: "#ff0000", colorMethod: "aci", aciIndex: 10 });
+    expect(document.entities.find((entity) => entity.handle === "paired-entity")?.appearance).toMatchObject({ color: "#ff0000", colorMethod: "aci", aciIndex: 1 });
+  });
 });

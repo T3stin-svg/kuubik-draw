@@ -4,7 +4,7 @@
   "benchmark": "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
   "engine": "Autodesk AutoCAD 2024 desktop COM/native viewports, VPCLIP, DWG To PDF.pc3 and DWG reopen",
   "engineVersion": "24.3s (LMS Tech)",
-  "automationProcessId": 23604,
+  "automationProcessId": 26932,
   "automationProcessOwned": true,
   "media": "ISO_expand_A3_(297.00_x_420.00_MM)",
   "handles": {
@@ -163,18 +163,18 @@
   },
   "dwg": {
     "bytes": 33555,
-    "sha256": "f53301faebd1a5b10646c585c0074f90ddf867e3cd7e7abd258c74d32c4309e5",
+    "sha256": "a81f36e22b93ea3dbb9af0cb568fc5e00508b9a755782f4a89447db95e62de91",
     "saveAsType": 64,
     "retained": false
   },
   "pdf": {
     "bytes": 89958,
-    "sha256": "50e3b82ac49b5746a0d3015ef5b9284a3f95efaaad0ada723d0a7ee9b34ff968",
+    "sha256": "76c2fa87b719c0f40382b9a70870b2ac044572e814736bac941fa5946df29183",
     "retained": false
   },
   "reopenPdf": {
     "bytes": 89958,
-    "sha256": "ae49b247c02f66c7b3f4ac74a96a0346603f19bbd0d8082b547ccd1694c19927",
+    "sha256": "b29c1592a84d9caaff97bb20973a792c5f75a0a2c55c1d443ee1b0d98dfcbc39",
     "retained": false
   },
   "status": "PASS",
@@ -184,7 +184,13 @@
   },
   "automationProcessTerminated": true,
   "processSetRestored": true,
-  "preExistingProcessIds": [],
+  "preExistingProcessIds": [
+    11276,
+    22952,
+    23180,
+    25848,
+    28152
+  ],
   "independentPdfReadback": {
     "readers": {
       "pypdf": "6.10.0",
@@ -193,7 +199,7 @@
     "documents": {
       "native": {
         "label": "native",
-        "path": "KuubikDraw-F104-a5b12dba-7fb9-47ef-9d25-5e2d6aaf4042.pdf",
+        "path": "KuubikDraw-F104-7108e036-6628-4950-926d-65c8db2e24d4.pdf",
         "pypdf": {
           "pages": 1,
           "mediaBox": [
@@ -291,7 +297,7 @@
       },
       "reopen": {
         "label": "reopen",
-        "path": "KuubikDraw-F104-a5b12dba-7fb9-47ef-9d25-5e2d6aaf4042.reopen.pdf",
+        "path": "KuubikDraw-F104-7108e036-6628-4950-926d-65c8db2e24d4.reopen.pdf",
         "pypdf": {
           "pages": 1,
           "mediaBox": [
@@ -455,9 +461,9 @@
     }
   },
   "scriptSha256": "62df9e6699ee6d10244d5790ada188a0c401c7744d0dc2e96bae89c9652d36fc",
-  "matrixScriptSha256": "81e65af9d65da9b2ed619274e4207cc404be8fb6ed62a7a586b473186c22403c",
+  "matrixScriptSha256": "22f673938c607ab830aa303849ef84cfbf72331f8dca1f78d9acbe786ffb2c77",
   "runnerScriptSha256": "db7915b0a295c7d4a068c582f93a9c855413d360b23ca8ebc22235392012f3c2",
   "pdfReaderSha256": "d29a89cb4a35425198436619356b3497c1a5d107adee669414ae258ec6382025",
   "pixelReaderSha256": "952e09b669d31675204170186a821e85889f748c640f6d439ffa04d71c3314dc",
-  "observedAt": "2026-08-28T20:27:38.753Z"
+  "observedAt": "2026-08-29T03:48:26.835Z"
 }

@@ -22,9 +22,9 @@ const result = {
 };
 if (
   result.dxf.units !== 4 || JSON.stringify(entities) !== JSON.stringify([
-    { type: "LINE", handle: "10", layer: "0", vertices: [{ x: 0, y: 0 }, { x: 1000, y: 0 }] },
-    { type: "LINE", handle: "11", layer: "0", vertices: [{ x: 0, y: 100 }, { x: 1000, y: 100 }] },
-    { type: "LINE", handle: "12", layer: "0", vertices: [{ x: 0, y: 200 }, { x: 1000, y: 200 }] },
+    { type: "LINE", handle: "10", layer: "F021_SOURCE", vertices: [{ x: 0, y: 0 }, { x: 1000, y: 0 }] },
+    { type: "LINE", handle: "11", layer: "F021_SOURCE", vertices: [{ x: 0, y: 100 }, { x: 1000, y: 100 }] },
+    { type: "LINE", handle: "12", layer: "F021_SOURCE", vertices: [{ x: 0, y: 200 }, { x: 1000, y: 200 }] },
   ]) || distance.rowId !== "F-021" || distance.status !== "PASS" || distance.operation?.commandId !== "OFFSET" ||
   JSON.stringify(distance.operation?.resultHandles) !== JSON.stringify(["11", "12"]) || distance.restored?.revision !== 2 || distance.restored?.entities?.length !== 1 ||
   families.rowId !== "F-021" || families.status !== "PASS" || families.operation?.commandId !== "OFFSET" ||

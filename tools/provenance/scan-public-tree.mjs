@@ -101,6 +101,9 @@ const syntheticCadAllowlist = new Set([
   "evidence/artifacts/F-106-independent-window.pdf",
   "evidence/artifacts/F-106-independent-display.pdf",
   "evidence/artifacts/F-107-independent.kdraw",
+  "evidence/artifacts/F-109-browser.dxf",
+  "evidence/artifacts/F-109-production.dxf",
+  "tools/oracles/fixtures/librecad-line-circle.dxf",
 ]);
 const textExtensions = new Set([".ts", ".tsx", ".js", ".mjs", ".json", ".md", ".yml", ".yaml", ".html", ".css", ".txt"]);
 const secretPatterns = [

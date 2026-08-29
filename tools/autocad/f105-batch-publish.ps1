@@ -26,6 +26,21 @@ function Invoke-ComRetry {
   } while ($true)
 }
 
+function Invoke-NonEmptyCom {
+  param([Parameter(Mandatory = $true)][scriptblock]$Action, [string]$Label = 'COM value', [int]$TimeoutSeconds = 25)
+  $deadline = [DateTime]::UtcNow.AddSeconds($TimeoutSeconds)
+  do {
+    try {
+      $value = [string](& $Action)
+      if (-not [string]::IsNullOrWhiteSpace($value)) { return $value }
+    } catch {
+      if ([DateTime]::UtcNow -ge $deadline) { throw }
+    }
+    if ([DateTime]::UtcNow -ge $deadline) { throw "$Label remained empty for $TimeoutSeconds seconds." }
+    Start-Sleep -Milliseconds 150
+  } while ($true)
+}
+
 function Get-Sha256 {
   param([Parameter(Mandatory = $true)][string]$Path)
   $stream = [IO.File]::OpenRead($Path)
@@ -62,10 +77,12 @@ function Get-LayoutSnapshot {
   $width = if ($rotation -eq 1 -or $rotation -eq 3) { $rawHeight } else { $rawWidth }
   $height = if ($rotation -eq 1 -or $rotation -eq 3) { $rawWidth } else { $rawHeight }
   return [ordered]@{
-    name = [string](Invoke-ComRetry { $Layout.Name }); tabOrder = [int](Invoke-ComRetry { $Layout.TabOrder })
+    name = Invoke-NonEmptyCom { $Layout.Name } 'Layout name'; tabOrder = [int](Invoke-ComRetry { $Layout.TabOrder })
     configName = [string](Invoke-ComRetry { $Layout.ConfigName }); canonicalMediaName = [string](Invoke-ComRetry { $Layout.CanonicalMediaName })
     paper = [ordered]@{ widthMm = $width; heightMm = $height; rotation = $rotation }
-    paperText = @($Layout.Block | Where-Object { [string]$_.ObjectName -match 'AcDb(Text|MText)' } | ForEach-Object { [string]$_.TextString })
+    paperText = @(Invoke-ComRetry {
+      @($Layout.Block | Where-Object { [string]$_.ObjectName -match 'AcDb(Text|MText)' } | ForEach-Object { [string]$_.TextString })
+    } -TimeoutSeconds 30)
   }
 }
 

@@ -19,7 +19,7 @@ describe("synthetic DXF gate", () => {
     });
     const readback = readDxfSummary(exported.text);
     expect(readback).toMatchObject({
-      acadVersion: "AC1015",
+      acadVersion: "AC1018",
       entityTypes: { LINE: 1, CIRCLE: 1, LWPOLYLINE: 1 },
       handles: ["10", "11", "12"],
       extents: { minX: 0.125, minY: -2.5, maxX: 100.75, maxY: 50.5 },

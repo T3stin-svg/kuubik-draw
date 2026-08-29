@@ -3,6 +3,7 @@ name: draw-ci
 on:
   push:
   pull_request:
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -22,8 +23,12 @@ jobs:
       - run: npm run check
 
   required-oracles:
-    if: ${{ vars.REQUIRE_CAD_ORACLES == 'true' }}
+    if: ${{ vars.REQUIRE_CAD_ORACLES == 'true' && (github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main')) }}
     runs-on: [self-hosted, cad-oracles]
+    environment: cad-oracles
+    env:
+      KUUBIK_ORACLE_NETWORK_ATTESTATION_PATH: ${{ vars.KUUBIK_ORACLE_NETWORK_ATTESTATION_PATH }}
+      KUUBIK_ORACLE_NETWORK_ATTESTATION_KEY: ${{ secrets.KUUBIK_ORACLE_NETWORK_ATTESTATION_KEY }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
@@ -34,8 +39,9 @@ jobs:
       - run: npm run test:oracles -- --require
 
   autocad-2024-certification:
-    if: ${{ vars.REQUIRE_AUTOCAD_CERTIFICATION == 'true' }}
+    if: ${{ vars.REQUIRE_AUTOCAD_CERTIFICATION == 'true' && (github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main')) }}
     runs-on: [self-hosted, windows, autocad-2024]
+    environment: autocad-2024-certification
     timeout-minutes: 15
     env:
       PYTHON_CMD: python
@@ -50,7 +56,7 @@ jobs:
       - run: npx playwright install chromium
       - shell: pwsh
         run: |
-          python -m pip install --disable-pip-version-check pypdf==6.10.0 pdfplumber==0.11.9
+          python -m pip install --disable-pip-version-check ezdxf==1.4.3 pypdf==6.10.0 pdfplumber==0.11.9
           if (-not (Get-Command pdftoppm -ErrorAction SilentlyContinue)) { throw 'pdftoppm is required on the licensed AutoCAD runner.' }
       - run: npm run parity:f102:browser-artifact
       - run: npm run parity:f102:readback
@@ -76,3 +82,7 @@ jobs:
       - run: npm run parity:f107:readback
       - run: npm run parity:f107:autocad
       - run: npm run parity:f107:cross-evidence
+      - run: npm run parity:f109:browser-artifact
+      - run: npm run parity:f109:readback
+      - run: npm run parity:f109:autocad
+      - run: npm run parity:f109:cross-evidence

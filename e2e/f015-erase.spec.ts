@@ -106,7 +106,7 @@ test("F-015 mixed selection preserves a locked-layer object through commit and r
   expect(parsed?.entities[0]).toMatchObject({
     type: "LWPOLYLINE",
     handle: "12",
-    layer: "layer-1",
+    layer: "Layer 1",
     shape: true,
     vertices: [
       { x: 125.25, y: -200.5 },

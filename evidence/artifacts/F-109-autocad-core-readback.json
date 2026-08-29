@@ -1,0 +1,344 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-109",
+  "benchmark": "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
+  "engine": "Autodesk AutoCAD Core Console 2024",
+  "engineVersion": "24.3",
+  "sourceSha256": "28de58b3aa9e7a2c44bcf4d17b297b1cc64b08fbbbea448a33720b0d14c601ac",
+  "scriptSha256": "7d75185bc666b3214dae4751915b409d0a10c0b6621b85608de55be8935f7623",
+  "implementationSha256": {
+    "autocadScript": "7d75185bc666b3214dae4751915b409d0a10c0b6621b85608de55be8935f7623",
+    "autocadCore": "7940e529cd8ab5671cdcdc2fafb9294e8b69e3e984a927fd67c1d802cdd91e9b",
+    "expected": "f13b358680c9aafe68b2ace52570a7d9a34d408bd93110d9b0a91c960f0a2852"
+  },
+  "units": 4,
+  "totalEntities": 40,
+  "entities": {
+    "CIRCLE": 1,
+    "DIMENSION": 1,
+    "HATCH": 7,
+    "LINE": 12,
+    "LWPOLYLINE": 9,
+    "TEXT": 10
+  },
+  "bulgedPolylines": 2,
+  "layers": {
+    "JOONED": {
+      "color": 7,
+      "lineweight": 25,
+      "linetype": "CONTINUOUS",
+      "trueColor": null,
+      "transparencyRaw": null
+    },
+    "TELJED": {
+      "color": 4,
+      "lineweight": 13,
+      "linetype": "DASHDOT",
+      "trueColor": null,
+      "transparencyRaw": null
+    },
+    "SEINAD": {
+      "color": 6,
+      "lineweight": 50,
+      "linetype": "DASHED",
+      "trueColor": null,
+      "transparencyRaw": null
+    },
+    "VIIRUTUS": {
+      "color": 9,
+      "lineweight": 13,
+      "linetype": "CONTINUOUS",
+      "trueColor": 12632256,
+      "transparencyRaw": 33554636
+    }
+  },
+  "semanticRecords": {
+    "1000": {
+      "type": "LINE",
+      "layer": "TELJED",
+      "color": 30,
+      "trueColor": null,
+      "linetype": "DASHED",
+      "lineweight": 70,
+      "transparencyRaw": 33554585,
+      "start": [
+        -200,
+        -600
+      ],
+      "end": [
+        5000,
+        -600
+      ]
+    },
+    "1001": {
+      "type": "LINE",
+      "layer": "JOONED",
+      "color": 152,
+      "trueColor": 681180,
+      "linetype": "BYLAYER",
+      "lineweight": 35,
+      "transparencyRaw": 33554649,
+      "start": [
+        0,
+        250
+      ],
+      "end": [
+        5000,
+        250
+      ]
+    },
+    "1209": {
+      "text": "MÕÕT ŠŽ€ 10"
+    }
+  },
+  "hatchTopology": {
+    "1300": {
+      "loopCount": 1,
+      "loops": [
+        {
+          "flags": 3,
+          "closed": true,
+          "hasBulge": false,
+          "vertexCount": 4,
+          "vertices": [
+            [
+              5200,
+              3000,
+              0
+            ],
+            [
+              5380,
+              3000,
+              0
+            ],
+            [
+              5380,
+              3240,
+              0
+            ],
+            [
+              5200,
+              3240,
+              0
+            ]
+          ]
+        }
+      ]
+    },
+    "1301": {
+      "loopCount": 1,
+      "loops": [
+        {
+          "flags": 3,
+          "closed": true,
+          "hasBulge": false,
+          "vertexCount": 4,
+          "vertices": [
+            [
+              5450,
+              3000,
+              0
+            ],
+            [
+              5630,
+              3000,
+              0
+            ],
+            [
+              5630,
+              3240,
+              0
+            ],
+            [
+              5450,
+              3240,
+              0
+            ]
+          ]
+        }
+      ]
+    },
+    "1302": {
+      "loopCount": 1,
+      "loops": [
+        {
+          "flags": 3,
+          "closed": true,
+          "hasBulge": false,
+          "vertexCount": 4,
+          "vertices": [
+            [
+              5700,
+              3000,
+              0
+            ],
+            [
+              5880,
+              3000,
+              0
+            ],
+            [
+              5880,
+              3240,
+              0
+            ],
+            [
+              5700,
+              3240,
+              0
+            ]
+          ]
+        }
+      ]
+    },
+    "1303": {
+      "loopCount": 1,
+      "loops": [
+        {
+          "flags": 3,
+          "closed": true,
+          "hasBulge": false,
+          "vertexCount": 4,
+          "vertices": [
+            [
+              5950,
+              3000,
+              0
+            ],
+            [
+              6130,
+              3000,
+              0
+            ],
+            [
+              6130,
+              3240,
+              0
+            ],
+            [
+              5950,
+              3240,
+              0
+            ]
+          ]
+        }
+      ]
+    },
+    "1304": {
+      "loopCount": 1,
+      "loops": [
+        {
+          "flags": 3,
+          "closed": true,
+          "hasBulge": false,
+          "vertexCount": 4,
+          "vertices": [
+            [
+              6200,
+              3000,
+              0
+            ],
+            [
+              6380,
+              3000,
+              0
+            ],
+            [
+              6380,
+              3240,
+              0
+            ],
+            [
+              6200,
+              3240,
+              0
+            ]
+          ]
+        }
+      ]
+    },
+    "1305": {
+      "loopCount": 1,
+      "loops": [
+        {
+          "flags": 3,
+          "closed": true,
+          "hasBulge": false,
+          "vertexCount": 4,
+          "vertices": [
+            [
+              6450,
+              3000,
+              0
+            ],
+            [
+              6630,
+              3000,
+              0
+            ],
+            [
+              6630,
+              3240,
+              0
+            ],
+            [
+              6450,
+              3240,
+              0
+            ]
+          ]
+        }
+      ]
+    },
+    "1306": {
+      "loopCount": 1,
+      "loops": [
+        {
+          "flags": 3,
+          "closed": true,
+          "hasBulge": false,
+          "vertexCount": 4,
+          "vertices": [
+            [
+              6700,
+              3000,
+              0
+            ],
+            [
+              6880,
+              3000,
+              0
+            ],
+            [
+              6880,
+              3240,
+              0
+            ],
+            [
+              6700,
+              3240,
+              0
+            ]
+          ]
+        }
+      ]
+    }
+  },
+  "dimensionTextStyleHandle": "401",
+  "styles": [
+    "NORMAL",
+    "STANDARD"
+  ],
+  "extents": {
+    "min": [
+      -200,
+      -600
+    ],
+    "max": [
+      7866.6667,
+      4627.6398
+    ]
+  },
+  "observedAt": "2026-08-29T04:25:19.303Z",
+  "status": "PASS"
+}

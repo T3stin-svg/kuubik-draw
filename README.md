@@ -8,7 +8,7 @@ käitumispariteeti, mitte kogu AutoCADi toodet.
 
 - vana Drawi auditi snapshot: **63,9% raw / 68,3% weighted / 60,7% visual**;
 - vana Drawi AutoCADi live-tõendiga read: **22/133**;
-- selle uue eraldatud rakenduse kohalik sertifikaat: **19/133 · 14,3% raw / 17,0% weighted**;
+- selle uue eraldatud rakenduse kohalik sertifikaat: **20/133 · 15,0% raw / 17,9% weighted**;
 - native DWG/DWT/XREF ja PC3/CTB/STB pariteet on veel blokeeritud.
 
 Need arvud on vana Drawi auditi muutmatu snapshot. Uus rakendus ei päri skoori
@@ -87,6 +87,12 @@ semantiliselt sama setup'i. Chromium tõendab Undo/Redo, IndexedDB ja KDRAW1
 taastamise. AutoCAD 2024 live-värav salvestab native DWT, loob sellest värske
 joonise ning loeb tagasi INSUNITS-i, PlotOrigin'i, marginaalid, mõõtkava ja
 named PlotConfiguration'i ainult PID-ga tõendatud omatud protsessis.
+F-109 `DXF export` väljastab production-tee kaudu deterministliku millimeetri-DXF-i
+40 objektiga, säilitades kihid, ACI/TrueColori, lineweight'id, linetype'id,
+tekstistiilid, bulge'id, viirutused ja native aligned-dimension'i. Range `ezdxf`,
+AutoCAD 2024 Core Console ning eraldi omatud desktop AutoCAD loevad sama faili
+tagasi. AutoCADi live AcCmColor-värav kinnitab kõik 255 ACI värvi täpse SHA-ga;
+runneri, maatriksi ja tootmislähte SHA muutus muudab tõendi automaatselt aegunuks.
 
 ## Piirid
 

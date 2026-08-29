@@ -45,7 +45,7 @@ if (
   ]) ||
   result.erasedLocked.units !== 4 || JSON.stringify(result.erasedLocked.entities) !== JSON.stringify([
     { type: "LINE", handle: "10", layer: "0", vertices: [{ x: 190, y: 10 }, { x: 20, y: 90 }] },
-    { type: "LINE", handle: "12", layer: "layer-1", vertices: [{ x: 10, y: 20 }, { x: 180, y: 90 }] },
+    { type: "LINE", handle: "12", layer: "Layer 1", vertices: [{ x: 10, y: 20 }, { x: 180, y: 90 }] },
   ]) ||
   standardMatrix.schemaVersion !== 1 || standardMatrix.rowId !== "F-020" || standardMatrix.status !== "PASS" ||
   standardMatrix.mirrored?.revision !== 1 ||

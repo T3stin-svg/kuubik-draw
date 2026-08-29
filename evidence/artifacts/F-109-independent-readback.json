@@ -1,0 +1,1178 @@
+{
+  "auditErrors": 0,
+  "auditFixes": 0,
+  "bulgedPolylines": 2,
+  "bytes": 13679,
+  "dimensionStyleRecords": {
+    "Standard": {
+      "arrowSize": 250.0,
+      "extensionOffset": 62.5,
+      "handle": "500",
+      "scale": 1.0,
+      "textHeight": 250.0,
+      "textStyle": "Standard",
+      "textStyleHandle": "401"
+    }
+  },
+  "dimensionStyles": [
+    "Standard"
+  ],
+  "dxfVersion": "AC1018",
+  "encoding": "cp1252",
+  "entities": {
+    "CIRCLE": 1,
+    "DIMENSION": 1,
+    "HATCH": 7,
+    "LINE": 12,
+    "LWPOLYLINE": 9,
+    "TEXT": 10
+  },
+  "extents": {
+    "max": [
+      10265.893587994542,
+      4580.0
+    ],
+    "min": [
+      -200.0,
+      -600.0
+    ]
+  },
+  "ezdxfVersion": "1.4.3",
+  "handseed": "1501",
+  "headerExtents": null,
+  "layers": {
+    "0": {
+      "color": 7,
+      "frozen": false,
+      "linetype": "Continuous",
+      "lineweight": -3,
+      "locked": false,
+      "on": true,
+      "plottable": true,
+      "transparencyPercent": 0.0,
+      "transparencyRaw": null,
+      "trueColor": null
+    },
+    "Defpoints": {
+      "color": 7,
+      "frozen": false,
+      "linetype": "Continuous",
+      "lineweight": -3,
+      "locked": false,
+      "on": true,
+      "plottable": false,
+      "transparencyPercent": 0.0,
+      "transparencyRaw": null,
+      "trueColor": null
+    },
+    "JOONED": {
+      "color": 7,
+      "frozen": false,
+      "linetype": "Continuous",
+      "lineweight": 25,
+      "locked": false,
+      "on": true,
+      "plottable": true,
+      "transparencyPercent": 0.0,
+      "transparencyRaw": null,
+      "trueColor": null
+    },
+    "SEINAD": {
+      "color": 6,
+      "frozen": false,
+      "linetype": "DASHED",
+      "lineweight": 50,
+      "locked": false,
+      "on": true,
+      "plottable": true,
+      "transparencyPercent": 0.0,
+      "transparencyRaw": null,
+      "trueColor": null
+    },
+    "TELJED": {
+      "color": 4,
+      "frozen": false,
+      "linetype": "DASHDOT",
+      "lineweight": 13,
+      "locked": false,
+      "on": true,
+      "plottable": true,
+      "transparencyPercent": 0.0,
+      "transparencyRaw": null,
+      "trueColor": null
+    },
+    "VIIRUTUS": {
+      "color": 9,
+      "frozen": false,
+      "linetype": "Continuous",
+      "lineweight": 13,
+      "locked": false,
+      "on": true,
+      "plottable": true,
+      "transparencyPercent": 20.0,
+      "transparencyRaw": 33554636,
+      "trueColor": 12632256
+    }
+  },
+  "linetypes": [
+    "ByBlock",
+    "ByLayer",
+    "Continuous",
+    "DASHDOT",
+    "DASHED"
+  ],
+  "passed": true,
+  "reader": "ezdxf",
+  "semanticEntities": {
+    "1000": {
+      "color": 30,
+      "end": [
+        5000.0,
+        -600.0
+      ],
+      "layer": "TELJED",
+      "linetype": "DASHED",
+      "lineweight": 70,
+      "start": [
+        -200.0,
+        -600.0
+      ],
+      "transparencyPercent": 40.0,
+      "trueColor": null,
+      "type": "LINE"
+    },
+    "1001": {
+      "color": 152,
+      "end": [
+        5000.0,
+        250.0
+      ],
+      "layer": "JOONED",
+      "linetype": "BYLAYER",
+      "lineweight": 35,
+      "start": [
+        0.0,
+        250.0
+      ],
+      "transparencyPercent": 14.901960784314,
+      "trueColor": 681180,
+      "type": "LINE"
+    },
+    "1002": {
+      "color": 256,
+      "end": [
+        5000.0,
+        500.0
+      ],
+      "layer": "JOONED",
+      "linetype": "BYLAYER",
+      "lineweight": -1,
+      "start": [
+        0.0,
+        500.0
+      ],
+      "transparencyPercent": 0.0,
+      "trueColor": null,
+      "type": "LINE"
+    },
+    "1003": {
+      "color": 256,
+      "end": [
+        5000.0,
+        750.0
+      ],
+      "layer": "TELJED",
+      "linetype": "BYLAYER",
+      "lineweight": -1,
+      "start": [
+        0.0,
+        750.0
+      ],
+      "transparencyPercent": 0.0,
+      "trueColor": null,
+      "type": "LINE"
+    },
+    "1004": {
+      "color": 256,
+      "end": [
+        5000.0,
+        1000.0
+      ],
+      "layer": "JOONED",
+      "linetype": "BYLAYER",
+      "lineweight": -1,
+      "start": [
+        0.0,
+        1000.0
+      ],
+      "transparencyPercent": 0.0,
+      "trueColor": null,
+      "type": "LINE"
+    },
+    "1005": {
+      "color": 256,
+      "end": [
+        5000.0,
+        1250.0
+      ],
+      "layer": "JOONED",
+      "linetype": "BYLAYER",
+      "lineweight": -1,
+      "start": [
+        0.0,
+        1250.0
+      ],
+      "transparencyPercent": 0.0,
+      "trueColor": null,
+      "type": "LINE"
+    },
+    "1006": {
+      "color": 256,
+      "end": [
+        5000.0,
+        1500.0
+      ],
+      "layer": "TELJED",
+      "linetype": "BYLAYER",
+      "lineweight": -1,
+      "start": [
+        0.0,
+        1500.0
+      ],
+      "transparencyPercent": 0.0,
+      "trueColor": null,
+      "type": "LINE"
+    },
+    "1007": {
+      "color": 256,
+      "end": [
+        5000.0,
+        1750.0
+      ],
+      "layer": "JOONED",
+      "linetype": "BYLAYER",
+      "lineweight": -1,
+      "start": [
+        0.0,
+        1750.0
+      ],
+      "transparencyPercent": 0.0,
+      "trueColor": null,
+      "type": "LINE"
+    },
+    "1008": {
+      "color": 256,
+      "end": [
+        5000.0,
+        2000.0
+      ],
+      "layer": "JOONED",
+      "linetype": "BYLAYER",
+      "lineweight": -1,
+      "start": [
+        0.0,
+        2000.0
+      ],
+      "transparencyPercent": 0.0,
+      "trueColor": null,
+      "type": "LINE"
+    },
+    "1009": {
+      "color": 256,
+      "end": [
+        5000.0,
+        2250.0
+      ],
+      "layer": "TELJED",
+      "linetype": "BYLAYER",
+      "lineweight": -1,
+      "start": [
+        0.0,
+        2250.0
+      ],
+      "transparencyPercent": 0.0,
+      "trueColor": null,
+      "type": "LINE"
+    },
+    "100A": {
+      "color": 256,
+      "end": [
+        5000.0,
+        2500.0
+      ],
+      "layer": "JOONED",
+      "linetype": "BYLAYER",
+      "lineweight": -1,
+      "start": [
+        0.0,
+        2500.0
+      ],
+      "transparencyPercent": 0.0,
+      "trueColor": null,
+      "type": "LINE"
+    },
+    "100B": {
+      "color": 256,
+      "end": [
+        5000.0,
+        2750.0
+      ],
+      "layer": "JOONED",
+      "linetype": "BYLAYER",
+      "lineweight": -1,
+      "start": [
+        0.0,
+        2750.0
+      ],
+      "transparencyPercent": 0.0,
+      "trueColor": null,
+      "type": "LINE"
+    },
+    "1100": {
+      "closed": true,
+      "color": 256,
+      "layer": "SEINAD",
+      "linetype": "BYLAYER",
+      "lineweight": -1,
+      "transparencyPercent": 0.0,
+      "trueColor": null,
+      "type": "LWPOLYLINE",
+      "vertices": [
+        [
+          0.0,
+          3000.0,
+          0.0,
+          0.0,
+          0.414213562373
+        ],
+        [
+          300.0,
+          3300.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          3600.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      ]
+    },
+    "1101": {
+      "closed": true,
+      "color": 256,
+      "layer": "SEINAD",
+      "linetype": "BYLAYER",
+      "lineweight": -1,
+      "transparencyPercent": 0.0,
+      "trueColor": null,
+      "type": "LWPOLYLINE",
+      "vertices": [
+        [
+          450.0,
+          3000.0,
+          0.0,
+          0.0,
+          0.414213562373
+        ],
+        [
+          750.0,
+          3300.0,
+          0.0,
+          0.0,
+          -0.414213562373
+        ],
+        [
+          450.0,
+          3600.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      ]
+    },
+    "1102": {
+      "closed": true,
+      "color": 256,
+      "layer": "SEINAD",
+      "linetype": "BYLAYER",
+      "lineweight": -1,
+      "transparencyPercent": 0.0,
+      "trueColor": null,
+      "type": "LWPOLYLINE",
+      "vertices": [
+        [
+          900.0,
+          3000.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          1200.0,
+          3000.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          1200.0,
+          3300.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          900.0,
+          3300.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      ]
+    },
+    "1103": {
+      "closed": true,
+      "color": 256,
+      "layer": "SEINAD",
+      "linetype": "BYLAYER",
+      "lineweight": -1,
+      "transparencyPercent": 0.0,
+      "trueColor": null,
+      "type": "LWPOLYLINE",
+      "vertices": [
+        [
+          1350.0,
+          3000.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          1650.0,
+          3000.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          1650.0,
+          3300.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          1350.0,
+          3300.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      ]
+    },
+    "1104": {
+      "closed": true,
+      "color": 256,
+      "layer": "SEINAD",
+      "linetype": "BYLAYER",
+      "lineweight": -1,
+      "transparencyPercent": 0.0,
+      "trueColor": null,
+      "type": "LWPOLYLINE",
+      "vertices": [
+        [
+          1800.0,
+          3000.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          2100.0,
+          3000.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          2100.0,
+          3300.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          1800.0,
+          3300.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      ]
+    },
+    "1105": {
+      "closed": true,
+      "color": 256,
+      "layer": "SEINAD",
+      "linetype": "BYLAYER",
+      "lineweight": -1,
+      "transparencyPercent": 0.0,
+      "trueColor": null,
+      "type": "LWPOLYLINE",
+      "vertices": [
+        [
+          2250.0,
+          3000.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          2550.0,
+          3000.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          2550.0,
+          3300.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          2250.0,
+          3300.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      ]
+    },
+    "1106": {
+      "closed": true,
+      "color": 256,
+      "layer": "SEINAD",
+      "linetype": "BYLAYER",
+      "lineweight": -1,
+      "transparencyPercent": 0.0,
+      "trueColor": null,
+      "type": "LWPOLYLINE",
+      "vertices": [
+        [
+          2700.0,
+          3000.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          3000.0,
+          3000.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          3000.0,
+          3300.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          2700.0,
+          3300.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      ]
+    },
+    "1107": {
+      "closed": true,
+      "color": 256,
+      "layer": "SEINAD",
+      "linetype": "BYLAYER",
+      "lineweight": -1,
+      "transparencyPercent": 0.0,
+      "trueColor": null,
+      "type": "LWPOLYLINE",
+      "vertices": [
+        [
+          3150.0,
+          3000.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          3450.0,
+          3000.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          3450.0,
+          3300.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          3150.0,
+          3300.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      ]
+    },
+    "1108": {
+      "closed": false,
+      "color": 256,
+      "layer": "SEINAD",
+      "linetype": "BYLAYER",
+      "lineweight": -1,
+      "transparencyPercent": 0.0,
+      "trueColor": null,
+      "type": "LWPOLYLINE",
+      "vertices": [
+        [
+          3600.0,
+          3000.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          3900.0,
+          3000.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          3900.0,
+          3300.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          3600.0,
+          3300.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      ]
+    },
+    "1200": {
+      "color": 256,
+      "height": 180.0,
+      "insert": [
+        0.0,
+        3900.0
+      ],
+      "layer": "JOONED",
+      "linetype": "BYLAYER",
+      "lineweight": -1,
+      "rotation": 0.0,
+      "style": "Standard",
+      "text": "F109 TEXT 1",
+      "transparencyPercent": 0.0,
+      "trueColor": null,
+      "type": "TEXT"
+    },
+    "1201": {
+      "color": 256,
+      "height": 180.0,
+      "insert": [
+        500.0,
+        3900.0
+      ],
+      "layer": "JOONED",
+      "linetype": "BYLAYER",
+      "lineweight": -1,
+      "rotation": 0.0,
+      "style": "NORMAL",
+      "text": "F109 TEXT 2",
+      "transparencyPercent": 0.0,
+      "trueColor": null,
+      "type": "TEXT"
+    },
+    "1202": {
+      "color": 256,
+      "height": 180.0,
+      "insert": [
+        1000.0,
+        3900.0
+      ],
+      "layer": "JOONED",
+      "linetype": "BYLAYER",
+      "lineweight": -1,
+      "rotation": 0.0,
+      "style": "Standard",
+      "text": "F109 TEXT 3",
+      "transparencyPercent": 0.0,
+      "trueColor": null,
+      "type": "TEXT"
+    },
+    "1203": {
+      "color": 256,
+      "height": 180.0,
+      "insert": [
+        1500.0,
+        3900.0
+      ],
+      "layer": "JOONED",
+      "linetype": "BYLAYER",
+      "lineweight": -1,
+      "rotation": 0.0,
+      "style": "NORMAL",
+      "text": "F109 TEXT 4",
+      "transparencyPercent": 0.0,
+      "trueColor": null,
+      "type": "TEXT"
+    },
+    "1204": {
+      "color": 256,
+      "height": 180.0,
+      "insert": [
+        2000.0,
+        3900.0
+      ],
+      "layer": "JOONED",
+      "linetype": "BYLAYER",
+      "lineweight": -1,
+      "rotation": 0.0,
+      "style": "Standard",
+      "text": "F109 TEXT 5",
+      "transparencyPercent": 0.0,
+      "trueColor": null,
+      "type": "TEXT"
+    },
+    "1205": {
+      "color": 256,
+      "height": 180.0,
+      "insert": [
+        2500.0,
+        3900.0
+      ],
+      "layer": "JOONED",
+      "linetype": "BYLAYER",
+      "lineweight": -1,
+      "rotation": 0.0,
+      "style": "NORMAL",
+      "text": "F109 TEXT 6",
+      "transparencyPercent": 0.0,
+      "trueColor": null,
+      "type": "TEXT"
+    },
+    "1206": {
+      "color": 256,
+      "height": 180.0,
+      "insert": [
+        3000.0,
+        3900.0
+      ],
+      "layer": "JOONED",
+      "linetype": "BYLAYER",
+      "lineweight": -1,
+      "rotation": 0.0,
+      "style": "Standard",
+      "text": "F109 TEXT 7",
+      "transparencyPercent": 0.0,
+      "trueColor": null,
+      "type": "TEXT"
+    },
+    "1207": {
+      "color": 256,
+      "height": 180.0,
+      "insert": [
+        3500.0,
+        3900.0
+      ],
+      "layer": "JOONED",
+      "linetype": "BYLAYER",
+      "lineweight": -1,
+      "rotation": 0.0,
+      "style": "NORMAL",
+      "text": "F109 TEXT 8",
+      "transparencyPercent": 0.0,
+      "trueColor": null,
+      "type": "TEXT"
+    },
+    "1208": {
+      "color": 256,
+      "height": 180.0,
+      "insert": [
+        4000.0,
+        3900.0
+      ],
+      "layer": "JOONED",
+      "linetype": "BYLAYER",
+      "lineweight": -1,
+      "rotation": 0.0,
+      "style": "Standard",
+      "text": "F109 TEXT 9",
+      "transparencyPercent": 0.0,
+      "trueColor": null,
+      "type": "TEXT"
+    },
+    "1209": {
+      "color": 256,
+      "height": 180.0,
+      "insert": [
+        4500.0,
+        4400.0
+      ],
+      "layer": "JOONED",
+      "linetype": "BYLAYER",
+      "lineweight": -1,
+      "rotation": 0.0,
+      "style": "NORMAL",
+      "text": "M\u00d5\u00d5T \u0160\u017d\u20ac 10",
+      "transparencyPercent": 0.0,
+      "trueColor": null,
+      "type": "TEXT"
+    },
+    "1300": {
+      "associative": false,
+      "color": 256,
+      "layer": "VIIRUTUS",
+      "linetype": "BYLAYER",
+      "lineweight": -1,
+      "loops": [
+        {
+          "closed": true,
+          "flags": 3,
+          "vertices": [
+            [
+              5200.0,
+              3000.0,
+              0.0
+            ],
+            [
+              5380.0,
+              3000.0,
+              0.0
+            ],
+            [
+              5380.0,
+              3240.0,
+              0.0
+            ],
+            [
+              5200.0,
+              3240.0,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "pattern": "SOLID",
+      "solid": true,
+      "transparencyPercent": 0.0,
+      "trueColor": null,
+      "type": "HATCH"
+    },
+    "1301": {
+      "associative": false,
+      "color": 256,
+      "layer": "VIIRUTUS",
+      "linetype": "BYLAYER",
+      "lineweight": -1,
+      "loops": [
+        {
+          "closed": true,
+          "flags": 3,
+          "vertices": [
+            [
+              5450.0,
+              3000.0,
+              0.0
+            ],
+            [
+              5630.0,
+              3000.0,
+              0.0
+            ],
+            [
+              5630.0,
+              3240.0,
+              0.0
+            ],
+            [
+              5450.0,
+              3240.0,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "pattern": "F109_1",
+      "solid": false,
+      "transparencyPercent": 0.0,
+      "trueColor": null,
+      "type": "HATCH"
+    },
+    "1302": {
+      "associative": false,
+      "color": 256,
+      "layer": "VIIRUTUS",
+      "linetype": "BYLAYER",
+      "lineweight": -1,
+      "loops": [
+        {
+          "closed": true,
+          "flags": 3,
+          "vertices": [
+            [
+              5700.0,
+              3000.0,
+              0.0
+            ],
+            [
+              5880.0,
+              3000.0,
+              0.0
+            ],
+            [
+              5880.0,
+              3240.0,
+              0.0
+            ],
+            [
+              5700.0,
+              3240.0,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "pattern": "F109_2",
+      "solid": false,
+      "transparencyPercent": 0.0,
+      "trueColor": null,
+      "type": "HATCH"
+    },
+    "1303": {
+      "associative": false,
+      "color": 256,
+      "layer": "VIIRUTUS",
+      "linetype": "BYLAYER",
+      "lineweight": -1,
+      "loops": [
+        {
+          "closed": true,
+          "flags": 3,
+          "vertices": [
+            [
+              5950.0,
+              3000.0,
+              0.0
+            ],
+            [
+              6130.0,
+              3000.0,
+              0.0
+            ],
+            [
+              6130.0,
+              3240.0,
+              0.0
+            ],
+            [
+              5950.0,
+              3240.0,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "pattern": "F109_3",
+      "solid": false,
+      "transparencyPercent": 0.0,
+      "trueColor": null,
+      "type": "HATCH"
+    },
+    "1304": {
+      "associative": false,
+      "color": 256,
+      "layer": "VIIRUTUS",
+      "linetype": "BYLAYER",
+      "lineweight": -1,
+      "loops": [
+        {
+          "closed": true,
+          "flags": 3,
+          "vertices": [
+            [
+              6200.0,
+              3000.0,
+              0.0
+            ],
+            [
+              6380.0,
+              3000.0,
+              0.0
+            ],
+            [
+              6380.0,
+              3240.0,
+              0.0
+            ],
+            [
+              6200.0,
+              3240.0,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "pattern": "F109_4",
+      "solid": false,
+      "transparencyPercent": 0.0,
+      "trueColor": null,
+      "type": "HATCH"
+    },
+    "1305": {
+      "associative": false,
+      "color": 256,
+      "layer": "VIIRUTUS",
+      "linetype": "BYLAYER",
+      "lineweight": -1,
+      "loops": [
+        {
+          "closed": true,
+          "flags": 3,
+          "vertices": [
+            [
+              6450.0,
+              3000.0,
+              0.0
+            ],
+            [
+              6630.0,
+              3000.0,
+              0.0
+            ],
+            [
+              6630.0,
+              3240.0,
+              0.0
+            ],
+            [
+              6450.0,
+              3240.0,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "pattern": "F109_5",
+      "solid": false,
+      "transparencyPercent": 0.0,
+      "trueColor": null,
+      "type": "HATCH"
+    },
+    "1306": {
+      "associative": false,
+      "color": 256,
+      "layer": "VIIRUTUS",
+      "linetype": "BYLAYER",
+      "lineweight": -1,
+      "loops": [
+        {
+          "closed": true,
+          "flags": 3,
+          "vertices": [
+            [
+              6700.0,
+              3000.0,
+              0.0
+            ],
+            [
+              6880.0,
+              3000.0,
+              0.0
+            ],
+            [
+              6880.0,
+              3240.0,
+              0.0
+            ],
+            [
+              6700.0,
+              3240.0,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "pattern": "F109_6",
+      "solid": false,
+      "transparencyPercent": 0.0,
+      "trueColor": null,
+      "type": "HATCH"
+    },
+    "1400": {
+      "center": [
+        7500.0,
+        0.0
+      ],
+      "color": 256,
+      "layer": "JOONED",
+      "linetype": "BYLAYER",
+      "lineweight": -1,
+      "radius": 366.6667,
+      "transparencyPercent": 0.0,
+      "trueColor": null,
+      "type": "CIRCLE"
+    },
+    "1500": {
+      "color": 256,
+      "definition": [
+        0.0,
+        4400.0
+      ],
+      "first": [
+        0.0,
+        4000.0
+      ],
+      "layer": "JOONED",
+      "linetype": "BYLAYER",
+      "lineweight": -1,
+      "measurement": 5000.0,
+      "second": [
+        5000.0,
+        4000.0
+      ],
+      "style": "Standard",
+      "text": "<>",
+      "textPosition": [
+        2500.0,
+        4400.0
+      ],
+      "transparencyPercent": 0.0,
+      "trueColor": null,
+      "type": "DIMENSION"
+    }
+  },
+  "sha256": "28de58b3aa9e7a2c44bcf4d17b297b1cc64b08fbbbea448a33720b0d14c601ac",
+  "source": "F-109-production.dxf",
+  "styles": [
+    "NORMAL",
+    "Standard"
+  ],
+  "totalEntities": 40,
+  "units": 4
+}
