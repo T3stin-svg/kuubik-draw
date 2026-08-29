@@ -50,6 +50,7 @@ const locked = command.execute(lockedDocument, { targetHandles: ["20"] });
 const result = {
   schemaVersion: 1,
   rowId: "F-015",
+  observedAt: new Date().toISOString(),
   parser: "dxf-parser@1.1.2",
   units: parsed?.header?.$INSUNITS,
   entityCount: parsed?.entities.length,

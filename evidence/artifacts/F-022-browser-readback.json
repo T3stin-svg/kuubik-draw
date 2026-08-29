@@ -2,14 +2,14 @@
   "schemaVersion": 1,
   "rowId": "F-022",
   "source": "Chromium 1920x1080 visible controls, IndexedDB and downloaded production DXF",
-  "observedAt": "2026-08-29T10:53:58.738Z",
+  "observedAt": "2026-08-29T13:51:38.974Z",
   "implementationSha256": {
-    "apps/web/src/App.tsx": "b46b198a1cc4c0fdecdccc025b0bcbb6284869bfc08248ad34a1e9c407428f47",
-    "apps/web/src/workflows/modify-command.ts": "9e0c91ebe4de8eece7da7b915725599275429d2bf52a5c4dbe2570435ab68e1a",
-    "packages/cad-core/src/commands.ts": "d70542980a4d26fafdcd6dedbe0f96722f6a52fcb455f48a95e0048d15e2067f",
+    "apps/web/src/App.tsx": "95c703822872d3cf92092e31d51b069af032b379e559352f5b5392fd34531458",
+    "apps/web/src/workflows/modify-command.ts": "79677b2bcd79abc4cc92ba1e228083b39636d3bccb27ecf6c14261975d6680df",
+    "packages/cad-core/src/commands.ts": "73e6ffc270f9a153a11a6abb68861a58dd845ef08a3ac4b52e9bebca3d5343a8",
     "packages/cad-core/src/index.ts": "53e77dcdfe65d0e0d9a3e26be5201e6743fb14b8c9e38e111c7148242344ad02",
     "packages/cad-core/src/transaction.ts": "e250aa2906e63905202a4b9591367632830745acbf731884f8e711d165750599",
-    "packages/cad-core/src/trim.ts": "5ee32dee42c4bb84a6045e05675a7cf2baa55725c49f7856aef38252ee8aa6f0",
+    "packages/cad-core/src/trim.ts": "17b7af49a16e90cd8ac617e3119e1e25dd1055d81324b1c61c03e312342e2232",
     "packages/cad-renderer/src/index.ts": "5563e5e6cdd66b652248e90d4ed237b145fd828da715c64375d2d05169a61888",
     "packages/cad-renderer/src/selection.ts": "7f39e9d073fc4c36aa4507c4eea1ff96e6990532652fdd5b16c5a81c84c9fbc3",
     "packages/cad-renderer/test/selection.test.ts": "4815f4b1b1bff65246abea27af5bbc05111a59ce7b874eb8ac45cd6f90c69bd1",
@@ -125,11 +125,11 @@
       "attachments": [],
       "metadata": {
         "createdAt": "2026-08-29T09:00:00.000Z",
-        "updatedAt": "2026-08-29T10:53:48.235Z"
+        "updatedAt": "2026-08-29T13:51:26.861Z"
       }
     },
     "operation": {
-      "opId": "2c63bd89-b215-4642-8655-85d6ed541a87",
+      "opId": "7a50cd6e-bf29-40c3-8f01-bc4726574b13",
       "baseRevision": 0,
       "commandId": "TRIM",
       "args": {
@@ -264,7 +264,7 @@
       "attachments": [],
       "metadata": {
         "createdAt": "2026-08-29T09:00:00.000Z",
-        "updatedAt": "2026-08-29T10:53:48.468Z"
+        "updatedAt": "2026-08-29T13:51:27.174Z"
       }
     },
     "consoleErrors": [],
@@ -377,11 +377,11 @@
       "attachments": [],
       "metadata": {
         "createdAt": "2026-08-29T09:00:00.000Z",
-        "updatedAt": "2026-08-29T10:53:49.036Z"
+        "updatedAt": "2026-08-29T13:51:27.776Z"
       }
     },
     "trimOperation": {
-      "opId": "848f53f6-f922-428f-81fe-a645dba7762d",
+      "opId": "72a47a3d-bd1b-467e-bb8c-6ffdd728845f",
       "baseRevision": 0,
       "commandId": "TRIM",
       "args": {
@@ -480,7 +480,7 @@
       "attachments": [],
       "metadata": {
         "createdAt": "2026-08-29T09:00:00.000Z",
-        "updatedAt": "2026-08-29T10:53:49.501Z"
+        "updatedAt": "2026-08-29T13:51:28.308Z"
       }
     },
     "restored": {
@@ -554,7 +554,7 @@
       "attachments": [],
       "metadata": {
         "createdAt": "2026-08-29T09:00:00.000Z",
-        "updatedAt": "2026-08-29T10:53:49.584Z"
+        "updatedAt": "2026-08-29T13:51:28.407Z"
       }
     },
     "status": "PASS",
@@ -634,11 +634,11 @@
       "attachments": [],
       "metadata": {
         "createdAt": "2026-08-29T09:00:00.000Z",
-        "updatedAt": "2026-08-29T10:53:50.152Z"
+        "updatedAt": "2026-08-29T13:51:29.109Z"
       }
     },
     "operation": {
-      "opId": "7d0c9adc-c3b0-4d2f-bd25-949512c0c457",
+      "opId": "aa07165c-b7b3-4990-a018-6daedb16231b",
       "baseRevision": 0,
       "commandId": "TRIM",
       "args": {
@@ -746,7 +746,7 @@
       "attachments": [],
       "metadata": {
         "createdAt": "2026-08-29T09:00:00.000Z",
-        "updatedAt": "2026-08-29T10:53:50.234Z"
+        "updatedAt": "2026-08-29T13:51:29.208Z"
       }
     },
     "status": "PASS",
@@ -821,7 +821,7 @@
         "attachments": [],
         "metadata": {
           "createdAt": "2026-08-29T09:00:00.000Z",
-          "updatedAt": "2026-08-29T10:53:51.318Z"
+          "updatedAt": "2026-08-29T13:51:30.442Z"
         }
       },
       "ucs": {
@@ -888,7 +888,7 @@
         "attachments": [],
         "metadata": {
           "createdAt": "2026-08-29T09:00:00.000Z",
-          "updatedAt": "2026-08-29T10:53:51.902Z"
+          "updatedAt": "2026-08-29T13:51:31.110Z"
         }
       },
       "view": {
@@ -955,7 +955,7 @@
         "attachments": [],
         "metadata": {
           "createdAt": "2026-08-29T09:00:00.000Z",
-          "updatedAt": "2026-08-29T10:53:52.451Z"
+          "updatedAt": "2026-08-29T13:51:31.758Z"
         }
       }
     },
@@ -1010,7 +1010,7 @@
       "attachments": [],
       "metadata": {
         "createdAt": "2026-08-29T09:00:00.000Z",
-        "updatedAt": "2026-08-29T10:53:52.968Z"
+        "updatedAt": "2026-08-29T13:51:32.392Z"
       }
     },
     "refused": {
@@ -1232,7 +1232,7 @@
       "attachments": [],
       "metadata": {
         "createdAt": "2026-08-29T09:00:00.000Z",
-        "updatedAt": "2026-08-29T10:53:53.968Z"
+        "updatedAt": "2026-08-29T13:51:33.542Z"
       }
     },
     "hatch": {
@@ -1474,7 +1474,7 @@
       "attachments": [],
       "metadata": {
         "createdAt": "2026-08-29T09:00:00.000Z",
-        "updatedAt": "2026-08-29T10:53:54.918Z"
+        "updatedAt": "2026-08-29T13:51:34.659Z"
       }
     },
     "cycle": {
@@ -1786,7 +1786,7 @@
       "attachments": [],
       "metadata": {
         "createdAt": "2026-08-29T09:00:00.000Z",
-        "updatedAt": "2026-08-29T10:53:55.868Z"
+        "updatedAt": "2026-08-29T13:51:35.809Z"
       }
     },
     "status": "PASS",
@@ -2006,7 +2006,7 @@
       "attachments": [],
       "metadata": {
         "createdAt": "2026-08-29T09:00:00.000Z",
-        "updatedAt": "2026-08-29T10:53:57.705Z"
+        "updatedAt": "2026-08-29T13:51:37.861Z"
       }
     },
     "tangentCommitted": {
@@ -2090,7 +2090,7 @@
       "attachments": [],
       "metadata": {
         "createdAt": "2026-08-29T09:00:00.000Z",
-        "updatedAt": "2026-08-29T10:53:58.402Z"
+        "updatedAt": "2026-08-29T13:51:38.627Z"
       }
     },
     "consoleErrors": [],

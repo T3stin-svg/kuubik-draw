@@ -1,0 +1,69 @@
+(defun f023:groups (code data / result) (foreach pair data (if (= (car pair) code) (setq result (cons (cdr pair) result)))) (reverse result))
+(defun f023:print-state (prefix / splineData lineData) (setq splineData (entget f023:spline)) (setq lineData (entget f023:line)) (princ (strcat "\nF023_" prefix "_LINE_START=")) (princ (cdr (assoc 10 lineData))) (princ (strcat "\nF023_" prefix "_LINE_END=")) (princ (cdr (assoc 11 lineData))) (princ (strcat "\nF023_" prefix "_SPLINE_DEGREE=")) (princ (cdr (assoc 71 splineData))) (princ (strcat "\nF023_" prefix "_SPLINE_KNOTS=")) (princ (f023:groups 40 splineData)) (princ (strcat "\nF023_" prefix "_SPLINE_CONTROLS=")) (princ (f023:groups 10 splineData)) (princ))
+(progn (princ "\nF023_ACADVER=") (princ (getvar "ACADVER")) (princ))
+_.UCS
+_World
+_.SPLINE
+200,0
+350,100
+500,0
+650,-100
+800,0
+
+
+
+(setq f023:spline (entlast))
+_.LINE
+200,500
+800,500
+
+(setq f023:line (entlast))
+_.LINE
+1000,-200
+1000,700
+
+(setq f023:boundary (entlast))
+_.ZOOM
+_Extents
+(f023:print-state "BEFORE")
+TRIMEXTENDMODE
+0
+_.EXTEND
+1000,250
+
+790,0
+790,500
+
+(f023:print-state "STANDARD")
+_.U
+(f023:print-state "UNDO")
+TRIMEXTENDMODE
+1
+_.EXTEND
+_Mode
+_Quick
+
+790,0
+790,500
+
+(f023:print-state "QUICK")
+_.U
+(f023:print-state "RESTORED")
+(command "_.LINE" '(0 1000 0) '(80 1000 0) "")
+(setq f023:edge-target (entlast))
+(command "_.LINE" '(100 1050 0) '(100 1100 0) "")
+(setq f023:edge-boundary (entlast))
+_.ZOOM
+_Extents
+EDGEMODE
+1
+_.EXTEND
+_Mode
+_Standard
+100,1075
+
+75,1000
+
+(progn (princ "\nF023_EDGE_END=") (princ (cdr (assoc 11 (entget f023:edge-target)))) (princ))
+(princ "\nF023_DONE=1")
+(princ)

@@ -72,6 +72,7 @@ const finalRead = independentRead(finalBytes);
 const result = {
   schemaVersion: 1,
   rowId: "F-099",
+  observedAt: new Date().toISOString(),
   source: "production viewport transaction kernel and serializer; independent KDRAW1 magic/base64/length/SHA/document reader",
   multiple: {
     revision: multipleRead.document.revision,

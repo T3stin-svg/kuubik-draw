@@ -1,0 +1,1719 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-023",
+  "benchmark": "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
+  "engine": "Autodesk AutoCAD 2024 desktop COM",
+  "engineVersion": "24.3s (LMS Tech)",
+  "automationProcessId": 31880,
+  "automationProcessOwned": true,
+  "installedUpdateIdentity": {
+    "displayName": "Autodesk AutoCAD 2024.1.2 Update",
+    "displayVersion": "24.3.152.0"
+  },
+  "automationProcessIdentity": {
+    "processId": 31880,
+    "executableName": "acad.exe",
+    "executableSha256": "0570749def2fa8dcfb62df1a6671f44245a9ef740dd61d9d0f9110794a76e70e",
+    "fileVersion": "R24.3.152.0.0",
+    "productVersion": "R24.3.152.0.0",
+    "startTimeSha256": "cc082d78a9c5964e4620990c93be09ce2959c8990a50ed6c1ddea9f9c867dd3c"
+  },
+  "options": {
+    "standard": true,
+    "quick": true,
+    "edgeExtend": true,
+    "edgeNoExtend": true,
+    "commandUndo": true,
+    "globalUndoRedo": true,
+    "fence": true,
+    "crossing": true,
+    "shiftSelectTrim": true,
+    "project": {
+      "none": true,
+      "ucs": true,
+      "view": true
+    },
+    "lockedLayerRefusal": true,
+    "hiddenLayerRefusal": true
+  },
+  "familyChecks": {
+    "line": true,
+    "openPolyline": true,
+    "arc": true,
+    "ellipse": true,
+    "circleBoundary": true,
+    "closedPolylineBoundary": true,
+    "rationalSpline": true
+  },
+  "propertiesPreserved": true,
+  "observations": {
+    "standard": [
+      {
+        "objectName": "AcDbLine",
+        "handle": "295",
+        "layer": "F023_STANDARD",
+        "color": 1,
+        "linetype": "ByLayer",
+        "lineweight": 50,
+        "details": {
+          "start": [
+            0,
+            0
+          ],
+          "end": [
+            100,
+            0
+          ]
+        }
+      }
+    ],
+    "quick": [
+      {
+        "objectName": "AcDbLine",
+        "handle": "297",
+        "layer": "F023_QUICK",
+        "color": 1,
+        "linetype": "ByLayer",
+        "lineweight": 50,
+        "details": {
+          "start": [
+            0,
+            200
+          ],
+          "end": [
+            100,
+            200
+          ]
+        }
+      }
+    ],
+    "edgeExtend": [
+      {
+        "objectName": "AcDbLine",
+        "handle": "299",
+        "layer": "F023_EDGE_EXTEND",
+        "color": 1,
+        "linetype": "ByLayer",
+        "lineweight": 50,
+        "details": {
+          "start": [
+            0,
+            400
+          ],
+          "end": [
+            100,
+            400
+          ]
+        }
+      }
+    ],
+    "edgeNoExtend": [
+      {
+        "objectName": "AcDbLine",
+        "handle": "29B",
+        "layer": "F023_EDGE_NO",
+        "color": 1,
+        "linetype": "ByLayer",
+        "lineweight": 50,
+        "details": {
+          "start": [
+            0,
+            600
+          ],
+          "end": [
+            80,
+            600
+          ]
+        }
+      }
+    ],
+    "commandUndo": [
+      {
+        "objectName": "AcDbLine",
+        "handle": "2A6",
+        "layer": "F023_UNDO",
+        "color": 1,
+        "linetype": "ByLayer",
+        "lineweight": 50,
+        "details": {
+          "start": [
+            0,
+            1600
+          ],
+          "end": [
+            80,
+            1600
+          ]
+        }
+      }
+    ],
+    "globalUndoRedo": {
+      "committed": [
+        {
+          "objectName": "AcDbLine",
+          "handle": "2A3",
+          "layer": "F023_GLOBAL_UNDO_REDO",
+          "color": 1,
+          "linetype": "ByLayer",
+          "lineweight": 50,
+          "details": {
+            "start": [
+              0,
+              1400
+            ],
+            "end": [
+              100,
+              1400
+            ]
+          }
+        },
+        {
+          "objectName": "AcDbLine",
+          "handle": "2A4",
+          "layer": "F023_GLOBAL_UNDO_REDO",
+          "color": 1,
+          "linetype": "ByLayer",
+          "lineweight": 50,
+          "details": {
+            "start": [
+              0,
+              1420
+            ],
+            "end": [
+              100,
+              1420
+            ]
+          }
+        }
+      ],
+      "undone": [
+        {
+          "objectName": "AcDbLine",
+          "handle": "2A3",
+          "layer": "F023_GLOBAL_UNDO_REDO",
+          "color": 1,
+          "linetype": "ByLayer",
+          "lineweight": 50,
+          "details": {
+            "start": [
+              0,
+              1400
+            ],
+            "end": [
+              80,
+              1400
+            ]
+          }
+        },
+        {
+          "objectName": "AcDbLine",
+          "handle": "2A4",
+          "layer": "F023_GLOBAL_UNDO_REDO",
+          "color": 1,
+          "linetype": "ByLayer",
+          "lineweight": 50,
+          "details": {
+            "start": [
+              0,
+              1420
+            ],
+            "end": [
+              80,
+              1420
+            ]
+          }
+        }
+      ],
+      "redone": [
+        {
+          "objectName": "AcDbLine",
+          "handle": "2A3",
+          "layer": "F023_GLOBAL_UNDO_REDO",
+          "color": 1,
+          "linetype": "ByLayer",
+          "lineweight": 50,
+          "details": {
+            "start": [
+              0,
+              1400
+            ],
+            "end": [
+              100,
+              1400
+            ]
+          }
+        },
+        {
+          "objectName": "AcDbLine",
+          "handle": "2A4",
+          "layer": "F023_GLOBAL_UNDO_REDO",
+          "color": 1,
+          "linetype": "ByLayer",
+          "lineweight": 50,
+          "details": {
+            "start": [
+              0,
+              1420
+            ],
+            "end": [
+              100,
+              1420
+            ]
+          }
+        }
+      ]
+    },
+    "projects": {
+      "none": [
+        {
+          "objectName": "AcDbLine",
+          "handle": "29D",
+          "layer": "F023_PROJECT_NONE",
+          "color": 1,
+          "linetype": "ByLayer",
+          "lineweight": 50,
+          "details": {
+            "start": [
+              0,
+              800
+            ],
+            "end": [
+              100,
+              800
+            ]
+          }
+        }
+      ],
+      "ucs": [
+        {
+          "objectName": "AcDbLine",
+          "handle": "29F",
+          "layer": "F023_PROJECT_UCS",
+          "color": 1,
+          "linetype": "ByLayer",
+          "lineweight": 50,
+          "details": {
+            "start": [
+              0,
+              1000
+            ],
+            "end": [
+              100,
+              1000
+            ]
+          }
+        }
+      ],
+      "view": [
+        {
+          "objectName": "AcDbLine",
+          "handle": "2A1",
+          "layer": "F023_PROJECT_VIEW",
+          "color": 1,
+          "linetype": "ByLayer",
+          "lineweight": 50,
+          "details": {
+            "start": [
+              0,
+              1200
+            ],
+            "end": [
+              100,
+              1200
+            ]
+          }
+        }
+      ]
+    },
+    "fence": [
+      {
+        "objectName": "AcDbLine",
+        "handle": "2A8",
+        "layer": "F023_FENCE_A",
+        "color": 1,
+        "linetype": "ByLayer",
+        "lineweight": 50,
+        "details": {
+          "start": [
+            0,
+            1800
+          ],
+          "end": [
+            100,
+            1800
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbLine",
+        "handle": "2A9",
+        "layer": "F023_FENCE_B",
+        "color": 1,
+        "linetype": "ByLayer",
+        "lineweight": 50,
+        "details": {
+          "start": [
+            0,
+            1820
+          ],
+          "end": [
+            100,
+            1820
+          ]
+        }
+      }
+    ],
+    "crossing": [
+      {
+        "objectName": "AcDbLine",
+        "handle": "2AB",
+        "layer": "F023_CROSS_A",
+        "color": 1,
+        "linetype": "ByLayer",
+        "lineweight": 50,
+        "details": {
+          "start": [
+            0,
+            2000
+          ],
+          "end": [
+            100,
+            2000
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbLine",
+        "handle": "2AC",
+        "layer": "F023_CROSS_B",
+        "color": 1,
+        "linetype": "ByLayer",
+        "lineweight": 50,
+        "details": {
+          "start": [
+            0,
+            2100
+          ],
+          "end": [
+            100,
+            2100
+          ]
+        }
+      }
+    ],
+    "polyline": [
+      {
+        "objectName": "AcDbPolyline",
+        "handle": "2AE",
+        "layer": "F023_POLYLINE",
+        "color": 1,
+        "linetype": "ByLayer",
+        "lineweight": 50,
+        "details": {
+          "vertices": [
+            [
+              0,
+              2200
+            ],
+            [
+              40,
+              2200
+            ],
+            [
+              100,
+              2200
+            ]
+          ],
+          "closed": false
+        }
+      }
+    ],
+    "arc": [
+      {
+        "objectName": "AcDbArc",
+        "handle": "2B0",
+        "layer": "F023_ARC",
+        "color": 1,
+        "linetype": "ByLayer",
+        "lineweight": 50,
+        "details": {
+          "start": [
+            3100,
+            2200
+          ],
+          "end": [
+            2900,
+            2200
+          ],
+          "startAngle": 0,
+          "endAngle": 3.141592653589793
+        }
+      }
+    ],
+    "ellipse": [
+      {
+        "objectName": "AcDbEllipse",
+        "handle": "2B2",
+        "layer": "F023_ELLIPSE",
+        "color": 1,
+        "linetype": "ByLayer",
+        "lineweight": 50,
+        "details": {
+          "start": [
+            4100,
+            2200
+          ],
+          "end": [
+            3900,
+            2200
+          ],
+          "startParameter": 0,
+          "endParameter": 3.141592653589793
+        }
+      }
+    ],
+    "circleBoundary": [
+      {
+        "objectName": "AcDbLine",
+        "handle": "2B4",
+        "layer": "F023_CIRCLE_BOUNDARY",
+        "color": 1,
+        "linetype": "ByLayer",
+        "lineweight": 50,
+        "details": {
+          "start": [
+            5000,
+            2200
+          ],
+          "end": [
+            5100,
+            2200
+          ]
+        }
+      }
+    ],
+    "closedBoundary": [
+      {
+        "objectName": "AcDbLine",
+        "handle": "2B6",
+        "layer": "F023_CLOSED_BOUNDARY",
+        "color": 1,
+        "linetype": "ByLayer",
+        "lineweight": 50,
+        "details": {
+          "start": [
+            6000,
+            2200
+          ],
+          "end": [
+            6100,
+            2200
+          ]
+        }
+      }
+    ],
+    "locked": [
+      {
+        "objectName": "AcDbLine",
+        "handle": "2B8",
+        "layer": "F023_LOCKED",
+        "color": 1,
+        "linetype": "ByLayer",
+        "lineweight": 50,
+        "details": {
+          "start": [
+            0,
+            2400
+          ],
+          "end": [
+            80,
+            2400
+          ]
+        }
+      }
+    ],
+    "hidden": [
+      {
+        "objectName": "AcDbLine",
+        "handle": "2BA",
+        "layer": "F023_HIDDEN",
+        "color": 1,
+        "linetype": "ByLayer",
+        "lineweight": 50,
+        "details": {
+          "start": [
+            0,
+            2600
+          ],
+          "end": [
+            80,
+            2600
+          ]
+        }
+      }
+    ],
+    "shiftTrim": [
+      {
+        "objectName": "AcDbLine",
+        "handle": "2BC",
+        "layer": "F023_SHIFT_TRIM",
+        "color": 1,
+        "linetype": "ByLayer",
+        "lineweight": 50,
+        "details": {
+          "start": [
+            0,
+            0
+          ],
+          "end": [
+            250,
+            0
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbLine",
+        "handle": "2BF",
+        "layer": "F023_SHIFT_TRIM",
+        "color": 1,
+        "linetype": "ByLayer",
+        "lineweight": 50,
+        "details": {
+          "start": [
+            750,
+            0
+          ],
+          "end": [
+            1000,
+            0
+          ]
+        }
+      }
+    ],
+    "shiftFixture": {
+      "target": [
+        [
+          0,
+          0
+        ],
+        [
+          1000,
+          0
+        ]
+      ],
+      "boundaries": [
+        [
+          [
+            250,
+            -100
+          ],
+          [
+            250,
+            100
+          ]
+        ],
+        [
+          [
+            750,
+            -100
+          ],
+          [
+            750,
+            100
+          ]
+        ]
+      ],
+      "pick": [
+        500,
+        0
+      ]
+    },
+    "shiftPhysicalInput": {
+      "x": 2398,
+      "y": 774,
+      "world": [
+        500,
+        0
+      ],
+      "viewport": [
+        1360,
+        186,
+        3436,
+        1363
+      ],
+      "screenSize": [
+        2076,
+        1177
+      ],
+      "viewCenter": [
+        500,
+        0
+      ],
+      "viewHeight": 680.0963855421686
+    },
+    "rationalSpline": {
+      "before": [
+        {
+          "objectName": "AcDbSpline",
+          "handle": "10",
+          "layer": "0",
+          "color": 161,
+          "linetype": "ByLayer",
+          "lineweight": 50,
+          "details": {
+            "controlPoints": [
+              [
+                0,
+                0
+              ],
+              [
+                1,
+                1
+              ],
+              [
+                2,
+                1
+              ],
+              [
+                3,
+                0
+              ]
+            ],
+            "degree": 3,
+            "knots": [
+              0,
+              0,
+              0,
+              0,
+              1,
+              1,
+              1,
+              1
+            ],
+            "weights": [
+              1,
+              1,
+              2,
+              2
+            ],
+            "rational": true
+          }
+        }
+      ],
+      "after": [
+        {
+          "objectName": "AcDbSpline",
+          "handle": "10",
+          "layer": "0",
+          "color": 161,
+          "linetype": "ByLayer",
+          "lineweight": 50,
+          "details": {
+            "controlPoints": [
+              [
+                0,
+                0
+              ],
+              [
+                1,
+                1
+              ],
+              [
+                2,
+                1
+              ],
+              [
+                3,
+                0
+              ],
+              [
+                3.621334927542687,
+                -0.6213349275426874
+              ],
+              [
+                4.628726947269851,
+                -1.8217554933620896
+              ],
+              [
+                6,
+                -3.5679976086859684
+              ]
+            ],
+            "degree": 3,
+            "knots": [
+              0,
+              0,
+              0,
+              0,
+              1,
+              1,
+              1,
+              1.6213349275426874,
+              1.6213349275426874,
+              1.6213349275426874,
+              1.6213349275426874
+            ],
+            "weights": [
+              1,
+              1,
+              2,
+              2,
+              2,
+              2,
+              2
+            ],
+            "rational": true
+          }
+        }
+      ],
+      "outputSha256": "ccf55a729bc7ebb25472c75834aa03ee9987eb43d1ee752926bc75bea9648306",
+      "boundaryDistanceProbe": [
+        {
+          "boundaryX": 3.5,
+          "after": {
+            "objectName": "AcDbSpline",
+            "handle": "10",
+            "layer": "0",
+            "color": 161,
+            "linetype": "ByLayer",
+            "lineweight": 50,
+            "details": {
+              "controlPoints": [
+                [
+                  0,
+                  0
+                ],
+                [
+                  1,
+                  1
+                ],
+                [
+                  2,
+                  1
+                ],
+                [
+                  3,
+                  0
+                ],
+                [
+                  3.1455708552445607,
+                  -0.14557085524456093
+                ],
+                [
+                  3.3123325843857545,
+                  -0.3229280213340712
+                ],
+                [
+                  3.5000000000000004,
+                  -0.5316437171331599
+                ]
+              ],
+              "degree": 3,
+              "knots": [
+                0,
+                0,
+                0,
+                0,
+                1,
+                1,
+                1,
+                1.145570855244561,
+                1.145570855244561,
+                1.145570855244561,
+                1.145570855244561
+              ],
+              "weights": [
+                1,
+                1,
+                2,
+                2,
+                2,
+                2,
+                2
+              ],
+              "rational": true
+            }
+          }
+        },
+        {
+          "boundaryX": 4,
+          "after": {
+            "objectName": "AcDbSpline",
+            "handle": "10",
+            "layer": "0",
+            "color": 161,
+            "linetype": "ByLayer",
+            "lineweight": 50,
+            "details": {
+              "controlPoints": [
+                [
+                  0,
+                  0
+                ],
+                [
+                  1,
+                  1
+                ],
+                [
+                  2,
+                  1
+                ],
+                [
+                  3,
+                  0
+                ],
+                [
+                  3.264134293207861,
+                  -0.26413429320786075
+                ],
+                [
+                  3.598035511264138,
+                  -0.6329189736883458
+                ],
+                [
+                  4.000000000000001,
+                  -1.1037985601882103
+                ]
+              ],
+              "degree": 3,
+              "knots": [
+                0,
+                0,
+                0,
+                0,
+                1,
+                1,
+                1,
+                1.2641342932078607,
+                1.2641342932078607,
+                1.2641342932078607,
+                1.2641342932078607
+              ],
+              "weights": [
+                1,
+                1,
+                2,
+                2,
+                2,
+                2,
+                2
+              ],
+              "rational": true
+            }
+          }
+        },
+        {
+          "boundaryX": 5,
+          "after": {
+            "objectName": "AcDbSpline",
+            "handle": "10",
+            "layer": "0",
+            "color": 161,
+            "linetype": "ByLayer",
+            "lineweight": 50,
+            "details": {
+              "controlPoints": [
+                [
+                  0,
+                  0
+                ],
+                [
+                  1,
+                  1
+                ],
+                [
+                  2,
+                  1
+                ],
+                [
+                  3,
+                  0
+                ],
+                [
+                  3.4589819430910724,
+                  -0.45898194309107243
+                ],
+                [
+                  4.1286283102658015,
+                  -1.2339605223076293
+                ],
+                [
+                  5.000000000000002,
+                  -2.311527085363394
+                ]
+              ],
+              "degree": 3,
+              "knots": [
+                0,
+                0,
+                0,
+                0,
+                1,
+                1,
+                1,
+                1.4589819430910724,
+                1.4589819430910724,
+                1.4589819430910724,
+                1.4589819430910724
+              ],
+              "weights": [
+                1,
+                1,
+                2,
+                2,
+                2,
+                2,
+                2
+              ],
+              "rational": true
+            }
+          }
+        },
+        {
+          "boundaryX": 6,
+          "after": {
+            "objectName": "AcDbSpline",
+            "handle": "10",
+            "layer": "0",
+            "color": 161,
+            "linetype": "ByLayer",
+            "lineweight": 50,
+            "details": {
+              "controlPoints": [
+                [
+                  0,
+                  0
+                ],
+                [
+                  1,
+                  1
+                ],
+                [
+                  2,
+                  1
+                ],
+                [
+                  3,
+                  0
+                ],
+                [
+                  3.621334927542687,
+                  -0.6213349275426874
+                ],
+                [
+                  4.628726947269851,
+                  -1.8217554933620896
+                ],
+                [
+                  6,
+                  -3.5679976086859684
+                ]
+              ],
+              "degree": 3,
+              "knots": [
+                0,
+                0,
+                0,
+                0,
+                1,
+                1,
+                1,
+                1.6213349275426874,
+                1.6213349275426874,
+                1.6213349275426874,
+                1.6213349275426874
+              ],
+              "weights": [
+                1,
+                1,
+                2,
+                2,
+                2,
+                2,
+                2
+              ],
+              "rational": true
+            }
+          }
+        },
+        {
+          "boundaryX": 8,
+          "after": {
+            "objectName": "AcDbSpline",
+            "handle": "10",
+            "layer": "0",
+            "color": 161,
+            "linetype": "ByLayer",
+            "lineweight": 50,
+            "details": {
+              "controlPoints": [
+                [
+                  0,
+                  0
+                ],
+                [
+                  1,
+                  1
+                ],
+                [
+                  2,
+                  1
+                ],
+                [
+                  3,
+                  0
+                ],
+                [
+                  3.8923225166531834,
+                  -0.8923225166531834
+                ],
+                [
+                  5.580884507032637,
+                  -2.979004243895773
+                ],
+                [
+                  8,
+                  -6.161516225020227
+                ]
+              ],
+              "degree": 3,
+              "knots": [
+                0,
+                0,
+                0,
+                0,
+                1,
+                1,
+                1,
+                1.8923225166531834,
+                1.8923225166531834,
+                1.8923225166531834,
+                1.8923225166531834
+              ],
+              "weights": [
+                1,
+                1,
+                2,
+                2,
+                2,
+                2,
+                2
+              ],
+              "rational": true
+            }
+          }
+        },
+        {
+          "boundaryX": 10,
+          "after": {
+            "objectName": "AcDbSpline",
+            "handle": "10",
+            "layer": "0",
+            "color": 161,
+            "linetype": "ByLayer",
+            "lineweight": 50,
+            "details": {
+              "controlPoints": [
+                [
+                  0,
+                  0
+                ],
+                [
+                  1,
+                  1
+                ],
+                [
+                  2,
+                  1
+                ],
+                [
+                  3,
+                  0
+                ],
+                [
+                  4.120713210194348,
+                  -1.1207132101943484
+                ],
+                [
+                  6.497424519892819,
+                  -4.12542356964488
+                ],
+                [
+                  10.000000000000004,
+                  -8.818930184708481
+                ]
+              ],
+              "degree": 3,
+              "knots": [
+                0,
+                0,
+                0,
+                0,
+                1,
+                1,
+                1,
+                2.1207132101943484,
+                2.1207132101943484,
+                2.1207132101943484,
+                2.1207132101943484
+              ],
+              "weights": [
+                1,
+                1,
+                2,
+                2,
+                2,
+                2,
+                2
+              ],
+              "rational": true
+            }
+          }
+        }
+      ],
+      "shapeProbe": [
+        {
+          "name": "equal-weights",
+          "before": {
+            "objectName": "AcDbSpline",
+            "handle": "10",
+            "layer": "0",
+            "color": 161,
+            "linetype": "ByLayer",
+            "lineweight": 50,
+            "details": {
+              "controlPoints": [
+                [
+                  0,
+                  0
+                ],
+                [
+                  1,
+                  1
+                ],
+                [
+                  2,
+                  1
+                ],
+                [
+                  3,
+                  0
+                ]
+              ],
+              "degree": 3,
+              "knots": [
+                0,
+                0,
+                0,
+                0,
+                1,
+                1,
+                1,
+                1
+              ],
+              "weights": [
+                1,
+                1,
+                1,
+                1
+              ],
+              "rational": true
+            }
+          },
+          "after": {
+            "objectName": "AcDbSpline",
+            "handle": "10",
+            "layer": "0",
+            "color": 161,
+            "linetype": "ByLayer",
+            "lineweight": 50,
+            "details": {
+              "controlPoints": [
+                [
+                  0,
+                  0
+                ],
+                [
+                  1,
+                  1
+                ],
+                [
+                  2,
+                  1
+                ],
+                [
+                  3,
+                  0
+                ],
+                [
+                  4,
+                  -1.0000000000000004
+                ],
+                [
+                  5,
+                  -3.0000000000000018
+                ],
+                [
+                  6,
+                  -5.8333333333333375
+                ]
+              ],
+              "degree": 3,
+              "knots": [
+                0,
+                0,
+                0,
+                0,
+                1,
+                1,
+                1,
+                2.0000000000000004,
+                2.0000000000000004,
+                2.0000000000000004,
+                2.0000000000000004
+              ],
+              "weights": [
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1
+              ],
+              "rational": true
+            }
+          }
+        },
+        {
+          "name": "weight-ramp",
+          "before": {
+            "objectName": "AcDbSpline",
+            "handle": "10",
+            "layer": "0",
+            "color": 161,
+            "linetype": "ByLayer",
+            "lineweight": 50,
+            "details": {
+              "controlPoints": [
+                [
+                  0,
+                  0
+                ],
+                [
+                  1,
+                  1
+                ],
+                [
+                  2,
+                  1
+                ],
+                [
+                  3,
+                  0
+                ]
+              ],
+              "degree": 3,
+              "knots": [
+                0,
+                0,
+                0,
+                0,
+                1,
+                1,
+                1,
+                1
+              ],
+              "weights": [
+                1,
+                2,
+                3,
+                4
+              ],
+              "rational": true
+            }
+          },
+          "after": {
+            "objectName": "AcDbSpline",
+            "handle": "10",
+            "layer": "0",
+            "color": 161,
+            "linetype": "ByLayer",
+            "lineweight": 50,
+            "details": {
+              "controlPoints": [
+                [
+                  0,
+                  0
+                ],
+                [
+                  1,
+                  1
+                ],
+                [
+                  2,
+                  1
+                ],
+                [
+                  3,
+                  0
+                ],
+                [
+                  4.111739571363378,
+                  -1.1117395713633784
+                ],
+                [
+                  5.086149712222842,
+                  -3.184785156254157
+                ],
+                [
+                  5.999999999999999,
+                  -5.681749712721087
+                ]
+              ],
+              "degree": 3,
+              "knots": [
+                0,
+                0,
+                0,
+                0,
+                1,
+                1,
+                1,
+                2.4823194284845047,
+                2.4823194284845047,
+                2.4823194284845047,
+                2.4823194284845047
+              ],
+              "weights": [
+                1,
+                2,
+                3,
+                4,
+                4,
+                4,
+                4
+              ],
+              "rational": true
+            }
+          }
+        },
+        {
+          "name": "changed-curvature",
+          "before": {
+            "objectName": "AcDbSpline",
+            "handle": "10",
+            "layer": "0",
+            "color": 161,
+            "linetype": "ByLayer",
+            "lineweight": 50,
+            "details": {
+              "controlPoints": [
+                [
+                  0,
+                  0
+                ],
+                [
+                  1,
+                  2
+                ],
+                [
+                  2,
+                  -1
+                ],
+                [
+                  3,
+                  0
+                ]
+              ],
+              "degree": 3,
+              "knots": [
+                0,
+                0,
+                0,
+                0,
+                1,
+                1,
+                1,
+                1
+              ],
+              "weights": [
+                1,
+                1,
+                2,
+                2
+              ],
+              "rational": true
+            }
+          },
+          "after": {
+            "objectName": "AcDbSpline",
+            "handle": "10",
+            "layer": "0",
+            "color": 161,
+            "linetype": "ByLayer",
+            "lineweight": 50,
+            "details": {
+              "controlPoints": [
+                [
+                  0,
+                  0
+                ],
+                [
+                  1,
+                  2
+                ],
+                [
+                  2,
+                  -1
+                ],
+                [
+                  3,
+                  0
+                ],
+                [
+                  3.619904037091053,
+                  0.6199040370910531
+                ],
+                [
+                  4.624089089383892,
+                  2.3926511197874634
+                ],
+                [
+                  6.000000000000001,
+                  5.280575777453684
+                ]
+              ],
+              "degree": 3,
+              "knots": [
+                0,
+                0,
+                0,
+                0,
+                1,
+                1,
+                1,
+                1.6199040370910531,
+                1.6199040370910531,
+                1.6199040370910531,
+                1.6199040370910531
+              ],
+              "weights": [
+                1,
+                1,
+                2,
+                2,
+                2,
+                2,
+                2
+              ],
+              "rational": true
+            }
+          }
+        }
+      ],
+      "startEndpointProbe": {
+        "objectName": "AcDbSpline",
+        "handle": "10",
+        "layer": "0",
+        "color": 161,
+        "linetype": "ByLayer",
+        "lineweight": 50,
+        "details": {
+          "controlPoints": [
+            [
+              -0.2000000000000003,
+              -0.23753137589750417
+            ],
+            [
+              -0.1458162162570558,
+              -0.1583542505983361
+            ],
+            [
+              -0.07917712529916805,
+              -0.07917712529916805
+            ],
+            [
+              0,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              2,
+              1
+            ],
+            [
+              3,
+              0
+            ]
+          ],
+          "degree": 3,
+          "knots": [
+            -0.07917712529916805,
+            -0.07917712529916805,
+            -0.07917712529916805,
+            -0.07917712529916805,
+            0,
+            0,
+            0,
+            1,
+            1,
+            1,
+            1
+          ],
+          "weights": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            2,
+            2
+          ],
+          "rational": true
+        }
+      }
+    }
+  },
+  "lockedLayer": {
+    "behavior": "refused",
+    "passed": true
+  },
+  "hiddenLayer": {
+    "behavior": "refused",
+    "passed": true
+  },
+  "cmdNamesAfter": "",
+  "status": "PASS",
+  "userDocument": {
+    "isolatedOwnedProcess": true,
+    "blankRestored": true
+  },
+  "automationProcessTerminated": true,
+  "processSetRestored": true,
+  "preExistingProcessIds": [
+    11276
+  ],
+  "rationalSplineDxfReadback": {
+    "sourceSha256": "98044dced09c4da3a3c0acec291b90267cde5205425ba2fdb2aa5e97ab14ab30",
+    "outputSha256": "ccf55a729bc7ebb25472c75834aa03ee9987eb43d1ee752926bc75bea9648306",
+    "source": [
+      {
+        "handle": "10",
+        "degree": 3,
+        "controlPoints": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            1
+          ],
+          [
+            2,
+            1
+          ],
+          [
+            3,
+            0
+          ]
+        ],
+        "knots": [
+          0,
+          0,
+          0,
+          0,
+          1,
+          1,
+          1,
+          1
+        ],
+        "weights": [
+          1,
+          1,
+          2,
+          2
+        ],
+        "rational": true
+      }
+    ],
+    "output": [
+      {
+        "handle": "10",
+        "degree": 3,
+        "controlPoints": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            1
+          ],
+          [
+            2,
+            1
+          ],
+          [
+            3,
+            0
+          ],
+          [
+            3.621334927542687,
+            -0.6213349275426874
+          ],
+          [
+            4.628726947269851,
+            -1.821755493362089
+          ],
+          [
+            6,
+            -3.567997608685968
+          ]
+        ],
+        "knots": [
+          0,
+          0,
+          0,
+          0,
+          1,
+          1,
+          1,
+          1.621334927542687,
+          1.621334927542687,
+          1.621334927542687,
+          1.621334927542687
+        ],
+        "weights": [
+          1,
+          1,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "rational": true
+      }
+    ]
+  },
+  "implementationSha256": {
+    "tools/autocad/f023-standard-matrix.ps1": "ed80b5faeae6b395e82ffe9223416be355c79616e7874384854fba7bc12742c3",
+    "tools/autocad/f022-shift-click.ps1": "bb5a60547a9e527ab90ca9f4dd479b5f8680b839f5979830c5bbdec9196bef37",
+    "tools/autocad/run-f023.mjs": "9bc2197cce12a975d669e942b5490e0240baa470150dc06a968022a81ff030dc",
+    "tools/autocad/run-f023-core.mjs": "21470c868ee4f770b921b84160a99cde6ef2913c4e7d543d7ad8346b34d1ee0d",
+    "parity/autocad/F-023-core.scr": "d1e8557ec8870eafde571caf0f37fda4b5f3808ac30bd18f394a01b10180ea63",
+    "tools/autocad/f023-runner.test.mjs": "93489536adf5f329cf69251ab2a05ff271032e48248aee479d1cf7a655a83912",
+    "tools/autocad/process-ownership.test.mjs": "703375745c55b8fccfc64c3e88990cb43639a1f7986b1f07b7cbbbc5220c8636"
+  },
+  "matrixScriptSha256": "ed80b5faeae6b395e82ffe9223416be355c79616e7874384854fba7bc12742c3",
+  "shiftHelperSha256": "bb5a60547a9e527ab90ca9f4dd479b5f8680b839f5979830c5bbdec9196bef37",
+  "runnerSha256": "9bc2197cce12a975d669e942b5490e0240baa470150dc06a968022a81ff030dc",
+  "coreRunnerSha256": "21470c868ee4f770b921b84160a99cde6ef2913c4e7d543d7ad8346b34d1ee0d",
+  "coreScriptSha256": "d1e8557ec8870eafde571caf0f37fda4b5f3808ac30bd18f394a01b10180ea63",
+  "observedAt": "2026-08-29T14:45:21.739Z"
+}

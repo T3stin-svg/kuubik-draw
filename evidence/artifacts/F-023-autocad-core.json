@@ -1,0 +1,349 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-023",
+  "benchmark": "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
+  "engine": "Autodesk AutoCAD Core Console 2024",
+  "engineVersion": "24.3",
+  "command": "EXTEND",
+  "certificationAuthority": false,
+  "measurementRole": "native-core-reference; desktop live workflow remains required",
+  "states": {
+    "before": {
+      "line": {
+        "start": [
+          200,
+          500
+        ],
+        "end": [
+          800,
+          500
+        ]
+      },
+      "spline": {
+        "degree": 3,
+        "knots": [
+          0,
+          0,
+          0,
+          0,
+          180.278,
+          360.555,
+          540.833,
+          721.11,
+          721.11,
+          721.11,
+          721.11
+        ],
+        "controlPoints": [
+          [
+            200,
+            0
+          ],
+          [
+            250,
+            50
+          ],
+          [
+            350,
+            150
+          ],
+          [
+            500,
+            2.13163e-14
+          ],
+          [
+            650,
+            -150
+          ],
+          [
+            750,
+            -50
+          ],
+          [
+            800,
+            0
+          ]
+        ]
+      }
+    },
+    "standard": {
+      "line": {
+        "start": [
+          200,
+          500
+        ],
+        "end": [
+          1000,
+          500
+        ]
+      },
+      "spline": {
+        "degree": 3,
+        "knots": [
+          0,
+          0,
+          0,
+          0,
+          180.278,
+          360.555,
+          540.833,
+          721.11,
+          721.11,
+          721.11,
+          961.48,
+          961.48,
+          961.48,
+          961.48
+        ],
+        "controlPoints": [
+          [
+            200,
+            0
+          ],
+          [
+            250,
+            50
+          ],
+          [
+            350,
+            150
+          ],
+          [
+            500,
+            2.13163e-14
+          ],
+          [
+            650,
+            -150
+          ],
+          [
+            750,
+            -50
+          ],
+          [
+            800,
+            0
+          ],
+          [
+            866.667,
+            66.6667
+          ],
+          [
+            933.333,
+            133.333
+          ],
+          [
+            1000,
+            200
+          ]
+        ]
+      }
+    },
+    "undo": {
+      "line": {
+        "start": [
+          200,
+          500
+        ],
+        "end": [
+          800,
+          500
+        ]
+      },
+      "spline": {
+        "degree": 3,
+        "knots": [
+          0,
+          0,
+          0,
+          0,
+          180.278,
+          360.555,
+          540.833,
+          721.11,
+          721.11,
+          721.11,
+          721.11
+        ],
+        "controlPoints": [
+          [
+            200,
+            0
+          ],
+          [
+            250,
+            50
+          ],
+          [
+            350,
+            150
+          ],
+          [
+            500,
+            2.13163e-14
+          ],
+          [
+            650,
+            -150
+          ],
+          [
+            750,
+            -50
+          ],
+          [
+            800,
+            0
+          ]
+        ]
+      }
+    },
+    "quick": {
+      "line": {
+        "start": [
+          200,
+          500
+        ],
+        "end": [
+          1000,
+          500
+        ]
+      },
+      "spline": {
+        "degree": 3,
+        "knots": [
+          0,
+          0,
+          0,
+          0,
+          180.278,
+          360.555,
+          540.833,
+          721.11,
+          721.11,
+          721.11,
+          961.48,
+          961.48,
+          961.48,
+          961.48
+        ],
+        "controlPoints": [
+          [
+            200,
+            0
+          ],
+          [
+            250,
+            50
+          ],
+          [
+            350,
+            150
+          ],
+          [
+            500,
+            2.13163e-14
+          ],
+          [
+            650,
+            -150
+          ],
+          [
+            750,
+            -50
+          ],
+          [
+            800,
+            0
+          ],
+          [
+            866.667,
+            66.6667
+          ],
+          [
+            933.333,
+            133.333
+          ],
+          [
+            1000,
+            200
+          ]
+        ]
+      }
+    },
+    "restored": {
+      "line": {
+        "start": [
+          200,
+          500
+        ],
+        "end": [
+          800,
+          500
+        ]
+      },
+      "spline": {
+        "degree": 3,
+        "knots": [
+          0,
+          0,
+          0,
+          0,
+          180.278,
+          360.555,
+          540.833,
+          721.11,
+          721.11,
+          721.11,
+          721.11
+        ],
+        "controlPoints": [
+          [
+            200,
+            0
+          ],
+          [
+            250,
+            50
+          ],
+          [
+            350,
+            150
+          ],
+          [
+            500,
+            2.13163e-14
+          ],
+          [
+            650,
+            -150
+          ],
+          [
+            750,
+            -50
+          ],
+          [
+            800,
+            0
+          ]
+        ]
+      }
+    }
+  },
+  "checks": {
+    "version": true,
+    "beforeLine": true,
+    "beforeSpline": true,
+    "standardLine": true,
+    "standardSpline": true,
+    "commandUndo": true,
+    "quickMatchesStandard": true,
+    "globalUndo": true,
+    "edgeExtend": true,
+    "completed": true
+  },
+  "fixtureSha256": "c5dbe35f3ea8fa8f26dee00edace96f0de5f033ec128e8e90ed34ed46d2d1bf6",
+  "scriptSha256": "d1e8557ec8870eafde571caf0f37fda4b5f3808ac30bd18f394a01b10180ea63",
+  "runnerSha256": "21470c868ee4f770b921b84160a99cde6ef2913c4e7d543d7ad8346b34d1ee0d",
+  "observedAt": "2026-08-29T12:40:26.975Z",
+  "status": "PASS"
+}

@@ -109,6 +109,32 @@ function Get-OptionalComValue {
   try { return (& $Action) } catch { return $null }
 }
 
+function Get-ExpectedLayerSnapshot {
+  param([Parameter(Mandatory = $true)]$Document)
+  $snapshot = [ordered]@{}
+  $layerCollection = Invoke-ComRetry { $Document.Layers }
+  $layerCount = Wait-ComCount { $layerCollection.Count } 4 'Layer count'
+  for ($index = 0; $index -lt $layerCount; $index++) {
+    $layer = Invoke-ComRetry { $layerCollection.Item($index) }
+    $name = Invoke-NonEmptyCom { $layer.Name } "Layer $index Name"
+    if (@('JOONED', 'TELJED', 'SEINAD', 'VIIRUTUS') -contains $name) {
+      $snapshot[$name] = [ordered]@{
+        color = [int](Invoke-ComRetry { $layer.Color })
+        lineweight = [int](Invoke-ComRetry { $layer.Lineweight })
+        linetype = Invoke-NonEmptyCom { $layer.Linetype } "Layer $name Linetype"
+        trueColor = Get-OptionalComValue { [int]$layer.TrueColor.RGB }
+        transparency = Get-OptionalComValue { [string]$layer.Transparency }
+      }
+    }
+  }
+  return $snapshot
+}
+
+function Test-ExpectedLayerSnapshot {
+  param($Layers)
+  return $Layers.JOONED.color -eq 7 -and $Layers.JOONED.lineweight -eq 25 -and $Layers.JOONED.linetype -eq 'Continuous' -and $Layers.TELJED.color -eq 4 -and $Layers.TELJED.lineweight -eq 13 -and $Layers.TELJED.linetype -eq 'DASHDOT' -and $Layers.SEINAD.color -eq 6 -and $Layers.SEINAD.lineweight -eq 50 -and $Layers.SEINAD.linetype -eq 'DASHED' -and $Layers.VIIRUTUS.color -eq 9 -and $Layers.VIIRUTUS.lineweight -eq 13 -and $Layers.VIIRUTUS.linetype -eq 'Continuous'
+}
+
 function Set-OwnedPidSidecar {
   param([Parameter(Mandatory = $true)]$Application)
   [uint32]$resolvedProcessId = 0
@@ -140,6 +166,13 @@ try {
   Wait-AcadReady $acad $document
   Invoke-ComRetry { $acad.ZoomExtents(); $document.Regen(1) } | Out-Null
   Wait-AcadReady $acad $document
+  # DXF proxy/lazy-load state can settle one command-idle tick before every
+  # LWPOLYLINE Closed flag is stable. Require two further completed native
+  # regens, then retain the post-read regen comparison below as the ratchet.
+  for ($stabilizePass = 0; $stabilizePass -lt 2; $stabilizePass += 1) {
+    Invoke-ComRetry { $document.Regen(1) } | Out-Null
+    Wait-AcadReady $acad $document
+  }
   $openedReadOnly = [bool](Invoke-ComRetry { $document.ReadOnly })
   $extents = [ordered]@{
     min = Convert-Point2 (Invoke-NonNullCom { $document.GetVariable('EXTMIN') } 'EXTMIN')
@@ -149,7 +182,7 @@ try {
   $handles = New-Object System.Collections.Generic.List[string]
   $nativeRecords = [ordered]@{}
   $modelSpace = Invoke-ComRetry { $document.ModelSpace }
-  $modelCount = Wait-ComCount { $modelSpace.Count } 40 'ModelSpace count'
+  $modelCount = Wait-ComCount { $modelSpace.Count } 40 'ModelSpace count' 60
   for ($index = 0; $index -lt $modelCount; $index++) {
     $entity = Invoke-ComRetry { $modelSpace.Item($index) }
     $name = Invoke-NonEmptyCom { $entity.ObjectName } "Entity $index ObjectName"
@@ -219,20 +252,13 @@ try {
     }
   }
   $layers = [ordered]@{}
-  $layerCollection = Invoke-ComRetry { $document.Layers }
-  $layerCount = Wait-ComCount { $layerCollection.Count } 4 'Layer count'
-  for ($index = 0; $index -lt $layerCount; $index++) {
-    $layer = Invoke-ComRetry { $layerCollection.Item($index) }
-    $name = Invoke-NonEmptyCom { $layer.Name } "Layer $index Name"
-    if (@('JOONED', 'TELJED', 'SEINAD', 'VIIRUTUS') -contains $name) {
-      $layers[$name] = [ordered]@{
-        color = [int](Invoke-ComRetry { $layer.Color })
-        lineweight = [int](Invoke-ComRetry { $layer.Lineweight })
-        linetype = Invoke-NonEmptyCom { $layer.Linetype } "Layer $name Linetype"
-        trueColor = Get-OptionalComValue { [int]$layer.TrueColor.RGB }
-        transparency = Get-OptionalComValue { [string]$layer.Transparency }
-      }
-    }
+  for ($layerPass = 0; $layerPass -lt 6; $layerPass += 1) {
+    $layers = Get-ExpectedLayerSnapshot $document
+    if (Test-ExpectedLayerSnapshot $layers) { break }
+    # Layer table values can lag an otherwise quiescent DXF open. A fresh
+    # native regen/read is required; an incorrect stable table remains FAIL.
+    Invoke-ComRetry { $document.Regen(1) } | Out-Null
+    Wait-AcadReady $acad $document
   }
   $styles = New-Object System.Collections.Generic.List[string]
   $styleCollection = Invoke-ComRetry { $document.TextStyles }
@@ -246,7 +272,7 @@ try {
     totalEntities = $modelCount -eq 40
     nativeTypes = $counts.AcDbLine -eq 12 -and $counts.AcDbPolyline -eq 9 -and $counts.AcDbText -eq 10 -and $counts.AcDbHatch -eq 7 -and $counts.AcDbCircle -eq 1 -and $counts.AcDbAlignedDimension -eq 1
     exactHandles = $handles.Count -eq 40 -and @($handles | Select-Object -Unique).Count -eq 40
-    layers = $layers.JOONED.color -eq 7 -and $layers.JOONED.lineweight -eq 25 -and $layers.JOONED.linetype -eq 'Continuous' -and $layers.TELJED.color -eq 4 -and $layers.TELJED.lineweight -eq 13 -and $layers.TELJED.linetype -eq 'DASHDOT' -and $layers.SEINAD.color -eq 6 -and $layers.SEINAD.lineweight -eq 50 -and $layers.SEINAD.linetype -eq 'DASHED' -and $layers.VIIRUTUS.color -eq 9 -and $layers.VIIRUTUS.lineweight -eq 13 -and $layers.VIIRUTUS.linetype -eq 'Continuous'
+    layers = Test-ExpectedLayerSnapshot $layers
     styles = $styles -contains 'NORMAL' -and $styles -contains 'Standard'
     readOnly = $openedReadOnly
     polylineClosureStable = @($polylineClosuresAfterRegen.Keys | Where-Object { [bool]$nativeRecords[$_].closed -ne [bool]$polylineClosuresAfterRegen[$_] }).Count -eq 0

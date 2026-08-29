@@ -1,0 +1,453 @@
+{
+  "schemaVersion": 1,
+  "kind": "global-topology",
+  "observedAt": "2026-08-29T15:07:02.567Z",
+  "sourceSha256": {
+    ".github/workflows/ci.yml": "b898ddca23dc64ba41ff74932d614ac709399a03776ef7c8a07871ec39c9e8e5",
+    "package.json": "85af1f998befcfaabb71f2a1c902882982508d21675b20f3aa774ae9d07568e2",
+    "package-lock.json": "9756bf28708c3933c83c0ace8e9dbd9fe4cad9b9d6cec58670758c545f02e584",
+    "apps/web/package.json": "e164660645a33349e303ac371042bcc3dc51525037060f203940f29f24d4b748",
+    "packages/cad-core/package.json": "76ce465c3726d5996b6ab5fe6130c795591ae6817cb31ac8f39809b9a247398e",
+    "packages/cad-renderer/package.json": "a07eeadcd06985a2701c0282f09a00e15f4aacdf0c33189d7fef8733db429960",
+    "packages/cad-dxf/package.json": "3f6f1422f036e26b7b35a2f902308be9c84f051326348fa4dd3d32eaf109406a",
+    "packages/cad-print/package.json": "f38343f8e48712a39ac30b46141d50b071b327b679769bb0d0b45b256a84ee57",
+    "evidence/artifacts/parity-package-v3-to-v4.json": "a4198589243e7ba26b3463a05407ad0397aa269d604dee2d2e0c888f815dceae",
+    "parity/rows.mjs": "7eeae6a608250f2f8eba3f714da412559f222fb062fcb4ccb8111b5896cc805f",
+    "tools/parity-kit/core.mjs": "31b859b415ba6fb970b98522579cec08b80284d1c6284663e891121ad2275181",
+    "tools/parity-kit/cli.mjs": "6ae170a77ad618905dfe0075ff86ca9f830e61ab1fc39303deb563b15eb68d5c"
+  },
+  "certifiedRowIds": [
+    "F-003",
+    "F-015",
+    "F-016",
+    "F-017",
+    "F-018",
+    "F-019",
+    "F-020",
+    "F-021",
+    "F-022",
+    "F-023",
+    "F-097",
+    "F-098",
+    "F-099",
+    "F-100",
+    "F-101",
+    "F-102",
+    "F-103",
+    "F-104",
+    "F-105",
+    "F-106",
+    "F-107",
+    "F-109",
+    "F-111",
+    "F-114"
+  ],
+  "stageScripts": {
+    "F-003": {
+      "browser": {
+        "script": "parity:f003:browser-artifact",
+        "command": "node tools/parity/capture-f003-browser.mjs"
+      },
+      "readback": {
+        "script": "parity:f003:readback",
+        "command": "npm run build -w @kuubik/cad-core && npm run build -w @kuubik/cad-dxf && npx vite-node tools/parity/run-f003-readback.mjs"
+      },
+      "autocad": {
+        "script": "parity:f003:autocad",
+        "command": "node tools/autocad/run-f003.mjs"
+      }
+    },
+    "F-015": {
+      "browser": {
+        "script": "parity:f015:browser-artifact",
+        "command": "node tools/parity/capture-f015-browser.mjs"
+      },
+      "readback": {
+        "script": "parity:f015:readback",
+        "command": "npm run build -w @kuubik/cad-core && npm run build -w @kuubik/cad-dxf && npx vite-node tools/parity/run-f015-readback.mjs"
+      },
+      "autocad": {
+        "script": "parity:f015:autocad",
+        "command": "node tools/autocad/run-f015.mjs"
+      }
+    },
+    "F-016": {
+      "browser": {
+        "script": "parity:f016:browser-artifact",
+        "command": "node tools/parity/capture-f016-browser.mjs"
+      },
+      "readback": {
+        "script": "parity:f016:readback",
+        "command": "npm run build -w @kuubik/cad-core && npm run build -w @kuubik/cad-dxf && npx vite-node tools/parity/run-f016-readback.mjs"
+      },
+      "autocad": {
+        "script": "parity:f016:autocad",
+        "command": "node tools/autocad/run-f016.mjs"
+      }
+    },
+    "F-017": {
+      "browser": {
+        "script": "parity:f017:browser-artifact",
+        "command": "node tools/parity/capture-f017-browser.mjs"
+      },
+      "readback": {
+        "script": "parity:f017:readback",
+        "command": "npm run build -w @kuubik/cad-core && npm run build -w @kuubik/cad-dxf && npx vite-node tools/parity/run-f017-readback.mjs"
+      },
+      "autocad": {
+        "script": "parity:f017:autocad",
+        "command": "node tools/autocad/run-f017.mjs"
+      }
+    },
+    "F-018": {
+      "browser": {
+        "script": "parity:f018:browser-artifact",
+        "command": "node tools/parity/capture-f018-browser.mjs"
+      },
+      "readback": {
+        "script": "parity:f018:readback",
+        "command": "npm run build -w @kuubik/cad-core && npm run build -w @kuubik/cad-dxf && npx vite-node tools/parity/run-f018-readback.mjs"
+      },
+      "autocad": {
+        "script": "parity:f018:autocad",
+        "command": "node tools/autocad/run-f018.mjs"
+      }
+    },
+    "F-019": {
+      "browser": {
+        "script": "parity:f019:browser-artifact",
+        "command": "node tools/parity/capture-f019-browser.mjs"
+      },
+      "readback": {
+        "script": "parity:f019:readback",
+        "command": "npm run build -w @kuubik/cad-core && npm run build -w @kuubik/cad-dxf && npx vite-node tools/parity/run-f019-readback.mjs"
+      },
+      "autocad": {
+        "script": "parity:f019:autocad",
+        "command": "node tools/autocad/run-f019.mjs"
+      }
+    },
+    "F-020": {
+      "browser": {
+        "script": "parity:f020:browser-artifact",
+        "command": "node tools/parity/capture-f020-browser.mjs"
+      },
+      "readback": {
+        "script": "parity:f020:readback",
+        "command": "npm run build -w @kuubik/cad-core && npm run build -w @kuubik/cad-dxf && npx vite-node tools/parity/run-f020-readback.mjs"
+      },
+      "autocad": {
+        "script": "parity:f020:autocad",
+        "command": "node tools/autocad/run-f020.mjs"
+      }
+    },
+    "F-021": {
+      "browser": {
+        "script": "parity:f021:browser-artifact",
+        "command": "node tools/parity/capture-f021-browser.mjs"
+      },
+      "readback": {
+        "script": "parity:f021:readback",
+        "command": "npm run build -w @kuubik/cad-core && npm run build -w @kuubik/cad-dxf && npx vite-node tools/parity/run-f021-readback.mjs"
+      },
+      "autocad": {
+        "script": "parity:f021:autocad",
+        "command": "node tools/autocad/run-f021.mjs"
+      }
+    },
+    "F-022": {
+      "browser": {
+        "script": "parity:f022:browser-artifact",
+        "command": "node tools/parity/capture-f022-browser.mjs"
+      },
+      "readback": {
+        "script": "parity:f022:readback",
+        "command": "npm run build -w @kuubik/cad-core && npm run build -w @kuubik/cad-dxf && npx vite-node tools/parity/run-f022-readback.mjs"
+      },
+      "autocad": {
+        "script": "parity:f022:autocad",
+        "command": "node tools/autocad/run-f022.mjs"
+      },
+      "oracle": {
+        "script": "parity:f022:oracles",
+        "command": "npm run parity:f022:readback && node tools/oracles/run-f022-oracles.mjs"
+      },
+      "cross": {
+        "script": "parity:f022:cross-evidence",
+        "command": "node tools/parity/check-f022-cross-evidence.mjs"
+      }
+    },
+    "F-023": {
+      "browser": {
+        "script": "parity:f023:browser-artifact",
+        "command": "node tools/parity/capture-f023-browser.mjs"
+      },
+      "readback": {
+        "script": "parity:f023:readback",
+        "command": "npm run build -w @kuubik/cad-core && npm run build -w @kuubik/cad-dxf && npx vite-node tools/parity/run-f023-readback.mjs"
+      },
+      "autocad": {
+        "script": "parity:f023:autocad",
+        "command": "node tools/autocad/run-f023.mjs"
+      },
+      "oracle": {
+        "script": "parity:f023:oracles",
+        "command": "npm run parity:f023:readback && node tools/oracles/run-f023-oracles.mjs"
+      },
+      "cross": {
+        "script": "parity:f023:cross-evidence",
+        "command": "node tools/parity/check-f023-cross-evidence.mjs"
+      }
+    },
+    "F-097": {
+      "browser": {
+        "script": "parity:f097:browser-artifact",
+        "command": "node tools/parity/capture-f097-browser.mjs"
+      },
+      "readback": {
+        "script": "parity:f097:readback",
+        "command": "npm run build -w @kuubik/cad-core && node tools/parity/run-f097-readback.mjs"
+      },
+      "autocad": {
+        "script": "parity:f097:autocad",
+        "command": "node tools/autocad/run-f097.mjs"
+      }
+    },
+    "F-098": {
+      "browser": {
+        "script": "parity:f098:browser-artifact",
+        "command": "node tools/parity/capture-f098-browser.mjs"
+      },
+      "readback": {
+        "script": "parity:f098:readback",
+        "command": "npm run build -w @kuubik/cad-core && node tools/parity/run-f098-readback.mjs"
+      },
+      "autocad": {
+        "script": "parity:f098:autocad",
+        "command": "node tools/autocad/run-f098.mjs"
+      }
+    },
+    "F-099": {
+      "browser": {
+        "script": "parity:f099:browser-artifact",
+        "command": "node tools/parity/capture-f099-browser.mjs"
+      },
+      "readback": {
+        "script": "parity:f099:readback",
+        "command": "npm run build -w @kuubik/cad-core && node tools/parity/run-f099-readback.mjs"
+      },
+      "autocad": {
+        "script": "parity:f099:autocad",
+        "command": "node tools/autocad/run-f099.mjs"
+      }
+    },
+    "F-100": {
+      "browser": {
+        "script": "parity:f100:browser-artifact",
+        "command": "node tools/parity/capture-f100-browser.mjs"
+      },
+      "readback": {
+        "script": "parity:f100:readback",
+        "command": "npm run build -w @kuubik/cad-core && node tools/parity/run-f100-readback.mjs"
+      },
+      "autocad": {
+        "script": "parity:f100:autocad",
+        "command": "node tools/autocad/run-f100.mjs"
+      },
+      "cross": {
+        "script": "parity:f100:cross-evidence",
+        "command": "node tools/parity/check-f100-cross-evidence.mjs"
+      }
+    },
+    "F-101": {
+      "browser": {
+        "script": "parity:f101:browser-artifact",
+        "command": "node tools/parity/capture-f101-browser.mjs"
+      },
+      "readback": {
+        "script": "parity:f101:readback",
+        "command": "npm run build -w @kuubik/cad-core && node tools/parity/run-f101-readback.mjs"
+      },
+      "autocad": {
+        "script": "parity:f101:autocad",
+        "command": "node tools/autocad/run-f101.mjs"
+      },
+      "cross": {
+        "script": "parity:f101:cross-evidence",
+        "command": "node tools/parity/check-f101-cross-evidence.mjs"
+      }
+    },
+    "F-102": {
+      "browser": {
+        "script": "parity:f102:browser-artifact",
+        "command": "node tools/parity/capture-f102-browser.mjs"
+      },
+      "readback": {
+        "script": "parity:f102:readback",
+        "command": "npm run build -w @kuubik/cad-core && npm run build -w @kuubik/cad-print && npx vite-node tools/parity/run-f102-readback.mjs"
+      },
+      "autocad": {
+        "script": "parity:f102:autocad",
+        "command": "node tools/autocad/run-f102.mjs"
+      },
+      "cross": {
+        "script": "parity:f102:cross-evidence",
+        "command": "node tools/parity/check-f102-cross-evidence.mjs"
+      }
+    },
+    "F-103": {
+      "browser": {
+        "script": "parity:f103:browser-artifact",
+        "command": "node tools/parity/capture-f103-browser.mjs"
+      },
+      "readback": {
+        "script": "parity:f103:readback",
+        "command": "npm run build -w @kuubik/cad-core && npm run build -w @kuubik/cad-print && npx vite-node tools/parity/run-f103-readback.mjs"
+      },
+      "autocad": {
+        "script": "parity:f103:autocad",
+        "command": "node tools/autocad/run-f103.mjs"
+      },
+      "cross": {
+        "script": "parity:f103:cross-evidence",
+        "command": "node tools/parity/check-f103-cross-evidence.mjs"
+      }
+    },
+    "F-104": {
+      "browser": {
+        "script": "parity:f104:browser-artifact",
+        "command": "node tools/parity/capture-f104-browser.mjs"
+      },
+      "readback": {
+        "script": "parity:f104:readback",
+        "command": "npm run build -w @kuubik/cad-core && npm run build -w @kuubik/cad-print && npx vite-node tools/parity/run-f104-readback.mjs"
+      },
+      "autocad": {
+        "script": "parity:f104:autocad",
+        "command": "node tools/autocad/run-f104.mjs"
+      },
+      "cross": {
+        "script": "parity:f104:cross-evidence",
+        "command": "node tools/parity/check-f104-cross-evidence.mjs"
+      }
+    },
+    "F-105": {
+      "browser": {
+        "script": "parity:f105:browser-artifact",
+        "command": "node tools/parity/capture-f105-browser.mjs"
+      },
+      "readback": {
+        "script": "parity:f105:readback",
+        "command": "npm run build -w @kuubik/cad-core && npm run build -w @kuubik/cad-print && npx vite-node tools/parity/run-f105-readback.mjs"
+      },
+      "autocad": {
+        "script": "parity:f105:autocad",
+        "command": "node tools/autocad/run-f105.mjs"
+      },
+      "cross": {
+        "script": "parity:f105:cross-evidence",
+        "command": "node tools/parity/check-f105-cross-evidence.mjs"
+      }
+    },
+    "F-106": {
+      "browser": {
+        "script": "parity:f106:browser-artifact",
+        "command": "node tools/parity/capture-f106-browser.mjs"
+      },
+      "readback": {
+        "script": "parity:f106:readback",
+        "command": "npm run build -w @kuubik/cad-core && npm run build -w @kuubik/cad-print && npx vite-node tools/parity/run-f106-readback.mjs"
+      },
+      "autocad": {
+        "script": "parity:f106:autocad",
+        "command": "node tools/autocad/run-f106.mjs"
+      },
+      "cross": {
+        "script": "parity:f106:cross-evidence",
+        "command": "node tools/parity/check-f106-cross-evidence.mjs"
+      }
+    },
+    "F-107": {
+      "browser": {
+        "script": "parity:f107:browser-artifact",
+        "command": "node tools/parity/capture-f107-browser.mjs"
+      },
+      "readback": {
+        "script": "parity:f107:readback",
+        "command": "npm run build -w @kuubik/cad-core && npx vite-node tools/parity/run-f107-readback.mjs"
+      },
+      "autocad": {
+        "script": "parity:f107:autocad",
+        "command": "node tools/autocad/run-f107.mjs"
+      },
+      "cross": {
+        "script": "parity:f107:cross-evidence",
+        "command": "node tools/parity/check-f107-cross-evidence.mjs"
+      }
+    },
+    "F-109": {
+      "browser": {
+        "script": "parity:f109:browser-artifact",
+        "command": "node tools/parity/capture-f109-browser.mjs"
+      },
+      "readback": {
+        "script": "parity:f109:readback",
+        "command": "npx vite-node tools/parity/run-f109-readback.mjs"
+      },
+      "autocad": {
+        "script": "parity:f109:autocad",
+        "command": "node tools/autocad/run-f109-all.mjs"
+      },
+      "cross": {
+        "script": "parity:f109:cross-evidence",
+        "command": "node tools/parity/check-f109-cross-evidence.mjs"
+      }
+    },
+    "F-111": {
+      "browser": {
+        "script": "parity:f111:browser-artifact",
+        "command": "node tools/parity/capture-f111-browser.mjs"
+      },
+      "readback": {
+        "script": "parity:f111:readback",
+        "command": "npx vite-node tools/parity/run-f111-readback.mjs"
+      },
+      "autocad": {
+        "script": "parity:f111:autocad",
+        "command": "node tools/autocad/run-f111-all.mjs"
+      },
+      "cross": {
+        "script": "parity:f111:cross-evidence",
+        "command": "node tools/parity/check-f111-cross-evidence.mjs"
+      }
+    },
+    "F-114": {
+      "browser": {
+        "script": "parity:f114:browser-artifact",
+        "command": "node tools/parity/capture-f114-browser.mjs"
+      },
+      "readback": {
+        "script": "parity:f114:readback",
+        "command": "npx vite-node tools/parity/run-f114-readback.mjs"
+      },
+      "autocad": {
+        "script": "parity:f114:autocad",
+        "command": "node tools/autocad/run-f114.mjs"
+      },
+      "cross": {
+        "script": "parity:f114:cross-evidence",
+        "command": "node tools/parity/check-f114-cross-evidence.mjs"
+      }
+    }
+  },
+  "checks": {
+    "denominatorExactly133": true,
+    "rowIdsUnique": true,
+    "scoreRatchetMatchesTopology": true,
+    "everyStageScriptExists": true,
+    "fullCiGatePresent": true,
+    "licensedAutoCadJobPresent": true,
+    "requiredOracleJobPresent": true
+  },
+  "status": "PASS"
+}

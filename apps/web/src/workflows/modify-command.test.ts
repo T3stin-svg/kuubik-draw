@@ -1,6 +1,6 @@
 import { createEmptyDocument } from "@kuubik/cad-core";
 import { describe, expect, it } from "vitest";
-import { prepareCopy, prepareMirror, prepareMove, prepareOffset, prepareRotate, prepareScale, prepareTrim, putEntities } from "./modify-command.js";
+import { prepareCopy, prepareExtend, prepareMirror, prepareMove, prepareOffset, prepareRotate, prepareScale, prepareTrim, putEntities } from "./modify-command.js";
 
 function modifyDocument() {
   const document = createEmptyDocument({ documentId: "web-workflows", now: "2026-08-29T00:00:00.000Z" });
@@ -58,5 +58,16 @@ describe("web modify command workflows", () => {
     expect(prepareTrim(document, {
       mode: "standard", cuttingHandlesInput: "20", targetsInput: "10@75,0", targetAction: "trim", edgeMode: "no-extend", projectMode: "none",
     })).toEqual(trim);
+
+    const extendDocument = modifyDocument();
+    extendDocument.entities[0] = { kind: "line", handle: "10", layerId: "0", start: { x: 0, y: 0 }, end: { x: 40, y: 0 } };
+    const extend = prepareExtend(extendDocument, {
+      mode: "standard", boundaryHandlesInput: "20", targetsInput: "10@40,0", targetAction: "extend", edgeMode: "no-extend", projectMode: "none",
+    });
+    expect(extend.commandId).toBe("EXTEND");
+    expect(extend.operationArgs).toMatchObject({ mode: "standard", boundaryEdgeHandles: ["20"], edgeMode: "no-extend", projectMode: "none" });
+    expect(prepareExtend(extendDocument, {
+      mode: "standard", boundaryHandlesInput: "20", targetsInput: "10@40,0", targetAction: "extend", edgeMode: "no-extend", projectMode: "none",
+    })).toEqual(extend);
   });
 });

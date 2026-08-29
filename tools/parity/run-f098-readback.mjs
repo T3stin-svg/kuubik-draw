@@ -28,6 +28,7 @@ const layout = parsed.layouts?.find((candidate) => candidate.name === "F098 PAPE
 const result = {
   schemaVersion: 1,
   rowId: "F-098",
+  observedAt: new Date().toISOString(),
   source: "production cad-core createPaperLayout and serializeKDraw; independent magic/base64/length/SHA/document reader",
   container: { bytes: bytes.byteLength, sha256: sha256(bytes), documentBytes: documentBytes.byteLength, documentSha256: sha256(documentBytes) },
   layout,

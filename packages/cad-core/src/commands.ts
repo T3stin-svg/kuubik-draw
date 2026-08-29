@@ -272,6 +272,43 @@ export interface TrimCommandDefinition {
   execute(document: KDrawDocumentV1, args: TrimCommandArgs): TrimCommandResult;
 }
 
+export type ExtendTargetAction = "extend" | "trim";
+
+export interface ExtendTargetPick {
+  handle: string;
+  pickPoint: CadPoint2;
+  action?: ExtendTargetAction;
+}
+
+export interface ExtendCommandArgs {
+  mode: TrimMode;
+  boundaryEdgeHandles: readonly string[];
+  targets: readonly ExtendTargetPick[];
+  edgeMode: TrimEdgeMode;
+  projectMode: TrimProjectMode;
+}
+
+export interface ExtendRejectedTarget extends TrimRejectedTarget {}
+
+export interface ExtendCommandStep extends TrimCommandStep {}
+
+export interface ExtendCommandResult {
+  changes: EntityChange[];
+  targetHandles: string[];
+  resultHandles: string[];
+  rejected: ExtendRejectedTarget[];
+  steps: ExtendCommandStep[];
+  mode: TrimMode;
+  edgeMode: TrimEdgeMode;
+  projectMode: TrimProjectMode;
+}
+
+export interface ExtendCommandDefinition {
+  id: "EXTEND";
+  aliases: readonly string[];
+  execute(document: KDrawDocumentV1, args: ExtendCommandArgs): ExtendCommandResult;
+}
+
 export class CadCommandInputError extends Error {
   constructor(message: string) {
     super(message);
@@ -320,18 +357,26 @@ export function parseOffsetDistance(input: string): number {
   return positiveScaleNumber(input, "Offset distance");
 }
 
-export function parseTrimTargetPicks(input: string, action: TrimTargetAction = "trim"): TrimTargetPick[] {
+function parseTargetPicks<TAction extends TrimTargetAction>(input: string, action: TAction, commandId: "TRIM" | "EXTEND"): Array<{ handle: string; pickPoint: CadPoint2; action: TAction }> {
   const tokens = input.split(/[;\r\n]+/).map((token) => token.trim()).filter(Boolean);
-  if (tokens.length === 0) throw new CadCommandInputError("TRIM requires at least one handle@x,y target pick.");
+  if (tokens.length === 0) throw new CadCommandInputError(`${commandId} requires at least one handle@x,y target pick.`);
   return tokens.map((token) => {
     const separator = token.indexOf("@");
     if (separator <= 0 || separator === token.length - 1) {
-      throw new CadCommandInputError("TRIM targets must use handle@x,y format.");
+      throw new CadCommandInputError(`${commandId} targets must use handle@x,y format.`);
     }
     const handle = token.slice(0, separator).trim();
-    if (!handle || /\s/u.test(handle)) throw new CadCommandInputError("TRIM target handle is invalid.");
+    if (!handle || /\s/u.test(handle)) throw new CadCommandInputError(`${commandId} target handle is invalid.`);
     return { handle, pickPoint: parseCartesianPoint(token.slice(separator + 1)), action };
   });
+}
+
+export function parseTrimTargetPicks(input: string, action: TrimTargetAction = "trim"): TrimTargetPick[] {
+  return parseTargetPicks(input, action, "TRIM");
+}
+
+export function parseExtendTargetPicks(input: string, action: ExtendTargetAction = "extend"): ExtendTargetPick[] {
+  return parseTargetPicks(input, action, "EXTEND");
 }
 
 export function parseCadHandleList(input: string): string[] {
@@ -1450,6 +1495,35 @@ export function executeTrim(document: KDrawDocumentV1, args: TrimCommandArgs): T
   };
 }
 
+/**
+ * Executes standalone AutoCAD-style EXTEND while sharing the exact geometric predicate and
+ * atomic transaction machinery used by TRIM Shift-Extend. Shift-selected targets are mapped to
+ * TRIM; ordinary targets default to EXTEND. The source document is never mutated.
+ */
+export function executeExtend(document: KDrawDocumentV1, args: ExtendCommandArgs): ExtendCommandResult {
+  const result = executeTrim(document, {
+    mode: args.mode,
+    cuttingEdgeHandles: args.boundaryEdgeHandles,
+    targets: args.targets.map((target) => ({
+      handle: target.handle,
+      pickPoint: target.pickPoint,
+      action: target.action === "trim" ? "trim" : "extend",
+    })),
+    edgeMode: args.edgeMode,
+    projectMode: args.projectMode,
+  });
+  return {
+    changes: result.changes,
+    targetHandles: result.targetHandles,
+    resultHandles: result.resultHandles,
+    rejected: result.rejected,
+    steps: result.steps,
+    mode: result.mode,
+    edgeMode: result.edgeMode,
+    projectMode: result.projectMode,
+  };
+}
+
 const rectangleCommand: RectangleCommandDefinition = Object.freeze({
   id: "RECTANGLE",
   aliases: Object.freeze(["RECTANG", "RECTANGLE", "REC"]),
@@ -1504,9 +1578,15 @@ const trimCommand: TrimCommandDefinition = Object.freeze({
   execute: executeTrim,
 });
 
-export const cadCommandRegistry = Object.freeze([rectangleCommand, eraseCommand, moveCommand, copyCommand, rotateCommand, scaleCommand, mirrorCommand, offsetCommand, trimCommand]);
+const extendCommand: ExtendCommandDefinition = Object.freeze({
+  id: "EXTEND",
+  aliases: Object.freeze(["EX", "EXTEND"]),
+  execute: executeExtend,
+});
 
-export function resolveCadCommand(token: string): RectangleCommandDefinition | EraseCommandDefinition | MoveCommandDefinition | CopyCommandDefinition | RotateCommandDefinition | ScaleCommandDefinition | MirrorCommandDefinition | OffsetCommandDefinition | TrimCommandDefinition | null {
+export const cadCommandRegistry = Object.freeze([rectangleCommand, eraseCommand, moveCommand, copyCommand, rotateCommand, scaleCommand, mirrorCommand, offsetCommand, trimCommand, extendCommand]);
+
+export function resolveCadCommand(token: string): RectangleCommandDefinition | EraseCommandDefinition | MoveCommandDefinition | CopyCommandDefinition | RotateCommandDefinition | ScaleCommandDefinition | MirrorCommandDefinition | OffsetCommandDefinition | TrimCommandDefinition | ExtendCommandDefinition | null {
   const normalized = token.trim().toUpperCase();
   return cadCommandRegistry.find((command) => command.aliases.includes(normalized)) ?? null;
 }

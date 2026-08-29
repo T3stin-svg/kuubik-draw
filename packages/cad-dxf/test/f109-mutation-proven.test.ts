@@ -1,4 +1,5 @@
 import { createHash } from "node:crypto";
+import { readFile } from "node:fs/promises";
 import { describe, expect, it } from "vitest";
 import { createF109Document } from "../../../parity/fixtures/f109-document.js";
 import { exportDxf } from "../src/index.js";
@@ -40,5 +41,13 @@ describe("F-109 mutation-proven ratchet", () => {
       loops: value.loops.map((loop) => ({ flags: loop.isHole ? 2 : 3, closed: true, vertices: loop.vertices.map((vertex) => [vertex.x, vertex.y, 0]) })),
     });
     expect(normalizeF109HatchTopology(toNativeRecord(baselineHatch))).not.toEqual(normalizeF109HatchTopology(toNativeRecord(hatch)));
+  });
+
+  it("requires the native layer table to stabilize after completed regens", async () => {
+    const source = await readFile(new URL("../../../tools/autocad/f109-desktop-readback.ps1", import.meta.url), "utf8");
+    expect(source).toContain("function Get-ExpectedLayerSnapshot");
+    expect(source).toContain("function Test-ExpectedLayerSnapshot");
+    expect(source).toMatch(/for \(\$layerPass = 0; \$layerPass -lt 6; \$layerPass \+= 1\)[\s\S]*Get-ExpectedLayerSnapshot \$document[\s\S]*\$document\.Regen\(1\)[\s\S]*Wait-AcadReady/gu);
+    expect(source).toContain("layers = Test-ExpectedLayerSnapshot $layers");
   });
 });

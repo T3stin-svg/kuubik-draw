@@ -99,6 +99,7 @@ const restoredViewport = read.document.layouts.find((layout) => layout.id === pa
 const result = {
   schemaVersion: 1,
   rowId: "F-101",
+  observedAt: new Date().toISOString(),
   source: "production display-lock transaction kernel and serializer; independent KDRAW1 magic/base64/length/SHA/document reader",
   initialViewport,
   lockedViewport,

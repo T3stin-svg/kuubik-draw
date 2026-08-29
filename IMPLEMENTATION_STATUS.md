@@ -19,6 +19,10 @@
   runtime coverage, semantic JSON/KDRAW1 content addresses, one-row execution
   and fast/row/full CI tiers; MOVE…TRIM preview and commit now share one typed
   web workflow module instead of duplicated parsing/execution branches.
+- schema-v4 package evidence binding separates the immutable dependency surface,
+  each row's transitive npm stage-command graph and the global CI topology. The
+  checked-in v3→v4 migration receipt proves that F-023 alone added authority-stage
+  commands while the prior 23 rows and `package-lock.json` stayed unchanged.
 - F-003 RECTANGLE mirrored through command registry, atomic browser commit, IndexedDB reload,
   production DXF, independent parser and a fresh AutoCAD 2024 Core Console live workflow.
 - F-015 ERASE mirrored through selectable browser objects, locked-layer refusal, one atomic
@@ -30,6 +34,12 @@
   families, closed bulge-width polylines and layer-safe nested blocks. The same
   rational SPLINE production DXF passes Chromium, typed AutoCAD COM and an
   independently parsed AutoCAD-saved DXF; final review is 0 P0 / 0 P1.
+- F-023 EXTEND mirrored Quick/Standard boundary selection, Fence/Crossing,
+  Edge Extend/No extend, Project None/UCS/View, command Undo, physical
+  Shift-TRIM and atomic global Undo/Redo across line/polyline/arc/circle/
+  ellipse/rational-spline geometry. Chromium, production DXF/KDRAW1,
+  independent read-back, secondary pinned LibreCAD/FreeCAD oracles and an
+  owned AutoCAD 2024 desktop live matrix all pass locally.
 - F-097 Layout tabs mirrored with create/rename/copy-before-source/reorder/delete,
   independent viewport and paper-entity identifiers, atomic Undo/Redo, IndexedDB reload,
   production KDRAW1 read-back and an owned AutoCAD native-DWG reopen workflow.
@@ -71,10 +81,10 @@
 
 ## Certified state and explicit remaining limits
 
-- the new application has **23/133** publicly CI-verified parity rows
-  (**17.3% raw / 20.7% weighted**) at feature commit `30a9c2a`; the completed
-  architecture gate ends at `d097b34` and GitHub Actions run `33250270350`;
-- all 22 legacy-certified rows and the first new row F-022 are locally mirrored;
+- the new application has **24/133** locally certified parity rows
+  (**18.0% raw / 21.7% weighted**); F-023 public CI verification is pending;
+- all 22 legacy-certified rows and the first two new rows F-022/F-023 are
+  locally mirrored;
 - spline/NURBS rendering is rejected rather than drawn as a misleading control polygon;
 - Unicode PDF text is rejected until a font-embedding path exists;
 - LibreCAD/FreeCAD fixtures pass locally, but the machine has no signed OS
@@ -84,17 +94,16 @@
 - native DWG/DWT/XREF and PC3/CTB/STB remain deferred;
 - no preview or production deployment has been made.
 
-The public general runner passed 33 test files / 245 Vitest tests, 34 mutation
-tests, 30 DXF tests, 19 PDF tests and 62 Chromium E2E tests. Its conditional
-self-hosted AutoCAD and required-oracle jobs were skipped because the protected
-runner variables are not enabled; the F-022 certification therefore remains
-bound to its checked-in licensed local AutoCAD live evidence and independent
-read-back, not to a claimed public native rerun.
+The F-023 local full gate passed 38 test files / 276 Vitest tests, 39 mutation
+tests, 32 DXF tests, 19 PDF tests and 66 Chromium E2E tests. The checked-in
+licensed AutoCAD evidence is fresh for F-022/F-023/F-109/F-111; public CI is
+still pending for this wave. LibreCAD/FreeCAD remain secondary oracles and
+report `FIXTURE_PASS_NOT_NETWORK_ISOLATED`, not certification authority.
 
 The architecture-efficiency wave in `ARCHITECTURE_ROADMAP.md` is closed with
 public Ubuntu CI and an independent `0 P0 / 0 P1` review. Its App-shell refactor
 was followed by all 22 browser captures, 23 independent read-backs, a fresh
 F-102 native AutoCAD live run, schema-v3 exact stage receipts, real F-003
 Chromium DXF capture and cross-platform content-address verification. The next
-functional row is F-023 EXTEND. F-108 native PC3/CTB/STB remains blocked on a
+functional row is F-024 FILLET. F-108 native PC3/CTB/STB remains blocked on a
 licensed adapter. No production deployment is authorized.

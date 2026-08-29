@@ -4,8 +4,8 @@
   "kind": "autocad",
   "authority": "autocad-2024.1.2-live",
   "status": "PASS",
-  "artifactSha256": "c9f9e153ffacfcdc290c2f241d537d2faec5832df5bd01e3c42e479a234e6b59",
-  "observedAt": "2026-08-29T10:49:33.459Z",
+  "artifactSha256": "9e0e92eb283e59033ea2e86714d6db7918ee583f9b75fa7e4d4ded42f44a255c",
+  "observedAt": "2026-08-29T13:54:09.303Z",
   "workflow": "An owned isolated AutoCAD 24.3 scratch process runs A3 Layout 1:1, A4 Window 10,20-190,270 at 1:2, DWG reopen, Extents Fit Center, an out-of-sheet Window -25,-40-275,360, Display from the exact captured Chromium paper view and restored A3 Layout.",
   "result": "AutoCAD preserved viewport coordinates, persisted A4 Window/1:2, accepted arbitrary Window coordinates and Display, rejected CenterPlot for Layout and emitted two independently parsed PDFs. Native VIEWCTR/VIEWSIZE/SCREENSIZE reproduced the Chromium Display source within 0.01 drawing units; both native vectors matched their resolved scale. Absolute PC3 printable margins remain F-108. The owned PID terminated, the pre-existing AutoCAD process set was restored and temporary files were removed.",
   "artifact": "evidence/artifacts/F-102-autocad-readback.json"

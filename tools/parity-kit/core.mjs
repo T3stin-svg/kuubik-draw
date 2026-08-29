@@ -8,6 +8,29 @@ import { CERTIFICATION_SOURCE_ROOTS, PARITY_ROWS, RUNTIME_SOURCE_ROOTS, SOURCE_G
 
 export const REPO_ROOT = resolve(fileURLToPath(new URL("../..", import.meta.url)));
 export const PARITY_STAGE_ORDER = Object.freeze(["browser", "readback", "oracle", "autocad", "cross"]);
+export const GLOBAL_TOPOLOGY_RECEIPT_PATH = "evidence/artifacts/parity-global-topology.json";
+export const PACKAGE_SEMANTIC_MIGRATION_PATH = "evidence/artifacts/parity-package-v3-to-v4.json";
+export const PACKAGE_SEMANTIC_MIGRATION_BASE = "46d827801a7aebc7070143ff36435f355df6252b";
+export const PACKAGE_SEMANTIC_MIGRATION_BASE_MANIFEST_SHA256 = "7f69dcae5325e072849411c5aed4034bb18d4ce0525dd3c4e3d8bc9fe3f185ef";
+export const PACKAGE_WORKSPACE_MANIFEST_PATHS = Object.freeze([
+  "apps/web/package.json",
+  "packages/cad-core/package.json",
+  "packages/cad-renderer/package.json",
+  "packages/cad-dxf/package.json",
+  "packages/cad-print/package.json",
+]);
+export const GLOBAL_TOPOLOGY_SOURCE_PATHS = Object.freeze([
+  ".github/workflows/ci.yml",
+  "package.json",
+  "package-lock.json",
+  ...PACKAGE_WORKSPACE_MANIFEST_PATHS,
+  PACKAGE_SEMANTIC_MIGRATION_PATH,
+  "parity/rows.mjs",
+  "tools/parity-kit/core.mjs",
+  "tools/parity-kit/cli.mjs",
+]);
+
+const PACKAGE_MIGRATION_GLOBAL_SCRIPT_CHANGES = Object.freeze(["parity:check", "test:mutation"]);
 
 export function normalizeRepoPath(path) {
   return path.replaceAll("\\", "/").replace(/^\.\//u, "");
@@ -19,6 +42,45 @@ export function sha256(bytes) {
 
 export function sourceContentAddress(bytes) {
   return sha256(Buffer.from(bytes.toString("utf8").replace(/\r\n?/gu, "\n"), "utf8"));
+}
+
+function packageSurface(packageJson) {
+  const { scripts: _scripts, ...surface } = packageJson;
+  return surface;
+}
+
+function referencedPackageScripts(command) {
+  if (typeof command !== "string") return [];
+  return [...command.matchAll(/\bnpm(?:\.cmd)?\s+run(?:-script)?\s+([A-Za-z0-9:_-]+)/gu)]
+    .map((match) => match[1]);
+}
+
+function packageScriptClosure(packageJson, rootScript) {
+  const scripts = packageJson.scripts ?? {};
+  const pending = [rootScript];
+  const visited = new Set();
+  const closure = {};
+  while (pending.length) {
+    const script = pending.shift();
+    if (!script || visited.has(script)) continue;
+    visited.add(script);
+    const command = scripts[script] ?? null;
+    closure[script] = command;
+    for (const referenced of referencedPackageScripts(command)) pending.push(referenced);
+  }
+  return Object.fromEntries(Object.entries(closure).sort(([left], [right]) => compareCodePoints(left, right)));
+}
+
+export function packageContractForRow(packageJson, row) {
+  const stages = Object.fromEntries(Object.entries(row.stages ?? {}).map(([stage, rootScript]) => [stage, {
+    rootScript,
+    closureSha256: sha256(Buffer.from(canonicalJson(packageScriptClosure(packageJson, rootScript)), "utf8")),
+  }]));
+  return {
+    schemaVersion: 1,
+    packageSurfaceSha256: sha256(Buffer.from(canonicalJson(packageSurface(packageJson)), "utf8")),
+    stages,
+  };
 }
 
 export function exactContentAddress(bytes, path = "") {
@@ -199,11 +261,14 @@ export async function runtimeSources() {
 }
 
 export async function buildContentAddressManifest() {
+  const packageJson = JSON.parse(await readFile(resolve(REPO_ROOT, "package.json"), "utf8"));
   const rows = [];
   for (const row of PARITY_ROWS) {
     const sources = Object.fromEntries(await Promise.all(expandRowSources(row).map(async (sourcePath) => {
       const sourceBytes = await readFile(resolve(REPO_ROOT, sourcePath));
-      return [sourcePath, sourceContentAddress(sourceBytes)];
+      return [sourcePath, sourcePath === "package.json"
+        ? packageContractForRow(packageJson, row)
+        : sourceContentAddress(sourceBytes)];
     })));
     const evidence = {};
     for (const [kind, descriptorPath] of Object.entries(row.evidence)) {
@@ -231,17 +296,240 @@ export async function buildContentAddressManifest() {
     }
     rows.push({ rowId: row.id, sources, evidence, receipts });
   }
-  return { schemaVersion: 3, normalization: "canonical-json-without-allowlisted-time-or-provenance-hashes; canonical-LF sources and exact JSON evidence; KDRAW1 semantic file addresses; other binaries exact", rows };
+  return { schemaVersion: 4, normalization: "row-scoped package stage closures plus package surface; canonical-json-without-allowlisted-time-or-provenance-hashes; canonical-LF sources and exact JSON evidence; KDRAW1 semantic file addresses; other binaries exact", rows };
 }
 
-export function staleEvidenceBindings(previous, current) {
-  if (previous?.schemaVersion !== 3) return [];
+function gitObjectBytes(revision, path) {
+  return execFileSync("git", ["show", `${revision}:${path}`], {
+    cwd: REPO_ROOT,
+    encoding: null,
+    stdio: ["ignore", "pipe", "pipe"],
+  });
+}
+
+export async function buildPackageSemanticMigrationReceipt(observedAt = new Date().toISOString()) {
+  const [currentPackageBytes, currentLockBytes] = await Promise.all([
+    readFile(resolve(REPO_ROOT, "package.json")),
+    readFile(resolve(REPO_ROOT, "package-lock.json")),
+  ]);
+  const previousPackageBytes = gitObjectBytes(PACKAGE_SEMANTIC_MIGRATION_BASE, "package.json");
+  const previousLockBytes = gitObjectBytes(PACKAGE_SEMANTIC_MIGRATION_BASE, "package-lock.json");
+  const baseManifestBytes = gitObjectBytes(PACKAGE_SEMANTIC_MIGRATION_BASE, "parity/content-addresses.json");
+  const [previousWorkspacePackages, currentWorkspacePackages] = await Promise.all([
+    Promise.all(PACKAGE_WORKSPACE_MANIFEST_PATHS.map(async (path) => [path, gitObjectBytes(PACKAGE_SEMANTIC_MIGRATION_BASE, path)])),
+    Promise.all(PACKAGE_WORKSPACE_MANIFEST_PATHS.map(async (path) => [path, await readFile(resolve(REPO_ROOT, path))])),
+  ]);
+  const previousPackage = JSON.parse(previousPackageBytes.toString("utf8"));
+  const currentPackage = JSON.parse(currentPackageBytes.toString("utf8"));
+  const allScriptNames = [...new Set([
+    ...Object.keys(previousPackage.scripts ?? {}),
+    ...Object.keys(currentPackage.scripts ?? {}),
+  ])].sort(compareCodePoints);
+  const changedScripts = allScriptNames.filter((name) => previousPackage.scripts?.[name] !== currentPackage.scripts?.[name]);
+  const stageChanges = [];
+  for (const row of PARITY_ROWS) {
+    for (const [stage, rootScript] of Object.entries(row.stages ?? {})) {
+      const before = packageScriptClosure(previousPackage, rootScript);
+      const after = packageScriptClosure(currentPackage, rootScript);
+      if (JSON.stringify(before) !== JSON.stringify(after)) {
+        stageChanges.push({ rowId: row.id, stage, rootScript, before, after });
+      }
+    }
+  }
+  const changedStageRows = [...new Set(stageChanges.map((change) => change.rowId))].sort(compareCodePoints);
+  const changedStageScripts = new Set(stageChanges.flatMap((change) => [
+    change.rootScript,
+    ...Object.keys(change.before),
+    ...Object.keys(change.after),
+  ]));
+  for (const rowId of changedStageRows) {
+    const rowPrefix = `parity:${rowId.toLowerCase().replace("-", "")}:`;
+    for (const script of changedScripts) if (script.startsWith(rowPrefix)) changedStageScripts.add(script);
+  }
+  const globalOnlyScriptChanges = changedScripts.filter((name) => !changedStageScripts.has(name));
+  const workspacePackageSha256 = Object.fromEntries(PACKAGE_WORKSPACE_MANIFEST_PATHS.map((path) => {
+    const previous = previousWorkspacePackages.find(([candidate]) => candidate === path)?.[1];
+    const current = currentWorkspacePackages.find(([candidate]) => candidate === path)?.[1];
+    return [path, { previous: sourceContentAddress(previous), current: sourceContentAddress(current) }];
+  }));
+  const baseManifest = JSON.parse(baseManifestBytes.toString("utf8"));
+  const currentManifest = await buildContentAddressManifest();
+  const nonPackageCompatibilityErrors = staleEvidenceBindings(baseManifest, currentManifest, {
+    allowV3ToV4: true,
+    ignoredSourcePaths: ["package.json", ...PACKAGE_WORKSPACE_MANIFEST_PATHS],
+  });
+  const checks = {
+    packageLockUnchanged: sourceContentAddress(previousLockBytes) === sourceContentAddress(currentLockBytes),
+    packageSurfaceUnchanged: canonicalJson(packageSurface(previousPackage)) === canonicalJson(packageSurface(currentPackage)),
+    workspacePackageManifestsUnchanged: Object.values(workspacePackageSha256).every(({ previous, current }) => previous === current),
+    baseContentAddressManifestPinned: sha256(baseManifestBytes) === PACKAGE_SEMANTIC_MIGRATION_BASE_MANIFEST_SHA256
+      && baseManifest.schemaVersion === 3 && baseManifest.rows?.length === 23,
+    nonPackageEvidenceBindingsCurrent: nonPackageCompatibilityErrors.length === 0,
+    onlyF023StageCommandsAdded: JSON.stringify(changedStageRows) === JSON.stringify(["F-023"]) &&
+      stageChanges.every((change) => Object.values(change.before).every((command) => command === null)),
+    onlyKnownGlobalGateScriptsChanged: JSON.stringify(globalOnlyScriptChanges) === JSON.stringify(PACKAGE_MIGRATION_GLOBAL_SCRIPT_CHANGES),
+  };
+  if (Object.values(checks).some((value) => value !== true)) {
+    throw new Error(`Package semantic migration failed: ${JSON.stringify({ checks, changedScripts, changedStageRows, globalOnlyScriptChanges })}`);
+  }
+  return {
+    schemaVersion: 1,
+    kind: "content-address-v3-to-v4-package-semantics",
+    observedAt,
+    baseCommit: PACKAGE_SEMANTIC_MIGRATION_BASE,
+    sourceSha256: {
+      previousPackage: sourceContentAddress(previousPackageBytes),
+      currentPackage: sourceContentAddress(currentPackageBytes),
+      previousPackageLock: sourceContentAddress(previousLockBytes),
+      currentPackageLock: sourceContentAddress(currentLockBytes),
+      baseContentAddressManifest: sha256(baseManifestBytes),
+      workspacePackages: workspacePackageSha256,
+    },
+    changedScripts,
+    stageChanges,
+    globalOnlyScriptChanges,
+    nonPackageCompatibilityErrors,
+    checks,
+    status: "PASS",
+  };
+}
+
+export async function verifyPackageSemanticMigrationReceipt() {
+  const storedBytes = await readFile(resolve(REPO_ROOT, PACKAGE_SEMANTIC_MIGRATION_PATH));
+  const stored = JSON.parse(storedBytes.toString("utf8"));
+  if (!Number.isFinite(Date.parse(stored.observedAt ?? ""))) throw new Error("Package semantic migration observedAt is invalid.");
+  const current = await buildPackageSemanticMigrationReceipt(stored.observedAt);
+  if (JSON.stringify(stored) !== JSON.stringify(current)) throw new Error("Package semantic migration receipt is stale.");
+  return current;
+}
+
+export async function buildGlobalTopologyReceipt(observedAt = new Date().toISOString()) {
+  const [packageBytes, ciBytes, localBytes] = await Promise.all([
+    readFile(resolve(REPO_ROOT, "package.json")),
+    readFile(resolve(REPO_ROOT, ".github/workflows/ci.yml")),
+    readFile(resolve(REPO_ROOT, "parity/local-certifications.json")),
+  ]);
+  const packageJson = JSON.parse(packageBytes.toString("utf8"));
+  const local = JSON.parse(localBytes.toString("utf8"));
+  const rowIds = PARITY_ROWS.map((row) => row.id);
+  const certifiedIds = (local.certifications ?? []).map((entry) => entry.rowId);
+  const stageScripts = Object.fromEntries(PARITY_ROWS.map((row) => [row.id, Object.fromEntries(
+    Object.entries(row.stages ?? {}).map(([stage, script]) => [stage, { script, command: packageJson.scripts?.[script] ?? null }]),
+  )]));
+  const checks = {
+    denominatorExactly133: parityManifest.denominator === 133 && parityManifest.rows.length === 133,
+    rowIdsUnique: new Set(rowIds).size === rowIds.length,
+    scoreRatchetMatchesTopology: rowIds.slice().sort().join("|") === certifiedIds.slice().sort().join("|"),
+    everyStageScriptExists: Object.values(stageScripts).every((stages) => Object.values(stages).every((entry) => typeof entry.command === "string" && entry.command.length > 0)),
+    fullCiGatePresent: ciBytes.includes(Buffer.from("npm run check:fast")) && ciBytes.includes(Buffer.from("npm run check:certification")),
+    licensedAutoCadJobPresent: ciBytes.includes(Buffer.from("autocad-2024-certification")),
+    requiredOracleJobPresent: ciBytes.includes(Buffer.from("required-oracles")),
+  };
+  if (Object.values(checks).some((value) => value !== true)) throw new Error(`Global topology receipt failed: ${JSON.stringify(checks)}`);
+  const sourceSha256 = Object.fromEntries(await Promise.all(GLOBAL_TOPOLOGY_SOURCE_PATHS.map(async (path) => [
+    path,
+    sourceContentAddress(await readFile(resolve(REPO_ROOT, path))),
+  ])));
+  return {
+    schemaVersion: 1,
+    kind: "global-topology",
+    observedAt,
+    sourceSha256,
+    certifiedRowIds: rowIds,
+    stageScripts,
+    checks,
+    status: "PASS",
+  };
+}
+
+export async function verifyGlobalTopologyReceipt() {
+  const storedBytes = await readFile(resolve(REPO_ROOT, GLOBAL_TOPOLOGY_RECEIPT_PATH));
+  const stored = JSON.parse(storedBytes.toString("utf8"));
+  if (!Number.isFinite(Date.parse(stored.observedAt ?? ""))) throw new Error("Global topology receipt observedAt is invalid.");
+  const current = await buildGlobalTopologyReceipt(stored.observedAt);
+  if (JSON.stringify(stored) !== JSON.stringify(current)) throw new Error("Global topology receipt is stale.");
+  return current;
+}
+
+function addAllAuthorityKinds(affected) {
+  affected.add("autocad"); affected.add("browser"); affected.add("readback"); affected.add("oracle"); affected.add("cross"); affected.add("global");
+}
+
+function addPackageContractKinds(affected, before, after) {
+  if (before?.schemaVersion !== 1 || after?.schemaVersion !== 1 || !before.stages || !after.stages) {
+    addAllAuthorityKinds(affected);
+    return;
+  }
+  if (before.packageSurfaceSha256 !== after.packageSurfaceSha256) addAllAuthorityKinds(affected);
+  const stages = new Set([...Object.keys(before.stages), ...Object.keys(after.stages)]);
+  for (const stage of stages) {
+    if (JSON.stringify(before.stages?.[stage]) === JSON.stringify(after.stages?.[stage])) continue;
+    if (!PARITY_STAGE_ORDER.includes(stage)) {
+      addAllAuthorityKinds(affected);
+      continue;
+    }
+    affected.add(stage);
+    affected.add("global");
+    if (stage !== "cross") affected.add("cross");
+  }
+}
+
+function evidenceKindsAffectedBySources(previousSources, currentSources, sourcePaths) {
+  const affected = new Set();
+  for (const rawPath of sourcePaths) {
+    const path = normalizeRepoPath(rawPath);
+    if (path === "package.json") {
+      addPackageContractKinds(affected, previousSources?.[path], currentSources?.[path]);
+      continue;
+    }
+    if (PACKAGE_WORKSPACE_MANIFEST_PATHS.includes(path)) {
+      addAllAuthorityKinds(affected);
+      continue;
+    }
+    if (path === "package-lock.json") {
+      addAllAuthorityKinds(affected);
+      continue;
+    }
+    if ([".github/workflows/ci.yml", PACKAGE_SEMANTIC_MIGRATION_PATH, "parity/rows.mjs", "tools/parity-kit/core.mjs", "tools/parity-kit/cli.mjs"].includes(path)) {
+      affected.add("global");
+      continue;
+    }
+    if (path === "playwright.config.ts" || path.startsWith("e2e/")) { affected.add("browser"); affected.add("cross"); continue; }
+    if (path.startsWith("apps/web/") || /^packages\/(?:cad-core|cad-dxf|cad-print|cad-renderer)\//u.test(path)) {
+      affected.add("browser");
+      affected.add("readback");
+      affected.add("cross");
+      continue;
+    }
+    if (path.startsWith("tools/autocad/") || path.startsWith("parity/autocad/")) { affected.add("autocad"); affected.add("cross"); continue; }
+    if (path.startsWith("tools/oracles/")) { affected.add("oracle"); affected.add("cross"); continue; }
+    if (/^tools\/parity\/(?:capture|build)-/u.test(path)) { affected.add("browser"); affected.add("cross"); continue; }
+    if (/^tools\/parity\/(?:run|read)-/u.test(path)) { affected.add("readback"); affected.add("cross"); continue; }
+    if (/^tools\/parity\/check-/u.test(path)) { affected.add("cross"); continue; }
+    if (/^parity\/F-\d{3}-scope\.md$/u.test(path)) { affected.add("cross"); continue; }
+    // Dependency locks, expected contracts and unknown shared certification
+    // sources stay fail-closed because they can affect every authority.
+    addAllAuthorityKinds(affected);
+  }
+  return affected;
+}
+
+export function staleEvidenceBindings(previous, current, { allowV3ToV4 = false, ignoredSourcePaths = [] } = {}) {
+  const sameSchema = previous?.schemaVersion === 4 && current?.schemaVersion === 4;
+  const migrating = allowV3ToV4 && previous?.schemaVersion === 3 && current?.schemaVersion === 4;
+  if (!sameSchema && !migrating) return [];
+  const ignored = new Set(ignoredSourcePaths.map(normalizeRepoPath));
   const previousRows = new Map((previous.rows ?? []).map((row) => [row.rowId, row]));
   const errors = [];
   for (const row of current.rows ?? []) {
     const prior = previousRows.get(row.rowId);
     if (!prior || JSON.stringify(prior.sources) === JSON.stringify(row.sources)) continue;
+    const changedSources = [...new Set([...Object.keys(prior.sources ?? {}), ...Object.keys(row.sources ?? {})])]
+      .filter((path) => !ignored.has(normalizeRepoPath(path)))
+      .filter((path) => JSON.stringify(prior.sources?.[path]) !== JSON.stringify(row.sources?.[path]));
+    const affectedKinds = evidenceKindsAffectedBySources(prior.sources, row.sources, changedSources);
     for (const kind of Object.keys(row.evidence ?? {})) {
+      if (!affectedKinds.has(kind)) continue;
       const before = prior.evidence?.[kind];
       const after = row.evidence?.[kind];
       if (before?.descriptorSha256 === after?.descriptorSha256 && before?.artifactSha256 === after?.artifactSha256) {
@@ -249,6 +537,7 @@ export function staleEvidenceBindings(previous, current) {
       }
     }
     for (const kind of Object.keys(row.receipts ?? {})) {
+      if (!affectedKinds.has(kind)) continue;
       if (prior.receipts?.[kind]?.sha256 === row.receipts?.[kind]?.sha256) {
         errors.push(`${row.rowId}: source changed without refreshed ${kind} stage receipt.`);
       }
@@ -260,6 +549,8 @@ export function staleEvidenceBindings(previous, current) {
 export async function validateParityKit({ checkContentAddresses = true } = {}) {
   const errors = [];
   const local = JSON.parse(await readFile(resolve(REPO_ROOT, "parity/local-certifications.json"), "utf8"));
+  try { await verifyPackageSemanticMigrationReceipt(); } catch (error) { errors.push(error instanceof Error ? error.message : String(error)); }
+  try { await verifyGlobalTopologyReceipt(); } catch (error) { errors.push(error instanceof Error ? error.message : String(error)); }
   const packageJson = JSON.parse(await readFile(resolve(REPO_ROOT, "package.json"), "utf8"));
   const declaredIds = PARITY_ROWS.map((row) => row.id);
   const certifiedIds = (local.certifications ?? []).map((row) => row.rowId).sort();

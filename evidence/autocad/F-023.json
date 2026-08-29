@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-023",
+  "kind": "autocad",
+  "authority": "autocad-2024.1.2-live",
+  "status": "PASS",
+  "artifactSha256": "14af8024d44197d5cafc9d3ee8356760e0b3a16b477815c06d6f944678701364",
+  "observedAt": "2026-08-29T14:45:21.739Z",
+  "workflow": "A newly owned blank AutoCAD 2024.1.2 desktop process runs Standard and Quick EXTEND, explicit/all boundaries, Edge Extend/No extend, Project None/UCS/View, Fence, Crossing, command Undo, physical Shift-Trim, layer refusals and line/open-polyline/arc/ellipse targets with circle/closed-polyline boundaries. The exact Chromium-exported rational cubic SPLINE is extended across six distances, three weight/curvature fixtures and both endpoints.",
+  "result": "All option and geometry workflows matched the fixed matrix. Typed COM and independent parsing of AutoCAD's saved DXF reproduced the rational cubic SPLINE control points, knots and weights; the owned acad.exe terminated and the exact pre-existing process set was restored.",
+  "artifact": "evidence/artifacts/F-023-autocad-readback.json"
+}

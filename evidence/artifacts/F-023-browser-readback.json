@@ -1,0 +1,1931 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-023",
+  "source": "Chromium 1920x1080 visible controls, physical Shift-click, IndexedDB and production DXF/KDRAW1 downloads",
+  "observedAt": "2026-08-29T15:07:00.851Z",
+  "implementationSha256": {
+    "apps/web/src/App.tsx": "95c703822872d3cf92092e31d51b069af032b379e559352f5b5392fd34531458",
+    "apps/web/src/workflows/modify-command.ts": "79677b2bcd79abc4cc92ba1e228083b39636d3bccb27ecf6c14261975d6680df",
+    "apps/web/src/workflows/modify-command.test.ts": "1017d5d866be68aef5958a4fef025076e0a5b8411523e08e4a942e171a8cc5a3",
+    "packages/cad-core/src/commands.ts": "73e6ffc270f9a153a11a6abb68861a58dd845ef08a3ac4b52e9bebca3d5343a8",
+    "packages/cad-core/src/index.ts": "53e77dcdfe65d0e0d9a3e26be5201e6743fb14b8c9e38e111c7148242344ad02",
+    "packages/cad-core/src/transaction.ts": "e250aa2906e63905202a4b9591367632830745acbf731884f8e711d165750599",
+    "packages/cad-core/src/trim.ts": "17b7af49a16e90cd8ac617e3119e1e25dd1055d81324b1c61c03e312342e2232",
+    "packages/cad-renderer/src/index.ts": "5563e5e6cdd66b652248e90d4ed237b145fd828da715c64375d2d05169a61888",
+    "packages/cad-renderer/src/selection.ts": "7f39e9d073fc4c36aa4507c4eea1ff96e6990532652fdd5b16c5a81c84c9fbc3",
+    "e2e/f023-extend.spec.ts": "2ad2f85f8a65a3c3d533684eb93c7cc73c57068fb0cfa362f546df6fda6196bb",
+    "tools/parity/capture-f023-browser.mjs": "da1954b736fe827f8342d319892d9782041490c937c62064eb52d83871812104",
+    "tools/parity/build-f023-browser-readback.mjs": "031fe696f6232e7dc38c979bea85d9bf8059272e8a79aeacc98873a64c9c8f1b"
+  },
+  "standard": {
+    "rowId": "F-023",
+    "workflow": "Standard + Fence + command Undo + atomic commit + one-step global Undo/Redo",
+    "committed": {
+      "schemaVersion": 1,
+      "documentId": "local",
+      "revision": 1,
+      "units": {
+        "linear": "mm",
+        "displayPrecision": 4,
+        "angularPrecision": 6
+      },
+      "currentLayerId": "0",
+      "entities": [
+        {
+          "kind": "line",
+          "handle": "10",
+          "layerId": "0",
+          "appearance": {
+            "color": "#40a0ff",
+            "lineweightMm": 0.5
+          },
+          "extensionData": {
+            "rowId": "F-023"
+          },
+          "start": {
+            "x": 200,
+            "y": 0
+          },
+          "end": {
+            "x": 1000,
+            "y": 0
+          }
+        },
+        {
+          "kind": "line",
+          "handle": "11",
+          "layerId": "0",
+          "start": {
+            "x": 200,
+            "y": 200
+          },
+          "end": {
+            "x": 1000,
+            "y": 200
+          }
+        },
+        {
+          "kind": "line",
+          "handle": "20",
+          "layerId": "0",
+          "start": {
+            "x": 1000,
+            "y": -100
+          },
+          "end": {
+            "x": 1000,
+            "y": 300
+          }
+        }
+      ],
+      "layers": [
+        {
+          "id": "0",
+          "name": "0",
+          "visible": true,
+          "frozen": false,
+          "locked": false,
+          "plottable": true
+        }
+      ],
+      "linetypes": [],
+      "textStyles": [],
+      "dimensionStyles": [],
+      "blocks": [],
+      "layouts": [
+        {
+          "id": "model",
+          "name": "Model",
+          "kind": "model",
+          "viewports": [],
+          "entities": []
+        }
+      ],
+      "attachments": [],
+      "metadata": {
+        "createdAt": "2026-08-29T12:00:00.000Z",
+        "updatedAt": "2026-08-29T15:06:54.244Z"
+      }
+    },
+    "operation": {
+      "opId": "3b91da4a-cd46-406b-9819-88706a8d86b2",
+      "baseRevision": 0,
+      "commandId": "EXTEND",
+      "args": {
+        "mode": "standard",
+        "boundaryEdgeHandles": [
+          "20"
+        ],
+        "targets": [
+          {
+            "handle": "10",
+            "pickPoint": {
+              "x": 800,
+              "y": 0
+            },
+            "action": "extend"
+          },
+          {
+            "handle": "11",
+            "pickPoint": {
+              "x": 800,
+              "y": 200
+            },
+            "action": "extend"
+          }
+        ],
+        "edgeMode": "no-extend",
+        "projectMode": "none",
+        "steps": [
+          {
+            "action": "extend",
+            "sourceHandle": "10",
+            "resultHandles": [
+              "10"
+            ],
+            "targetIndex": 0,
+            "intersectionPoints": [
+              {
+                "x": 1000,
+                "y": 0
+              }
+            ]
+          },
+          {
+            "action": "extend",
+            "sourceHandle": "11",
+            "resultHandles": [
+              "11"
+            ],
+            "targetIndex": 1,
+            "intersectionPoints": [
+              {
+                "x": 1000,
+                "y": 200
+              }
+            ]
+          }
+        ]
+      },
+      "targetHandles": [
+        "10",
+        "11"
+      ],
+      "resultHandles": [
+        "10",
+        "11"
+      ]
+    },
+    "restored": {
+      "schemaVersion": 1,
+      "documentId": "local",
+      "revision": 2,
+      "units": {
+        "linear": "mm",
+        "displayPrecision": 4,
+        "angularPrecision": 6
+      },
+      "currentLayerId": "0",
+      "entities": [
+        {
+          "kind": "line",
+          "handle": "10",
+          "layerId": "0",
+          "appearance": {
+            "color": "#40a0ff",
+            "lineweightMm": 0.5
+          },
+          "extensionData": {
+            "rowId": "F-023"
+          },
+          "start": {
+            "x": 200,
+            "y": 0
+          },
+          "end": {
+            "x": 800,
+            "y": 0
+          }
+        },
+        {
+          "kind": "line",
+          "handle": "11",
+          "layerId": "0",
+          "start": {
+            "x": 200,
+            "y": 200
+          },
+          "end": {
+            "x": 800,
+            "y": 200
+          }
+        },
+        {
+          "kind": "line",
+          "handle": "20",
+          "layerId": "0",
+          "start": {
+            "x": 1000,
+            "y": -100
+          },
+          "end": {
+            "x": 1000,
+            "y": 300
+          }
+        }
+      ],
+      "layers": [
+        {
+          "id": "0",
+          "name": "0",
+          "visible": true,
+          "frozen": false,
+          "locked": false,
+          "plottable": true
+        }
+      ],
+      "linetypes": [],
+      "textStyles": [],
+      "dimensionStyles": [],
+      "blocks": [],
+      "layouts": [
+        {
+          "id": "model",
+          "name": "Model",
+          "kind": "model",
+          "viewports": [],
+          "entities": []
+        }
+      ],
+      "attachments": [],
+      "metadata": {
+        "createdAt": "2026-08-29T12:00:00.000Z",
+        "updatedAt": "2026-08-29T15:06:54.377Z"
+      }
+    },
+    "redone": {
+      "schemaVersion": 1,
+      "documentId": "local",
+      "revision": 3,
+      "units": {
+        "linear": "mm",
+        "displayPrecision": 4,
+        "angularPrecision": 6
+      },
+      "currentLayerId": "0",
+      "entities": [
+        {
+          "kind": "line",
+          "handle": "10",
+          "layerId": "0",
+          "appearance": {
+            "color": "#40a0ff",
+            "lineweightMm": 0.5
+          },
+          "extensionData": {
+            "rowId": "F-023"
+          },
+          "start": {
+            "x": 200,
+            "y": 0
+          },
+          "end": {
+            "x": 1000,
+            "y": 0
+          }
+        },
+        {
+          "kind": "line",
+          "handle": "11",
+          "layerId": "0",
+          "start": {
+            "x": 200,
+            "y": 200
+          },
+          "end": {
+            "x": 1000,
+            "y": 200
+          }
+        },
+        {
+          "kind": "line",
+          "handle": "20",
+          "layerId": "0",
+          "start": {
+            "x": 1000,
+            "y": -100
+          },
+          "end": {
+            "x": 1000,
+            "y": 300
+          }
+        }
+      ],
+      "layers": [
+        {
+          "id": "0",
+          "name": "0",
+          "visible": true,
+          "frozen": false,
+          "locked": false,
+          "plottable": true
+        }
+      ],
+      "linetypes": [],
+      "textStyles": [],
+      "dimensionStyles": [],
+      "blocks": [],
+      "layouts": [
+        {
+          "id": "model",
+          "name": "Model",
+          "kind": "model",
+          "viewports": [],
+          "entities": []
+        }
+      ],
+      "attachments": [],
+      "metadata": {
+        "createdAt": "2026-08-29T12:00:00.000Z",
+        "updatedAt": "2026-08-29T15:06:54.460Z"
+      }
+    },
+    "consoleErrors": [],
+    "status": "PASS"
+  },
+  "quickShift": {
+    "rowId": "F-023",
+    "workflow": "Quick all-object boundary + Shift-Trim shared preview/commit",
+    "quick": {
+      "committed": {
+        "schemaVersion": 1,
+        "documentId": "local",
+        "revision": 1,
+        "units": {
+          "linear": "mm",
+          "displayPrecision": 4,
+          "angularPrecision": 6
+        },
+        "currentLayerId": "0",
+        "entities": [
+          {
+            "kind": "line",
+            "handle": "10",
+            "layerId": "0",
+            "appearance": {
+              "color": "#40a0ff",
+              "lineweightMm": 0.5
+            },
+            "extensionData": {
+              "rowId": "F-023"
+            },
+            "start": {
+              "x": 200,
+              "y": 0
+            },
+            "end": {
+              "x": 1000,
+              "y": 0
+            }
+          },
+          {
+            "kind": "line",
+            "handle": "11",
+            "layerId": "0",
+            "start": {
+              "x": 200,
+              "y": 200
+            },
+            "end": {
+              "x": 800,
+              "y": 200
+            }
+          },
+          {
+            "kind": "line",
+            "handle": "20",
+            "layerId": "0",
+            "start": {
+              "x": 1000,
+              "y": -100
+            },
+            "end": {
+              "x": 1000,
+              "y": 300
+            }
+          }
+        ],
+        "layers": [
+          {
+            "id": "0",
+            "name": "0",
+            "visible": true,
+            "frozen": false,
+            "locked": false,
+            "plottable": true
+          }
+        ],
+        "linetypes": [],
+        "textStyles": [],
+        "dimensionStyles": [],
+        "blocks": [],
+        "layouts": [
+          {
+            "id": "model",
+            "name": "Model",
+            "kind": "model",
+            "viewports": [],
+            "entities": []
+          }
+        ],
+        "attachments": [],
+        "metadata": {
+          "createdAt": "2026-08-29T12:00:00.000Z",
+          "updatedAt": "2026-08-29T15:06:55.046Z"
+        }
+      },
+      "operation": {
+        "opId": "c5a74984-037d-4939-99c6-70d94582ada2",
+        "baseRevision": 0,
+        "commandId": "EXTEND",
+        "args": {
+          "mode": "quick",
+          "boundaryEdgeHandles": [],
+          "targets": [
+            {
+              "handle": "10",
+              "pickPoint": {
+                "x": 800,
+                "y": 0
+              },
+              "action": "extend"
+            }
+          ],
+          "edgeMode": "no-extend",
+          "projectMode": "none",
+          "steps": [
+            {
+              "action": "extend",
+              "sourceHandle": "10",
+              "resultHandles": [
+                "10"
+              ],
+              "targetIndex": 0,
+              "intersectionPoints": [
+                {
+                  "x": 1000,
+                  "y": 0
+                }
+              ]
+            }
+          ]
+        },
+        "targetHandles": [
+          "10"
+        ],
+        "resultHandles": [
+          "10"
+        ]
+      }
+    },
+    "shiftTrim": {
+      "source": {
+        "schemaVersion": 1,
+        "documentId": "local",
+        "revision": 0,
+        "units": {
+          "linear": "mm",
+          "displayPrecision": 4,
+          "angularPrecision": 6
+        },
+        "currentLayerId": "0",
+        "entities": [
+          {
+            "kind": "line",
+            "handle": "10",
+            "layerId": "0",
+            "start": {
+              "x": 0,
+              "y": 0
+            },
+            "end": {
+              "x": 1000,
+              "y": 0
+            }
+          },
+          {
+            "kind": "line",
+            "handle": "20",
+            "layerId": "0",
+            "start": {
+              "x": 250,
+              "y": -100
+            },
+            "end": {
+              "x": 250,
+              "y": 100
+            }
+          },
+          {
+            "kind": "line",
+            "handle": "21",
+            "layerId": "0",
+            "start": {
+              "x": 750,
+              "y": -100
+            },
+            "end": {
+              "x": 750,
+              "y": 100
+            }
+          }
+        ],
+        "layers": [
+          {
+            "id": "0",
+            "name": "0",
+            "visible": true,
+            "frozen": false,
+            "locked": false,
+            "plottable": true
+          }
+        ],
+        "linetypes": [],
+        "textStyles": [],
+        "dimensionStyles": [],
+        "blocks": [],
+        "layouts": [
+          {
+            "id": "model",
+            "name": "Model",
+            "kind": "model",
+            "viewports": [],
+            "entities": []
+          }
+        ],
+        "attachments": [],
+        "metadata": {
+          "createdAt": "2026-08-29T12:10:00.000Z",
+          "updatedAt": "2026-08-29T12:10:00.000Z"
+        }
+      },
+      "committed": {
+        "schemaVersion": 1,
+        "documentId": "local",
+        "revision": 1,
+        "units": {
+          "linear": "mm",
+          "displayPrecision": 4,
+          "angularPrecision": 6
+        },
+        "currentLayerId": "0",
+        "entities": [
+          {
+            "handle": "10",
+            "layerId": "0",
+            "kind": "line",
+            "start": {
+              "x": 0,
+              "y": 0
+            },
+            "end": {
+              "x": 250,
+              "y": 0
+            }
+          },
+          {
+            "kind": "line",
+            "handle": "20",
+            "layerId": "0",
+            "start": {
+              "x": 250,
+              "y": -100
+            },
+            "end": {
+              "x": 250,
+              "y": 100
+            }
+          },
+          {
+            "kind": "line",
+            "handle": "21",
+            "layerId": "0",
+            "start": {
+              "x": 750,
+              "y": -100
+            },
+            "end": {
+              "x": 750,
+              "y": 100
+            }
+          },
+          {
+            "handle": "22",
+            "layerId": "0",
+            "kind": "line",
+            "start": {
+              "x": 750,
+              "y": 0
+            },
+            "end": {
+              "x": 1000,
+              "y": 0
+            }
+          }
+        ],
+        "layers": [
+          {
+            "id": "0",
+            "name": "0",
+            "visible": true,
+            "frozen": false,
+            "locked": false,
+            "plottable": true
+          }
+        ],
+        "linetypes": [],
+        "textStyles": [],
+        "dimensionStyles": [],
+        "blocks": [],
+        "layouts": [
+          {
+            "id": "model",
+            "name": "Model",
+            "kind": "model",
+            "viewports": [],
+            "entities": []
+          }
+        ],
+        "attachments": [],
+        "metadata": {
+          "createdAt": "2026-08-29T12:10:00.000Z",
+          "updatedAt": "2026-08-29T15:06:55.693Z"
+        }
+      },
+      "operation": {
+        "opId": "c582ce16-981f-47eb-9c45-3ffc71ce3ac3",
+        "baseRevision": 0,
+        "commandId": "EXTEND",
+        "args": {
+          "mode": "standard",
+          "boundaryEdgeHandles": [
+            "20",
+            "21"
+          ],
+          "targets": [
+            {
+              "handle": "10",
+              "pickPoint": {
+                "x": 499.999889,
+                "y": 0
+              },
+              "action": "trim"
+            }
+          ],
+          "edgeMode": "no-extend",
+          "projectMode": "none",
+          "steps": [
+            {
+              "action": "trim",
+              "sourceHandle": "10",
+              "resultHandles": [
+                "10",
+                "22"
+              ],
+              "targetIndex": 0,
+              "intersectionPoints": [
+                {
+                  "x": 250,
+                  "y": 0
+                },
+                {
+                  "x": 750,
+                  "y": 0
+                }
+              ]
+            }
+          ]
+        },
+        "targetHandles": [
+          "10"
+        ],
+        "resultHandles": [
+          "10",
+          "22"
+        ]
+      }
+    },
+    "physicalInput": {
+      "modifier": "Shift",
+      "action": "trim",
+      "pointer": {
+        "x": 548.3333333333334,
+        "y": 567.3333333333333
+      }
+    },
+    "consoleErrors": [],
+    "status": "PASS"
+  },
+  "options": {
+    "rowId": "F-023",
+    "workflow": "Crossing + Edge Extend/No extend + Project None/UCS/View + locked/hidden refusal",
+    "crossing": {
+      "document": {
+        "schemaVersion": 1,
+        "documentId": "local",
+        "revision": 1,
+        "units": {
+          "linear": "mm",
+          "displayPrecision": 4,
+          "angularPrecision": 6
+        },
+        "currentLayerId": "0",
+        "entities": [
+          {
+            "kind": "line",
+            "handle": "10",
+            "layerId": "0",
+            "appearance": {
+              "color": "#40a0ff",
+              "lineweightMm": 0.5
+            },
+            "extensionData": {
+              "rowId": "F-023"
+            },
+            "start": {
+              "x": 200,
+              "y": 0
+            },
+            "end": {
+              "x": 1000,
+              "y": 0
+            }
+          },
+          {
+            "kind": "line",
+            "handle": "11",
+            "layerId": "0",
+            "start": {
+              "x": 200,
+              "y": 200
+            },
+            "end": {
+              "x": 1000,
+              "y": 200
+            }
+          },
+          {
+            "kind": "line",
+            "handle": "20",
+            "layerId": "0",
+            "start": {
+              "x": 1000,
+              "y": -100
+            },
+            "end": {
+              "x": 1000,
+              "y": 300
+            }
+          }
+        ],
+        "layers": [
+          {
+            "id": "0",
+            "name": "0",
+            "visible": true,
+            "frozen": false,
+            "locked": false,
+            "plottable": true
+          }
+        ],
+        "linetypes": [],
+        "textStyles": [],
+        "dimensionStyles": [],
+        "blocks": [],
+        "layouts": [
+          {
+            "id": "model",
+            "name": "Model",
+            "kind": "model",
+            "viewports": [],
+            "entities": []
+          }
+        ],
+        "attachments": [],
+        "metadata": {
+          "createdAt": "2026-08-29T12:00:00.000Z",
+          "updatedAt": "2026-08-29T15:06:56.394Z"
+        }
+      },
+      "operation": {
+        "opId": "1f9ff933-e799-47df-a1f7-16d37ce1ffd4",
+        "baseRevision": 0,
+        "commandId": "EXTEND",
+        "args": {
+          "mode": "standard",
+          "boundaryEdgeHandles": [
+            "20"
+          ],
+          "targets": [
+            {
+              "handle": "10",
+              "pickPoint": {
+                "x": 750,
+                "y": 0
+              },
+              "action": "extend"
+            },
+            {
+              "handle": "11",
+              "pickPoint": {
+                "x": 750,
+                "y": 200
+              },
+              "action": "extend"
+            }
+          ],
+          "edgeMode": "no-extend",
+          "projectMode": "none",
+          "steps": [
+            {
+              "action": "extend",
+              "sourceHandle": "10",
+              "resultHandles": [
+                "10"
+              ],
+              "targetIndex": 0,
+              "intersectionPoints": [
+                {
+                  "x": 1000,
+                  "y": 0
+                }
+              ]
+            },
+            {
+              "action": "extend",
+              "sourceHandle": "11",
+              "resultHandles": [
+                "11"
+              ],
+              "targetIndex": 1,
+              "intersectionPoints": [
+                {
+                  "x": 1000,
+                  "y": 200
+                }
+              ]
+            }
+          ]
+        },
+        "targetHandles": [
+          "10",
+          "11"
+        ],
+        "resultHandles": [
+          "10",
+          "11"
+        ]
+      }
+    },
+    "edge": {
+      "noExtend": {
+        "schemaVersion": 1,
+        "documentId": "local",
+        "revision": 0,
+        "units": {
+          "linear": "mm",
+          "displayPrecision": 4,
+          "angularPrecision": 6
+        },
+        "currentLayerId": "0",
+        "entities": [
+          {
+            "kind": "line",
+            "handle": "10",
+            "layerId": "0",
+            "start": {
+              "x": 0,
+              "y": 0
+            },
+            "end": {
+              "x": 80,
+              "y": 0
+            }
+          },
+          {
+            "kind": "line",
+            "handle": "20",
+            "layerId": "0",
+            "start": {
+              "x": 100,
+              "y": 50
+            },
+            "end": {
+              "x": 100,
+              "y": 100
+            }
+          }
+        ],
+        "layers": [
+          {
+            "id": "0",
+            "name": "0",
+            "visible": true,
+            "frozen": false,
+            "locked": false,
+            "plottable": true
+          }
+        ],
+        "linetypes": [],
+        "textStyles": [],
+        "dimensionStyles": [],
+        "blocks": [],
+        "layouts": [
+          {
+            "id": "model",
+            "name": "Model",
+            "kind": "model",
+            "viewports": [],
+            "entities": []
+          }
+        ],
+        "attachments": [],
+        "metadata": {
+          "createdAt": "2026-08-29T12:20:00.000Z",
+          "updatedAt": "2026-08-29T12:20:00.000Z"
+        }
+      },
+      "extend": {
+        "document": {
+          "schemaVersion": 1,
+          "documentId": "local",
+          "revision": 1,
+          "units": {
+            "linear": "mm",
+            "displayPrecision": 4,
+            "angularPrecision": 6
+          },
+          "currentLayerId": "0",
+          "entities": [
+            {
+              "kind": "line",
+              "handle": "10",
+              "layerId": "0",
+              "start": {
+                "x": 0,
+                "y": 0
+              },
+              "end": {
+                "x": 100,
+                "y": 0
+              }
+            },
+            {
+              "kind": "line",
+              "handle": "20",
+              "layerId": "0",
+              "start": {
+                "x": 100,
+                "y": 50
+              },
+              "end": {
+                "x": 100,
+                "y": 100
+              }
+            }
+          ],
+          "layers": [
+            {
+              "id": "0",
+              "name": "0",
+              "visible": true,
+              "frozen": false,
+              "locked": false,
+              "plottable": true
+            }
+          ],
+          "linetypes": [],
+          "textStyles": [],
+          "dimensionStyles": [],
+          "blocks": [],
+          "layouts": [
+            {
+              "id": "model",
+              "name": "Model",
+              "kind": "model",
+              "viewports": [],
+              "entities": []
+            }
+          ],
+          "attachments": [],
+          "metadata": {
+            "createdAt": "2026-08-29T12:20:00.000Z",
+            "updatedAt": "2026-08-29T15:06:57.044Z"
+          }
+        },
+        "operation": {
+          "opId": "2c38cd79-508d-4343-baf0-4ff9a39fe239",
+          "baseRevision": 0,
+          "commandId": "EXTEND",
+          "args": {
+            "mode": "standard",
+            "boundaryEdgeHandles": [
+              "20"
+            ],
+            "targets": [
+              {
+                "handle": "10",
+                "pickPoint": {
+                  "x": 80,
+                  "y": 0
+                },
+                "action": "extend"
+              }
+            ],
+            "edgeMode": "extend",
+            "projectMode": "none",
+            "steps": [
+              {
+                "action": "extend",
+                "sourceHandle": "10",
+                "resultHandles": [
+                  "10"
+                ],
+                "targetIndex": 0,
+                "intersectionPoints": [
+                  {
+                    "x": 100,
+                    "y": 0
+                  }
+                ]
+              }
+            ]
+          },
+          "targetHandles": [
+            "10"
+          ],
+          "resultHandles": [
+            "10"
+          ]
+        }
+      },
+      "restored": {
+        "schemaVersion": 1,
+        "documentId": "local",
+        "revision": 2,
+        "units": {
+          "linear": "mm",
+          "displayPrecision": 4,
+          "angularPrecision": 6
+        },
+        "currentLayerId": "0",
+        "entities": [
+          {
+            "kind": "line",
+            "handle": "10",
+            "layerId": "0",
+            "start": {
+              "x": 0,
+              "y": 0
+            },
+            "end": {
+              "x": 80,
+              "y": 0
+            }
+          },
+          {
+            "kind": "line",
+            "handle": "20",
+            "layerId": "0",
+            "start": {
+              "x": 100,
+              "y": 50
+            },
+            "end": {
+              "x": 100,
+              "y": 100
+            }
+          }
+        ],
+        "layers": [
+          {
+            "id": "0",
+            "name": "0",
+            "visible": true,
+            "frozen": false,
+            "locked": false,
+            "plottable": true
+          }
+        ],
+        "linetypes": [],
+        "textStyles": [],
+        "dimensionStyles": [],
+        "blocks": [],
+        "layouts": [
+          {
+            "id": "model",
+            "name": "Model",
+            "kind": "model",
+            "viewports": [],
+            "entities": []
+          }
+        ],
+        "attachments": [],
+        "metadata": {
+          "createdAt": "2026-08-29T12:20:00.000Z",
+          "updatedAt": "2026-08-29T15:06:57.143Z"
+        }
+      }
+    },
+    "projects": {
+      "none": {
+        "document": {
+          "schemaVersion": 1,
+          "documentId": "local",
+          "revision": 1,
+          "units": {
+            "linear": "mm",
+            "displayPrecision": 4,
+            "angularPrecision": 6
+          },
+          "currentLayerId": "0",
+          "entities": [
+            {
+              "kind": "line",
+              "handle": "10",
+              "layerId": "0",
+              "appearance": {
+                "color": "#40a0ff",
+                "lineweightMm": 0.5
+              },
+              "extensionData": {
+                "rowId": "F-023"
+              },
+              "start": {
+                "x": 200,
+                "y": 0
+              },
+              "end": {
+                "x": 1000,
+                "y": 0
+              }
+            },
+            {
+              "kind": "line",
+              "handle": "11",
+              "layerId": "0",
+              "start": {
+                "x": 200,
+                "y": 200
+              },
+              "end": {
+                "x": 800,
+                "y": 200
+              }
+            },
+            {
+              "kind": "line",
+              "handle": "20",
+              "layerId": "0",
+              "start": {
+                "x": 1000,
+                "y": -100
+              },
+              "end": {
+                "x": 1000,
+                "y": 300
+              }
+            }
+          ],
+          "layers": [
+            {
+              "id": "0",
+              "name": "0",
+              "visible": true,
+              "frozen": false,
+              "locked": false,
+              "plottable": true
+            }
+          ],
+          "linetypes": [],
+          "textStyles": [],
+          "dimensionStyles": [],
+          "blocks": [],
+          "layouts": [
+            {
+              "id": "model",
+              "name": "Model",
+              "kind": "model",
+              "viewports": [],
+              "entities": []
+            }
+          ],
+          "attachments": [],
+          "metadata": {
+            "createdAt": "2026-08-29T12:00:00.000Z",
+            "updatedAt": "2026-08-29T15:06:57.727Z"
+          }
+        },
+        "operation": {
+          "opId": "daa6dd8b-82d1-4f72-b7fe-e2438384443d",
+          "baseRevision": 0,
+          "commandId": "EXTEND",
+          "args": {
+            "mode": "standard",
+            "boundaryEdgeHandles": [
+              "20"
+            ],
+            "targets": [
+              {
+                "handle": "10",
+                "pickPoint": {
+                  "x": 800,
+                  "y": 0
+                },
+                "action": "extend"
+              }
+            ],
+            "edgeMode": "no-extend",
+            "projectMode": "none",
+            "steps": [
+              {
+                "action": "extend",
+                "sourceHandle": "10",
+                "resultHandles": [
+                  "10"
+                ],
+                "targetIndex": 0,
+                "intersectionPoints": [
+                  {
+                    "x": 1000,
+                    "y": 0
+                  }
+                ]
+              }
+            ]
+          },
+          "targetHandles": [
+            "10"
+          ],
+          "resultHandles": [
+            "10"
+          ]
+        }
+      },
+      "ucs": {
+        "document": {
+          "schemaVersion": 1,
+          "documentId": "local",
+          "revision": 1,
+          "units": {
+            "linear": "mm",
+            "displayPrecision": 4,
+            "angularPrecision": 6
+          },
+          "currentLayerId": "0",
+          "entities": [
+            {
+              "kind": "line",
+              "handle": "10",
+              "layerId": "0",
+              "appearance": {
+                "color": "#40a0ff",
+                "lineweightMm": 0.5
+              },
+              "extensionData": {
+                "rowId": "F-023"
+              },
+              "start": {
+                "x": 200,
+                "y": 0
+              },
+              "end": {
+                "x": 1000,
+                "y": 0
+              }
+            },
+            {
+              "kind": "line",
+              "handle": "11",
+              "layerId": "0",
+              "start": {
+                "x": 200,
+                "y": 200
+              },
+              "end": {
+                "x": 800,
+                "y": 200
+              }
+            },
+            {
+              "kind": "line",
+              "handle": "20",
+              "layerId": "0",
+              "start": {
+                "x": 1000,
+                "y": -100
+              },
+              "end": {
+                "x": 1000,
+                "y": 300
+              }
+            }
+          ],
+          "layers": [
+            {
+              "id": "0",
+              "name": "0",
+              "visible": true,
+              "frozen": false,
+              "locked": false,
+              "plottable": true
+            }
+          ],
+          "linetypes": [],
+          "textStyles": [],
+          "dimensionStyles": [],
+          "blocks": [],
+          "layouts": [
+            {
+              "id": "model",
+              "name": "Model",
+              "kind": "model",
+              "viewports": [],
+              "entities": []
+            }
+          ],
+          "attachments": [],
+          "metadata": {
+            "createdAt": "2026-08-29T12:00:00.000Z",
+            "updatedAt": "2026-08-29T15:06:58.327Z"
+          }
+        },
+        "operation": {
+          "opId": "a1bc9d5c-d848-4eeb-9dc7-a3430193f341",
+          "baseRevision": 0,
+          "commandId": "EXTEND",
+          "args": {
+            "mode": "standard",
+            "boundaryEdgeHandles": [
+              "20"
+            ],
+            "targets": [
+              {
+                "handle": "10",
+                "pickPoint": {
+                  "x": 800,
+                  "y": 0
+                },
+                "action": "extend"
+              }
+            ],
+            "edgeMode": "no-extend",
+            "projectMode": "ucs",
+            "steps": [
+              {
+                "action": "extend",
+                "sourceHandle": "10",
+                "resultHandles": [
+                  "10"
+                ],
+                "targetIndex": 0,
+                "intersectionPoints": [
+                  {
+                    "x": 1000,
+                    "y": 0
+                  }
+                ]
+              }
+            ]
+          },
+          "targetHandles": [
+            "10"
+          ],
+          "resultHandles": [
+            "10"
+          ]
+        }
+      },
+      "view": {
+        "document": {
+          "schemaVersion": 1,
+          "documentId": "local",
+          "revision": 1,
+          "units": {
+            "linear": "mm",
+            "displayPrecision": 4,
+            "angularPrecision": 6
+          },
+          "currentLayerId": "0",
+          "entities": [
+            {
+              "kind": "line",
+              "handle": "10",
+              "layerId": "0",
+              "appearance": {
+                "color": "#40a0ff",
+                "lineweightMm": 0.5
+              },
+              "extensionData": {
+                "rowId": "F-023"
+              },
+              "start": {
+                "x": 200,
+                "y": 0
+              },
+              "end": {
+                "x": 1000,
+                "y": 0
+              }
+            },
+            {
+              "kind": "line",
+              "handle": "11",
+              "layerId": "0",
+              "start": {
+                "x": 200,
+                "y": 200
+              },
+              "end": {
+                "x": 800,
+                "y": 200
+              }
+            },
+            {
+              "kind": "line",
+              "handle": "20",
+              "layerId": "0",
+              "start": {
+                "x": 1000,
+                "y": -100
+              },
+              "end": {
+                "x": 1000,
+                "y": 300
+              }
+            }
+          ],
+          "layers": [
+            {
+              "id": "0",
+              "name": "0",
+              "visible": true,
+              "frozen": false,
+              "locked": false,
+              "plottable": true
+            }
+          ],
+          "linetypes": [],
+          "textStyles": [],
+          "dimensionStyles": [],
+          "blocks": [],
+          "layouts": [
+            {
+              "id": "model",
+              "name": "Model",
+              "kind": "model",
+              "viewports": [],
+              "entities": []
+            }
+          ],
+          "attachments": [],
+          "metadata": {
+            "createdAt": "2026-08-29T12:00:00.000Z",
+            "updatedAt": "2026-08-29T15:06:58.944Z"
+          }
+        },
+        "operation": {
+          "opId": "921e2151-600b-4105-bdaf-4d9c8dffc8d0",
+          "baseRevision": 0,
+          "commandId": "EXTEND",
+          "args": {
+            "mode": "standard",
+            "boundaryEdgeHandles": [
+              "20"
+            ],
+            "targets": [
+              {
+                "handle": "10",
+                "pickPoint": {
+                  "x": 800,
+                  "y": 0
+                },
+                "action": "extend"
+              }
+            ],
+            "edgeMode": "no-extend",
+            "projectMode": "view",
+            "steps": [
+              {
+                "action": "extend",
+                "sourceHandle": "10",
+                "resultHandles": [
+                  "10"
+                ],
+                "targetIndex": 0,
+                "intersectionPoints": [
+                  {
+                    "x": 1000,
+                    "y": 0
+                  }
+                ]
+              }
+            ]
+          },
+          "targetHandles": [
+            "10"
+          ],
+          "resultHandles": [
+            "10"
+          ]
+        }
+      }
+    },
+    "refusals": {
+      "source": {
+        "schemaVersion": 1,
+        "documentId": "local",
+        "revision": 0,
+        "units": {
+          "linear": "mm",
+          "displayPrecision": 4,
+          "angularPrecision": 6
+        },
+        "currentLayerId": "0",
+        "entities": [
+          {
+            "kind": "line",
+            "handle": "10",
+            "layerId": "locked",
+            "start": {
+              "x": 0,
+              "y": 0
+            },
+            "end": {
+              "x": 80,
+              "y": 0
+            }
+          },
+          {
+            "kind": "line",
+            "handle": "11",
+            "layerId": "hidden",
+            "start": {
+              "x": 0,
+              "y": 20
+            },
+            "end": {
+              "x": 80,
+              "y": 20
+            }
+          },
+          {
+            "kind": "line",
+            "handle": "20",
+            "layerId": "0",
+            "start": {
+              "x": 100,
+              "y": -20
+            },
+            "end": {
+              "x": 100,
+              "y": 40
+            }
+          }
+        ],
+        "layers": [
+          {
+            "id": "0",
+            "name": "0",
+            "visible": true,
+            "frozen": false,
+            "locked": false,
+            "plottable": true
+          },
+          {
+            "id": "locked",
+            "name": "F023 LOCKED",
+            "visible": true,
+            "frozen": false,
+            "locked": true,
+            "plottable": true
+          },
+          {
+            "id": "hidden",
+            "name": "F023 HIDDEN",
+            "visible": false,
+            "frozen": false,
+            "locked": false,
+            "plottable": true
+          }
+        ],
+        "linetypes": [],
+        "textStyles": [],
+        "dimensionStyles": [],
+        "blocks": [],
+        "layouts": [
+          {
+            "id": "model",
+            "name": "Model",
+            "kind": "model",
+            "viewports": [],
+            "entities": []
+          }
+        ],
+        "attachments": [],
+        "metadata": {
+          "createdAt": "2026-08-29T12:25:00.000Z",
+          "updatedAt": "2026-08-29T12:25:00.000Z"
+        }
+      },
+      "rejected": [
+        {
+          "handle": "10",
+          "targetIndex": 0,
+          "reason": "locked-layer"
+        },
+        {
+          "handle": "11",
+          "targetIndex": 1,
+          "reason": "hidden-layer"
+        }
+      ],
+      "operationCount": 0
+    },
+    "consoleErrors": [],
+    "status": "PASS"
+  },
+  "spline": {
+    "rowId": "F-023",
+    "commandId": "EXTEND",
+    "source": [
+      {
+        "kind": "spline",
+        "handle": "10",
+        "layerId": "0",
+        "degree": 3,
+        "controlPoints": [
+          {
+            "x": 0,
+            "y": 0
+          },
+          {
+            "x": 1,
+            "y": 1
+          },
+          {
+            "x": 2,
+            "y": 1
+          },
+          {
+            "x": 3,
+            "y": 0
+          }
+        ],
+        "knots": [
+          0,
+          0,
+          0,
+          0,
+          1,
+          1,
+          1,
+          1
+        ],
+        "weights": [
+          1,
+          1,
+          2,
+          2
+        ],
+        "closed": false,
+        "periodic": false,
+        "appearance": {
+          "color": "#40a0ff",
+          "lineweightMm": 0.5
+        },
+        "extensionData": {
+          "rowId": "F-023"
+        }
+      },
+      {
+        "kind": "line",
+        "handle": "20",
+        "layerId": "0",
+        "start": {
+          "x": 6,
+          "y": -10
+        },
+        "end": {
+          "x": 6,
+          "y": 10
+        }
+      }
+    ],
+    "committed": [
+      {
+        "kind": "spline",
+        "handle": "10",
+        "layerId": "0",
+        "degree": 3,
+        "controlPoints": [
+          {
+            "x": 0,
+            "y": 0
+          },
+          {
+            "x": 1,
+            "y": 1
+          },
+          {
+            "x": 2,
+            "y": 1
+          },
+          {
+            "x": 3,
+            "y": 0
+          },
+          {
+            "x": 3.621334927543,
+            "y": -0.621334927543
+          },
+          {
+            "x": 4.628726947271,
+            "y": -1.821755493363
+          },
+          {
+            "x": 6.000000000002,
+            "y": -3.567997608689
+          }
+        ],
+        "knots": [
+          0,
+          0,
+          0,
+          0,
+          1,
+          1,
+          1,
+          1.621334927543,
+          1.621334927543,
+          1.621334927543,
+          1.621334927543
+        ],
+        "weights": [
+          1,
+          1,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "closed": false,
+        "periodic": false,
+        "appearance": {
+          "color": "#40a0ff",
+          "lineweightMm": 0.5
+        },
+        "extensionData": {
+          "rowId": "F-023"
+        }
+      },
+      {
+        "kind": "line",
+        "handle": "20",
+        "layerId": "0",
+        "start": {
+          "x": 6,
+          "y": -10
+        },
+        "end": {
+          "x": 6,
+          "y": 10
+        }
+      }
+    ],
+    "dxfTypes": [
+      "SPLINE",
+      "LINE"
+    ],
+    "kdrawRestored": [
+      {
+        "kind": "spline",
+        "handle": "10",
+        "layerId": "0",
+        "degree": 3,
+        "controlPoints": [
+          {
+            "x": 0,
+            "y": 0
+          },
+          {
+            "x": 1,
+            "y": 1
+          },
+          {
+            "x": 2,
+            "y": 1
+          },
+          {
+            "x": 3,
+            "y": 0
+          },
+          {
+            "x": 3.621334927543,
+            "y": -0.621334927543
+          },
+          {
+            "x": 4.628726947271,
+            "y": -1.821755493363
+          },
+          {
+            "x": 6.000000000002,
+            "y": -3.567997608689
+          }
+        ],
+        "knots": [
+          0,
+          0,
+          0,
+          0,
+          1,
+          1,
+          1,
+          1.621334927543,
+          1.621334927543,
+          1.621334927543,
+          1.621334927543
+        ],
+        "weights": [
+          1,
+          1,
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "closed": false,
+        "periodic": false,
+        "appearance": {
+          "color": "#40a0ff",
+          "lineweightMm": 0.5
+        },
+        "extensionData": {
+          "rowId": "F-023"
+        }
+      },
+      {
+        "kind": "line",
+        "handle": "20",
+        "layerId": "0",
+        "start": {
+          "x": 6,
+          "y": -10
+        },
+        "end": {
+          "x": 6,
+          "y": 10
+        }
+      }
+    ],
+    "consoleErrors": [],
+    "status": "PASS"
+  },
+  "downloads": {
+    "source": {
+      "sha256": "98044dced09c4da3a3c0acec291b90267cde5205425ba2fdb2aa5e97ab14ab30",
+      "byteLength": 4214,
+      "types": [
+        "SPLINE",
+        "LINE"
+      ]
+    },
+    "dxf": {
+      "sha256": "be59f6f6ac5ab3f2dfb3df04e186b38fb6969ca86f23994a83fbc95b05f30cdf",
+      "byteLength": 4468,
+      "types": [
+        "SPLINE",
+        "LINE"
+      ]
+    },
+    "kdraw": {
+      "sha256": "11635977019788c83dddef97552ab0215a1e410f759142bd306dd5ffd68c641f",
+      "byteLength": 1789
+    }
+  },
+  "checks": {
+    "allFourBrowserWorkflowsPassed": true,
+    "standardFenceCommandAndGlobalUndo": true,
+    "quickAllObjectBoundary": true,
+    "physicalShiftTrim": true,
+    "crossingSelectionAndCommit": true,
+    "edgeExtendAndNoExtend": true,
+    "projectModesExact": true,
+    "lockedAndHiddenRefusedWithoutMutation": true,
+    "exactRationalSplineCommit": true,
+    "productionDownloadsParseExactly": true
+  },
+  "status": "PASS"
+}

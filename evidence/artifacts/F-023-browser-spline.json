@@ -1,0 +1,238 @@
+{
+  "rowId": "F-023",
+  "commandId": "EXTEND",
+  "source": [
+    {
+      "kind": "spline",
+      "handle": "10",
+      "layerId": "0",
+      "degree": 3,
+      "controlPoints": [
+        {
+          "x": 0,
+          "y": 0
+        },
+        {
+          "x": 1,
+          "y": 1
+        },
+        {
+          "x": 2,
+          "y": 1
+        },
+        {
+          "x": 3,
+          "y": 0
+        }
+      ],
+      "knots": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1
+      ],
+      "weights": [
+        1,
+        1,
+        2,
+        2
+      ],
+      "closed": false,
+      "periodic": false,
+      "appearance": {
+        "color": "#40a0ff",
+        "lineweightMm": 0.5
+      },
+      "extensionData": {
+        "rowId": "F-023"
+      }
+    },
+    {
+      "kind": "line",
+      "handle": "20",
+      "layerId": "0",
+      "start": {
+        "x": 6,
+        "y": -10
+      },
+      "end": {
+        "x": 6,
+        "y": 10
+      }
+    }
+  ],
+  "committed": [
+    {
+      "kind": "spline",
+      "handle": "10",
+      "layerId": "0",
+      "degree": 3,
+      "controlPoints": [
+        {
+          "x": 0,
+          "y": 0
+        },
+        {
+          "x": 1,
+          "y": 1
+        },
+        {
+          "x": 2,
+          "y": 1
+        },
+        {
+          "x": 3,
+          "y": 0
+        },
+        {
+          "x": 3.621334927543,
+          "y": -0.621334927543
+        },
+        {
+          "x": 4.628726947271,
+          "y": -1.821755493363
+        },
+        {
+          "x": 6.000000000002,
+          "y": -3.567997608689
+        }
+      ],
+      "knots": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1.621334927543,
+        1.621334927543,
+        1.621334927543,
+        1.621334927543
+      ],
+      "weights": [
+        1,
+        1,
+        2,
+        2,
+        2,
+        2,
+        2
+      ],
+      "closed": false,
+      "periodic": false,
+      "appearance": {
+        "color": "#40a0ff",
+        "lineweightMm": 0.5
+      },
+      "extensionData": {
+        "rowId": "F-023"
+      }
+    },
+    {
+      "kind": "line",
+      "handle": "20",
+      "layerId": "0",
+      "start": {
+        "x": 6,
+        "y": -10
+      },
+      "end": {
+        "x": 6,
+        "y": 10
+      }
+    }
+  ],
+  "dxfTypes": [
+    "SPLINE",
+    "LINE"
+  ],
+  "kdrawRestored": [
+    {
+      "kind": "spline",
+      "handle": "10",
+      "layerId": "0",
+      "degree": 3,
+      "controlPoints": [
+        {
+          "x": 0,
+          "y": 0
+        },
+        {
+          "x": 1,
+          "y": 1
+        },
+        {
+          "x": 2,
+          "y": 1
+        },
+        {
+          "x": 3,
+          "y": 0
+        },
+        {
+          "x": 3.621334927543,
+          "y": -0.621334927543
+        },
+        {
+          "x": 4.628726947271,
+          "y": -1.821755493363
+        },
+        {
+          "x": 6.000000000002,
+          "y": -3.567997608689
+        }
+      ],
+      "knots": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1.621334927543,
+        1.621334927543,
+        1.621334927543,
+        1.621334927543
+      ],
+      "weights": [
+        1,
+        1,
+        2,
+        2,
+        2,
+        2,
+        2
+      ],
+      "closed": false,
+      "periodic": false,
+      "appearance": {
+        "color": "#40a0ff",
+        "lineweightMm": 0.5
+      },
+      "extensionData": {
+        "rowId": "F-023"
+      }
+    },
+    {
+      "kind": "line",
+      "handle": "20",
+      "layerId": "0",
+      "start": {
+        "x": 6,
+        "y": -10
+      },
+      "end": {
+        "x": 6,
+        "y": 10
+      }
+    }
+  ],
+  "consoleErrors": [],
+  "status": "PASS"
+}

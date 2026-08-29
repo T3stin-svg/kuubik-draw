@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-023",
+  "kind": "browser",
+  "authority": "kuubik-draw-browser",
+  "status": "PASS",
+  "artifactSha256": "a36df36663e52f5cece0fe0fc6705747a6e27e849506e76799ea8df1b04ae808",
+  "observedAt": "2026-08-29T15:07:00.851Z",
+  "workflow": "Chromium /d/local runs Standard EXTEND with Fence, command-local Undo, atomic commit and global Undo; Quick all-object boundary selection; a real Shift-key-down plus canvas pointer click for Trim; and exact rational cubic SPLINE extension through visible controls, IndexedDB and production DXF/KDRAW1 downloads.",
+  "result": "Preview and commit used one predicate, all mutations were atomic, the physical Shift gesture selected Trim, the spline matched AutoCAD's C2 continuation, downloads parsed exactly and all three workflows completed with zero page or console errors.",
+  "test": "e2e/f023-extend.spec.ts",
+  "artifact": "evidence/artifacts/F-023-browser-readback.json"
+}

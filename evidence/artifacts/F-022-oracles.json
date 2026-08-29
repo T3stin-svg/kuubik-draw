@@ -2,18 +2,18 @@
   "schemaVersion": 1,
   "rowId": "F-022",
   "certificationAuthority": false,
-  "generatedAt": "2026-08-29T10:06:31.147Z",
+  "generatedAt": "2026-08-29T13:51:45.094Z",
   "sourceArtifact": "evidence/artifacts/F-022-kuubik.dxf",
   "sourceArtifactSha256": "d1bb747545368329b068ba3a851c0daea0459cc84ceb57c7e0598c3201361c0b",
   "implementationSha256": {
-    "tools/oracles/freecad-headless.py": "741125586fbcceebfe23a5e736462d98c3b61f22d68061c47c80b078bde8e56c",
+    "tools/oracles/freecad-headless.py": "1177b9a6342d7863e40c358dfea8cbd0b2530c11b9b8a4835cff918f6b53caa6",
     "tools/oracles/network-isolation.mjs": "3fb18e9ad145b76e53ed241a0a529bb2ccd4eabe784b04e915d77cdd9203d415",
     "tools/oracles/probe-tools.mjs": "86b118cdf03da095214901d4f5f3b4460d9994b1280ae991904aedb0b992883e",
     "tools/oracles/run-fixtures.mjs": "0a97574ac92ef761f092b2c2d2990f5401a652b8f261b243c9724f49f4fa2800",
     "tools/oracles/run-f022-oracles.mjs": "4d68ff336003ef39c43fa39c80e195458ee797a17f51cbae8a9094ed07e6efe2"
   },
   "runnerSha256": "4d68ff336003ef39c43fa39c80e195458ee797a17f51cbae8a9094ed07e6efe2",
-  "freeCadScriptSha256": "741125586fbcceebfe23a5e736462d98c3b61f22d68061c47c80b078bde8e56c",
+  "freeCadScriptSha256": "1177b9a6342d7863e40c358dfea8cbd0b2530c11b9b8a4835cff918f6b53caa6",
   "networkIsolation": {
     "proven": false,
     "reason": "A protected signed network-isolation attestation was not configured."
@@ -42,7 +42,7 @@
         "inputSha256": "d1bb747545368329b068ba3a851c0daea0459cc84ceb57c7e0598c3201361c0b",
         "output": {
           "bytes": 6792,
-          "sha256": "5edce985e33c3fc9249f5f2e2df937e09a44a2d071e26745ee84ffeff96e5094",
+          "sha256": "40934c68d13e5b34a6bfffc7c5bb56fd2e07f33a60e3920ac04732addb9e3863",
           "hasPdfHeader": true,
           "hasEof": true,
           "pages": 1,

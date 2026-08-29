@@ -554,6 +554,159 @@ function extendedParameter(curve: TrimCurve, parameter: number, endpoint: "start
   return parameter <= 1 + TRIM_EPSILON ? parameter + period : parameter;
 }
 
+interface SplineEndpointJet {
+  point: CadPoint2;
+  first: CadPoint2;
+  second: CadPoint2;
+  third: CadPoint2;
+  referenceSpan: number;
+  endpointWeight: number;
+}
+
+interface HomogeneousPoint { x: number; y: number; weight: number; }
+
+/**
+ * AutoCAD 2024 extends a clamped cubic control-point SPLINE with a polynomial
+ * cubic span. Native measurements show that the span preserves C, C' and C''
+ * and uses -normalize(C'') for C''' (zero when C'' is zero). Rational input is
+ * differentiated in homogeneous form before conversion to Euclidean jets.
+ */
+function splineEndpointJet(entity: CadSpline, endpoint: "start" | "end"): SplineEndpointJet | null {
+  if (!validSpline(entity) || entity.closed || entity.periodic || entity.degree !== 3) return null;
+  const domainStart = entity.knots[entity.degree]!;
+  const domainEnd = entity.knots[entity.controlPoints.length]!;
+  const startClamp = entity.knots.slice(0, entity.degree + 1);
+  const endClamp = entity.knots.slice(-(entity.degree + 1));
+  if (
+    !startClamp.every((knot) => Math.abs(knot - domainStart) <= 1e-10) ||
+    !endClamp.every((knot) => Math.abs(knot - domainEnd) <= 1e-10) ||
+    !(domainEnd - domainStart > 1e-14)
+  ) return null;
+
+  const homogeneous = entity.controlPoints.map((point, index): HomogeneousPoint => {
+    const weight = entity.weights?.[index] ?? 1;
+    return { x: point.x * weight, y: point.y * weight, weight };
+  });
+  const endpointValue = <T>(values: readonly T[]): T | undefined => endpoint === "start" ? values[0] : values.at(-1);
+  const derivatives: HomogeneousPoint[] = [];
+  let derivativePoints = homogeneous;
+  let derivativeKnots = [...entity.knots];
+  let derivativeDegree = entity.degree;
+  for (let order = 1; order <= 2; order += 1) {
+    const next: HomogeneousPoint[] = [];
+    for (let index = 0; index + 1 < derivativePoints.length; index += 1) {
+      const denominator = derivativeKnots[index + derivativeDegree + 1]! - derivativeKnots[index + 1]!;
+      if (!(Math.abs(denominator) > 1e-14)) return null;
+      const factor = derivativeDegree / denominator;
+      const before = derivativePoints[index]!; const after = derivativePoints[index + 1]!;
+      next.push({
+        x: (after.x - before.x) * factor,
+        y: (after.y - before.y) * factor,
+        weight: (after.weight - before.weight) * factor,
+      });
+    }
+    const endpointDerivative = endpointValue(next);
+    if (!endpointDerivative) return null;
+    derivatives.push(endpointDerivative);
+    derivativePoints = next;
+    derivativeKnots = derivativeKnots.slice(1, -1);
+    derivativeDegree -= 1;
+  }
+
+  const value = endpointValue(homogeneous); const firstHomogeneous = derivatives[0]; const secondHomogeneous = derivatives[1];
+  if (!value || !firstHomogeneous || !secondHomogeneous || !(Math.abs(value.weight) > 1e-14)) return null;
+  const point = { x: value.x / value.weight, y: value.y / value.weight };
+  const parameterFirst = {
+    x: (firstHomogeneous.x - firstHomogeneous.weight * point.x) / value.weight,
+    y: (firstHomogeneous.y - firstHomogeneous.weight * point.y) / value.weight,
+  };
+  const parameterSecond = {
+    x: (secondHomogeneous.x - 2 * firstHomogeneous.weight * parameterFirst.x - secondHomogeneous.weight * point.x) / value.weight,
+    y: (secondHomogeneous.y - 2 * firstHomogeneous.weight * parameterFirst.y - secondHomogeneous.weight * point.y) / value.weight,
+  };
+  const first = endpoint === "start" ? scaled(parameterFirst, -1) : parameterFirst;
+  if (!(length(first) > TRIM_EPSILON)) return null;
+  const secondMagnitude = length(parameterSecond);
+  const third = secondMagnitude > TRIM_EPSILON ? scaled(parameterSecond, -1 / secondMagnitude) : { x: 0, y: 0 };
+  let neighboringKnot: number | undefined;
+  if (endpoint === "start") neighboringKnot = entity.knots.find((knot) => knot > domainStart + TRIM_EPSILON);
+  else {
+    for (let index = entity.knots.length - 1; index >= 0; index -= 1) {
+      const knot = entity.knots[index]!;
+      if (knot < domainEnd - TRIM_EPSILON) { neighboringKnot = knot; break; }
+    }
+  }
+  if (neighboringKnot === undefined) return null;
+  const referenceSpan = endpoint === "start" ? neighboringKnot - domainStart : domainEnd - neighboringKnot;
+  if (!(referenceSpan > TRIM_EPSILON)) return null;
+  return {
+    point: cleanPoint(point), first, second: parameterSecond, third, referenceSpan,
+    endpointWeight: entity.weights?.[endpoint === "start" ? 0 : entity.controlPoints.length - 1] ?? 1,
+  };
+}
+
+function splineExtensionBezier(jet: SplineEndpointJet, span: number): [CadPoint2, CadPoint2, CadPoint2, CadPoint2] | null {
+  if (!(span > TRIM_EPSILON) || !Number.isFinite(span)) return null;
+  const spanSquared = span * span; const spanCubed = spanSquared * span;
+  const firstControl = add(jet.point, scaled(jet.first, span / 3));
+  const secondControl = add(add(jet.point, scaled(jet.first, 2 * span / 3)), scaled(jet.second, spanSquared / 6));
+  const endPoint = add(add(add(jet.point, scaled(jet.first, span)), scaled(jet.second, spanSquared / 2)), scaled(jet.third, spanCubed / 6));
+  if (![firstControl, secondControl, endPoint].every(finitePoint)) return null;
+  return [cleanPoint(jet.point), cleanPoint(firstControl), cleanPoint(secondControl), cleanPoint(endPoint)];
+}
+
+function splineExtensionCurve(jet: SplineEndpointJet, span: number): TrimSplineCurve | null {
+  const controlPoints = splineExtensionBezier(jet, span);
+  return controlPoints ? {
+    kind: "spline", degree: 3, controlPoints, knots: [0, 0, 0, 0, 1, 1, 1, 1],
+    startParameter: 0, endParameter: 1, closed: false, segment: 0,
+  } : null;
+}
+
+function splineEndpointExtension(entity: CadSpline, endpoint: "start" | "end", span: number): CadSpline | null {
+  const jet = splineEndpointJet(entity, endpoint); const bezier = jet ? splineExtensionBezier(jet, span) : null;
+  if (!jet || !bezier) return null;
+  const domainStart = entity.knots[entity.degree]!; const domainEnd = entity.knots[entity.controlPoints.length]!;
+  const endpointWeights = Array.from({ length: entity.degree }, () => jet.endpointWeight);
+  const output: CadSpline = endpoint === "end" ? {
+    ...structuredClone(entity),
+    controlPoints: [...structuredClone(entity.controlPoints), ...bezier.slice(1)],
+    knots: [...entity.knots.slice(0, -1), ...Array.from({ length: entity.degree + 1 }, () => clean(domainEnd + span))],
+    ...(entity.weights ? { weights: [...entity.weights, ...endpointWeights] } : {}),
+  } : {
+    ...structuredClone(entity),
+    controlPoints: [...bezier.slice(1).reverse(), ...structuredClone(entity.controlPoints)],
+    knots: [...Array.from({ length: entity.degree + 1 }, () => clean(domainStart - span)), ...entity.knots.slice(1)],
+    ...(entity.weights ? { weights: [...endpointWeights, ...entity.weights] } : {}),
+  };
+  return validSpline(output) ? output : null;
+}
+
+function splineExtensionIntersections(
+  entity: CadSpline,
+  endpoint: "start" | "end",
+  boundaries: readonly TrimCurve[],
+  edgeMode: TrimEdgeMode,
+): Array<{ point: CadPoint2; span: number }> {
+  const jet = splineEndpointJet(entity, endpoint);
+  if (!jet) return [];
+  let probeSpan = jet.referenceSpan;
+  for (let iteration = 0; iteration < 24; iteration += 1) {
+    const extension = splineExtensionCurve(jet, probeSpan);
+    if (!extension) return [];
+    const candidates = boundaries.flatMap((boundary) =>
+      trimCurveIntersections(extension, boundary, edgeMode === "extend", false)
+        .filter((intersection) => intersection.first > TRIM_EPSILON && intersection.first <= 1 + TRIM_EPSILON)
+        .map((intersection) => ({ point: intersection.point, span: intersection.first * probeSpan })),
+    ).sort((left, right) => left.span - right.span)
+      .filter((candidate, index, all) => index === 0 || Math.abs(candidate.span - all[index - 1]!.span) > TRIM_EPSILON);
+    if (candidates.length > 0) return candidates;
+    probeSpan *= 2;
+    if (!Number.isFinite(probeSpan)) break;
+  }
+  return [];
+}
+
 function extendedCurveEntity(entity: CadEntity, curve: TrimCurve, parameter: number, endpoint: "start" | "end"): CadEntity | null {
   const point = trimPointAt(curve, parameter);
   if (!finitePoint(point)) return null;
@@ -568,6 +721,7 @@ function extendedCurveEntity(entity: CadEntity, curve: TrimCurve, parameter: num
     const ellipseParameter = clean(curve.startParameter + curve.sweep * parameter);
     return { ...structuredClone(entity), ...(endpoint === "start" ? { startParameter: ellipseParameter } : { endParameter: ellipseParameter }) };
   }
+  if (entity.kind === "spline") return null;
   if (entity.kind !== "polyline" || entity.closed) return null;
   const vertices = structuredClone(entity.vertices);
   if (endpoint === "start") {
@@ -605,30 +759,36 @@ export function extendCadEntity(
   if (!finitePoint(pickPoint)) return { entity: null, intersectionPoint: null, endpoint: null, reason: "degenerate-geometry" };
   const curves = trimCurvesOfEntity(entity);
   if (
-    curves.length === 0 || entity.kind === "circle" || entity.kind === "spline" ||
+    curves.length === 0 || entity.kind === "circle" ||
     (entity.kind === "ellipse" && fullCurve(curves[0]!)) ||
     (entity.kind === "polyline" && entity.closed)
   ) return { entity: null, intersectionPoint: null, endpoint: null, reason: "unsupported-target" };
   const startPoint = trimPointAt(curves[0]!, 0);
   const endPoint = trimPointAt(curves.at(-1)!, 1);
   const endpoint = distance(pickPoint, startPoint) <= distance(pickPoint, endPoint) ? "start" : "end";
+  if (entity.kind === "spline" && !splineEndpointJet(entity, endpoint)) {
+    return { entity: null, intersectionPoint: null, endpoint, reason: "unsupported-target" };
+  }
   const targetCurve = endpoint === "start" ? curves[0]! : curves.at(-1)!;
+  if (!targetCurve) return { entity: null, intersectionPoint: null, endpoint, reason: "unsupported-target" };
   const boundaryCurves = boundaries.flatMap(trimBoundaryCurvesOfEntity);
-  const candidates = boundaryCurves.flatMap((boundary) =>
-    trimCurveIntersections(targetCurve, boundary, options.edgeMode === "extend", true)
+  const candidates = entity.kind === "spline"
+    ? splineExtensionIntersections(entity, endpoint, boundaryCurves, options.edgeMode ?? "no-extend")
+      .map((intersection) => ({ point: intersection.point, parameter: intersection.span }))
+    : boundaryCurves.flatMap((boundary) =>
+      trimCurveIntersections(targetCurve, boundary, options.edgeMode === "extend", true)
       .map((intersection) => ({
         point: intersection.point,
         parameter: extendedParameter(targetCurve, intersection.first, endpoint),
       })),
-  ).filter((candidate) => endpoint === "start"
-    ? candidate.parameter < -TRIM_EPSILON
-    : candidate.parameter > 1 + TRIM_EPSILON);
-  candidates.sort((first, second) => endpoint === "start"
-    ? second.parameter - first.parameter
-    : first.parameter - second.parameter);
+    ).filter((candidate) => endpoint === "start" ? candidate.parameter < -TRIM_EPSILON : candidate.parameter > 1 + TRIM_EPSILON);
+  candidates.sort((first, second) => entity.kind === "spline" || endpoint === "end"
+    ? first.parameter - second.parameter : second.parameter - first.parameter);
   const selected = candidates[0];
   if (!selected) return { entity: null, intersectionPoint: null, endpoint, reason: "no-intersection" };
-  const extended = extendedCurveEntity(entity, targetCurve, selected.parameter, endpoint);
+  const extended = entity.kind === "spline"
+    ? splineEndpointExtension(entity, endpoint, selected.parameter)
+    : extendedCurveEntity(entity, targetCurve, selected.parameter, endpoint);
   return extended
     ? { entity: extended, intersectionPoint: cleanPoint(selected.point), endpoint, reason: null }
     : { entity: null, intersectionPoint: null, endpoint, reason: "degenerate-geometry" };
@@ -659,8 +819,6 @@ export function trimClosestPoint(entity: CadEntity, point: CadPoint2): TrimClose
 function entityBase(entity: CadEntity): Omit<CadEntity, "kind"> {
   return { handle: entity.handle, layerId: entity.layerId, ...(entity.appearance ? { appearance: structuredClone(entity.appearance) } : {}), ...(entity.extensionData ? { extensionData: structuredClone(entity.extensionData) } : {}) } as Omit<CadEntity, "kind">;
 }
-
-interface HomogeneousPoint { x: number; y: number; weight: number; }
 
 function splineSpan(entity: CadSpline, parameter: number): number {
   const last = entity.controlPoints.length - 1;

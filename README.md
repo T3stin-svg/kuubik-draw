@@ -11,10 +11,10 @@ efektiivsusvärav on failis [`ARCHITECTURE_ROADMAP.md`](ARCHITECTURE_ROADMAP.md)
 
 - vana Drawi auditi snapshot: **63,9% raw / 68,3% weighted / 60,7% visual**;
 - vana Drawi AutoCADi live-tõendiga read: **22/133**;
-- selle uue eraldatud rakenduse avalikus CI-s kinnitatud sertifikaat:
-  **23/133 · 17,3% raw / 20,7% weighted** (`30a9c2a`, run `33247396359`);
+- selle uue eraldatud rakenduse värske lokaalne sertifikaat:
+  **24/133 · 18,0% raw / 21,7% weighted**; F-023 avalik CI-kinnitus on pooleli;
 - avalikult suletud arhitektuurivärav: lõpp-HEAD `d097b34`, GitHub Actions
-  run `33250270350`, sõltumatu review `0 P0 / 0 P1`; järgmine rida F-023 EXTEND;
+  run `33250270350`, sõltumatu review `0 P0 / 0 P1`;
 - native DWG/DWT/XREF ja PC3/CTB/STB pariteet on veel blokeeritud.
 
 Need arvud on vana Drawi auditi muutmatu snapshot. Uus rakendus ei päri skoori
@@ -33,6 +33,13 @@ line/polyline/circle/arc/ellipse/rational-SPLINE geomeetria ning layer-safe
 nested block piirid. Sama production rational NURBS DXF läbib Chromiumi,
 AutoCAD 2024 typed COM-i, AutoCADi salvestatud DXF-i sõltumatu parseri ja
 Kuubiku DXF/KDRAW1 read-back'i; sõltumatu review lõppes `0 P0 / 0 P1`.
+F-023 `EXTEND` lisab sama typed töövoo peale Quick/Standard boundary-valiku,
+Fence/Crossing režiimid, Edge Extend/No extend, Project None/UCS/View 2D
+semantika, käsusisese Undo, füüsilise Shift-TRIM-i ning ühe atomaarse
+globaalse Undo/Redo sammu. Line/polyline/arc/circle/ellipse/rational-SPLINE
+maatriks läbib Chromiumi, tootmis-DXF/KDRAW1 sõltumatu tagasilugemise,
+LibreCADi/FreeCADi sekundaarse oracle-kontrolli ja omatud AutoCAD 2024 desktopi
+live-jooksu. Järgmine funktsioonirida on F-024 `FILLET`.
 F-097 `Layout tabs` lisab revisioneeritud create/copy/reorder/delete töövoo,
 AutoCADi copy-before-source nimekuju, sõltumatud viewport'i ID-d ja paberiruumi
 handle'id, atomaarse Undo/Redo ning IndexedDB/`.kdraw` taastamise.
@@ -157,6 +164,11 @@ kaardistamata runtime-failist. `parity:row` juhib ühe sertifitseeritud rea
 browser/read-back/oracle/AutoCAD/cross samme, uuendab SHA-seosed ning käivitab
 lõpliku 133-rea ratchet'i; `--portable` jätab litsentsitud AutoCADi ja kohaliku
 oracle-runneri ausalt vahele.
+
+Content-address schema v4 seob `package.json` muudatuse rea tõendiga ainult siis,
+kui muutus dependency-pind või selle rea authority-etapi transitiivne npm-käsk.
+Kõik muud scripts/CI-topoloogia muutused peavad endiselt värskendama ühist
+fail-closed topology receipt'i; v3→v4 üleminek on eraldi kontrollitava receipt'iga.
 
 Rakendus: `apps/web`. Tuum, renderdus ning failiadapterid on eraldi pakettides.
 Avalik failiskeem elab MIT-litsentsiga projektis

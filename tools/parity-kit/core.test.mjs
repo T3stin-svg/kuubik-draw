@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { affectedRows, canonicalJson, exactContentAddress, executableStages, inferredRowIds, semanticContentAddress, semanticValue, sourceContentAddress, sourceToRows, staleEvidenceBindings } from "./core.mjs";
+import { affectedRows, canonicalJson, exactContentAddress, executableStages, inferredRowIds, packageContractForRow, semanticContentAddress, semanticValue, sourceContentAddress, sourceToRows, staleEvidenceBindings } from "./core.mjs";
 
 describe("parity kit", () => {
   it("gives timestamp-only JSON reruns the same semantic content address", () => {
@@ -60,12 +60,14 @@ describe("parity kit", () => {
     expect(semanticValue({ generatedAt: "now", value: 1 })).toEqual({ value: 1 });
   });
 
-  it("maps TRIM-only sources to F-022 and shared package changes to every certified row", () => {
-    expect(affectedRows(["packages/cad-core/src/trim.ts"]).rows).toEqual(["F-022"]);
-    expect(affectedRows(["apps/web/src/workflows/modify-command.ts"]).rows).toEqual(["F-015", "F-016", "F-017", "F-018", "F-019", "F-020", "F-021", "F-022"]);
+  it("maps shared trim/extend sources to F-022/F-023 and package locks to every certified row", () => {
+    expect(affectedRows(["packages/cad-core/src/trim.ts"]).rows).toEqual(["F-022", "F-023"]);
+    expect(affectedRows(["apps/web/src/workflows/modify-command.ts"]).rows).toEqual(["F-015", "F-016", "F-017", "F-018", "F-019", "F-020", "F-021", "F-022", "F-023"]);
     expect(affectedRows(["apps/web/src/workflows/modify-command.ts"]).rows).not.toContain("F-114");
-    expect(affectedRows(["package-lock.json"]).rows).toHaveLength(23);
-    expect(sourceToRows().get("packages/cad-core/src/trim.ts")).toEqual(["F-022"]);
+    expect(affectedRows(["package-lock.json"]).rows).toHaveLength(24);
+    expect(affectedRows(["apps/web/package.json"]).rows).toHaveLength(24);
+    expect(affectedRows(["packages/cad-core/package.json"]).rows).toHaveLength(24);
+    expect(sourceToRows().get("packages/cad-core/src/trim.ts")).toEqual(["F-022", "F-023"]);
   });
 
   it("fails closed for a new unmapped runtime source", () => {
@@ -80,27 +82,160 @@ describe("parity kit", () => {
     expect(affectedRows(["tools/parity/new-shared-checker.mjs"]).unmappedRuntime).toEqual(["tools/parity/new-shared-checker.mjs"]);
   });
 
-  it("refuses to rebind changed sources to unchanged browser or readback evidence", () => {
+  it("refreshes only authorities that can be affected by a runtime source", () => {
     const evidence = {
       autocad: { descriptorSha256: "autocad-descriptor", artifactSha256: "autocad-artifact" },
       browser: { descriptorSha256: "browser-descriptor", artifactSha256: "browser-artifact" },
       readback: { descriptorSha256: "readback-descriptor", artifactSha256: "readback-artifact" },
     };
     const receipts = { cross: { sha256: "cross-receipt" } };
-    const previous = { schemaVersion: 3, rows: [{ rowId: "F-023", sources: { "src.ts": "old" }, evidence, receipts }] };
-    const stale = { schemaVersion: 3, rows: [{ rowId: "F-023", sources: { "src.ts": "new" }, evidence, receipts }] };
+    const previous = { schemaVersion: 4, rows: [{ rowId: "F-023", sources: { "apps/web/src/App.tsx": "old" }, evidence, receipts }] };
+    const stale = { schemaVersion: 4, rows: [{ rowId: "F-023", sources: { "apps/web/src/App.tsx": "new" }, evidence, receipts }] };
     expect(staleEvidenceBindings(previous, stale)).toEqual([
-      "F-023: source changed without refreshed autocad evidence.",
       "F-023: source changed without refreshed browser evidence.",
       "F-023: source changed without refreshed readback evidence.",
       "F-023: source changed without refreshed cross stage receipt.",
     ]);
     const refreshed = structuredClone(stale);
-    refreshed.rows[0].evidence.autocad.artifactSha256 = "new-autocad-artifact";
     refreshed.rows[0].evidence.browser.descriptorSha256 = "new-browser-descriptor";
     refreshed.rows[0].evidence.readback.artifactSha256 = "new-readback-artifact";
     refreshed.rows[0].receipts.cross.sha256 = "new-cross-receipt";
     expect(staleEvidenceBindings(previous, refreshed)).toEqual([]);
+  });
+
+  it("keeps AutoCAD-only source changes scoped to native evidence plus cross-check", () => {
+    const evidence = {
+      autocad: { descriptorSha256: "autocad-descriptor", artifactSha256: "autocad-artifact" },
+      browser: { descriptorSha256: "browser-descriptor", artifactSha256: "browser-artifact" },
+      readback: { descriptorSha256: "readback-descriptor", artifactSha256: "readback-artifact" },
+    };
+    const receipts = { cross: { sha256: "cross-receipt" } };
+    const previous = { schemaVersion: 4, rows: [{ rowId: "F-023", sources: { "tools/autocad/run-f023.mjs": "old" }, evidence, receipts }] };
+    const stale = { schemaVersion: 4, rows: [{ rowId: "F-023", sources: { "tools/autocad/run-f023.mjs": "new" }, evidence, receipts }] };
+    expect(staleEvidenceBindings(previous, stale)).toEqual([
+      "F-023: source changed without refreshed autocad evidence.",
+      "F-023: source changed without refreshed cross stage receipt.",
+    ]);
+  });
+
+  it("treats a row scope document as cross-contract provenance, not executable geometry", () => {
+    const evidence = {
+      autocad: { descriptorSha256: "autocad-descriptor", artifactSha256: "autocad-artifact" },
+      browser: { descriptorSha256: "browser-descriptor", artifactSha256: "browser-artifact" },
+      readback: { descriptorSha256: "readback-descriptor", artifactSha256: "readback-artifact" },
+    };
+    const previous = { schemaVersion: 4, rows: [{ rowId: "F-023", sources: { "parity/F-023-scope.md": "old" }, evidence, receipts: { cross: { sha256: "old-cross" } } }] };
+    const current = { schemaVersion: 4, rows: [{ rowId: "F-023", sources: { "parity/F-023-scope.md": "new" }, evidence, receipts: { cross: { sha256: "old-cross" } } }] };
+    expect(staleEvidenceBindings(previous, current)).toEqual(["F-023: source changed without refreshed cross stage receipt."]);
+  });
+
+  it("fails closed across every authority when the package dependency surface changes", () => {
+    const evidence = {
+      autocad: { descriptorSha256: "autocad-descriptor", artifactSha256: "autocad-artifact" },
+      browser: { descriptorSha256: "browser-descriptor", artifactSha256: "browser-artifact" },
+      readback: { descriptorSha256: "readback-descriptor", artifactSha256: "readback-artifact" },
+    };
+    const receipts = { global: { sha256: "global-receipt" } };
+    const previous = { schemaVersion: 4, rows: [{ rowId: "F-003", sources: { "package.json": { schemaVersion: 1, packageSurfaceSha256: "old", stages: {} } }, evidence, receipts }] };
+    const current = { schemaVersion: 4, rows: [{ rowId: "F-003", sources: { "package.json": { schemaVersion: 1, packageSurfaceSha256: "new", stages: {} } }, evidence, receipts }] };
+    expect(staleEvidenceBindings(previous, current)).toEqual([
+      "F-003: source changed without refreshed autocad evidence.",
+      "F-003: source changed without refreshed browser evidence.",
+      "F-003: source changed without refreshed readback evidence.",
+      "F-003: source changed without refreshed global stage receipt.",
+    ]);
+  });
+
+  it("scopes a package stage-command change to its authority, cross-check and global receipt", () => {
+    const evidence = {
+      autocad: { descriptorSha256: "autocad-descriptor", artifactSha256: "autocad-artifact" },
+      browser: { descriptorSha256: "browser-descriptor", artifactSha256: "browser-artifact" },
+      readback: { descriptorSha256: "readback-descriptor", artifactSha256: "readback-artifact" },
+    };
+    const previous = { schemaVersion: 4, rows: [{
+      rowId: "F-003",
+      sources: { "package.json": { schemaVersion: 1, packageSurfaceSha256: "same", stages: { autocad: { rootScript: "parity:f003:autocad", closureSha256: "old" } } } },
+      evidence,
+      receipts: { cross: { sha256: "old-cross" }, global: { sha256: "old-global" } },
+    }] };
+    const current = structuredClone(previous);
+    current.rows[0].sources["package.json"].stages.autocad.closureSha256 = "new";
+    expect(staleEvidenceBindings(previous, current)).toEqual([
+      "F-003: source changed without refreshed autocad evidence.",
+      "F-003: source changed without refreshed cross stage receipt.",
+      "F-003: source changed without refreshed global stage receipt.",
+    ]);
+  });
+
+  it("keeps unrelated package scripts out of a row package contract", () => {
+    const row = { stages: { autocad: "parity:f003:autocad" } };
+    const before = {
+      name: "kuubik-draw",
+      scripts: { "parity:f003:autocad": "node tools/autocad/run-f003.mjs", "test:mutation": "vitest run old.test.ts" },
+    };
+    const after = structuredClone(before);
+    after.scripts["test:mutation"] = "vitest run old.test.ts new-f023.test.ts";
+    after.scripts["parity:f023:autocad"] = "node tools/autocad/run-f023.mjs";
+    expect(packageContractForRow(before, row)).toEqual(packageContractForRow(after, row));
+  });
+
+  it("includes transitively invoked npm scripts in a row package contract", () => {
+    const row = { stages: { readback: "parity:f003:readback" } };
+    const before = {
+      name: "kuubik-draw",
+      scripts: { "parity:f003:readback": "npm run build && node readback.mjs", build: "tsc -b" },
+    };
+    const after = structuredClone(before);
+    after.scripts.build = "tsc -b --force";
+    expect(packageContractForRow(before, row)).not.toEqual(packageContractForRow(after, row));
+  });
+
+  it("fails closed across every authority when a workspace package manifest changes", () => {
+    const evidence = {
+      autocad: { descriptorSha256: "autocad-descriptor", artifactSha256: "autocad-artifact" },
+      browser: { descriptorSha256: "browser-descriptor", artifactSha256: "browser-artifact" },
+      readback: { descriptorSha256: "readback-descriptor", artifactSha256: "readback-artifact" },
+    };
+    const previous = { schemaVersion: 4, rows: [{ rowId: "F-003", sources: { "packages/cad-core/package.json": "old" }, evidence, receipts: { global: { sha256: "global" } } }] };
+    const current = { schemaVersion: 4, rows: [{ rowId: "F-003", sources: { "packages/cad-core/package.json": "new" }, evidence, receipts: { global: { sha256: "global" } } }] };
+    expect(staleEvidenceBindings(previous, current)).toEqual([
+      "F-003: source changed without refreshed autocad evidence.",
+      "F-003: source changed without refreshed browser evidence.",
+      "F-003: source changed without refreshed readback evidence.",
+      "F-003: source changed without refreshed global stage receipt.",
+    ]);
+  });
+
+  it("checks non-package source bindings during the v3 to v4 migration", () => {
+    const evidence = {
+      autocad: { descriptorSha256: "autocad-descriptor", artifactSha256: "autocad-artifact" },
+      browser: { descriptorSha256: "browser-descriptor", artifactSha256: "browser-artifact" },
+      readback: { descriptorSha256: "readback-descriptor", artifactSha256: "readback-artifact" },
+    };
+    const previous = { schemaVersion: 3, rows: [{ rowId: "F-003", sources: { "apps/web/src/App.tsx": "old", "package.json": "old-package" }, evidence, receipts: {} }] };
+    const current = { schemaVersion: 4, rows: [{ rowId: "F-003", sources: { "apps/web/src/App.tsx": "new", "package.json": { schemaVersion: 1, packageSurfaceSha256: "same", stages: {} } }, evidence: structuredClone(evidence), receipts: {} }] };
+    expect(staleEvidenceBindings(previous, current, { allowV3ToV4: true, ignoredSourcePaths: ["package.json"] })).toEqual([
+      "F-003: source changed without refreshed browser evidence.",
+      "F-003: source changed without refreshed readback evidence.",
+    ]);
+    current.rows[0].evidence.browser.descriptorSha256 = "new-browser";
+    current.rows[0].evidence.readback.artifactSha256 = "new-readback";
+    expect(staleEvidenceBindings(previous, current, { allowV3ToV4: true, ignoredSourcePaths: ["package.json"] })).toEqual([]);
+  });
+
+  it("requires a refreshed global receipt when CI or parity topology changes on a row without cross evidence", () => {
+    const evidence = {
+      autocad: { descriptorSha256: "autocad-descriptor", artifactSha256: "autocad-artifact" },
+      browser: { descriptorSha256: "browser-descriptor", artifactSha256: "browser-artifact" },
+      readback: { descriptorSha256: "readback-descriptor", artifactSha256: "readback-artifact" },
+    };
+    const previous = { schemaVersion: 4, rows: [{ rowId: "F-003", sources: { "parity/rows.mjs": "old", ".github/workflows/ci.yml": "old" }, evidence, receipts: { global: { sha256: "old-global" } } }] };
+    const current = { schemaVersion: 4, rows: [{ rowId: "F-003", sources: { "parity/rows.mjs": "new", ".github/workflows/ci.yml": "new" }, evidence, receipts: { global: { sha256: "old-global" } } }] };
+    expect(staleEvidenceBindings(previous, current)).toEqual([
+      "F-003: source changed without refreshed global stage receipt.",
+    ]);
+    current.rows[0].receipts.global.sha256 = "new-global";
+    expect(staleEvidenceBindings(previous, current)).toEqual([]);
   });
 
   it("orchestrates a synthetic row without requiring a copied cross checker", () => {

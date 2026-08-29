@@ -1,0 +1,336 @@
+{
+  "rowId": "F-023",
+  "workflow": "Standard + Fence + command Undo + atomic commit + one-step global Undo/Redo",
+  "committed": {
+    "schemaVersion": 1,
+    "documentId": "local",
+    "revision": 1,
+    "units": {
+      "linear": "mm",
+      "displayPrecision": 4,
+      "angularPrecision": 6
+    },
+    "currentLayerId": "0",
+    "entities": [
+      {
+        "kind": "line",
+        "handle": "10",
+        "layerId": "0",
+        "appearance": {
+          "color": "#40a0ff",
+          "lineweightMm": 0.5
+        },
+        "extensionData": {
+          "rowId": "F-023"
+        },
+        "start": {
+          "x": 200,
+          "y": 0
+        },
+        "end": {
+          "x": 1000,
+          "y": 0
+        }
+      },
+      {
+        "kind": "line",
+        "handle": "11",
+        "layerId": "0",
+        "start": {
+          "x": 200,
+          "y": 200
+        },
+        "end": {
+          "x": 1000,
+          "y": 200
+        }
+      },
+      {
+        "kind": "line",
+        "handle": "20",
+        "layerId": "0",
+        "start": {
+          "x": 1000,
+          "y": -100
+        },
+        "end": {
+          "x": 1000,
+          "y": 300
+        }
+      }
+    ],
+    "layers": [
+      {
+        "id": "0",
+        "name": "0",
+        "visible": true,
+        "frozen": false,
+        "locked": false,
+        "plottable": true
+      }
+    ],
+    "linetypes": [],
+    "textStyles": [],
+    "dimensionStyles": [],
+    "blocks": [],
+    "layouts": [
+      {
+        "id": "model",
+        "name": "Model",
+        "kind": "model",
+        "viewports": [],
+        "entities": []
+      }
+    ],
+    "attachments": [],
+    "metadata": {
+      "createdAt": "2026-08-29T12:00:00.000Z",
+      "updatedAt": "2026-08-29T15:06:54.244Z"
+    }
+  },
+  "operation": {
+    "opId": "3b91da4a-cd46-406b-9819-88706a8d86b2",
+    "baseRevision": 0,
+    "commandId": "EXTEND",
+    "args": {
+      "mode": "standard",
+      "boundaryEdgeHandles": [
+        "20"
+      ],
+      "targets": [
+        {
+          "handle": "10",
+          "pickPoint": {
+            "x": 800,
+            "y": 0
+          },
+          "action": "extend"
+        },
+        {
+          "handle": "11",
+          "pickPoint": {
+            "x": 800,
+            "y": 200
+          },
+          "action": "extend"
+        }
+      ],
+      "edgeMode": "no-extend",
+      "projectMode": "none",
+      "steps": [
+        {
+          "action": "extend",
+          "sourceHandle": "10",
+          "resultHandles": [
+            "10"
+          ],
+          "targetIndex": 0,
+          "intersectionPoints": [
+            {
+              "x": 1000,
+              "y": 0
+            }
+          ]
+        },
+        {
+          "action": "extend",
+          "sourceHandle": "11",
+          "resultHandles": [
+            "11"
+          ],
+          "targetIndex": 1,
+          "intersectionPoints": [
+            {
+              "x": 1000,
+              "y": 200
+            }
+          ]
+        }
+      ]
+    },
+    "targetHandles": [
+      "10",
+      "11"
+    ],
+    "resultHandles": [
+      "10",
+      "11"
+    ]
+  },
+  "restored": {
+    "schemaVersion": 1,
+    "documentId": "local",
+    "revision": 2,
+    "units": {
+      "linear": "mm",
+      "displayPrecision": 4,
+      "angularPrecision": 6
+    },
+    "currentLayerId": "0",
+    "entities": [
+      {
+        "kind": "line",
+        "handle": "10",
+        "layerId": "0",
+        "appearance": {
+          "color": "#40a0ff",
+          "lineweightMm": 0.5
+        },
+        "extensionData": {
+          "rowId": "F-023"
+        },
+        "start": {
+          "x": 200,
+          "y": 0
+        },
+        "end": {
+          "x": 800,
+          "y": 0
+        }
+      },
+      {
+        "kind": "line",
+        "handle": "11",
+        "layerId": "0",
+        "start": {
+          "x": 200,
+          "y": 200
+        },
+        "end": {
+          "x": 800,
+          "y": 200
+        }
+      },
+      {
+        "kind": "line",
+        "handle": "20",
+        "layerId": "0",
+        "start": {
+          "x": 1000,
+          "y": -100
+        },
+        "end": {
+          "x": 1000,
+          "y": 300
+        }
+      }
+    ],
+    "layers": [
+      {
+        "id": "0",
+        "name": "0",
+        "visible": true,
+        "frozen": false,
+        "locked": false,
+        "plottable": true
+      }
+    ],
+    "linetypes": [],
+    "textStyles": [],
+    "dimensionStyles": [],
+    "blocks": [],
+    "layouts": [
+      {
+        "id": "model",
+        "name": "Model",
+        "kind": "model",
+        "viewports": [],
+        "entities": []
+      }
+    ],
+    "attachments": [],
+    "metadata": {
+      "createdAt": "2026-08-29T12:00:00.000Z",
+      "updatedAt": "2026-08-29T15:06:54.377Z"
+    }
+  },
+  "redone": {
+    "schemaVersion": 1,
+    "documentId": "local",
+    "revision": 3,
+    "units": {
+      "linear": "mm",
+      "displayPrecision": 4,
+      "angularPrecision": 6
+    },
+    "currentLayerId": "0",
+    "entities": [
+      {
+        "kind": "line",
+        "handle": "10",
+        "layerId": "0",
+        "appearance": {
+          "color": "#40a0ff",
+          "lineweightMm": 0.5
+        },
+        "extensionData": {
+          "rowId": "F-023"
+        },
+        "start": {
+          "x": 200,
+          "y": 0
+        },
+        "end": {
+          "x": 1000,
+          "y": 0
+        }
+      },
+      {
+        "kind": "line",
+        "handle": "11",
+        "layerId": "0",
+        "start": {
+          "x": 200,
+          "y": 200
+        },
+        "end": {
+          "x": 1000,
+          "y": 200
+        }
+      },
+      {
+        "kind": "line",
+        "handle": "20",
+        "layerId": "0",
+        "start": {
+          "x": 1000,
+          "y": -100
+        },
+        "end": {
+          "x": 1000,
+          "y": 300
+        }
+      }
+    ],
+    "layers": [
+      {
+        "id": "0",
+        "name": "0",
+        "visible": true,
+        "frozen": false,
+        "locked": false,
+        "plottable": true
+      }
+    ],
+    "linetypes": [],
+    "textStyles": [],
+    "dimensionStyles": [],
+    "blocks": [],
+    "layouts": [
+      {
+        "id": "model",
+        "name": "Model",
+        "kind": "model",
+        "viewports": [],
+        "entities": []
+      }
+    ],
+    "attachments": [],
+    "metadata": {
+      "createdAt": "2026-08-29T12:00:00.000Z",
+      "updatedAt": "2026-08-29T15:06:54.460Z"
+    }
+  },
+  "consoleErrors": [],
+  "status": "PASS"
+}

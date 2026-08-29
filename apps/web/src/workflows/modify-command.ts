@@ -2,6 +2,7 @@ import {
   parseCadHandleList,
   parseCartesianPoint,
   parseCopyDestinations,
+  parseExtendTargetPicks,
   parseMoveDestination,
   parseOffsetDistance,
   parseOffsetPlacementPoints,
@@ -13,6 +14,8 @@ import {
   resolveCadCommand,
   type CadChange,
   type CopyCommandResult,
+  type ExtendCommandResult,
+  type ExtendTargetAction,
   type MirrorCommandResult,
   type MoveCommandResult,
   type OffsetCommandResult,
@@ -31,7 +34,7 @@ import {
 import type { CadEntity, KDrawDocumentV1 } from "@kuubik/cad-schema";
 
 export interface PreparedModifyCommand<TResult> {
-  commandId: "MOVE" | "COPY" | "ROTATE" | "SCALE" | "MIRROR" | "OFFSET" | "TRIM";
+  commandId: "MOVE" | "COPY" | "ROTATE" | "SCALE" | "MIRROR" | "OFFSET" | "TRIM" | "EXTEND";
   operationArgs: Readonly<Record<string, unknown>>;
   result: TResult;
 }
@@ -206,6 +209,39 @@ export function prepareTrim(document: KDrawDocumentV1, input: {
     operationArgs: {
       mode: result.mode,
       cuttingEdgeHandles,
+      targets,
+      edgeMode: result.edgeMode,
+      projectMode: result.projectMode,
+      steps: result.steps,
+    },
+    result,
+  };
+}
+
+export function prepareExtend(document: KDrawDocumentV1, input: {
+  mode: TrimMode;
+  boundaryHandlesInput: string;
+  targetsInput: string;
+  targetAction: ExtendTargetAction;
+  edgeMode: TrimEdgeMode;
+  projectMode: TrimProjectMode;
+}): PreparedModifyCommand<ExtendCommandResult> {
+  const command = resolveCadCommand("EXTEND");
+  if (!command || command.id !== "EXTEND") throw new Error("EXTEND command is missing from the registry.");
+  const boundaryEdgeHandles = input.mode === "quick" ? [] : parseCadHandleList(input.boundaryHandlesInput);
+  const targets = parseExtendTargetPicks(input.targetsInput, input.targetAction);
+  const result = command.execute(document, {
+    mode: input.mode,
+    boundaryEdgeHandles,
+    targets,
+    edgeMode: input.edgeMode,
+    projectMode: input.projectMode,
+  });
+  return {
+    commandId: command.id,
+    operationArgs: {
+      mode: result.mode,
+      boundaryEdgeHandles,
       targets,
       edgeMode: result.edgeMode,
       projectMode: result.projectMode,

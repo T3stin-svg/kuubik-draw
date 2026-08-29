@@ -44,6 +44,41 @@ elif operation == "spline-intersections":
             "ymax": spline_shape.BoundBox.YMax,
         },
     }
+elif operation == "rational-spline-readback":
+    spline = Part.BSplineCurve()
+    poles = [point(value) for value in payload["controlPoints"]]
+    multiplicities = [int(value) for value in payload["multiplicities"]]
+    knots = [float(value) for value in payload["knots"]]
+    weights = [float(value) for value in payload["weights"]]
+    spline.buildFromPolesMultsKnots(
+        poles,
+        multiplicities,
+        knots,
+        False,
+        int(payload["degree"]),
+        weights,
+    )
+    samples = []
+    for parameter in payload["sampleParameters"]:
+        value = spline.value(float(parameter))
+        samples.append({"parameter": float(parameter), "x": value.x, "y": value.y})
+    spline_shape = spline.toShape()
+    result = {
+        "degree": spline.Degree,
+        "poleCount": len(spline.getPoles()),
+        "poles": [{"x": value.x, "y": value.y} for value in spline.getPoles()],
+        "weights": list(spline.getWeights()),
+        "knots": list(spline.getKnots()),
+        "multiplicities": list(spline.getMultiplicities()),
+        "rational": bool(spline.isRational()),
+        "samples": samples,
+        "bounds": {
+            "xmin": spline_shape.BoundBox.XMin,
+            "xmax": spline_shape.BoundBox.XMax,
+            "ymin": spline_shape.BoundBox.YMin,
+            "ymax": spline_shape.BoundBox.YMax,
+        },
+    }
 else:
     print(json.dumps({"status": "FAIL", "certificationAuthority": False, "error": "Unsupported synthetic operation"}))
     raise SystemExit(3)

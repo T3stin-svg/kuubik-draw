@@ -88,6 +88,7 @@ if (
 const result = {
   schemaVersion: 1,
   rowId: "F-097",
+  observedAt: new Date().toISOString(),
   source: "independent KDRAW1 magic/base64/SHA-256/JSON reader",
   copyMatrix: {
     layouts: copyRead.document.layouts,

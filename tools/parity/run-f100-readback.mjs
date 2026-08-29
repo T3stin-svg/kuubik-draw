@@ -82,6 +82,7 @@ const restoredViewport = read.document.layouts.find((layout) => layout.id === pa
 const result = {
   schemaVersion: 1,
   rowId: "F-100",
+  observedAt: new Date().toISOString(),
   source: "production viewport view transaction kernel and serializer; independent KDRAW1 magic/base64/length/SHA/document reader",
   preset: { viewport: presetViewport, scaleDenominator: viewportScaleDenominator(presetViewport), scaleLabel: formatViewportScale(presetViewport) },
   cursorZoom: { normalizedCursor, anchorModel, anchorBefore, anchorAfter, viewport: zoomedViewport, scaleDenominator: viewportScaleDenominator(zoomedViewport), scaleLabel: formatViewportScale(zoomedViewport) },

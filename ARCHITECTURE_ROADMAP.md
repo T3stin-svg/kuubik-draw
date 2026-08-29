@@ -33,8 +33,9 @@ selles teekaardis teadlikult `Won't have`.
 
 ## Now
 
-1. F-022 avalik sertifikaat on valmis: **23/133 · 17,3% raw / 20,7% weighted**.
-2. Quick/Standard TRIM, closed bulge/width polyline, hidden/locked target,
+1. F-023 lokaalne sertifikaat on valmis: **24/133 · 18,0% raw / 21,7% weighted**;
+   avalik CI-kinnitus on pooleli.
+2. Quick/Standard TRIM ja EXTEND, closed bulge/width polyline, hidden/locked target,
    ignored HATCH loop, nested block layer-semantika ja rational SPLINE läbivad
    AutoCAD 2024.1.2, Chromiumi ning sõltumatu DXF/KDRAW1 read-back'i.
 3. Sõltumatu review lõppes `0 P0 / 0 P1`; commit `30a9c2a` läbis avaliku
@@ -44,6 +45,10 @@ selles teekaardis teadlikult `Won't have`.
    parity-kit'is ning täpne ratchet töötab võrdselt Windowsis ja Linuxis.
    Põhilaine commit `da45a56`, lõpp-HEAD `d097b34` ja GitHub Actions run
    `33250270350` läbisid fast- ja täieliku certification-värava.
+5. F-023 laine schema-v4 package-ratchet seob iga rea ainult tema transitiivsete
+   npm authority-etappidega, hoides dependency- ja globaalse CI-pinna eraldi
+   fail-closed kontrollis. Ühekordne v3→v4 receipt tõendab, et varasema 23 rea
+   etapikäsud ning `package-lock.json` ei muutunud.
 
 ## Suletud — architecture-efficiency gate
 
@@ -90,18 +95,19 @@ parity/content-address-, litsentsi- ja turvaväravad. Sõltumatu lõppreview oli
 `0 P0 / 0 P1`. Tingimuslikud self-hosted AutoCAD/oracle job'id jäid selle push'i
 jaoks ausalt `skipped`; checked-in native tõendeid kontrolliti üldises ratchet'is.
 
-## Next — F-023 EXTEND
+## Next — F-024 FILLET
 
-Rakendada täis-EXTEND sama eraldatud workflow/transaction arhitektuuriga:
-Quick/Standard boundary selection, Fence/Crossing, Edge Extend/No extend,
-Shift-TRIM, command Undo, atomic global Undo/Redo, layer-refusal, preview=commit,
+Rakendada täis-FILLET sama eraldatud workflow/transaction arhitektuuriga:
+radius, Polyline, Trim/No trim ja Multiple käsuvalikud; line/arc/polyline
+objektipaarid, nullraadius, paralleelsete ja pikendatavate segmentide juhud,
+layer-refusal, preview=commit, käsusisene Undo, atomic global Undo/Redo,
 DXF/KDRAW1 read-back ning sama AutoCAD 2024.1.2 live-maatriks. Skoor muutub
 ainult pärast kõigi tõendite ja sõltumatu P0/P1 review läbimist.
 
 ## Later
 
-1. Pärast arhitektuurivärava avalikku kinnitust rakendada F-023 `EXTEND`, siis
-   jätkata mõjupõhises P0 → P1 → P2 järjekorras kuni 133/133.
+1. Pärast F-023 avalikku kinnitust rakendada F-024 `FILLET`, siis jätkata
+   mõjupõhises P0 → P1 → P2 järjekorras kuni 133/133.
 2. Native DWG/DWT/XREF ja PC3/CTB/STB ainult litsentsitud ODA/RealDWG teega.
 3. Pärast funktsionaalset 133/133 väravat viia kõik viis visuaalkategooriat
    eraldi `100,0%` peale.

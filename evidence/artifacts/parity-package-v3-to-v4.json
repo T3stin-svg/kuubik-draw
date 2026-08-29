@@ -1,0 +1,120 @@
+{
+  "schemaVersion": 1,
+  "kind": "content-address-v3-to-v4-package-semantics",
+  "observedAt": "2026-08-29T15:07:01.590Z",
+  "baseCommit": "46d827801a7aebc7070143ff36435f355df6252b",
+  "sourceSha256": {
+    "previousPackage": "31bd8d42fc6173361cab146eb19e96fe8e8623d3309d44ee401792a2ad10d97b",
+    "currentPackage": "85af1f998befcfaabb71f2a1c902882982508d21675b20f3aa774ae9d07568e2",
+    "previousPackageLock": "9756bf28708c3933c83c0ace8e9dbd9fe4cad9b9d6cec58670758c545f02e584",
+    "currentPackageLock": "9756bf28708c3933c83c0ace8e9dbd9fe4cad9b9d6cec58670758c545f02e584",
+    "baseContentAddressManifest": "7f69dcae5325e072849411c5aed4034bb18d4ce0525dd3c4e3d8bc9fe3f185ef",
+    "workspacePackages": {
+      "apps/web/package.json": {
+        "previous": "e164660645a33349e303ac371042bcc3dc51525037060f203940f29f24d4b748",
+        "current": "e164660645a33349e303ac371042bcc3dc51525037060f203940f29f24d4b748"
+      },
+      "packages/cad-core/package.json": {
+        "previous": "76ce465c3726d5996b6ab5fe6130c795591ae6817cb31ac8f39809b9a247398e",
+        "current": "76ce465c3726d5996b6ab5fe6130c795591ae6817cb31ac8f39809b9a247398e"
+      },
+      "packages/cad-renderer/package.json": {
+        "previous": "a07eeadcd06985a2701c0282f09a00e15f4aacdf0c33189d7fef8733db429960",
+        "current": "a07eeadcd06985a2701c0282f09a00e15f4aacdf0c33189d7fef8733db429960"
+      },
+      "packages/cad-dxf/package.json": {
+        "previous": "3f6f1422f036e26b7b35a2f902308be9c84f051326348fa4dd3d32eaf109406a",
+        "current": "3f6f1422f036e26b7b35a2f902308be9c84f051326348fa4dd3d32eaf109406a"
+      },
+      "packages/cad-print/package.json": {
+        "previous": "f38343f8e48712a39ac30b46141d50b071b327b679769bb0d0b45b256a84ee57",
+        "current": "f38343f8e48712a39ac30b46141d50b071b327b679769bb0d0b45b256a84ee57"
+      }
+    }
+  },
+  "changedScripts": [
+    "parity:check",
+    "parity:f023:autocad",
+    "parity:f023:autocad-core",
+    "parity:f023:browser-artifact",
+    "parity:f023:cross-evidence",
+    "parity:f023:oracles",
+    "parity:f023:readback",
+    "test:mutation"
+  ],
+  "stageChanges": [
+    {
+      "rowId": "F-023",
+      "stage": "browser",
+      "rootScript": "parity:f023:browser-artifact",
+      "before": {
+        "parity:f023:browser-artifact": null
+      },
+      "after": {
+        "parity:f023:browser-artifact": "node tools/parity/capture-f023-browser.mjs"
+      }
+    },
+    {
+      "rowId": "F-023",
+      "stage": "readback",
+      "rootScript": "parity:f023:readback",
+      "before": {
+        "parity:f023:readback": null
+      },
+      "after": {
+        "build": "npm run build -w @kuubik/cad-core && npm run build -w @kuubik/cad-renderer && npm run build -w @kuubik/cad-dxf && npm run build -w @kuubik/cad-print && npm run build -w @kuubik/draw-web",
+        "parity:f023:readback": "npm run build -w @kuubik/cad-core && npm run build -w @kuubik/cad-dxf && npx vite-node tools/parity/run-f023-readback.mjs"
+      }
+    },
+    {
+      "rowId": "F-023",
+      "stage": "autocad",
+      "rootScript": "parity:f023:autocad",
+      "before": {
+        "parity:f023:autocad": null
+      },
+      "after": {
+        "parity:f023:autocad": "node tools/autocad/run-f023.mjs"
+      }
+    },
+    {
+      "rowId": "F-023",
+      "stage": "oracle",
+      "rootScript": "parity:f023:oracles",
+      "before": {
+        "parity:f023:oracles": null
+      },
+      "after": {
+        "build": "npm run build -w @kuubik/cad-core && npm run build -w @kuubik/cad-renderer && npm run build -w @kuubik/cad-dxf && npm run build -w @kuubik/cad-print && npm run build -w @kuubik/draw-web",
+        "parity:f023:oracles": "npm run parity:f023:readback && node tools/oracles/run-f023-oracles.mjs",
+        "parity:f023:readback": "npm run build -w @kuubik/cad-core && npm run build -w @kuubik/cad-dxf && npx vite-node tools/parity/run-f023-readback.mjs"
+      }
+    },
+    {
+      "rowId": "F-023",
+      "stage": "cross",
+      "rootScript": "parity:f023:cross-evidence",
+      "before": {
+        "parity:f023:cross-evidence": null
+      },
+      "after": {
+        "parity:f023:cross-evidence": "node tools/parity/check-f023-cross-evidence.mjs"
+      }
+    }
+  ],
+  "globalOnlyScriptChanges": [
+    "parity:check",
+    "test:mutation"
+  ],
+  "nonPackageCompatibilityErrors": [],
+  "checks": {
+    "packageLockUnchanged": true,
+    "packageSurfaceUnchanged": true,
+    "workspacePackageManifestsUnchanged": true,
+    "baseContentAddressManifestPinned": true,
+    "nonPackageEvidenceBindingsCurrent": true,
+    "onlyF023StageCommandsAdded": true,
+    "onlyKnownGlobalGateScriptsChanged": true
+  },
+  "status": "PASS"
+}

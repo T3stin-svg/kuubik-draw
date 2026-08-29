@@ -19,6 +19,7 @@ const ratio = (metrics) => metrics.sheet.width / metrics.sheet.height;
 const result = {
   schemaVersion: 1,
   rowId: "F-098",
+  observedAt: new Date().toISOString(),
   source: "Chromium 1920x1080 live DOM/canvas measurement plus independently decoded production KDRAW1",
   matrix,
   container: { bytes: bytes.byteLength, sha256: sha256(bytes), documentSha256: sha256(documentBytes) },
