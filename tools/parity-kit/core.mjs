@@ -21,6 +21,10 @@ export function sourceContentAddress(bytes) {
   return sha256(Buffer.from(bytes.toString("utf8").replace(/\r\n?/gu, "\n"), "utf8"));
 }
 
+export function exactContentAddress(bytes, path = "") {
+  return path.toLowerCase().endsWith(".json") ? sourceContentAddress(bytes) : sha256(bytes);
+}
+
 const volatileTimeKeys = new Set([
   "capturedAt",
   "checkedAt",
@@ -205,10 +209,10 @@ export async function buildContentAddressManifest() {
       const artifactBytes = await readFile(resolve(REPO_ROOT, artifactPath));
       evidence[kind] = {
         descriptorPath,
-        descriptorSha256: sha256(descriptorBytes),
+        descriptorSha256: exactContentAddress(descriptorBytes, descriptorPath),
         descriptorContentSha256: semanticContentAddress(descriptorBytes, descriptorPath),
         artifactPath,
-        artifactSha256: sha256(artifactBytes),
+        artifactSha256: exactContentAddress(artifactBytes, artifactPath),
         artifactContentSha256: semanticContentAddress(artifactBytes, artifactPath),
       };
     }
@@ -217,13 +221,13 @@ export async function buildContentAddressManifest() {
       const receiptBytes = await readFile(resolve(REPO_ROOT, receipt.path));
       receipts[receipt.kind] = {
         path: receipt.path,
-        sha256: sha256(receiptBytes),
+        sha256: exactContentAddress(receiptBytes, receipt.path),
         contentSha256: semanticContentAddress(receiptBytes, receipt.path),
       };
     }
     rows.push({ rowId: row.id, sources, evidence, receipts });
   }
-  return { schemaVersion: 3, normalization: "canonical-json-without-allowlisted-time-or-provenance-hashes; canonical-LF sources; KDRAW1 semantic file addresses; exact stage receipts; other binaries exact", rows };
+  return { schemaVersion: 3, normalization: "canonical-json-without-allowlisted-time-or-provenance-hashes; canonical-LF sources and exact JSON evidence; KDRAW1 semantic file addresses; other binaries exact", rows };
 }
 
 export function staleEvidenceBindings(previous, current) {

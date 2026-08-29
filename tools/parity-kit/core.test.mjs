@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { affectedRows, canonicalJson, executableStages, inferredRowIds, semanticContentAddress, semanticValue, sourceContentAddress, sourceToRows, staleEvidenceBindings } from "./core.mjs";
+import { affectedRows, canonicalJson, exactContentAddress, executableStages, inferredRowIds, semanticContentAddress, semanticValue, sourceContentAddress, sourceToRows, staleEvidenceBindings } from "./core.mjs";
 
 describe("parity kit", () => {
   it("gives timestamp-only JSON reruns the same semantic content address", () => {
@@ -45,6 +45,13 @@ describe("parity kit", () => {
   it("gives LF and CRLF source files the same content address", () => {
     expect(sourceContentAddress(Buffer.from("const value = 1;\nexport { value };\n")))
       .toBe(sourceContentAddress(Buffer.from("const value = 1;\r\nexport { value };\r\n")));
+  });
+
+  it("gives LF and CRLF exact JSON evidence the same repository address", () => {
+    expect(exactContentAddress(Buffer.from('{\n  "status": "PASS"\n}\n'), "evidence.json"))
+      .toBe(exactContentAddress(Buffer.from('{\r\n  "status": "PASS"\r\n}\r\n'), "evidence.json"));
+    expect(exactContentAddress(Buffer.from("A\n"), "drawing.dxf"))
+      .not.toBe(exactContentAddress(Buffer.from("A\r\n"), "drawing.dxf"));
   });
 
   it("canonicalizes object keys while preserving array order", () => {
