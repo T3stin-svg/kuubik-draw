@@ -2,13 +2,13 @@
   "schemaVersion": 1,
   "rowId": "F-023",
   "source": "Chromium 1920x1080 visible controls, physical Shift-click, IndexedDB and production DXF/KDRAW1 downloads",
-  "observedAt": "2026-08-29T15:07:00.851Z",
+  "observedAt": "2026-08-29T16:13:35.183Z",
   "implementationSha256": {
-    "apps/web/src/App.tsx": "95c703822872d3cf92092e31d51b069af032b379e559352f5b5392fd34531458",
-    "apps/web/src/workflows/modify-command.ts": "79677b2bcd79abc4cc92ba1e228083b39636d3bccb27ecf6c14261975d6680df",
-    "apps/web/src/workflows/modify-command.test.ts": "1017d5d866be68aef5958a4fef025076e0a5b8411523e08e4a942e171a8cc5a3",
-    "packages/cad-core/src/commands.ts": "73e6ffc270f9a153a11a6abb68861a58dd845ef08a3ac4b52e9bebca3d5343a8",
-    "packages/cad-core/src/index.ts": "53e77dcdfe65d0e0d9a3e26be5201e6743fb14b8c9e38e111c7148242344ad02",
+    "apps/web/src/App.tsx": "00c5197cddd1040405c296acb4ddae054cec1398f0386f7304605c0040f79c18",
+    "apps/web/src/workflows/modify-command.ts": "e341e97c2e3cecd384682e27f7baaf9159852ed593c673070205e42eed17b849",
+    "apps/web/src/workflows/modify-command.test.ts": "e47782d5a84789d98cc4c8c0580b4ffba5bbcf496742ad6df771baa341770f51",
+    "packages/cad-core/src/commands.ts": "9ade3eb23fd29a8c16f532544ea046100d7398190e2d483107b22d89c6974777",
+    "packages/cad-core/src/index.ts": "d92e8a14866db8d94d0549401221ea9f95781f8aa1cc5ab988da97923576a337",
     "packages/cad-core/src/transaction.ts": "e250aa2906e63905202a4b9591367632830745acbf731884f8e711d165750599",
     "packages/cad-core/src/trim.ts": "17b7af49a16e90cd8ac617e3119e1e25dd1055d81324b1c61c03e312342e2232",
     "packages/cad-renderer/src/index.ts": "5563e5e6cdd66b652248e90d4ed237b145fd828da715c64375d2d05169a61888",
@@ -104,11 +104,11 @@
       "attachments": [],
       "metadata": {
         "createdAt": "2026-08-29T12:00:00.000Z",
-        "updatedAt": "2026-08-29T15:06:54.244Z"
+        "updatedAt": "2026-08-29T16:13:28.101Z"
       }
     },
     "operation": {
-      "opId": "3b91da4a-cd46-406b-9819-88706a8d86b2",
+      "opId": "8b680dec-3823-4804-a15a-761abfc2d2c2",
       "baseRevision": 0,
       "commandId": "EXTEND",
       "args": {
@@ -260,7 +260,7 @@
       "attachments": [],
       "metadata": {
         "createdAt": "2026-08-29T12:00:00.000Z",
-        "updatedAt": "2026-08-29T15:06:54.377Z"
+        "updatedAt": "2026-08-29T16:13:28.217Z"
       }
     },
     "redone": {
@@ -347,7 +347,7 @@
       "attachments": [],
       "metadata": {
         "createdAt": "2026-08-29T12:00:00.000Z",
-        "updatedAt": "2026-08-29T15:06:54.460Z"
+        "updatedAt": "2026-08-29T16:13:28.320Z"
       }
     },
     "consoleErrors": [],
@@ -441,11 +441,11 @@
         "attachments": [],
         "metadata": {
           "createdAt": "2026-08-29T12:00:00.000Z",
-          "updatedAt": "2026-08-29T15:06:55.046Z"
+          "updatedAt": "2026-08-29T16:13:28.918Z"
         }
       },
       "operation": {
-        "opId": "c5a74984-037d-4939-99c6-70d94582ada2",
+        "opId": "abf9b18e-aff4-4264-a721-c9579e044567",
         "baseRevision": 0,
         "commandId": "EXTEND",
         "args": {
@@ -659,11 +659,11 @@
         "attachments": [],
         "metadata": {
           "createdAt": "2026-08-29T12:10:00.000Z",
-          "updatedAt": "2026-08-29T15:06:55.693Z"
+          "updatedAt": "2026-08-29T16:13:29.617Z"
         }
       },
       "operation": {
-        "opId": "c582ce16-981f-47eb-9c45-3ffc71ce3ac3",
+        "opId": "d6f3916a-cfa9-41d9-8d9c-0a916e8fcd19",
         "baseRevision": 0,
         "commandId": "EXTEND",
         "args": {
@@ -814,11 +814,11 @@
         "attachments": [],
         "metadata": {
           "createdAt": "2026-08-29T12:00:00.000Z",
-          "updatedAt": "2026-08-29T15:06:56.394Z"
+          "updatedAt": "2026-08-29T16:13:30.385Z"
         }
       },
       "operation": {
-        "opId": "1f9ff933-e799-47df-a1f7-16d37ce1ffd4",
+        "opId": "0ab9cd02-6210-4342-865c-4e59891cf041",
         "baseRevision": 0,
         "commandId": "EXTEND",
         "args": {
@@ -1020,11 +1020,11 @@
           "attachments": [],
           "metadata": {
             "createdAt": "2026-08-29T12:20:00.000Z",
-            "updatedAt": "2026-08-29T15:06:57.044Z"
+            "updatedAt": "2026-08-29T16:13:31.101Z"
           }
         },
         "operation": {
-          "opId": "2c38cd79-508d-4343-baf0-4ff9a39fe239",
+          "opId": "d125ea5d-947e-4ae0-9025-cf2b9b241073",
           "baseRevision": 0,
           "commandId": "EXTEND",
           "args": {
@@ -1133,7 +1133,7 @@
         "attachments": [],
         "metadata": {
           "createdAt": "2026-08-29T12:20:00.000Z",
-          "updatedAt": "2026-08-29T15:06:57.143Z"
+          "updatedAt": "2026-08-29T16:13:31.217Z"
         }
       }
     },
@@ -1223,11 +1223,11 @@
           "attachments": [],
           "metadata": {
             "createdAt": "2026-08-29T12:00:00.000Z",
-            "updatedAt": "2026-08-29T15:06:57.727Z"
+            "updatedAt": "2026-08-29T16:13:31.884Z"
           }
         },
         "operation": {
-          "opId": "daa6dd8b-82d1-4f72-b7fe-e2438384443d",
+          "opId": "1c5601a7-bd40-49b6-9f08-bceb761af55a",
           "baseRevision": 0,
           "commandId": "EXTEND",
           "args": {
@@ -1357,11 +1357,11 @@
           "attachments": [],
           "metadata": {
             "createdAt": "2026-08-29T12:00:00.000Z",
-            "updatedAt": "2026-08-29T15:06:58.327Z"
+            "updatedAt": "2026-08-29T16:13:32.535Z"
           }
         },
         "operation": {
-          "opId": "a1bc9d5c-d848-4eeb-9dc7-a3430193f341",
+          "opId": "77dd3c36-31c7-4cde-9f06-9100a6275722",
           "baseRevision": 0,
           "commandId": "EXTEND",
           "args": {
@@ -1491,11 +1491,11 @@
           "attachments": [],
           "metadata": {
             "createdAt": "2026-08-29T12:00:00.000Z",
-            "updatedAt": "2026-08-29T15:06:58.944Z"
+            "updatedAt": "2026-08-29T16:13:33.201Z"
           }
         },
         "operation": {
-          "opId": "921e2151-600b-4105-bdaf-4d9c8dffc8d0",
+          "opId": "8bddec0d-58bc-4cd2-b1c4-c6c05a1f9bca",
           "baseRevision": 0,
           "commandId": "EXTEND",
           "args": {
@@ -1911,7 +1911,7 @@
       ]
     },
     "kdraw": {
-      "sha256": "11635977019788c83dddef97552ab0215a1e410f759142bd306dd5ffd68c641f",
+      "sha256": "c47eeb375813b193d3f87ef480899e1041e7df9cc015bb9fde8c096ad7a35a84",
       "byteLength": 1789
     }
   },

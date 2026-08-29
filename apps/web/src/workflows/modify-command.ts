@@ -3,6 +3,8 @@ import {
   parseCartesianPoint,
   parseCopyDestinations,
   parseExtendTargetPicks,
+  parseFilletPairPicks,
+  parseFilletRadius,
   parseMoveDestination,
   parseOffsetDistance,
   parseOffsetPlacementPoints,
@@ -16,6 +18,8 @@ import {
   type CopyCommandResult,
   type ExtendCommandResult,
   type ExtendTargetAction,
+  type FilletCommandResult,
+  type FilletTrimMode,
   type MirrorCommandResult,
   type MoveCommandResult,
   type OffsetCommandResult,
@@ -34,7 +38,7 @@ import {
 import type { CadEntity, KDrawDocumentV1 } from "@kuubik/cad-schema";
 
 export interface PreparedModifyCommand<TResult> {
-  commandId: "MOVE" | "COPY" | "ROTATE" | "SCALE" | "MIRROR" | "OFFSET" | "TRIM" | "EXTEND";
+  commandId: "MOVE" | "COPY" | "ROTATE" | "SCALE" | "MIRROR" | "OFFSET" | "TRIM" | "EXTEND" | "FILLET";
   operationArgs: Readonly<Record<string, unknown>>;
   result: TResult;
 }
@@ -246,6 +250,31 @@ export function prepareExtend(document: KDrawDocumentV1, input: {
       edgeMode: result.edgeMode,
       projectMode: result.projectMode,
       steps: result.steps,
+    },
+    result,
+  };
+}
+
+export function prepareFillet(document: KDrawDocumentV1, input: {
+  mode: "pairs" | "polyline";
+  radiusInput: string;
+  pairsInput: string;
+  polylineHandlesInput: string;
+  trimMode: FilletTrimMode;
+}): PreparedModifyCommand<FilletCommandResult> {
+  const command = resolveCadCommand("FILLET");
+  if (!command || command.id !== "FILLET") throw new Error("FILLET command is missing from the registry.");
+  const radius = parseFilletRadius(input.radiusInput);
+  const args = input.mode === "pairs"
+    ? { mode: "pairs" as const, radius, trimMode: input.trimMode, pairs: parseFilletPairPicks(input.pairsInput) }
+    : { mode: "polyline" as const, radius, polylineHandles: parseCadHandleList(input.polylineHandlesInput) };
+  const result = command.execute(document, args);
+  return {
+    commandId: command.id,
+    operationArgs: {
+      ...args,
+      steps: result.steps,
+      multiple: result.multiple,
     },
     result,
   };

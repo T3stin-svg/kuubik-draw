@@ -4,7 +4,7 @@
   "benchmark": "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
   "engine": "Autodesk AutoCAD 2024 desktop COM/native Layout PlotConfiguration and PlotToFile",
   "engineVersion": "24.3s (LMS Tech)",
-  "automationProcessId": 30888,
+  "automationProcessId": 30452,
   "automationProcessOwned": true,
   "media": {
     "a3": "ISO_expand_A3_(297.00_x_420.00_MM)",
@@ -24,7 +24,7 @@
     },
     "plotType": 5,
     "useStandardScale": false,
-    "standardScale": 0,
+    "standardScale": 16,
     "customScale": {
       "paperUnits": 1,
       "drawingUnits": 1,
@@ -37,7 +37,7 @@
     },
     "window": null,
     "viewport": {
-      "handle": "288",
+      "handle": "",
       "center": {
         "x": 210,
         "y": 148.5
@@ -339,18 +339,18 @@
   },
   "dwg": {
     "bytes": 32532,
-    "sha256": "748cf7a88ac27eef084563ac3916d6b0e7feb29d70af27ccdf4979307abd8cdd",
+    "sha256": "2088a49ba48a10b3b11df4459da704abcdef49a3bd0351fdf62982ce7dca4cde",
     "saveAsType": 64,
     "retained": false
   },
   "pdf": {
     "bytes": 2021,
-    "sha256": "0e3ed8413caa3a23c9cc0f54a0f76c37933f599dc5ca7e2b93b741517f60ec3b",
+    "sha256": "fddf711e0b87af5820a99d5e0716603a6cf6c93211972e7cd76efea9f491802d",
     "retained": false
   },
   "displayPdf": {
     "bytes": 2048,
-    "sha256": "9dbec957922f1038a6648bf96a67193d6a48f2b916c4f692cba6ca2f75f2dca9",
+    "sha256": "8e84920e8abdeed99d828d8b573ec83db5e2d0da02fb6833f226d28f0d35e3f4",
     "retained": false
   },
   "status": "PASS",
@@ -419,9 +419,9 @@
       }
     }
   },
-  "browserEvidenceSha256": "f12cdc2fd68fec6d2c818007a004cdaf0934bfd2e50b9446304f505ababa27e5",
+  "browserEvidenceSha256": "b9d8b87290464c7017beaae65bf32e822bf0808350caa52aaabf865b1a9ddf16",
   "scriptSha256": "82fe5a54be4efcfbd5ce2735ad23147a2d75c093e83ba404d2c3189d3821d23e",
   "matrixScriptSha256": "b0c2b9c0ed003fd5f60a297d266d0117f71f30bde5b6929c68717cf01294dc92",
   "runnerScriptSha256": "fbbb62a75f0c60eabfeee5b995e861d2f9db8a59a1a216cc1e0f082b12273744",
-  "observedAt": "2026-08-29T13:54:09.303Z"
+  "observedAt": "2026-08-29T16:19:15.982Z"
 }

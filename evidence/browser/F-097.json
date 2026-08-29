@@ -4,7 +4,7 @@
   "kind": "browser",
   "authority": "kuubik-draw-browser",
   "status": "PASS",
-  "artifactSha256": "67aaec01fec1d0aff753dac38e07d2a95714f4d49771734d92285cd8dbdf0d94",
+  "artifactSha256": "6eba2680ff74466d38f4531199a3fbebb3824a052658a5eadfd1909b64be70db",
   "observedAt": "2026-08-29T10:43:42.820Z",
   "workflow": "Chromium /d/local proves paper mode disables every current Model draw/modify commit path and blocks Undo/Redo when the next operation belongs to Model, then uses the visible layout strip for create, rename, duplicate-name rejection, copy-before-source, reorder, delete with adjacent activation, two-step layout Undo/Redo, KDRAW1 download and IndexedDB reload.",
   "result": "The hashed browser report kept hidden Model geometry unchanged in PAPER, explicitly recorded blocked Model Undo/Redo and duplicateRejected with its error, preserved independent paper entities and viewports, recorded exact create/rename/copy/reorder/delete/Undo/Redo operations including redo opIds, reloaded Model/NOTES/PLAN at revision 6, and emitted no console or page errors.",

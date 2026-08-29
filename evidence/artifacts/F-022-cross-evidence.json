@@ -4,15 +4,15 @@
   "source": "AutoCAD 2024.1.2 physical desktop workflow + Chromium physical Shift-click workflow + production DXF/KDRAW1 read-back + secondary LibreCAD/FreeCAD reports",
   "sourceSha256": {
     "autocad": "a6e0fd1861355e77b3f01913212d712affbf61b0dfaf43d030ffc2f1d999cf79",
-    "browser": "0ae144afdbd1cb5c6cd62936ada88a4dac6cf93ba2a336aca16f8671d7c889ff",
-    "readback": "0cf40945e3ea262f5f58a76ba6e0e7353b4ac8a50fa0efd243e43f84da61986a",
-    "oracles": "edec50722f85c5d6d3cb9c213d7020de0c70fdecc3e0fdc6a725eb1898496125"
+    "browser": "f1d99567fc571a2a981c47f1e08513cfdca1fe96a2febcfd260723da739b10af",
+    "readback": "f842c481e8aec1902c92c823aee750486d2580c55950aa2b7f97966c6904a1ad",
+    "oracles": "4ee2c39d8b8bcfa4e6cc73faa6f87f356270f360083b0d965844180d4943283c"
   },
   "implementationSha256": {
-    "apps/web/src/App.tsx": "95c703822872d3cf92092e31d51b069af032b379e559352f5b5392fd34531458",
-    "apps/web/src/workflows/modify-command.ts": "79677b2bcd79abc4cc92ba1e228083b39636d3bccb27ecf6c14261975d6680df",
-    "packages/cad-core/src/commands.ts": "73e6ffc270f9a153a11a6abb68861a58dd845ef08a3ac4b52e9bebca3d5343a8",
-    "packages/cad-core/src/index.ts": "53e77dcdfe65d0e0d9a3e26be5201e6743fb14b8c9e38e111c7148242344ad02",
+    "apps/web/src/App.tsx": "00c5197cddd1040405c296acb4ddae054cec1398f0386f7304605c0040f79c18",
+    "apps/web/src/workflows/modify-command.ts": "e341e97c2e3cecd384682e27f7baaf9159852ed593c673070205e42eed17b849",
+    "packages/cad-core/src/commands.ts": "9ade3eb23fd29a8c16f532544ea046100d7398190e2d483107b22d89c6974777",
+    "packages/cad-core/src/index.ts": "d92e8a14866db8d94d0549401221ea9f95781f8aa1cc5ab988da97923576a337",
     "packages/cad-core/src/transaction.ts": "e250aa2906e63905202a4b9591367632830745acbf731884f8e711d165750599",
     "packages/cad-core/src/trim.ts": "17b7af49a16e90cd8ac617e3119e1e25dd1055d81324b1c61c03e312342e2232",
     "packages/cad-renderer/src/index.ts": "5563e5e6cdd66b652248e90d4ed237b145fd828da715c64375d2d05169a61888",

@@ -1,6 +1,6 @@
 import { createEmptyDocument } from "@kuubik/cad-core";
 import { describe, expect, it } from "vitest";
-import { prepareCopy, prepareExtend, prepareMirror, prepareMove, prepareOffset, prepareRotate, prepareScale, prepareTrim, putEntities } from "./modify-command.js";
+import { prepareCopy, prepareExtend, prepareFillet, prepareMirror, prepareMove, prepareOffset, prepareRotate, prepareScale, prepareTrim, putEntities } from "./modify-command.js";
 
 function modifyDocument() {
   const document = createEmptyDocument({ documentId: "web-workflows", now: "2026-08-29T00:00:00.000Z" });
@@ -69,5 +69,34 @@ describe("web modify command workflows", () => {
     expect(prepareExtend(extendDocument, {
       mode: "standard", boundaryHandlesInput: "20", targetsInput: "10@40,0", targetAction: "extend", edgeMode: "no-extend", projectMode: "none",
     })).toEqual(extend);
+  });
+
+  it("normalizes FILLET pair, Multiple, Polyline and No Trim inputs once for preview and commit", () => {
+    const document = modifyDocument();
+    const pairs = prepareFillet(document, {
+      mode: "pairs", radiusInput: "10", trimMode: "no-trim",
+      pairsInput: "10@25,0>20@50,25", polylineHandlesInput: "",
+    });
+    expect(pairs.commandId).toBe("FILLET");
+    expect(pairs.operationArgs).toMatchObject({ mode: "pairs", radius: 10, trimMode: "no-trim", multiple: false });
+    expect(pairs.result).toMatchObject({ rejected: [], createdHandles: ["21"], steps: [{ mode: "pair", effectiveRadius: 10 }] });
+    expect(prepareFillet(document, {
+      mode: "pairs", radiusInput: "10", trimMode: "no-trim",
+      pairsInput: "10@25,0>20@50,25", polylineHandlesInput: "",
+    })).toEqual(pairs);
+
+    document.entities.push({
+      kind: "polyline", handle: "30", layerId: "0", closed: true,
+      vertices: [{ x: 0, y: 0 }, { x: 100, y: 0 }, { x: 100, y: 100 }, { x: 0, y: 100 }],
+    });
+    const polyline = prepareFillet(document, {
+      mode: "polyline", radiusInput: "5", trimMode: "trim",
+      pairsInput: "", polylineHandlesInput: "30",
+    });
+    expect(polyline).toMatchObject({
+      commandId: "FILLET",
+      operationArgs: { mode: "polyline", radius: 5, polylineHandles: ["30"] },
+      result: { rejected: [], resultHandles: ["30"], steps: [{ mode: "polyline" }] },
+    });
   });
 });

@@ -4,16 +4,16 @@
   "source": "AutoCAD 2024.1.2 physical desktop workflow + Chromium physical Shift-click workflow + production DXF/KDRAW1 read-back + secondary LibreCAD/FreeCAD reports",
   "sourceSha256": {
     "autocad": "14af8024d44197d5cafc9d3ee8356760e0b3a16b477815c06d6f944678701364",
-    "browser": "a36df36663e52f5cece0fe0fc6705747a6e27e849506e76799ea8df1b04ae808",
-    "readback": "63f2a844288fbe062e8a487a7a575aa052ff69db956311f66d509b35ab0278d4",
-    "oracles": "f8554837abac8d7c24cbfb30ffeb850ed28baede6a8dc33463364c221aef392c"
+    "browser": "048eee9fee2992d76c08a3dab2e8c37bbca00cf1563e3396a58f3e3799afd41e",
+    "readback": "a634b158703408aea249d31b7694b404da851f9dad76bcb612d1286cb184af2f",
+    "oracles": "d5a45d08baaac5867d290d8bf1969e4be522c46f83c7202ca9257ce369e7ab98"
   },
   "implementationSha256": {
-    "apps/web/src/App.tsx": "95c703822872d3cf92092e31d51b069af032b379e559352f5b5392fd34531458",
-    "apps/web/src/workflows/modify-command.ts": "79677b2bcd79abc4cc92ba1e228083b39636d3bccb27ecf6c14261975d6680df",
-    "apps/web/src/workflows/modify-command.test.ts": "1017d5d866be68aef5958a4fef025076e0a5b8411523e08e4a942e171a8cc5a3",
-    "packages/cad-core/src/commands.ts": "73e6ffc270f9a153a11a6abb68861a58dd845ef08a3ac4b52e9bebca3d5343a8",
-    "packages/cad-core/src/index.ts": "53e77dcdfe65d0e0d9a3e26be5201e6743fb14b8c9e38e111c7148242344ad02",
+    "apps/web/src/App.tsx": "00c5197cddd1040405c296acb4ddae054cec1398f0386f7304605c0040f79c18",
+    "apps/web/src/workflows/modify-command.ts": "e341e97c2e3cecd384682e27f7baaf9159852ed593c673070205e42eed17b849",
+    "apps/web/src/workflows/modify-command.test.ts": "e47782d5a84789d98cc4c8c0580b4ffba5bbcf496742ad6df771baa341770f51",
+    "packages/cad-core/src/commands.ts": "9ade3eb23fd29a8c16f532544ea046100d7398190e2d483107b22d89c6974777",
+    "packages/cad-core/src/index.ts": "d92e8a14866db8d94d0549401221ea9f95781f8aa1cc5ab988da97923576a337",
     "packages/cad-core/src/transaction.ts": "e250aa2906e63905202a4b9591367632830745acbf731884f8e711d165750599",
     "packages/cad-core/src/trim.ts": "17b7af49a16e90cd8ac617e3119e1e25dd1055d81324b1c61c03e312342e2232",
     "packages/cad-renderer/src/index.ts": "5563e5e6cdd66b652248e90d4ed237b145fd828da715c64375d2d05169a61888",

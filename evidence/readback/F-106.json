@@ -4,7 +4,7 @@
   "kind": "readback",
   "authority": "independent-parser",
   "status": "PASS",
-  "artifactSha256": "e81af90b8946a245c42639ba0745263b9b82ee3a98133970e51b87d72b88a968",
+  "artifactSha256": "176148079b39b3373d60a1f9c9698b6e29c8eacee124c0e385a65227ca59ad60",
   "observedAt": "2026-08-29T10:46:18.266Z",
   "workflow": "A second invocation of the production Model SVG/PDF generator creates Extents, Window and browser-measured Display outputs from the shared fixture; pypdf, pdfplumber and Poppler inspect each output while independent scale and geometry mutations challenge the bytes.",
   "result": "The production outputs matched Chromium downloads byte-for-byte, were deterministic, changed under both mutations, contained zero skipped handles and zero image XObjects, and exposed the expected physical paper, clip and source-to-paper transforms.",

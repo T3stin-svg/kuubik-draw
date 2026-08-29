@@ -1,5 +1,11 @@
 import type { CadBlockDefinition, CadEntity, CadPoint2, CadPolyline, CadSpline, KDrawDocumentV1 } from "@kuubik/cad-schema";
 import type { EntityChange } from "./transaction.js";
+import {
+  filletCadEntityPair,
+  filletCadPolyline,
+  type FilletGeometryRejectReason,
+  type FilletTrimMode,
+} from "./fillet.js";
 import { offsetCadEntity, type OffsetGeometryMode, type OffsetGeometryRejectReason } from "./offset.js";
 import {
   extendCadEntity,
@@ -309,6 +315,62 @@ export interface ExtendCommandDefinition {
   execute(document: KDrawDocumentV1, args: ExtendCommandArgs): ExtendCommandResult;
 }
 
+export interface FilletPairPick {
+  firstHandle: string;
+  firstPickPoint: CadPoint2;
+  secondHandle: string;
+  secondPickPoint: CadPoint2;
+  /** One-shot radius used by the AutoCAD Shift+second-object gesture. */
+  radiusOverride?: number;
+}
+
+export type FilletCommandArgs =
+  | {
+      mode: "pairs";
+      radius: number;
+      trimMode: FilletTrimMode;
+      pairs: readonly FilletPairPick[];
+    }
+  | {
+      mode: "polyline";
+      radius: number;
+      polylineHandles: readonly string[];
+    };
+
+export interface FilletRejectedTarget {
+  sourceIndex: number;
+  handles: string[];
+  reason: "missing" | "locked-layer" | "hidden-layer" | FilletGeometryRejectReason;
+}
+
+export interface FilletCommandStep {
+  mode: "pair" | "polyline";
+  sourceHandles: string[];
+  resultHandles: string[];
+  effectiveRadius: number;
+  tangentPoints: readonly [CadPoint2, CadPoint2] | null;
+  skippedVertices: number[];
+}
+
+export interface FilletCommandResult {
+  changes: EntityChange[];
+  sourceHandles: string[];
+  resultHandles: string[];
+  createdHandles: string[];
+  rejected: FilletRejectedTarget[];
+  steps: FilletCommandStep[];
+  mode: FilletCommandArgs["mode"];
+  radius: number;
+  trimMode: FilletTrimMode;
+  multiple: boolean;
+}
+
+export interface FilletCommandDefinition {
+  id: "FILLET";
+  aliases: readonly string[];
+  execute(document: KDrawDocumentV1, args: FilletCommandArgs): FilletCommandResult;
+}
+
 export class CadCommandInputError extends Error {
   constructor(message: string) {
     super(message);
@@ -377,6 +439,42 @@ export function parseTrimTargetPicks(input: string, action: TrimTargetAction = "
 
 export function parseExtendTargetPicks(input: string, action: ExtendTargetAction = "extend"): ExtendTargetPick[] {
   return parseTargetPicks(input, action, "EXTEND");
+}
+
+function parseFilletObjectPick(token: string): { handle: string; pickPoint: CadPoint2 } {
+  const separator = token.indexOf("@");
+  if (separator <= 0 || separator === token.length - 1) throw new CadCommandInputError("FILLET object picks must use handle@x,y format.");
+  const handle = token.slice(0, separator).trim();
+  if (!handle || /\s/u.test(handle)) throw new CadCommandInputError("FILLET object handle is invalid.");
+  return { handle, pickPoint: parseCartesianPoint(token.slice(separator + 1)) };
+}
+
+export function parseFilletPairPicks(input: string): FilletPairPick[] {
+  const tokens = input.split(/[;\r\n]+/).map((token) => token.trim()).filter(Boolean);
+  if (tokens.length === 0) throw new CadCommandInputError("FILLET requires at least one object pair.");
+  return tokens.map((token) => {
+    const radiusSeparator = token.lastIndexOf("~");
+    const pairToken = radiusSeparator >= 0 ? token.slice(0, radiusSeparator).trim() : token;
+    const radiusOverride = radiusSeparator >= 0 ? parseFilletRadius(token.slice(radiusSeparator + 1)) : undefined;
+    const sides = pairToken.split(">").map((side) => side.trim());
+    if (sides.length !== 2 || !sides[0] || !sides[1]) throw new CadCommandInputError("FILLET pairs must use firstHandle@x,y>secondHandle@x,y format.");
+    const first = parseFilletObjectPick(sides[0]); const second = parseFilletObjectPick(sides[1]);
+    return {
+      firstHandle: first.handle,
+      firstPickPoint: first.pickPoint,
+      secondHandle: second.handle,
+      secondPickPoint: second.pickPoint,
+      ...(radiusOverride === undefined ? {} : { radiusOverride }),
+    };
+  });
+}
+
+export function parseFilletRadius(input: string): number {
+  const trimmed = input.trim();
+  if (!trimmed) throw new CadCommandInputError("FILLET radius is required.");
+  const radius = Number(trimmed);
+  if (!Number.isFinite(radius) || radius < 0) throw new CadCommandInputError("FILLET radius must be zero or greater.");
+  return Object.is(radius, -0) ? 0 : radius;
 }
 
 export function parseCadHandleList(input: string): string[] {
@@ -1524,6 +1622,137 @@ export function executeExtend(document: KDrawDocumentV1, args: ExtendCommandArgs
   };
 }
 
+/**
+ * Executes an ordered FILLET Multiple sequence against an immutable working map. Pair output arcs
+ * receive deterministic handles, and all successful pair/polyline edits form one global Undo step.
+ */
+export function executeFillet(document: KDrawDocumentV1, args: FilletCommandArgs): FilletCommandResult {
+  if (!Number.isFinite(args.radius) || args.radius < 0) throw new CadCommandInputError("FILLET radius must be zero or greater.");
+  if (args.mode === "pairs" && args.pairs.length === 0) throw new CadCommandInputError("FILLET requires at least one object pair.");
+  if (args.mode === "polyline" && args.polylineHandles.length === 0) throw new CadCommandInputError("FILLET Polyline requires at least one handle.");
+  const layers = new Map(document.layers.map((layer) => [layer.id, layer]));
+  const original = new Map(document.entities.map((entity) => [entity.handle, entity]));
+  const working = new Map(document.entities.map((entity) => [entity.handle, structuredClone(entity)]));
+  const allocated = allocateEntityHandles(document, args.mode === "pairs" ? args.pairs.length : 0);
+  let allocatedIndex = 0;
+  const touched = new Set<string>();
+  const sourceHandles = new Set<string>();
+  const resultHandles: string[] = [];
+  const createdHandles: string[] = [];
+  const rejected: FilletRejectedTarget[] = [];
+  const steps: FilletCommandStep[] = [];
+
+  const layerReason = (entity: CadEntity): "locked-layer" | "hidden-layer" | null => {
+    const layer = layers.get(entity.layerId);
+    if (layer?.locked) return "locked-layer";
+    if (layer && (!layer.visible || layer.frozen)) return "hidden-layer";
+    return null;
+  };
+
+  if (args.mode === "pairs") {
+    args.pairs.forEach((pair, sourceIndex) => {
+      assertFinitePoint(`FILLET pair ${sourceIndex + 1} first pick`, pair.firstPickPoint);
+      assertFinitePoint(`FILLET pair ${sourceIndex + 1} second pick`, pair.secondPickPoint);
+      if (pair.radiusOverride !== undefined && (!Number.isFinite(pair.radiusOverride) || pair.radiusOverride < 0)) {
+        throw new CadCommandInputError(`FILLET pair ${sourceIndex + 1} radius override must be zero or greater.`);
+      }
+      const first = working.get(pair.firstHandle); const second = working.get(pair.secondHandle);
+      const handles = [pair.firstHandle, pair.secondHandle];
+      if (!first || !second) {
+        rejected.push({ sourceIndex, handles, reason: "missing" });
+        return;
+      }
+      const refusedLayer = layerReason(first) ?? layerReason(second);
+      if (refusedLayer) {
+        rejected.push({ sourceIndex, handles, reason: refusedLayer });
+        return;
+      }
+      const pairRadius = pair.radiusOverride ?? args.radius;
+      const geometry = filletCadEntityPair(first, pair.firstPickPoint, second, pair.secondPickPoint, pairRadius, args.trimMode);
+      if (geometry.reason || !geometry.firstEntity || !geometry.secondEntity) {
+        rejected.push({ sourceIndex, handles, reason: geometry.reason ?? "no-solution" });
+        return;
+      }
+      sourceHandles.add(first.handle); sourceHandles.add(second.handle);
+      const pairResults: string[] = [];
+      if (args.trimMode === "trim") {
+        const firstOutput = { ...geometry.firstEntity, handle: first.handle } as CadEntity;
+        const secondOutput = { ...geometry.secondEntity, handle: second.handle } as CadEntity;
+        working.set(first.handle, firstOutput); working.set(second.handle, secondOutput);
+        touched.add(first.handle); touched.add(second.handle);
+        pairResults.push(first.handle, second.handle);
+        resultHandles.push(first.handle, second.handle);
+      }
+      if (geometry.arc) {
+        const handle = allocated[allocatedIndex++]!;
+        const layerId = first.layerId === second.layerId ? first.layerId : document.currentLayerId;
+        const arc = { ...geometry.arc, handle, layerId } as CadEntity;
+        working.set(handle, arc); touched.add(handle);
+        createdHandles.push(handle); resultHandles.push(handle); pairResults.push(handle);
+      }
+      steps.push({
+        mode: "pair",
+        sourceHandles: handles,
+        resultHandles: pairResults,
+        effectiveRadius: geometry.effectiveRadius ?? pairRadius,
+        tangentPoints: geometry.tangentPoints,
+        skippedVertices: [],
+      });
+    });
+  } else {
+    [...new Set(args.polylineHandles.map((handle) => handle.trim()).filter(Boolean))].forEach((handle, sourceIndex) => {
+      const entity = working.get(handle);
+      if (!entity) {
+        rejected.push({ sourceIndex, handles: [handle], reason: "missing" });
+        return;
+      }
+      const refusedLayer = layerReason(entity);
+      if (refusedLayer) {
+        rejected.push({ sourceIndex, handles: [handle], reason: refusedLayer });
+        return;
+      }
+      if (entity.kind !== "polyline") {
+        rejected.push({ sourceIndex, handles: [handle], reason: "unsupported-target" });
+        return;
+      }
+      const geometry = filletCadPolyline(entity, args.radius);
+      if (geometry.reason || !geometry.entity) {
+        rejected.push({ sourceIndex, handles: [handle], reason: geometry.reason ?? "no-solution" });
+        return;
+      }
+      sourceHandles.add(handle);
+      const output = { ...geometry.entity, handle } as CadEntity;
+      working.set(handle, output); touched.add(handle); resultHandles.push(handle);
+      steps.push({
+        mode: "polyline",
+        sourceHandles: [handle],
+        resultHandles: [handle],
+        effectiveRadius: args.radius,
+        tangentPoints: null,
+        skippedVertices: geometry.skippedVertices,
+      });
+    });
+  }
+
+  const changes: EntityChange[] = [];
+  for (const handle of touched) {
+    const before = original.get(handle); const after = working.get(handle);
+    if (after && (!before || JSON.stringify(before) !== JSON.stringify(after))) changes.push({ type: "put", entity: structuredClone(after) });
+  }
+  return {
+    changes,
+    sourceHandles: [...sourceHandles],
+    resultHandles,
+    createdHandles,
+    rejected,
+    steps,
+    mode: args.mode,
+    radius: args.radius,
+    trimMode: args.mode === "pairs" ? args.trimMode : "trim",
+    multiple: args.mode === "pairs" ? args.pairs.length > 1 : args.polylineHandles.length > 1,
+  };
+}
+
 const rectangleCommand: RectangleCommandDefinition = Object.freeze({
   id: "RECTANGLE",
   aliases: Object.freeze(["RECTANG", "RECTANGLE", "REC"]),
@@ -1584,9 +1813,15 @@ const extendCommand: ExtendCommandDefinition = Object.freeze({
   execute: executeExtend,
 });
 
-export const cadCommandRegistry = Object.freeze([rectangleCommand, eraseCommand, moveCommand, copyCommand, rotateCommand, scaleCommand, mirrorCommand, offsetCommand, trimCommand, extendCommand]);
+const filletCommand: FilletCommandDefinition = Object.freeze({
+  id: "FILLET",
+  aliases: Object.freeze(["F", "FILLET"]),
+  execute: executeFillet,
+});
 
-export function resolveCadCommand(token: string): RectangleCommandDefinition | EraseCommandDefinition | MoveCommandDefinition | CopyCommandDefinition | RotateCommandDefinition | ScaleCommandDefinition | MirrorCommandDefinition | OffsetCommandDefinition | TrimCommandDefinition | ExtendCommandDefinition | null {
+export const cadCommandRegistry = Object.freeze([rectangleCommand, eraseCommand, moveCommand, copyCommand, rotateCommand, scaleCommand, mirrorCommand, offsetCommand, trimCommand, extendCommand, filletCommand]);
+
+export function resolveCadCommand(token: string): RectangleCommandDefinition | EraseCommandDefinition | MoveCommandDefinition | CopyCommandDefinition | RotateCommandDefinition | ScaleCommandDefinition | MirrorCommandDefinition | OffsetCommandDefinition | TrimCommandDefinition | ExtendCommandDefinition | FilletCommandDefinition | null {
   const normalized = token.trim().toUpperCase();
   return cadCommandRegistry.find((command) => command.aliases.includes(normalized)) ?? null;
 }

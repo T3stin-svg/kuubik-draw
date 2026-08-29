@@ -1,15 +1,15 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ISO_PAPER_MEDIA, MAX_PAGE_SETUP_TEMPLATE_BYTES, STANDARD_VIEWPORT_SCALE_DENOMINATORS, allocateEntityHandles, applyNamedPageSetup, buildLayoutPublishPlan, CadCommandInputError, CadSession, clearNamedPageSetupAssignment, createPageSetupTemplate, LayoutCommandError, LayoutPublishSettingsError, NoOpOperationError, PageSetupLibraryError, copyPaperLayout, createEmptyDocument, createPaperLayout, createPaperViewport, deleteNamedPageSetup, deletePaperLayout, deletePaperViewport, formatViewportScale, importPageSetupTemplate, metadataWithLayoutPublishSettings, movePaperLayout, panPaperViewportByPixels, paperDefinitionForPageSetup, parseCartesianPoint, parsePageSetupTemplate, renameNamedPageSetup, renamePaperLayout, replaceDrawingContentPreservingLayouts, resolveCadCommand, resolveLayoutPublishSettings, resolveModelPageSetup, resolvePageSetup, resolvePageSetupLibrary, resolvePaperDefinition, sanitizePdfFileStem, saveNamedPageSetup, serializeKDraw, serializePageSetupTemplate, setModelLayoutPageSetup, setPaperLayoutPageSetup, setPaperViewportDisplayLocked, setPaperViewportView, viewportScaleDenominator, zoomPaperViewportAtModelPoint, type CadChange, type CopyRejectedTarget, type ExtendRejectedTarget, type ExtendTargetAction, type LayoutPublishSettingsV1, type MirrorRejectedTarget, type MoveRejectedTarget, type OffsetLayerMode, type OffsetRejectedTarget, type RotateRejectedTarget, type ScaleRejectedTarget, type TrimEdgeMode, type TrimMode, type TrimProjectMode, type TrimRejectedTarget, type TrimTargetAction } from "@kuubik/cad-core";
+import { ISO_PAPER_MEDIA, MAX_PAGE_SETUP_TEMPLATE_BYTES, STANDARD_VIEWPORT_SCALE_DENOMINATORS, allocateEntityHandles, applyNamedPageSetup, buildLayoutPublishPlan, CadCommandInputError, CadSession, clearNamedPageSetupAssignment, createPageSetupTemplate, LayoutCommandError, LayoutPublishSettingsError, NoOpOperationError, PageSetupLibraryError, copyPaperLayout, createEmptyDocument, createPaperLayout, createPaperViewport, deleteNamedPageSetup, deletePaperLayout, deletePaperViewport, formatViewportScale, importPageSetupTemplate, metadataWithLayoutPublishSettings, movePaperLayout, panPaperViewportByPixels, paperDefinitionForPageSetup, parseCartesianPoint, parsePageSetupTemplate, renameNamedPageSetup, renamePaperLayout, replaceDrawingContentPreservingLayouts, resolveCadCommand, resolveLayoutPublishSettings, resolveModelPageSetup, resolvePageSetup, resolvePageSetupLibrary, resolvePaperDefinition, sanitizePdfFileStem, saveNamedPageSetup, serializeKDraw, serializePageSetupTemplate, setModelLayoutPageSetup, setPaperLayoutPageSetup, setPaperViewportDisplayLocked, setPaperViewportView, viewportScaleDenominator, zoomPaperViewportAtModelPoint, type CadChange, type CopyRejectedTarget, type ExtendRejectedTarget, type ExtendTargetAction, type FilletRejectedTarget, type FilletTrimMode, type LayoutPublishSettingsV1, type MirrorRejectedTarget, type MoveRejectedTarget, type OffsetLayerMode, type OffsetRejectedTarget, type RotateRejectedTarget, type ScaleRejectedTarget, type TrimEdgeMode, type TrimMode, type TrimProjectMode, type TrimRejectedTarget, type TrimTargetAction } from "@kuubik/cad-core";
 import { DxfImportError, MAX_DXF_IMPORT_BYTES, exportDxf, importDxf } from "@kuubik/cad-dxf";
 import { exportLayoutSvg, exportLayoutsVectorPdf, exportLayoutVectorPdf, exportModelSvg, exportModelVectorPdf, type LayoutPlotOptions, type ModelPlotOptions } from "@kuubik/cad-print";
 import { CadCanvasRenderer, pickCadEntity, pannedViewportWorldCenter, selectCadEntityHitsByCrossingPolygon, selectCadEntityHitsByFence, viewportScreenToWorld, viewportScreenTransform, type Viewport2D } from "@kuubik/cad-renderer";
 import type { CadEntity, CadLayout, CadPageSetup, CadPaperRect, CadPlotStyle, CadViewport, KDrawDocumentV1 } from "@kuubik/cad-schema";
 import { KDrawIndexedDb, StorageRevisionConflictError } from "./indexed-db.js";
-import { prepareCopy, prepareExtend, prepareMirror, prepareMove, prepareOffset, prepareRotate, prepareScale, prepareTrim, putEntities } from "./workflows/modify-command.js";
+import { prepareCopy, prepareExtend, prepareFillet, prepareMirror, prepareMove, prepareOffset, prepareRotate, prepareScale, prepareTrim, putEntities } from "./workflows/modify-command.js";
 import "./style.css";
 
 const LOCAL_DOCUMENT_ID = "local";
-const MODEL_SPACE_COMMANDS = new Set(["LINE", "RECTANGLE", "MOVE", "COPY", "ROTATE", "SCALE", "MIRROR", "OFFSET", "TRIM", "EXTEND", "ERASE"]);
+const MODEL_SPACE_COMMANDS = new Set(["LINE", "RECTANGLE", "MOVE", "COPY", "ROTATE", "SCALE", "MIRROR", "OFFSET", "TRIM", "EXTEND", "FILLET", "ERASE"]);
 const MODEL_VIEW_WORLD = Object.freeze({ minX: -500, minY: -500, maxX: 2500, maxY: 2500 });
 
 function nextInteractiveHandle(document: KDrawDocumentV1): string {
@@ -289,7 +289,15 @@ export function App() {
   const [extendPathMode, setExtendPathMode] = useState<"fence" | "crossing">("fence");
   const [extendPathInput, setExtendPathInput] = useState("80,-50; 80,50");
   const [lastExtendRejected, setLastExtendRejected] = useState<ExtendRejectedTarget[]>([]);
-  const [previewCommand, setPreviewCommand] = useState<"MOVE" | "COPY" | "ROTATE" | "SCALE" | "MIRROR" | "OFFSET" | "TRIM" | "EXTEND">("MOVE");
+  const [filletMode, setFilletMode] = useState<"pairs" | "polyline">("pairs");
+  const [filletRadiusInput, setFilletRadiusInput] = useState("100");
+  const [filletTrimMode, setFilletTrimMode] = useState<FilletTrimMode>("trim");
+  const [filletPairsInput, setFilletPairsInput] = useState("10@400,0>20@500,100");
+  const [filletPolylineHandlesInput, setFilletPolylineHandlesInput] = useState("10");
+  const [filletFirstCanvasPick, setFilletFirstCanvasPick] = useState<{ handle: string; point: { x: number; y: number } } | null>(null);
+  const [filletCanvasSessionActive, setFilletCanvasSessionActive] = useState(false);
+  const [lastFilletRejected, setLastFilletRejected] = useState<FilletRejectedTarget[]>([]);
+  const [previewCommand, setPreviewCommand] = useState<"MOVE" | "COPY" | "ROTATE" | "SCALE" | "MIRROR" | "OFFSET" | "TRIM" | "EXTEND" | "FILLET">("MOVE");
   const activeLayer = document.layers.find((layer) => layer.id === document.currentLayerId)!;
   const activeLayout = document.layouts.find((layout) => layout.id === activeLayoutId) ?? document.layouts[0]!;
   const selectedViewport = activeLayout.kind === "paper"
@@ -452,6 +460,26 @@ export function App() {
       return null;
     }
   }, [document, extendBoundaryHandlesInput, extendEdgeMode, extendMode, extendProjectMode, extendTargetAction, extendTargetsInput, previewCommand]);
+  const filletPreview = useMemo((): { entities: CadEntity[]; sourceHandles: string[]; steps: number; trimMode: FilletTrimMode } | null => {
+    if (previewCommand !== "FILLET") return null;
+    try {
+      const { result } = prepareFillet(document, {
+        mode: filletMode,
+        radiusInput: filletRadiusInput,
+        pairsInput: filletPairsInput,
+        polylineHandlesInput: filletPolylineHandlesInput,
+        trimMode: filletTrimMode,
+      });
+      return {
+        entities: putEntities(result.changes),
+        sourceHandles: result.changes.flatMap((change) => change.type === "put" && result.sourceHandles.includes(change.entity.handle) ? [change.entity.handle] : []),
+        steps: result.steps.length,
+        trimMode: result.trimMode,
+      };
+    } catch {
+      return null;
+    }
+  }, [document, filletMode, filletPairsInput, filletPolylineHandlesInput, filletRadiusInput, filletTrimMode, previewCommand]);
 
   useEffect(() => {
     let active = true;
@@ -564,11 +592,12 @@ export function App() {
         widthPx,
         heightPx,
         devicePixelRatio: ratio,
-      }, document.layers, activeLayout.kind === "model" ? [...(movePreview?.entities ?? []), ...(copyPreview?.entities ?? []), ...(rotatePreview?.entities ?? []), ...(scalePreview?.entities ?? []), ...(mirrorPreview?.entities ?? []), ...(offsetPreview?.entities ?? []), ...(trimPreview?.entities ?? []), ...(extendPreview?.entities ?? [])] : [], [
+      }, document.layers, activeLayout.kind === "model" ? [...(movePreview?.entities ?? []), ...(copyPreview?.entities ?? []), ...(rotatePreview?.entities ?? []), ...(scalePreview?.entities ?? []), ...(mirrorPreview?.entities ?? []), ...(offsetPreview?.entities ?? []), ...(trimPreview?.entities ?? []), ...(extendPreview?.entities ?? []), ...(filletPreview?.entities ?? [])] : [], [
         ...(mirrorPreview?.eraseSource ? mirrorPreview.sourceHandles : []),
         ...(offsetPreview?.eraseSource ? offsetPreview.sourceHandles : []),
         ...(trimPreview?.sourceHandles ?? []),
         ...(extendPreview?.sourceHandles ?? []),
+        ...(filletPreview?.trimMode === "trim" ? filletPreview.sourceHandles : []),
       ], activePaper && activePageSetup?.displayPlotStyles ? {
         plotStyle: activePageSetup.plotStyle ?? { profile: "monochrome", plotLineweights: true, plotTransparency: true },
         pixelsPerMillimeter: widthPx / activePaper.widthMm,
@@ -578,7 +607,7 @@ export function App() {
     const observer = new ResizeObserver(render);
     observer.observe(element);
     return () => observer.disconnect();
-  }, [activeLayout, activePageSetup, activePaper, copyPreview, document, extendPreview, mirrorPreview, movePreview, offsetPreview, rotatePreview, scalePreview, trimPreview]);
+  }, [activeLayout, activePageSetup, activePaper, copyPreview, document, extendPreview, filletPreview, mirrorPreview, movePreview, offsetPreview, rotatePreview, scalePreview, trimPreview]);
 
   async function recoverFromStorageConflict(error: unknown): Promise<void> {
     if (!(error instanceof StorageRevisionConflictError)) throw error;
@@ -1018,8 +1047,8 @@ export function App() {
     }
   }
 
-  function selectTrimExtendTargetFromCanvas(event: React.PointerEvent<HTMLCanvasElement>): void {
-    if (!modelSpaceEditing || (previewCommand !== "TRIM" && previewCommand !== "EXTEND") || event.button !== 0) return;
+  function selectModifyTargetFromCanvas(event: React.PointerEvent<HTMLCanvasElement>): void {
+    if (!modelSpaceEditing || (previewCommand !== "TRIM" && previewCommand !== "EXTEND" && previewCommand !== "FILLET") || event.button !== 0) return;
     const element = event.currentTarget;
     const rect = element.getBoundingClientRect();
     if (!(rect.width > 0 && rect.height > 0)) return;
@@ -1044,6 +1073,23 @@ export function App() {
     }
     const cleanCoordinate = (value: number): number => Number(value.toFixed(6));
     const pickPoint = { x: cleanCoordinate(hit.point.x), y: cleanCoordinate(hit.point.y) };
+    if (previewCommand === "FILLET") {
+      setFilletMode("pairs");
+      if (!filletFirstCanvasPick) {
+        if (!filletCanvasSessionActive) setFilletPairsInput("");
+        setFilletCanvasSessionActive(true);
+        setFilletFirstCanvasPick({ handle: hit.handle, point: pickPoint });
+        setStatus(`FILLET esimene objekt: ${hit.handle}; vali teine objekt${event.shiftKey ? " (Shift rakendub teisele valikule)" : ""}`);
+        return;
+      }
+      const pair = `${filletFirstCanvasPick.handle}@${filletFirstCanvasPick.point.x},${filletFirstCanvasPick.point.y}>${hit.handle}@${pickPoint.x},${pickPoint.y}${event.shiftKey ? "~0" : ""}`;
+      setFilletPairsInput((current) => current.trim() ? `${current.trim()}; ${pair}` : pair);
+      setFilletFirstCanvasPick(null);
+      setStatus(event.shiftKey
+        ? `FILLET Shift-teine objekt: ${hit.handle}; see paar kasutab raadiust 0, salvestatud Radius ei muutunud`
+        : `FILLET paar lisatud: ${filletFirstCanvasPick.handle}+${hit.handle}; vali järgmine esimene objekt või käivita FILLET`);
+      return;
+    }
     if (previewCommand === "TRIM") {
       const action: TrimTargetAction = event.shiftKey ? "extend" : trimTargetAction === "extend" ? "trim" : trimTargetAction;
       setTrimTargetAction(action);
@@ -1159,6 +1205,69 @@ export function App() {
     } catch (error) {
       if (error instanceof StorageRevisionConflictError) await recoverFromStorageConflict(error);
       else if (error instanceof CadCommandInputError) setStatus(`EXTEND viga: ${error.message}`);
+      else throw error;
+    } finally {
+      committing.current = false;
+    }
+  }
+
+  function undoFilletSource(): void {
+    if (filletFirstCanvasPick) {
+      setFilletFirstCanvasPick(null);
+      setStatus("FILLET Undo: pooleliolev esimese objekti valik tühistatud");
+      return;
+    }
+    if (filletMode === "pairs") {
+      const tokens = filletPairsInput.split(/[;\r\n]+/).map((token) => token.trim()).filter(Boolean);
+      if (tokens.length === 0) {
+        setStatus("FILLET Undo: käsk on täielikult tagasi võetud; globaalset UNDO sammu ei loodud");
+        return;
+      }
+      tokens.pop();
+      setFilletPairsInput(tokens.join("; "));
+      setPreviewCommand("FILLET");
+      setStatus(tokens.length ? `FILLET Undo: viimane paar eemaldatud; ${tokens.length} paari jääb` : "FILLET Undo: kõik paarid eemaldatud; globaalset UNDO sammu ei loodud");
+      return;
+    }
+    const handles = filletPolylineHandlesInput.split(/[,;\s]+/u).map((token) => token.trim()).filter(Boolean);
+    if (handles.length === 0) {
+      setStatus("FILLET Polyline Undo: käsk on täielikult tagasi võetud; globaalset UNDO sammu ei loodud");
+      return;
+    }
+    handles.pop();
+    setFilletPolylineHandlesInput(handles.join(","));
+    setPreviewCommand("FILLET");
+    setStatus(handles.length ? `FILLET Polyline Undo: viimane objekt eemaldatud; ${handles.length} jääb` : "FILLET Polyline Undo: kõik objektid eemaldatud; globaalset UNDO sammu ei loodud");
+  }
+
+  async function filletTargets(): Promise<void> {
+    if (committing.current) return;
+    setPreviewCommand("FILLET");
+    committing.current = true;
+    try {
+      const prepared = prepareFillet(document, {
+        mode: filletMode,
+        radiusInput: filletRadiusInput,
+        pairsInput: filletPairsInput,
+        polylineHandlesInput: filletPolylineHandlesInput,
+        trimMode: filletTrimMode,
+      });
+      const { result } = prepared;
+      setLastFilletRejected(result.rejected);
+      if (result.changes.length === 0) {
+        const suffix = result.rejected.length ? `; ${result.rejected.length} lukus, peidetud, puudu või sobimatu` : "";
+        setStatus(`FILLET ei muutnud geomeetriat${suffix}`);
+        return;
+      }
+      await commitChanges(prepared.commandId, prepared.operationArgs, result.changes, result.resultHandles, result.sourceHandles);
+      setFilletFirstCanvasPick(null);
+      setFilletCanvasSessionActive(false);
+      setSelectedHandles([]);
+      const suffix = result.rejected.length ? `; ${result.rejected.length} jäi muutmata` : "";
+      setStatus(`${result.steps.length} FILLET sammu salvestatud ühe Undo-operatsioonina${suffix}`);
+    } catch (error) {
+      if (error instanceof StorageRevisionConflictError) await recoverFromStorageConflict(error);
+      else if (error instanceof CadCommandInputError) setStatus(`FILLET viga: ${error.message}`);
       else throw error;
     } finally {
       committing.current = false;
@@ -2223,6 +2332,39 @@ export function App() {
         </label>
         <button type="button" onClick={() => void extendTargets()} disabled={!modelSpaceEditing}>EXTEND</button>
         <button type="button" onClick={undoExtendTarget} disabled={!modelSpaceEditing}>EXTEND Undo</button>
+        <label className="coordinate-input">
+          <span>FILLET režiim</span>
+          <select aria-label="FILLET režiim" value={filletMode} onFocus={() => setPreviewCommand("FILLET")} onChange={(event) => { setPreviewCommand("FILLET"); setFilletMode(event.target.value as "pairs" | "polyline"); setFilletFirstCanvasPick(null); setFilletCanvasSessionActive(false); }}>
+            <option value="pairs">Object pairs / Multiple</option>
+            <option value="polyline">Polyline</option>
+          </select>
+        </label>
+        <label className="coordinate-input">
+          <span>FILLET Radius</span>
+          <input aria-label="FILLET radius" value={filletRadiusInput} onFocus={() => setPreviewCommand("FILLET")} onChange={(event) => { setPreviewCommand("FILLET"); setFilletRadiusInput(event.target.value); }} placeholder="0 või suurem" />
+        </label>
+        {filletMode === "pairs" ? (
+          <>
+            <label className="coordinate-input">
+              <span>FILLET objektipaarid</span>
+              <input aria-label="FILLET paarid" value={filletPairsInput} onFocus={() => setPreviewCommand("FILLET")} onChange={(event) => { setPreviewCommand("FILLET"); setFilletPairsInput(event.target.value); setFilletFirstCanvasPick(null); setFilletCanvasSessionActive(false); }} placeholder="10@x,y&gt;20@x,y; ..." />
+            </label>
+            <label className="coordinate-input">
+              <span>FILLET Trim</span>
+              <select aria-label="FILLET Trim" value={filletTrimMode} onFocus={() => setPreviewCommand("FILLET")} onChange={(event) => { setPreviewCommand("FILLET"); setFilletTrimMode(event.target.value as FilletTrimMode); }}>
+                <option value="trim">Trim</option>
+                <option value="no-trim">No Trim</option>
+              </select>
+            </label>
+          </>
+        ) : (
+          <label className="coordinate-input">
+            <span>FILLET Polyline handle’id</span>
+            <input aria-label="FILLET Polyline handle'id" value={filletPolylineHandlesInput} onFocus={() => setPreviewCommand("FILLET")} onChange={(event) => { setPreviewCommand("FILLET"); setFilletPolylineHandlesInput(event.target.value); }} placeholder="10,20" />
+          </label>
+        )}
+        <button type="button" onClick={() => void filletTargets()} disabled={!modelSpaceEditing}>FILLET</button>
+        <button type="button" onClick={undoFilletSource} disabled={!modelSpaceEditing}>FILLET Undo</button>
         <button type="button" onClick={() => void eraseSelected()} disabled={!modelSpaceEditing || selectedHandles.length === 0}>ERASE</button>
         <button type="button" onClick={() => void undoLast()} disabled={!canUndoInActiveLayout}>UNDO</button>
         <button type="button" onClick={() => void redoLast()} disabled={!canRedoInActiveLayout}>REDO</button>
@@ -2246,6 +2388,7 @@ export function App() {
         {offsetPreview && <span data-testid="offset-preview" data-hidden-source-count={offsetPreview.eraseSource ? offsetPreview.sourceHandles.length : 0}>OFFSET eelvaade: {offsetPreview.entities.length} · {offsetPreview.steps} sammu · lähteobjektid {offsetPreview.eraseSource ? "kustutatakse" : "säilivad"}</span>}
         {trimPreview && <span data-testid="trim-preview" data-hidden-source-count={trimPreview.sourceHandles.length}>TRIM eelvaade: {trimPreview.entities.length} tulemust · {trimPreview.steps} sammu</span>}
         {extendPreview && <span data-testid="extend-preview" data-hidden-source-count={extendPreview.sourceHandles.length}>EXTEND eelvaade: {extendPreview.entities.length} tulemust · {extendPreview.steps} sammu</span>}
+        {filletPreview && <span data-testid="fillet-preview" data-hidden-source-count={filletPreview.trimMode === "trim" ? filletPreview.sourceHandles.length : 0}>FILLET eelvaade: {filletPreview.entities.length} tulemust · {filletPreview.steps} sammu</span>}
         {lastMoveRejected.length > 0 && (
           <span data-testid="move-rejected" data-rejected={JSON.stringify(lastMoveRejected)}>
             MOVE muutmata: {lastMoveRejected.map(({ handle, reason }) => `${handle} (${reason})`).join(", ")}
@@ -2284,6 +2427,11 @@ export function App() {
         {lastExtendRejected.length > 0 && (
           <span data-testid="extend-rejected" data-rejected={JSON.stringify(lastExtendRejected)}>
             EXTEND muutmata: {lastExtendRejected.map(({ handle, targetIndex, reason }) => `${handle}#${targetIndex + 1} (${reason})`).join(", ")}
+          </span>
+        )}
+        {lastFilletRejected.length > 0 && (
+          <span data-testid="fillet-rejected" data-rejected={JSON.stringify(lastFilletRejected)}>
+            FILLET muutmata: {lastFilletRejected.map(({ handles, sourceIndex, reason }) => `${handles.join("+")}#${sourceIndex + 1} (${reason})`).join(", ")}
           </span>
         )}
       </section>
@@ -2338,7 +2486,7 @@ export function App() {
             </div>
           </div>
         ) : (
-          <canvas ref={canvas} aria-label="Kuubik Draw joonestusala" onPointerDown={selectTrimExtendTargetFromCanvas} />
+          <canvas ref={canvas} aria-label="Kuubik Draw joonestusala" onPointerDown={selectModifyTargetFromCanvas} />
         )}
       </section>
       <section className="layoutbar" aria-label="Model ja Layout vahelehed">
