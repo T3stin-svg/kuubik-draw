@@ -4,7 +4,7 @@
   "benchmark": "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
   "engine": "Autodesk AutoCAD 2024 desktop COM/native Layout PlotConfiguration and PlotToFile",
   "engineVersion": "24.3s (LMS Tech)",
-  "automationProcessId": 35324,
+  "automationProcessId": 35856,
   "automationProcessOwned": true,
   "media": {
     "a3": "ISO_expand_A3_(297.00_x_420.00_MM)",
@@ -12,7 +12,7 @@
   },
   "baseline": {
     "layoutName": "F102 PAGE SETUP",
-    "configName": "",
+    "configName": "DWG To PDF.pc3",
     "canonicalMediaName": "ISO_expand_A3_(297.00_x_420.00_MM)",
     "paperUnits": 1,
     "plotRotation": 1,
@@ -339,18 +339,18 @@
   },
   "dwg": {
     "bytes": 32532,
-    "sha256": "70a059e4104ecbbfb252d284651a75394eff4f3dc10c85b752903f85eff42410",
+    "sha256": "58e4c1837ac88ddd335da4a210b189f40ca52c07c8fa29b206eb1dc4e64d8dd4",
     "saveAsType": 64,
     "retained": false
   },
   "pdf": {
     "bytes": 2021,
-    "sha256": "73905b28e6ef6aaef70e826f98dadb3f9c1fd2e5eda84b1b6492cf8275f287e8",
+    "sha256": "25c5cb18d20972260f00160b7a3f6769ea5d85b10ca9d35c1b6128113fa2f6e7",
     "retained": false
   },
   "displayPdf": {
     "bytes": 2048,
-    "sha256": "37b829ae8d5c680fe777eaa7f2cc4e453b58c927d7856198a1ad1ae47175ff61",
+    "sha256": "a211916a0e7c4f937c79cbc8d20f0a3d5f6e6c917a199cfe87f175618f99244c",
     "retained": false
   },
   "status": "PASS",
@@ -361,11 +361,7 @@
   "automationProcessTerminated": true,
   "processSetRestored": true,
   "preExistingProcessIds": [
-    11276,
-    22952,
-    23180,
-    25848,
-    28152
+    11276
   ],
   "pdfReadback": {
     "version": "1.7",
@@ -423,9 +419,9 @@
       }
     }
   },
-  "browserEvidenceSha256": "fbfe6ce97ceefb5298e3f488dd3dd42ddb84828293e1e930d6c695e130ec0025",
+  "browserEvidenceSha256": "37797325e51162a1191e86501b32c3aa44da611886809a5c53c21f458e9c3e02",
   "scriptSha256": "82fe5a54be4efcfbd5ce2735ad23147a2d75c093e83ba404d2c3189d3821d23e",
   "matrixScriptSha256": "1e0b54ca1e79cf36d862e3425462000e8ca3f038edde4037dcbe6bf8da01a940",
   "runnerScriptSha256": "fbbb62a75f0c60eabfeee5b995e861d2f9db8a59a1a216cc1e0f082b12273744",
-  "observedAt": "2026-08-29T05:35:40.163Z"
+  "observedAt": "2026-08-29T09:38:20.483Z"
 }

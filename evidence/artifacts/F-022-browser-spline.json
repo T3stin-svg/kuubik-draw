@@ -1,0 +1,240 @@
+{
+  "rowId": "F-022",
+  "committed": {
+    "schemaVersion": 1,
+    "documentId": "local",
+    "revision": 1,
+    "units": {
+      "linear": "mm",
+      "displayPrecision": 4,
+      "angularPrecision": 6
+    },
+    "currentLayerId": "0",
+    "entities": [
+      {
+        "kind": "spline",
+        "handle": "10",
+        "layerId": "0",
+        "degree": 3,
+        "controlPoints": [
+          {
+            "x": 0,
+            "y": 0
+          },
+          {
+            "x": 8.333333333333,
+            "y": 25
+          },
+          {
+            "x": 16.666666666667,
+            "y": 31.25
+          },
+          {
+            "x": 25,
+            "y": 28.125
+          }
+        ],
+        "knots": [
+          0,
+          0,
+          0,
+          0,
+          0.25,
+          0.25,
+          0.25,
+          0.25
+        ],
+        "weights": [
+          2,
+          2,
+          2,
+          2
+        ],
+        "closed": false,
+        "periodic": false
+      },
+      {
+        "kind": "line",
+        "handle": "20",
+        "layerId": "0",
+        "start": {
+          "x": 25,
+          "y": -100
+        },
+        "end": {
+          "x": 25,
+          "y": 100
+        }
+      },
+      {
+        "kind": "line",
+        "handle": "21",
+        "layerId": "0",
+        "start": {
+          "x": 75,
+          "y": -100
+        },
+        "end": {
+          "x": 75,
+          "y": 100
+        }
+      },
+      {
+        "kind": "spline",
+        "handle": "22",
+        "layerId": "0",
+        "degree": 3,
+        "controlPoints": [
+          {
+            "x": 75,
+            "y": -28.125
+          },
+          {
+            "x": 83.333333333334,
+            "y": -31.25
+          },
+          {
+            "x": 91.666666666667,
+            "y": -25
+          },
+          {
+            "x": 100,
+            "y": 0
+          }
+        ],
+        "knots": [
+          0.75,
+          0.75,
+          0.75,
+          0.75,
+          1,
+          1,
+          1,
+          1
+        ],
+        "weights": [
+          2,
+          2,
+          2,
+          2
+        ],
+        "closed": false,
+        "periodic": false
+      }
+    ],
+    "layers": [
+      {
+        "id": "0",
+        "name": "0",
+        "visible": true,
+        "frozen": false,
+        "locked": false,
+        "plottable": true
+      }
+    ],
+    "linetypes": [],
+    "textStyles": [],
+    "dimensionStyles": [],
+    "blocks": [],
+    "layouts": [
+      {
+        "id": "model",
+        "name": "Model",
+        "kind": "model",
+        "viewports": [],
+        "entities": []
+      }
+    ],
+    "attachments": [],
+    "metadata": {
+      "createdAt": "2026-08-29T09:00:00.000Z",
+      "updatedAt": "2026-08-29T10:08:46.613Z"
+    }
+  },
+  "tangentCommitted": {
+    "schemaVersion": 1,
+    "documentId": "local",
+    "revision": 1,
+    "units": {
+      "linear": "mm",
+      "displayPrecision": 4,
+      "angularPrecision": 6
+    },
+    "currentLayerId": "0",
+    "entities": [
+      {
+        "kind": "spline",
+        "handle": "10",
+        "layerId": "0",
+        "degree": 2,
+        "controlPoints": [
+          {
+            "x": 0.370000002038,
+            "y": 0
+          },
+          {
+            "x": 0.685000001019,
+            "y": 1.284e-9
+          },
+          {
+            "x": 1,
+            "y": 0.3969
+          }
+        ],
+        "knots": [
+          0.370000002038,
+          0.370000002038,
+          0.370000002038,
+          1,
+          1,
+          1
+        ],
+        "closed": false,
+        "periodic": false
+      },
+      {
+        "kind": "line",
+        "handle": "20",
+        "layerId": "0",
+        "start": {
+          "x": -1,
+          "y": 0
+        },
+        "end": {
+          "x": 2,
+          "y": 0
+        }
+      }
+    ],
+    "layers": [
+      {
+        "id": "0",
+        "name": "0",
+        "visible": true,
+        "frozen": false,
+        "locked": false,
+        "plottable": true
+      }
+    ],
+    "linetypes": [],
+    "textStyles": [],
+    "dimensionStyles": [],
+    "blocks": [],
+    "layouts": [
+      {
+        "id": "model",
+        "name": "Model",
+        "kind": "model",
+        "viewports": [],
+        "entities": []
+      }
+    ],
+    "attachments": [],
+    "metadata": {
+      "createdAt": "2026-08-29T09:00:00.000Z",
+      "updatedAt": "2026-08-29T10:08:47.311Z"
+    }
+  },
+  "consoleErrors": [],
+  "status": "PASS"
+}

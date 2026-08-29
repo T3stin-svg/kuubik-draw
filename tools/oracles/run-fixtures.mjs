@@ -8,7 +8,7 @@ import { inflateSync } from "node:zlib";
 const sha256 = (value) => createHash("sha256").update(value).digest("hex");
 const close = (left, right, tolerance = 1e-9) => Math.abs(left - right) <= tolerance;
 
-async function isolatedEnvironment(environment, directory) {
+export async function isolatedEnvironment(environment, directory) {
   const profile = join(directory, "profile");
   const appData = join(profile, "AppData", "Roaming");
   const localAppData = join(profile, "AppData", "Local");
@@ -40,7 +40,7 @@ async function isolatedEnvironment(environment, directory) {
   return output;
 }
 
-function run(executable, args, options) {
+export function run(executable, args, options) {
   const result = spawnSync(executable, args, {
     ...options,
     encoding: "utf8",
@@ -173,7 +173,7 @@ function readPdfStreams(bytes) {
   };
 }
 
-function readPdf(bytes) {
+export function readPdf(bytes) {
   const text = bytes.toString("latin1");
   const media = /\/MediaBox\s*\[\s*([\d.]+)\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)\s*\]/u.exec(text);
   return {

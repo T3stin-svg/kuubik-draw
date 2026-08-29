@@ -153,10 +153,10 @@ test("F-111 refuses an unsupported partial DXF without changing revision or mode
   const source = Buffer.from(exportDxf(createF109Document()).bytes);
   const unsupported = Buffer.from(source.toString("latin1").replace(
     "  0\r\nENDSEC\r\n  0\r\nSECTION\r\n  2\r\nOBJECTS",
-    "  0\r\nSPLINE\r\n  5\r\nABC\r\n  8\r\nJOONED\r\n  0\r\nENDSEC\r\n  0\r\nSECTION\r\n  2\r\nOBJECTS",
+    "  0\r\n3DSOLID\r\n  5\r\nABC\r\n  8\r\nJOONED\r\n  0\r\nENDSEC\r\n  0\r\nSECTION\r\n  2\r\nOBJECTS",
   ), "latin1");
   await page.getByLabel("DXF import").setInputFiles({ name: "partial.dxf", mimeType: "application/dxf", buffer: unsupported });
-  await expect(page.getByText(/DXF import peatatud: 1 toetamata objekti; esimene SPLINE ABC/u)).toBeVisible();
+  await expect(page.getByText(/DXF import peatatud: 1 toetamata objekti; esimene 3DSOLID ABC/u)).toBeVisible();
   expect(await storedDocument(page)).toMatchObject({ revision: 0, entities: [], layers: [{ name: "0" }] });
   expect(errors).toEqual([]);
 });

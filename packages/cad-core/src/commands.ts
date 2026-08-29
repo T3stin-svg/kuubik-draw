@@ -1,6 +1,14 @@
-import type { CadEntity, CadPoint2, CadPolyline, KDrawDocumentV1 } from "@kuubik/cad-schema";
+import type { CadBlockDefinition, CadEntity, CadPoint2, CadPolyline, CadSpline, KDrawDocumentV1 } from "@kuubik/cad-schema";
 import type { EntityChange } from "./transaction.js";
 import { offsetCadEntity, type OffsetGeometryMode, type OffsetGeometryRejectReason } from "./offset.js";
+import {
+  extendCadEntity,
+  trimCurvesOfEntity,
+  trimCadEntity,
+  type TrimEdgeMode,
+  type TrimGeometryRejectReason,
+  type TrimProjectMode,
+} from "./trim.js";
 
 export interface RectangleCommandArgs {
   handle: string;
@@ -216,6 +224,54 @@ export interface OffsetCommandDefinition {
   execute(document: KDrawDocumentV1, args: OffsetCommandArgs): OffsetCommandResult;
 }
 
+export type TrimMode = "quick" | "standard";
+export type TrimTargetAction = "trim" | "extend" | "erase";
+
+export interface TrimTargetPick {
+  handle: string;
+  pickPoint: CadPoint2;
+  action?: TrimTargetAction;
+}
+
+export interface TrimCommandArgs {
+  mode: TrimMode;
+  cuttingEdgeHandles: readonly string[];
+  targets: readonly TrimTargetPick[];
+  edgeMode: TrimEdgeMode;
+  projectMode: TrimProjectMode;
+}
+
+export interface TrimRejectedTarget {
+  handle: string;
+  targetIndex: number;
+  reason: "missing" | "locked-layer" | "hidden-layer" | TrimGeometryRejectReason;
+}
+
+export interface TrimCommandStep {
+  action: "trim" | "extend" | "erase" | "quick-erase";
+  sourceHandle: string;
+  resultHandles: string[];
+  targetIndex: number;
+  intersectionPoints: CadPoint2[];
+}
+
+export interface TrimCommandResult {
+  changes: EntityChange[];
+  targetHandles: string[];
+  resultHandles: string[];
+  rejected: TrimRejectedTarget[];
+  steps: TrimCommandStep[];
+  mode: TrimMode;
+  edgeMode: TrimEdgeMode;
+  projectMode: TrimProjectMode;
+}
+
+export interface TrimCommandDefinition {
+  id: "TRIM";
+  aliases: readonly string[];
+  execute(document: KDrawDocumentV1, args: TrimCommandArgs): TrimCommandResult;
+}
+
 export class CadCommandInputError extends Error {
   constructor(message: string) {
     super(message);
@@ -262,6 +318,24 @@ export function parseOffsetPlacementPoints(input: string): CadPoint2[] {
 
 export function parseOffsetDistance(input: string): number {
   return positiveScaleNumber(input, "Offset distance");
+}
+
+export function parseTrimTargetPicks(input: string, action: TrimTargetAction = "trim"): TrimTargetPick[] {
+  const tokens = input.split(/[;\r\n]+/).map((token) => token.trim()).filter(Boolean);
+  if (tokens.length === 0) throw new CadCommandInputError("TRIM requires at least one handle@x,y target pick.");
+  return tokens.map((token) => {
+    const separator = token.indexOf("@");
+    if (separator <= 0 || separator === token.length - 1) {
+      throw new CadCommandInputError("TRIM targets must use handle@x,y format.");
+    }
+    const handle = token.slice(0, separator).trim();
+    if (!handle || /\s/u.test(handle)) throw new CadCommandInputError("TRIM target handle is invalid.");
+    return { handle, pickPoint: parseCartesianPoint(token.slice(separator + 1)), action };
+  });
+}
+
+export function parseCadHandleList(input: string): string[] {
+  return [...new Set(input.split(/[,;\s]+/u).map((handle) => handle.trim()).filter(Boolean))];
 }
 
 export function parseAngleDegrees(input: string): number {
@@ -1023,6 +1097,359 @@ export function executeOffset(document: KDrawDocumentV1, args: OffsetCommandArgs
   };
 }
 
+interface TrimAffine2 {
+  a: number; b: number; c: number; d: number; tx: number; ty: number;
+}
+
+const IDENTITY_TRIM_AFFINE: TrimAffine2 = Object.freeze({ a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0 });
+
+function composeTrimAffine(parent: TrimAffine2, child: TrimAffine2): TrimAffine2 {
+  return {
+    a: parent.a * child.a + parent.c * child.b,
+    b: parent.b * child.a + parent.d * child.b,
+    c: parent.a * child.c + parent.c * child.d,
+    d: parent.b * child.c + parent.d * child.d,
+    tx: parent.a * child.tx + parent.c * child.ty + parent.tx,
+    ty: parent.b * child.tx + parent.d * child.ty + parent.ty,
+  };
+}
+
+function trimBlockAffine(block: CadBlockDefinition, reference: Extract<CadEntity, { kind: "blockRef" }>): TrimAffine2 {
+  const cosine = Math.cos(reference.rotationRad); const sine = Math.sin(reference.rotationRad);
+  const a = cosine * reference.scale.x; const b = sine * reference.scale.x;
+  const c = -sine * reference.scale.y; const d = cosine * reference.scale.y;
+  return {
+    a, b, c, d,
+    tx: reference.insertion.x - a * block.basePoint.x - c * block.basePoint.y,
+    ty: reference.insertion.y - b * block.basePoint.x - d * block.basePoint.y,
+  };
+}
+
+function trimAffinePoint(matrix: TrimAffine2, point: CadPoint2, vector = false): CadPoint2 {
+  return {
+    x: matrix.a * point.x + matrix.c * point.y + (vector ? 0 : matrix.tx),
+    y: matrix.b * point.x + matrix.d * point.y + (vector ? 0 : matrix.ty),
+  };
+}
+
+function conformalTrimScale(matrix: TrimAffine2): number | null {
+  const first = Math.hypot(matrix.a, matrix.b); const second = Math.hypot(matrix.c, matrix.d);
+  const orthogonal = matrix.a * matrix.c + matrix.b * matrix.d;
+  return first > 0 && Math.abs(first - second) <= first * 1e-9 && Math.abs(orthogonal) <= first * second * 1e-9 ? first : null;
+}
+
+function conicSplineBoundary(
+  entity: CadEntity,
+  matrix: TrimAffine2,
+  center: CadPoint2,
+  firstAxis: CadPoint2,
+  secondAxis: CadPoint2,
+  start: number,
+  sweep: number,
+  handleSuffix = "",
+): CadSpline | null {
+  if (!Number.isFinite(start) || !Number.isFinite(sweep) || Math.abs(sweep) <= 1e-12) return null;
+  const segmentCount = Math.max(1, Math.ceil(Math.abs(sweep) / (Math.PI / 2)));
+  const segmentSweep = sweep / segmentCount;
+  const middleWeight = Math.cos(segmentSweep / 2);
+  if (!(middleWeight > 1e-12)) return null;
+  const pointAt = (parameter: number, radialScale = 1): CadPoint2 => trimAffinePoint(matrix, {
+    x: center.x + radialScale * (firstAxis.x * Math.cos(parameter) + secondAxis.x * Math.sin(parameter)),
+    y: center.y + radialScale * (firstAxis.y * Math.cos(parameter) + secondAxis.y * Math.sin(parameter)),
+  });
+  const controlPoints: CadPoint2[] = [];
+  const weights: number[] = [];
+  for (let segment = 0; segment < segmentCount; segment += 1) {
+    const segmentStart = start + segmentSweep * segment;
+    const segmentEnd = segmentStart + segmentSweep;
+    const segmentMiddle = (segmentStart + segmentEnd) / 2;
+    if (segment === 0) {
+      controlPoints.push(pointAt(segmentStart));
+      weights.push(1);
+    }
+    controlPoints.push(pointAt(segmentMiddle, 1 / middleWeight), pointAt(segmentEnd));
+    weights.push(middleWeight, 1);
+  }
+  const knots = [0, 0, 0];
+  for (let segment = 1; segment < segmentCount; segment += 1) knots.push(segment / segmentCount, segment / segmentCount);
+  knots.push(1, 1, 1);
+  return {
+    kind: "spline",
+    handle: `${entity.handle}${handleSuffix}`,
+    layerId: entity.layerId,
+    ...(entity.appearance ? { appearance: structuredClone(entity.appearance) } : {}),
+    ...(entity.extensionData ? { extensionData: structuredClone(entity.extensionData) } : {}),
+    degree: 2,
+    controlPoints,
+    knots,
+    weights,
+    closed: Math.abs(sweep) >= Math.PI * 2 - 1e-9,
+    periodic: false,
+  };
+}
+
+function positiveSweep(start: number, end: number): number {
+  const fullTurn = Math.PI * 2;
+  if (Math.abs(end - start) >= fullTurn - 1e-9) return fullTurn;
+  return ((end - start) % fullTurn + fullTurn) % fullTurn;
+}
+
+function transformedTrimBoundaries(entity: CadEntity, matrix: TrimAffine2): CadEntity[] {
+  const base = { handle: entity.handle, layerId: entity.layerId };
+  if (entity.kind === "line") return [{ ...structuredClone(entity), start: trimAffinePoint(matrix, entity.start), end: trimAffinePoint(matrix, entity.end) }];
+  if (entity.kind === "polyline") {
+    const hasBulge = entity.vertices.some((vertex) => Math.abs(vertex.bulge ?? 0) > 1e-12);
+    const scale = conformalTrimScale(matrix);
+    if (hasBulge && scale === null) {
+      return trimCurvesOfEntity(entity).flatMap<CadEntity>((curve): CadEntity[] => {
+        if (curve.kind === "line") return [{
+          ...base,
+          handle: `${entity.handle}:${curve.segment}`,
+          kind: "line" as const,
+          start: trimAffinePoint(matrix, curve.start),
+          end: trimAffinePoint(matrix, curve.end),
+        }];
+        if (curve.kind !== "arc") return [];
+        const spline = conicSplineBoundary(
+          entity,
+          matrix,
+          curve.center,
+          { x: curve.radius, y: 0 },
+          { x: 0, y: curve.radius },
+          curve.startAngle,
+          curve.sweep,
+          `:${curve.segment}`,
+        );
+        return spline ? [spline] : [];
+      });
+    }
+    const orientation = matrix.a * matrix.d - matrix.b * matrix.c < 0 ? -1 : 1;
+    return [{
+      ...structuredClone(entity),
+      vertices: entity.vertices.map((vertex) => ({
+        ...structuredClone(vertex), ...trimAffinePoint(matrix, vertex),
+        ...(vertex.bulge !== undefined ? { bulge: vertex.bulge * orientation } : {}),
+      })),
+    }];
+  }
+  if (entity.kind === "hatch") return [{
+    ...structuredClone(entity),
+    loops: entity.loops.map((loop) => ({ ...structuredClone(loop), vertices: loop.vertices.map((point) => trimAffinePoint(matrix, point)) })),
+  }];
+  if (entity.kind === "spline") return [{
+    ...structuredClone(entity),
+    controlPoints: entity.controlPoints.map((point) => trimAffinePoint(matrix, point)),
+  }];
+  const scale = conformalTrimScale(matrix);
+  if (entity.kind === "circle") {
+    if (scale !== null) return [{ ...base, kind: "circle", center: trimAffinePoint(matrix, entity.center), radius: entity.radius * scale }];
+    const spline = conicSplineBoundary(entity, matrix, entity.center, { x: entity.radius, y: 0 }, { x: 0, y: entity.radius }, 0, Math.PI * 2);
+    return spline ? [spline] : [];
+  }
+  if (entity.kind === "arc") {
+    if (scale === null) {
+      const sweep = entity.counterClockwise
+        ? positiveSweep(entity.startAngleRad, entity.endAngleRad)
+        : -positiveSweep(entity.endAngleRad, entity.startAngleRad);
+      const spline = conicSplineBoundary(entity, matrix, entity.center, { x: entity.radius, y: 0 }, { x: 0, y: entity.radius }, entity.startAngleRad, sweep);
+      return spline ? [spline] : [];
+    }
+    const center = trimAffinePoint(matrix, entity.center);
+    const start = trimAffinePoint(matrix, { x: entity.center.x + entity.radius * Math.cos(entity.startAngleRad), y: entity.center.y + entity.radius * Math.sin(entity.startAngleRad) });
+    const end = trimAffinePoint(matrix, { x: entity.center.x + entity.radius * Math.cos(entity.endAngleRad), y: entity.center.y + entity.radius * Math.sin(entity.endAngleRad) });
+    const reflected = matrix.a * matrix.d - matrix.b * matrix.c < 0;
+    return [{
+      ...structuredClone(entity), center, radius: entity.radius * scale,
+      startAngleRad: Math.atan2(start.y - center.y, start.x - center.x),
+      endAngleRad: Math.atan2(end.y - center.y, end.x - center.x),
+      counterClockwise: reflected ? !entity.counterClockwise : entity.counterClockwise,
+    }];
+  }
+  if (entity.kind === "ellipse") {
+    if (scale !== null && matrix.a * matrix.d - matrix.b * matrix.c > 0) return [{
+      ...structuredClone(entity), center: trimAffinePoint(matrix, entity.center), majorAxis: trimAffinePoint(matrix, entity.majorAxis, true),
+    }];
+    const majorLength = Math.hypot(entity.majorAxis.x, entity.majorAxis.y);
+    if (!(majorLength > 1e-12) || !(entity.ratio > 0)) return [];
+    const secondAxis = {
+      x: -entity.majorAxis.y * entity.ratio,
+      y: entity.majorAxis.x * entity.ratio,
+    };
+    const spline = conicSplineBoundary(
+      entity,
+      matrix,
+      entity.center,
+      entity.majorAxis,
+      secondAxis,
+      entity.startParameter,
+      positiveSweep(entity.startParameter, entity.endParameter),
+    );
+    return spline ? [spline] : [];
+  }
+  return [];
+}
+
+function expandTrimBoundaries(
+  document: KDrawDocumentV1,
+  candidates: readonly CadEntity[],
+  layers: ReadonlyMap<string, KDrawDocumentV1["layers"][number]>,
+): CadEntity[] {
+  const blocks = new Map(document.blocks.map((block) => [block.id, block]));
+  const expand = (
+    entity: CadEntity,
+    matrix: TrimAffine2,
+    trail: ReadonlySet<string>,
+    insertionLayerId: string,
+  ): CadEntity[] => {
+    // AutoCAD block semantics: layer 0 content inherits the effective insertion layer,
+    // while content on a named layer keeps that layer at every nesting depth.
+    const effectiveLayerId = entity.layerId === "0" ? insertionLayerId : entity.layerId;
+    const effectiveLayer = layers.get(effectiveLayerId);
+    if (effectiveLayer && (!effectiveLayer.visible || effectiveLayer.frozen)) return [];
+    if (entity.kind !== "blockRef") {
+      return transformedTrimBoundaries(entity, matrix);
+    }
+    const block = blocks.get(entity.blockId);
+    if (!block || trail.has(block.id)) return [];
+    const nextMatrix = composeTrimAffine(matrix, trimBlockAffine(block, entity));
+    const nextTrail = new Set(trail).add(block.id);
+    return block.entities.flatMap((child) => expand(child, nextMatrix, nextTrail, effectiveLayerId));
+  };
+  return candidates.flatMap((entity) => expand(entity, IDENTITY_TRIM_AFFINE, new Set(), entity.layerId));
+}
+
+/**
+ * Executes an ordered TRIM target sequence against a working entity map. The returned changes form
+ * one atomic document operation; a caller can implement command-local Undo by replaying a shorter
+ * targets prefix without ever mutating the source document.
+ */
+export function executeTrim(document: KDrawDocumentV1, args: TrimCommandArgs): TrimCommandResult {
+  const layers = new Map(document.layers.map((layer) => [layer.id, layer]));
+  const original = new Map(document.entities.map((entity) => [entity.handle, entity]));
+  const working = new Map(document.entities.map((entity) => [entity.handle, structuredClone(entity)]));
+  const cuttingHandles = [...new Set(args.cuttingEdgeHandles.map((handle) => handle.trim()).filter(Boolean))];
+  const allocated = allocateEntityHandles(document, args.targets.length);
+  let allocatedIndex = 0;
+  const touched = new Set<string>();
+  const targetHandles: string[] = [];
+  const resultHandles: string[] = [];
+  const rejected: TrimRejectedTarget[] = [];
+  const steps: TrimCommandStep[] = [];
+
+  const boundariesFor = (targetHandle: string): CadEntity[] => {
+    const candidates = args.mode === "quick" || cuttingHandles.length === 0
+      ? [...working.values()]
+      : cuttingHandles.map((handle) => working.get(handle)).filter((entity): entity is CadEntity => entity !== undefined);
+    return expandTrimBoundaries(document, candidates.filter((entity) => {
+      if (entity.handle === targetHandle) return false;
+      const layer = layers.get(entity.layerId);
+      return !layer || (layer.visible && !layer.frozen);
+    }), layers);
+  };
+
+  args.targets.forEach((target, targetIndex) => {
+    assertFinitePoint(`TRIM target ${targetIndex + 1} pick`, target.pickPoint);
+    const entity = working.get(target.handle);
+    if (!entity) {
+      rejected.push({ handle: target.handle, targetIndex, reason: "missing" });
+      return;
+    }
+    const layer = layers.get(entity.layerId);
+    if (layer?.locked) {
+      rejected.push({ handle: target.handle, targetIndex, reason: "locked-layer" });
+      return;
+    }
+    if (layer && (!layer.visible || layer.frozen)) {
+      rejected.push({ handle: target.handle, targetIndex, reason: "hidden-layer" });
+      return;
+    }
+
+    targetHandles.push(entity.handle);
+    if (target.action === "erase") {
+      working.delete(entity.handle);
+      touched.add(entity.handle);
+      steps.push({ action: "erase", sourceHandle: entity.handle, resultHandles: [], targetIndex, intersectionPoints: [] });
+      return;
+    }
+
+    if (target.action === "extend") {
+      const result = extendCadEntity(entity, target.pickPoint, boundariesFor(entity.handle), {
+        edgeMode: args.edgeMode,
+        projectMode: args.projectMode,
+      });
+      if (!result.entity) {
+        rejected.push({ handle: entity.handle, targetIndex, reason: result.reason ?? "no-intersection" });
+        return;
+      }
+      const output = { ...result.entity, handle: entity.handle } as CadEntity;
+      working.set(entity.handle, output);
+      touched.add(entity.handle);
+      resultHandles.push(entity.handle);
+      steps.push({
+        action: "extend",
+        sourceHandle: entity.handle,
+        resultHandles: [entity.handle],
+        targetIndex,
+        intersectionPoints: result.intersectionPoint ? [result.intersectionPoint] : [],
+      });
+      return;
+    }
+
+    const result = trimCadEntity(entity, target.pickPoint, boundariesFor(entity.handle), {
+      edgeMode: args.edgeMode,
+      projectMode: args.projectMode,
+    });
+    if (result.reason) {
+      // AutoCAD Quick mode treats an object that cannot be trimmed as an erase selection.
+      if (args.mode === "quick" && result.reason === "no-intersection") {
+        working.delete(entity.handle);
+        touched.add(entity.handle);
+        steps.push({ action: "quick-erase", sourceHandle: entity.handle, resultHandles: [], targetIndex, intersectionPoints: [] });
+        return;
+      }
+      rejected.push({ handle: entity.handle, targetIndex, reason: result.reason });
+      return;
+    }
+
+    const outputs = result.entities.map((geometry, index) => {
+      const handle = index === 0 ? entity.handle : allocated[allocatedIndex++]!;
+      return { ...geometry, handle } as CadEntity;
+    });
+    working.delete(entity.handle);
+    touched.add(entity.handle);
+    outputs.forEach((output) => {
+      working.set(output.handle, output);
+      touched.add(output.handle);
+      resultHandles.push(output.handle);
+    });
+    steps.push({
+      action: "trim",
+      sourceHandle: entity.handle,
+      resultHandles: outputs.map((output) => output.handle),
+      targetIndex,
+      intersectionPoints: result.intersectionPoints,
+    });
+  });
+
+  const changes: EntityChange[] = [];
+  for (const handle of touched) {
+    const before = original.get(handle);
+    const after = working.get(handle);
+    if (after) changes.push({ type: "put", entity: structuredClone(after) });
+    else if (before) changes.push({ type: "delete", handle });
+  }
+  return {
+    changes,
+    targetHandles,
+    resultHandles,
+    rejected,
+    steps,
+    mode: args.mode,
+    edgeMode: args.edgeMode,
+    projectMode: args.projectMode,
+  };
+}
+
 const rectangleCommand: RectangleCommandDefinition = Object.freeze({
   id: "RECTANGLE",
   aliases: Object.freeze(["RECTANG", "RECTANGLE", "REC"]),
@@ -1071,9 +1498,15 @@ const offsetCommand: OffsetCommandDefinition = Object.freeze({
   execute: executeOffset,
 });
 
-export const cadCommandRegistry = Object.freeze([rectangleCommand, eraseCommand, moveCommand, copyCommand, rotateCommand, scaleCommand, mirrorCommand, offsetCommand]);
+const trimCommand: TrimCommandDefinition = Object.freeze({
+  id: "TRIM",
+  aliases: Object.freeze(["TR", "TRIM"]),
+  execute: executeTrim,
+});
 
-export function resolveCadCommand(token: string): RectangleCommandDefinition | EraseCommandDefinition | MoveCommandDefinition | CopyCommandDefinition | RotateCommandDefinition | ScaleCommandDefinition | MirrorCommandDefinition | OffsetCommandDefinition | null {
+export const cadCommandRegistry = Object.freeze([rectangleCommand, eraseCommand, moveCommand, copyCommand, rotateCommand, scaleCommand, mirrorCommand, offsetCommand, trimCommand]);
+
+export function resolveCadCommand(token: string): RectangleCommandDefinition | EraseCommandDefinition | MoveCommandDefinition | CopyCommandDefinition | RotateCommandDefinition | ScaleCommandDefinition | MirrorCommandDefinition | OffsetCommandDefinition | TrimCommandDefinition | null {
   const normalized = token.trim().toUpperCase();
   return cadCommandRegistry.find((command) => command.aliases.includes(normalized)) ?? null;
 }

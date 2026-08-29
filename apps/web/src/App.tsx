@@ -1,14 +1,14 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ISO_PAPER_MEDIA, MAX_PAGE_SETUP_TEMPLATE_BYTES, STANDARD_VIEWPORT_SCALE_DENOMINATORS, allocateEntityHandles, applyNamedPageSetup, buildLayoutPublishPlan, CadCommandInputError, CadSession, clearNamedPageSetupAssignment, createPageSetupTemplate, LayoutCommandError, LayoutPublishSettingsError, NoOpOperationError, PageSetupLibraryError, copyPaperLayout, createEmptyDocument, createPaperLayout, createPaperViewport, deleteNamedPageSetup, deletePaperLayout, deletePaperViewport, formatViewportScale, importPageSetupTemplate, metadataWithLayoutPublishSettings, movePaperLayout, panPaperViewportByPixels, paperDefinitionForPageSetup, parseCartesianPoint, parseCopyDestinations, parseMoveDestination, parseOffsetDistance, parseOffsetPlacementPoints, parsePageSetupTemplate, parseReferenceAngleInput, parseRotationAngleInput, parseScaleFactorInput, parseScaleLengthInput, renameNamedPageSetup, renamePaperLayout, replaceDrawingContentPreservingLayouts, resolveCadCommand, resolveLayoutPublishSettings, resolveModelPageSetup, resolvePageSetup, resolvePageSetupLibrary, resolvePaperDefinition, sanitizePdfFileStem, saveNamedPageSetup, serializeKDraw, serializePageSetupTemplate, setModelLayoutPageSetup, setPaperLayoutPageSetup, setPaperViewportDisplayLocked, setPaperViewportView, viewportScaleDenominator, zoomPaperViewportAtModelPoint, type CadChange, type CopyRejectedTarget, type LayoutPublishSettingsV1, type MirrorRejectedTarget, type MoveRejectedTarget, type OffsetLayerMode, type OffsetRejectedTarget, type RotateAngleSpec, type RotateRejectedTarget, type ScaleFactorSpec, type ScaleRejectedTarget } from "@kuubik/cad-core";
+import { ISO_PAPER_MEDIA, MAX_PAGE_SETUP_TEMPLATE_BYTES, STANDARD_VIEWPORT_SCALE_DENOMINATORS, allocateEntityHandles, applyNamedPageSetup, buildLayoutPublishPlan, CadCommandInputError, CadSession, clearNamedPageSetupAssignment, createPageSetupTemplate, LayoutCommandError, LayoutPublishSettingsError, NoOpOperationError, PageSetupLibraryError, copyPaperLayout, createEmptyDocument, createPaperLayout, createPaperViewport, deleteNamedPageSetup, deletePaperLayout, deletePaperViewport, formatViewportScale, importPageSetupTemplate, metadataWithLayoutPublishSettings, movePaperLayout, panPaperViewportByPixels, paperDefinitionForPageSetup, parseCadHandleList, parseCartesianPoint, parseCopyDestinations, parseMoveDestination, parseOffsetDistance, parseOffsetPlacementPoints, parsePageSetupTemplate, parseReferenceAngleInput, parseRotationAngleInput, parseScaleFactorInput, parseScaleLengthInput, parseTrimTargetPicks, renameNamedPageSetup, renamePaperLayout, replaceDrawingContentPreservingLayouts, resolveCadCommand, resolveLayoutPublishSettings, resolveModelPageSetup, resolvePageSetup, resolvePageSetupLibrary, resolvePaperDefinition, sanitizePdfFileStem, saveNamedPageSetup, serializeKDraw, serializePageSetupTemplate, setModelLayoutPageSetup, setPaperLayoutPageSetup, setPaperViewportDisplayLocked, setPaperViewportView, viewportScaleDenominator, zoomPaperViewportAtModelPoint, type CadChange, type CopyRejectedTarget, type LayoutPublishSettingsV1, type MirrorRejectedTarget, type MoveRejectedTarget, type OffsetLayerMode, type OffsetRejectedTarget, type RotateAngleSpec, type RotateRejectedTarget, type ScaleFactorSpec, type ScaleRejectedTarget, type TrimEdgeMode, type TrimMode, type TrimProjectMode, type TrimRejectedTarget, type TrimTargetAction } from "@kuubik/cad-core";
 import { DxfImportError, MAX_DXF_IMPORT_BYTES, exportDxf, importDxf } from "@kuubik/cad-dxf";
 import { exportLayoutSvg, exportLayoutsVectorPdf, exportLayoutVectorPdf, exportModelSvg, exportModelVectorPdf, type LayoutPlotOptions, type ModelPlotOptions } from "@kuubik/cad-print";
-import { CadCanvasRenderer, pannedViewportWorldCenter, viewportScreenToWorld, type Viewport2D } from "@kuubik/cad-renderer";
+import { CadCanvasRenderer, pickCadEntity, pannedViewportWorldCenter, selectCadEntityHitsByCrossingPolygon, selectCadEntityHitsByFence, viewportScreenToWorld, viewportScreenTransform, type Viewport2D } from "@kuubik/cad-renderer";
 import type { CadEntity, CadLayout, CadPageSetup, CadPaperRect, CadPlotStyle, CadViewport, KDrawDocumentV1 } from "@kuubik/cad-schema";
 import { KDrawIndexedDb, StorageRevisionConflictError } from "./indexed-db.js";
 import "./style.css";
 
 const LOCAL_DOCUMENT_ID = "local";
-const MODEL_SPACE_COMMANDS = new Set(["LINE", "RECTANGLE", "MOVE", "COPY", "ROTATE", "SCALE", "MIRROR", "OFFSET", "ERASE"]);
+const MODEL_SPACE_COMMANDS = new Set(["LINE", "RECTANGLE", "MOVE", "COPY", "ROTATE", "SCALE", "MIRROR", "OFFSET", "TRIM", "ERASE"]);
 const MODEL_VIEW_WORLD = Object.freeze({ minX: -500, minY: -500, maxX: 2500, maxY: 2500 });
 
 function nextInteractiveHandle(document: KDrawDocumentV1): string {
@@ -304,7 +304,16 @@ export function App() {
   const [offsetLayerMode, setOffsetLayerMode] = useState<OffsetLayerMode>("source");
   const [offsetAwaitingSelection, setOffsetAwaitingSelection] = useState(false);
   const [lastOffsetRejected, setLastOffsetRejected] = useState<OffsetRejectedTarget[]>([]);
-  const [previewCommand, setPreviewCommand] = useState<"MOVE" | "COPY" | "ROTATE" | "SCALE" | "MIRROR" | "OFFSET">("MOVE");
+  const [trimMode, setTrimMode] = useState<TrimMode>("standard");
+  const [trimCuttingHandlesInput, setTrimCuttingHandlesInput] = useState("20,21");
+  const [trimTargetsInput, setTrimTargetsInput] = useState("10@500,0");
+  const [trimEdgeMode, setTrimEdgeMode] = useState<TrimEdgeMode>("no-extend");
+  const [trimProjectMode, setTrimProjectMode] = useState<TrimProjectMode>("none");
+  const [trimTargetAction, setTrimTargetAction] = useState<TrimTargetAction>("trim");
+  const [trimPathMode, setTrimPathMode] = useState<"fence" | "crossing">("fence");
+  const [trimPathInput, setTrimPathInput] = useState("500,-500; 500,500");
+  const [lastTrimRejected, setLastTrimRejected] = useState<TrimRejectedTarget[]>([]);
+  const [previewCommand, setPreviewCommand] = useState<"MOVE" | "COPY" | "ROTATE" | "SCALE" | "MIRROR" | "OFFSET" | "TRIM">("MOVE");
   const activeLayer = document.layers.find((layer) => layer.id === document.currentLayerId)!;
   const activeLayout = document.layouts.find((layout) => layout.id === activeLayoutId) ?? document.layouts[0]!;
   const selectedViewport = activeLayout.kind === "paper"
@@ -430,6 +439,27 @@ export function App() {
       return null;
     }
   }, [document, offsetDistanceInput, offsetEraseSource, offsetLayerMode, offsetMode, offsetMultiple, offsetPlacementInput, previewCommand, selectedHandles]);
+  const trimPreview = useMemo((): { entities: CadEntity[]; sourceHandles: string[]; steps: number } | null => {
+    if (previewCommand !== "TRIM") return null;
+    try {
+      const command = resolveCadCommand("TRIM");
+      if (!command || command.id !== "TRIM") return null;
+      const result = command.execute(document, {
+        mode: trimMode,
+        cuttingEdgeHandles: parseCadHandleList(trimCuttingHandlesInput),
+        targets: parseTrimTargetPicks(trimTargetsInput, trimTargetAction),
+        edgeMode: trimEdgeMode,
+        projectMode: trimProjectMode,
+      });
+      return {
+        entities: result.changes.flatMap((change) => change.type === "put" ? [change.entity] : []),
+        sourceHandles: result.steps.map((step) => step.sourceHandle),
+        steps: result.steps.length,
+      };
+    } catch {
+      return null;
+    }
+  }, [document, previewCommand, trimCuttingHandlesInput, trimEdgeMode, trimMode, trimProjectMode, trimTargetAction, trimTargetsInput]);
 
   useEffect(() => {
     let active = true;
@@ -542,9 +572,10 @@ export function App() {
         widthPx,
         heightPx,
         devicePixelRatio: ratio,
-      }, document.layers, activeLayout.kind === "model" ? [...(movePreview?.entities ?? []), ...(copyPreview?.entities ?? []), ...(rotatePreview?.entities ?? []), ...(scalePreview?.entities ?? []), ...(mirrorPreview?.entities ?? []), ...(offsetPreview?.entities ?? [])] : [], [
+      }, document.layers, activeLayout.kind === "model" ? [...(movePreview?.entities ?? []), ...(copyPreview?.entities ?? []), ...(rotatePreview?.entities ?? []), ...(scalePreview?.entities ?? []), ...(mirrorPreview?.entities ?? []), ...(offsetPreview?.entities ?? []), ...(trimPreview?.entities ?? [])] : [], [
         ...(mirrorPreview?.eraseSource ? mirrorPreview.sourceHandles : []),
         ...(offsetPreview?.eraseSource ? offsetPreview.sourceHandles : []),
+        ...(trimPreview?.sourceHandles ?? []),
       ], activePaper && activePageSetup?.displayPlotStyles ? {
         plotStyle: activePageSetup.plotStyle ?? { profile: "monochrome", plotLineweights: true, plotTransparency: true },
         pixelsPerMillimeter: widthPx / activePaper.widthMm,
@@ -554,7 +585,7 @@ export function App() {
     const observer = new ResizeObserver(render);
     observer.observe(element);
     return () => observer.disconnect();
-  }, [activeLayout, activePageSetup, activePaper, copyPreview, document, mirrorPreview, movePreview, offsetPreview, rotatePreview, scalePreview]);
+  }, [activeLayout, activePageSetup, activePaper, copyPreview, document, mirrorPreview, movePreview, offsetPreview, rotatePreview, scalePreview, trimPreview]);
 
   async function recoverFromStorageConflict(error: unknown): Promise<void> {
     if (!(error instanceof StorageRevisionConflictError)) throw error;
@@ -967,6 +998,120 @@ export function App() {
         setOffsetAwaitingSelection(false);
         setStatus(`OFFSET viga: ${error.message}`);
       } else throw error;
+    } finally {
+      committing.current = false;
+    }
+  }
+
+  function undoTrimTarget(): void {
+    const tokens = trimTargetsInput.split(/[;\r\n]+/).map((token) => token.trim()).filter(Boolean);
+    if (tokens.length === 0) {
+      setStatus("TRIM Undo: käsk on täielikult tagasi võetud; globaalset UNDO sammu ei loodud");
+      return;
+    }
+    tokens.pop();
+    setTrimTargetsInput(tokens.join("; "));
+    setPreviewCommand("TRIM");
+    setStatus(tokens.length
+      ? `TRIM Undo: viimane siht eemaldatud; ${tokens.length} sihtmärki jääb`
+      : "TRIM Undo: kõik sihid eemaldatud; globaalset UNDO sammu ei loodud");
+  }
+
+  function selectTrimTargetsFromPath(): void {
+    try {
+      const points = trimPathInput.split(/[;\r\n]+/).map((token) => token.trim()).filter(Boolean).map(parseCartesianPoint);
+      const hiddenLayers = new Set(document.layers.filter((layer) => !layer.visible || layer.frozen).map((layer) => layer.id));
+      const candidates = document.entities.filter((entity) => !hiddenLayers.has(entity.layerId));
+      const hits = trimPathMode === "fence"
+        ? selectCadEntityHitsByFence(candidates, points)
+        : selectCadEntityHitsByCrossingPolygon(candidates, points);
+      setTrimTargetsInput(hits.map((hit) => `${hit.handle}@${hit.pickPoint.x},${hit.pickPoint.y}`).join("; "));
+      setPreviewCommand("TRIM");
+      setStatus(hits.length
+        ? `TRIM ${trimPathMode === "fence" ? "Fence" : "Crossing"}: ${hits.length} sihtmärki valitud`
+        : `TRIM ${trimPathMode === "fence" ? "Fence" : "Crossing"}: geomeetriat ei tabatud`);
+    } catch (error) {
+      setStatus(`TRIM valikuviga: ${error instanceof Error ? error.message : String(error)}`);
+    }
+  }
+
+  function selectTrimTargetFromCanvas(event: React.PointerEvent<HTMLCanvasElement>): void {
+    if (!modelSpaceEditing || previewCommand !== "TRIM" || event.button !== 0) return;
+    const element = event.currentTarget;
+    const rect = element.getBoundingClientRect();
+    if (!(rect.width > 0 && rect.height > 0)) return;
+    const viewport: Viewport2D = {
+      world: MODEL_VIEW_WORLD,
+      widthPx: rect.width,
+      heightPx: rect.height,
+      devicePixelRatio: window.devicePixelRatio || 1,
+    };
+    const point = viewportScreenToWorld(viewport, { x: event.clientX - rect.left, y: event.clientY - rect.top });
+    const tolerance = viewportScreenTransform(viewport).worldUnitsPerPixel * 8;
+    const hiddenLayers = new Set(document.layers.filter((layer) => !layer.visible || layer.frozen).map((layer) => layer.id));
+    const hits = document.entities.flatMap((entity, index) => {
+      if (hiddenLayers.has(entity.layerId)) return [];
+      const hit = pickCadEntity(entity, point, tolerance);
+      return hit ? [{ ...hit, drawIndex: index }] : [];
+    }).sort((first, second) => first.distance - second.distance || second.drawIndex - first.drawIndex);
+    const hit = hits[0];
+    if (!hit) {
+      setStatus(`TRIM valik: objekti ei leitud ${tolerance.toFixed(3)} ühiku raadiuses`);
+      return;
+    }
+    const cleanCoordinate = (value: number): number => Number(value.toFixed(6));
+    const pickPoint = { x: cleanCoordinate(hit.point.x), y: cleanCoordinate(hit.point.y) };
+    const action: TrimTargetAction = event.shiftKey ? "extend" : trimTargetAction === "extend" ? "trim" : trimTargetAction;
+    setTrimTargetAction(action);
+    setTrimTargetsInput(`${hit.handle}@${pickPoint.x},${pickPoint.y}`);
+    setStatus(event.shiftKey
+      ? `TRIM Shift-valik: ${hit.handle} pikendatakse`
+      : `TRIM valik: ${hit.handle} · ${action}`);
+  }
+
+  async function trimTargets(): Promise<void> {
+    if (committing.current) return;
+    setPreviewCommand("TRIM");
+    committing.current = true;
+    try {
+      const command = resolveCadCommand("TRIM");
+      if (!command || command.id !== "TRIM") throw new Error("TRIM command is missing from the registry.");
+      const targets = parseTrimTargetPicks(trimTargetsInput, trimTargetAction);
+      const cuttingEdgeHandles = parseCadHandleList(trimCuttingHandlesInput);
+      const result = command.execute(document, {
+        mode: trimMode,
+        cuttingEdgeHandles,
+        targets,
+        edgeMode: trimEdgeMode,
+        projectMode: trimProjectMode,
+      });
+      setLastTrimRejected(result.rejected);
+      if (result.changes.length === 0) {
+        const suffix = result.rejected.length ? `; ${result.rejected.length} lukus, peidetud, puudu või sobimatu` : "";
+        setStatus(`TRIM ei muutnud geomeetriat${suffix}`);
+        return;
+      }
+      await commitChanges(
+        command.id,
+        {
+          mode: result.mode,
+          cuttingEdgeHandles,
+          targets,
+          edgeMode: result.edgeMode,
+          projectMode: result.projectMode,
+          steps: result.steps,
+        },
+        result.changes,
+        result.resultHandles,
+        result.targetHandles,
+      );
+      setSelectedHandles([]);
+      const suffix = result.rejected.length ? `; ${result.rejected.length} jäi muutmata` : "";
+      setStatus(`${result.steps.length} TRIM sammu salvestatud ühe Undo-operatsioonina${suffix}`);
+    } catch (error) {
+      if (error instanceof StorageRevisionConflictError) await recoverFromStorageConflict(error);
+      else if (error instanceof CadCommandInputError) setStatus(`TRIM viga: ${error.message}`);
+      else throw error;
     } finally {
       committing.current = false;
     }
@@ -1927,6 +2072,58 @@ export function App() {
         </label>
         <button type="button" onClick={() => void offsetSelected()} disabled={!modelSpaceEditing}>OFFSET</button>
         <button type="button" onClick={undoOffsetPlacement} disabled={!modelSpaceEditing}>OFFSET Undo</button>
+        <label className="coordinate-input">
+          <span>TRIM režiim</span>
+          <select aria-label="TRIM režiim" value={trimMode} onFocus={() => setPreviewCommand("TRIM")} onChange={(event) => { setPreviewCommand("TRIM"); setTrimMode(event.target.value as TrimMode); }}>
+            <option value="quick">Quick</option>
+            <option value="standard">Standard</option>
+          </select>
+        </label>
+        <label className="coordinate-input">
+          <span>TRIM cutting edges</span>
+          <input aria-label="TRIM cutting edges" value={trimCuttingHandlesInput} disabled={trimMode === "quick"} onFocus={() => setPreviewCommand("TRIM")} onChange={(event) => { setPreviewCommand("TRIM"); setTrimCuttingHandlesInput(event.target.value); }} placeholder="20,21" />
+        </label>
+        <label className="coordinate-input">
+          <span>TRIM sihid</span>
+          <input aria-label="TRIM sihid" value={trimTargetsInput} onFocus={() => setPreviewCommand("TRIM")} onChange={(event) => { setPreviewCommand("TRIM"); setTrimTargetsInput(event.target.value); }} placeholder="10@500,0; 11@500,200" />
+        </label>
+        <label className="coordinate-input">
+          <span>TRIM valik</span>
+          <select aria-label="TRIM valik" value={trimPathMode} onFocus={() => setPreviewCommand("TRIM")} onChange={(event) => { setPreviewCommand("TRIM"); setTrimPathMode(event.target.value as "fence" | "crossing"); }}>
+            <option value="fence">Fence</option>
+            <option value="crossing">Crossing</option>
+          </select>
+        </label>
+        <label className="coordinate-input">
+          <span>TRIM valikutee</span>
+          <input aria-label="TRIM valikutee" value={trimPathInput} onFocus={() => setPreviewCommand("TRIM")} onChange={(event) => { setPreviewCommand("TRIM"); setTrimPathInput(event.target.value); }} placeholder="x,y; x,y; ..." />
+        </label>
+        <button type="button" onClick={selectTrimTargetsFromPath} disabled={!modelSpaceEditing}>TRIM Fence/Crossing vali</button>
+        <label className="coordinate-input">
+          <span>TRIM Edge</span>
+          <select aria-label="TRIM Edge" value={trimEdgeMode} onFocus={() => setPreviewCommand("TRIM")} onChange={(event) => { setPreviewCommand("TRIM"); setTrimEdgeMode(event.target.value as TrimEdgeMode); }}>
+            <option value="no-extend">No extend</option>
+            <option value="extend">Extend</option>
+          </select>
+        </label>
+        <label className="coordinate-input">
+          <span>TRIM Project</span>
+          <select aria-label="TRIM Project" value={trimProjectMode} onFocus={() => setPreviewCommand("TRIM")} onChange={(event) => { setPreviewCommand("TRIM"); setTrimProjectMode(event.target.value as TrimProjectMode); }}>
+            <option value="none">None</option>
+            <option value="ucs">UCS</option>
+            <option value="view">View</option>
+          </select>
+        </label>
+        <label className="coordinate-input">
+          <span>TRIM tegevus</span>
+          <select aria-label="TRIM tegevus" value={trimTargetAction} onFocus={() => setPreviewCommand("TRIM")} onChange={(event) => { setPreviewCommand("TRIM"); setTrimTargetAction(event.target.value as TrimTargetAction); }}>
+            <option value="trim">Trim</option>
+            <option value="extend">Shift-Extend</option>
+            <option value="erase">Erase</option>
+          </select>
+        </label>
+        <button type="button" onClick={() => void trimTargets()} disabled={!modelSpaceEditing}>TRIM</button>
+        <button type="button" onClick={undoTrimTarget} disabled={!modelSpaceEditing}>TRIM Undo</button>
         <button type="button" onClick={() => void eraseSelected()} disabled={!modelSpaceEditing || selectedHandles.length === 0}>ERASE</button>
         <button type="button" onClick={() => void undoLast()} disabled={!canUndoInActiveLayout}>UNDO</button>
         <button type="button" onClick={() => void redoLast()} disabled={!canRedoInActiveLayout}>REDO</button>
@@ -1941,7 +2138,6 @@ export function App() {
         </label>
         <button type="button" onClick={downloadDxf}>DXF eksport</button>
         <button type="button" onClick={() => void downloadKDraw()}>KDraw eksport</button>
-        <button type="button" disabled>TRIM järgmine</button>
         <span>{document.entities.length} objekti · {selectedHandles.length} valitud · {activeLayer.name}{activeLayer.locked ? " 🔒" : ""}</span>
         {movePreview && <span data-testid="move-preview">MOVE eelvaade: {movePreview.entities.length} · Δ{movePreview.delta.x},{movePreview.delta.y}</span>}
         {copyPreview && <span data-testid="copy-preview">COPY eelvaade: {copyPreview.entities.length} · {copyPreview.deltas.length} paigutust</span>}
@@ -1949,6 +2145,7 @@ export function App() {
         {scalePreview && <span data-testid="scale-preview">SCALE eelvaade: {scalePreview.entities.length} · ×{scalePreview.factor}{scalePreview.copy ? " · Copy" : ""}</span>}
         {mirrorPreview && <span data-testid="mirror-preview" data-hidden-source-count={mirrorPreview.eraseSource ? mirrorPreview.sourceHandles.length : 0}>MIRROR eelvaade: {mirrorPreview.entities.length} · lähteobjektid {mirrorPreview.eraseSource ? "kustutatakse" : "säilivad"}</span>}
         {offsetPreview && <span data-testid="offset-preview" data-hidden-source-count={offsetPreview.eraseSource ? offsetPreview.sourceHandles.length : 0}>OFFSET eelvaade: {offsetPreview.entities.length} · {offsetPreview.steps} sammu · lähteobjektid {offsetPreview.eraseSource ? "kustutatakse" : "säilivad"}</span>}
+        {trimPreview && <span data-testid="trim-preview" data-hidden-source-count={trimPreview.sourceHandles.length}>TRIM eelvaade: {trimPreview.entities.length} tulemust · {trimPreview.steps} sammu</span>}
         {lastMoveRejected.length > 0 && (
           <span data-testid="move-rejected" data-rejected={JSON.stringify(lastMoveRejected)}>
             MOVE muutmata: {lastMoveRejected.map(({ handle, reason }) => `${handle} (${reason})`).join(", ")}
@@ -1977,6 +2174,11 @@ export function App() {
         {lastOffsetRejected.length > 0 && (
           <span data-testid="offset-rejected" data-rejected={JSON.stringify(lastOffsetRejected)}>
             OFFSET muutmata: {lastOffsetRejected.map(({ handle, placementIndex, reason }) => `${handle}${placementIndex === null ? "" : `#${placementIndex + 1}`} (${reason})`).join(", ")}
+          </span>
+        )}
+        {lastTrimRejected.length > 0 && (
+          <span data-testid="trim-rejected" data-rejected={JSON.stringify(lastTrimRejected)}>
+            TRIM muutmata: {lastTrimRejected.map(({ handle, targetIndex, reason }) => `${handle}#${targetIndex + 1} (${reason})`).join(", ")}
           </span>
         )}
       </section>
@@ -2031,7 +2233,7 @@ export function App() {
             </div>
           </div>
         ) : (
-          <canvas ref={canvas} aria-label="Kuubik Draw joonestusala" />
+          <canvas ref={canvas} aria-label="Kuubik Draw joonestusala" onPointerDown={selectTrimTargetFromCanvas} />
         )}
       </section>
       <section className="layoutbar" aria-label="Model ja Layout vahelehed">

@@ -185,6 +185,40 @@ function pointValue(pairs: readonly DxfPair[], xCode: number, yCode: number, lab
   };
 }
 
+function singletonNumberValue(pairs: readonly DxfPair[], code: number, label: string, required = true): number | undefined {
+  const matches = pairs.filter((pair) => pair.code === code);
+  if (matches.length === 0) {
+    if (required) throw new DxfImportError(`${label} is missing DXF group ${code}.`);
+    return undefined;
+  }
+  const values = matches.map((pair) => {
+    const value = Number(pair.value.trim());
+    if (!Number.isFinite(value)) throw new DxfImportError(`${label} has a non-finite DXF group ${code} at line ${pair.line + 1}.`);
+    return value;
+  });
+  if (values.some((value) => value !== values[0])) throw new DxfImportError(`${label} has conflicting duplicate DXF group ${code}.`);
+  return values[0];
+}
+
+function auditedPlanarConic(
+  pairs: readonly DxfPair[],
+  label: string,
+  points: ReadonlyArray<{ x: number; y: number; z: number; name: string }>,
+): void {
+  for (const point of points) {
+    singletonNumberValue(pairs, point.x, `${label} ${point.name} X`);
+    singletonNumberValue(pairs, point.y, `${label} ${point.name} Y`);
+    const z = singletonNumberValue(pairs, point.z, `${label} ${point.name} Z`, false) ?? 0;
+    if (Math.abs(z) > 1e-9) throw new DxfImportError(`${label} ${point.name} is non-planar (group ${point.z}).`);
+  }
+  const extrusionX = singletonNumberValue(pairs, 210, `${label} extrusion X`, false) ?? 0;
+  const extrusionY = singletonNumberValue(pairs, 220, `${label} extrusion Y`, false) ?? 0;
+  const extrusionZ = singletonNumberValue(pairs, 230, `${label} extrusion Z`, false) ?? 1;
+  if (Math.abs(extrusionX) > 1e-9 || Math.abs(extrusionY) > 1e-9 || Math.abs(extrusionZ - 1) > 1e-9) {
+    throw new DxfImportError(`${label} OCS extrusion is outside the audited +Z planar subset.`);
+  }
+}
+
 function records(pairs: readonly DxfPair[]): DxfRecord[] {
   const result: DxfRecord[] = [];
   let current: DxfRecord | null = null;
@@ -603,6 +637,49 @@ function unescapeDxfText(value: string, multiline: boolean): string {
   return result;
 }
 
+function parseSpline(record: DxfRecord, base: Omit<Extract<CadEntity, { kind: "spline" }>, "kind" | "degree" | "controlPoints" | "knots" | "weights" | "closed" | "periodic">): CadEntity {
+  const label = `SPLINE ${base.handle}`;
+  const normalX = singletonNumberValue(record.pairs, 210, `${label} normal X`, false) ?? 0;
+  const normalY = singletonNumberValue(record.pairs, 220, `${label} normal Y`, false) ?? 0;
+  const normalZ = singletonNumberValue(record.pairs, 230, `${label} normal Z`, false) ?? 1;
+  if (Math.abs(normalX) > 1e-9 || Math.abs(normalY) > 1e-9 || Math.abs(normalZ - 1) > 1e-9) {
+    throw new DxfImportError(`${label} normal is outside the audited +Z planar subset.`);
+  }
+  const flags = integerValue(record.pairs, 70, `${label} flags`)!;
+  const degree = integerValue(record.pairs, 71, `${label} degree`)!;
+  const knotCount = integerValue(record.pairs, 72, `${label} knot count`)!;
+  const controlPointCount = integerValue(record.pairs, 73, `${label} control-point count`)!;
+  const fitPointCount = integerValue(record.pairs, 74, `${label} fit-point count`, false) ?? 0;
+  if (flags < 0 || (flags & ~15) !== 0) throw new DxfImportError(`${label} flags ${flags} are outside the 2D planar subset.`);
+  if (!Number.isInteger(degree) || degree < 1 || degree > 16) throw new DxfImportError(`${label} degree is outside 1..16.`);
+  if (!Number.isInteger(controlPointCount) || controlPointCount <= degree || controlPointCount > MAX_DXF_ENTITY_VERTICES) throw new DxfImportError(`${label} control-point count is invalid.`);
+  if (knotCount !== controlPointCount + degree + 1) throw new DxfImportError(`${label} knot count does not match control points plus degree plus one.`);
+  if (fitPointCount !== 0) throw new DxfImportError(`${label} fit points are outside the audited control-point subset.`);
+  const numericPairs = (code: number, field: string): number[] => record.pairs.filter((pair) => pair.code === code).map((pair) => {
+    const value = Number(pair.value.trim());
+    if (!Number.isFinite(value)) throw new DxfImportError(`${label} ${field} contains a non-finite value at line ${pair.line + 1}.`);
+    return value;
+  });
+  const knots = numericPairs(40, "knots");
+  if (knots.length !== knotCount || knots.some((knot, index) => index > 0 && knot < knots[index - 1]!)) throw new DxfImportError(`${label} knots are missing, unsorted or inconsistent with group 72.`);
+  if (!(knots[controlPointCount]! - knots[degree]! > 0)) throw new DxfImportError(`${label} has an empty parameter domain.`);
+  const x = numericPairs(10, "control-point X values");
+  const y = numericPairs(20, "control-point Y values");
+  const z = numericPairs(30, "control-point Z values");
+  if (x.length !== controlPointCount || y.length !== controlPointCount || (z.length !== 0 && z.length !== controlPointCount)) throw new DxfImportError(`${label} control-point groups do not match group 73.`);
+  if (z.some((value) => Math.abs(value) > 1e-9)) throw new DxfImportError(`${label} contains non-planar control points.`);
+  const weights = numericPairs(41, "weights");
+  const rational = (flags & 4) !== 0;
+  if ((rational && weights.length !== controlPointCount) || (!rational && weights.length !== 0) || weights.some((weight) => !(weight > 0))) throw new DxfImportError(`${label} rational flag and positive weights are inconsistent.`);
+  const controlPoints = x.map((xCoordinate, index) => ({ x: xCoordinate, y: y[index]! }));
+  return {
+    kind: "spline", ...base, degree, controlPoints, knots,
+    ...(rational ? { weights } : {}),
+    closed: (flags & 1) !== 0,
+    periodic: (flags & 2) !== 0,
+  };
+}
+
 function parseEntity(
   record: DxfRecord,
   layerIds: ReadonlyMap<string, string>,
@@ -617,12 +694,53 @@ function parseEntity(
     case "LINE":
       return { kind: "line", ...base, start: pointValue(record.pairs, 10, 20, `LINE ${base.handle} start`), end: pointValue(record.pairs, 11, 21, `LINE ${base.handle} end`) };
     case "CIRCLE": {
-      const radius = numberValue(record.pairs, 40, `CIRCLE ${base.handle} radius`)!;
+      const label = `CIRCLE ${base.handle}`;
+      auditedPlanarConic(record.pairs, label, [{ x: 10, y: 20, z: 30, name: "center" }]);
+      const radius = singletonNumberValue(record.pairs, 40, `${label} radius`)!;
       if (!(radius > 0)) throw new DxfImportError(`CIRCLE ${base.handle} radius must be positive.`);
       return { kind: "circle", ...base, center: pointValue(record.pairs, 10, 20, `CIRCLE ${base.handle} center`), radius };
     }
+    case "ARC": {
+      const label = `ARC ${base.handle}`;
+      auditedPlanarConic(record.pairs, label, [{ x: 10, y: 20, z: 30, name: "center" }]);
+      const radius = singletonNumberValue(record.pairs, 40, `${label} radius`)!;
+      if (!(radius > 0)) throw new DxfImportError(`ARC ${base.handle} radius must be positive.`);
+      const startAngleRad = singletonNumberValue(record.pairs, 50, `${label} start angle`)! * Math.PI / 180;
+      const endAngleRad = singletonNumberValue(record.pairs, 51, `${label} end angle`)! * Math.PI / 180;
+      return {
+        kind: "arc",
+        ...base,
+        center: pointValue(record.pairs, 10, 20, `ARC ${base.handle} center`),
+        radius,
+        startAngleRad,
+        endAngleRad,
+        counterClockwise: true,
+      };
+    }
+    case "ELLIPSE": {
+      const label = `ELLIPSE ${base.handle}`;
+      auditedPlanarConic(record.pairs, label, [
+        { x: 10, y: 20, z: 30, name: "center" },
+        { x: 11, y: 21, z: 31, name: "major axis" },
+      ]);
+      const majorAxis = pointValue(record.pairs, 11, 21, `ELLIPSE ${base.handle} major axis`);
+      const ratio = singletonNumberValue(record.pairs, 40, `${label} ratio`)!;
+      if (!(Math.hypot(majorAxis.x, majorAxis.y) > 0)) throw new DxfImportError(`ELLIPSE ${base.handle} major axis must be non-zero.`);
+      if (!(ratio > 0 && ratio <= 1)) throw new DxfImportError(`ELLIPSE ${base.handle} ratio must be greater than zero and at most one.`);
+      return {
+        kind: "ellipse",
+        ...base,
+        center: pointValue(record.pairs, 10, 20, `ELLIPSE ${base.handle} center`),
+        majorAxis,
+        ratio,
+        startParameter: singletonNumberValue(record.pairs, 41, `${label} start parameter`, false) ?? 0,
+        endParameter: singletonNumberValue(record.pairs, 42, `${label} end parameter`, false) ?? Math.PI * 2,
+      };
+    }
     case "LWPOLYLINE":
       return parsePolyline(record, base);
+    case "SPLINE":
+      return parseSpline(record, base);
     case "TEXT": {
       const styleName = textValue(record.pairs, 7, `TEXT ${base.handle} style`, false) ?? "Standard";
       const styleId = textStyleIds.get(normalizedName(styleName));
@@ -710,7 +828,7 @@ export function importDxf(input: string | Uint8Array, options: DxfImportOptions)
   for (const record of records(entitySection)) {
     if (["ENDSEC", "EOF"].includes(record.type)) continue;
     const rawHandle = textValue(record.pairs, 5, `${record.type} handle`, false) ?? null;
-    if (!["LINE", "CIRCLE", "LWPOLYLINE", "TEXT", "HATCH", "DIMENSION"].includes(record.type)) {
+    if (!["LINE", "CIRCLE", "ARC", "ELLIPSE", "LWPOLYLINE", "SPLINE", "TEXT", "HATCH", "DIMENSION"].includes(record.type)) {
       if (rawHandle) registerHandle(rawHandle, usedHandles, record.type);
       report.skipped.push({ type: record.type, handle: rawHandle, reason: "DXF entity type is outside the F-111 audited import subset." });
       continue;

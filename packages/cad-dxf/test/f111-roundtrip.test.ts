@@ -59,9 +59,9 @@ describe("F-111 DXF roundtrip fidelity", () => {
 
   it("reports unsupported entities so callers can refuse partial document mutation", () => {
     const source = exportDxf(createF109Document()).text;
-    const unsupported = source.replace("  0\r\nENDSEC\r\n  0\r\nSECTION\r\n  2\r\nOBJECTS", "  0\r\nSPLINE\r\n  5\r\nABC\r\n  8\r\nJOONED\r\n  0\r\nENDSEC\r\n  0\r\nSECTION\r\n  2\r\nOBJECTS");
+    const unsupported = source.replace("  0\r\nENDSEC\r\n  0\r\nSECTION\r\n  2\r\nOBJECTS", "  0\r\n3DSOLID\r\n  5\r\nABC\r\n  8\r\nJOONED\r\n  0\r\nENDSEC\r\n  0\r\nSECTION\r\n  2\r\nOBJECTS");
     const result = importDxf(unsupported, { documentId: "unsupported" });
-    expect(result.report.skipped).toEqual([{ type: "SPLINE", handle: "ABC", reason: "DXF entity type is outside the F-111 audited import subset." }]);
+    expect(result.report.skipped).toEqual([{ type: "3DSOLID", handle: "ABC", reason: "DXF entity type is outside the F-111 audited import subset." }]);
     expect(result.document.entities).toHaveLength(40);
   });
 

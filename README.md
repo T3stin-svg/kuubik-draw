@@ -4,11 +4,14 @@ Kuubik Draw on eraldiseisev avalik 2D CAD-rakendus. Projekt sihib fikseeritud
 AutoCAD 2024.1.2 Windowsi **2D Drafting & Annotation** 133-realise auditi
 käitumispariteeti, mitte kogu AutoCADi toodet.
 
+Uuendatud eesmärk, roadmap.sh arhitektuurikaart ja pärast F-022 kohustuslik
+efektiivsusvärav on failis [`ARCHITECTURE_ROADMAP.md`](ARCHITECTURE_ROADMAP.md).
+
 ## Aus hetkeseis
 
 - vana Drawi auditi snapshot: **63,9% raw / 68,3% weighted / 60,7% visual**;
 - vana Drawi AutoCADi live-tõendiga read: **22/133**;
-- selle uue eraldatud rakenduse kohalik sertifikaat: **22/133 · 16,5% raw / 19,8% weighted**;
+- selle uue eraldatud rakenduse kohalik sertifikaat: **23/133 · 17,3% raw / 20,7% weighted**;
 - native DWG/DWT/XREF ja PC3/CTB/STB pariteet on veel blokeeritud.
 
 Need arvud on vana Drawi auditi muutmatu snapshot. Uus rakendus ei päri skoori
@@ -21,6 +24,12 @@ standardset KDraw objektiperekonda; F-021 lisab analüütilise LINE/POLYLINE/
 CIRCLE/ARC offset'i ja AutoCADiga mõõdetud ELLIPSE→SPLINE käitumise. Tundmatu
 proxy säilitatakse muutmata ning lükatakse ausalt tagasi, kuni litsentsitud
 native-adapter suudab selle transformatsioonilepingu tõendada.
+F-022 `TRIM` lisab Quick/Standard režiimi, eraldi või kõik cutting edge'id,
+Edge/Project/Erase/command Undo, Fence/Crossing, füüsilise Shift-Extend'i,
+line/polyline/circle/arc/ellipse/rational-SPLINE geomeetria ning layer-safe
+nested block piirid. Sama production rational NURBS DXF läbib Chromiumi,
+AutoCAD 2024 typed COM-i, AutoCADi salvestatud DXF-i sõltumatu parseri ja
+Kuubiku DXF/KDRAW1 read-back'i; sõltumatu review lõppes `0 P0 / 0 P1`.
 F-097 `Layout tabs` lisab revisioneeritud create/copy/reorder/delete töövoo,
 AutoCADi copy-before-source nimekuju, sõltumatud viewport'i ID-d ja paberiruumi
 handle'id, atomaarse Undo/Redo ning IndexedDB/`.kdraw` taastamise.

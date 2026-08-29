@@ -284,6 +284,40 @@ function midpoint(first: CadPoint2, second: CadPoint2): CadPoint2 {
   return { x: (first.x + second.x) / 2, y: (first.y + second.y) / 2 };
 }
 
+const FULL_TURN = Math.PI * 2;
+
+function normalizedRadians(value: number): number {
+  return ((value % FULL_TURN) + FULL_TURN) % FULL_TURN;
+}
+
+function angleOnCounterClockwiseArc(angle: number, start: number, end: number): boolean {
+  if (Math.abs(end - start) >= FULL_TURN - 1e-12) return true;
+  const sweep = normalizedRadians(end - start);
+  const travelled = normalizedRadians(angle - start);
+  return travelled <= sweep + 1e-12;
+}
+
+function arcExtentPoints(center: CadPoint2, radius: number, start: number, end: number): CadPoint2[] {
+  const pointAt = (angle: number): CadPoint2 => ({ x: center.x + radius * Math.cos(angle), y: center.y + radius * Math.sin(angle) });
+  return [start, end, 0, Math.PI / 2, Math.PI, Math.PI * 1.5]
+    .filter((angle, index) => index < 2 || angleOnCounterClockwiseArc(angle, start, end))
+    .map(pointAt);
+}
+
+function ellipseExtentPoints(center: CadPoint2, major: CadPoint2, ratio: number, start: number, end: number): CadPoint2[] {
+  const majorLength = Math.hypot(major.x, major.y);
+  const minor = { x: -(major.y / majorLength) * majorLength * ratio, y: (major.x / majorLength) * majorLength * ratio };
+  const pointAt = (parameter: number): CadPoint2 => ({
+    x: center.x + major.x * Math.cos(parameter) + minor.x * Math.sin(parameter),
+    y: center.y + major.y * Math.cos(parameter) + minor.y * Math.sin(parameter),
+  });
+  const xExtreme = Math.atan2(minor.x, major.x);
+  const yExtreme = Math.atan2(minor.y, major.y);
+  return [start, end, xExtreme, xExtreme + Math.PI, yExtreme, yExtreme + Math.PI]
+    .filter((parameter, index) => index < 2 || angleOnCounterClockwiseArc(parameter, start, end))
+    .map(pointAt);
+}
+
 function emitDimension(context: Context, entity: CadDimension): { text: string | null; points: CadPoint2[] } {
   if (entity.definitionPoints.length < 2) return { text: null, points: [] };
   const first = entity.definitionPoints[0]!;
@@ -335,6 +369,25 @@ function emitEntity(context: Context, entity: CadEntity): { text: string | null;
       text: header(context, "CIRCLE", entity) + pair(100, "AcDbCircle") + point(10, 20, entity.center) + pair(40, num(entity.radius)),
       points: [{ x: entity.center.x - entity.radius, y: entity.center.y - entity.radius }, { x: entity.center.x + entity.radius, y: entity.center.y + entity.radius }],
     } : { text: null, points: [] };
+    case "arc": {
+      if (!(entity.radius > 0)) return { text: null, points: [] };
+      const start = entity.counterClockwise ? entity.startAngleRad : entity.endAngleRad;
+      const end = entity.counterClockwise ? entity.endAngleRad : entity.startAngleRad;
+      return {
+        text: header(context, "ARC", entity) + pair(100, "AcDbCircle") + point(10, 20, entity.center) + pair(40, num(entity.radius)) +
+          pair(100, "AcDbArc") + pair(50, num(normalizedRadians(start) * 180 / Math.PI)) + pair(51, num(normalizedRadians(end) * 180 / Math.PI)),
+        points: arcExtentPoints(entity.center, entity.radius, start, end),
+      };
+    }
+    case "ellipse": {
+      const majorLength = Math.hypot(entity.majorAxis.x, entity.majorAxis.y);
+      if (!(majorLength > 0) || !(entity.ratio > 0 && entity.ratio <= 1)) return { text: null, points: [] };
+      return {
+        text: header(context, "ELLIPSE", entity) + pair(100, "AcDbEllipse") + point(10, 20, entity.center) + point(11, 21, entity.majorAxis) +
+          pair(40, num(entity.ratio)) + pair(41, num(entity.startParameter)) + pair(42, num(entity.endParameter)),
+        points: ellipseExtentPoints(entity.center, entity.majorAxis, entity.ratio, entity.startParameter, entity.endParameter),
+      };
+    }
     case "polyline": {
       if (entity.vertices.length < 2) return { text: null, points: [] };
       let text = header(context, "LWPOLYLINE", entity) + pair(100, "AcDbPolyline") + pair(90, entity.vertices.length) + pair(70, entity.closed ? 1 : 0);
@@ -345,6 +398,24 @@ function emitEntity(context: Context, entity: CadEntity): { text: string | null;
         if (vertex.bulge !== undefined && vertex.bulge !== 0) text += pair(42, num(vertex.bulge));
       }
       return { text, points: entity.vertices };
+    }
+    case "spline": {
+      const last = entity.controlPoints.length - 1;
+      if (
+        !Number.isInteger(entity.degree) || entity.degree < 1 || last < entity.degree
+        || entity.knots.length !== last + entity.degree + 2
+        || entity.controlPoints.some((value) => !Number.isFinite(value.x) || !Number.isFinite(value.y))
+        || entity.knots.some((value, index) => !Number.isFinite(value) || (index > 0 && value < entity.knots[index - 1]!))
+        || (entity.weights !== undefined && (entity.weights.length !== entity.controlPoints.length || entity.weights.some((value) => !Number.isFinite(value) || !(value > 0))))
+      ) throw new TypeError(`DXF SPLINE ${entity.handle} has invalid degree, knots, control points or weights.`);
+      const flags = (entity.closed ? 1 : 0) | (entity.periodic ? 2 : 0) | (entity.weights ? 4 : 0) | 8;
+      let text = header(context, "SPLINE", entity) + pair(100, "AcDbSpline") + pair(210, 0) + pair(220, 0) + pair(230, 1)
+        + pair(70, flags) + pair(71, entity.degree) + pair(72, entity.knots.length) + pair(73, entity.controlPoints.length) + pair(74, 0)
+        + pair(42, 1e-7) + pair(43, 1e-7) + pair(44, 1e-10);
+      for (const knot of entity.knots) text += pair(40, num(knot));
+      if (entity.weights) for (const weight of entity.weights) text += pair(41, num(weight));
+      for (const controlPoint of entity.controlPoints) text += point(10, 20, controlPoint);
+      return { text, points: entity.controlPoints };
     }
     case "text":
     case "mtext": {
@@ -361,9 +432,6 @@ function emitEntity(context: Context, entity: CadEntity): { text: string | null;
     }
     case "dimension": return emitDimension(context, entity);
     case "hatch": return emitHatch(context, entity);
-    case "arc":
-    case "ellipse":
-    case "spline":
     case "leader":
     case "blockRef":
     case "proxy": return { text: null, points: [] };
@@ -571,21 +639,54 @@ export function readDxfSummary(text: string): DxfReadbackSummary {
   const handles: string[] = [];
   const points: CadPoint2[] = [];
   let acadVersion: string | null = null;
-  let inEntities = false;
-  let currentType: string | null = null;
-  let pendingX: number | null = null;
-  let circleCenter: CadPoint2 | null = null;
   for (let index = 0; index < pairs.length; index += 1) {
-    const item = pairs[index]!;
-    if (item.code === 2 && item.value === "ENTITIES") inEntities = true;
-    if (item.code === 0 && item.value === "ENDSEC") inEntities = false;
-    if (item.code === 9 && item.value === "$ACADVER") acadVersion = pairs[index + 1]?.value ?? null;
-    if (!inEntities) continue;
-    if (item.code === 0 && item.value !== "ENDSEC") { currentType = item.value; circleCenter = null; entityTypes[item.value] = (entityTypes[item.value] ?? 0) + 1; }
-    else if (currentType && item.code === 5) handles.push(item.value);
-    else if (currentType && [10, 11, 13, 14].includes(item.code)) pendingX = Number(item.value);
-    else if (currentType && pendingX !== null && [20, 21, 23, 24].includes(item.code)) { const value = { x: pendingX, y: Number(item.value) }; points.push(value); if (currentType === "CIRCLE" && item.code === 20) circleCenter = value; pendingX = null; }
-    else if (currentType === "CIRCLE" && item.code === 40 && circleCenter) { const radius = Number(item.value); points.push({ x: circleCenter.x - radius, y: circleCenter.y - radius }, { x: circleCenter.x + radius, y: circleCenter.y + radius }); }
+    if (pairs[index]?.code === 9 && pairs[index]?.value === "$ACADVER") acadVersion = pairs[index + 1]?.value ?? null;
+  }
+  const entitiesMarker = pairs.findIndex((item, index) => item.code === 2 && item.value === "ENTITIES" && pairs[index - 1]?.code === 0 && pairs[index - 1]?.value === "SECTION");
+  if (entitiesMarker >= 0) {
+    let index = entitiesMarker + 1;
+    while (index < pairs.length) {
+      if (pairs[index]?.code !== 0) { index += 1; continue; }
+      const type = pairs[index]!.value;
+      if (type === "ENDSEC") break;
+      const record: Array<{ code: number; value: string }> = [];
+      index += 1;
+      while (index < pairs.length && pairs[index]!.code !== 0) record.push(pairs[index++]!);
+      entityTypes[type] = (entityTypes[type] ?? 0) + 1;
+      const value = (code: number, fallback = Number.NaN): number => {
+        const found = record.find((item) => item.code === code);
+        return found ? Number(found.value) : fallback;
+      };
+      const pointValue = (xCode: number, yCode: number): CadPoint2 | null => {
+        const x = value(xCode); const y = value(yCode);
+        return Number.isFinite(x) && Number.isFinite(y) ? { x, y } : null;
+      };
+      const handle = record.find((item) => item.code === 5)?.value;
+      if (handle) handles.push(handle);
+      if (type === "LINE") {
+        const start = pointValue(10, 20); const end = pointValue(11, 21);
+        if (start) points.push(start); if (end) points.push(end);
+      } else if (type === "CIRCLE") {
+        const center = pointValue(10, 20); const radius = value(40);
+        if (center && Number.isFinite(radius)) points.push({ x: center.x - radius, y: center.y - radius }, { x: center.x + radius, y: center.y + radius });
+      } else if (type === "ARC") {
+        const center = pointValue(10, 20); const radius = value(40); const start = value(50) * Math.PI / 180; const end = value(51) * Math.PI / 180;
+        if (center && Number.isFinite(radius) && Number.isFinite(start) && Number.isFinite(end)) points.push(...arcExtentPoints(center, radius, start, end));
+      } else if (type === "ELLIPSE") {
+        const center = pointValue(10, 20); const major = pointValue(11, 21); const ratio = value(40); const start = value(41, 0); const end = value(42, FULL_TURN);
+        if (center && major && Math.hypot(major.x, major.y) > 0 && Number.isFinite(ratio)) points.push(...ellipseExtentPoints(center, major, ratio, start, end));
+      } else if (type === "LWPOLYLINE") {
+        for (let pairIndex = 0; pairIndex < record.length; pairIndex += 1) {
+          if (record[pairIndex]!.code !== 10 || record[pairIndex + 1]?.code !== 20) continue;
+          points.push({ x: Number(record[pairIndex]!.value), y: Number(record[pairIndex + 1]!.value) });
+        }
+      } else {
+        for (const [xCode, yCode] of [[10, 20], [11, 21], [13, 23], [14, 24]] as const) {
+          const point = pointValue(xCode, yCode);
+          if (point) points.push(point);
+        }
+      }
+    }
   }
   return { acadVersion, entityTypes, handles, extents: bounds(points) };
 }

@@ -15,7 +15,7 @@ import {
 import { assertLayoutCollection } from "./layouts.js";
 
 export type EntityChange =
-  | { type: "put"; entity: CadEntity }
+  | { type: "put"; entity: CadEntity; /** Used by inverse changes to restore exact draw order. */ index?: number }
   | { type: "delete"; handle: string };
 
 export type CadChange =
@@ -307,13 +307,25 @@ export function applyAtomicOperation(
     if (change.type === "put") {
       const before = entities.get(change.entity.handle);
       inverseChanges.unshift(before ? { type: "put", entity: cloneEntity(before) } : { type: "delete", handle: change.entity.handle });
-      entities.set(change.entity.handle, cloneEntity(change.entity));
+      const replacement = cloneEntity(change.entity);
+      if (!before && change.index !== undefined) {
+        if (!Number.isSafeInteger(change.index) || change.index < 0 || change.index > entities.size) {
+          throw new RangeError(`Entity insertion index ${change.index} is outside 0..${entities.size}.`);
+        }
+        const ordered = [...entities.entries()];
+        ordered.splice(change.index, 0, [change.entity.handle, replacement]);
+        entities.clear();
+        ordered.forEach(([handle, entity]) => entities.set(handle, entity));
+      } else {
+        entities.set(change.entity.handle, replacement);
+      }
       continue;
     }
     if (change.type === "delete") {
       const before = entities.get(change.handle);
       if (!before) throw new RangeError(`Cannot delete missing entity ${change.handle}.`);
-      inverseChanges.unshift({ type: "put", entity: cloneEntity(before) });
+      const index = [...entities.keys()].indexOf(change.handle);
+      inverseChanges.unshift({ type: "put", entity: cloneEntity(before), index });
       entities.delete(change.handle);
       continue;
     }

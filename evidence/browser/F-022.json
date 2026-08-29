@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-022",
+  "kind": "browser",
+  "authority": "kuubik-draw-browser",
+  "status": "PASS",
+  "artifactSha256": "0b2b08fcfb4eed510ff03f6da9d0bf047e0ce894751e7bca3e11391dfb5054b6",
+  "observedAt": "2026-08-29T10:08:47.629Z",
+  "workflow": "Chromium /d/local runs Standard and Quick TRIM, command-local and global Undo, Edge/Project/Erase, physical Shift-click Extend, Fence/Crossing selection, layer refusals, closed polyline widths/bulges, ignored HATCH loops, transformed/cyclic/mixed-layer nested blocks and rational/tangent SPLINE cases through visible controls, IndexedDB and production DXF downloads.",
+  "result": "Preview and commit used one predicate, all mutations were atomic, layer-0 block children inherited the insertion layer while named hidden/frozen children stayed inert, and the rational cubic SPLINE split into two exact pieces. Seven workflows completed with zero page or console errors and their downloaded DXF files parsed successfully.",
+  "test": "e2e/f022-trim.spec.ts",
+  "artifact": "evidence/artifacts/F-022-browser-readback.json"
+}

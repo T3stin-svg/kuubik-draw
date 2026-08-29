@@ -44,10 +44,10 @@ describe("F-111 mutation-proven roundtrip ratchet", () => {
 
   it("kills the partial-import mutant by requiring a clean report before commit", () => {
     const source = exportDxf(createF109Document()).text;
-    const unsupported = source.replace("  0\r\nENDSEC\r\n  0\r\nSECTION\r\n  2\r\nOBJECTS", "  0\r\nSPLINE\r\n  5\r\nABC\r\n  8\r\nJOONED\r\n  0\r\nENDSEC\r\n  0\r\nSECTION\r\n  2\r\nOBJECTS");
+    const unsupported = source.replace("  0\r\nENDSEC\r\n  0\r\nSECTION\r\n  2\r\nOBJECTS", "  0\r\n3DSOLID\r\n  5\r\nABC\r\n  8\r\nJOONED\r\n  0\r\nENDSEC\r\n  0\r\nSECTION\r\n  2\r\nOBJECTS");
     const result = importDxf(unsupported, { documentId: "F-111-partial" });
     expect(result.report.skipped).toHaveLength(1);
-    expect(result.report.skipped[0]).toMatchObject({ type: "SPLINE", handle: "ABC" });
+    expect(result.report.skipped[0]).toMatchObject({ type: "3DSOLID", handle: "ABC" });
   });
 
   it("kills fail-open HATCH, global-handle and parser-budget mutants", () => {

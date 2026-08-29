@@ -1,0 +1,168 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-022",
+  "certificationAuthority": false,
+  "generatedAt": "2026-08-29T10:06:31.147Z",
+  "sourceArtifact": "evidence/artifacts/F-022-kuubik.dxf",
+  "sourceArtifactSha256": "d1bb747545368329b068ba3a851c0daea0459cc84ceb57c7e0598c3201361c0b",
+  "implementationSha256": {
+    "tools/oracles/freecad-headless.py": "741125586fbcceebfe23a5e736462d98c3b61f22d68061c47c80b078bde8e56c",
+    "tools/oracles/network-isolation.mjs": "3fb18e9ad145b76e53ed241a0a529bb2ccd4eabe784b04e915d77cdd9203d415",
+    "tools/oracles/probe-tools.mjs": "86b118cdf03da095214901d4f5f3b4460d9994b1280ae991904aedb0b992883e",
+    "tools/oracles/run-fixtures.mjs": "0a97574ac92ef761f092b2c2d2990f5401a652b8f261b243c9724f49f4fa2800",
+    "tools/oracles/run-f022-oracles.mjs": "4d68ff336003ef39c43fa39c80e195458ee797a17f51cbae8a9094ed07e6efe2"
+  },
+  "runnerSha256": "4d68ff336003ef39c43fa39c80e195458ee797a17f51cbae8a9094ed07e6efe2",
+  "freeCadScriptSha256": "741125586fbcceebfe23a5e736462d98c3b61f22d68061c47c80b078bde8e56c",
+  "networkIsolation": {
+    "proven": false,
+    "reason": "A protected signed network-isolation attestation was not configured."
+  },
+  "reports": [
+    {
+      "oracle": "librecad",
+      "expected": "2.2.1.5",
+      "status": "FIXTURE_PASS_NOT_NETWORK_ISOLATED",
+      "versionMatchesPin": true,
+      "executableSha256MatchesPin": true,
+      "certificationAuthority": false,
+      "executableSha256": "9b5ec58c40c9e88b2fc110678f03c5b071191cd8dd79b3c68d6620b269c03773",
+      "expectedExecutableSha256": "9b5ec58c40c9e88b2fc110678f03c5b071191cd8dd79b3c68d6620b269c03773",
+      "versionOutput": "LibreCAD v2.2.1.5",
+      "sandbox": {
+        "disposableDirectory": true,
+        "inputPolicy": "synthetic-and-generated-F-022-output-only",
+        "networkIsolationProven": false,
+        "networkPolicy": "not isolated; dead-proxy variables are defense in depth only",
+        "timeoutMs": 30000,
+        "oneProcessPerFixture": true
+      },
+      "fixtureReport": {
+        "fixture": "F-022 production TRIM DXF rendered by LibreCAD 2.2.1.5",
+        "inputSha256": "d1bb747545368329b068ba3a851c0daea0459cc84ceb57c7e0598c3201361c0b",
+        "output": {
+          "bytes": 6792,
+          "sha256": "5edce985e33c3fc9249f5f2e2df937e09a44a2d071e26745ee84ffeff96e5094",
+          "hasPdfHeader": true,
+          "hasEof": true,
+          "pages": 1,
+          "imageXObjects": 0,
+          "mediaBox": [
+            0,
+            0,
+            595,
+            842
+          ],
+          "vectorOperators": {
+            "decodedStreams": 1,
+            "moveToOperators": 21,
+            "lineToOperators": 342,
+            "cubicCurveOperators": 141,
+            "paintedPathOperators": 17,
+            "geometry": {
+              "line": {
+                "start": [
+                  3977.999995,
+                  4
+                ],
+                "end": [
+                  3977.999995,
+                  4213
+                ],
+                "length": 4209
+              },
+              "circle": {
+                "center": [
+                  5029.999995,
+                  6316.999995
+                ],
+                "radius": 105.2692649999999,
+                "cubicSegments": 4
+              },
+              "inferredUniformTransform": {
+                "scale": 42.09,
+                "centerError": 4338.113467616425,
+                "centerErrorNormalized": 1.0306755684524649,
+                "radiusError": 315.6307350000001,
+                "radiusErrorNormalized": 0.07498948325017821
+              }
+            }
+          }
+        },
+        "checks": {
+          "exitCodeZero": true,
+          "exactProductionDxfInput": true,
+          "validSinglePageVectorPdf": true,
+          "vectorGeometryPresent": true
+        }
+      }
+    },
+    {
+      "oracle": "freecad",
+      "expected": "1.1.3",
+      "status": "FIXTURE_PASS_NOT_NETWORK_ISOLATED",
+      "versionMatchesPin": true,
+      "executableSha256MatchesPin": true,
+      "certificationAuthority": false,
+      "executableSha256": "b5551d26050ed64981c5767729bb35900fd4975fa7fd31714c17dd714b6fd44c",
+      "expectedExecutableSha256": "b5551d26050ed64981c5767729bb35900fd4975fa7fd31714c17dd714b6fd44c",
+      "versionOutput": "FreeCAD 1.1.3 Revision: 20260725 (Git shallow)",
+      "sandbox": {
+        "disposableDirectory": true,
+        "inputPolicy": "synthetic-and-generated-F-022-output-only",
+        "networkIsolationProven": false,
+        "networkPolicy": "not isolated; dead-proxy variables are defense in depth only",
+        "timeoutMs": 30000,
+        "oneProcessPerFixture": true
+      },
+      "fixtureReport": {
+        "fixture": "F-022 cubic SPLINE intersections independently evaluated by FreeCAD/OCCT",
+        "inputSha256": "476629e25d628d47ade2d0a02f43d57cb9470773fe82f19f0fbba2d6c817184b",
+        "output": {
+          "certificationAuthority": false,
+          "freecadVersion": [
+            "1",
+            "1",
+            "3",
+            "20260725 (Git shallow)",
+            "Unknown",
+            "2026/07/25 04:52:02",
+            "grafted,grafted",
+            "145529fe741292ff0b3977a01195bf0247425794"
+          ],
+          "result": {
+            "bounds": {
+              "xmax": 100,
+              "xmin": 0,
+              "ymax": 52.77777777777779,
+              "ymin": -52.77777777777782
+            },
+            "degree": 3,
+            "intersections": [
+              {
+                "x": 24.99999999999909,
+                "y": 28.125000000000682
+              },
+              {
+                "x": 75.00000000000091,
+                "y": -28.125000000000682
+              }
+            ],
+            "poleCount": 4
+          },
+          "status": "PASS"
+        },
+        "checks": {
+          "exitCodeZero": true,
+          "statusPass": true,
+          "notCertificationAuthority": true,
+          "exactPinnedVersion": true,
+          "exactPinnedCommit": true,
+          "cubicSplineTopology": true,
+          "exactIntersections": true
+        }
+      }
+    }
+  ],
+  "status": "SECONDARY_ORACLE_REPORT_COMPLETE"
+}

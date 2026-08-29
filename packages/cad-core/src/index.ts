@@ -9,3 +9,4 @@ export * from "./plot-style.js";
 export * from "./aci-palette.js";
 export * from "./publish.js";
 export * from "./transaction.js";
+export * from "./trim.js";

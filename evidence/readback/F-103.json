@@ -4,8 +4,8 @@
   "kind": "readback",
   "authority": "independent-parser",
   "status": "PASS",
-  "artifactSha256": "813ec0c938acc147160ce6add55c2e598c89a8de9716cf477b0e744f3ffa73df",
-  "observedAt": "2026-08-29T05:35:58.558Z",
+  "artifactSha256": "8bf7591e9d97972929329489ffce503273deb1f66fa76fe0068b4602d6c7981c",
+  "observedAt": "2026-08-29T09:40:12.777Z",
   "workflow": "Production cad-core applies four plot-style states with atomic PAGESETUP/Undo/Redo while independent readers inspect SVG attributes, PDF colors/widths/ExtGState/xref and final KDRAW1 bytes.",
   "result": "Independent read-back proved ACI versus TrueColor CTB behavior, Color/Monochrome/Grayscale conversion, explicit 0.00 mm and 0.70/0.35 mm output, exact hatch transparency, SOLID fill, revision 6 and final persisted monochrome preview state.",
   "artifact": "evidence/artifacts/F-103-readback.json"

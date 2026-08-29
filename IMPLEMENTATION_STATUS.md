@@ -21,6 +21,11 @@
   delete/UNDO, empty production DXF and a fresh AutoCAD 2024 Core Console live workflow.
 - F-016…F-021 MOVE/COPY/ROTATE/SCALE/MIRROR/OFFSET mirrored through owned AutoCAD
   desktop workflows, Chromium, atomic operation logs and independent DXF/KDRAW1 read-back.
+- F-022 TRIM mirrored Quick/Standard, explicit/all cutting edges, Edge/Project,
+  Erase, command/global Undo, Fence/Crossing, physical Shift-Extend, six geometry
+  families, closed bulge-width polylines and layer-safe nested blocks. The same
+  rational SPLINE production DXF passes Chromium, typed AutoCAD COM and an
+  independently parsed AutoCAD-saved DXF; final review is 0 P0 / 0 P1.
 - F-097 Layout tabs mirrored with create/rename/copy-before-source/reorder/delete,
   independent viewport and paper-entity identifiers, atomic Undo/Redo, IndexedDB reload,
   production KDRAW1 read-back and an owned AutoCAD native-DWG reopen workflow.
@@ -62,9 +67,8 @@
 
 ## Explicitly not certified yet
 
-- the new application has **20/133** locally certified parity rows (**15.0% raw / 17.9% weighted**);
-- 2 of the 22 legacy-certified rows still need mirror workflows and evidence here;
-- F-022 TRIM is not implemented in the new kernel;
+- the new application has **23/133** locally certified parity rows (**17.3% raw / 20.7% weighted**);
+- all 22 legacy-certified rows and the first new row F-022 are locally mirrored;
 - spline/NURBS rendering is rejected rather than drawn as a misleading control polygon;
 - Unicode PDF text is rejected until a font-embedding path exists;
 - LibreCAD/FreeCAD fixtures pass locally, but the machine has no signed OS
@@ -74,7 +78,8 @@
 - native DWG/DWT/XREF and PC3/CTB/STB remain deferred;
 - no preview or production deployment has been made.
 
-The next release gate remains parity mirror. F-108 native PC3/CTB/STB remains
-blocked on a licensed adapter. F-111 roundtrip fidelity is the next directly
-testable legacy-certified row, followed by F-114 PDF vector output. F-022 work
-starts after both remaining mirror rows are independently certified.
+The next mandatory gate is the architecture-efficiency wave in
+`ARCHITECTURE_ROADMAP.md`: command workflow extraction, declarative parity-kit,
+source-to-row dependency mapping, content-addressed evidence and tiered CI.
+F-108 native PC3/CTB/STB remains blocked on a licensed adapter. No production
+deployment is authorized.
