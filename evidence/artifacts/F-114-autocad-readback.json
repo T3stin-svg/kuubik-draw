@@ -1,0 +1,288 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-114",
+  "benchmark": "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
+  "authority": "autocad-2024.1.2-live",
+  "sourceRowId": "F-104",
+  "sourceArtifactSha256": "0e9c4cea82aa5e6d2e00babf0c1ead25ac02763811568439262e32685f5cc0e2",
+  "sourceObservedAt": "2026-08-29T05:59:41.685Z",
+  "workflow": "Fresh owned AutoCAD 2024 A3 layout plot through DWG To PDF.pc3, native DWG save/reopen and second plot; both PDFs reopened by pypdf/pdfplumber and rendered by Poppler.",
+  "engineVersion": "24.3s (LMS Tech)",
+  "automationProcessOwned": true,
+  "automationProcessTerminated": true,
+  "processSetRestored": true,
+  "nativePdf": {
+    "label": "native",
+    "path": "KuubikDraw-F104-b23458c1-8891-4d45-bf0a-3223b1d3b9a8.pdf",
+    "pypdf": {
+      "pages": 1,
+      "mediaBox": [
+        0,
+        0,
+        842,
+        1191
+      ],
+      "xobjects": 0,
+      "imageXObjects": 0,
+      "images": 0,
+      "operators": {
+        "cm": 2,
+        "q": 5,
+        "m": 9,
+        "l": 23,
+        "W": 4,
+        "n": 4,
+        "RG": 3,
+        "rg": 3,
+        "gs": 2,
+        "w": 3,
+        "j": 3,
+        "J": 3,
+        "BDC": 4,
+        "S": 5,
+        "EMC": 4,
+        "Q": 5,
+        "Tf": 4,
+        "BT": 4,
+        "Tm": 4,
+        "Tc": 4,
+        "Tz": 4,
+        "Tr": 4,
+        "Tj": 4,
+        "ET": 4,
+        "c": 4
+      },
+      "matrices": [
+        [
+          0.12,
+          0,
+          0,
+          0.12,
+          14,
+          28
+        ],
+        [
+          0,
+          -1,
+          1,
+          0,
+          2986.5,
+          2832.5
+        ]
+      ],
+      "clipPaths": [
+        "m:95.0,5396.0|l:5927.0,5396.0|l:5927.0,9447.0|l:95.0,9447.0|l:95.0,5396.0",
+        "m:95.0,5396.0|l:5927.0,5396.0|l:5927.0,9447.0|l:95.0,9447.0|l:95.0,5396.0",
+        "m:105.0,613.0|l:5927.0,1126.0|l:5927.0,4468.0|l:105.0,4981.0|l:95.0,4981.0|l:95.0,613.0|l:105.0,613.0",
+        "m:0.0,0.0|l:6779.0,0.0|l:6779.0,9448.0|l:0.0,9448.0|l:0.0,0.0"
+      ],
+      "strictParsed": false,
+      "strictError": "PdfReadError: Multiple definitions in dictionary at byte 0x15b2f for key /PageMode"
+    },
+    "pdfplumber": {
+      "pages": 1,
+      "width": 1191,
+      "height": 842,
+      "lines": 3,
+      "rects": 0,
+      "curves": 2,
+      "images": 0,
+      "words": [
+        "VIEW",
+        "1",
+        "SCALE",
+        "1:50",
+        "VIEW",
+        "2",
+        "SCALE",
+        "1:100",
+        "KUUBIK",
+        "F-104",
+        "VECTOR",
+        "LAYOUT",
+        "A3",
+        "420x297",
+        "|",
+        "1:50",
+        "+",
+        "1:100"
+      ]
+    }
+  },
+  "reopenPdf": {
+    "label": "reopen",
+    "path": "KuubikDraw-F104-b23458c1-8891-4d45-bf0a-3223b1d3b9a8.reopen.pdf",
+    "pypdf": {
+      "pages": 1,
+      "mediaBox": [
+        0,
+        0,
+        842,
+        1191
+      ],
+      "xobjects": 0,
+      "imageXObjects": 0,
+      "images": 0,
+      "operators": {
+        "cm": 2,
+        "q": 5,
+        "m": 9,
+        "l": 23,
+        "W": 4,
+        "n": 4,
+        "RG": 3,
+        "rg": 3,
+        "gs": 2,
+        "w": 3,
+        "j": 3,
+        "J": 3,
+        "BDC": 4,
+        "S": 5,
+        "EMC": 4,
+        "Q": 5,
+        "Tf": 4,
+        "BT": 4,
+        "Tm": 4,
+        "Tc": 4,
+        "Tz": 4,
+        "Tr": 4,
+        "Tj": 4,
+        "ET": 4,
+        "c": 4
+      },
+      "matrices": [
+        [
+          0.12,
+          0,
+          0,
+          0.12,
+          14,
+          28
+        ],
+        [
+          0,
+          -1,
+          1,
+          0,
+          2986.5,
+          2832.5
+        ]
+      ],
+      "clipPaths": [
+        "m:95.0,5396.0|l:5927.0,5396.0|l:5927.0,9447.0|l:95.0,9447.0|l:95.0,5396.0",
+        "m:95.0,5396.0|l:5927.0,5396.0|l:5927.0,9447.0|l:95.0,9447.0|l:95.0,5396.0",
+        "m:105.0,613.0|l:5927.0,1126.0|l:5927.0,4468.0|l:105.0,4981.0|l:95.0,4981.0|l:95.0,613.0|l:105.0,613.0",
+        "m:0.0,0.0|l:6779.0,0.0|l:6779.0,9448.0|l:0.0,9448.0|l:0.0,0.0"
+      ],
+      "strictParsed": false,
+      "strictError": "PdfReadError: Multiple definitions in dictionary at byte 0x15b2f for key /PageMode"
+    },
+    "pdfplumber": {
+      "pages": 1,
+      "width": 1191,
+      "height": 842,
+      "lines": 3,
+      "rects": 0,
+      "curves": 2,
+      "images": 0,
+      "words": [
+        "VIEW",
+        "1",
+        "SCALE",
+        "1:50",
+        "VIEW",
+        "2",
+        "SCALE",
+        "1:100",
+        "KUUBIK",
+        "F-104",
+        "VECTOR",
+        "LAYOUT",
+        "A3",
+        "420x297",
+        "|",
+        "1:50",
+        "+",
+        "1:100"
+      ]
+    }
+  },
+  "nativePixels": {
+    "label": "native",
+    "width": 2382,
+    "height": 1684,
+    "mode": "RGB",
+    "sha256": "7ef56c762945b505c78fa074381d529b5f19a3a2aade23476b7bd0afcff3f79c",
+    "counts": {
+      "red": 10415,
+      "redAlphaOnWhite": 827,
+      "blue": 8620,
+      "black": 6104,
+      "nonWhite": 34752,
+      "leftRed": 10415,
+      "rightBlue": 8620
+    },
+    "extrema": [
+      [
+        0,
+        255
+      ],
+      [
+        0,
+        255
+      ],
+      [
+        0,
+        255
+      ]
+    ]
+  },
+  "reopenPixels": {
+    "label": "reopen",
+    "width": 2382,
+    "height": 1684,
+    "mode": "RGB",
+    "sha256": "7ef56c762945b505c78fa074381d529b5f19a3a2aade23476b7bd0afcff3f79c",
+    "counts": {
+      "red": 10415,
+      "redAlphaOnWhite": 827,
+      "blue": 8620,
+      "black": 6104,
+      "nonWhite": 34752,
+      "leftRed": 10415,
+      "rightBlue": 8620
+    },
+    "extrema": [
+      [
+        0,
+        255
+      ],
+      [
+        0,
+        255
+      ],
+      [
+        0,
+        255
+      ]
+    ]
+  },
+  "sourceSha256": {
+    "marker": "a23e0d810a100f1e67088cb010590840febaaed1547c2bd8e97b01d87f0b9b8c",
+    "runner": "501998d1512694aa9192e77163b58d5a758509c6180a70f34f3f3798727a7e37",
+    "f104Runner": "db7915b0a295c7d4a068c582f93a9c855413d360b23ca8ebc22235392012f3c2",
+    "f104Matrix": "22f673938c607ab830aa303849ef84cfbf72331f8dca1f78d9acbe786ffb2c77",
+    "pdfReader": "d29a89cb4a35425198436619356b3497c1a5d107adee669414ae258ec6382025",
+    "pixelReader": "952e09b669d31675204170186a821e85889f748c640f6d439ffa04d71c3314dc"
+  },
+  "checks": {
+    "freshF104LivePass": true,
+    "ownedAndRestored": true,
+    "physicalA3Vector": true,
+    "autoCadCatalogDefectRecorded": true,
+    "popplerSharpAndStable": true,
+    "nativeReopenStable": true
+  },
+  "observedAt": "2026-08-29T05:59:41.695Z",
+  "status": "PASS"
+}

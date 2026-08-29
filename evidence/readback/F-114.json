@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-114",
+  "kind": "readback",
+  "authority": "independent-parser",
+  "status": "PASS",
+  "artifactSha256": "c2570eaac09ee387c97ab86ef95ef30d5f623cf80eff497b274c86e5104d1c4c",
+  "observedAt": "2026-08-29T06:19:21.224Z",
+  "workflow": "The production cad-print package exports the same mixed-size document twice and independent pypdf, pdfplumber and Poppler readers inspect physical sizes, text, exact alpha, transformed paths, border bboxes, colours and raster absence; order, geometry, alpha and a valid referenced image XObject are mutated separately.",
+  "result": "Direct production bytes exactly matched the Chromium download and remained deterministic. The shared semantic contract accepted the baseline and rejected all four strict-parsing mutants for the expected page-order, line geometry, ExtGState alpha or image-XObject reason.",
+  "artifact": "evidence/artifacts/F-114-independent-readback.json"
+}

@@ -1,0 +1,2782 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-114",
+  "source": "Production cad-print mixed-size export repeated independently, mutation-proven and reopened with pypdf/pdfplumber/Poppler",
+  "sourceSha256": {
+    "runner": "b35f1570ebdea31c2ec037abbfc907d99108e965bfa136c800131a6174322e88",
+    "fixture": "0594ef541dd98ab579ddba6c818cd310541c5bc4c49dda9904f2b72af7bcf9ae",
+    "browserEvidence": "9d3f91f7dc9eb918d04e858e080e2b9e3cc4c97b1ce9093c8118e32a47f1a652",
+    "contract": "9124e24fde45e9e54070cf8550ff10091a5c64832751af3c79bdf3e5bd1689d0",
+    "mutantBuilder": "d37ee92b257bf58b5b41b134597a51e439a7dffca7fb15e5adb1ced7ce3b1030",
+    "pdfReader": "145890f5c80180e3e52d377279227a9a5d347d7b12207e51d028608bb0323b8a",
+    "pixelReader": "fd128196353a029e024f52e74f68197ec27c724b39c2ddb3e6f06a6e5fae0d7b",
+    "cadPrint": "9216a0ad409b66b06945dfcd564cc0ca81fd4d45618525e7801863bb8dc3816b",
+    "unitTest": "c9bfd74c7398aa50aa089cd7e402298dac69d9fd1135e5124f50e6269cf0c2d4",
+    "mutationTest": "b334e4b7596f0dd38b108fb6f2d0d82efac7ecf3f2b9063377f5322a5caaa504",
+    "expected": "d310217fee5accecc3898c3a7d4f0fad4543b1b837c9a48f5598f425a298f571",
+    "scope": "3ab21619636d85e189d82e830070958216d74892e554a55e8e01046a967dd964",
+    "packageLock": "9756bf28708c3933c83c0ace8e9dbd9fe4cad9b9d6cec58670758c545f02e584"
+  },
+  "outputs": {
+    "production": {
+      "bytes": 2321,
+      "sha256": "4fb1ce37bf217841a7f7a0b88f82084a92339074d00cc6961a37d3781123f4c1",
+      "summary": {
+        "version": "1.4",
+        "pages": 2,
+        "vectorStrokeCommands": 4,
+        "hasXref": true,
+        "xrefOffsetsValid": true
+      },
+      "pages": [
+        {
+          "layoutId": "layout-f114-a3",
+          "placement": {
+            "paper": {
+              "widthMm": 420,
+              "heightMm": 297,
+              "marginsMm": {
+                "top": 10,
+                "right": 10,
+                "bottom": 10,
+                "left": 10
+              }
+            },
+            "setup": {
+              "mediaName": "ISO_A3",
+              "orientation": "landscape",
+              "plotArea": {
+                "kind": "layout"
+              },
+              "plotScale": {
+                "mode": "custom",
+                "paperUnits": 1,
+                "drawingUnits": 1
+              },
+              "centerPlot": false,
+              "plotOriginMm": {
+                "x": 0,
+                "y": 0
+              },
+              "plotStyle": {
+                "profile": "color",
+                "plotLineweights": true,
+                "plotTransparency": true
+              },
+              "displayPlotStyles": false
+            },
+            "source": {
+              "x": 0,
+              "y": 0,
+              "width": 420,
+              "height": 297
+            },
+            "destination": {
+              "x": 0,
+              "y": 0,
+              "width": 420,
+              "height": 297
+            },
+            "scaleFactor": 1
+          },
+          "skippedHandles": []
+        },
+        {
+          "layoutId": "layout-f114-a4",
+          "placement": {
+            "paper": {
+              "widthMm": 210,
+              "heightMm": 297,
+              "marginsMm": {
+                "top": 10,
+                "right": 10,
+                "bottom": 10,
+                "left": 10
+              }
+            },
+            "setup": {
+              "mediaName": "ISO_A4",
+              "orientation": "portrait",
+              "plotArea": {
+                "kind": "layout"
+              },
+              "plotScale": {
+                "mode": "custom",
+                "paperUnits": 1,
+                "drawingUnits": 1
+              },
+              "centerPlot": false,
+              "plotOriginMm": {
+                "x": 0,
+                "y": 0
+              },
+              "plotStyle": {
+                "profile": "color",
+                "plotLineweights": true,
+                "plotTransparency": true
+              },
+              "displayPlotStyles": false
+            },
+            "source": {
+              "x": 0,
+              "y": 0,
+              "width": 210,
+              "height": 297
+            },
+            "destination": {
+              "x": 0,
+              "y": 0,
+              "width": 210,
+              "height": 297
+            },
+            "scaleFactor": 1
+          },
+          "skippedHandles": []
+        }
+      ]
+    },
+    "deterministic": "4fb1ce37bf217841a7f7a0b88f82084a92339074d00cc6961a37d3781123f4c1",
+    "mutations": {
+      "order": {
+        "sha256": "e4ea32d672f0e7ae08c65bf6ff29805871fe70dfd8bf480737b59d56ae87fb97",
+        "strictParsed": true,
+        "rejected": true,
+        "reasons": [
+          "page-1-size",
+          "page-2-size",
+          "model-line-geometry-alpha",
+          "model-circle-bezier",
+          "page-1-border-vector-bbox",
+          "page-2-border-vector-bbox"
+        ]
+      },
+      "geometry": {
+        "sha256": "85cfabc07d9979717a9a9702711d6c0a8dfa81f5fc7519aa150face39f4b2b08",
+        "strictParsed": true,
+        "rejected": true,
+        "reasons": [
+          "model-line-geometry-alpha"
+        ]
+      },
+      "alpha": {
+        "sha256": "885cae249bc638116c49a4929ff56a5a6b5d1497744f42c68947dfe46d55ce8a",
+        "strictParsed": true,
+        "rejected": true,
+        "reasons": [
+          "extgstate-alpha",
+          "model-line-geometry-alpha"
+        ]
+      },
+      "raster": {
+        "sha256": "cf966f4b55d18fb2d01a6590e244e4ea1e746b4b5338f62c5fecc2608e943b1a",
+        "strictParsed": true,
+        "rejected": true,
+        "reasons": [
+          "page-1-raster"
+        ]
+      }
+    }
+  },
+  "expectedContract": {
+    "featureId": "F-114",
+    "benchmark": "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
+    "kuubikPdf": {
+      "strict": true,
+      "pages": 2,
+      "geometryTolerancePt": 0.01,
+      "renderTolerancePx": 2,
+      "alphaTolerance": 0.000001,
+      "pageSizesPt": [
+        [
+          1190.551181,
+          841.889764
+        ],
+        [
+          595.275591,
+          841.889764
+        ]
+      ],
+      "pageRotations": [
+        0,
+        0
+      ],
+      "maxImageXObjects": 0,
+      "requiredText": [
+        "F-114 A3 LAYOUT",
+        "F-114 A4 DETAIL",
+        "KUUBIK F-114 VECTOR PDF"
+      ],
+      "requiredColours": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "transparency": {
+        "page": 1,
+        "resource": "/GS60",
+        "strokeAlpha": 0.6,
+        "fillAlpha": 0.6
+      },
+      "modelLine": {
+        "page": 1,
+        "strokeColour": [
+          1,
+          0,
+          0
+        ],
+        "gState": "/GS60",
+        "segments": [
+          {
+            "operator": "m",
+            "points": [
+              [
+                295.205704,
+                220.898293
+              ]
+            ]
+          },
+          {
+            "operator": "l",
+            "points": [
+              [
+                895.345616,
+                620.991569
+              ]
+            ]
+          }
+        ],
+        "bboxPt": [
+          295.205704,
+          220.898293,
+          895.345616,
+          620.991569
+        ]
+      },
+      "modelCircle": {
+        "page": 2,
+        "strokeColour": [
+          0,
+          0,
+          1
+        ],
+        "gState": "/GS100",
+        "centerPt": [
+          297.649979,
+          420.944931
+        ],
+        "radiusPt": 250.058297,
+        "bezierKappa": 0.55228475,
+        "curveSegments": 4,
+        "bboxPt": [
+          47.591682,
+          170.886634,
+          547.708276,
+          671.003228
+        ]
+      },
+      "borders": [
+        {
+          "page": 1,
+          "bboxPt": [
+            14.17323,
+            14.17323,
+            1176.37809,
+            827.716632
+          ],
+          "renderedBlackBBoxPx": [
+            28,
+            28,
+            2352,
+            1655
+          ]
+        },
+        {
+          "page": 2,
+          "bboxPt": [
+            14.17323,
+            14.17323,
+            581.10243,
+            827.716632
+          ],
+          "renderedBlackBBoxPx": [
+            28,
+            28,
+            1162,
+            1655
+          ]
+        }
+      ]
+    },
+    "autoCadPdf": {
+      "strict": false,
+      "pages": 1,
+      "physicalPaper": "ISO A3 landscape",
+      "maxImageXObjects": 0,
+      "requiresVectorOperators": true,
+      "requiresPopplerRender": true
+    }
+  },
+  "semanticContract": {
+    "pass": true,
+    "reasons": []
+  },
+  "independentPdfReadback": {
+    "readers": {
+      "pypdf": "6.10.0",
+      "pdfplumber": "0.11.9"
+    },
+    "documents": {
+      "independent": {
+        "label": "independent",
+        "path": "F-114-independent-vector.pdf",
+        "bytes": 2321,
+        "sha256": "4fb1ce37bf217841a7f7a0b88f82084a92339074d00cc6961a37d3781123f4c1",
+        "pdfHeader": "%PDF-1.4",
+        "pages": 2,
+        "strictParsed": true,
+        "strictError": null,
+        "pageDetails": [
+          {
+            "index": 1,
+            "mediaBox": [
+              0,
+              0,
+              1190.551181,
+              841.889764
+            ],
+            "rotation": 0,
+            "text": "F-114 A3 MODEL VECTOR\nKUUBIK F-114 VECTOR PDF\nF-114 A3 LAYOUT",
+            "words": [
+              "F-114",
+              "A3",
+              "MODEL",
+              "VECTOR",
+              "KUUBIK",
+              "F-114",
+              "VECTOR",
+              "PDF",
+              "F-114",
+              "A3",
+              "LAYOUT"
+            ],
+            "operators": {
+              "q": 7,
+              "re": 2,
+              "W": 2,
+              "n": 2,
+              "cm": 2,
+              "RG": 5,
+              "rg": 5,
+              "w": 5,
+              "gs": 5,
+              "m": 2,
+              "l": 4,
+              "S": 2,
+              "Q": 7,
+              "BT": 3,
+              "Tf": 3,
+              "Td": 3,
+              "Tj": 3,
+              "ET": 3,
+              "h": 1
+            },
+            "strokeColors": [
+              [
+                1,
+                0,
+                0
+              ],
+              [
+                1,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0
+              ]
+            ],
+            "imageXObjects": 0,
+            "extGStates": 2,
+            "extGStateValues": {
+              "/GS100": {
+                "strokeAlpha": 1,
+                "fillAlpha": 1
+              },
+              "/GS60": {
+                "strokeAlpha": 0.6,
+                "fillAlpha": 0.6
+              }
+            },
+            "strokedPaths": [
+              {
+                "strokeColor": [
+                  1,
+                  0,
+                  0
+                ],
+                "fillColor": [
+                  1,
+                  0,
+                  0
+                ],
+                "gState": "/GS60",
+                "strokeAlpha": 0.6,
+                "fillAlpha": 0.6,
+                "segments": [
+                  {
+                    "operator": "m",
+                    "points": [
+                      [
+                        295.205704,
+                        220.898293
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "l",
+                    "points": [
+                      [
+                        895.345616,
+                        620.991569
+                      ]
+                    ]
+                  }
+                ],
+                "bbox": [
+                  295.205704,
+                  220.898293,
+                  895.345616,
+                  620.991569
+                ],
+                "insideMediaBox": true
+              },
+              {
+                "strokeColor": [
+                  0,
+                  0,
+                  0
+                ],
+                "fillColor": [
+                  0,
+                  0,
+                  0
+                ],
+                "gState": "/GS100",
+                "strokeAlpha": 1,
+                "fillAlpha": 1,
+                "segments": [
+                  {
+                    "operator": "m",
+                    "points": [
+                      [
+                        14.17323,
+                        14.17323
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "l",
+                    "points": [
+                      [
+                        1176.37809,
+                        14.17323
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "l",
+                    "points": [
+                      [
+                        1176.37809,
+                        827.716632
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "l",
+                    "points": [
+                      [
+                        14.17323,
+                        827.716632
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "h",
+                    "points": []
+                  }
+                ],
+                "bbox": [
+                  14.17323,
+                  14.17323,
+                  1176.37809,
+                  827.716632
+                ],
+                "insideMediaBox": true
+              }
+            ],
+            "plumberImages": 0,
+            "plumberLines": 1,
+            "plumberCurves": 0,
+            "plumberChars": 59
+          },
+          {
+            "index": 2,
+            "mediaBox": [
+              0,
+              0,
+              595.275591,
+              841.889764
+            ],
+            "rotation": 0,
+            "text": "F-114 A4 MODEL VECTOR\nKUUBIK F-114 VECTOR PDF\nF-114 A4 DETAIL",
+            "words": [
+              "F-114",
+              "A4",
+              "MODEL",
+              "VECTOR",
+              "KUUBIK",
+              "F-114",
+              "VECTOR",
+              "PDF",
+              "F-114",
+              "A4",
+              "DETAIL"
+            ],
+            "operators": {
+              "q": 7,
+              "re": 2,
+              "W": 2,
+              "n": 2,
+              "cm": 2,
+              "RG": 5,
+              "rg": 5,
+              "w": 5,
+              "gs": 5,
+              "m": 2,
+              "c": 4,
+              "S": 2,
+              "Q": 7,
+              "BT": 3,
+              "Tf": 3,
+              "Td": 3,
+              "Tj": 3,
+              "ET": 3,
+              "l": 3,
+              "h": 1
+            },
+            "strokeColors": [
+              [
+                0,
+                0,
+                1
+              ],
+              [
+                0,
+                0,
+                1
+              ],
+              [
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0
+              ]
+            ],
+            "imageXObjects": 0,
+            "extGStates": 2,
+            "extGStateValues": {
+              "/GS100": {
+                "strokeAlpha": 1,
+                "fillAlpha": 1
+              },
+              "/GS60": {
+                "strokeAlpha": 0.6,
+                "fillAlpha": 0.6
+              }
+            },
+            "strokedPaths": [
+              {
+                "strokeColor": [
+                  0,
+                  0,
+                  1
+                ],
+                "fillColor": [
+                  0,
+                  0,
+                  1
+                ],
+                "gState": "/GS100",
+                "strokeAlpha": 1,
+                "fillAlpha": 1,
+                "segments": [
+                  {
+                    "operator": "m",
+                    "points": [
+                      [
+                        547.708276,
+                        420.944931
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "c",
+                    "points": [
+                      [
+                        547.708276,
+                        559.048315
+                      ],
+                      [
+                        435.753363,
+                        671.003228
+                      ],
+                      [
+                        297.649979,
+                        671.003228
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "c",
+                    "points": [
+                      [
+                        159.546595,
+                        671.003228
+                      ],
+                      [
+                        47.591682,
+                        559.048315
+                      ],
+                      [
+                        47.591682,
+                        420.944931
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "c",
+                    "points": [
+                      [
+                        47.591682,
+                        282.841547
+                      ],
+                      [
+                        159.546595,
+                        170.886634
+                      ],
+                      [
+                        297.649979,
+                        170.886634
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "c",
+                    "points": [
+                      [
+                        435.753363,
+                        170.886634
+                      ],
+                      [
+                        547.708276,
+                        282.841547
+                      ],
+                      [
+                        547.708276,
+                        420.944931
+                      ]
+                    ]
+                  }
+                ],
+                "bbox": [
+                  47.591682,
+                  170.886634,
+                  547.708276,
+                  671.003228
+                ],
+                "insideMediaBox": true
+              },
+              {
+                "strokeColor": [
+                  0,
+                  0,
+                  0
+                ],
+                "fillColor": [
+                  0,
+                  0,
+                  0
+                ],
+                "gState": "/GS100",
+                "strokeAlpha": 1,
+                "fillAlpha": 1,
+                "segments": [
+                  {
+                    "operator": "m",
+                    "points": [
+                      [
+                        14.17323,
+                        14.17323
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "l",
+                    "points": [
+                      [
+                        581.10243,
+                        14.17323
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "l",
+                    "points": [
+                      [
+                        581.10243,
+                        827.716632
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "l",
+                    "points": [
+                      [
+                        14.17323,
+                        827.716632
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "h",
+                    "points": []
+                  }
+                ],
+                "bbox": [
+                  14.17323,
+                  14.17323,
+                  581.10243,
+                  827.716632
+                ],
+                "insideMediaBox": true
+              }
+            ],
+            "plumberImages": 0,
+            "plumberLines": 0,
+            "plumberCurves": 1,
+            "plumberChars": 59
+          }
+        ]
+      },
+      "order": {
+        "label": "order",
+        "path": "F-114-order-mutant.pdf",
+        "bytes": 2321,
+        "sha256": "e4ea32d672f0e7ae08c65bf6ff29805871fe70dfd8bf480737b59d56ae87fb97",
+        "pdfHeader": "%PDF-1.4",
+        "pages": 2,
+        "strictParsed": true,
+        "strictError": null,
+        "pageDetails": [
+          {
+            "index": 1,
+            "mediaBox": [
+              0,
+              0,
+              595.275591,
+              841.889764
+            ],
+            "rotation": 0,
+            "text": "F-114 A4 MODEL VECTOR\nKUUBIK F-114 VECTOR PDF\nF-114 A4 DETAIL",
+            "words": [
+              "F-114",
+              "A4",
+              "MODEL",
+              "VECTOR",
+              "KUUBIK",
+              "F-114",
+              "VECTOR",
+              "PDF",
+              "F-114",
+              "A4",
+              "DETAIL"
+            ],
+            "operators": {
+              "q": 7,
+              "re": 2,
+              "W": 2,
+              "n": 2,
+              "cm": 2,
+              "RG": 5,
+              "rg": 5,
+              "w": 5,
+              "gs": 5,
+              "m": 2,
+              "c": 4,
+              "S": 2,
+              "Q": 7,
+              "BT": 3,
+              "Tf": 3,
+              "Td": 3,
+              "Tj": 3,
+              "ET": 3,
+              "l": 3,
+              "h": 1
+            },
+            "strokeColors": [
+              [
+                0,
+                0,
+                1
+              ],
+              [
+                0,
+                0,
+                1
+              ],
+              [
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0
+              ]
+            ],
+            "imageXObjects": 0,
+            "extGStates": 2,
+            "extGStateValues": {
+              "/GS100": {
+                "strokeAlpha": 1,
+                "fillAlpha": 1
+              },
+              "/GS60": {
+                "strokeAlpha": 0.6,
+                "fillAlpha": 0.6
+              }
+            },
+            "strokedPaths": [
+              {
+                "strokeColor": [
+                  0,
+                  0,
+                  1
+                ],
+                "fillColor": [
+                  0,
+                  0,
+                  1
+                ],
+                "gState": "/GS100",
+                "strokeAlpha": 1,
+                "fillAlpha": 1,
+                "segments": [
+                  {
+                    "operator": "m",
+                    "points": [
+                      [
+                        547.708276,
+                        420.944931
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "c",
+                    "points": [
+                      [
+                        547.708276,
+                        559.048315
+                      ],
+                      [
+                        435.753363,
+                        671.003228
+                      ],
+                      [
+                        297.649979,
+                        671.003228
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "c",
+                    "points": [
+                      [
+                        159.546595,
+                        671.003228
+                      ],
+                      [
+                        47.591682,
+                        559.048315
+                      ],
+                      [
+                        47.591682,
+                        420.944931
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "c",
+                    "points": [
+                      [
+                        47.591682,
+                        282.841547
+                      ],
+                      [
+                        159.546595,
+                        170.886634
+                      ],
+                      [
+                        297.649979,
+                        170.886634
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "c",
+                    "points": [
+                      [
+                        435.753363,
+                        170.886634
+                      ],
+                      [
+                        547.708276,
+                        282.841547
+                      ],
+                      [
+                        547.708276,
+                        420.944931
+                      ]
+                    ]
+                  }
+                ],
+                "bbox": [
+                  47.591682,
+                  170.886634,
+                  547.708276,
+                  671.003228
+                ],
+                "insideMediaBox": true
+              },
+              {
+                "strokeColor": [
+                  0,
+                  0,
+                  0
+                ],
+                "fillColor": [
+                  0,
+                  0,
+                  0
+                ],
+                "gState": "/GS100",
+                "strokeAlpha": 1,
+                "fillAlpha": 1,
+                "segments": [
+                  {
+                    "operator": "m",
+                    "points": [
+                      [
+                        14.17323,
+                        14.17323
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "l",
+                    "points": [
+                      [
+                        581.10243,
+                        14.17323
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "l",
+                    "points": [
+                      [
+                        581.10243,
+                        827.716632
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "l",
+                    "points": [
+                      [
+                        14.17323,
+                        827.716632
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "h",
+                    "points": []
+                  }
+                ],
+                "bbox": [
+                  14.17323,
+                  14.17323,
+                  581.10243,
+                  827.716632
+                ],
+                "insideMediaBox": true
+              }
+            ],
+            "plumberImages": 0,
+            "plumberLines": 0,
+            "plumberCurves": 1,
+            "plumberChars": 59
+          },
+          {
+            "index": 2,
+            "mediaBox": [
+              0,
+              0,
+              1190.551181,
+              841.889764
+            ],
+            "rotation": 0,
+            "text": "F-114 A3 MODEL VECTOR\nKUUBIK F-114 VECTOR PDF\nF-114 A3 LAYOUT",
+            "words": [
+              "F-114",
+              "A3",
+              "MODEL",
+              "VECTOR",
+              "KUUBIK",
+              "F-114",
+              "VECTOR",
+              "PDF",
+              "F-114",
+              "A3",
+              "LAYOUT"
+            ],
+            "operators": {
+              "q": 7,
+              "re": 2,
+              "W": 2,
+              "n": 2,
+              "cm": 2,
+              "RG": 5,
+              "rg": 5,
+              "w": 5,
+              "gs": 5,
+              "m": 2,
+              "l": 4,
+              "S": 2,
+              "Q": 7,
+              "BT": 3,
+              "Tf": 3,
+              "Td": 3,
+              "Tj": 3,
+              "ET": 3,
+              "h": 1
+            },
+            "strokeColors": [
+              [
+                1,
+                0,
+                0
+              ],
+              [
+                1,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0
+              ]
+            ],
+            "imageXObjects": 0,
+            "extGStates": 2,
+            "extGStateValues": {
+              "/GS100": {
+                "strokeAlpha": 1,
+                "fillAlpha": 1
+              },
+              "/GS60": {
+                "strokeAlpha": 0.6,
+                "fillAlpha": 0.6
+              }
+            },
+            "strokedPaths": [
+              {
+                "strokeColor": [
+                  1,
+                  0,
+                  0
+                ],
+                "fillColor": [
+                  1,
+                  0,
+                  0
+                ],
+                "gState": "/GS60",
+                "strokeAlpha": 0.6,
+                "fillAlpha": 0.6,
+                "segments": [
+                  {
+                    "operator": "m",
+                    "points": [
+                      [
+                        295.205704,
+                        220.898293
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "l",
+                    "points": [
+                      [
+                        895.345616,
+                        620.991569
+                      ]
+                    ]
+                  }
+                ],
+                "bbox": [
+                  295.205704,
+                  220.898293,
+                  895.345616,
+                  620.991569
+                ],
+                "insideMediaBox": true
+              },
+              {
+                "strokeColor": [
+                  0,
+                  0,
+                  0
+                ],
+                "fillColor": [
+                  0,
+                  0,
+                  0
+                ],
+                "gState": "/GS100",
+                "strokeAlpha": 1,
+                "fillAlpha": 1,
+                "segments": [
+                  {
+                    "operator": "m",
+                    "points": [
+                      [
+                        14.17323,
+                        14.17323
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "l",
+                    "points": [
+                      [
+                        1176.37809,
+                        14.17323
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "l",
+                    "points": [
+                      [
+                        1176.37809,
+                        827.716632
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "l",
+                    "points": [
+                      [
+                        14.17323,
+                        827.716632
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "h",
+                    "points": []
+                  }
+                ],
+                "bbox": [
+                  14.17323,
+                  14.17323,
+                  1176.37809,
+                  827.716632
+                ],
+                "insideMediaBox": true
+              }
+            ],
+            "plumberImages": 0,
+            "plumberLines": 1,
+            "plumberCurves": 0,
+            "plumberChars": 59
+          }
+        ]
+      },
+      "geometry": {
+        "label": "geometry",
+        "path": "F-114-geometry-mutant.pdf",
+        "bytes": 2321,
+        "sha256": "85cfabc07d9979717a9a9702711d6c0a8dfa81f5fc7519aa150face39f4b2b08",
+        "pdfHeader": "%PDF-1.4",
+        "pages": 2,
+        "strictParsed": true,
+        "strictError": null,
+        "pageDetails": [
+          {
+            "index": 1,
+            "mediaBox": [
+              0,
+              0,
+              1190.551181,
+              841.889764
+            ],
+            "rotation": 0,
+            "text": "F-114 A3 MODEL VECTOR\nKUUBIK F-114 VECTOR PDF\nF-114 A3 LAYOUT",
+            "words": [
+              "F-114",
+              "A3",
+              "MODEL",
+              "VECTOR",
+              "KUUBIK",
+              "F-114",
+              "VECTOR",
+              "PDF",
+              "F-114",
+              "A3",
+              "LAYOUT"
+            ],
+            "operators": {
+              "q": 7,
+              "re": 2,
+              "W": 2,
+              "n": 2,
+              "cm": 2,
+              "RG": 5,
+              "rg": 5,
+              "w": 5,
+              "gs": 5,
+              "m": 2,
+              "l": 4,
+              "S": 2,
+              "Q": 7,
+              "BT": 3,
+              "Tf": 3,
+              "Td": 3,
+              "Tj": 3,
+              "ET": 3,
+              "h": 1
+            },
+            "strokeColors": [
+              [
+                1,
+                0,
+                0
+              ],
+              [
+                1,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0
+              ]
+            ],
+            "imageXObjects": 0,
+            "extGStates": 2,
+            "extGStateValues": {
+              "/GS100": {
+                "strokeAlpha": 1,
+                "fillAlpha": 1
+              },
+              "/GS60": {
+                "strokeAlpha": 0.6,
+                "fillAlpha": 0.6
+              }
+            },
+            "strokedPaths": [
+              {
+                "strokeColor": [
+                  1,
+                  0,
+                  0
+                ],
+                "fillColor": [
+                  1,
+                  0,
+                  0
+                ],
+                "gState": "/GS60",
+                "strokeAlpha": 0.6,
+                "fillAlpha": 0.6,
+                "segments": [
+                  {
+                    "operator": "m",
+                    "points": [
+                      [
+                        295.205704,
+                        220.898293
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "l",
+                    "points": [
+                      [
+                        945.357276,
+                        620.991569
+                      ]
+                    ]
+                  }
+                ],
+                "bbox": [
+                  295.205704,
+                  220.898293,
+                  945.357276,
+                  620.991569
+                ],
+                "insideMediaBox": true
+              },
+              {
+                "strokeColor": [
+                  0,
+                  0,
+                  0
+                ],
+                "fillColor": [
+                  0,
+                  0,
+                  0
+                ],
+                "gState": "/GS100",
+                "strokeAlpha": 1,
+                "fillAlpha": 1,
+                "segments": [
+                  {
+                    "operator": "m",
+                    "points": [
+                      [
+                        14.17323,
+                        14.17323
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "l",
+                    "points": [
+                      [
+                        1176.37809,
+                        14.17323
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "l",
+                    "points": [
+                      [
+                        1176.37809,
+                        827.716632
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "l",
+                    "points": [
+                      [
+                        14.17323,
+                        827.716632
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "h",
+                    "points": []
+                  }
+                ],
+                "bbox": [
+                  14.17323,
+                  14.17323,
+                  1176.37809,
+                  827.716632
+                ],
+                "insideMediaBox": true
+              }
+            ],
+            "plumberImages": 0,
+            "plumberLines": 1,
+            "plumberCurves": 0,
+            "plumberChars": 59
+          },
+          {
+            "index": 2,
+            "mediaBox": [
+              0,
+              0,
+              595.275591,
+              841.889764
+            ],
+            "rotation": 0,
+            "text": "F-114 A4 MODEL VECTOR\nKUUBIK F-114 VECTOR PDF\nF-114 A4 DETAIL",
+            "words": [
+              "F-114",
+              "A4",
+              "MODEL",
+              "VECTOR",
+              "KUUBIK",
+              "F-114",
+              "VECTOR",
+              "PDF",
+              "F-114",
+              "A4",
+              "DETAIL"
+            ],
+            "operators": {
+              "q": 7,
+              "re": 2,
+              "W": 2,
+              "n": 2,
+              "cm": 2,
+              "RG": 5,
+              "rg": 5,
+              "w": 5,
+              "gs": 5,
+              "m": 2,
+              "c": 4,
+              "S": 2,
+              "Q": 7,
+              "BT": 3,
+              "Tf": 3,
+              "Td": 3,
+              "Tj": 3,
+              "ET": 3,
+              "l": 3,
+              "h": 1
+            },
+            "strokeColors": [
+              [
+                0,
+                0,
+                1
+              ],
+              [
+                0,
+                0,
+                1
+              ],
+              [
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0
+              ]
+            ],
+            "imageXObjects": 0,
+            "extGStates": 2,
+            "extGStateValues": {
+              "/GS100": {
+                "strokeAlpha": 1,
+                "fillAlpha": 1
+              },
+              "/GS60": {
+                "strokeAlpha": 0.6,
+                "fillAlpha": 0.6
+              }
+            },
+            "strokedPaths": [
+              {
+                "strokeColor": [
+                  0,
+                  0,
+                  1
+                ],
+                "fillColor": [
+                  0,
+                  0,
+                  1
+                ],
+                "gState": "/GS100",
+                "strokeAlpha": 1,
+                "fillAlpha": 1,
+                "segments": [
+                  {
+                    "operator": "m",
+                    "points": [
+                      [
+                        547.708276,
+                        420.944931
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "c",
+                    "points": [
+                      [
+                        547.708276,
+                        559.048315
+                      ],
+                      [
+                        435.753363,
+                        671.003228
+                      ],
+                      [
+                        297.649979,
+                        671.003228
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "c",
+                    "points": [
+                      [
+                        159.546595,
+                        671.003228
+                      ],
+                      [
+                        47.591682,
+                        559.048315
+                      ],
+                      [
+                        47.591682,
+                        420.944931
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "c",
+                    "points": [
+                      [
+                        47.591682,
+                        282.841547
+                      ],
+                      [
+                        159.546595,
+                        170.886634
+                      ],
+                      [
+                        297.649979,
+                        170.886634
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "c",
+                    "points": [
+                      [
+                        435.753363,
+                        170.886634
+                      ],
+                      [
+                        547.708276,
+                        282.841547
+                      ],
+                      [
+                        547.708276,
+                        420.944931
+                      ]
+                    ]
+                  }
+                ],
+                "bbox": [
+                  47.591682,
+                  170.886634,
+                  547.708276,
+                  671.003228
+                ],
+                "insideMediaBox": true
+              },
+              {
+                "strokeColor": [
+                  0,
+                  0,
+                  0
+                ],
+                "fillColor": [
+                  0,
+                  0,
+                  0
+                ],
+                "gState": "/GS100",
+                "strokeAlpha": 1,
+                "fillAlpha": 1,
+                "segments": [
+                  {
+                    "operator": "m",
+                    "points": [
+                      [
+                        14.17323,
+                        14.17323
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "l",
+                    "points": [
+                      [
+                        581.10243,
+                        14.17323
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "l",
+                    "points": [
+                      [
+                        581.10243,
+                        827.716632
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "l",
+                    "points": [
+                      [
+                        14.17323,
+                        827.716632
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "h",
+                    "points": []
+                  }
+                ],
+                "bbox": [
+                  14.17323,
+                  14.17323,
+                  581.10243,
+                  827.716632
+                ],
+                "insideMediaBox": true
+              }
+            ],
+            "plumberImages": 0,
+            "plumberLines": 0,
+            "plumberCurves": 1,
+            "plumberChars": 59
+          }
+        ]
+      },
+      "alpha": {
+        "label": "alpha",
+        "path": "F-114-alpha-mutant.pdf",
+        "bytes": 2323,
+        "sha256": "885cae249bc638116c49a4929ff56a5a6b5d1497744f42c68947dfe46d55ce8a",
+        "pdfHeader": "%PDF-1.4",
+        "pages": 2,
+        "strictParsed": true,
+        "strictError": null,
+        "pageDetails": [
+          {
+            "index": 1,
+            "mediaBox": [
+              0,
+              0,
+              1190.551181,
+              841.889764
+            ],
+            "rotation": 0,
+            "text": "F-114 A3 MODEL VECTOR\nKUUBIK F-114 VECTOR PDF\nF-114 A3 LAYOUT",
+            "words": [
+              "F-114",
+              "A3",
+              "MODEL",
+              "VECTOR",
+              "KUUBIK",
+              "F-114",
+              "VECTOR",
+              "PDF",
+              "F-114",
+              "A3",
+              "LAYOUT"
+            ],
+            "operators": {
+              "q": 7,
+              "re": 2,
+              "W": 2,
+              "n": 2,
+              "cm": 2,
+              "RG": 5,
+              "rg": 5,
+              "w": 5,
+              "gs": 5,
+              "m": 2,
+              "l": 4,
+              "S": 2,
+              "Q": 7,
+              "BT": 3,
+              "Tf": 3,
+              "Td": 3,
+              "Tj": 3,
+              "ET": 3,
+              "h": 1
+            },
+            "strokeColors": [
+              [
+                1,
+                0,
+                0
+              ],
+              [
+                1,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0
+              ]
+            ],
+            "imageXObjects": 0,
+            "extGStates": 2,
+            "extGStateValues": {
+              "/GS100": {
+                "strokeAlpha": 1,
+                "fillAlpha": 1
+              },
+              "/GS25": {
+                "strokeAlpha": 0.25,
+                "fillAlpha": 0.25
+              }
+            },
+            "strokedPaths": [
+              {
+                "strokeColor": [
+                  1,
+                  0,
+                  0
+                ],
+                "fillColor": [
+                  1,
+                  0,
+                  0
+                ],
+                "gState": "/GS25",
+                "strokeAlpha": 0.25,
+                "fillAlpha": 0.25,
+                "segments": [
+                  {
+                    "operator": "m",
+                    "points": [
+                      [
+                        295.205704,
+                        220.898293
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "l",
+                    "points": [
+                      [
+                        895.345616,
+                        620.991569
+                      ]
+                    ]
+                  }
+                ],
+                "bbox": [
+                  295.205704,
+                  220.898293,
+                  895.345616,
+                  620.991569
+                ],
+                "insideMediaBox": true
+              },
+              {
+                "strokeColor": [
+                  0,
+                  0,
+                  0
+                ],
+                "fillColor": [
+                  0,
+                  0,
+                  0
+                ],
+                "gState": "/GS100",
+                "strokeAlpha": 1,
+                "fillAlpha": 1,
+                "segments": [
+                  {
+                    "operator": "m",
+                    "points": [
+                      [
+                        14.17323,
+                        14.17323
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "l",
+                    "points": [
+                      [
+                        1176.37809,
+                        14.17323
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "l",
+                    "points": [
+                      [
+                        1176.37809,
+                        827.716632
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "l",
+                    "points": [
+                      [
+                        14.17323,
+                        827.716632
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "h",
+                    "points": []
+                  }
+                ],
+                "bbox": [
+                  14.17323,
+                  14.17323,
+                  1176.37809,
+                  827.716632
+                ],
+                "insideMediaBox": true
+              }
+            ],
+            "plumberImages": 0,
+            "plumberLines": 1,
+            "plumberCurves": 0,
+            "plumberChars": 59
+          },
+          {
+            "index": 2,
+            "mediaBox": [
+              0,
+              0,
+              595.275591,
+              841.889764
+            ],
+            "rotation": 0,
+            "text": "F-114 A4 MODEL VECTOR\nKUUBIK F-114 VECTOR PDF\nF-114 A4 DETAIL",
+            "words": [
+              "F-114",
+              "A4",
+              "MODEL",
+              "VECTOR",
+              "KUUBIK",
+              "F-114",
+              "VECTOR",
+              "PDF",
+              "F-114",
+              "A4",
+              "DETAIL"
+            ],
+            "operators": {
+              "q": 7,
+              "re": 2,
+              "W": 2,
+              "n": 2,
+              "cm": 2,
+              "RG": 5,
+              "rg": 5,
+              "w": 5,
+              "gs": 5,
+              "m": 2,
+              "c": 4,
+              "S": 2,
+              "Q": 7,
+              "BT": 3,
+              "Tf": 3,
+              "Td": 3,
+              "Tj": 3,
+              "ET": 3,
+              "l": 3,
+              "h": 1
+            },
+            "strokeColors": [
+              [
+                0,
+                0,
+                1
+              ],
+              [
+                0,
+                0,
+                1
+              ],
+              [
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0
+              ]
+            ],
+            "imageXObjects": 0,
+            "extGStates": 2,
+            "extGStateValues": {
+              "/GS100": {
+                "strokeAlpha": 1,
+                "fillAlpha": 1
+              },
+              "/GS25": {
+                "strokeAlpha": 0.25,
+                "fillAlpha": 0.25
+              }
+            },
+            "strokedPaths": [
+              {
+                "strokeColor": [
+                  0,
+                  0,
+                  1
+                ],
+                "fillColor": [
+                  0,
+                  0,
+                  1
+                ],
+                "gState": "/GS100",
+                "strokeAlpha": 1,
+                "fillAlpha": 1,
+                "segments": [
+                  {
+                    "operator": "m",
+                    "points": [
+                      [
+                        547.708276,
+                        420.944931
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "c",
+                    "points": [
+                      [
+                        547.708276,
+                        559.048315
+                      ],
+                      [
+                        435.753363,
+                        671.003228
+                      ],
+                      [
+                        297.649979,
+                        671.003228
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "c",
+                    "points": [
+                      [
+                        159.546595,
+                        671.003228
+                      ],
+                      [
+                        47.591682,
+                        559.048315
+                      ],
+                      [
+                        47.591682,
+                        420.944931
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "c",
+                    "points": [
+                      [
+                        47.591682,
+                        282.841547
+                      ],
+                      [
+                        159.546595,
+                        170.886634
+                      ],
+                      [
+                        297.649979,
+                        170.886634
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "c",
+                    "points": [
+                      [
+                        435.753363,
+                        170.886634
+                      ],
+                      [
+                        547.708276,
+                        282.841547
+                      ],
+                      [
+                        547.708276,
+                        420.944931
+                      ]
+                    ]
+                  }
+                ],
+                "bbox": [
+                  47.591682,
+                  170.886634,
+                  547.708276,
+                  671.003228
+                ],
+                "insideMediaBox": true
+              },
+              {
+                "strokeColor": [
+                  0,
+                  0,
+                  0
+                ],
+                "fillColor": [
+                  0,
+                  0,
+                  0
+                ],
+                "gState": "/GS100",
+                "strokeAlpha": 1,
+                "fillAlpha": 1,
+                "segments": [
+                  {
+                    "operator": "m",
+                    "points": [
+                      [
+                        14.17323,
+                        14.17323
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "l",
+                    "points": [
+                      [
+                        581.10243,
+                        14.17323
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "l",
+                    "points": [
+                      [
+                        581.10243,
+                        827.716632
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "l",
+                    "points": [
+                      [
+                        14.17323,
+                        827.716632
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "h",
+                    "points": []
+                  }
+                ],
+                "bbox": [
+                  14.17323,
+                  14.17323,
+                  581.10243,
+                  827.716632
+                ],
+                "insideMediaBox": true
+              }
+            ],
+            "plumberImages": 0,
+            "plumberLines": 0,
+            "plumberCurves": 1,
+            "plumberChars": 59
+          }
+        ]
+      },
+      "raster": {
+        "label": "raster",
+        "path": "F-114-raster-mutant.pdf",
+        "bytes": 2517,
+        "sha256": "cf966f4b55d18fb2d01a6590e244e4ea1e746b4b5338f62c5fecc2608e943b1a",
+        "pdfHeader": "%PDF-1.4",
+        "pages": 2,
+        "strictParsed": true,
+        "strictError": null,
+        "pageDetails": [
+          {
+            "index": 1,
+            "mediaBox": [
+              0,
+              0,
+              1190.551181,
+              841.889764
+            ],
+            "rotation": 0,
+            "text": "F-114 A3 MODEL VECTOR\nKUUBIK F-114 VECTOR PDF\nF-114 A3 LAYOUT",
+            "words": [
+              "F-114",
+              "A3",
+              "MODEL",
+              "VECTOR",
+              "KUUBIK",
+              "F-114",
+              "VECTOR",
+              "PDF",
+              "F-114",
+              "A3",
+              "LAYOUT"
+            ],
+            "operators": {
+              "q": 7,
+              "re": 2,
+              "W": 2,
+              "n": 2,
+              "cm": 2,
+              "RG": 5,
+              "rg": 5,
+              "w": 5,
+              "gs": 5,
+              "m": 2,
+              "l": 4,
+              "S": 2,
+              "Q": 7,
+              "BT": 3,
+              "Tf": 3,
+              "Td": 3,
+              "Tj": 3,
+              "ET": 3,
+              "h": 1
+            },
+            "strokeColors": [
+              [
+                1,
+                0,
+                0
+              ],
+              [
+                1,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0
+              ]
+            ],
+            "imageXObjects": 1,
+            "extGStates": 2,
+            "extGStateValues": {
+              "/GS100": {
+                "strokeAlpha": 1,
+                "fillAlpha": 1
+              },
+              "/GS60": {
+                "strokeAlpha": 0.6,
+                "fillAlpha": 0.6
+              }
+            },
+            "strokedPaths": [
+              {
+                "strokeColor": [
+                  1,
+                  0,
+                  0
+                ],
+                "fillColor": [
+                  1,
+                  0,
+                  0
+                ],
+                "gState": "/GS60",
+                "strokeAlpha": 0.6,
+                "fillAlpha": 0.6,
+                "segments": [
+                  {
+                    "operator": "m",
+                    "points": [
+                      [
+                        295.205704,
+                        220.898293
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "l",
+                    "points": [
+                      [
+                        895.345616,
+                        620.991569
+                      ]
+                    ]
+                  }
+                ],
+                "bbox": [
+                  295.205704,
+                  220.898293,
+                  895.345616,
+                  620.991569
+                ],
+                "insideMediaBox": true
+              },
+              {
+                "strokeColor": [
+                  0,
+                  0,
+                  0
+                ],
+                "fillColor": [
+                  0,
+                  0,
+                  0
+                ],
+                "gState": "/GS100",
+                "strokeAlpha": 1,
+                "fillAlpha": 1,
+                "segments": [
+                  {
+                    "operator": "m",
+                    "points": [
+                      [
+                        14.17323,
+                        14.17323
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "l",
+                    "points": [
+                      [
+                        1176.37809,
+                        14.17323
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "l",
+                    "points": [
+                      [
+                        1176.37809,
+                        827.716632
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "l",
+                    "points": [
+                      [
+                        14.17323,
+                        827.716632
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "h",
+                    "points": []
+                  }
+                ],
+                "bbox": [
+                  14.17323,
+                  14.17323,
+                  1176.37809,
+                  827.716632
+                ],
+                "insideMediaBox": true
+              }
+            ],
+            "plumberImages": 0,
+            "plumberLines": 1,
+            "plumberCurves": 0,
+            "plumberChars": 59
+          },
+          {
+            "index": 2,
+            "mediaBox": [
+              0,
+              0,
+              595.275591,
+              841.889764
+            ],
+            "rotation": 0,
+            "text": "F-114 A4 MODEL VECTOR\nKUUBIK F-114 VECTOR PDF\nF-114 A4 DETAIL",
+            "words": [
+              "F-114",
+              "A4",
+              "MODEL",
+              "VECTOR",
+              "KUUBIK",
+              "F-114",
+              "VECTOR",
+              "PDF",
+              "F-114",
+              "A4",
+              "DETAIL"
+            ],
+            "operators": {
+              "q": 7,
+              "re": 2,
+              "W": 2,
+              "n": 2,
+              "cm": 2,
+              "RG": 5,
+              "rg": 5,
+              "w": 5,
+              "gs": 5,
+              "m": 2,
+              "c": 4,
+              "S": 2,
+              "Q": 7,
+              "BT": 3,
+              "Tf": 3,
+              "Td": 3,
+              "Tj": 3,
+              "ET": 3,
+              "l": 3,
+              "h": 1
+            },
+            "strokeColors": [
+              [
+                0,
+                0,
+                1
+              ],
+              [
+                0,
+                0,
+                1
+              ],
+              [
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0
+              ]
+            ],
+            "imageXObjects": 0,
+            "extGStates": 2,
+            "extGStateValues": {
+              "/GS100": {
+                "strokeAlpha": 1,
+                "fillAlpha": 1
+              },
+              "/GS60": {
+                "strokeAlpha": 0.6,
+                "fillAlpha": 0.6
+              }
+            },
+            "strokedPaths": [
+              {
+                "strokeColor": [
+                  0,
+                  0,
+                  1
+                ],
+                "fillColor": [
+                  0,
+                  0,
+                  1
+                ],
+                "gState": "/GS100",
+                "strokeAlpha": 1,
+                "fillAlpha": 1,
+                "segments": [
+                  {
+                    "operator": "m",
+                    "points": [
+                      [
+                        547.708276,
+                        420.944931
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "c",
+                    "points": [
+                      [
+                        547.708276,
+                        559.048315
+                      ],
+                      [
+                        435.753363,
+                        671.003228
+                      ],
+                      [
+                        297.649979,
+                        671.003228
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "c",
+                    "points": [
+                      [
+                        159.546595,
+                        671.003228
+                      ],
+                      [
+                        47.591682,
+                        559.048315
+                      ],
+                      [
+                        47.591682,
+                        420.944931
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "c",
+                    "points": [
+                      [
+                        47.591682,
+                        282.841547
+                      ],
+                      [
+                        159.546595,
+                        170.886634
+                      ],
+                      [
+                        297.649979,
+                        170.886634
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "c",
+                    "points": [
+                      [
+                        435.753363,
+                        170.886634
+                      ],
+                      [
+                        547.708276,
+                        282.841547
+                      ],
+                      [
+                        547.708276,
+                        420.944931
+                      ]
+                    ]
+                  }
+                ],
+                "bbox": [
+                  47.591682,
+                  170.886634,
+                  547.708276,
+                  671.003228
+                ],
+                "insideMediaBox": true
+              },
+              {
+                "strokeColor": [
+                  0,
+                  0,
+                  0
+                ],
+                "fillColor": [
+                  0,
+                  0,
+                  0
+                ],
+                "gState": "/GS100",
+                "strokeAlpha": 1,
+                "fillAlpha": 1,
+                "segments": [
+                  {
+                    "operator": "m",
+                    "points": [
+                      [
+                        14.17323,
+                        14.17323
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "l",
+                    "points": [
+                      [
+                        581.10243,
+                        14.17323
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "l",
+                    "points": [
+                      [
+                        581.10243,
+                        827.716632
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "l",
+                    "points": [
+                      [
+                        14.17323,
+                        827.716632
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "h",
+                    "points": []
+                  }
+                ],
+                "bbox": [
+                  14.17323,
+                  14.17323,
+                  581.10243,
+                  827.716632
+                ],
+                "insideMediaBox": true
+              }
+            ],
+            "plumberImages": 0,
+            "plumberLines": 0,
+            "plumberCurves": 1,
+            "plumberChars": 59
+          }
+        ]
+      }
+    }
+  },
+  "renderedPixels": {
+    "schemaVersion": 1,
+    "images": {
+      "page1": {
+        "label": "page1",
+        "width": 2382,
+        "height": 1684,
+        "mode": "RGB",
+        "sha256": "6830113f7ee3021190ac7cb540c785c525a3316b050c8081a57d083193148494",
+        "counts": {
+          "red": 19880,
+          "redAlphaOnWhite": 6219,
+          "blue": 0,
+          "black": 10994,
+          "nonWhite": 44415
+        },
+        "bboxes": {
+          "red": [
+            697,
+            276,
+            1802,
+            341
+          ],
+          "redAlphaOnWhite": [
+            590,
+            275,
+            1803,
+            1242
+          ],
+          "blue": null,
+          "black": [
+            28,
+            28,
+            2352,
+            1655
+          ],
+          "nonWhite": [
+            28,
+            28,
+            2352,
+            1655
+          ]
+        },
+        "extrema": [
+          [
+            0,
+            255
+          ],
+          [
+            0,
+            255
+          ],
+          [
+            0,
+            255
+          ]
+        ]
+      },
+      "page2": {
+        "label": "page2",
+        "width": 1191,
+        "height": 1684,
+        "mode": "RGB",
+        "sha256": "f0937a7eaf7feb7f037c5e7489d5594f1645aaa0256258449e2aecff7c23f635",
+        "counts": {
+          "red": 0,
+          "redAlphaOnWhite": 0,
+          "blue": 25176,
+          "black": 10251,
+          "nonWhite": 41783
+        },
+        "bboxes": {
+          "red": null,
+          "redAlphaOnWhite": null,
+          "blue": [
+            94,
+            175,
+            1105,
+            1342
+          ],
+          "black": [
+            28,
+            28,
+            1162,
+            1655
+          ],
+          "nonWhite": [
+            28,
+            28,
+            1162,
+            1655
+          ]
+        },
+        "extrema": [
+          [
+            0,
+            255
+          ],
+          [
+            0,
+            255
+          ],
+          [
+            0,
+            255
+          ]
+        ]
+      }
+    }
+  },
+  "checks": {
+    "browserPassed": true,
+    "exactBrowserBytes": true,
+    "deterministic": true,
+    "mutationSensitive": true,
+    "noSkippedHandles": true,
+    "mixedPagePlan": true,
+    "strictVectorPdf": true,
+    "physicalSizes": true,
+    "requiredText": true,
+    "renderedPages": true
+  },
+  "observedAt": "2026-08-29T06:19:21.224Z",
+  "status": "PASS"
+}

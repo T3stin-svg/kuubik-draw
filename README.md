@@ -8,7 +8,7 @@ käitumispariteeti, mitte kogu AutoCADi toodet.
 
 - vana Drawi auditi snapshot: **63,9% raw / 68,3% weighted / 60,7% visual**;
 - vana Drawi AutoCADi live-tõendiga read: **22/133**;
-- selle uue eraldatud rakenduse kohalik sertifikaat: **21/133 · 15,8% raw / 18,9% weighted**;
+- selle uue eraldatud rakenduse kohalik sertifikaat: **22/133 · 16,5% raw / 19,8% weighted**;
 - native DWG/DWT/XREF ja PC3/CTB/STB pariteet on veel blokeeritud.
 
 Need arvud on vana Drawi auditi muutmatu snapshot. Uus rakendus ei päri skoori
@@ -103,6 +103,16 @@ OBJECTS/ENTITIES handle'id, mittetoetatud HATCH-i grammatika, ühikuvahetuse
 unit-sensitive layout state'i korral ning mahu- ja struktuurieelarve ületuse.
 Chromium, range `ezdxf`, AutoCAD 2024 Core Console ja eraldi omatud desktop
 AutoCAD kinnitavad 40 native objekti; sõltumatu kordusülevaatus lõppes 0 P0/P1.
+F-114 `PDF vector output` avaldab ühe tootmiskäsuga ISO A3 landscape ja ISO A4
+portrait layout'id samasse rangesse PDF 1.4 faili. Chromiumi nähtav töövoog
+avab A3 lehe, avaldab mõlemad lehed, kontrollib A4 paberit, taastab dokumendi
+IndexedDB-st ning väljastab bititäpselt sama faili uuesti. Range `pypdf`,
+`pdfplumber` ja Poppler kinnitavad füüsilised lehesuurused, otsitava teksti,
+punase/sinise vektorgeomeetria, läbipaistvuse ExtGState'i, teravad raamid ja
+null image XObject'i. Värske omatud AutoCAD 2024 referents plotib native A3
+layout'i `DWG To PDF.pc3` kaudu enne ja pärast scratch-DWG taasavamist ning
+taastab algse protsessikomplekti. Lehejärjekorra, geomeetria, alpha ja raster-
+fallback'i mutatsioonid on eraldi tõendatud.
 
 ## Piirid
 

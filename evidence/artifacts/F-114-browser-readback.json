@@ -1,0 +1,812 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-114",
+  "source": "Chromium 1920x1080 exact mixed-size production PDF plus strict pypdf, pdfplumber and Poppler read-back",
+  "sourceSha256": {
+    "e2e": "10f96718714028aebe25feeb762e49471386709dcaa5f031379e3b18d4e682b8",
+    "fixture": "0594ef541dd98ab579ddba6c818cd310541c5bc4c49dda9904f2b72af7bcf9ae",
+    "capture": "9311adf5a2d3673f4c72c3e1f3a7129f12938a2598ded8a4d8872e3ec9b7ab4f",
+    "builder": "440e82186c216422fa47b7fd0568673d33336936a6390488279fef061ea7b212",
+    "contract": "9124e24fde45e9e54070cf8550ff10091a5c64832751af3c79bdf3e5bd1689d0",
+    "pdfReader": "145890f5c80180e3e52d377279227a9a5d347d7b12207e51d028608bb0323b8a",
+    "pixelReader": "fd128196353a029e024f52e74f68197ec27c724b39c2ddb3e6f06a6e5fae0d7b",
+    "app": "4139ef98956d6bcb7ae241afa1561b5380a0b6471b9dfebbed7276b6479c4e7a",
+    "publish": "b90890bbcbe114dd4847ef5dcfc4c16dede0d7b6e98c388b2ba5ce4ca2be13c5",
+    "cadPrint": "9216a0ad409b66b06945dfcd564cc0ca81fd4d45618525e7801863bb8dc3816b",
+    "unitTest": "c9bfd74c7398aa50aa089cd7e402298dac69d9fd1135e5124f50e6269cf0c2d4",
+    "mutationTest": "b334e4b7596f0dd38b108fb6f2d0d82efac7ecf3f2b9063377f5322a5caaa504",
+    "expected": "d310217fee5accecc3898c3a7d4f0fad4543b1b837c9a48f5598f425a298f571",
+    "scope": "3ab21619636d85e189d82e830070958216d74892e554a55e8e01046a967dd964",
+    "mutantBuilder": "d37ee92b257bf58b5b41b134597a51e439a7dffca7fb15e5adb1ced7ce3b1030",
+    "packageLock": "9756bf28708c3933c83c0ace8e9dbd9fe4cad9b9d6cec58670758c545f02e584"
+  },
+  "matrix": {
+    "schemaVersion": 1,
+    "rowId": "F-114",
+    "status": "PASS",
+    "viewport": {
+      "width": 1920,
+      "height": 1080
+    },
+    "action": "Open A3 -> publish mixed A3/A4 vector PDF -> inspect A4 -> reload -> exact re-publish",
+    "order": [
+      "layout-f114-a3",
+      "layout-f114-a4"
+    ],
+    "included": [
+      "layout-f114-a3",
+      "layout-f114-a4"
+    ],
+    "output": {
+      "bytes": 2321,
+      "sha256": "4fb1ce37bf217841a7f7a0b88f82084a92339074d00cc6961a37d3781123f4c1",
+      "name": "F114 Browser.pdf",
+      "summary": {
+        "version": "1.4",
+        "pages": 2,
+        "a3Landscape": 1,
+        "a4Portrait": 1,
+        "a3TitleAt": 778,
+        "a4TitleAt": 1744,
+        "kuubikTitles": 2,
+        "red": true,
+        "blue": true,
+        "alpha60": true,
+        "images": 0,
+        "eof": true
+      }
+    },
+    "deterministicReloadSha256": "4fb1ce37bf217841a7f7a0b88f82084a92339074d00cc6961a37d3781123f4c1",
+    "consoleErrors": []
+  },
+  "output": {
+    "bytes": 2321,
+    "sha256": "4fb1ce37bf217841a7f7a0b88f82084a92339074d00cc6961a37d3781123f4c1"
+  },
+  "screenshot": {
+    "bytes": 7737,
+    "sha256": "40fef72bbf44bc4e53d86c3be982ca3e4ae25628bdb1cbb2aad4a0e12de4c9e1"
+  },
+  "expectedContract": {
+    "featureId": "F-114",
+    "benchmark": "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
+    "kuubikPdf": {
+      "strict": true,
+      "pages": 2,
+      "geometryTolerancePt": 0.01,
+      "renderTolerancePx": 2,
+      "alphaTolerance": 0.000001,
+      "pageSizesPt": [
+        [
+          1190.551181,
+          841.889764
+        ],
+        [
+          595.275591,
+          841.889764
+        ]
+      ],
+      "pageRotations": [
+        0,
+        0
+      ],
+      "maxImageXObjects": 0,
+      "requiredText": [
+        "F-114 A3 LAYOUT",
+        "F-114 A4 DETAIL",
+        "KUUBIK F-114 VECTOR PDF"
+      ],
+      "requiredColours": [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "transparency": {
+        "page": 1,
+        "resource": "/GS60",
+        "strokeAlpha": 0.6,
+        "fillAlpha": 0.6
+      },
+      "modelLine": {
+        "page": 1,
+        "strokeColour": [
+          1,
+          0,
+          0
+        ],
+        "gState": "/GS60",
+        "segments": [
+          {
+            "operator": "m",
+            "points": [
+              [
+                295.205704,
+                220.898293
+              ]
+            ]
+          },
+          {
+            "operator": "l",
+            "points": [
+              [
+                895.345616,
+                620.991569
+              ]
+            ]
+          }
+        ],
+        "bboxPt": [
+          295.205704,
+          220.898293,
+          895.345616,
+          620.991569
+        ]
+      },
+      "modelCircle": {
+        "page": 2,
+        "strokeColour": [
+          0,
+          0,
+          1
+        ],
+        "gState": "/GS100",
+        "centerPt": [
+          297.649979,
+          420.944931
+        ],
+        "radiusPt": 250.058297,
+        "bezierKappa": 0.55228475,
+        "curveSegments": 4,
+        "bboxPt": [
+          47.591682,
+          170.886634,
+          547.708276,
+          671.003228
+        ]
+      },
+      "borders": [
+        {
+          "page": 1,
+          "bboxPt": [
+            14.17323,
+            14.17323,
+            1176.37809,
+            827.716632
+          ],
+          "renderedBlackBBoxPx": [
+            28,
+            28,
+            2352,
+            1655
+          ]
+        },
+        {
+          "page": 2,
+          "bboxPt": [
+            14.17323,
+            14.17323,
+            581.10243,
+            827.716632
+          ],
+          "renderedBlackBBoxPx": [
+            28,
+            28,
+            1162,
+            1655
+          ]
+        }
+      ]
+    },
+    "autoCadPdf": {
+      "strict": false,
+      "pages": 1,
+      "physicalPaper": "ISO A3 landscape",
+      "maxImageXObjects": 0,
+      "requiresVectorOperators": true,
+      "requiresPopplerRender": true
+    }
+  },
+  "semanticContract": {
+    "pass": true,
+    "reasons": []
+  },
+  "independentPdfReadback": {
+    "readers": {
+      "pypdf": "6.10.0",
+      "pdfplumber": "0.11.9"
+    },
+    "documents": {
+      "browser": {
+        "label": "browser",
+        "path": "F-114-browser-vector.pdf",
+        "bytes": 2321,
+        "sha256": "4fb1ce37bf217841a7f7a0b88f82084a92339074d00cc6961a37d3781123f4c1",
+        "pdfHeader": "%PDF-1.4",
+        "pages": 2,
+        "strictParsed": true,
+        "strictError": null,
+        "pageDetails": [
+          {
+            "index": 1,
+            "mediaBox": [
+              0,
+              0,
+              1190.551181,
+              841.889764
+            ],
+            "rotation": 0,
+            "text": "F-114 A3 MODEL VECTOR\nKUUBIK F-114 VECTOR PDF\nF-114 A3 LAYOUT",
+            "words": [
+              "F-114",
+              "A3",
+              "MODEL",
+              "VECTOR",
+              "KUUBIK",
+              "F-114",
+              "VECTOR",
+              "PDF",
+              "F-114",
+              "A3",
+              "LAYOUT"
+            ],
+            "operators": {
+              "q": 7,
+              "re": 2,
+              "W": 2,
+              "n": 2,
+              "cm": 2,
+              "RG": 5,
+              "rg": 5,
+              "w": 5,
+              "gs": 5,
+              "m": 2,
+              "l": 4,
+              "S": 2,
+              "Q": 7,
+              "BT": 3,
+              "Tf": 3,
+              "Td": 3,
+              "Tj": 3,
+              "ET": 3,
+              "h": 1
+            },
+            "strokeColors": [
+              [
+                1,
+                0,
+                0
+              ],
+              [
+                1,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0
+              ]
+            ],
+            "imageXObjects": 0,
+            "extGStates": 2,
+            "extGStateValues": {
+              "/GS100": {
+                "strokeAlpha": 1,
+                "fillAlpha": 1
+              },
+              "/GS60": {
+                "strokeAlpha": 0.6,
+                "fillAlpha": 0.6
+              }
+            },
+            "strokedPaths": [
+              {
+                "strokeColor": [
+                  1,
+                  0,
+                  0
+                ],
+                "fillColor": [
+                  1,
+                  0,
+                  0
+                ],
+                "gState": "/GS60",
+                "strokeAlpha": 0.6,
+                "fillAlpha": 0.6,
+                "segments": [
+                  {
+                    "operator": "m",
+                    "points": [
+                      [
+                        295.205704,
+                        220.898293
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "l",
+                    "points": [
+                      [
+                        895.345616,
+                        620.991569
+                      ]
+                    ]
+                  }
+                ],
+                "bbox": [
+                  295.205704,
+                  220.898293,
+                  895.345616,
+                  620.991569
+                ],
+                "insideMediaBox": true
+              },
+              {
+                "strokeColor": [
+                  0,
+                  0,
+                  0
+                ],
+                "fillColor": [
+                  0,
+                  0,
+                  0
+                ],
+                "gState": "/GS100",
+                "strokeAlpha": 1,
+                "fillAlpha": 1,
+                "segments": [
+                  {
+                    "operator": "m",
+                    "points": [
+                      [
+                        14.17323,
+                        14.17323
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "l",
+                    "points": [
+                      [
+                        1176.37809,
+                        14.17323
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "l",
+                    "points": [
+                      [
+                        1176.37809,
+                        827.716632
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "l",
+                    "points": [
+                      [
+                        14.17323,
+                        827.716632
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "h",
+                    "points": []
+                  }
+                ],
+                "bbox": [
+                  14.17323,
+                  14.17323,
+                  1176.37809,
+                  827.716632
+                ],
+                "insideMediaBox": true
+              }
+            ],
+            "plumberImages": 0,
+            "plumberLines": 1,
+            "plumberCurves": 0,
+            "plumberChars": 59
+          },
+          {
+            "index": 2,
+            "mediaBox": [
+              0,
+              0,
+              595.275591,
+              841.889764
+            ],
+            "rotation": 0,
+            "text": "F-114 A4 MODEL VECTOR\nKUUBIK F-114 VECTOR PDF\nF-114 A4 DETAIL",
+            "words": [
+              "F-114",
+              "A4",
+              "MODEL",
+              "VECTOR",
+              "KUUBIK",
+              "F-114",
+              "VECTOR",
+              "PDF",
+              "F-114",
+              "A4",
+              "DETAIL"
+            ],
+            "operators": {
+              "q": 7,
+              "re": 2,
+              "W": 2,
+              "n": 2,
+              "cm": 2,
+              "RG": 5,
+              "rg": 5,
+              "w": 5,
+              "gs": 5,
+              "m": 2,
+              "c": 4,
+              "S": 2,
+              "Q": 7,
+              "BT": 3,
+              "Tf": 3,
+              "Td": 3,
+              "Tj": 3,
+              "ET": 3,
+              "l": 3,
+              "h": 1
+            },
+            "strokeColors": [
+              [
+                0,
+                0,
+                1
+              ],
+              [
+                0,
+                0,
+                1
+              ],
+              [
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0
+              ]
+            ],
+            "imageXObjects": 0,
+            "extGStates": 2,
+            "extGStateValues": {
+              "/GS100": {
+                "strokeAlpha": 1,
+                "fillAlpha": 1
+              },
+              "/GS60": {
+                "strokeAlpha": 0.6,
+                "fillAlpha": 0.6
+              }
+            },
+            "strokedPaths": [
+              {
+                "strokeColor": [
+                  0,
+                  0,
+                  1
+                ],
+                "fillColor": [
+                  0,
+                  0,
+                  1
+                ],
+                "gState": "/GS100",
+                "strokeAlpha": 1,
+                "fillAlpha": 1,
+                "segments": [
+                  {
+                    "operator": "m",
+                    "points": [
+                      [
+                        547.708276,
+                        420.944931
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "c",
+                    "points": [
+                      [
+                        547.708276,
+                        559.048315
+                      ],
+                      [
+                        435.753363,
+                        671.003228
+                      ],
+                      [
+                        297.649979,
+                        671.003228
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "c",
+                    "points": [
+                      [
+                        159.546595,
+                        671.003228
+                      ],
+                      [
+                        47.591682,
+                        559.048315
+                      ],
+                      [
+                        47.591682,
+                        420.944931
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "c",
+                    "points": [
+                      [
+                        47.591682,
+                        282.841547
+                      ],
+                      [
+                        159.546595,
+                        170.886634
+                      ],
+                      [
+                        297.649979,
+                        170.886634
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "c",
+                    "points": [
+                      [
+                        435.753363,
+                        170.886634
+                      ],
+                      [
+                        547.708276,
+                        282.841547
+                      ],
+                      [
+                        547.708276,
+                        420.944931
+                      ]
+                    ]
+                  }
+                ],
+                "bbox": [
+                  47.591682,
+                  170.886634,
+                  547.708276,
+                  671.003228
+                ],
+                "insideMediaBox": true
+              },
+              {
+                "strokeColor": [
+                  0,
+                  0,
+                  0
+                ],
+                "fillColor": [
+                  0,
+                  0,
+                  0
+                ],
+                "gState": "/GS100",
+                "strokeAlpha": 1,
+                "fillAlpha": 1,
+                "segments": [
+                  {
+                    "operator": "m",
+                    "points": [
+                      [
+                        14.17323,
+                        14.17323
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "l",
+                    "points": [
+                      [
+                        581.10243,
+                        14.17323
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "l",
+                    "points": [
+                      [
+                        581.10243,
+                        827.716632
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "l",
+                    "points": [
+                      [
+                        14.17323,
+                        827.716632
+                      ]
+                    ]
+                  },
+                  {
+                    "operator": "h",
+                    "points": []
+                  }
+                ],
+                "bbox": [
+                  14.17323,
+                  14.17323,
+                  581.10243,
+                  827.716632
+                ],
+                "insideMediaBox": true
+              }
+            ],
+            "plumberImages": 0,
+            "plumberLines": 0,
+            "plumberCurves": 1,
+            "plumberChars": 59
+          }
+        ]
+      }
+    }
+  },
+  "renderedPixels": {
+    "schemaVersion": 1,
+    "images": {
+      "page1": {
+        "label": "page1",
+        "width": 2382,
+        "height": 1684,
+        "mode": "RGB",
+        "sha256": "6830113f7ee3021190ac7cb540c785c525a3316b050c8081a57d083193148494",
+        "counts": {
+          "red": 19880,
+          "redAlphaOnWhite": 6219,
+          "blue": 0,
+          "black": 10994,
+          "nonWhite": 44415
+        },
+        "bboxes": {
+          "red": [
+            697,
+            276,
+            1802,
+            341
+          ],
+          "redAlphaOnWhite": [
+            590,
+            275,
+            1803,
+            1242
+          ],
+          "blue": null,
+          "black": [
+            28,
+            28,
+            2352,
+            1655
+          ],
+          "nonWhite": [
+            28,
+            28,
+            2352,
+            1655
+          ]
+        },
+        "extrema": [
+          [
+            0,
+            255
+          ],
+          [
+            0,
+            255
+          ],
+          [
+            0,
+            255
+          ]
+        ]
+      },
+      "page2": {
+        "label": "page2",
+        "width": 1191,
+        "height": 1684,
+        "mode": "RGB",
+        "sha256": "f0937a7eaf7feb7f037c5e7489d5594f1645aaa0256258449e2aecff7c23f635",
+        "counts": {
+          "red": 0,
+          "redAlphaOnWhite": 0,
+          "blue": 25176,
+          "black": 10251,
+          "nonWhite": 41783
+        },
+        "bboxes": {
+          "red": null,
+          "redAlphaOnWhite": null,
+          "blue": [
+            94,
+            175,
+            1105,
+            1342
+          ],
+          "black": [
+            28,
+            28,
+            1162,
+            1655
+          ],
+          "nonWhite": [
+            28,
+            28,
+            1162,
+            1655
+          ]
+        },
+        "extrema": [
+          [
+            0,
+            255
+          ],
+          [
+            0,
+            255
+          ],
+          [
+            0,
+            255
+          ]
+        ]
+      }
+    }
+  },
+  "checks": {
+    "matrixPassed": true,
+    "exactDownload": true,
+    "strictMixedPages": true,
+    "requiredText": true,
+    "vectorTransparencyNoImages": true,
+    "pageColours": true,
+    "popplerComplete": true
+  },
+  "status": "PASS"
+}

@@ -1,0 +1,6 @@
+; F-114 AutoCAD 2024.1.2 live vector-PDF reference.
+; The owned F-104 harness is rerun because it already creates the fixed native
+; A3 layout, plots through DWG To PDF.pc3, reopens the DWG and plots again.
+; F-114 independently binds the fresh PDF/parser/render evidence to its mixed
+; A3/A4 Kuubik workflow; see tools/autocad/run-f114.mjs.
+_.REGENALL

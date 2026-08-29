@@ -1,0 +1,54 @@
+{
+  "featureId": "F-114",
+  "benchmark": "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
+  "kuubikPdf": {
+    "strict": true,
+    "pages": 2,
+    "geometryTolerancePt": 0.01,
+    "renderTolerancePx": 2,
+    "alphaTolerance": 0.000001,
+    "pageSizesPt": [[1190.551181, 841.889764], [595.275591, 841.889764]],
+    "pageRotations": [0, 0],
+    "maxImageXObjects": 0,
+    "requiredText": ["F-114 A3 LAYOUT", "F-114 A4 DETAIL", "KUUBIK F-114 VECTOR PDF"],
+    "requiredColours": [[1, 0, 0], [0, 0, 1]],
+    "transparency": {
+      "page": 1,
+      "resource": "/GS60",
+      "strokeAlpha": 0.6,
+      "fillAlpha": 0.6
+    },
+    "modelLine": {
+      "page": 1,
+      "strokeColour": [1, 0, 0],
+      "gState": "/GS60",
+      "segments": [
+        { "operator": "m", "points": [[295.205704, 220.898293]] },
+        { "operator": "l", "points": [[895.345616, 620.991569]] }
+      ],
+      "bboxPt": [295.205704, 220.898293, 895.345616, 620.991569]
+    },
+    "modelCircle": {
+      "page": 2,
+      "strokeColour": [0, 0, 1],
+      "gState": "/GS100",
+      "centerPt": [297.649979, 420.944931],
+      "radiusPt": 250.058297,
+      "bezierKappa": 0.55228475,
+      "curveSegments": 4,
+      "bboxPt": [47.591682, 170.886634, 547.708276, 671.003228]
+    },
+    "borders": [
+      { "page": 1, "bboxPt": [14.17323, 14.17323, 1176.37809, 827.716632], "renderedBlackBBoxPx": [28, 28, 2352, 1655] },
+      { "page": 2, "bboxPt": [14.17323, 14.17323, 581.10243, 827.716632], "renderedBlackBBoxPx": [28, 28, 1162, 1655] }
+    ]
+  },
+  "autoCadPdf": {
+    "strict": false,
+    "pages": 1,
+    "physicalPaper": "ISO A3 landscape",
+    "maxImageXObjects": 0,
+    "requiresVectorOperators": true,
+    "requiresPopplerRender": true
+  }
+}

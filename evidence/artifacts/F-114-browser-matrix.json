@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-114",
+  "status": "PASS",
+  "viewport": {
+    "width": 1920,
+    "height": 1080
+  },
+  "action": "Open A3 -> publish mixed A3/A4 vector PDF -> inspect A4 -> reload -> exact re-publish",
+  "order": [
+    "layout-f114-a3",
+    "layout-f114-a4"
+  ],
+  "included": [
+    "layout-f114-a3",
+    "layout-f114-a4"
+  ],
+  "output": {
+    "bytes": 2321,
+    "sha256": "4fb1ce37bf217841a7f7a0b88f82084a92339074d00cc6961a37d3781123f4c1",
+    "name": "F114 Browser.pdf",
+    "summary": {
+      "version": "1.4",
+      "pages": 2,
+      "a3Landscape": 1,
+      "a4Portrait": 1,
+      "a3TitleAt": 778,
+      "a4TitleAt": 1744,
+      "kuubikTitles": 2,
+      "red": true,
+      "blue": true,
+      "alpha60": true,
+      "images": 0,
+      "eof": true
+    }
+  },
+  "deterministicReloadSha256": "4fb1ce37bf217841a7f7a0b88f82084a92339074d00cc6961a37d3781123f4c1",
+  "consoleErrors": []
+}
