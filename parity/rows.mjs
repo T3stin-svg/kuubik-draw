@@ -102,6 +102,16 @@ export const SOURCE_GROUPS = Object.freeze({
   ]),
 });
 
+/**
+ * Sources for audit rows that are implemented far enough to enter the source
+ * graph, but have not passed the certification ratchet yet. Keeping these
+ * mappings separate prevents source coverage from being confused with a 1.00
+ * score in parity/local-certifications.json.
+ */
+export const UNCERTIFIED_SOURCE_ROWS = Object.freeze({
+  "packages/cad-core/src/fillet.ts": Object.freeze(["F-024"]),
+});
+
 const certifiedIds = Object.freeze([
   "F-003", "F-015", "F-016", "F-017", "F-018", "F-019", "F-020", "F-021", "F-022", "F-023",
   "F-097", "F-098", "F-099", "F-100", "F-101", "F-102", "F-103", "F-104", "F-105",

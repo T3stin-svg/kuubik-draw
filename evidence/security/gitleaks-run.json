@@ -6,7 +6,7 @@
   "executableSha256": "17157e2ee8b76fc8b1d8bee607a250e34b8a8023c8bc81822d4b5ee4d78fcb7c",
   "status": "PASS",
   "leakCount": 0,
-  "scannedAt": "2026-08-29T16:21:47.472Z",
+  "scannedAt": "2026-08-29T16:27:54.793Z",
   "command": "gitleaks dir --no-banner --redact --config .gitleaks.toml --report-format json --report-path evidence/security/gitleaks-report.json .",
   "sourceScope": "git-visible public repository tree, including tracked and untracked non-ignored files",
   "networkRequired": false,
@@ -16,8 +16,8 @@
   },
   "sourceManifest": {
     "path": "evidence/security/gitleaks-source-manifest.json",
-    "sha256": "a1f11b1a49f6ba0888890bbe719ede3b37f77dcd7710129f9c01b34f6357fcb2",
-    "sourceTreeSha256": "9cb1b08531269c1ba84a874cbc3d8755ad5ccfe9a9b2cc97db1e234f6190b287"
+    "sha256": "5caa70ec63fa4e3748114f3f13c75032293a534e8e63eafdc3797f525050fb2e",
+    "sourceTreeSha256": "057e71a4514de2cd35a2f06b5f5e80ae3adbd0be84f30732fd92e9aec11ba08c"
   },
   "report": {
     "path": "evidence/security/gitleaks-report.json",

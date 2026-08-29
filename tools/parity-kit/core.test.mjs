@@ -97,6 +97,12 @@ describe("parity kit", () => {
     expect(affectedRows(["tools/parity/new-shared-checker.mjs"]).unmappedRuntime).toEqual(["tools/parity/new-shared-checker.mjs"]);
   });
 
+  it("tracks an implemented audit row without certifying it", () => {
+    expect(sourceToRows().get("packages/cad-core/src/fillet.ts")).toEqual(["F-024"]);
+    expect(affectedRows(["e2e/f024-fillet.spec.ts"]).rows).toEqual(["F-024"]);
+    expect(affectedRows(["packages/cad-core/src/fillet.ts"]).unmappedRuntime).toEqual([]);
+  });
+
   it("refreshes only authorities that can be affected by a runtime source", () => {
     const evidence = {
       autocad: { descriptorSha256: "autocad-descriptor", artifactSha256: "autocad-artifact" },

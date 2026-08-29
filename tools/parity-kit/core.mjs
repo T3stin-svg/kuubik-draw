@@ -4,7 +4,7 @@ import { access, readFile, readdir } from "node:fs/promises";
 import { relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parityManifest } from "../../parity/autocad-2024-2d.manifest.mjs";
-import { CERTIFICATION_SOURCE_ROOTS, PARITY_ROWS, RUNTIME_SOURCE_ROOTS, SOURCE_GROUPS } from "../../parity/rows.mjs";
+import { CERTIFICATION_SOURCE_ROOTS, PARITY_ROWS, RUNTIME_SOURCE_ROOTS, SOURCE_GROUPS, UNCERTIFIED_SOURCE_ROWS } from "../../parity/rows.mjs";
 
 export const REPO_ROOT = resolve(fileURLToPath(new URL("../..", import.meta.url)));
 export const PARITY_STAGE_ORDER = Object.freeze(["browser", "readback", "oracle", "autocad", "cross"]);
@@ -227,10 +227,14 @@ function repositoryFiles() {
   return cachedRepositoryFiles;
 }
 
+function isAuditRowId(rowId) {
+  return /^F-(?:0(?:0[1-9]|[1-9]\d)|1(?:[0-2]\d|3[0-3]))$/u.test(rowId);
+}
+
 export function inferredRowIds(file) {
   const ids = [...normalizeRepoPath(file).matchAll(/f-?(\d{3})/giu)]
     .map((match) => `F-${match[1]}`)
-    .filter((rowId) => PARITY_ROWS.some((row) => row.id === rowId));
+    .filter(isAuditRowId);
   return [...new Set(ids)].sort();
 }
 
@@ -251,6 +255,12 @@ export function sourceToRows() {
       rows.push(row.id);
       graph.set(normalized, rows);
     }
+  }
+  for (const [source, rowIds] of Object.entries(UNCERTIFIED_SOURCE_ROWS)) {
+    const normalized = normalizeRepoPath(source);
+    const rows = graph.get(normalized) ?? [];
+    rows.push(...rowIds);
+    graph.set(normalized, rows);
   }
   return new Map([...graph].map(([source, rows]) => [source, [...new Set(rows)].sort()]));
 }
@@ -624,6 +634,13 @@ export async function validateParityKit({ checkContentAddresses = true } = {}) {
     }
     for (const [stage, script] of Object.entries(row.stages)) {
       if (!packageJson.scripts?.[script]) errors.push(`${row.id}: ${stage} references missing npm script ${script}.`);
+    }
+  }
+  for (const [source, rowIds] of Object.entries(UNCERTIFIED_SOURCE_ROWS)) {
+    try { await access(resolve(REPO_ROOT, source)); } catch { errors.push(`Uncertified source mapping is missing ${source}.`); }
+    for (const rowId of rowIds) {
+      if (!isAuditRowId(rowId)) errors.push(`Uncertified source mapping ${source} has invalid audit row ${rowId}.`);
+      if (declaredIds.includes(rowId)) errors.push(`Certified row ${rowId} must use sourceGroups instead of UNCERTIFIED_SOURCE_ROWS.`);
     }
   }
   const graph = sourceToRows();
