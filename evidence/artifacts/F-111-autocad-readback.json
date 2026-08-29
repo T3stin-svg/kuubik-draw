@@ -1,0 +1,1294 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-111",
+  "authority": "autocad-2024.1.2-live",
+  "status": "PASS",
+  "observedAt": "2026-08-29T05:34:19.544Z",
+  "sourceSha256": "28de58b3aa9e7a2c44bcf4d17b297b1cc64b08fbbbea448a33720b0d14c601ac",
+  "workflow": "Open the exact Chromium second-generation DXF in AutoCAD 2024 Core Console and a separately owned visible desktop AutoCAD process, read native entities/tables, close without saving, and restore the prior process set.",
+  "core": {
+    "schemaVersion": 1,
+    "rowId": "F-111",
+    "benchmark": "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
+    "engine": "Autodesk AutoCAD Core Console 2024",
+    "engineVersion": "24.3",
+    "sourceSha256": "28de58b3aa9e7a2c44bcf4d17b297b1cc64b08fbbbea448a33720b0d14c601ac",
+    "scriptSha256": "7d75185bc666b3214dae4751915b409d0a10c0b6621b85608de55be8935f7623",
+    "implementationSha256": {
+      "autocadScript": "7d75185bc666b3214dae4751915b409d0a10c0b6621b85608de55be8935f7623",
+      "autocadCore": "49fc9cf885969ecf0fcc1c8f14a0dabcc1b9de6dc8e99953c9c978f5fc2481a8",
+      "expected": "f13b358680c9aafe68b2ace52570a7d9a34d408bd93110d9b0a91c960f0a2852"
+    },
+    "units": 4,
+    "totalEntities": 40,
+    "entities": {
+      "CIRCLE": 1,
+      "DIMENSION": 1,
+      "HATCH": 7,
+      "LINE": 12,
+      "LWPOLYLINE": 9,
+      "TEXT": 10
+    },
+    "bulgedPolylines": 2,
+    "layers": {
+      "JOONED": {
+        "color": 7,
+        "lineweight": 25,
+        "linetype": "CONTINUOUS",
+        "trueColor": null,
+        "transparencyRaw": null
+      },
+      "TELJED": {
+        "color": 4,
+        "lineweight": 13,
+        "linetype": "DASHDOT",
+        "trueColor": null,
+        "transparencyRaw": null
+      },
+      "SEINAD": {
+        "color": 6,
+        "lineweight": 50,
+        "linetype": "DASHED",
+        "trueColor": null,
+        "transparencyRaw": null
+      },
+      "VIIRUTUS": {
+        "color": 9,
+        "lineweight": 13,
+        "linetype": "CONTINUOUS",
+        "trueColor": 12632256,
+        "transparencyRaw": 33554636
+      }
+    },
+    "semanticRecords": {
+      "1000": {
+        "type": "LINE",
+        "layer": "TELJED",
+        "color": 30,
+        "trueColor": null,
+        "linetype": "DASHED",
+        "lineweight": 70,
+        "transparencyRaw": 33554585,
+        "start": [
+          -200,
+          -600
+        ],
+        "end": [
+          5000,
+          -600
+        ]
+      },
+      "1001": {
+        "type": "LINE",
+        "layer": "JOONED",
+        "color": 152,
+        "trueColor": 681180,
+        "linetype": "BYLAYER",
+        "lineweight": 35,
+        "transparencyRaw": 33554649,
+        "start": [
+          0,
+          250
+        ],
+        "end": [
+          5000,
+          250
+        ]
+      },
+      "1209": {
+        "text": "MÕÕT ŠŽ€ 10"
+      }
+    },
+    "hatchTopology": {
+      "1300": {
+        "loopCount": 1,
+        "loops": [
+          {
+            "flags": 3,
+            "closed": true,
+            "hasBulge": false,
+            "vertexCount": 4,
+            "vertices": [
+              [
+                5200,
+                3000,
+                0
+              ],
+              [
+                5380,
+                3000,
+                0
+              ],
+              [
+                5380,
+                3240,
+                0
+              ],
+              [
+                5200,
+                3240,
+                0
+              ]
+            ]
+          }
+        ]
+      },
+      "1301": {
+        "loopCount": 1,
+        "loops": [
+          {
+            "flags": 3,
+            "closed": true,
+            "hasBulge": false,
+            "vertexCount": 4,
+            "vertices": [
+              [
+                5450,
+                3000,
+                0
+              ],
+              [
+                5630,
+                3000,
+                0
+              ],
+              [
+                5630,
+                3240,
+                0
+              ],
+              [
+                5450,
+                3240,
+                0
+              ]
+            ]
+          }
+        ]
+      },
+      "1302": {
+        "loopCount": 1,
+        "loops": [
+          {
+            "flags": 3,
+            "closed": true,
+            "hasBulge": false,
+            "vertexCount": 4,
+            "vertices": [
+              [
+                5700,
+                3000,
+                0
+              ],
+              [
+                5880,
+                3000,
+                0
+              ],
+              [
+                5880,
+                3240,
+                0
+              ],
+              [
+                5700,
+                3240,
+                0
+              ]
+            ]
+          }
+        ]
+      },
+      "1303": {
+        "loopCount": 1,
+        "loops": [
+          {
+            "flags": 3,
+            "closed": true,
+            "hasBulge": false,
+            "vertexCount": 4,
+            "vertices": [
+              [
+                5950,
+                3000,
+                0
+              ],
+              [
+                6130,
+                3000,
+                0
+              ],
+              [
+                6130,
+                3240,
+                0
+              ],
+              [
+                5950,
+                3240,
+                0
+              ]
+            ]
+          }
+        ]
+      },
+      "1304": {
+        "loopCount": 1,
+        "loops": [
+          {
+            "flags": 3,
+            "closed": true,
+            "hasBulge": false,
+            "vertexCount": 4,
+            "vertices": [
+              [
+                6200,
+                3000,
+                0
+              ],
+              [
+                6380,
+                3000,
+                0
+              ],
+              [
+                6380,
+                3240,
+                0
+              ],
+              [
+                6200,
+                3240,
+                0
+              ]
+            ]
+          }
+        ]
+      },
+      "1305": {
+        "loopCount": 1,
+        "loops": [
+          {
+            "flags": 3,
+            "closed": true,
+            "hasBulge": false,
+            "vertexCount": 4,
+            "vertices": [
+              [
+                6450,
+                3000,
+                0
+              ],
+              [
+                6630,
+                3000,
+                0
+              ],
+              [
+                6630,
+                3240,
+                0
+              ],
+              [
+                6450,
+                3240,
+                0
+              ]
+            ]
+          }
+        ]
+      },
+      "1306": {
+        "loopCount": 1,
+        "loops": [
+          {
+            "flags": 3,
+            "closed": true,
+            "hasBulge": false,
+            "vertexCount": 4,
+            "vertices": [
+              [
+                6700,
+                3000,
+                0
+              ],
+              [
+                6880,
+                3000,
+                0
+              ],
+              [
+                6880,
+                3240,
+                0
+              ],
+              [
+                6700,
+                3240,
+                0
+              ]
+            ]
+          }
+        ]
+      }
+    },
+    "dimensionTextStyleHandle": "401",
+    "styles": [
+      "NORMAL",
+      "STANDARD"
+    ],
+    "extents": {
+      "min": [
+        -200,
+        -600
+      ],
+      "max": [
+        7866.6667,
+        4627.6398
+      ]
+    },
+    "observedAt": "2026-08-29T05:34:19.534Z",
+    "status": "PASS"
+  },
+  "desktop": {
+    "schemaVersion": 1,
+    "rowId": "F-111",
+    "benchmark": "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
+    "engine": "Autodesk AutoCAD 2024 desktop COM",
+    "engineVersion": "24.3s (LMS Tech)",
+    "automationProcessId": 12116,
+    "automationProcessOwned": true,
+    "sourcePath": "F-111-browser-roundtrip.dxf",
+    "documentName": "F-111-browser-roundtrip.dxf",
+    "units": 4,
+    "totalEntities": 40,
+    "entities": {
+      "AcDbLine": 12,
+      "AcDbPolyline": 9,
+      "AcDbText": 10,
+      "AcDbHatch": 7,
+      "AcDbCircle": 1,
+      "AcDbAlignedDimension": 1
+    },
+    "handles": [
+      "1000",
+      "1001",
+      "1002",
+      "1003",
+      "1004",
+      "1005",
+      "1006",
+      "1007",
+      "1008",
+      "1009",
+      "100A",
+      "100B",
+      "1100",
+      "1101",
+      "1102",
+      "1103",
+      "1104",
+      "1105",
+      "1106",
+      "1107",
+      "1108",
+      "1200",
+      "1201",
+      "1202",
+      "1203",
+      "1204",
+      "1205",
+      "1206",
+      "1207",
+      "1208",
+      "1209",
+      "1300",
+      "1301",
+      "1302",
+      "1303",
+      "1304",
+      "1305",
+      "1306",
+      "1400",
+      "1500"
+    ],
+    "nativeRecords": {
+      "1000": {
+        "type": "AcDbLine",
+        "layer": "TELJED",
+        "color": 30,
+        "trueColor": 0,
+        "linetype": "DASHED",
+        "lineweight": 70,
+        "transparency": "",
+        "start": [
+          -200,
+          -600
+        ],
+        "end": [
+          5000,
+          -600
+        ]
+      },
+      "1001": {
+        "type": "AcDbLine",
+        "layer": "JOONED",
+        "color": 152,
+        "trueColor": 0,
+        "linetype": "ByLayer",
+        "lineweight": 35,
+        "transparency": "",
+        "start": [
+          0,
+          250
+        ],
+        "end": [
+          5000,
+          250
+        ]
+      },
+      "1002": {
+        "type": "AcDbLine",
+        "layer": "JOONED",
+        "color": 256,
+        "trueColor": 0,
+        "linetype": "ByLayer",
+        "lineweight": -1,
+        "transparency": "",
+        "start": [
+          0,
+          500
+        ],
+        "end": [
+          5000,
+          500
+        ]
+      },
+      "1003": {
+        "type": "AcDbLine",
+        "layer": "TELJED",
+        "color": 256,
+        "trueColor": 0,
+        "linetype": "ByLayer",
+        "lineweight": -1,
+        "transparency": "",
+        "start": [
+          0,
+          750
+        ],
+        "end": [
+          5000,
+          750
+        ]
+      },
+      "1004": {
+        "type": "AcDbLine",
+        "layer": "JOONED",
+        "color": 256,
+        "trueColor": 0,
+        "linetype": "ByLayer",
+        "lineweight": -1,
+        "transparency": "",
+        "start": [
+          0,
+          1000
+        ],
+        "end": [
+          5000,
+          1000
+        ]
+      },
+      "1005": {
+        "type": "AcDbLine",
+        "layer": "JOONED",
+        "color": 256,
+        "trueColor": 0,
+        "linetype": "ByLayer",
+        "lineweight": -1,
+        "transparency": "",
+        "start": [
+          0,
+          1250
+        ],
+        "end": [
+          5000,
+          1250
+        ]
+      },
+      "1006": {
+        "type": "AcDbLine",
+        "layer": "TELJED",
+        "color": 256,
+        "trueColor": 0,
+        "linetype": "ByLayer",
+        "lineweight": -1,
+        "transparency": "",
+        "start": [
+          0,
+          1500
+        ],
+        "end": [
+          5000,
+          1500
+        ]
+      },
+      "1007": {
+        "type": "AcDbLine",
+        "layer": "JOONED",
+        "color": 256,
+        "trueColor": 0,
+        "linetype": "ByLayer",
+        "lineweight": -1,
+        "transparency": "",
+        "start": [
+          0,
+          1750
+        ],
+        "end": [
+          5000,
+          1750
+        ]
+      },
+      "1008": {
+        "type": "AcDbLine",
+        "layer": "JOONED",
+        "color": 256,
+        "trueColor": 0,
+        "linetype": "ByLayer",
+        "lineweight": -1,
+        "transparency": "",
+        "start": [
+          0,
+          2000
+        ],
+        "end": [
+          5000,
+          2000
+        ]
+      },
+      "1009": {
+        "type": "AcDbLine",
+        "layer": "TELJED",
+        "color": 256,
+        "trueColor": 0,
+        "linetype": "ByLayer",
+        "lineweight": -1,
+        "transparency": "",
+        "start": [
+          0,
+          2250
+        ],
+        "end": [
+          5000,
+          2250
+        ]
+      },
+      "1100": {
+        "type": "AcDbPolyline",
+        "layer": "SEINAD",
+        "color": 256,
+        "trueColor": 0,
+        "linetype": "ByLayer",
+        "lineweight": -1,
+        "transparency": "",
+        "closed": true,
+        "vertices": [
+          [
+            0,
+            3000,
+            0.414213562373095
+          ],
+          [
+            300,
+            3300,
+            0
+          ],
+          [
+            0,
+            3600,
+            0
+          ]
+        ]
+      },
+      "1101": {
+        "type": "AcDbPolyline",
+        "layer": "SEINAD",
+        "color": 256,
+        "trueColor": 0,
+        "linetype": "ByLayer",
+        "lineweight": -1,
+        "transparency": "",
+        "closed": true,
+        "vertices": [
+          [
+            450,
+            3000,
+            0.414213562373095
+          ],
+          [
+            750,
+            3300,
+            -0.414213562373095
+          ],
+          [
+            450,
+            3600,
+            0
+          ]
+        ]
+      },
+      "1102": {
+        "type": "AcDbPolyline",
+        "layer": "SEINAD",
+        "color": 256,
+        "trueColor": 0,
+        "linetype": "ByLayer",
+        "lineweight": -1,
+        "transparency": "",
+        "closed": true,
+        "vertices": [
+          [
+            900,
+            3000,
+            0
+          ],
+          [
+            1200,
+            3000,
+            0
+          ],
+          [
+            1200,
+            3300,
+            0
+          ],
+          [
+            900,
+            3300,
+            0
+          ]
+        ]
+      },
+      "1103": {
+        "type": "AcDbPolyline",
+        "layer": "SEINAD",
+        "color": 256,
+        "trueColor": 0,
+        "linetype": "ByLayer",
+        "lineweight": -1,
+        "transparency": "",
+        "closed": true,
+        "vertices": [
+          [
+            1350,
+            3000,
+            0
+          ],
+          [
+            1650,
+            3000,
+            0
+          ],
+          [
+            1650,
+            3300,
+            0
+          ],
+          [
+            1350,
+            3300,
+            0
+          ]
+        ]
+      },
+      "1104": {
+        "type": "AcDbPolyline",
+        "layer": "SEINAD",
+        "color": 256,
+        "trueColor": 0,
+        "linetype": "ByLayer",
+        "lineweight": -1,
+        "transparency": "",
+        "closed": true,
+        "vertices": [
+          [
+            1800,
+            3000,
+            0
+          ],
+          [
+            2100,
+            3000,
+            0
+          ],
+          [
+            2100,
+            3300,
+            0
+          ],
+          [
+            1800,
+            3300,
+            0
+          ]
+        ]
+      },
+      "1105": {
+        "type": "AcDbPolyline",
+        "layer": "SEINAD",
+        "color": 256,
+        "trueColor": 0,
+        "linetype": "ByLayer",
+        "lineweight": -1,
+        "transparency": "",
+        "closed": true,
+        "vertices": [
+          [
+            2250,
+            3000,
+            0
+          ],
+          [
+            2550,
+            3000,
+            0
+          ],
+          [
+            2550,
+            3300,
+            0
+          ],
+          [
+            2250,
+            3300,
+            0
+          ]
+        ]
+      },
+      "1106": {
+        "type": "AcDbPolyline",
+        "layer": "SEINAD",
+        "color": 256,
+        "trueColor": 0,
+        "linetype": "ByLayer",
+        "lineweight": -1,
+        "transparency": "",
+        "closed": true,
+        "vertices": [
+          [
+            2700,
+            3000,
+            0
+          ],
+          [
+            3000,
+            3000,
+            0
+          ],
+          [
+            3000,
+            3300,
+            0
+          ],
+          [
+            2700,
+            3300,
+            0
+          ]
+        ]
+      },
+      "1107": {
+        "type": "AcDbPolyline",
+        "layer": "SEINAD",
+        "color": 256,
+        "trueColor": 0,
+        "linetype": "ByLayer",
+        "lineweight": -1,
+        "transparency": "",
+        "closed": true,
+        "vertices": [
+          [
+            3150,
+            3000,
+            0
+          ],
+          [
+            3450,
+            3000,
+            0
+          ],
+          [
+            3450,
+            3300,
+            0
+          ],
+          [
+            3150,
+            3300,
+            0
+          ]
+        ]
+      },
+      "1108": {
+        "type": "AcDbPolyline",
+        "layer": "SEINAD",
+        "color": 256,
+        "trueColor": 0,
+        "linetype": "ByLayer",
+        "lineweight": -1,
+        "transparency": "",
+        "closed": false,
+        "vertices": [
+          [
+            3600,
+            3000,
+            0
+          ],
+          [
+            3900,
+            3000,
+            0
+          ],
+          [
+            3900,
+            3300,
+            0
+          ],
+          [
+            3600,
+            3300,
+            0
+          ]
+        ]
+      },
+      "1200": {
+        "type": "AcDbText",
+        "layer": "JOONED",
+        "color": 256,
+        "trueColor": 0,
+        "linetype": "ByLayer",
+        "lineweight": -1,
+        "transparency": "",
+        "insert": [
+          0,
+          3900
+        ],
+        "text": "F109 TEXT 1",
+        "height": 180,
+        "style": "Standard",
+        "rotation": 0
+      },
+      "1201": {
+        "type": "AcDbText",
+        "layer": "JOONED",
+        "color": 256,
+        "trueColor": 0,
+        "linetype": "ByLayer",
+        "lineweight": -1,
+        "transparency": "",
+        "insert": [
+          500,
+          3900
+        ],
+        "text": "F109 TEXT 2",
+        "height": 180,
+        "style": "NORMAL",
+        "rotation": 0
+      },
+      "1202": {
+        "type": "AcDbText",
+        "layer": "JOONED",
+        "color": 256,
+        "trueColor": 0,
+        "linetype": "ByLayer",
+        "lineweight": -1,
+        "transparency": "",
+        "insert": [
+          1000,
+          3900
+        ],
+        "text": "F109 TEXT 3",
+        "height": 180,
+        "style": "Standard",
+        "rotation": 0
+      },
+      "1203": {
+        "type": "AcDbText",
+        "layer": "JOONED",
+        "color": 256,
+        "trueColor": 0,
+        "linetype": "ByLayer",
+        "lineweight": -1,
+        "transparency": "",
+        "insert": [
+          1500,
+          3900
+        ],
+        "text": "F109 TEXT 4",
+        "height": 180,
+        "style": "NORMAL",
+        "rotation": 0
+      },
+      "1204": {
+        "type": "AcDbText",
+        "layer": "JOONED",
+        "color": 256,
+        "trueColor": 0,
+        "linetype": "ByLayer",
+        "lineweight": -1,
+        "transparency": "",
+        "insert": [
+          2000,
+          3900
+        ],
+        "text": "F109 TEXT 5",
+        "height": 180,
+        "style": "Standard",
+        "rotation": 0
+      },
+      "1205": {
+        "type": "AcDbText",
+        "layer": "JOONED",
+        "color": 256,
+        "trueColor": 0,
+        "linetype": "ByLayer",
+        "lineweight": -1,
+        "transparency": "",
+        "insert": [
+          2500,
+          3900
+        ],
+        "text": "F109 TEXT 6",
+        "height": 180,
+        "style": "NORMAL",
+        "rotation": 0
+      },
+      "1206": {
+        "type": "AcDbText",
+        "layer": "JOONED",
+        "color": 256,
+        "trueColor": 0,
+        "linetype": "ByLayer",
+        "lineweight": -1,
+        "transparency": "",
+        "insert": [
+          3000,
+          3900
+        ],
+        "text": "F109 TEXT 7",
+        "height": 180,
+        "style": "Standard",
+        "rotation": 0
+      },
+      "1207": {
+        "type": "AcDbText",
+        "layer": "JOONED",
+        "color": 256,
+        "trueColor": 0,
+        "linetype": "ByLayer",
+        "lineweight": -1,
+        "transparency": "",
+        "insert": [
+          3500,
+          3900
+        ],
+        "text": "F109 TEXT 8",
+        "height": 180,
+        "style": "NORMAL",
+        "rotation": 0
+      },
+      "1208": {
+        "type": "AcDbText",
+        "layer": "JOONED",
+        "color": 256,
+        "trueColor": 0,
+        "linetype": "ByLayer",
+        "lineweight": -1,
+        "transparency": "",
+        "insert": [
+          4000,
+          3900
+        ],
+        "text": "F109 TEXT 9",
+        "height": 180,
+        "style": "Standard",
+        "rotation": 0
+      },
+      "1209": {
+        "type": "AcDbText",
+        "layer": "JOONED",
+        "color": 256,
+        "trueColor": 0,
+        "linetype": "ByLayer",
+        "lineweight": -1,
+        "transparency": "",
+        "insert": [
+          4500,
+          4400
+        ],
+        "text": "MÕÕT ŠŽ€ 10",
+        "height": 180,
+        "style": "NORMAL",
+        "rotation": 0
+      },
+      "1300": {
+        "type": "AcDbHatch",
+        "layer": "VIIRUTUS",
+        "color": 256,
+        "trueColor": 0,
+        "linetype": "ByLayer",
+        "lineweight": -1,
+        "transparency": "",
+        "pattern": "SOLID",
+        "associative": false,
+        "loopCount": 1
+      },
+      "1301": {
+        "type": "AcDbHatch",
+        "layer": "VIIRUTUS",
+        "color": 256,
+        "trueColor": 0,
+        "linetype": "ByLayer",
+        "lineweight": -1,
+        "transparency": "",
+        "pattern": "F109_1",
+        "associative": false,
+        "loopCount": 1
+      },
+      "1302": {
+        "type": "AcDbHatch",
+        "layer": "VIIRUTUS",
+        "color": 256,
+        "trueColor": 0,
+        "linetype": "ByLayer",
+        "lineweight": -1,
+        "transparency": "",
+        "pattern": "F109_2",
+        "associative": false,
+        "loopCount": 1
+      },
+      "1303": {
+        "type": "AcDbHatch",
+        "layer": "VIIRUTUS",
+        "color": 256,
+        "trueColor": 0,
+        "linetype": "ByLayer",
+        "lineweight": -1,
+        "transparency": "",
+        "pattern": "F109_3",
+        "associative": false,
+        "loopCount": 1
+      },
+      "1304": {
+        "type": "AcDbHatch",
+        "layer": "VIIRUTUS",
+        "color": 256,
+        "trueColor": 0,
+        "linetype": "ByLayer",
+        "lineweight": -1,
+        "transparency": "",
+        "pattern": "F109_4",
+        "associative": false,
+        "loopCount": 1
+      },
+      "1305": {
+        "type": "AcDbHatch",
+        "layer": "VIIRUTUS",
+        "color": 256,
+        "trueColor": 0,
+        "linetype": "ByLayer",
+        "lineweight": -1,
+        "transparency": "",
+        "pattern": "F109_5",
+        "associative": false,
+        "loopCount": 1
+      },
+      "1306": {
+        "type": "AcDbHatch",
+        "layer": "VIIRUTUS",
+        "color": 256,
+        "trueColor": 0,
+        "linetype": "ByLayer",
+        "lineweight": -1,
+        "transparency": "",
+        "pattern": "F109_6",
+        "associative": false,
+        "loopCount": 1
+      },
+      "1400": {
+        "type": "AcDbCircle",
+        "layer": "JOONED",
+        "color": 256,
+        "trueColor": 0,
+        "linetype": "ByLayer",
+        "lineweight": -1,
+        "transparency": "",
+        "center": [
+          7500,
+          0
+        ],
+        "radius": 366.6667
+      },
+      "1500": {
+        "type": "AcDbAlignedDimension",
+        "layer": "JOONED",
+        "color": 256,
+        "trueColor": 0,
+        "linetype": "ByLayer",
+        "lineweight": -1,
+        "transparency": "",
+        "first": [
+          0,
+          4000
+        ],
+        "second": [
+          5000,
+          4000
+        ],
+        "textPosition": [
+          2500,
+          4400
+        ],
+        "textOverrideRaw": "<>",
+        "text": "<>",
+        "measurement": 5000,
+        "style": "Standard"
+      },
+      "100A": {
+        "type": "AcDbLine",
+        "layer": "JOONED",
+        "color": 256,
+        "trueColor": 0,
+        "linetype": "ByLayer",
+        "lineweight": -1,
+        "transparency": "",
+        "start": [
+          0,
+          2500
+        ],
+        "end": [
+          5000,
+          2500
+        ]
+      },
+      "100B": {
+        "type": "AcDbLine",
+        "layer": "JOONED",
+        "color": 256,
+        "trueColor": 0,
+        "linetype": "ByLayer",
+        "lineweight": -1,
+        "transparency": "",
+        "start": [
+          0,
+          2750
+        ],
+        "end": [
+          5000,
+          2750
+        ]
+      }
+    },
+    "polylineClosuresAfterRegen": {
+      "1100": true,
+      "1101": true,
+      "1102": true,
+      "1103": true,
+      "1104": true,
+      "1105": true,
+      "1106": true,
+      "1107": true,
+      "1108": false
+    },
+    "layers": {
+      "JOONED": {
+        "color": 7,
+        "lineweight": 25,
+        "linetype": "Continuous",
+        "trueColor": 0,
+        "transparency": ""
+      },
+      "TELJED": {
+        "color": 4,
+        "lineweight": 13,
+        "linetype": "DASHDOT",
+        "trueColor": 0,
+        "transparency": ""
+      },
+      "SEINAD": {
+        "color": 6,
+        "lineweight": 50,
+        "linetype": "DASHED",
+        "trueColor": 0,
+        "transparency": ""
+      },
+      "VIIRUTUS": {
+        "color": 9,
+        "lineweight": 13,
+        "linetype": "Continuous",
+        "trueColor": 0,
+        "transparency": ""
+      }
+    },
+    "styles": [
+      "NORMAL",
+      "Standard"
+    ],
+    "extents": {
+      "min": [
+        -200,
+        -600
+      ],
+      "max": [
+        7866.6667,
+        4627.639836289222
+      ]
+    },
+    "openedReadOnly": true,
+    "checks": {
+      "units": true,
+      "totalEntities": true,
+      "nativeTypes": true,
+      "exactHandles": true,
+      "layers": true,
+      "styles": true,
+      "readOnly": true,
+      "polylineClosureStable": true
+    },
+    "status": "PASS",
+    "closedWithoutSaving": true,
+    "quitRequested": true,
+    "sourceSha256": "28de58b3aa9e7a2c44bcf4d17b297b1cc64b08fbbbea448a33720b0d14c601ac",
+    "matrixScriptSha256": "61e9892de68f75d9402d067eb51ca7b3dba1ca91d3d9dfd1d98bf5232a0f10ab",
+    "runnerScriptSha256": "be557cfaceda083c75a17b9386fdab94f39c6c034115fa519274eabf74297eb6",
+    "implementationSha256": {
+      "autocadDesktopMatrix": "61e9892de68f75d9402d067eb51ca7b3dba1ca91d3d9dfd1d98bf5232a0f10ab",
+      "autocadDesktop": "be557cfaceda083c75a17b9386fdab94f39c6c034115fa519274eabf74297eb6",
+      "expected": "f13b358680c9aafe68b2ace52570a7d9a34d408bd93110d9b0a91c960f0a2852"
+    },
+    "automationProcessTerminated": true,
+    "processSetRestored": true,
+    "preExistingProcessIds": [
+      11276,
+      22952,
+      23180,
+      25848,
+      28152
+    ],
+    "observedAt": "2026-08-29T05:34:18.637Z"
+  },
+  "evidenceSha256": {
+    "core": "6a37979f97f5abe9dd82efea7f50efb5316ee1e67fcd07a80442a4a0596d5fd2",
+    "desktop": "5548496ce48684e67a20e02583f8d29cec4a4662db76761956575781e2d8143a"
+  },
+  "implementationSha256": {
+    "autocadAll": "a143212b16f3a7e8adfc631c47a07c369e56a77e69b3c652d3324f9d65b7ef6e",
+    "crossChecker": "00fc1a853c0ea918ca92b3d68c0098b0e6849df5bab67dffe970a702a56af327",
+    "packageLock": "9756bf28708c3933c83c0ace8e9dbd9fe4cad9b9d6cec58670758c545f02e584",
+    "autocadScript": "7d75185bc666b3214dae4751915b409d0a10c0b6621b85608de55be8935f7623",
+    "autocadCore": "49fc9cf885969ecf0fcc1c8f14a0dabcc1b9de6dc8e99953c9c978f5fc2481a8",
+    "expected": "f13b358680c9aafe68b2ace52570a7d9a34d408bd93110d9b0a91c960f0a2852",
+    "autocadDesktopMatrix": "61e9892de68f75d9402d067eb51ca7b3dba1ca91d3d9dfd1d98bf5232a0f10ab",
+    "autocadDesktop": "be557cfaceda083c75a17b9386fdab94f39c6c034115fa519274eabf74297eb6"
+  }
+}

@@ -103,6 +103,9 @@ const syntheticCadAllowlist = new Set([
   "evidence/artifacts/F-107-independent.kdraw",
   "evidence/artifacts/F-109-browser.dxf",
   "evidence/artifacts/F-109-production.dxf",
+  "evidence/artifacts/F-111-browser-roundtrip.dxf",
+  "evidence/artifacts/F-111-roundtrip.dxf",
+  "evidence/artifacts/F-111-source.dxf",
   "tools/oracles/fixtures/librecad-line-circle.dxf",
 ]);
 const textExtensions = new Set([".ts", ".tsx", ".js", ".mjs", ".json", ".md", ".yml", ".yaml", ".html", ".css", ".txt"]);

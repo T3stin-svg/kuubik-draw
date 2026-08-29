@@ -8,7 +8,7 @@ käitumispariteeti, mitte kogu AutoCADi toodet.
 
 - vana Drawi auditi snapshot: **63,9% raw / 68,3% weighted / 60,7% visual**;
 - vana Drawi AutoCADi live-tõendiga read: **22/133**;
-- selle uue eraldatud rakenduse kohalik sertifikaat: **20/133 · 15,0% raw / 17,9% weighted**;
+- selle uue eraldatud rakenduse kohalik sertifikaat: **21/133 · 15,8% raw / 18,9% weighted**;
 - native DWG/DWT/XREF ja PC3/CTB/STB pariteet on veel blokeeritud.
 
 Need arvud on vana Drawi auditi muutmatu snapshot. Uus rakendus ei päri skoori
@@ -93,6 +93,16 @@ tekstistiilid, bulge'id, viirutused ja native aligned-dimension'i. Range `ezdxf`
 AutoCAD 2024 Core Console ning eraldi omatud desktop AutoCAD loevad sama faili
 tagasi. AutoCADi live AcCmColor-värav kinnitab kõik 255 ACI värvi täpse SHA-ga;
 runneri, maatriksi ja tootmislähte SHA muutus muudab tõendi automaatselt aegunuks.
+F-111 `DXF roundtrip fidelity` impordib sama 40-objektilise AC1018/ANSI_1252
+DXF-i schema-valideeritud muudetavaks dokumendiks ning väljastab pärast
+brauseri import→MOVE→Undo/Redo→IndexedDB reload töövoogu bititäpselt sama
+13 679-baidise faili. DXFIN asendab mudeliruumi ühe atomaarse operatsioonina,
+kuid säilitab Kuubiku layout'id ja nende transitiivsed ressursid collision-safe
+remap'iga. Importija blokeerib osalise impordi, dubleeruvad TABLES/BLOCKS/
+OBJECTS/ENTITIES handle'id, mittetoetatud HATCH-i grammatika, ühikuvahetuse
+unit-sensitive layout state'i korral ning mahu- ja struktuurieelarve ületuse.
+Chromium, range `ezdxf`, AutoCAD 2024 Core Console ja eraldi omatud desktop
+AutoCAD kinnitavad 40 native objekti; sõltumatu kordusülevaatus lõppes 0 P0/P1.
 
 ## Piirid
 

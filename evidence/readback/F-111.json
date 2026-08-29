@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-111",
+  "kind": "readback",
+  "authority": "independent-parser",
+  "status": "PASS",
+  "artifactSha256": "8e34bd586d24798f26c6891f8acce013cef25f470a698edefa592a44a839a8d3",
+  "observedAt": "2026-08-29T05:41:21.352Z",
+  "workflow": "A fresh production DXF is imported into the immutable KDraw document and exported again; source, direct roundtrip and exact Chromium roundtrip bytes are compared and each is opened independently with strict ezdxf 1.4.3.",
+  "result": "All three 13679-byte files had SHA-256 28de58b3... and identical 40/40 per-handle semantic hashes. Independent read-back preserved two bulged polylines, seven HATCH records and loops, aligned DIMENSION points, millimetres, layers, linetypes, styles, ACI/TrueColor, lineweight and transparency with zero audit errors or fixes.",
+  "artifact": "evidence/artifacts/F-111-readback.json"
+}

@@ -10,6 +10,8 @@ import type {
 } from "@kuubik/cad-schema";
 import { nearestAciIndex } from "@kuubik/cad-core";
 
+export * from "./import.js";
+
 export interface DxfExportReport {
   emittedHandles: string[];
   handleMap: Readonly<Record<string, string>>;

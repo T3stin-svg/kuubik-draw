@@ -4,8 +4,8 @@
   "kind": "readback",
   "authority": "independent-parser",
   "status": "PASS",
-  "artifactSha256": "b0b73da0a7db707dfbdcba2bee2f7005e422f622abba01cbb85dc699af58b1e7",
-  "observedAt": "2026-08-29T03:45:25.518Z",
+  "artifactSha256": "f7f7d000b0b2c2fd8fe543f040463db8c90de5d8ead151b0e456882315382648",
+  "observedAt": "2026-08-29T05:37:46.188Z",
   "workflow": "The production cad-core publish planner and cad-print PDF writer generate reordered multi-page, excluded, separate and inactive-Display outputs twice from the shared F-105 fixture. pypdf, pdfplumber and Poppler inspect every output; PDF operators independently expose the Display source clip and transform, while order and geometry mutations are applied independently.",
   "result": "Production output matched the Chromium download bytes exactly, including the inactive SECTION 10 Display PDF and its exact stored source window. Output was deterministic, preserved non-alphabetic PLAN 20 then SECTION 10 order, exclusion and Windows-safe length-bounded collision names, and contained no image XObjects. Reversing page order or changing geometry changed the PDF hash.",
   "artifact": "evidence/artifacts/F-105-independent-readback.json"

@@ -14,7 +14,7 @@ describe("AutoCAD owned-process launch and cleanup ratchet", () => {
     });
   }
 
-  for (const runner of ["run-f019.mjs", "run-f020.mjs", "run-f021.mjs", "run-f109-aci-palette.mjs", "run-f109-desktop.mjs"]) {
+  for (const runner of ["run-f019.mjs", "run-f020.mjs", "run-f021.mjs", "run-f109-aci-palette.mjs", "run-f109-desktop.mjs", "run-f111-desktop.mjs"]) {
     it(`${runner} kills a timed-out child tree and always cleans an authenticated PID`, async () => {
       const text = await source(runner);
       expect(text).toContain("timedOut = true");

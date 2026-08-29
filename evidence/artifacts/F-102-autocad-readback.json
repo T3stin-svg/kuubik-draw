@@ -4,7 +4,7 @@
   "benchmark": "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
   "engine": "Autodesk AutoCAD 2024 desktop COM/native Layout PlotConfiguration and PlotToFile",
   "engineVersion": "24.3s (LMS Tech)",
-  "automationProcessId": 23484,
+  "automationProcessId": 35324,
   "automationProcessOwned": true,
   "media": {
     "a3": "ISO_expand_A3_(297.00_x_420.00_MM)",
@@ -12,9 +12,9 @@
   },
   "baseline": {
     "layoutName": "F102 PAGE SETUP",
-    "configName": "DWG To PDF.pc3",
+    "configName": "",
     "canonicalMediaName": "ISO_expand_A3_(297.00_x_420.00_MM)",
-    "paperUnits": 0,
+    "paperUnits": 1,
     "plotRotation": 1,
     "paper": {
       "widthMm": 420,
@@ -339,18 +339,18 @@
   },
   "dwg": {
     "bytes": 32532,
-    "sha256": "a67ea578154f4b20f0f054a54e90f3b70a391f4aeb5a540b6298e71f21bec145",
+    "sha256": "70a059e4104ecbbfb252d284651a75394eff4f3dc10c85b752903f85eff42410",
     "saveAsType": 64,
     "retained": false
   },
   "pdf": {
     "bytes": 2021,
-    "sha256": "a589466bd2341f46ac85067e50f76957933d410683dc014f2551348bfaeb17b7",
+    "sha256": "73905b28e6ef6aaef70e826f98dadb3f9c1fd2e5eda84b1b6492cf8275f287e8",
     "retained": false
   },
   "displayPdf": {
     "bytes": 2048,
-    "sha256": "d5718856a523c3da4b56086adc510bbcd1a30db03047807b441ddeef95b7cbe4",
+    "sha256": "37b829ae8d5c680fe777eaa7f2cc4e453b58c927d7856198a1ad1ae47175ff61",
     "retained": false
   },
   "status": "PASS",
@@ -423,9 +423,9 @@
       }
     }
   },
-  "browserEvidenceSha256": "df7829bede8a856498afd0b23dabe2c9a9039af8a29ff9443911d2a93e803e7e",
+  "browserEvidenceSha256": "fbfe6ce97ceefb5298e3f488dd3dd42ddb84828293e1e930d6c695e130ec0025",
   "scriptSha256": "82fe5a54be4efcfbd5ce2735ad23147a2d75c093e83ba404d2c3189d3821d23e",
   "matrixScriptSha256": "1e0b54ca1e79cf36d862e3425462000e8ca3f038edde4037dcbe6bf8da01a940",
   "runnerScriptSha256": "fbbb62a75f0c60eabfeee5b995e861d2f9db8a59a1a216cc1e0f082b12273744",
-  "observedAt": "2026-08-29T03:47:22.764Z"
+  "observedAt": "2026-08-29T05:35:40.163Z"
 }

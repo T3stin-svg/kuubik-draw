@@ -4,8 +4,8 @@
   "kind": "autocad",
   "authority": "autocad-2024.1.2-live",
   "status": "PASS",
-  "artifactSha256": "53c6dcbbc637f93edf21c25b89b99785644e91136a0904e9a7d0601f183d7f8b",
-  "observedAt": "2026-08-29T03:50:50.065Z",
+  "artifactSha256": "b20ec1dc4e2982b0e4bcb051d35281349f0e9de3056dc230c789fe08ef4f5daa",
+  "observedAt": "2026-08-29T05:39:37.422Z",
   "workflow": "An owned isolated AutoCAD 24.3 process creates an A4 portrait Layout 1:1 named PlotConfiguration, applies it to Layout1, renames it, creates and deletes another named setup, saves a native AutoCAD 2018 DWT, and creates a fresh drawing from that DWT.",
   "result": "Named setup create/apply/rename/delete passed. The native DWT reopened with millimetre INSUNITS, one named setup and Layout1 preserving DWG To PDF.pc3, ISO A4 portrait, Layout plot type, 1:1 scale, PlotOrigin, printable margins, monochrome.ctb, lineweights and plot styles; only the PID-proven owned process was terminated and the pre-existing process set was restored.",
   "artifact": "evidence/artifacts/F-107-autocad-readback.json"

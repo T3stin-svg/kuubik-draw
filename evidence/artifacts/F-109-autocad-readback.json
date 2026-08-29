@@ -3,7 +3,7 @@
   "rowId": "F-109",
   "authority": "autocad-2024.1.2-live",
   "status": "PASS",
-  "observedAt": "2026-08-29T04:25:19.312Z",
+  "observedAt": "2026-08-29T05:40:24.944Z",
   "sourceSha256": "28de58b3aa9e7a2c44bcf4d17b297b1cc64b08fbbbea448a33720b0d14c601ac",
   "workflow": "Open the exact Kuubik production DXF in AutoCAD 2024 Core Console and a separately owned visible desktop AutoCAD process, read native entities/tables, close without saving, and restore the prior process set.",
   "core": {
@@ -347,7 +347,7 @@
         4627.6398
       ]
     },
-    "observedAt": "2026-08-29T04:25:19.303Z",
+    "observedAt": "2026-08-29T05:40:24.934Z",
     "status": "PASS"
   },
   "desktop": {
@@ -356,10 +356,10 @@
     "benchmark": "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
     "engine": "Autodesk AutoCAD 2024 desktop COM",
     "engineVersion": "24.3s (LMS Tech)",
-    "automationProcessId": 8052,
+    "automationProcessId": 35712,
     "automationProcessOwned": true,
     "sourcePath": "F-109-production.dxf",
-    "documentName": "F-109-production.dxf",
+    "documentName": "",
     "units": 4,
     "totalEntities": 40,
     "entities": {
@@ -1275,7 +1275,7 @@
       25848,
       28152
     ],
-    "observedAt": "2026-08-29T04:25:08.489Z"
+    "observedAt": "2026-08-29T05:40:12.835Z"
   },
   "palette": {
     "schemaVersion": 1,
@@ -1283,7 +1283,7 @@
     "benchmark": "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
     "engine": "Autodesk AutoCAD 2024 desktop COM AcCmColor.24",
     "engineVersion": "24.3s (LMS Tech)",
-    "automationProcessId": 30264,
+    "automationProcessId": 33616,
     "automationProcessOwned": true,
     "indices": "1..255",
     "palette": [
@@ -1568,12 +1568,12 @@
       "autocadAciMatrix": "b09d1a34decf15946d22475e1f251952a3d02465b401fa67ba309c33b5efd9ad",
       "autocadAciRunner": "9ad5fbb2fe47d23477e3777e0275484351c70eb8d33caee3b49496531f59c889"
     },
-    "observedAt": "2026-08-29T04:25:18.400Z"
+    "observedAt": "2026-08-29T05:40:24.008Z"
   },
   "evidenceSha256": {
-    "core": "c8ce82aa54766f893d7d4b60e4f9fdcccb2fc9fe87c7fbd6cb56917eabedddc0",
-    "desktop": "c7bb961d761eb17058c344c41dc1a43dffb6a2ae0559dd3d02e0d96721e73530",
-    "palette": "8edea093f1f4450cbb797b70f306fcdee8a4bd2358329979e414e00b24bc24c6"
+    "core": "b67aff9d72ce00361bb0b2772e8dbfe11f4c707216ba6419e1586f902f582a21",
+    "desktop": "aa424b7bf4d8ac7ddef1b7135607c276e991a58288b76166fe28fe37aba5a57d",
+    "palette": "5c405eefdeeb7714656360a517a2a2546b8f0e6dd4c48b4a9d44613f1e3f8b02"
   },
   "implementationSha256": {
     "autocadAll": "c5a9efed9c33909099b04278e88316ca13666f851c5b8100db791016543d7558",

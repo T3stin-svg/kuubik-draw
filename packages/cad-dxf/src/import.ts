@@ -1,0 +1,737 @@
+import {
+  AUTOCAD_2024_ACI_PALETTE,
+  createEmptyDocument,
+} from "@kuubik/cad-core";
+import {
+  assertKDrawDocumentV1,
+  type CadAppearance,
+  type CadDimensionStyle,
+  type CadEntity,
+  type CadHatchLoop,
+  type CadLayer,
+  type CadLinearUnit,
+  type CadLinetype,
+  type CadPoint2,
+  type CadPolylineVertex,
+  type CadTextStyle,
+  type KDrawDocumentV1,
+} from "@kuubik/cad-schema";
+
+export const MAX_DXF_IMPORT_BYTES = 32 * 1024 * 1024;
+export const MAX_DXF_IMPORT_PAIRS = 750_000;
+export const MAX_DXF_IMPORT_RECORDS = 100_000;
+export const MAX_DXF_RECORD_PAIRS = 16_384;
+export const MAX_DXF_ENTITY_VERTICES = 50_000;
+export const MAX_DXF_HATCH_LOOPS = 256;
+const MAX_DXF_LINE_CHARS = 1_048_576;
+const DXF_HANDLE = /^[1-9A-F][0-9A-F]{0,15}$/u;
+const BUILTIN_LINETYPES = new Set(["BYBLOCK", "BYLAYER", "CONTINUOUS"]);
+const INSUNITS: Readonly<Record<number, CadLinearUnit>> = Object.freeze({
+  0: "unitless",
+  1: "in",
+  2: "ft",
+  4: "mm",
+  5: "cm",
+  6: "m",
+});
+
+interface DxfPair {
+  code: number;
+  value: string;
+  line: number;
+}
+
+interface DxfRecord {
+  type: string;
+  pairs: DxfPair[];
+}
+
+export interface DxfImportSkippedRecord {
+  type: string;
+  handle: string | null;
+  reason: string;
+}
+
+export interface DxfImportReport {
+  acadVersion: string;
+  codePage: string;
+  sourceByteLength: number;
+  importedHandles: string[];
+  skipped: DxfImportSkippedRecord[];
+  warnings: string[];
+}
+
+export interface DxfImportResult {
+  document: KDrawDocumentV1;
+  report: DxfImportReport;
+}
+
+export interface DxfImportOptions {
+  documentId: string;
+  now?: string;
+}
+
+export class DxfImportError extends Error {
+  constructor(message: string, readonly report?: DxfImportReport) {
+    super(message);
+    this.name = "DxfImportError";
+  }
+}
+
+function normalizedName(value: string): string {
+  return value.trim().toLocaleUpperCase("en-US");
+}
+
+function stableId(kind: string, name: string): string {
+  return `dxf-${kind}:${encodeURIComponent(normalizedName(name))}`;
+}
+
+function decodeInput(input: string | Uint8Array): { text: string; byteLength: number } {
+  const byteLength = typeof input === "string" ? new TextEncoder().encode(input).byteLength : input.byteLength;
+  if (byteLength === 0) throw new DxfImportError("DXF file is empty.");
+  if (byteLength > MAX_DXF_IMPORT_BYTES) throw new DxfImportError(`DXF file exceeds the ${MAX_DXF_IMPORT_BYTES} byte import limit.`);
+  const text = typeof input === "string" ? input : new TextDecoder("windows-1252").decode(input);
+  if (text.startsWith("AutoCAD Binary DXF")) throw new DxfImportError("Binary DXF is not supported by this audited ASCII import path.");
+  if (text.includes("\0")) throw new DxfImportError("DXF contains a NUL byte.");
+  return { text, byteLength };
+}
+
+function parsePairs(text: string): DxfPair[] {
+  let logicalLines = 1;
+  let lineLength = 0;
+  for (let index = 0; index < text.length; index += 1) {
+    const character = text[index]!;
+    if (character === "\r" || character === "\n") {
+      if (character === "\r" && text[index + 1] === "\n") index += 1;
+      logicalLines += 1;
+      lineLength = 0;
+    } else {
+      lineLength += 1;
+      if (lineLength > MAX_DXF_LINE_CHARS) throw new DxfImportError(`DXF line exceeds the ${MAX_DXF_LINE_CHARS} character limit.`);
+    }
+    if (logicalLines > MAX_DXF_IMPORT_PAIRS * 2 + 1) throw new DxfImportError(`DXF exceeds the ${MAX_DXF_IMPORT_PAIRS} group-pair limit.`);
+  }
+  const lines = text.split(/\r\n|\r|\n/u);
+  if (lines.at(-1) === "") lines.pop();
+  if (lines.length % 2 !== 0) throw new DxfImportError(`DXF ends with an unpaired group-code line ${lines.length}.`);
+  const pairs: DxfPair[] = [];
+  for (let index = 0; index < lines.length; index += 2) {
+    const rawCode = lines[index]!;
+    if (!/^\s*[+-]?\d+\s*$/u.test(rawCode)) throw new DxfImportError(`Invalid DXF group code at line ${index + 1}.`);
+    const code = Number(rawCode.trim());
+    if (!Number.isSafeInteger(code)) throw new DxfImportError(`DXF group code is outside the safe integer range at line ${index + 1}.`);
+    pairs.push({ code, value: lines[index + 1]!, line: index + 1 });
+  }
+  const last = pairs.at(-1);
+  if (!last || last.code !== 0 || last.value.trim().toUpperCase() !== "EOF") throw new DxfImportError("DXF is missing its final EOF record.");
+  return pairs;
+}
+
+function sections(pairs: readonly DxfPair[]): Map<string, DxfPair[]> {
+  const result = new Map<string, DxfPair[]>();
+  for (let index = 0; index < pairs.length; index += 1) {
+    const pair = pairs[index]!;
+    if (pair.code !== 0 || normalizedName(pair.value) !== "SECTION") continue;
+    const namePair = pairs[index + 1];
+    if (!namePair || namePair.code !== 2) throw new DxfImportError(`SECTION at line ${pair.line} has no name.`);
+    const name = normalizedName(namePair.value);
+    if (result.has(name)) throw new DxfImportError(`DXF contains duplicate ${name} sections.`);
+    const body: DxfPair[] = [];
+    index += 2;
+    while (index < pairs.length && !(pairs[index]!.code === 0 && normalizedName(pairs[index]!.value) === "ENDSEC")) {
+      body.push(pairs[index]!);
+      index += 1;
+    }
+    if (index >= pairs.length) throw new DxfImportError(`${name} section is missing ENDSEC.`);
+    result.set(name, body);
+  }
+  return result;
+}
+
+function firstPair(pairs: readonly DxfPair[], code: number): DxfPair | undefined {
+  return pairs.find((pair) => pair.code === code);
+}
+
+function textValue(pairs: readonly DxfPair[], code: number, label: string, required = true): string | undefined {
+  const pair = firstPair(pairs, code);
+  if (!pair) {
+    if (required) throw new DxfImportError(`${label} is missing DXF group ${code}.`);
+    return undefined;
+  }
+  return pair.value.trim();
+}
+
+function numberValue(pairs: readonly DxfPair[], code: number, label: string, required = true): number | undefined {
+  const pair = firstPair(pairs, code);
+  if (!pair) {
+    if (required) throw new DxfImportError(`${label} is missing DXF group ${code}.`);
+    return undefined;
+  }
+  const value = Number(pair.value.trim());
+  if (!Number.isFinite(value)) throw new DxfImportError(`${label} has a non-finite DXF group ${code} at line ${pair.line + 1}.`);
+  return value;
+}
+
+function integerValue(pairs: readonly DxfPair[], code: number, label: string, required = true): number | undefined {
+  const value = numberValue(pairs, code, label, required);
+  if (value !== undefined && !Number.isInteger(value)) throw new DxfImportError(`${label} DXF group ${code} must be an integer.`);
+  return value;
+}
+
+function pointValue(pairs: readonly DxfPair[], xCode: number, yCode: number, label: string): CadPoint2 {
+  return {
+    x: numberValue(pairs, xCode, label)!,
+    y: numberValue(pairs, yCode, label)!,
+  };
+}
+
+function records(pairs: readonly DxfPair[]): DxfRecord[] {
+  const result: DxfRecord[] = [];
+  let current: DxfRecord | null = null;
+  for (const pair of pairs) {
+    if (pair.code === 0) {
+      if (current) {
+        if (current.pairs.length > MAX_DXF_RECORD_PAIRS) throw new DxfImportError(`${current.type} record exceeds the ${MAX_DXF_RECORD_PAIRS} pair limit.`);
+        result.push(current);
+        if (result.length > MAX_DXF_IMPORT_RECORDS) throw new DxfImportError(`DXF exceeds the ${MAX_DXF_IMPORT_RECORDS} record limit.`);
+      }
+      current = { type: normalizedName(pair.value), pairs: [] };
+    } else if (current) {
+      current.pairs.push(pair);
+    }
+  }
+  if (current) {
+    if (current.pairs.length > MAX_DXF_RECORD_PAIRS) throw new DxfImportError(`${current.type} record exceeds the ${MAX_DXF_RECORD_PAIRS} pair limit.`);
+    result.push(current);
+    if (result.length > MAX_DXF_IMPORT_RECORDS) throw new DxfImportError(`DXF exceeds the ${MAX_DXF_IMPORT_RECORDS} record limit.`);
+  }
+  return result;
+}
+
+function tableRecords(tableSection: readonly DxfPair[], tableName: string): DxfRecord[] {
+  for (let index = 0; index < tableSection.length; index += 1) {
+    if (tableSection[index]!.code !== 0 || normalizedName(tableSection[index]!.value) !== "TABLE") continue;
+    const name = tableSection[index + 1];
+    if (!name || name.code !== 2) throw new DxfImportError(`TABLE at line ${tableSection[index]!.line} has no name.`);
+    let end = index + 2;
+    while (end < tableSection.length && !(tableSection[end]!.code === 0 && normalizedName(tableSection[end]!.value) === "ENDTAB")) end += 1;
+    if (end >= tableSection.length) throw new DxfImportError(`${normalizedName(name.value)} table is missing ENDTAB.`);
+    if (normalizedName(name.value) === normalizedName(tableName)) return records(tableSection.slice(index + 2, end));
+    index = end;
+  }
+  return [];
+}
+
+function headerVariables(header: readonly DxfPair[]): Map<string, DxfPair> {
+  const result = new Map<string, DxfPair>();
+  for (let index = 0; index < header.length; index += 1) {
+    const pair = header[index]!;
+    if (pair.code !== 9) continue;
+    const value = header[index + 1];
+    if (!value) throw new DxfImportError(`Header variable ${pair.value.trim()} has no value.`);
+    result.set(normalizedName(pair.value), value);
+  }
+  return result;
+}
+
+function requireHeader(headers: ReadonlyMap<string, DxfPair>, name: string): DxfPair {
+  const pair = headers.get(name);
+  if (!pair) throw new DxfImportError(`DXF header is missing ${name}.`);
+  return pair;
+}
+
+function uniqueNames(values: readonly { name: string }[], kind: string): void {
+  const names = new Set<string>();
+  for (const value of values) {
+    const normalized = normalizedName(value.name);
+    if (!normalized) throw new DxfImportError(`DXF ${kind} has an empty name.`);
+    if (names.has(normalized)) throw new DxfImportError(`DXF contains duplicate ${kind} name ${value.name}.`);
+    names.add(normalized);
+  }
+}
+
+function registerHandle(raw: string, used: Set<string>, label: string): string {
+  const handle = normalizedName(raw);
+  if (!DXF_HANDLE.test(handle)) throw new DxfImportError(`${label} has unsupported handle ${raw}.`);
+  if (used.has(handle)) throw new DxfImportError(`DXF contains duplicate global handle ${handle}.`);
+  used.add(handle);
+  return handle;
+}
+
+function registerSectionHandles(pairs: readonly DxfPair[], used: Set<string>, label: string): void {
+  for (const pair of pairs) {
+    if (pair.code === 5 || pair.code === 105) registerHandle(pair.value.trim(), used, label);
+  }
+}
+
+function rgbHex(value: number): string {
+  if (!Number.isInteger(value) || value < 0 || value > 0xffffff) throw new DxfImportError(`DXF TrueColor ${value} is outside 0..16777215.`);
+  return `#${value.toString(16).padStart(6, "0")}`;
+}
+
+function aciHex(index: number): string {
+  if (!Number.isInteger(index) || index < 1 || index > 255) throw new DxfImportError(`DXF ACI ${index} is outside 1..255.`);
+  return AUTOCAD_2024_ACI_PALETTE[index - 1]!;
+}
+
+function transparencyPercent(raw: number): number {
+  if (!Number.isInteger(raw) || raw < 0) throw new DxfImportError(`Invalid DXF transparency value ${raw}.`);
+  const alpha = raw & 0xff;
+  return Number((100 * (1 - alpha / 255)).toFixed(12));
+}
+
+function xdataTransparency(pairs: readonly DxfPair[]): number | undefined {
+  for (let index = 0; index < pairs.length - 1; index += 1) {
+    if (pairs[index]!.code === 1001 && normalizedName(pairs[index]!.value) === "ACCMTRANSPARENCY") {
+      const value = pairs[index + 1]!;
+      if (value.code !== 1071) throw new DxfImportError("AcCmTransparency XDATA is missing its 1071 value.");
+      const raw = Number(value.value.trim());
+      if (!Number.isInteger(raw)) throw new DxfImportError("AcCmTransparency XDATA must be an integer.");
+      return transparencyPercent(raw);
+    }
+  }
+  return undefined;
+}
+
+function appearance(
+  pairs: readonly DxfPair[],
+  linetypeIds: ReadonlyMap<string, string>,
+  options: { layer: boolean },
+): CadAppearance | undefined {
+  const rawAci = integerValue(pairs, 62, "appearance", false);
+  const index = rawAci === undefined ? undefined : Math.abs(rawAci);
+  const trueColor = integerValue(pairs, 420, "appearance", false);
+  const linetypeName = textValue(pairs, 6, "appearance", false);
+  const linetypeId = linetypeName && !BUILTIN_LINETYPES.has(normalizedName(linetypeName))
+    ? linetypeIds.get(normalizedName(linetypeName))
+    : undefined;
+  if (linetypeName && !BUILTIN_LINETYPES.has(normalizedName(linetypeName)) && !linetypeId) {
+    throw new DxfImportError(`Appearance references missing linetype ${linetypeName}.`);
+  }
+  const rawLineweight = integerValue(pairs, 370, "appearance", false);
+  const commonTransparency = integerValue(pairs, 440, "appearance", false);
+  const layerTransparency = options.layer ? xdataTransparency(pairs) : undefined;
+  const result: CadAppearance = {};
+  if (trueColor !== undefined) {
+    result.color = rgbHex(trueColor);
+    result.colorMethod = "trueColor";
+    if (index !== undefined && index >= 1 && index <= 255) result.aciIndex = index;
+  } else if (index !== undefined && index >= 1 && index <= 255) {
+    result.color = aciHex(index);
+    result.colorMethod = "aci";
+    result.aciIndex = index;
+  } else if (index !== undefined && index !== 0 && index !== 256) {
+    throw new DxfImportError(`Appearance ACI ${index} is unsupported.`);
+  }
+  if (linetypeId) result.linetypeId = linetypeId;
+  if (rawLineweight !== undefined && rawLineweight >= 0) result.lineweightMm = rawLineweight / 100;
+  const parsedTransparency = commonTransparency === undefined ? layerTransparency : transparencyPercent(commonTransparency);
+  if (parsedTransparency !== undefined) result.transparency = parsedTransparency;
+  return Object.keys(result).length ? result : undefined;
+}
+
+function parseLinetypes(tableSection: readonly DxfPair[]): { values: CadLinetype[]; ids: Map<string, string> } {
+  const allRecords = tableRecords(tableSection, "LTYPE").filter((record) => record.type === "LTYPE");
+  const values: CadLinetype[] = [];
+  const ids = new Map<string, string>();
+  for (const record of allRecords) {
+    const name = textValue(record.pairs, 2, "linetype")!;
+    const normalized = normalizedName(name);
+    if (ids.has(normalized)) throw new DxfImportError(`DXF contains duplicate linetype name ${name}.`);
+    if (BUILTIN_LINETYPES.has(normalized)) continue;
+    const id = stableId("linetype", name);
+    const pattern = record.pairs.filter((pair) => pair.code === 49).map((pair) => {
+      const value = Number(pair.value.trim());
+      if (!Number.isFinite(value)) throw new DxfImportError(`Linetype ${name} contains a non-finite pattern segment.`);
+      return value;
+    });
+    const expectedSegments = integerValue(record.pairs, 73, `linetype ${name}`, false);
+    if (expectedSegments !== undefined && expectedSegments !== pattern.length) throw new DxfImportError(`Linetype ${name} segment count does not match group 73.`);
+    const description = textValue(record.pairs, 3, `linetype ${name}`, false);
+    values.push({ id, name, ...(description ? { description } : {}), pattern });
+    ids.set(normalized, id);
+  }
+  return { values, ids };
+}
+
+function parseTextStyles(tableSection: readonly DxfPair[]): { values: CadTextStyle[]; ids: Map<string, string>; handles: Map<string, string> } {
+  const values: CadTextStyle[] = [];
+  const ids = new Map<string, string>();
+  const handles = new Map<string, string>();
+  for (const record of tableRecords(tableSection, "STYLE").filter((candidate) => candidate.type === "STYLE")) {
+    const name = textValue(record.pairs, 2, "text style")!;
+    const normalized = normalizedName(name);
+    if (ids.has(normalized)) throw new DxfImportError(`DXF contains duplicate text style name ${name}.`);
+    const widthFactor = numberValue(record.pairs, 41, `text style ${name}`, false) ?? 1;
+    if (!(widthFactor > 0)) throw new DxfImportError(`Text style ${name} has a non-positive width factor.`);
+    const id = stableId("text-style", name);
+    const bigFont = textValue(record.pairs, 4, `text style ${name}`, false);
+    values.push({
+      id,
+      name,
+      fontFamily: textValue(record.pairs, 3, `text style ${name}`, false) ?? "txt",
+      ...(bigFont ? { bigFont } : {}),
+      widthFactor,
+      obliqueAngleRad: (numberValue(record.pairs, 50, `text style ${name}`, false) ?? 0) * Math.PI / 180,
+    });
+    ids.set(normalized, id);
+    const handle = textValue(record.pairs, 5, `text style ${name}`, false);
+    if (handle) handles.set(normalizedName(handle), id);
+  }
+  uniqueNames(values, "text style");
+  return { values, ids, handles };
+}
+
+function parseDimensionStyles(
+  tableSection: readonly DxfPair[],
+  textStyleHandles: ReadonlyMap<string, string>,
+): { values: CadDimensionStyle[]; ids: Map<string, string> } {
+  const values: CadDimensionStyle[] = [];
+  const ids = new Map<string, string>();
+  for (const record of tableRecords(tableSection, "DIMSTYLE").filter((candidate) => candidate.type === "DIMSTYLE")) {
+    const name = textValue(record.pairs, 2, "dimension style")!;
+    const normalized = normalizedName(name);
+    if (ids.has(normalized)) throw new DxfImportError(`DXF contains duplicate dimension style name ${name}.`);
+    const textStyleHandle = textValue(record.pairs, 340, `dimension style ${name}`, false);
+    const textStyleId = textStyleHandle ? textStyleHandles.get(normalizedName(textStyleHandle)) : undefined;
+    if (textStyleHandle && !textStyleId) throw new DxfImportError(`Dimension style ${name} references missing text style handle ${textStyleHandle}.`);
+    const id = stableId("dimension-style", name);
+    const value: CadDimensionStyle = {
+      id,
+      name,
+      ...(textStyleId ? { textStyleId } : {}),
+      textHeight: numberValue(record.pairs, 140, `dimension style ${name}`, false) ?? 2.5,
+      arrowSize: numberValue(record.pairs, 41, `dimension style ${name}`, false) ?? 2.5,
+      extensionOffset: numberValue(record.pairs, 42, `dimension style ${name}`, false) ?? 0.625,
+      scale: numberValue(record.pairs, 40, `dimension style ${name}`, false) ?? 1,
+    };
+    if (!(value.textHeight > 0 && value.arrowSize > 0 && value.scale > 0) || value.extensionOffset < 0) {
+      throw new DxfImportError(`Dimension style ${name} contains invalid sizes.`);
+    }
+    values.push(value);
+    ids.set(normalized, id);
+  }
+  uniqueNames(values, "dimension style");
+  return { values, ids };
+}
+
+function parseLayers(tableSection: readonly DxfPair[], linetypeIds: ReadonlyMap<string, string>): { values: CadLayer[]; ids: Map<string, string> } {
+  const values: CadLayer[] = [];
+  const ids = new Map<string, string>();
+  for (const record of tableRecords(tableSection, "LAYER").filter((candidate) => candidate.type === "LAYER")) {
+    const name = textValue(record.pairs, 2, "layer")!;
+    const normalized = normalizedName(name);
+    if (ids.has(normalized)) throw new DxfImportError(`DXF contains duplicate layer name ${name}.`);
+    const flags = integerValue(record.pairs, 70, `layer ${name}`, false) ?? 0;
+    const rawColor = integerValue(record.pairs, 62, `layer ${name}`, false) ?? 7;
+    const id = stableId("layer", name);
+    const parsedAppearance = appearance(record.pairs, linetypeIds, { layer: true });
+    values.push({
+      id,
+      name,
+      visible: rawColor >= 0,
+      frozen: (flags & 1) !== 0,
+      locked: (flags & 4) !== 0,
+      plottable: (integerValue(record.pairs, 290, `layer ${name}`, false) ?? 1) !== 0,
+      ...(parsedAppearance ? { appearance: parsedAppearance } : {}),
+    });
+    ids.set(normalized, id);
+  }
+  if (!values.length) throw new DxfImportError("DXF contains no LAYER table records.");
+  uniqueNames(values, "layer");
+  return { values, ids };
+}
+
+function parseHandle(record: DxfRecord, used: Set<string>): string {
+  const raw = textValue(record.pairs, 5, `${record.type} handle`)!;
+  return registerHandle(raw, used, record.type);
+}
+
+function entityBase(
+  record: DxfRecord,
+  layerIds: ReadonlyMap<string, string>,
+  linetypeIds: ReadonlyMap<string, string>,
+  usedHandles: Set<string>,
+): { handle: string; layerId: string; appearance?: CadAppearance } {
+  const handle = parseHandle(record, usedHandles);
+  const layerName = textValue(record.pairs, 8, `${record.type} ${handle} layer`)!;
+  const layerId = layerIds.get(normalizedName(layerName));
+  if (!layerId) throw new DxfImportError(`${record.type} ${handle} references missing layer ${layerName}.`);
+  const parsedAppearance = appearance(record.pairs, linetypeIds, { layer: false });
+  return { handle, layerId, ...(parsedAppearance ? { appearance: parsedAppearance } : {}) };
+}
+
+function parsePolyline(record: DxfRecord, base: ReturnType<typeof entityBase>): CadEntity {
+  const vertices: CadPolylineVertex[] = [];
+  for (let index = 0; index < record.pairs.length; index += 1) {
+    if (record.pairs[index]!.code !== 10) continue;
+    const x = Number(record.pairs[index]!.value.trim());
+    if (!Number.isFinite(x)) throw new DxfImportError(`LWPOLYLINE ${base.handle} has a non-finite vertex X.`);
+    const vertex: CadPolylineVertex = { x, y: Number.NaN };
+    for (index += 1; index < record.pairs.length && record.pairs[index]!.code !== 10; index += 1) {
+      const pair = record.pairs[index]!;
+      const value = Number(pair.value.trim());
+      if ([20, 40, 41, 42].includes(pair.code) && !Number.isFinite(value)) throw new DxfImportError(`LWPOLYLINE ${base.handle} has a non-finite vertex value.`);
+      if (pair.code === 20) vertex.y = value;
+      else if (pair.code === 40) vertex.startWidth = value;
+      else if (pair.code === 41) vertex.endWidth = value;
+      else if (pair.code === 42 && value !== 0) vertex.bulge = value;
+    }
+    index -= 1;
+    if (!Number.isFinite(vertex.y)) throw new DxfImportError(`LWPOLYLINE ${base.handle} vertex has no Y coordinate.`);
+    vertices.push(vertex);
+    if (vertices.length > MAX_DXF_ENTITY_VERTICES) throw new DxfImportError(`LWPOLYLINE ${base.handle} exceeds the ${MAX_DXF_ENTITY_VERTICES} vertex limit.`);
+  }
+  const expected = integerValue(record.pairs, 90, `LWPOLYLINE ${base.handle}`)!;
+  if (expected !== vertices.length || vertices.length < 2) throw new DxfImportError(`LWPOLYLINE ${base.handle} vertex count is invalid.`);
+  const flags = integerValue(record.pairs, 70, `LWPOLYLINE ${base.handle}`, false) ?? 0;
+  return { kind: "polyline", ...base, vertices, closed: (flags & 1) !== 0 };
+}
+
+function parseHatch(record: DxfRecord, base: ReturnType<typeof entityBase>): CadEntity {
+  const pattern = textValue(record.pairs, 2, `HATCH ${base.handle} pattern`)!;
+  const solid = normalizedName(pattern) === "SOLID";
+  const associative = integerValue(record.pairs, 71, `HATCH ${base.handle}`)!;
+  if (associative !== 0) throw new DxfImportError(`HATCH ${base.handle} associative boundary references are outside the audited roundtrip subset.`);
+  const solidFill = integerValue(record.pairs, 70, `HATCH ${base.handle}`)!;
+  if (solidFill !== (solid ? 1 : 0)) throw new DxfImportError(`HATCH ${base.handle} pattern and solid-fill flag disagree.`);
+  const expectedPreamble: Array<{ code: number; value?: string | number; numeric?: boolean }> = [
+    { code: 5, value: base.handle },
+    { code: 330, value: "1A" },
+    { code: 100, value: "AcDbEntity" },
+    { code: 8 },
+    { code: 100, value: "AcDbHatch" },
+    { code: 10, value: 0, numeric: true },
+    { code: 20, value: 0, numeric: true },
+    { code: 30, value: 0, numeric: true },
+    { code: 210, value: 0, numeric: true },
+    { code: 220, value: 0, numeric: true },
+    { code: 230, value: 1, numeric: true },
+    { code: 2, value: pattern },
+    { code: 70, value: solidFill, numeric: true },
+    { code: 71, value: associative, numeric: true },
+    { code: 91 },
+  ];
+  for (const [index, expected] of expectedPreamble.entries()) {
+    const pair = record.pairs[index];
+    if (!pair || pair.code !== expected.code) throw new DxfImportError(`HATCH ${base.handle} preamble is outside the audited deterministic subset at group ${expected.code}.`);
+    if (expected.value === undefined) continue;
+    const actual = expected.numeric ? Number(pair.value.trim()) : pair.value.trim();
+    const wanted = expected.numeric ? Number(expected.value) : expected.value;
+    if (actual !== wanted) throw new DxfImportError(`HATCH ${base.handle} preamble is outside the audited deterministic subset at group ${expected.code}.`);
+  }
+  const loopCountPairIndex = expectedPreamble.length - 1;
+  const expectedLoopCount = Number(record.pairs[loopCountPairIndex]!.value.trim());
+  if (!Number.isInteger(expectedLoopCount) || expectedLoopCount < 1 || expectedLoopCount > MAX_DXF_HATCH_LOOPS) throw new DxfImportError(`HATCH ${base.handle} loop count is outside 1..${MAX_DXF_HATCH_LOOPS}.`);
+  const loops: CadHatchLoop[] = [];
+  let index = loopCountPairIndex + 1;
+  while (loops.length < expectedLoopCount) {
+    if (record.pairs[index]?.code !== 92) throw new DxfImportError(`HATCH ${base.handle} loop ${loops.length + 1} does not begin with group 92.`);
+    const flags = Number(record.pairs[index]!.value.trim());
+    if (!Number.isInteger(flags) || (flags !== 2 && flags !== 3)) throw new DxfImportError(`HATCH ${base.handle} loop flags ${flags} are outside the straight closed polyline subset.`);
+    index += 1;
+    if (record.pairs[index]?.code !== 72 || Number(record.pairs[index]!.value.trim()) !== 0) throw new DxfImportError(`HATCH ${base.handle} bulged polyline boundaries are outside the audited roundtrip subset.`);
+    index += 1;
+    if (record.pairs[index]?.code !== 73 || Number(record.pairs[index]!.value.trim()) !== 1) throw new DxfImportError(`HATCH ${base.handle} boundary must be explicitly closed.`);
+    index += 1;
+    if (record.pairs[index]?.code !== 93) throw new DxfImportError(`HATCH ${base.handle} loop has no vertex count.`);
+    const vertexCount = Number(record.pairs[index]!.value.trim());
+    if (!Number.isInteger(vertexCount) || vertexCount < 3 || vertexCount > MAX_DXF_ENTITY_VERTICES) throw new DxfImportError(`HATCH ${base.handle} loop vertex count is outside 3..${MAX_DXF_ENTITY_VERTICES}.`);
+    index += 1;
+    const vertices: CadPoint2[] = [];
+    while (vertices.length < vertexCount) {
+      if (record.pairs[index]?.code !== 10) throw new DxfImportError(`HATCH ${base.handle} loop vertex ${vertices.length + 1} has no X coordinate.`);
+      const x = Number(record.pairs[index]!.value.trim());
+      index += 1;
+      if (record.pairs[index]?.code !== 20) throw new DxfImportError(`HATCH ${base.handle} loop vertex has no Y coordinate.`);
+      const y = Number(record.pairs[index]!.value.trim());
+      if (!Number.isFinite(x) || !Number.isFinite(y)) throw new DxfImportError(`HATCH ${base.handle} loop contains a non-finite vertex.`);
+      vertices.push({ x, y });
+      index += 1;
+    }
+    if (record.pairs[index]?.code !== 97 || Number(record.pairs[index]!.value.trim()) !== 0) throw new DxfImportError(`HATCH ${base.handle} associative source handles are outside the audited roundtrip subset.`);
+    index += 1;
+    loops.push({ vertices, isHole: (flags & 1) === 0 });
+  }
+  const expectedTail: Array<[number, number]> = [
+    [75, 1],
+    [76, solid ? 1 : 0],
+    ...(!solid ? [[52, 0], [41, 1], [77, 0], [78, 1], [53, 45], [43, 0], [44, 0], [45, 0], [46, 3.175], [79, 0]] as Array<[number, number]> : []),
+    [98, 0],
+  ];
+  for (const [code, value] of expectedTail) {
+    const pair = record.pairs[index];
+    if (!pair || pair.code !== code || Number(pair.value.trim()) !== value) throw new DxfImportError(`HATCH ${base.handle} pattern definition is outside the audited deterministic subset at group ${code}.`);
+    index += 1;
+  }
+  if (index !== record.pairs.length) throw new DxfImportError(`HATCH ${base.handle} contains unconsumed boundary or pattern data.`);
+  return {
+    kind: "hatch",
+    ...base,
+    pattern,
+    associative: false,
+    loops,
+  };
+}
+
+function unescapeDxfText(value: string, multiline: boolean): string {
+  let result = "";
+  for (let index = 0; index < value.length; index += 1) {
+    const character = value[index]!;
+    if (character !== "\\") {
+      result += character;
+      continue;
+    }
+    if (value[index + 1] === "\\") {
+      result += "\\";
+      index += 1;
+      continue;
+    }
+    const unicode = /^\\U\+([0-9A-F]{4})/iu.exec(value.slice(index));
+    if (unicode) {
+      result += String.fromCharCode(Number.parseInt(unicode[1]!, 16));
+      index += unicode[0].length - 1;
+      continue;
+    }
+    if (multiline && value[index + 1]?.toUpperCase() === "P") {
+      result += "\n";
+      index += 1;
+      continue;
+    }
+    result += "\\";
+  }
+  return result;
+}
+
+function parseEntity(
+  record: DxfRecord,
+  layerIds: ReadonlyMap<string, string>,
+  linetypeIds: ReadonlyMap<string, string>,
+  textStyleIds: ReadonlyMap<string, string>,
+  dimensionStyleIds: ReadonlyMap<string, string>,
+  usedHandles: Set<string>,
+): CadEntity | null {
+  const base = entityBase(record, layerIds, linetypeIds, usedHandles);
+  if ((integerValue(record.pairs, 67, `${record.type} ${base.handle}`, false) ?? 0) !== 0) return null;
+  switch (record.type) {
+    case "LINE":
+      return { kind: "line", ...base, start: pointValue(record.pairs, 10, 20, `LINE ${base.handle} start`), end: pointValue(record.pairs, 11, 21, `LINE ${base.handle} end`) };
+    case "CIRCLE": {
+      const radius = numberValue(record.pairs, 40, `CIRCLE ${base.handle} radius`)!;
+      if (!(radius > 0)) throw new DxfImportError(`CIRCLE ${base.handle} radius must be positive.`);
+      return { kind: "circle", ...base, center: pointValue(record.pairs, 10, 20, `CIRCLE ${base.handle} center`), radius };
+    }
+    case "LWPOLYLINE":
+      return parsePolyline(record, base);
+    case "TEXT": {
+      const styleName = textValue(record.pairs, 7, `TEXT ${base.handle} style`, false) ?? "Standard";
+      const styleId = textStyleIds.get(normalizedName(styleName));
+      if (!styleId) throw new DxfImportError(`TEXT ${base.handle} references missing style ${styleName}.`);
+      const height = numberValue(record.pairs, 40, `TEXT ${base.handle} height`)!;
+      if (!(height > 0)) throw new DxfImportError(`TEXT ${base.handle} height must be positive.`);
+      return {
+        kind: "text",
+        ...base,
+        position: pointValue(record.pairs, 10, 20, `TEXT ${base.handle} insertion`),
+        text: unescapeDxfText(firstPair(record.pairs, 1)?.value ?? "", false),
+        height,
+        rotationRad: (numberValue(record.pairs, 50, `TEXT ${base.handle} rotation`, false) ?? 0) * Math.PI / 180,
+        styleId,
+      };
+    }
+    case "HATCH":
+      return parseHatch(record, base);
+    case "DIMENSION": {
+      const rawKind = (integerValue(record.pairs, 70, `DIMENSION ${base.handle} type`)! & 7);
+      if (rawKind !== 0 && rawKind !== 1) throw new DxfImportError(`DIMENSION ${base.handle} type ${rawKind} is outside the F-111 linear/aligned scope.`);
+      const styleName = textValue(record.pairs, 3, `DIMENSION ${base.handle} style`)!;
+      const styleId = dimensionStyleIds.get(normalizedName(styleName));
+      if (!styleId) throw new DxfImportError(`DIMENSION ${base.handle} references missing style ${styleName}.`);
+      const override = firstPair(record.pairs, 1)?.value;
+      return {
+        kind: "dimension",
+        ...base,
+        dimensionKind: rawKind === 1 ? "aligned" : "linear",
+        definitionPoints: [
+          pointValue(record.pairs, 13, 23, `DIMENSION ${base.handle} first extension`),
+          pointValue(record.pairs, 14, 24, `DIMENSION ${base.handle} second extension`),
+          pointValue(record.pairs, 10, 20, `DIMENSION ${base.handle} definition`),
+          pointValue(record.pairs, 11, 21, `DIMENSION ${base.handle} text`),
+        ],
+        styleId,
+        ...(override && override !== "<>" ? { overrideText: unescapeDxfText(override, false) } : {}),
+      };
+    }
+    default:
+      return null;
+  }
+}
+
+export function importDxf(input: string | Uint8Array, options: DxfImportOptions): DxfImportResult {
+  if (!options.documentId.trim()) throw new DxfImportError("DXF import requires a document id.");
+  const decoded = decodeInput(input);
+  const parsedPairs = parsePairs(decoded.text);
+  const parsedSections = sections(parsedPairs);
+  const header = parsedSections.get("HEADER");
+  const tables = parsedSections.get("TABLES");
+  const entitySection = parsedSections.get("ENTITIES");
+  if (!header || !tables || !entitySection) throw new DxfImportError("DXF must contain HEADER, TABLES and ENTITIES sections.");
+  const usedHandles = new Set<string>();
+  registerSectionHandles(tables, usedHandles, "DXF table record");
+  const blockSection = parsedSections.get("BLOCKS");
+  if (blockSection) registerSectionHandles(blockSection, usedHandles, "DXF block record");
+  const objectSection = parsedSections.get("OBJECTS");
+  if (objectSection) registerSectionHandles(objectSection, usedHandles, "DXF object record");
+  const headers = headerVariables(header);
+  const acadVersion = requireHeader(headers, "$ACADVER").value.trim();
+  const codePage = requireHeader(headers, "$DWGCODEPAGE").value.trim();
+  if (normalizedName(codePage) !== "ANSI_1252") throw new DxfImportError(`DXF code page ${codePage} is outside the audited ANSI_1252 path.`);
+  const rawUnits = Number(requireHeader(headers, "$INSUNITS").value.trim());
+  const units = INSUNITS[rawUnits];
+  if (!units) throw new DxfImportError(`DXF INSUNITS ${rawUnits} is unsupported.`);
+
+  const linetypes = parseLinetypes(tables);
+  const textStyles = parseTextStyles(tables);
+  const dimensionStyles = parseDimensionStyles(tables, textStyles.handles);
+  const layers = parseLayers(tables, linetypes.ids);
+  const currentLayerName = requireHeader(headers, "$CLAYER").value.trim();
+  const currentLayerId = layers.ids.get(normalizedName(currentLayerName));
+  if (!currentLayerId) throw new DxfImportError(`DXF current layer ${currentLayerName} is missing from the LAYER table.`);
+
+  const report: DxfImportReport = {
+    acadVersion,
+    codePage,
+    sourceByteLength: decoded.byteLength,
+    importedHandles: [],
+    skipped: [],
+    warnings: [],
+  };
+  const entities: CadEntity[] = [];
+  for (const record of records(entitySection)) {
+    if (["ENDSEC", "EOF"].includes(record.type)) continue;
+    const rawHandle = textValue(record.pairs, 5, `${record.type} handle`, false) ?? null;
+    if (!["LINE", "CIRCLE", "LWPOLYLINE", "TEXT", "HATCH", "DIMENSION"].includes(record.type)) {
+      if (rawHandle) registerHandle(rawHandle, usedHandles, record.type);
+      report.skipped.push({ type: record.type, handle: rawHandle, reason: "DXF entity type is outside the F-111 audited import subset." });
+      continue;
+    }
+    const parsed = parseEntity(record, layers.ids, linetypes.ids, textStyles.ids, dimensionStyles.ids, usedHandles);
+    if (!parsed) {
+      report.skipped.push({ type: record.type, handle: rawHandle, reason: "Paper-space entities are outside the F-111 model-space import subset." });
+      continue;
+    }
+    entities.push(parsed);
+    report.importedHandles.push(parsed.handle);
+  }
+
+  const document = createEmptyDocument({ documentId: options.documentId, ...(options.now ? { now: options.now } : {}), units });
+  document.currentLayerId = currentLayerId;
+  document.entities = entities;
+  document.layers = layers.values;
+  document.linetypes = linetypes.values;
+  document.textStyles = textStyles.values;
+  document.dimensionStyles = dimensionStyles.values;
+  document.metadata.source = `DXF ${acadVersion} ${codePage}`;
+  assertKDrawDocumentV1(document);
+  return { document, report };
+}

@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-111",
+  "status": "PASS",
+  "viewport": {
+    "width": 1920,
+    "height": 1080
+  },
+  "workflow": "Visible DXF import -> editable MOVE -> undo MOVE -> atomic undo import -> redo import -> reload -> visible second-generation DXF export",
+  "source": {
+    "bytes": 13679,
+    "sha256": "28de58b3aa9e7a2c44bcf4d17b297b1cc64b08fbbbea448a33720b0d14c601ac"
+  },
+  "roundtrip": {
+    "bytes": 13679,
+    "sha256": "28de58b3aa9e7a2c44bcf4d17b297b1cc64b08fbbbea448a33720b0d14c601ac",
+    "exactProductionBytes": true
+  },
+  "revision": 5,
+  "entityCount": 40,
+  "layers": [
+    "0",
+    "JOONED",
+    "TELJED",
+    "SEINAD",
+    "VIIRUTUS"
+  ],
+  "consoleErrors": []
+}

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ISO_PAPER_MEDIA, MAX_PAGE_SETUP_TEMPLATE_BYTES, STANDARD_VIEWPORT_SCALE_DENOMINATORS, allocateEntityHandles, applyNamedPageSetup, buildLayoutPublishPlan, CadCommandInputError, CadSession, clearNamedPageSetupAssignment, createPageSetupTemplate, LayoutCommandError, LayoutPublishSettingsError, PageSetupLibraryError, copyPaperLayout, createEmptyDocument, createPaperLayout, createPaperViewport, deleteNamedPageSetup, deletePaperLayout, deletePaperViewport, formatViewportScale, importPageSetupTemplate, metadataWithLayoutPublishSettings, movePaperLayout, panPaperViewportByPixels, paperDefinitionForPageSetup, parseCartesianPoint, parseCopyDestinations, parseMoveDestination, parseOffsetDistance, parseOffsetPlacementPoints, parsePageSetupTemplate, parseReferenceAngleInput, parseRotationAngleInput, parseScaleFactorInput, parseScaleLengthInput, renameNamedPageSetup, renamePaperLayout, resolveCadCommand, resolveLayoutPublishSettings, resolveModelPageSetup, resolvePageSetup, resolvePageSetupLibrary, resolvePaperDefinition, sanitizePdfFileStem, saveNamedPageSetup, serializeKDraw, serializePageSetupTemplate, setModelLayoutPageSetup, setPaperLayoutPageSetup, setPaperViewportDisplayLocked, setPaperViewportView, viewportScaleDenominator, zoomPaperViewportAtModelPoint, type CadChange, type CopyRejectedTarget, type LayoutPublishSettingsV1, type MirrorRejectedTarget, type MoveRejectedTarget, type OffsetLayerMode, type OffsetRejectedTarget, type RotateAngleSpec, type RotateRejectedTarget, type ScaleFactorSpec, type ScaleRejectedTarget } from "@kuubik/cad-core";
-import { exportDxf } from "@kuubik/cad-dxf";
+import { ISO_PAPER_MEDIA, MAX_PAGE_SETUP_TEMPLATE_BYTES, STANDARD_VIEWPORT_SCALE_DENOMINATORS, allocateEntityHandles, applyNamedPageSetup, buildLayoutPublishPlan, CadCommandInputError, CadSession, clearNamedPageSetupAssignment, createPageSetupTemplate, LayoutCommandError, LayoutPublishSettingsError, NoOpOperationError, PageSetupLibraryError, copyPaperLayout, createEmptyDocument, createPaperLayout, createPaperViewport, deleteNamedPageSetup, deletePaperLayout, deletePaperViewport, formatViewportScale, importPageSetupTemplate, metadataWithLayoutPublishSettings, movePaperLayout, panPaperViewportByPixels, paperDefinitionForPageSetup, parseCartesianPoint, parseCopyDestinations, parseMoveDestination, parseOffsetDistance, parseOffsetPlacementPoints, parsePageSetupTemplate, parseReferenceAngleInput, parseRotationAngleInput, parseScaleFactorInput, parseScaleLengthInput, renameNamedPageSetup, renamePaperLayout, replaceDrawingContentPreservingLayouts, resolveCadCommand, resolveLayoutPublishSettings, resolveModelPageSetup, resolvePageSetup, resolvePageSetupLibrary, resolvePaperDefinition, sanitizePdfFileStem, saveNamedPageSetup, serializeKDraw, serializePageSetupTemplate, setModelLayoutPageSetup, setPaperLayoutPageSetup, setPaperViewportDisplayLocked, setPaperViewportView, viewportScaleDenominator, zoomPaperViewportAtModelPoint, type CadChange, type CopyRejectedTarget, type LayoutPublishSettingsV1, type MirrorRejectedTarget, type MoveRejectedTarget, type OffsetLayerMode, type OffsetRejectedTarget, type RotateAngleSpec, type RotateRejectedTarget, type ScaleFactorSpec, type ScaleRejectedTarget } from "@kuubik/cad-core";
+import { DxfImportError, MAX_DXF_IMPORT_BYTES, exportDxf, importDxf } from "@kuubik/cad-dxf";
 import { exportLayoutSvg, exportLayoutsVectorPdf, exportLayoutVectorPdf, exportModelSvg, exportModelVectorPdf, type LayoutPlotOptions, type ModelPlotOptions } from "@kuubik/cad-print";
 import { CadCanvasRenderer, pannedViewportWorldCenter, viewportScreenToWorld, type Viewport2D } from "@kuubik/cad-renderer";
 import type { CadEntity, CadLayout, CadPageSetup, CadPaperRect, CadPlotStyle, CadViewport, KDrawDocumentV1 } from "@kuubik/cad-schema";
@@ -1730,6 +1730,45 @@ export function App() {
     }
   }
 
+  async function importDxfFile(file: File | undefined, input: HTMLInputElement): Promise<void> {
+    if (!file || committing.current) {
+      input.value = "";
+      return;
+    }
+    committing.current = true;
+    try {
+      if (file.size > MAX_DXF_IMPORT_BYTES) throw new DxfImportError(`Fail ületab ${MAX_DXF_IMPORT_BYTES} baidi impordipiiri.`);
+      const bytes = new Uint8Array(await file.arrayBuffer());
+      const imported = importDxf(bytes, { documentId: document.documentId });
+      if (imported.report.skipped.length) {
+        const first = imported.report.skipped[0]!;
+        setStatus(`DXF import peatatud: ${imported.report.skipped.length} toetamata objekti; esimene ${first.type}${first.handle ? ` ${first.handle}` : ""}.`);
+        return;
+      }
+      const previousHandles = document.entities.map((entity) => entity.handle);
+      await commitChanges(
+        "DXFIN",
+        { fileName: file.name, byteLength: file.size, acadVersion: imported.report.acadVersion, codePage: imported.report.codePage },
+        replaceDrawingContentPreservingLayouts(document, imported.document),
+        imported.report.importedHandles,
+        previousHandles,
+      );
+      setSelectedHandles([]);
+      setActiveLayoutId("model");
+      setSelectedViewportId(null);
+      setModelViewportId(null);
+      setStatus(`DXF imporditud: ${imported.report.importedHandles.length} objekti · ${imported.document.layers.length} kihti · ${imported.document.units.linear}`);
+    } catch (error) {
+      if (error instanceof StorageRevisionConflictError) await recoverFromStorageConflict(error);
+      else if (error instanceof NoOpOperationError) setStatus("DXF import muutusteta: sama joonis on juba avatud");
+      else if (error instanceof DxfImportError || error instanceof RangeError || error instanceof TypeError) setStatus(`DXF impordi viga: ${error.message}`);
+      else throw error;
+    } finally {
+      committing.current = false;
+      input.value = "";
+    }
+  }
+
   async function downloadKDraw(): Promise<void> {
     const bytes = await serializeKDraw(document);
     const url = URL.createObjectURL(new Blob([bytes as Uint8Array<ArrayBuffer>], { type: "application/vnd.kuubik.kdraw+json" }));
@@ -1891,6 +1930,15 @@ export function App() {
         <button type="button" onClick={() => void eraseSelected()} disabled={!modelSpaceEditing || selectedHandles.length === 0}>ERASE</button>
         <button type="button" onClick={() => void undoLast()} disabled={!canUndoInActiveLayout}>UNDO</button>
         <button type="button" onClick={() => void redoLast()} disabled={!canRedoInActiveLayout}>REDO</button>
+        <label className="coordinate-input">
+          <span>DXF import</span>
+          <input
+            aria-label="DXF import"
+            type="file"
+            accept=".dxf,application/dxf,text/plain"
+            onChange={(event) => void importDxfFile(event.target.files?.[0], event.currentTarget)}
+          />
+        </label>
         <button type="button" onClick={downloadDxf}>DXF eksport</button>
         <button type="button" onClick={() => void downloadKDraw()}>KDraw eksport</button>
         <button type="button" disabled>TRIM järgmine</button>

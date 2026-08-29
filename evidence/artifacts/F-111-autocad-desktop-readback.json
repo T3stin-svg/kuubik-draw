@@ -1,0 +1,927 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-111",
+  "benchmark": "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
+  "engine": "Autodesk AutoCAD 2024 desktop COM",
+  "engineVersion": "24.3s (LMS Tech)",
+  "automationProcessId": 12116,
+  "automationProcessOwned": true,
+  "sourcePath": "F-111-browser-roundtrip.dxf",
+  "documentName": "F-111-browser-roundtrip.dxf",
+  "units": 4,
+  "totalEntities": 40,
+  "entities": {
+    "AcDbLine": 12,
+    "AcDbPolyline": 9,
+    "AcDbText": 10,
+    "AcDbHatch": 7,
+    "AcDbCircle": 1,
+    "AcDbAlignedDimension": 1
+  },
+  "handles": [
+    "1000",
+    "1001",
+    "1002",
+    "1003",
+    "1004",
+    "1005",
+    "1006",
+    "1007",
+    "1008",
+    "1009",
+    "100A",
+    "100B",
+    "1100",
+    "1101",
+    "1102",
+    "1103",
+    "1104",
+    "1105",
+    "1106",
+    "1107",
+    "1108",
+    "1200",
+    "1201",
+    "1202",
+    "1203",
+    "1204",
+    "1205",
+    "1206",
+    "1207",
+    "1208",
+    "1209",
+    "1300",
+    "1301",
+    "1302",
+    "1303",
+    "1304",
+    "1305",
+    "1306",
+    "1400",
+    "1500"
+  ],
+  "nativeRecords": {
+    "1000": {
+      "type": "AcDbLine",
+      "layer": "TELJED",
+      "color": 30,
+      "trueColor": 0,
+      "linetype": "DASHED",
+      "lineweight": 70,
+      "transparency": "",
+      "start": [
+        -200,
+        -600
+      ],
+      "end": [
+        5000,
+        -600
+      ]
+    },
+    "1001": {
+      "type": "AcDbLine",
+      "layer": "JOONED",
+      "color": 152,
+      "trueColor": 0,
+      "linetype": "ByLayer",
+      "lineweight": 35,
+      "transparency": "",
+      "start": [
+        0,
+        250
+      ],
+      "end": [
+        5000,
+        250
+      ]
+    },
+    "1002": {
+      "type": "AcDbLine",
+      "layer": "JOONED",
+      "color": 256,
+      "trueColor": 0,
+      "linetype": "ByLayer",
+      "lineweight": -1,
+      "transparency": "",
+      "start": [
+        0,
+        500
+      ],
+      "end": [
+        5000,
+        500
+      ]
+    },
+    "1003": {
+      "type": "AcDbLine",
+      "layer": "TELJED",
+      "color": 256,
+      "trueColor": 0,
+      "linetype": "ByLayer",
+      "lineweight": -1,
+      "transparency": "",
+      "start": [
+        0,
+        750
+      ],
+      "end": [
+        5000,
+        750
+      ]
+    },
+    "1004": {
+      "type": "AcDbLine",
+      "layer": "JOONED",
+      "color": 256,
+      "trueColor": 0,
+      "linetype": "ByLayer",
+      "lineweight": -1,
+      "transparency": "",
+      "start": [
+        0,
+        1000
+      ],
+      "end": [
+        5000,
+        1000
+      ]
+    },
+    "1005": {
+      "type": "AcDbLine",
+      "layer": "JOONED",
+      "color": 256,
+      "trueColor": 0,
+      "linetype": "ByLayer",
+      "lineweight": -1,
+      "transparency": "",
+      "start": [
+        0,
+        1250
+      ],
+      "end": [
+        5000,
+        1250
+      ]
+    },
+    "1006": {
+      "type": "AcDbLine",
+      "layer": "TELJED",
+      "color": 256,
+      "trueColor": 0,
+      "linetype": "ByLayer",
+      "lineweight": -1,
+      "transparency": "",
+      "start": [
+        0,
+        1500
+      ],
+      "end": [
+        5000,
+        1500
+      ]
+    },
+    "1007": {
+      "type": "AcDbLine",
+      "layer": "JOONED",
+      "color": 256,
+      "trueColor": 0,
+      "linetype": "ByLayer",
+      "lineweight": -1,
+      "transparency": "",
+      "start": [
+        0,
+        1750
+      ],
+      "end": [
+        5000,
+        1750
+      ]
+    },
+    "1008": {
+      "type": "AcDbLine",
+      "layer": "JOONED",
+      "color": 256,
+      "trueColor": 0,
+      "linetype": "ByLayer",
+      "lineweight": -1,
+      "transparency": "",
+      "start": [
+        0,
+        2000
+      ],
+      "end": [
+        5000,
+        2000
+      ]
+    },
+    "1009": {
+      "type": "AcDbLine",
+      "layer": "TELJED",
+      "color": 256,
+      "trueColor": 0,
+      "linetype": "ByLayer",
+      "lineweight": -1,
+      "transparency": "",
+      "start": [
+        0,
+        2250
+      ],
+      "end": [
+        5000,
+        2250
+      ]
+    },
+    "1100": {
+      "type": "AcDbPolyline",
+      "layer": "SEINAD",
+      "color": 256,
+      "trueColor": 0,
+      "linetype": "ByLayer",
+      "lineweight": -1,
+      "transparency": "",
+      "closed": true,
+      "vertices": [
+        [
+          0,
+          3000,
+          0.414213562373095
+        ],
+        [
+          300,
+          3300,
+          0
+        ],
+        [
+          0,
+          3600,
+          0
+        ]
+      ]
+    },
+    "1101": {
+      "type": "AcDbPolyline",
+      "layer": "SEINAD",
+      "color": 256,
+      "trueColor": 0,
+      "linetype": "ByLayer",
+      "lineweight": -1,
+      "transparency": "",
+      "closed": true,
+      "vertices": [
+        [
+          450,
+          3000,
+          0.414213562373095
+        ],
+        [
+          750,
+          3300,
+          -0.414213562373095
+        ],
+        [
+          450,
+          3600,
+          0
+        ]
+      ]
+    },
+    "1102": {
+      "type": "AcDbPolyline",
+      "layer": "SEINAD",
+      "color": 256,
+      "trueColor": 0,
+      "linetype": "ByLayer",
+      "lineweight": -1,
+      "transparency": "",
+      "closed": true,
+      "vertices": [
+        [
+          900,
+          3000,
+          0
+        ],
+        [
+          1200,
+          3000,
+          0
+        ],
+        [
+          1200,
+          3300,
+          0
+        ],
+        [
+          900,
+          3300,
+          0
+        ]
+      ]
+    },
+    "1103": {
+      "type": "AcDbPolyline",
+      "layer": "SEINAD",
+      "color": 256,
+      "trueColor": 0,
+      "linetype": "ByLayer",
+      "lineweight": -1,
+      "transparency": "",
+      "closed": true,
+      "vertices": [
+        [
+          1350,
+          3000,
+          0
+        ],
+        [
+          1650,
+          3000,
+          0
+        ],
+        [
+          1650,
+          3300,
+          0
+        ],
+        [
+          1350,
+          3300,
+          0
+        ]
+      ]
+    },
+    "1104": {
+      "type": "AcDbPolyline",
+      "layer": "SEINAD",
+      "color": 256,
+      "trueColor": 0,
+      "linetype": "ByLayer",
+      "lineweight": -1,
+      "transparency": "",
+      "closed": true,
+      "vertices": [
+        [
+          1800,
+          3000,
+          0
+        ],
+        [
+          2100,
+          3000,
+          0
+        ],
+        [
+          2100,
+          3300,
+          0
+        ],
+        [
+          1800,
+          3300,
+          0
+        ]
+      ]
+    },
+    "1105": {
+      "type": "AcDbPolyline",
+      "layer": "SEINAD",
+      "color": 256,
+      "trueColor": 0,
+      "linetype": "ByLayer",
+      "lineweight": -1,
+      "transparency": "",
+      "closed": true,
+      "vertices": [
+        [
+          2250,
+          3000,
+          0
+        ],
+        [
+          2550,
+          3000,
+          0
+        ],
+        [
+          2550,
+          3300,
+          0
+        ],
+        [
+          2250,
+          3300,
+          0
+        ]
+      ]
+    },
+    "1106": {
+      "type": "AcDbPolyline",
+      "layer": "SEINAD",
+      "color": 256,
+      "trueColor": 0,
+      "linetype": "ByLayer",
+      "lineweight": -1,
+      "transparency": "",
+      "closed": true,
+      "vertices": [
+        [
+          2700,
+          3000,
+          0
+        ],
+        [
+          3000,
+          3000,
+          0
+        ],
+        [
+          3000,
+          3300,
+          0
+        ],
+        [
+          2700,
+          3300,
+          0
+        ]
+      ]
+    },
+    "1107": {
+      "type": "AcDbPolyline",
+      "layer": "SEINAD",
+      "color": 256,
+      "trueColor": 0,
+      "linetype": "ByLayer",
+      "lineweight": -1,
+      "transparency": "",
+      "closed": true,
+      "vertices": [
+        [
+          3150,
+          3000,
+          0
+        ],
+        [
+          3450,
+          3000,
+          0
+        ],
+        [
+          3450,
+          3300,
+          0
+        ],
+        [
+          3150,
+          3300,
+          0
+        ]
+      ]
+    },
+    "1108": {
+      "type": "AcDbPolyline",
+      "layer": "SEINAD",
+      "color": 256,
+      "trueColor": 0,
+      "linetype": "ByLayer",
+      "lineweight": -1,
+      "transparency": "",
+      "closed": false,
+      "vertices": [
+        [
+          3600,
+          3000,
+          0
+        ],
+        [
+          3900,
+          3000,
+          0
+        ],
+        [
+          3900,
+          3300,
+          0
+        ],
+        [
+          3600,
+          3300,
+          0
+        ]
+      ]
+    },
+    "1200": {
+      "type": "AcDbText",
+      "layer": "JOONED",
+      "color": 256,
+      "trueColor": 0,
+      "linetype": "ByLayer",
+      "lineweight": -1,
+      "transparency": "",
+      "insert": [
+        0,
+        3900
+      ],
+      "text": "F109 TEXT 1",
+      "height": 180,
+      "style": "Standard",
+      "rotation": 0
+    },
+    "1201": {
+      "type": "AcDbText",
+      "layer": "JOONED",
+      "color": 256,
+      "trueColor": 0,
+      "linetype": "ByLayer",
+      "lineweight": -1,
+      "transparency": "",
+      "insert": [
+        500,
+        3900
+      ],
+      "text": "F109 TEXT 2",
+      "height": 180,
+      "style": "NORMAL",
+      "rotation": 0
+    },
+    "1202": {
+      "type": "AcDbText",
+      "layer": "JOONED",
+      "color": 256,
+      "trueColor": 0,
+      "linetype": "ByLayer",
+      "lineweight": -1,
+      "transparency": "",
+      "insert": [
+        1000,
+        3900
+      ],
+      "text": "F109 TEXT 3",
+      "height": 180,
+      "style": "Standard",
+      "rotation": 0
+    },
+    "1203": {
+      "type": "AcDbText",
+      "layer": "JOONED",
+      "color": 256,
+      "trueColor": 0,
+      "linetype": "ByLayer",
+      "lineweight": -1,
+      "transparency": "",
+      "insert": [
+        1500,
+        3900
+      ],
+      "text": "F109 TEXT 4",
+      "height": 180,
+      "style": "NORMAL",
+      "rotation": 0
+    },
+    "1204": {
+      "type": "AcDbText",
+      "layer": "JOONED",
+      "color": 256,
+      "trueColor": 0,
+      "linetype": "ByLayer",
+      "lineweight": -1,
+      "transparency": "",
+      "insert": [
+        2000,
+        3900
+      ],
+      "text": "F109 TEXT 5",
+      "height": 180,
+      "style": "Standard",
+      "rotation": 0
+    },
+    "1205": {
+      "type": "AcDbText",
+      "layer": "JOONED",
+      "color": 256,
+      "trueColor": 0,
+      "linetype": "ByLayer",
+      "lineweight": -1,
+      "transparency": "",
+      "insert": [
+        2500,
+        3900
+      ],
+      "text": "F109 TEXT 6",
+      "height": 180,
+      "style": "NORMAL",
+      "rotation": 0
+    },
+    "1206": {
+      "type": "AcDbText",
+      "layer": "JOONED",
+      "color": 256,
+      "trueColor": 0,
+      "linetype": "ByLayer",
+      "lineweight": -1,
+      "transparency": "",
+      "insert": [
+        3000,
+        3900
+      ],
+      "text": "F109 TEXT 7",
+      "height": 180,
+      "style": "Standard",
+      "rotation": 0
+    },
+    "1207": {
+      "type": "AcDbText",
+      "layer": "JOONED",
+      "color": 256,
+      "trueColor": 0,
+      "linetype": "ByLayer",
+      "lineweight": -1,
+      "transparency": "",
+      "insert": [
+        3500,
+        3900
+      ],
+      "text": "F109 TEXT 8",
+      "height": 180,
+      "style": "NORMAL",
+      "rotation": 0
+    },
+    "1208": {
+      "type": "AcDbText",
+      "layer": "JOONED",
+      "color": 256,
+      "trueColor": 0,
+      "linetype": "ByLayer",
+      "lineweight": -1,
+      "transparency": "",
+      "insert": [
+        4000,
+        3900
+      ],
+      "text": "F109 TEXT 9",
+      "height": 180,
+      "style": "Standard",
+      "rotation": 0
+    },
+    "1209": {
+      "type": "AcDbText",
+      "layer": "JOONED",
+      "color": 256,
+      "trueColor": 0,
+      "linetype": "ByLayer",
+      "lineweight": -1,
+      "transparency": "",
+      "insert": [
+        4500,
+        4400
+      ],
+      "text": "MÕÕT ŠŽ€ 10",
+      "height": 180,
+      "style": "NORMAL",
+      "rotation": 0
+    },
+    "1300": {
+      "type": "AcDbHatch",
+      "layer": "VIIRUTUS",
+      "color": 256,
+      "trueColor": 0,
+      "linetype": "ByLayer",
+      "lineweight": -1,
+      "transparency": "",
+      "pattern": "SOLID",
+      "associative": false,
+      "loopCount": 1
+    },
+    "1301": {
+      "type": "AcDbHatch",
+      "layer": "VIIRUTUS",
+      "color": 256,
+      "trueColor": 0,
+      "linetype": "ByLayer",
+      "lineweight": -1,
+      "transparency": "",
+      "pattern": "F109_1",
+      "associative": false,
+      "loopCount": 1
+    },
+    "1302": {
+      "type": "AcDbHatch",
+      "layer": "VIIRUTUS",
+      "color": 256,
+      "trueColor": 0,
+      "linetype": "ByLayer",
+      "lineweight": -1,
+      "transparency": "",
+      "pattern": "F109_2",
+      "associative": false,
+      "loopCount": 1
+    },
+    "1303": {
+      "type": "AcDbHatch",
+      "layer": "VIIRUTUS",
+      "color": 256,
+      "trueColor": 0,
+      "linetype": "ByLayer",
+      "lineweight": -1,
+      "transparency": "",
+      "pattern": "F109_3",
+      "associative": false,
+      "loopCount": 1
+    },
+    "1304": {
+      "type": "AcDbHatch",
+      "layer": "VIIRUTUS",
+      "color": 256,
+      "trueColor": 0,
+      "linetype": "ByLayer",
+      "lineweight": -1,
+      "transparency": "",
+      "pattern": "F109_4",
+      "associative": false,
+      "loopCount": 1
+    },
+    "1305": {
+      "type": "AcDbHatch",
+      "layer": "VIIRUTUS",
+      "color": 256,
+      "trueColor": 0,
+      "linetype": "ByLayer",
+      "lineweight": -1,
+      "transparency": "",
+      "pattern": "F109_5",
+      "associative": false,
+      "loopCount": 1
+    },
+    "1306": {
+      "type": "AcDbHatch",
+      "layer": "VIIRUTUS",
+      "color": 256,
+      "trueColor": 0,
+      "linetype": "ByLayer",
+      "lineweight": -1,
+      "transparency": "",
+      "pattern": "F109_6",
+      "associative": false,
+      "loopCount": 1
+    },
+    "1400": {
+      "type": "AcDbCircle",
+      "layer": "JOONED",
+      "color": 256,
+      "trueColor": 0,
+      "linetype": "ByLayer",
+      "lineweight": -1,
+      "transparency": "",
+      "center": [
+        7500,
+        0
+      ],
+      "radius": 366.6667
+    },
+    "1500": {
+      "type": "AcDbAlignedDimension",
+      "layer": "JOONED",
+      "color": 256,
+      "trueColor": 0,
+      "linetype": "ByLayer",
+      "lineweight": -1,
+      "transparency": "",
+      "first": [
+        0,
+        4000
+      ],
+      "second": [
+        5000,
+        4000
+      ],
+      "textPosition": [
+        2500,
+        4400
+      ],
+      "textOverrideRaw": "<>",
+      "text": "<>",
+      "measurement": 5000,
+      "style": "Standard"
+    },
+    "100A": {
+      "type": "AcDbLine",
+      "layer": "JOONED",
+      "color": 256,
+      "trueColor": 0,
+      "linetype": "ByLayer",
+      "lineweight": -1,
+      "transparency": "",
+      "start": [
+        0,
+        2500
+      ],
+      "end": [
+        5000,
+        2500
+      ]
+    },
+    "100B": {
+      "type": "AcDbLine",
+      "layer": "JOONED",
+      "color": 256,
+      "trueColor": 0,
+      "linetype": "ByLayer",
+      "lineweight": -1,
+      "transparency": "",
+      "start": [
+        0,
+        2750
+      ],
+      "end": [
+        5000,
+        2750
+      ]
+    }
+  },
+  "polylineClosuresAfterRegen": {
+    "1100": true,
+    "1101": true,
+    "1102": true,
+    "1103": true,
+    "1104": true,
+    "1105": true,
+    "1106": true,
+    "1107": true,
+    "1108": false
+  },
+  "layers": {
+    "JOONED": {
+      "color": 7,
+      "lineweight": 25,
+      "linetype": "Continuous",
+      "trueColor": 0,
+      "transparency": ""
+    },
+    "TELJED": {
+      "color": 4,
+      "lineweight": 13,
+      "linetype": "DASHDOT",
+      "trueColor": 0,
+      "transparency": ""
+    },
+    "SEINAD": {
+      "color": 6,
+      "lineweight": 50,
+      "linetype": "DASHED",
+      "trueColor": 0,
+      "transparency": ""
+    },
+    "VIIRUTUS": {
+      "color": 9,
+      "lineweight": 13,
+      "linetype": "Continuous",
+      "trueColor": 0,
+      "transparency": ""
+    }
+  },
+  "styles": [
+    "NORMAL",
+    "Standard"
+  ],
+  "extents": {
+    "min": [
+      -200,
+      -600
+    ],
+    "max": [
+      7866.6667,
+      4627.639836289222
+    ]
+  },
+  "openedReadOnly": true,
+  "checks": {
+    "units": true,
+    "totalEntities": true,
+    "nativeTypes": true,
+    "exactHandles": true,
+    "layers": true,
+    "styles": true,
+    "readOnly": true,
+    "polylineClosureStable": true
+  },
+  "status": "PASS",
+  "closedWithoutSaving": true,
+  "quitRequested": true,
+  "sourceSha256": "28de58b3aa9e7a2c44bcf4d17b297b1cc64b08fbbbea448a33720b0d14c601ac",
+  "matrixScriptSha256": "61e9892de68f75d9402d067eb51ca7b3dba1ca91d3d9dfd1d98bf5232a0f10ab",
+  "runnerScriptSha256": "be557cfaceda083c75a17b9386fdab94f39c6c034115fa519274eabf74297eb6",
+  "implementationSha256": {
+    "autocadDesktopMatrix": "61e9892de68f75d9402d067eb51ca7b3dba1ca91d3d9dfd1d98bf5232a0f10ab",
+    "autocadDesktop": "be557cfaceda083c75a17b9386fdab94f39c6c034115fa519274eabf74297eb6",
+    "expected": "f13b358680c9aafe68b2ace52570a7d9a34d408bd93110d9b0a91c960f0a2852"
+  },
+  "automationProcessTerminated": true,
+  "processSetRestored": true,
+  "preExistingProcessIds": [
+    11276,
+    22952,
+    23180,
+    25848,
+    28152
+  ],
+  "observedAt": "2026-08-29T05:34:18.637Z"
+}

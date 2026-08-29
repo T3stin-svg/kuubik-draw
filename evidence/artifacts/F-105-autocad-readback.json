@@ -4,7 +4,7 @@
   "benchmark": "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
   "engine": "Autodesk AutoCAD 2024 desktop COM SetLayoutsToPlot/PlotToFile",
   "engineVersion": "24.3s (LMS Tech)",
-  "automationProcessId": 18824,
+  "automationProcessId": 35832,
   "automationProcessOwned": true,
   "backgroundPlot": 0,
   "requestedOrder": [
@@ -55,7 +55,9 @@
         "heightMm": 297,
         "rotation": 0
       },
-      "paperText": []
+      "paperText": [
+        "F-105 SHEET 10 SECTION"
+      ]
     },
     {
       "name": "F-105 SHEET 20 PLAN",
@@ -75,29 +77,29 @@
   "batchOutputs": [
     {
       "name": "F105-F-105 SHEET 20 PLAN.pdf",
-      "fullName": "C:\\temp\\KuubikDraw-F105-WIZyIu\\pdf\\batch\\F105-F-105 SHEET 20 PLAN.pdf",
+      "fullName": "C:\\temp\\KuubikDraw-F105-scHe5y\\pdf\\batch\\F105-F-105 SHEET 20 PLAN.pdf",
       "bytes": 79632,
-      "sha256": "4bd4aae338457b69ac9b43b045cc576f7e84d8f743d4abbda0c752a0ee501f6a",
-      "creationTimeUtc": "2026-08-29T03:49:42.2601450Z",
-      "lastWriteTimeUtc": "2026-08-29T03:49:42.4031303Z"
+      "sha256": "7909dced0e8880706c7e1f3a3f109e8a4214331d88fa574277989be4b1e3c776",
+      "creationTimeUtc": "2026-08-29T05:38:00.3220980Z",
+      "lastWriteTimeUtc": "2026-08-29T05:38:00.5540592Z"
     },
     {
       "name": "F105-F-105 SHEET 10 SECTION.pdf",
-      "fullName": "C:\\temp\\KuubikDraw-F105-WIZyIu\\pdf\\batch\\F105-F-105 SHEET 10 SECTION.pdf",
+      "fullName": "C:\\temp\\KuubikDraw-F105-scHe5y\\pdf\\batch\\F105-F-105 SHEET 10 SECTION.pdf",
       "bytes": 78633,
-      "sha256": "60b09e92deca28ed2ab3c4ec22df0f40a42c64dcc3085591c4c20a71d54f05df",
-      "creationTimeUtc": "2026-08-29T03:49:45.2257785Z",
-      "lastWriteTimeUtc": "2026-08-29T03:49:45.2766170Z"
+      "sha256": "183bafe11df43817d67a300edd3c78c6c09d7914513eeb78ceb92385a1c19133",
+      "creationTimeUtc": "2026-08-29T05:38:03.2947890Z",
+      "lastWriteTimeUtc": "2026-08-29T05:38:03.5406498Z"
     }
   ],
   "excludedOutputs": [
     {
       "name": "F105-F-105 SHEET 20 PLAN.pdf",
-      "fullName": "C:\\temp\\KuubikDraw-F105-WIZyIu\\pdf\\excluded\\F105-F-105 SHEET 20 PLAN.pdf",
+      "fullName": "C:\\temp\\KuubikDraw-F105-scHe5y\\pdf\\excluded\\F105-F-105 SHEET 20 PLAN.pdf",
       "bytes": 79632,
-      "sha256": "5beb2e160576e4e0f19ea96efc7af2001ba85771d57fa83b5c2544f4dbd17683",
-      "creationTimeUtc": "2026-08-29T03:49:48.5718745Z",
-      "lastWriteTimeUtc": "2026-08-29T03:49:48.6264842Z"
+      "sha256": "197338059c63a3ad1d01f385d428b171951c7ba0851f251314d6dedabc436e09",
+      "creationTimeUtc": "2026-08-29T05:38:06.6246114Z",
+      "lastWriteTimeUtc": "2026-08-29T05:38:06.6770036Z"
     }
   ],
   "checks": {
@@ -111,7 +113,7 @@
   },
   "dwg": {
     "bytes": 32405,
-    "sha256": "5eaf361ac84822695b1a351d4faa15d1aa373c549765631ca1f008bb98bcdaaa",
+    "sha256": "00c07c127dc10511a7b8652ff9cb299536563f003c5a47c2db42c0be4a700025",
     "saveAsType": 64,
     "retained": false
   },
@@ -408,5 +410,5 @@
   "runnerScriptSha256": "965db3e8d6cb4b98cd258e552823a13348eaefea4fc85bb86c7e61e20cfea557",
   "pdfReaderSha256": "e16e6eab403dc659ddadc2be05672007f8a9dd3672f3565f20a91073d467c0ae",
   "pixelReaderSha256": "8da5100785701e5b2ada88f7992660d80c840e693eb28af1a978963d0015da5f",
-  "observedAt": "2026-08-29T03:49:56.764Z"
+  "observedAt": "2026-08-29T05:38:15.107Z"
 }

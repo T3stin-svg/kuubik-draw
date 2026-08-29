@@ -57,6 +57,48 @@ async function writeManifest() {
   console.log(`Gitleaks source manifest written (${manifest.fileCount} files, ${manifest.sourceTreeSha256}).`);
 }
 
+async function scanEvidence() {
+  const executablePath = process.env.GITLEAKS_CMD;
+  if (!executablePath) throw new Error("GITLEAKS_CMD must point to the pinned gitleaks executable for --scan.");
+  await writeManifest();
+  const version = execFileSync(executablePath, ["version"], { cwd: root, encoding: "utf8" }).trim();
+  const previousRun = JSON.parse(await readFile(resolve(root, runPath), "utf8"));
+  if (previousRun.version !== version || !/^[a-f0-9]{64}$/u.test(previousRun.releaseArchiveSha256 ?? "")) {
+    throw new Error(`Pinned release provenance is unavailable for gitleaks ${version}.`);
+  }
+  execFileSync(executablePath, [
+    "dir", "--no-banner", "--redact", "--config", ".gitleaks.toml",
+    "--report-format", "json", "--report-path", reportPath, ".",
+  ], { cwd: root, stdio: "inherit" });
+  const [manifestBytes, reportBytes, configBytes, executableBytes] = await Promise.all([
+    readFile(resolve(root, manifestPath)),
+    readFile(resolve(root, reportPath)),
+    readFile(resolve(root, ".gitleaks.toml")),
+    readFile(executablePath),
+  ]);
+  const manifest = JSON.parse(manifestBytes.toString("utf8"));
+  const report = JSON.parse(reportBytes.toString("utf8"));
+  if (!Array.isArray(report) || report.length !== 0) throw new Error("Gitleaks reported one or more findings.");
+  const run = {
+    schemaVersion: 1,
+    tool: "gitleaks",
+    version,
+    releaseArchiveSha256: previousRun.releaseArchiveSha256,
+    executableSha256: sha256(executableBytes),
+    status: "PASS",
+    leakCount: 0,
+    scannedAt: new Date().toISOString(),
+    command: expectedCommand,
+    sourceScope: "git-visible public repository tree, including tracked and untracked non-ignored files",
+    networkRequired: false,
+    configuration: { path: ".gitleaks.toml", sha256: sha256(configBytes) },
+    sourceManifest: { path: manifestPath, sha256: sha256(manifestBytes), sourceTreeSha256: manifest.sourceTreeSha256 },
+    report: { path: reportPath, sha256: sha256(reportBytes) },
+  };
+  await writeFile(resolve(root, runPath), `${JSON.stringify(run, null, 2)}\n`, "utf8");
+  console.log(`Gitleaks evidence written (${version}, 0 findings, ${manifest.sourceTreeSha256}).`);
+}
+
 async function verifyEvidence() {
   const [storedManifestBytes, reportBytes, runBytes, configBytes] = await Promise.all([
     readFile(resolve(root, manifestPath)),
@@ -94,5 +136,6 @@ async function verifyEvidence() {
   console.log(`Gitleaks evidence PASS (${currentManifest.fileCount} source files bound to ${currentManifest.sourceTreeSha256}).`);
 }
 
-if (process.argv.includes("--write")) await writeManifest();
+if (process.argv.includes("--scan")) await scanEvidence();
+else if (process.argv.includes("--write")) await writeManifest();
 else await verifyEvidence();
