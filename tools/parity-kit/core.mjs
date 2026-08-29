@@ -44,6 +44,57 @@ export function sourceContentAddress(bytes) {
   return sha256(Buffer.from(bytes.toString("utf8").replace(/\r\n?/gu, "\n"), "utf8"));
 }
 
+export function checkoutStepsUseFullHistory(ciText) {
+  const lines = ciText.split(/\r?\n/u);
+  const stepStarts = new Set();
+  for (let index = 0; index < lines.length; index += 1) {
+    const line = lines[index];
+    if (line.trimStart().startsWith("#") || !/^\s*(?:-\s*)?uses:\s*["']?actions\/checkout@/u.test(line)) continue;
+    const inlineStep = /^(\s*)-\s*uses:/u.exec(line);
+    if (inlineStep) {
+      stepStarts.add(index);
+      continue;
+    }
+    const usesIndent = line.length - line.trimStart().length;
+    let owner = -1;
+    for (let previous = index - 1; previous >= 0; previous -= 1) {
+      const step = /^(\s*)-\s+/u.exec(lines[previous]);
+      if (step && step[1].length < usesIndent) {
+        owner = previous;
+        break;
+      }
+    }
+    if (owner < 0) return false;
+    stepStarts.add(owner);
+  }
+  if (stepStarts.size === 0) return false;
+  return [...stepStarts].every((start) => {
+    const stepIndent = lines[start].length - lines[start].trimStart().length;
+    let end = lines.length;
+    for (let index = start + 1; index < lines.length; index += 1) {
+      const nextStep = /^(\s*)-\s+/u.exec(lines[index]);
+      if (nextStep && nextStep[1].length <= stepIndent) {
+        end = index;
+        break;
+      }
+    }
+    for (let index = start + 1; index < end; index += 1) {
+      const withMatch = /^(\s*)with:\s*(?:#.*)?$/u.exec(lines[index]);
+      if (!withMatch || withMatch[1].length <= stepIndent) continue;
+      const withIndent = withMatch[1].length;
+      for (let child = index + 1; child < end; child += 1) {
+        const trimmed = lines[child].trim();
+        if (!trimmed || trimmed.startsWith("#")) continue;
+        const childIndent = lines[child].length - lines[child].trimStart().length;
+        if (childIndent <= withIndent) break;
+        if (/^fetch-depth:\s*(?:0|["']0["'])\s*(?:#.*)?$/u.test(trimmed)) return true;
+      }
+      return false;
+    }
+    return false;
+  });
+}
+
 function packageSurface(packageJson) {
   const { scripts: _scripts, ...surface } = packageJson;
   return surface;
@@ -422,6 +473,7 @@ export async function buildGlobalTopologyReceipt(observedAt = new Date().toISOSt
     scoreRatchetMatchesTopology: rowIds.slice().sort().join("|") === certifiedIds.slice().sort().join("|"),
     everyStageScriptExists: Object.values(stageScripts).every((stages) => Object.values(stages).every((entry) => typeof entry.command === "string" && entry.command.length > 0)),
     fullCiGatePresent: ciBytes.includes(Buffer.from("npm run check:fast")) && ciBytes.includes(Buffer.from("npm run check:certification")),
+    packageMigrationHistoryAvailable: checkoutStepsUseFullHistory(ciBytes.toString("utf8")),
     licensedAutoCadJobPresent: ciBytes.includes(Buffer.from("autocad-2024-certification")),
     requiredOracleJobPresent: ciBytes.includes(Buffer.from("required-oracles")),
   };

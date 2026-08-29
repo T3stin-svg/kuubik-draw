@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
   "kind": "global-topology",
-  "observedAt": "2026-08-29T15:07:02.567Z",
+  "observedAt": "2026-08-29T15:22:00.021Z",
   "sourceSha256": {
-    ".github/workflows/ci.yml": "b898ddca23dc64ba41ff74932d614ac709399a03776ef7c8a07871ec39c9e8e5",
+    ".github/workflows/ci.yml": "6b3d897f78d593305d76f80cfa193d4a9187ea1e6bd12de0d116c79b5fd6885a",
     "package.json": "85af1f998befcfaabb71f2a1c902882982508d21675b20f3aa774ae9d07568e2",
     "package-lock.json": "9756bf28708c3933c83c0ace8e9dbd9fe4cad9b9d6cec58670758c545f02e584",
     "apps/web/package.json": "e164660645a33349e303ac371042bcc3dc51525037060f203940f29f24d4b748",
@@ -13,7 +13,7 @@
     "packages/cad-print/package.json": "f38343f8e48712a39ac30b46141d50b071b327b679769bb0d0b45b256a84ee57",
     "evidence/artifacts/parity-package-v3-to-v4.json": "a4198589243e7ba26b3463a05407ad0397aa269d604dee2d2e0c888f815dceae",
     "parity/rows.mjs": "7eeae6a608250f2f8eba3f714da412559f222fb062fcb4ccb8111b5896cc805f",
-    "tools/parity-kit/core.mjs": "31b859b415ba6fb970b98522579cec08b80284d1c6284663e891121ad2275181",
+    "tools/parity-kit/core.mjs": "a49945b8df71b15a17ed8ef3d230c10a3dae8caf109890c934beac740cf2d833",
     "tools/parity-kit/cli.mjs": "6ae170a77ad618905dfe0075ff86ca9f830e61ab1fc39303deb563b15eb68d5c"
   },
   "certifiedRowIds": [
@@ -446,6 +446,7 @@
     "scoreRatchetMatchesTopology": true,
     "everyStageScriptExists": true,
     "fullCiGatePresent": true,
+    "packageMigrationHistoryAvailable": true,
     "licensedAutoCadJobPresent": true,
     "requiredOracleJobPresent": true
   },

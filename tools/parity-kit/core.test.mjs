@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { affectedRows, canonicalJson, exactContentAddress, executableStages, inferredRowIds, packageContractForRow, semanticContentAddress, semanticValue, sourceContentAddress, sourceToRows, staleEvidenceBindings } from "./core.mjs";
+import { affectedRows, canonicalJson, checkoutStepsUseFullHistory, exactContentAddress, executableStages, inferredRowIds, packageContractForRow, semanticContentAddress, semanticValue, sourceContentAddress, sourceToRows, staleEvidenceBindings } from "./core.mjs";
 
 describe("parity kit", () => {
   it("gives timestamp-only JSON reruns the same semantic content address", () => {
@@ -45,6 +45,21 @@ describe("parity kit", () => {
   it("gives LF and CRLF source files the same content address", () => {
     expect(sourceContentAddress(Buffer.from("const value = 1;\nexport { value };\n")))
       .toBe(sourceContentAddress(Buffer.from("const value = 1;\r\nexport { value };\r\n")));
+  });
+
+  it("requires every pinned checkout step to fetch the migration base history", () => {
+    const valid = `steps:\n  - uses: actions/checkout@pinned\n    with:\n      fetch-depth: 0\n  - uses: actions/setup-node@pinned\n`;
+    const namedValid = `steps:\n  - name: Checkout\n    uses: actions/checkout@pinned\n    with:\n      fetch-depth: "0"\n`;
+    const shallow = `steps:\n  - uses: actions/checkout@pinned\n  - uses: actions/setup-node@pinned\n`;
+    const mixed = `${valid}other:\n  - uses: actions/checkout@pinned\n    with:\n      fetch-depth: 1\n`;
+    const wrongScope = `steps:\n  - uses: actions/checkout@pinned\n    env:\n      fetch-depth: 0\n`;
+    const namedShallow = `${valid}other:\n  - name: Hidden shallow checkout\n    uses: actions/checkout@pinned\n`;
+    expect(checkoutStepsUseFullHistory(valid)).toBe(true);
+    expect(checkoutStepsUseFullHistory(namedValid)).toBe(true);
+    expect(checkoutStepsUseFullHistory(shallow)).toBe(false);
+    expect(checkoutStepsUseFullHistory(mixed)).toBe(false);
+    expect(checkoutStepsUseFullHistory(wrongScope)).toBe(false);
+    expect(checkoutStepsUseFullHistory(namedShallow)).toBe(false);
   });
 
   it("gives LF and CRLF exact JSON evidence the same repository address", () => {
