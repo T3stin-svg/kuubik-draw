@@ -11,7 +11,8 @@ efektiivsusvärav on failis [`ARCHITECTURE_ROADMAP.md`](ARCHITECTURE_ROADMAP.md)
 
 - vana Drawi auditi snapshot: **63,9% raw / 68,3% weighted / 60,7% visual**;
 - vana Drawi AutoCADi live-tõendiga read: **22/133**;
-- selle uue eraldatud rakenduse kohalik sertifikaat: **23/133 · 17,3% raw / 20,7% weighted**;
+- selle uue eraldatud rakenduse avalikus CI-s kinnitatud sertifikaat:
+  **23/133 · 17,3% raw / 20,7% weighted** (`30a9c2a`, run `33247396359`);
 - native DWG/DWT/XREF ja PC3/CTB/STB pariteet on veel blokeeritud.
 
 Need arvud on vana Drawi auditi muutmatu snapshot. Uus rakendus ei päri skoori

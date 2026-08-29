@@ -65,9 +65,11 @@
   255 exact ACI colors and native aligned dimensions through Chromium, strict
   ezdxf, AutoCAD Core Console and an owned desktop AutoCAD read-back.
 
-## Explicitly not certified yet
+## Certified state and explicit remaining limits
 
-- the new application has **23/133** locally certified parity rows (**17.3% raw / 20.7% weighted**);
+- the new application has **23/133** publicly CI-verified parity rows
+  (**17.3% raw / 20.7% weighted**) at feature commit `30a9c2a` and GitHub
+  Actions run `33247396359`;
 - all 22 legacy-certified rows and the first new row F-022 are locally mirrored;
 - spline/NURBS rendering is rejected rather than drawn as a misleading control polygon;
 - Unicode PDF text is rejected until a font-embedding path exists;
@@ -77,6 +79,13 @@
 - 50,000-entity R-tree query passes, but 30 FPS browser pan/zoom is not yet proved;
 - native DWG/DWT/XREF and PC3/CTB/STB remain deferred;
 - no preview or production deployment has been made.
+
+The public general runner passed 31 test files / 230 Vitest tests, 34 mutation
+tests, 30 DXF tests, 19 PDF tests and 62 Chromium E2E tests. Its conditional
+self-hosted AutoCAD and required-oracle jobs were skipped because the protected
+runner variables are not enabled; the F-022 certification therefore remains
+bound to its checked-in licensed local AutoCAD live evidence and independent
+read-back, not to a claimed public native rerun.
 
 The next mandatory gate is the architecture-efficiency wave in
 `ARCHITECTURE_ROADMAP.md`: command workflow extraction, declarative parity-kit,

@@ -33,12 +33,14 @@ selles teekaardis teadlikult `Won't have`.
 
 ## Now
 
-1. F-022 lokaalne sertifikaat on valmis: **23/133 · 17,3% raw / 20,7% weighted**.
+1. F-022 avalik sertifikaat on valmis: **23/133 · 17,3% raw / 20,7% weighted**.
 2. Quick/Standard TRIM, closed bulge/width polyline, hidden/locked target,
    ignored HATCH loop, nested block layer-semantika ja rational SPLINE läbivad
    AutoCAD 2024.1.2, Chromiumi ning sõltumatu DXF/KDRAW1 read-back'i.
-3. Sõltumatu review lõppes `0 P0 / 0 P1`; avalik CI peab sama commit'i veel
-   roheliseks kinnitama enne laine lõplikku sulgemist.
+3. Sõltumatu review lõppes `0 P0 / 0 P1`; commit `30a9c2a` läbis avaliku
+   GitHub Actions run'i `33247396359` kogu `npm run check` värava.
+4. Kohustuslik architecture-efficiency gate on nüüd aktiivne; järgmist F-rida
+   enne selle vastuvõtukriteeriumide täitmist ei alustata.
 
 ## Next — architecture-efficiency gate
 
@@ -75,8 +77,10 @@ muuda sisuräsi ning täielik senine parity-ratchet jääb roheliseks.
 
 ## Peamised riskid ja sõltuvused
 
-- F-022 sõltub litsentsitud AutoCAD 2024.1.2 runnerist ning kaitstud oracle-runneri
-  võrgu-isolatsiooni attestatsioonist.
+- F-022 native tõend pärineb litsentsitud lokaalsest AutoCAD 2024.1.2 live-run'ist.
+  Avaliku run'i self-hosted AutoCAD/oracle job'id jäid repo muutujate puudumisel
+  ausalt `skipped`; kaitstud oracle-runner vajab endiselt võrgu-isolatsiooni
+  attestatsiooni.
 - Native failiread sõltuvad ODA/RealDWG litsentsist ja anonümiseeritud korpusest.
 - Arhitektuurivärav ei tohi muuta nimetajat, kaale, olemasolevaid skoore ega
   nõrgendada live/read-back nõuet.
