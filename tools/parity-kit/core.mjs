@@ -47,12 +47,16 @@ const volatileProvenanceHashKeys = new Set([
   "sourceSha256",
 ]);
 
+function compareCodePoints(left, right) {
+  return left < right ? -1 : left > right ? 1 : 0;
+}
+
 export function semanticValue(value) {
   if (Array.isArray(value)) return value.map(semanticValue);
   if (value === null || typeof value !== "object") return value;
   return Object.fromEntries(Object.entries(value)
     .filter(([key]) => !volatileTimeKeys.has(key) && !volatileProvenanceHashKeys.has(key))
-    .sort(([left], [right]) => left.localeCompare(right))
+    .sort(([left], [right]) => compareCodePoints(left, right))
     .map(([key, entry]) => [key, semanticValue(entry)]));
 }
 
@@ -84,7 +88,7 @@ export function semanticContentAddress(bytes, path = "") {
     const fileAddresses = Object.entries(envelope.files ?? {}).map(([filePath, encoded]) => {
       const fileBytes = Buffer.from(encoded, "base64");
       return [filePath, semanticContentAddress(fileBytes, filePath)];
-    }).sort(([left], [right]) => left.localeCompare(right));
+    }).sort(([left], [right]) => compareCodePoints(left, right));
     return sha256(Buffer.from(canonicalJson({ container: "KDRAW1", files: fileAddresses }), "utf8"));
   }
   if (lowerPath.endsWith(".json")) {

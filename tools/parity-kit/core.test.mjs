@@ -56,6 +56,7 @@ describe("parity kit", () => {
 
   it("canonicalizes object keys while preserving array order", () => {
     expect(canonicalJson({ b: 2, a: [2, 1] })).toBe('{"a":[2,1],"b":2}');
+    expect(canonicalJson({ "ä": 4, z: 3, a: 2, A: 1 })).toBe('{"A":1,"a":2,"z":3,"ä":4}');
     expect(semanticValue({ generatedAt: "now", value: 1 })).toEqual({ value: 1 });
   });
 
