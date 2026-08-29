@@ -72,8 +72,8 @@
 ## Certified state and explicit remaining limits
 
 - the new application has **23/133** publicly CI-verified parity rows
-  (**17.3% raw / 20.7% weighted**) at feature commit `30a9c2a` and GitHub
-  Actions run `33247396359`;
+  (**17.3% raw / 20.7% weighted**) at feature commit `30a9c2a`; the completed
+  architecture gate ends at `d097b34` and GitHub Actions run `33250270350`;
 - all 22 legacy-certified rows and the first new row F-022 are locally mirrored;
 - spline/NURBS rendering is rejected rather than drawn as a misleading control polygon;
 - Unicode PDF text is rejected until a font-embedding path exists;
@@ -84,16 +84,17 @@
 - native DWG/DWT/XREF and PC3/CTB/STB remain deferred;
 - no preview or production deployment has been made.
 
-The public general runner passed 31 test files / 230 Vitest tests, 34 mutation
+The public general runner passed 33 test files / 245 Vitest tests, 34 mutation
 tests, 30 DXF tests, 19 PDF tests and 62 Chromium E2E tests. Its conditional
 self-hosted AutoCAD and required-oracle jobs were skipped because the protected
 runner variables are not enabled; the F-022 certification therefore remains
 bound to its checked-in licensed local AutoCAD live evidence and independent
 read-back, not to a claimed public native rerun.
 
-The architecture-efficiency wave in `ARCHITECTURE_ROADMAP.md` is locally green
-and awaits public CI plus P0/P1 diff review. Its one-time App-shell refactor was
-followed by all 22 browser captures, 23 independent read-backs and a fresh
-F-102 native AutoCAD live run. After that public gate, the next functional row
-is F-023 EXTEND. F-108 native PC3/CTB/STB remains blocked on a licensed adapter.
-No production deployment is authorized.
+The architecture-efficiency wave in `ARCHITECTURE_ROADMAP.md` is closed with
+public Ubuntu CI and an independent `0 P0 / 0 P1` review. Its App-shell refactor
+was followed by all 22 browser captures, 23 independent read-backs, a fresh
+F-102 native AutoCAD live run, schema-v3 exact stage receipts, real F-003
+Chromium DXF capture and cross-platform content-address verification. The next
+functional row is F-023 EXTEND. F-108 native PC3/CTB/STB remains blocked on a
+licensed adapter. No production deployment is authorized.

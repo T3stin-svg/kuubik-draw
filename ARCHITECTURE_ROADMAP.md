@@ -39,11 +39,13 @@ selles teekaardis teadlikult `Won't have`.
    AutoCAD 2024.1.2, Chromiumi ning sõltumatu DXF/KDRAW1 read-back'i.
 3. Sõltumatu review lõppes `0 P0 / 0 P1`; commit `30a9c2a` läbis avaliku
    GitHub Actions run'i `33247396359` kogu `npm run check` värava.
-4. Architecture-efficiency gate on lokaalselt teostatud ja ootab avaliku CI
-   kinnitust: MOVE…TRIM kasutavad ühist workflow-moodulit, 23 sertifitseeritud
-   rida on deklaratiivses parity-kit'is ning kogu täpne ratchet on taastatud.
+4. Architecture-efficiency gate on avalikult suletud: MOVE…TRIM kasutavad
+   ühist workflow-moodulit, 23 sertifitseeritud rida on deklaratiivses
+   parity-kit'is ning täpne ratchet töötab võrdselt Windowsis ja Linuxis.
+   Põhilaine commit `da45a56`, lõpp-HEAD `d097b34` ja GitHub Actions run
+   `33250270350` läbisid fast- ja täieliku certification-värava.
 
-## Next — architecture-efficiency gate
+## Suletud — architecture-efficiency gate
 
 Järgmist funktsioonirida ei alustata enne järgmisi tulemusi:
 
@@ -82,8 +84,19 @@ Lokaalne vastuvõtt 2026-08-29:
   ebadeterminismi (viewporti stabiliseerimine ja COM media-listi retry) ning
   läbis native PAGESETUP/PlotToFile/DWG reopen värava.
 
-Avalik GitHub Actions run ja sõltumatu P0/P1 diff-review on enne värava lõplikku
-sulgemist veel kohustuslikud.
+Avalik GitHub Actions run `33250270350` läbis Ubuntu 24.04 peal 245 Vitest-testi,
+34 mutation-, 30 DXF-, 19 PDF- ja 62 Chromiumi testi, production buildi,
+parity/content-address-, litsentsi- ja turvaväravad. Sõltumatu lõppreview oli
+`0 P0 / 0 P1`. Tingimuslikud self-hosted AutoCAD/oracle job'id jäid selle push'i
+jaoks ausalt `skipped`; checked-in native tõendeid kontrolliti üldises ratchet'is.
+
+## Next — F-023 EXTEND
+
+Rakendada täis-EXTEND sama eraldatud workflow/transaction arhitektuuriga:
+Quick/Standard boundary selection, Fence/Crossing, Edge Extend/No extend,
+Shift-TRIM, command Undo, atomic global Undo/Redo, layer-refusal, preview=commit,
+DXF/KDRAW1 read-back ning sama AutoCAD 2024.1.2 live-maatriks. Skoor muutub
+ainult pärast kõigi tõendite ja sõltumatu P0/P1 review läbimist.
 
 ## Later
 

@@ -13,6 +13,8 @@ efektiivsusvärav on failis [`ARCHITECTURE_ROADMAP.md`](ARCHITECTURE_ROADMAP.md)
 - vana Drawi AutoCADi live-tõendiga read: **22/133**;
 - selle uue eraldatud rakenduse avalikus CI-s kinnitatud sertifikaat:
   **23/133 · 17,3% raw / 20,7% weighted** (`30a9c2a`, run `33247396359`);
+- avalikult suletud arhitektuurivärav: lõpp-HEAD `d097b34`, GitHub Actions
+  run `33250270350`, sõltumatu review `0 P0 / 0 P1`; järgmine rida F-023 EXTEND;
 - native DWG/DWT/XREF ja PC3/CTB/STB pariteet on veel blokeeritud.
 
 Need arvud on vana Drawi auditi muutmatu snapshot. Uus rakendus ei päri skoori
