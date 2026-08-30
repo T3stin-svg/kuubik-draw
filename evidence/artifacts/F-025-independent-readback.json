@@ -1,0 +1,2622 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-025",
+  "source": "production CHAMFER registry -> immutable atomic commits -> production DXF/KDRAW1 -> strict importer + dxf-parser -> three-step Undo/Redo",
+  "observedAt": "2026-08-30T04:41:04.231Z",
+  "status": "PASS",
+  "implementationSha256": {
+    "packages/cad-core/src/chamfer.ts": "0142afb06c0d468a7f1b5e1b1bc45a3319a271cf75c12b302d6e155c0494e6bc",
+    "packages/cad-core/src/commands.ts": "24910e7b4b2b529f845b285aa1e9cb383c1b91da69b98e0c66987a0756092997",
+    "packages/cad-core/src/index.ts": "76e8aefd21b5bda42fa48a43e407cd6b2e388785947a43d127393e9820fabc18",
+    "packages/cad-core/src/container.ts": "931db68e6aa0688ac9a7aa6d5ac56c07d1cd5e0126adec836f27258011419502",
+    "packages/cad-core/src/transaction.ts": "e250aa2906e63905202a4b9591367632830745acbf731884f8e711d165750599",
+    "packages/cad-core/test/chamfer.test.ts": "ad7b4a17d2e016e01cf4a0cb1df0b68642d2a77dbc047a3226994f571264a523",
+    "packages/cad-core/test/f025-mutation-proven.test.ts": "1a501923bb2fdf52a6fbe8b2aa9f27e753600b52cb3cc1c2106fe22f3c04ff7b",
+    "packages/cad-dxf/src/import.ts": "ffdef7a01488d09f32b8bab171b0632092317a5687cd6eca2231629a4fc51f20",
+    "packages/cad-dxf/src/index.ts": "82ca8f21ac22b29cd0f36be39f51b379ffd9307ec96c69c45d93da713cc9b2bd",
+    "packages/cad-dxf/test/f025-chamfer-roundtrip.test.ts": "911e57219188970a0894abe3570583d60b1870233e025adeee20cb5aaa46cdc3",
+    "tools/parity/run-f025-readback.mjs": "a773f10feb8afe902ec0be6fb8a5ce9277ebdea84af01b4317059ca2c2774505"
+  },
+  "commands": {
+    "distance": {
+      "changes": [
+        {
+          "type": "put",
+          "entity": {
+            "kind": "line",
+            "handle": "10",
+            "layerId": "0",
+            "appearance": {
+              "color": "#ff0000",
+              "colorMethod": "aci",
+              "aciIndex": 1,
+              "lineweightMm": 0.5
+            },
+            "extensionData": {
+              "rowId": "F-025"
+            },
+            "start": {
+              "x": -100,
+              "y": 0
+            },
+            "end": {
+              "x": -10,
+              "y": 0
+            }
+          }
+        },
+        {
+          "type": "put",
+          "entity": {
+            "kind": "line",
+            "handle": "20",
+            "layerId": "0",
+            "start": {
+              "x": 0,
+              "y": 20
+            },
+            "end": {
+              "x": 0,
+              "y": 100
+            }
+          }
+        },
+        {
+          "type": "put",
+          "entity": {
+            "kind": "line",
+            "start": {
+              "x": -10,
+              "y": 0
+            },
+            "end": {
+              "x": 0,
+              "y": 20
+            },
+            "handle": "51",
+            "layerId": "0"
+          }
+        }
+      ],
+      "sourceHandles": [
+        "10",
+        "20"
+      ],
+      "resultHandles": [
+        "10",
+        "20",
+        "51"
+      ],
+      "createdHandles": [
+        "51"
+      ],
+      "rejected": [],
+      "steps": [
+        {
+          "mode": "pair",
+          "sourceHandles": [
+            "10",
+            "20"
+          ],
+          "resultHandles": [
+            "10",
+            "20",
+            "51"
+          ],
+          "method": "distance",
+          "effectiveDistances": [
+            10,
+            20
+          ],
+          "chamferPoints": [
+            {
+              "x": -10,
+              "y": 0
+            },
+            {
+              "x": 0,
+              "y": 20
+            }
+          ],
+          "skippedVertices": []
+        }
+      ],
+      "mode": "pairs",
+      "specification": {
+        "method": "distance",
+        "firstDistance": 10,
+        "secondDistance": 20
+      },
+      "trimMode": "trim",
+      "multiple": false
+    },
+    "angleNoTrim": {
+      "changes": [
+        {
+          "type": "put",
+          "entity": {
+            "kind": "line",
+            "start": {
+              "x": 290,
+              "y": 0
+            },
+            "end": {
+              "x": 300,
+              "y": 10
+            },
+            "handle": "52",
+            "layerId": "0"
+          }
+        }
+      ],
+      "sourceHandles": [
+        "30",
+        "40"
+      ],
+      "resultHandles": [
+        "52"
+      ],
+      "createdHandles": [
+        "52"
+      ],
+      "rejected": [],
+      "steps": [
+        {
+          "mode": "pair",
+          "sourceHandles": [
+            "30",
+            "40"
+          ],
+          "resultHandles": [
+            "52"
+          ],
+          "method": "angle",
+          "effectiveDistances": [
+            10,
+            10
+          ],
+          "chamferPoints": [
+            {
+              "x": 290,
+              "y": 0
+            },
+            {
+              "x": 300,
+              "y": 10
+            }
+          ],
+          "skippedVertices": []
+        }
+      ],
+      "mode": "pairs",
+      "specification": {
+        "method": "angle",
+        "firstDistance": 10,
+        "angleDeg": 45
+      },
+      "trimMode": "no-trim",
+      "multiple": false
+    },
+    "polyline": {
+      "changes": [
+        {
+          "type": "put",
+          "entity": {
+            "kind": "polyline",
+            "handle": "50",
+            "layerId": "0",
+            "appearance": {
+              "color": "#00ff00",
+              "colorMethod": "trueColor",
+              "aciIndex": 7,
+              "lineweightMm": 0.35
+            },
+            "closed": true,
+            "vertices": [
+              {
+                "x": 10,
+                "y": 200
+              },
+              {
+                "x": 90,
+                "y": 200
+              },
+              {
+                "x": 100,
+                "y": 210
+              },
+              {
+                "x": 100,
+                "y": 290
+              },
+              {
+                "x": 90,
+                "y": 300
+              },
+              {
+                "x": 10,
+                "y": 300
+              },
+              {
+                "x": 0,
+                "y": 290
+              },
+              {
+                "x": 0,
+                "y": 210
+              }
+            ]
+          }
+        }
+      ],
+      "sourceHandles": [
+        "50"
+      ],
+      "resultHandles": [
+        "50"
+      ],
+      "createdHandles": [],
+      "rejected": [],
+      "steps": [
+        {
+          "mode": "polyline",
+          "sourceHandles": [
+            "50"
+          ],
+          "resultHandles": [
+            "50"
+          ],
+          "method": "distance",
+          "effectiveDistances": null,
+          "chamferPoints": null,
+          "skippedVertices": []
+        }
+      ],
+      "mode": "polyline",
+      "specification": {
+        "method": "distance",
+        "firstDistance": 10,
+        "secondDistance": 10
+      },
+      "trimMode": "trim",
+      "multiple": false
+    }
+  },
+  "edgeCases": {
+    "overlap": {
+      "result": {
+        "changes": [
+          {
+            "type": "put",
+            "entity": {
+              "kind": "polyline",
+              "handle": "10",
+              "layerId": "0",
+              "closed": true,
+              "vertices": [
+                {
+                  "x": 0,
+                  "y": 0
+                },
+                {
+                  "x": 5,
+                  "y": 0
+                },
+                {
+                  "x": 25,
+                  "y": 20
+                },
+                {
+                  "x": 25,
+                  "y": 25
+                },
+                {
+                  "x": 20,
+                  "y": 25
+                },
+                {
+                  "x": 0,
+                  "y": 5
+                }
+              ]
+            }
+          }
+        ],
+        "sourceHandles": [
+          "10"
+        ],
+        "resultHandles": [
+          "10"
+        ],
+        "createdHandles": [],
+        "rejected": [],
+        "steps": [
+          {
+            "mode": "polyline",
+            "sourceHandles": [
+              "10"
+            ],
+            "resultHandles": [
+              "10"
+            ],
+            "method": "distance",
+            "effectiveDistances": null,
+            "chamferPoints": null,
+            "skippedVertices": [
+              0,
+              2
+            ]
+          }
+        ],
+        "mode": "polyline",
+        "specification": {
+          "method": "distance",
+          "firstDistance": 20,
+          "secondDistance": 20
+        },
+        "trimMode": "trim",
+        "multiple": false
+      },
+      "vertices": [
+        {
+          "x": 0,
+          "y": 0
+        },
+        {
+          "x": 5,
+          "y": 0
+        },
+        {
+          "x": 25,
+          "y": 20
+        },
+        {
+          "x": 25,
+          "y": 25
+        },
+        {
+          "x": 20,
+          "y": 25
+        },
+        {
+          "x": 0,
+          "y": 5
+        }
+      ],
+      "dxfSha256": "8ab93b94844a9601f21481715c1992860e7aafa8e3dc74ac7140d3bc708904d4",
+      "kdrawSha256": "de8a93e969b41846a886a723aff906a4b956c4daa549b3c321007ef68975a5cf"
+    },
+    "seamForward": {
+      "result": {
+        "changes": [
+          {
+            "type": "put",
+            "entity": {
+              "kind": "polyline",
+              "handle": "10",
+              "layerId": "0",
+              "closed": true,
+              "vertices": [
+                {
+                  "x": 20,
+                  "y": 0
+                },
+                {
+                  "x": 25,
+                  "y": 0
+                },
+                {
+                  "x": 25,
+                  "y": 25
+                },
+                {
+                  "x": 0,
+                  "y": 25
+                },
+                {
+                  "x": 0,
+                  "y": 10
+                }
+              ]
+            }
+          }
+        ],
+        "sourceHandles": [
+          "10"
+        ],
+        "resultHandles": [
+          "10"
+        ],
+        "createdHandles": [],
+        "rejected": [],
+        "steps": [
+          {
+            "mode": "pair",
+            "sourceHandles": [
+              "10",
+              "10"
+            ],
+            "resultHandles": [
+              "10"
+            ],
+            "method": "distance",
+            "effectiveDistances": [
+              10,
+              20
+            ],
+            "chamferPoints": [
+              {
+                "x": 0,
+                "y": 10
+              },
+              {
+                "x": 20,
+                "y": 0
+              }
+            ],
+            "skippedVertices": []
+          }
+        ],
+        "mode": "pairs",
+        "specification": {
+          "method": "distance",
+          "firstDistance": 10,
+          "secondDistance": 20
+        },
+        "trimMode": "trim",
+        "multiple": false
+      },
+      "document": {
+        "schemaVersion": 1,
+        "documentId": "F-025-edge-readback",
+        "revision": 0,
+        "units": {
+          "linear": "mm",
+          "displayPrecision": 4,
+          "angularPrecision": 6
+        },
+        "currentLayerId": "0",
+        "entities": [
+          {
+            "kind": "polyline",
+            "handle": "10",
+            "layerId": "0",
+            "closed": true,
+            "vertices": [
+              {
+                "x": 20,
+                "y": 0
+              },
+              {
+                "x": 25,
+                "y": 0
+              },
+              {
+                "x": 25,
+                "y": 25
+              },
+              {
+                "x": 0,
+                "y": 25
+              },
+              {
+                "x": 0,
+                "y": 10
+              }
+            ]
+          }
+        ],
+        "layers": [
+          {
+            "id": "0",
+            "name": "0",
+            "visible": true,
+            "frozen": false,
+            "locked": false,
+            "plottable": true
+          }
+        ],
+        "linetypes": [],
+        "textStyles": [],
+        "dimensionStyles": [],
+        "blocks": [],
+        "layouts": [
+          {
+            "id": "model",
+            "name": "Model",
+            "kind": "model",
+            "viewports": [],
+            "entities": []
+          }
+        ],
+        "attachments": [],
+        "metadata": {
+          "createdAt": "2026-08-30T01:33:00.000Z",
+          "updatedAt": "2026-08-30T01:33:00.000Z"
+        }
+      },
+      "dxfSha256": "0692ce86926b9d1395e8f518a1dd494ac0548f83d2216c5d71a2dcc16f398c2b",
+      "kdrawSha256": "91cf56f5c300cfdc73127c50e94687eaa62dc0411fe58bfd1096b69e05dfe271"
+    },
+    "seamReverse": {
+      "result": {
+        "changes": [
+          {
+            "type": "put",
+            "entity": {
+              "kind": "polyline",
+              "handle": "10",
+              "layerId": "0",
+              "closed": true,
+              "vertices": [
+                {
+                  "x": 10,
+                  "y": 0
+                },
+                {
+                  "x": 25,
+                  "y": 0
+                },
+                {
+                  "x": 25,
+                  "y": 25
+                },
+                {
+                  "x": 0,
+                  "y": 25
+                },
+                {
+                  "x": 0,
+                  "y": 20
+                }
+              ]
+            }
+          }
+        ],
+        "sourceHandles": [
+          "10"
+        ],
+        "resultHandles": [
+          "10"
+        ],
+        "createdHandles": [],
+        "rejected": [],
+        "steps": [
+          {
+            "mode": "pair",
+            "sourceHandles": [
+              "10",
+              "10"
+            ],
+            "resultHandles": [
+              "10"
+            ],
+            "method": "distance",
+            "effectiveDistances": [
+              10,
+              20
+            ],
+            "chamferPoints": [
+              {
+                "x": 10,
+                "y": 0
+              },
+              {
+                "x": 0,
+                "y": 20
+              }
+            ],
+            "skippedVertices": []
+          }
+        ],
+        "mode": "pairs",
+        "specification": {
+          "method": "distance",
+          "firstDistance": 10,
+          "secondDistance": 20
+        },
+        "trimMode": "trim",
+        "multiple": false
+      },
+      "document": {
+        "schemaVersion": 1,
+        "documentId": "F-025-edge-readback",
+        "revision": 0,
+        "units": {
+          "linear": "mm",
+          "displayPrecision": 4,
+          "angularPrecision": 6
+        },
+        "currentLayerId": "0",
+        "entities": [
+          {
+            "kind": "polyline",
+            "handle": "10",
+            "layerId": "0",
+            "closed": true,
+            "vertices": [
+              {
+                "x": 10,
+                "y": 0
+              },
+              {
+                "x": 25,
+                "y": 0
+              },
+              {
+                "x": 25,
+                "y": 25
+              },
+              {
+                "x": 0,
+                "y": 25
+              },
+              {
+                "x": 0,
+                "y": 20
+              }
+            ]
+          }
+        ],
+        "layers": [
+          {
+            "id": "0",
+            "name": "0",
+            "visible": true,
+            "frozen": false,
+            "locked": false,
+            "plottable": true
+          }
+        ],
+        "linetypes": [],
+        "textStyles": [],
+        "dimensionStyles": [],
+        "blocks": [],
+        "layouts": [
+          {
+            "id": "model",
+            "name": "Model",
+            "kind": "model",
+            "viewports": [],
+            "entities": []
+          }
+        ],
+        "attachments": [],
+        "metadata": {
+          "createdAt": "2026-08-30T01:33:00.000Z",
+          "updatedAt": "2026-08-30T01:33:00.000Z"
+        }
+      },
+      "dxfSha256": "dab5246c7b5b043b1ae66ece736ecb98a3b936631f889ac35d5788a09773893d",
+      "kdrawSha256": "1f8c3bb38546ada86ff260f2bc3cb037d03bd920d5b3a63d5dd971f256e0d4df"
+    },
+    "properties": {
+      "connector": {
+        "kind": "line",
+        "start": {
+          "x": -10,
+          "y": 0
+        },
+        "end": {
+          "x": 0,
+          "y": 20
+        },
+        "handle": "21",
+        "layerId": "current",
+        "appearance": {
+          "lineweightMm": 0.35,
+          "transparency": 25
+        }
+      },
+      "strictConnector": {
+        "kind": "line",
+        "handle": "21",
+        "layerId": "dxf-layer:CURRENT",
+        "appearance": {
+          "lineweightMm": 0.35,
+          "transparency": 25.098039215686
+        },
+        "start": {
+          "x": -10,
+          "y": 0
+        },
+        "end": {
+          "x": 0,
+          "y": 20
+        }
+      },
+      "dxfSha256": "c63686e015754273ab2d941aa22ed3cf68c6528c382ac4125260adc8c7fd623b",
+      "kdrawSha256": "17417eb31253977903574d1f3d527aa30478d89a35174b02216f0a23c5292f35"
+    },
+    "construction": {
+      "trim": {
+        "changes": [
+          {
+            "type": "put",
+            "entity": {
+              "kind": "line",
+              "handle": "10",
+              "layerId": "0",
+              "appearance": {
+                "color": "#ff0000",
+                "colorMethod": "aci",
+                "aciIndex": 1,
+                "lineweightMm": 0.5
+              },
+              "start": {
+                "x": -100,
+                "y": 0
+              },
+              "end": {
+                "x": -10,
+                "y": 0
+              }
+            }
+          },
+          {
+            "type": "put",
+            "entity": {
+              "kind": "ray",
+              "handle": "20",
+              "layerId": "0",
+              "appearance": {
+                "color": "#ff0000",
+                "colorMethod": "aci",
+                "aciIndex": 1,
+                "lineweightMm": 0.5
+              },
+              "basePoint": {
+                "x": 0,
+                "y": 20
+              },
+              "direction": {
+                "x": 0,
+                "y": 1
+              }
+            }
+          },
+          {
+            "type": "put",
+            "entity": {
+              "kind": "line",
+              "start": {
+                "x": -10,
+                "y": 0
+              },
+              "end": {
+                "x": 0,
+                "y": 20
+              },
+              "handle": "81",
+              "layerId": "0",
+              "appearance": {
+                "lineweightMm": 0.5
+              }
+            }
+          },
+          {
+            "type": "put",
+            "entity": {
+              "kind": "ray",
+              "handle": "30",
+              "layerId": "0",
+              "appearance": {
+                "color": "#ff0000",
+                "colorMethod": "aci",
+                "aciIndex": 1,
+                "lineweightMm": 0.5
+              },
+              "basePoint": {
+                "x": 310,
+                "y": 200
+              },
+              "direction": {
+                "x": 1,
+                "y": 0
+              }
+            }
+          },
+          {
+            "type": "put",
+            "entity": {
+              "kind": "ray",
+              "handle": "40",
+              "layerId": "0",
+              "appearance": {
+                "color": "#ff0000",
+                "colorMethod": "aci",
+                "aciIndex": 1,
+                "lineweightMm": 0.5
+              },
+              "basePoint": {
+                "x": 300,
+                "y": 220
+              },
+              "direction": {
+                "x": 0,
+                "y": 1
+              }
+            }
+          },
+          {
+            "type": "put",
+            "entity": {
+              "kind": "line",
+              "start": {
+                "x": 310,
+                "y": 200
+              },
+              "end": {
+                "x": 300,
+                "y": 220
+              },
+              "handle": "82",
+              "layerId": "0",
+              "appearance": {
+                "lineweightMm": 0.5
+              }
+            }
+          },
+          {
+            "type": "put",
+            "entity": {
+              "kind": "ray",
+              "handle": "50",
+              "layerId": "0",
+              "appearance": {
+                "color": "#ff0000",
+                "colorMethod": "aci",
+                "aciIndex": 1,
+                "lineweightMm": 0.5
+              },
+              "basePoint": {
+                "x": 490,
+                "y": 400
+              },
+              "direction": {
+                "x": -1,
+                "y": 0
+              }
+            }
+          },
+          {
+            "type": "put",
+            "entity": {
+              "kind": "line",
+              "handle": "60",
+              "layerId": "0",
+              "appearance": {
+                "color": "#ff0000",
+                "colorMethod": "aci",
+                "aciIndex": 1,
+                "lineweightMm": 0.5
+              },
+              "start": {
+                "x": 500,
+                "y": 420
+              },
+              "end": {
+                "x": 500,
+                "y": 500
+              }
+            }
+          },
+          {
+            "type": "put",
+            "entity": {
+              "kind": "line",
+              "start": {
+                "x": 490,
+                "y": 400
+              },
+              "end": {
+                "x": 500,
+                "y": 420
+              },
+              "handle": "83",
+              "layerId": "0",
+              "appearance": {
+                "lineweightMm": 0.5
+              }
+            }
+          }
+        ],
+        "sourceHandles": [
+          "10",
+          "20",
+          "30",
+          "40",
+          "50",
+          "60"
+        ],
+        "resultHandles": [
+          "10",
+          "20",
+          "81",
+          "30",
+          "40",
+          "82",
+          "50",
+          "60",
+          "83"
+        ],
+        "createdHandles": [
+          "81",
+          "82",
+          "83"
+        ],
+        "rejected": [],
+        "steps": [
+          {
+            "mode": "pair",
+            "sourceHandles": [
+              "10",
+              "20"
+            ],
+            "resultHandles": [
+              "10",
+              "20",
+              "81"
+            ],
+            "method": "distance",
+            "effectiveDistances": [
+              10,
+              20
+            ],
+            "chamferPoints": [
+              {
+                "x": -10,
+                "y": 0
+              },
+              {
+                "x": 0,
+                "y": 20
+              }
+            ],
+            "skippedVertices": []
+          },
+          {
+            "mode": "pair",
+            "sourceHandles": [
+              "30",
+              "40"
+            ],
+            "resultHandles": [
+              "30",
+              "40",
+              "82"
+            ],
+            "method": "distance",
+            "effectiveDistances": [
+              10,
+              20
+            ],
+            "chamferPoints": [
+              {
+                "x": 310,
+                "y": 200
+              },
+              {
+                "x": 300,
+                "y": 220
+              }
+            ],
+            "skippedVertices": []
+          },
+          {
+            "mode": "pair",
+            "sourceHandles": [
+              "50",
+              "60"
+            ],
+            "resultHandles": [
+              "50",
+              "60",
+              "83"
+            ],
+            "method": "distance",
+            "effectiveDistances": [
+              10,
+              20
+            ],
+            "chamferPoints": [
+              {
+                "x": 490,
+                "y": 400
+              },
+              {
+                "x": 500,
+                "y": 420
+              }
+            ],
+            "skippedVertices": []
+          }
+        ],
+        "mode": "pairs",
+        "specification": {
+          "method": "distance",
+          "firstDistance": 10,
+          "secondDistance": 20
+        },
+        "trimMode": "trim",
+        "multiple": true
+      },
+      "noTrim": {
+        "changes": [
+          {
+            "type": "put",
+            "entity": {
+              "kind": "line",
+              "start": {
+                "x": 690,
+                "y": 600
+              },
+              "end": {
+                "x": 700,
+                "y": 620
+              },
+              "handle": "84",
+              "layerId": "0",
+              "appearance": {
+                "lineweightMm": 0.5
+              }
+            }
+          }
+        ],
+        "sourceHandles": [
+          "70",
+          "80"
+        ],
+        "resultHandles": [
+          "84"
+        ],
+        "createdHandles": [
+          "84"
+        ],
+        "rejected": [],
+        "steps": [
+          {
+            "mode": "pair",
+            "sourceHandles": [
+              "70",
+              "80"
+            ],
+            "resultHandles": [
+              "84"
+            ],
+            "method": "distance",
+            "effectiveDistances": [
+              10,
+              20
+            ],
+            "chamferPoints": [
+              {
+                "x": 690,
+                "y": 600
+              },
+              {
+                "x": 700,
+                "y": 620
+              }
+            ],
+            "skippedVertices": []
+          }
+        ],
+        "mode": "pairs",
+        "specification": {
+          "method": "distance",
+          "firstDistance": 10,
+          "secondDistance": 20
+        },
+        "trimMode": "no-trim",
+        "multiple": false
+      },
+      "expectedSemantics": [
+        {
+          "handle": "10",
+          "kind": "line",
+          "appearance": {
+            "color": "#ff0000",
+            "colorMethod": "aci",
+            "aciIndex": 1,
+            "lineweightMm": 0.5
+          },
+          "start": {
+            "x": -100,
+            "y": 0
+          },
+          "end": {
+            "x": -10,
+            "y": 0
+          }
+        },
+        {
+          "handle": "20",
+          "kind": "ray",
+          "appearance": {
+            "color": "#ff0000",
+            "colorMethod": "aci",
+            "aciIndex": 1,
+            "lineweightMm": 0.5
+          },
+          "basePoint": {
+            "x": 0,
+            "y": 20
+          },
+          "direction": {
+            "x": 0,
+            "y": 1
+          }
+        },
+        {
+          "handle": "30",
+          "kind": "ray",
+          "appearance": {
+            "color": "#ff0000",
+            "colorMethod": "aci",
+            "aciIndex": 1,
+            "lineweightMm": 0.5
+          },
+          "basePoint": {
+            "x": 310,
+            "y": 200
+          },
+          "direction": {
+            "x": 1,
+            "y": 0
+          }
+        },
+        {
+          "handle": "40",
+          "kind": "ray",
+          "appearance": {
+            "color": "#ff0000",
+            "colorMethod": "aci",
+            "aciIndex": 1,
+            "lineweightMm": 0.5
+          },
+          "basePoint": {
+            "x": 300,
+            "y": 220
+          },
+          "direction": {
+            "x": 0,
+            "y": 1
+          }
+        },
+        {
+          "handle": "50",
+          "kind": "ray",
+          "appearance": {
+            "color": "#ff0000",
+            "colorMethod": "aci",
+            "aciIndex": 1,
+            "lineweightMm": 0.5
+          },
+          "basePoint": {
+            "x": 490,
+            "y": 400
+          },
+          "direction": {
+            "x": -1,
+            "y": 0
+          }
+        },
+        {
+          "handle": "60",
+          "kind": "line",
+          "appearance": {
+            "color": "#ff0000",
+            "colorMethod": "aci",
+            "aciIndex": 1,
+            "lineweightMm": 0.5
+          },
+          "start": {
+            "x": 500,
+            "y": 420
+          },
+          "end": {
+            "x": 500,
+            "y": 500
+          }
+        },
+        {
+          "handle": "70",
+          "kind": "ray",
+          "appearance": {
+            "color": "#ff0000",
+            "colorMethod": "aci",
+            "aciIndex": 1,
+            "lineweightMm": 0.5
+          },
+          "basePoint": {
+            "x": 600,
+            "y": 600
+          },
+          "direction": {
+            "x": 4,
+            "y": 0
+          }
+        },
+        {
+          "handle": "80",
+          "kind": "xline",
+          "appearance": {
+            "color": "#ff0000",
+            "colorMethod": "aci",
+            "aciIndex": 1,
+            "lineweightMm": 0.5
+          },
+          "basePoint": {
+            "x": 700,
+            "y": 600
+          },
+          "direction": {
+            "x": 0,
+            "y": 3
+          }
+        },
+        {
+          "handle": "81",
+          "kind": "line",
+          "appearance": {
+            "lineweightMm": 0.5
+          },
+          "start": {
+            "x": -10,
+            "y": 0
+          },
+          "end": {
+            "x": 0,
+            "y": 20
+          }
+        },
+        {
+          "handle": "82",
+          "kind": "line",
+          "appearance": {
+            "lineweightMm": 0.5
+          },
+          "start": {
+            "x": 310,
+            "y": 200
+          },
+          "end": {
+            "x": 300,
+            "y": 220
+          }
+        },
+        {
+          "handle": "83",
+          "kind": "line",
+          "appearance": {
+            "lineweightMm": 0.5
+          },
+          "start": {
+            "x": 490,
+            "y": 400
+          },
+          "end": {
+            "x": 500,
+            "y": 420
+          }
+        },
+        {
+          "handle": "84",
+          "kind": "line",
+          "appearance": {
+            "lineweightMm": 0.5
+          },
+          "start": {
+            "x": 690,
+            "y": 600
+          },
+          "end": {
+            "x": 700,
+            "y": 620
+          }
+        }
+      ],
+      "strictSemantics": [
+        {
+          "handle": "10",
+          "kind": "line",
+          "appearance": {
+            "color": "#ff0000",
+            "colorMethod": "aci",
+            "aciIndex": 1,
+            "lineweightMm": 0.5
+          },
+          "start": {
+            "x": -100,
+            "y": 0
+          },
+          "end": {
+            "x": -10,
+            "y": 0
+          }
+        },
+        {
+          "handle": "20",
+          "kind": "ray",
+          "appearance": {
+            "color": "#ff0000",
+            "colorMethod": "aci",
+            "aciIndex": 1,
+            "lineweightMm": 0.5
+          },
+          "basePoint": {
+            "x": 0,
+            "y": 20
+          },
+          "direction": {
+            "x": 0,
+            "y": 1
+          }
+        },
+        {
+          "handle": "30",
+          "kind": "ray",
+          "appearance": {
+            "color": "#ff0000",
+            "colorMethod": "aci",
+            "aciIndex": 1,
+            "lineweightMm": 0.5
+          },
+          "basePoint": {
+            "x": 310,
+            "y": 200
+          },
+          "direction": {
+            "x": 1,
+            "y": 0
+          }
+        },
+        {
+          "handle": "40",
+          "kind": "ray",
+          "appearance": {
+            "color": "#ff0000",
+            "colorMethod": "aci",
+            "aciIndex": 1,
+            "lineweightMm": 0.5
+          },
+          "basePoint": {
+            "x": 300,
+            "y": 220
+          },
+          "direction": {
+            "x": 0,
+            "y": 1
+          }
+        },
+        {
+          "handle": "50",
+          "kind": "ray",
+          "appearance": {
+            "color": "#ff0000",
+            "colorMethod": "aci",
+            "aciIndex": 1,
+            "lineweightMm": 0.5
+          },
+          "basePoint": {
+            "x": 490,
+            "y": 400
+          },
+          "direction": {
+            "x": -1,
+            "y": 0
+          }
+        },
+        {
+          "handle": "60",
+          "kind": "line",
+          "appearance": {
+            "color": "#ff0000",
+            "colorMethod": "aci",
+            "aciIndex": 1,
+            "lineweightMm": 0.5
+          },
+          "start": {
+            "x": 500,
+            "y": 420
+          },
+          "end": {
+            "x": 500,
+            "y": 500
+          }
+        },
+        {
+          "handle": "70",
+          "kind": "ray",
+          "appearance": {
+            "color": "#ff0000",
+            "colorMethod": "aci",
+            "aciIndex": 1,
+            "lineweightMm": 0.5
+          },
+          "basePoint": {
+            "x": 600,
+            "y": 600
+          },
+          "direction": {
+            "x": 4,
+            "y": 0
+          }
+        },
+        {
+          "handle": "80",
+          "kind": "xline",
+          "appearance": {
+            "color": "#ff0000",
+            "colorMethod": "aci",
+            "aciIndex": 1,
+            "lineweightMm": 0.5
+          },
+          "basePoint": {
+            "x": 700,
+            "y": 600
+          },
+          "direction": {
+            "x": 0,
+            "y": 3
+          }
+        },
+        {
+          "handle": "81",
+          "kind": "line",
+          "appearance": {
+            "lineweightMm": 0.5
+          },
+          "start": {
+            "x": -10,
+            "y": 0
+          },
+          "end": {
+            "x": 0,
+            "y": 20
+          }
+        },
+        {
+          "handle": "82",
+          "kind": "line",
+          "appearance": {
+            "lineweightMm": 0.5
+          },
+          "start": {
+            "x": 310,
+            "y": 200
+          },
+          "end": {
+            "x": 300,
+            "y": 220
+          }
+        },
+        {
+          "handle": "83",
+          "kind": "line",
+          "appearance": {
+            "lineweightMm": 0.5
+          },
+          "start": {
+            "x": 490,
+            "y": 400
+          },
+          "end": {
+            "x": 500,
+            "y": 420
+          }
+        },
+        {
+          "handle": "84",
+          "kind": "line",
+          "appearance": {
+            "lineweightMm": 0.5
+          },
+          "start": {
+            "x": 690,
+            "y": 600
+          },
+          "end": {
+            "x": 700,
+            "y": 620
+          }
+        }
+      ],
+      "strictMismatch": null,
+      "rawChecks": {
+        "trimmedReverseRay": true,
+        "trimmedXlineToRay": true,
+        "forwardRay": true,
+        "reverseXlineToRay": true,
+        "noTrimRay": true,
+        "noTrimXline": true
+      },
+      "dxfSha256": "f33dc58ea5683a149ff5a5619185e59120935b59179e19d4dee25b98977e755f",
+      "kdrawSha256": "67e9cd098782a4d6295bb1b0b8257d4a3d5679c5440f3c60aefd838660936096"
+    },
+    "zeroIdentity": {
+      "polyline": {
+        "changes": [],
+        "sourceHandles": [
+          "10"
+        ],
+        "resultHandles": [
+          "10"
+        ],
+        "createdHandles": [],
+        "rejected": [],
+        "steps": [
+          {
+            "mode": "polyline",
+            "sourceHandles": [
+              "10"
+            ],
+            "resultHandles": [
+              "10"
+            ],
+            "method": "distance",
+            "effectiveDistances": null,
+            "chamferPoints": null,
+            "skippedVertices": []
+          }
+        ],
+        "mode": "polyline",
+        "specification": {
+          "method": "distance",
+          "firstDistance": 0,
+          "secondDistance": 0
+        },
+        "trimMode": "trim",
+        "multiple": false
+      },
+      "pair": {
+        "changes": [],
+        "sourceHandles": [
+          "10"
+        ],
+        "resultHandles": [
+          "10"
+        ],
+        "createdHandles": [],
+        "rejected": [],
+        "steps": [
+          {
+            "mode": "pair",
+            "sourceHandles": [
+              "10",
+              "10"
+            ],
+            "resultHandles": [
+              "10"
+            ],
+            "method": "distance",
+            "effectiveDistances": [
+              0,
+              0
+            ],
+            "chamferPoints": [
+              {
+                "x": 0,
+                "y": 0
+              },
+              {
+                "x": 0,
+                "y": 0
+              }
+            ],
+            "skippedVertices": []
+          }
+        ],
+        "mode": "pairs",
+        "specification": {
+          "method": "distance",
+          "firstDistance": 0,
+          "secondDistance": 0
+        },
+        "trimMode": "trim",
+        "multiple": false
+      },
+      "source": {
+        "schemaVersion": 1,
+        "documentId": "F-025-zero-readback",
+        "revision": 0,
+        "units": {
+          "linear": "mm",
+          "displayPrecision": 4,
+          "angularPrecision": 6
+        },
+        "currentLayerId": "0",
+        "entities": [
+          {
+            "kind": "polyline",
+            "handle": "10",
+            "layerId": "0",
+            "closed": true,
+            "vertices": [
+              {
+                "x": 0,
+                "y": 0
+              },
+              {
+                "x": 100,
+                "y": 0
+              },
+              {
+                "x": 100,
+                "y": 100
+              },
+              {
+                "x": 0,
+                "y": 100
+              }
+            ]
+          }
+        ],
+        "layers": [
+          {
+            "id": "0",
+            "name": "0",
+            "visible": true,
+            "frozen": false,
+            "locked": false,
+            "plottable": true
+          }
+        ],
+        "linetypes": [],
+        "textStyles": [],
+        "dimensionStyles": [],
+        "blocks": [],
+        "layouts": [
+          {
+            "id": "model",
+            "name": "Model",
+            "kind": "model",
+            "viewports": [],
+            "entities": []
+          }
+        ],
+        "attachments": [],
+        "metadata": {
+          "createdAt": "2026-08-30T02:10:00.000Z",
+          "updatedAt": "2026-08-30T02:10:00.000Z"
+        }
+      },
+      "dxfSha256": "bd44151980679b01146114f2beddd9f44dad8412c6f3d2d9e1aba5c94e311e56",
+      "kdrawSha256": "7edbd0080f279c16ad9dd9561d63b53e3f5526a4ed062c55f7f69a00374c7dfa"
+    },
+    "distanceTooLarge": {
+      "result": {
+        "changes": [],
+        "sourceHandles": [],
+        "resultHandles": [],
+        "createdHandles": [],
+        "rejected": [
+          {
+            "sourceIndex": 0,
+            "handles": [
+              "10",
+              "10"
+            ],
+            "reason": "distance-too-large"
+          },
+          {
+            "sourceIndex": 1,
+            "handles": [
+              "20",
+              "30"
+            ],
+            "reason": "distance-too-large"
+          },
+          {
+            "sourceIndex": 2,
+            "handles": [
+              "40",
+              "50"
+            ],
+            "reason": "distance-too-large"
+          }
+        ],
+        "steps": [],
+        "mode": "pairs",
+        "specification": {
+          "method": "distance",
+          "firstDistance": 10,
+          "secondDistance": 10
+        },
+        "trimMode": "trim",
+        "multiple": true
+      },
+      "source": {
+        "schemaVersion": 1,
+        "documentId": "F-025-distance-too-large-readback",
+        "revision": 0,
+        "units": {
+          "linear": "mm",
+          "displayPrecision": 4,
+          "angularPrecision": 6
+        },
+        "currentLayerId": "0",
+        "entities": [
+          {
+            "kind": "polyline",
+            "handle": "10",
+            "layerId": "0",
+            "closed": true,
+            "vertices": [
+              {
+                "x": 0,
+                "y": 0
+              },
+              {
+                "x": 5,
+                "y": 0
+              },
+              {
+                "x": 5,
+                "y": 5
+              },
+              {
+                "x": 0,
+                "y": 5
+              }
+            ]
+          },
+          {
+            "kind": "polyline",
+            "handle": "20",
+            "layerId": "0",
+            "closed": true,
+            "vertices": [
+              {
+                "x": 20,
+                "y": 0
+              },
+              {
+                "x": 25,
+                "y": 0
+              },
+              {
+                "x": 25,
+                "y": 5
+              },
+              {
+                "x": 20,
+                "y": 5
+              }
+            ]
+          },
+          {
+            "kind": "line",
+            "handle": "30",
+            "layerId": "0",
+            "start": {
+              "x": 25,
+              "y": 0
+            },
+            "end": {
+              "x": 25,
+              "y": 100
+            }
+          },
+          {
+            "kind": "polyline",
+            "handle": "40",
+            "layerId": "0",
+            "closed": true,
+            "vertices": [
+              {
+                "x": 40,
+                "y": 0
+              },
+              {
+                "x": 45,
+                "y": 0
+              },
+              {
+                "x": 45,
+                "y": 5
+              },
+              {
+                "x": 40,
+                "y": 5
+              }
+            ]
+          },
+          {
+            "kind": "polyline",
+            "handle": "50",
+            "layerId": "0",
+            "closed": true,
+            "vertices": [
+              {
+                "x": 45,
+                "y": 0
+              },
+              {
+                "x": 50,
+                "y": 0
+              },
+              {
+                "x": 50,
+                "y": 5
+              },
+              {
+                "x": 45,
+                "y": 5
+              }
+            ]
+          }
+        ],
+        "layers": [
+          {
+            "id": "0",
+            "name": "0",
+            "visible": true,
+            "frozen": false,
+            "locked": false,
+            "plottable": true
+          }
+        ],
+        "linetypes": [],
+        "textStyles": [],
+        "dimensionStyles": [],
+        "blocks": [],
+        "layouts": [
+          {
+            "id": "model",
+            "name": "Model",
+            "kind": "model",
+            "viewports": [],
+            "entities": []
+          }
+        ],
+        "attachments": [],
+        "metadata": {
+          "createdAt": "2026-08-30T02:20:00.000Z",
+          "updatedAt": "2026-08-30T02:20:00.000Z"
+        }
+      },
+      "canUndo": false,
+      "expectedSemantics": [
+        {
+          "handle": "10",
+          "kind": "polyline",
+          "closed": true,
+          "vertices": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": 5,
+              "y": 0
+            },
+            {
+              "x": 5,
+              "y": 5
+            },
+            {
+              "x": 0,
+              "y": 5
+            }
+          ]
+        },
+        {
+          "handle": "20",
+          "kind": "polyline",
+          "closed": true,
+          "vertices": [
+            {
+              "x": 20,
+              "y": 0
+            },
+            {
+              "x": 25,
+              "y": 0
+            },
+            {
+              "x": 25,
+              "y": 5
+            },
+            {
+              "x": 20,
+              "y": 5
+            }
+          ]
+        },
+        {
+          "handle": "30",
+          "kind": "line",
+          "start": {
+            "x": 25,
+            "y": 0
+          },
+          "end": {
+            "x": 25,
+            "y": 100
+          }
+        },
+        {
+          "handle": "40",
+          "kind": "polyline",
+          "closed": true,
+          "vertices": [
+            {
+              "x": 40,
+              "y": 0
+            },
+            {
+              "x": 45,
+              "y": 0
+            },
+            {
+              "x": 45,
+              "y": 5
+            },
+            {
+              "x": 40,
+              "y": 5
+            }
+          ]
+        },
+        {
+          "handle": "50",
+          "kind": "polyline",
+          "closed": true,
+          "vertices": [
+            {
+              "x": 45,
+              "y": 0
+            },
+            {
+              "x": 50,
+              "y": 0
+            },
+            {
+              "x": 50,
+              "y": 5
+            },
+            {
+              "x": 45,
+              "y": 5
+            }
+          ]
+        }
+      ],
+      "strictSemantics": [
+        {
+          "handle": "10",
+          "kind": "polyline",
+          "closed": true,
+          "vertices": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": 5,
+              "y": 0
+            },
+            {
+              "x": 5,
+              "y": 5
+            },
+            {
+              "x": 0,
+              "y": 5
+            }
+          ]
+        },
+        {
+          "handle": "20",
+          "kind": "polyline",
+          "closed": true,
+          "vertices": [
+            {
+              "x": 20,
+              "y": 0
+            },
+            {
+              "x": 25,
+              "y": 0
+            },
+            {
+              "x": 25,
+              "y": 5
+            },
+            {
+              "x": 20,
+              "y": 5
+            }
+          ]
+        },
+        {
+          "handle": "30",
+          "kind": "line",
+          "start": {
+            "x": 25,
+            "y": 0
+          },
+          "end": {
+            "x": 25,
+            "y": 100
+          }
+        },
+        {
+          "handle": "40",
+          "kind": "polyline",
+          "closed": true,
+          "vertices": [
+            {
+              "x": 40,
+              "y": 0
+            },
+            {
+              "x": 45,
+              "y": 0
+            },
+            {
+              "x": 45,
+              "y": 5
+            },
+            {
+              "x": 40,
+              "y": 5
+            }
+          ]
+        },
+        {
+          "handle": "50",
+          "kind": "polyline",
+          "closed": true,
+          "vertices": [
+            {
+              "x": 45,
+              "y": 0
+            },
+            {
+              "x": 50,
+              "y": 0
+            },
+            {
+              "x": 50,
+              "y": 5
+            },
+            {
+              "x": 45,
+              "y": 5
+            }
+          ]
+        }
+      ],
+      "independentSemantics": [
+        {
+          "handle": "10",
+          "kind": "polyline",
+          "closed": true,
+          "vertices": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": 5,
+              "y": 0
+            },
+            {
+              "x": 5,
+              "y": 5
+            },
+            {
+              "x": 0,
+              "y": 5
+            }
+          ]
+        },
+        {
+          "handle": "20",
+          "kind": "polyline",
+          "closed": true,
+          "vertices": [
+            {
+              "x": 20,
+              "y": 0
+            },
+            {
+              "x": 25,
+              "y": 0
+            },
+            {
+              "x": 25,
+              "y": 5
+            },
+            {
+              "x": 20,
+              "y": 5
+            }
+          ]
+        },
+        {
+          "handle": "30",
+          "kind": "line",
+          "start": {
+            "x": 25,
+            "y": 0
+          },
+          "end": {
+            "x": 25,
+            "y": 100
+          }
+        },
+        {
+          "handle": "40",
+          "kind": "polyline",
+          "closed": true,
+          "vertices": [
+            {
+              "x": 40,
+              "y": 0
+            },
+            {
+              "x": 45,
+              "y": 0
+            },
+            {
+              "x": 45,
+              "y": 5
+            },
+            {
+              "x": 40,
+              "y": 5
+            }
+          ]
+        },
+        {
+          "handle": "50",
+          "kind": "polyline",
+          "closed": true,
+          "vertices": [
+            {
+              "x": 45,
+              "y": 0
+            },
+            {
+              "x": 50,
+              "y": 0
+            },
+            {
+              "x": 50,
+              "y": 5
+            },
+            {
+              "x": 45,
+              "y": 5
+            }
+          ]
+        }
+      ],
+      "dxfSha256": "34b6db88580c7e728a89249f219e76222fa2d111cd07324dbc01d16146bb22c5",
+      "kdrawSha256": "45b8cdb91492a665bf74be0d6f809714b1e90f792f0d45732e0c08aadf1b1f5b"
+    }
+  },
+  "output": {
+    "expectedSemantics": [
+      {
+        "handle": "10",
+        "kind": "line",
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "aci",
+          "aciIndex": 1,
+          "lineweightMm": 0.5
+        },
+        "start": {
+          "x": -100,
+          "y": 0
+        },
+        "end": {
+          "x": -10,
+          "y": 0
+        }
+      },
+      {
+        "handle": "20",
+        "kind": "line",
+        "start": {
+          "x": 0,
+          "y": 20
+        },
+        "end": {
+          "x": 0,
+          "y": 100
+        }
+      },
+      {
+        "handle": "30",
+        "kind": "line",
+        "start": {
+          "x": 200,
+          "y": 0
+        },
+        "end": {
+          "x": 300,
+          "y": 0
+        }
+      },
+      {
+        "handle": "40",
+        "kind": "line",
+        "start": {
+          "x": 300,
+          "y": 0
+        },
+        "end": {
+          "x": 300,
+          "y": 100
+        }
+      },
+      {
+        "handle": "50",
+        "kind": "polyline",
+        "appearance": {
+          "color": "#00ff00",
+          "colorMethod": "trueColor",
+          "aciIndex": 7,
+          "lineweightMm": 0.35
+        },
+        "closed": true,
+        "vertices": [
+          {
+            "x": 10,
+            "y": 200
+          },
+          {
+            "x": 90,
+            "y": 200
+          },
+          {
+            "x": 100,
+            "y": 210
+          },
+          {
+            "x": 100,
+            "y": 290
+          },
+          {
+            "x": 90,
+            "y": 300
+          },
+          {
+            "x": 10,
+            "y": 300
+          },
+          {
+            "x": 0,
+            "y": 290
+          },
+          {
+            "x": 0,
+            "y": 210
+          }
+        ]
+      },
+      {
+        "handle": "51",
+        "kind": "line",
+        "start": {
+          "x": -10,
+          "y": 0
+        },
+        "end": {
+          "x": 0,
+          "y": 20
+        }
+      },
+      {
+        "handle": "52",
+        "kind": "line",
+        "start": {
+          "x": 290,
+          "y": 0
+        },
+        "end": {
+          "x": 300,
+          "y": 10
+        }
+      }
+    ],
+    "strictSemantics": [
+      {
+        "handle": "10",
+        "kind": "line",
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "aci",
+          "aciIndex": 1,
+          "lineweightMm": 0.5
+        },
+        "start": {
+          "x": -100,
+          "y": 0
+        },
+        "end": {
+          "x": -10,
+          "y": 0
+        }
+      },
+      {
+        "handle": "20",
+        "kind": "line",
+        "start": {
+          "x": 0,
+          "y": 20
+        },
+        "end": {
+          "x": 0,
+          "y": 100
+        }
+      },
+      {
+        "handle": "30",
+        "kind": "line",
+        "start": {
+          "x": 200,
+          "y": 0
+        },
+        "end": {
+          "x": 300,
+          "y": 0
+        }
+      },
+      {
+        "handle": "40",
+        "kind": "line",
+        "start": {
+          "x": 300,
+          "y": 0
+        },
+        "end": {
+          "x": 300,
+          "y": 100
+        }
+      },
+      {
+        "handle": "50",
+        "kind": "polyline",
+        "appearance": {
+          "color": "#00ff00",
+          "colorMethod": "trueColor",
+          "aciIndex": 7,
+          "lineweightMm": 0.35
+        },
+        "closed": true,
+        "vertices": [
+          {
+            "x": 10,
+            "y": 200
+          },
+          {
+            "x": 90,
+            "y": 200
+          },
+          {
+            "x": 100,
+            "y": 210
+          },
+          {
+            "x": 100,
+            "y": 290
+          },
+          {
+            "x": 90,
+            "y": 300
+          },
+          {
+            "x": 10,
+            "y": 300
+          },
+          {
+            "x": 0,
+            "y": 290
+          },
+          {
+            "x": 0,
+            "y": 210
+          }
+        ]
+      },
+      {
+        "handle": "51",
+        "kind": "line",
+        "start": {
+          "x": -10,
+          "y": 0
+        },
+        "end": {
+          "x": 0,
+          "y": 20
+        }
+      },
+      {
+        "handle": "52",
+        "kind": "line",
+        "start": {
+          "x": 290,
+          "y": 0
+        },
+        "end": {
+          "x": 300,
+          "y": 10
+        }
+      }
+    ],
+    "independentSemantics": [
+      {
+        "handle": "10",
+        "kind": "line",
+        "start": {
+          "x": -100,
+          "y": 0
+        },
+        "end": {
+          "x": -10,
+          "y": 0
+        }
+      },
+      {
+        "handle": "20",
+        "kind": "line",
+        "start": {
+          "x": 0,
+          "y": 20
+        },
+        "end": {
+          "x": 0,
+          "y": 100
+        }
+      },
+      {
+        "handle": "30",
+        "kind": "line",
+        "start": {
+          "x": 200,
+          "y": 0
+        },
+        "end": {
+          "x": 300,
+          "y": 0
+        }
+      },
+      {
+        "handle": "40",
+        "kind": "line",
+        "start": {
+          "x": 300,
+          "y": 0
+        },
+        "end": {
+          "x": 300,
+          "y": 100
+        }
+      },
+      {
+        "handle": "50",
+        "kind": "polyline",
+        "closed": true,
+        "vertices": [
+          {
+            "x": 10,
+            "y": 200
+          },
+          {
+            "x": 90,
+            "y": 200
+          },
+          {
+            "x": 100,
+            "y": 210
+          },
+          {
+            "x": 100,
+            "y": 290
+          },
+          {
+            "x": 90,
+            "y": 300
+          },
+          {
+            "x": 10,
+            "y": 300
+          },
+          {
+            "x": 0,
+            "y": 290
+          },
+          {
+            "x": 0,
+            "y": 210
+          }
+        ]
+      },
+      {
+        "handle": "51",
+        "kind": "line",
+        "start": {
+          "x": -10,
+          "y": 0
+        },
+        "end": {
+          "x": 0,
+          "y": 20
+        }
+      },
+      {
+        "handle": "52",
+        "kind": "line",
+        "start": {
+          "x": 290,
+          "y": 0
+        },
+        "end": {
+          "x": 300,
+          "y": 10
+        }
+      }
+    ],
+    "strictMismatch": null,
+    "independentMismatch": null
+  },
+  "dxf": {
+    "sha256": "f31246047d682eaaba437129fc40c85a7eb22f0155a7cb9b7bacd92893c73f74",
+    "byteLength": 4732,
+    "emittedHandles": [
+      "10",
+      "20",
+      "30",
+      "40",
+      "50",
+      "51",
+      "52"
+    ]
+  },
+  "kdraw": {
+    "sha256": "7b4acdd5d618bac35e5ee3a4a7f6fc982fafd819c7c4cfafc61f1b0e8a1376ee",
+    "byteLength": 2325,
+    "documentSha256": "382f3a6cbde3774cf178c98fa0474ab5a297bbbde99fa5d42d59ead6f3decdac",
+    "manifestEntryCount": 1,
+    "attachmentCount": 0
+  },
+  "undoRedo": {
+    "undoStates": [
+      {
+        "present": true,
+        "revision": 4
+      },
+      {
+        "present": true,
+        "revision": 5
+      },
+      {
+        "present": true,
+        "revision": 6
+      }
+    ],
+    "redoStates": [
+      {
+        "present": true,
+        "revision": 7
+      },
+      {
+        "present": true,
+        "revision": 8
+      },
+      {
+        "present": true,
+        "revision": 9
+      }
+    ],
+    "exactSourceRestored": true,
+    "exactCommittedRestored": true
+  }
+}

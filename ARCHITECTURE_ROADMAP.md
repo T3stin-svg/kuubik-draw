@@ -33,20 +33,24 @@ selles teekaardis teadlikult `Won't have`.
 
 ## Now
 
-1. F-024 on avalikult sertifitseeritud: **25/133 · 18,8% raw / 22,6% weighted**;
-   feature-commit `4462631` läbis GitHub Actions run'i `33283660256` ja
-   sõltumatu lõppreview oli `0 P0 / 0 P1`.
-2. Quick/Standard TRIM ja EXTEND, closed bulge/width polyline, hidden/locked target,
+1. F-025 lokaalne sertifikaadikandidaat on **26/133 · 19,5% raw / 23,2% weighted**;
+   AutoCAD/Chromium/DXF/KDRAW1 risttõend ja sõltumatu lõppreview `0 P0 / 0 P1`
+   on rohelised. Viimane avalik roheline seis jääb F-024 järel 25/133 peale,
+   kuni F-025 exact commit läbib GitHub Actionsi.
+2. CHAMFER Distance/Angle/Method, Trim/No Trim, Multiple/Polyline, Shift-zero,
+   selected-segment bounds, open-terminal closure ja LINE/RAY/XLINE extension
+   kasutavad sama preview=commit predikaati ning üht atomic Undo/Redo sammu.
+3. Quick/Standard TRIM ja EXTEND, closed bulge/width polyline, hidden/locked target,
    ignored HATCH loop, nested block layer-semantika ja rational SPLINE läbivad
    AutoCAD 2024.1.2, Chromiumi ning sõltumatu DXF/KDRAW1 read-back'i.
-3. F-023 feature-commit `1f4a96c` ja CI portability fix `7e252de` läbisid
+4. F-023 feature-commit `1f4a96c` ja CI portability fix `7e252de` läbisid
    GitHub Actions run'i `33260160549`; sõltumatu lõppreview oli `0 P0 / 0 P1`.
-4. Architecture-efficiency gate on avalikult suletud: MOVE…TRIM kasutavad
+5. Architecture-efficiency gate on avalikult suletud: MOVE…TRIM kasutavad
    ühist workflow-moodulit, 23 sertifitseeritud rida on deklaratiivses
    parity-kit'is ning täpne ratchet töötab võrdselt Windowsis ja Linuxis.
    Põhilaine commit `da45a56`, lõpp-HEAD `d097b34` ja GitHub Actions run
    `33250270350` läbisid fast- ja täieliku certification-värava.
-5. F-023 laine schema-v4 package-ratchet seob iga rea ainult tema transitiivsete
+6. F-023 laine schema-v4 package-ratchet seob iga rea ainult tema transitiivsete
    npm authority-etappidega, hoides dependency- ja globaalse CI-pinna eraldi
    fail-closed kontrollis. Ühekordne v3→v4 receipt tõendab, et varasema 23 rea
    etapikäsud ning `package-lock.json` ei muutunud. Kõik CI checkout-stepid
@@ -98,18 +102,18 @@ parity/content-address-, litsentsi- ja turvaväravad. Sõltumatu lõppreview oli
 `0 P0 / 0 P1`. Tingimuslikud self-hosted AutoCAD/oracle job'id jäid selle push'i
 jaoks ausalt `skipped`; checked-in native tõendeid kontrolliti üldises ratchet'is.
 
-## Next — F-025 CHAMFER
+## Next — F-026 BREAK
 
-Rakendada täis-CHAMFER sama eraldatud workflow/transaction arhitektuuriga:
-Distance, Angle, Method, Trim/No trim, Multiple ja Polyline käsuvalikud;
-line/polyline objektipaarid, nullkaugus, paralleelsed ja pikendatavad segmendid,
-layer-refusal, preview=commit, käsusisene Undo, atomic global Undo/Redo,
-DXF/KDRAW1 read-back ning sama AutoCAD 2024.1.2 live-maatriks. Skoor muutub
-ainult pärast kõigi tõendite ja sõltumatu P0/P1 review läbimist.
+Rakendada AutoCAD 2024.1.2 järgi BREAK ühe ja kahe katkestuspunktiga, First point
+valikuga ning sama-punkti katkestusega. Katta line/polyline/arc/circle/ellipse/
+rational-spline geomeetria, polyline'i valitud segment, handle'ite ja omaduste
+säilimine, preview=commit, command Undo, atomic global Undo/Redo ning exact
+DXF/KDRAW1 read-back. Skoor muutub ainult pärast AutoCADi live-maatriksit,
+Chromiumi töövoogu, sõltumatut väljundikontrolli ja `0 P0 / 0 P1` review'd.
 
 ## Later
 
-1. Rakendada F-025 `CHAMFER` ning jätkata mõjupõhises P0 → P1 → P2 järjekorras
+1. Rakendada F-026 `BREAK` ning jätkata mõjupõhises P0 → P1 → P2 järjekorras
    kuni 133/133.
 2. Native DWG/DWT/XREF ja PC3/CTB/STB ainult litsentsitud ODA/RealDWG teega.
 3. Pärast funktsionaalset 133/133 väravat viia kõik viis visuaalkategooriat

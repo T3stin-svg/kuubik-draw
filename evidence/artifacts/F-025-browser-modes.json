@@ -1,0 +1,465 @@
+{
+  "rowId": "F-025",
+  "angleSource": {
+    "schemaVersion": 1,
+    "documentId": "local",
+    "revision": 0,
+    "units": {
+      "linear": "mm",
+      "displayPrecision": 4,
+      "angularPrecision": 6
+    },
+    "currentLayerId": "0",
+    "entities": [
+      {
+        "kind": "line",
+        "handle": "10",
+        "layerId": "0",
+        "appearance": {
+          "color": "#40a0ff"
+        },
+        "extensionData": {
+          "rowId": "F-025"
+        },
+        "start": {
+          "x": -1000,
+          "y": 0
+        },
+        "end": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      {
+        "kind": "line",
+        "handle": "20",
+        "layerId": "0",
+        "start": {
+          "x": 0,
+          "y": 0
+        },
+        "end": {
+          "x": 0,
+          "y": 1000
+        }
+      },
+      {
+        "kind": "line",
+        "handle": "30",
+        "layerId": "0",
+        "start": {
+          "x": 1000,
+          "y": 0
+        },
+        "end": {
+          "x": 2000,
+          "y": 0
+        }
+      },
+      {
+        "kind": "line",
+        "handle": "40",
+        "layerId": "0",
+        "start": {
+          "x": 1000,
+          "y": 0
+        },
+        "end": {
+          "x": 1000,
+          "y": 1000
+        }
+      }
+    ],
+    "layers": [
+      {
+        "id": "0",
+        "name": "0",
+        "visible": true,
+        "frozen": false,
+        "locked": false,
+        "plottable": true
+      }
+    ],
+    "linetypes": [],
+    "textStyles": [],
+    "dimensionStyles": [],
+    "blocks": [],
+    "layouts": [
+      {
+        "id": "model",
+        "name": "Model",
+        "kind": "model",
+        "viewports": [],
+        "entities": []
+      }
+    ],
+    "attachments": [],
+    "metadata": {
+      "createdAt": "2026-08-30T01:00:00.000Z",
+      "updatedAt": "2026-08-30T01:00:00.000Z"
+    }
+  },
+  "noTrim": {
+    "schemaVersion": 1,
+    "documentId": "local",
+    "revision": 1,
+    "units": {
+      "linear": "mm",
+      "displayPrecision": 4,
+      "angularPrecision": 6
+    },
+    "currentLayerId": "0",
+    "entities": [
+      {
+        "kind": "line",
+        "handle": "10",
+        "layerId": "0",
+        "appearance": {
+          "color": "#40a0ff"
+        },
+        "extensionData": {
+          "rowId": "F-025"
+        },
+        "start": {
+          "x": -1000,
+          "y": 0
+        },
+        "end": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      {
+        "kind": "line",
+        "handle": "20",
+        "layerId": "0",
+        "start": {
+          "x": 0,
+          "y": 0
+        },
+        "end": {
+          "x": 0,
+          "y": 1000
+        }
+      },
+      {
+        "kind": "line",
+        "handle": "30",
+        "layerId": "0",
+        "start": {
+          "x": 1000,
+          "y": 0
+        },
+        "end": {
+          "x": 2000,
+          "y": 0
+        }
+      },
+      {
+        "kind": "line",
+        "handle": "40",
+        "layerId": "0",
+        "start": {
+          "x": 1000,
+          "y": 0
+        },
+        "end": {
+          "x": 1000,
+          "y": 1000
+        }
+      },
+      {
+        "kind": "line",
+        "start": {
+          "x": -100,
+          "y": 0
+        },
+        "end": {
+          "x": 0,
+          "y": 100
+        },
+        "handle": "41",
+        "layerId": "0"
+      }
+    ],
+    "layers": [
+      {
+        "id": "0",
+        "name": "0",
+        "visible": true,
+        "frozen": false,
+        "locked": false,
+        "plottable": true
+      }
+    ],
+    "linetypes": [],
+    "textStyles": [],
+    "dimensionStyles": [],
+    "blocks": [],
+    "layouts": [
+      {
+        "id": "model",
+        "name": "Model",
+        "kind": "model",
+        "viewports": [],
+        "entities": []
+      }
+    ],
+    "attachments": [],
+    "metadata": {
+      "createdAt": "2026-08-30T01:00:00.000Z",
+      "updatedAt": "2026-08-30T04:36:34.318Z"
+    }
+  },
+  "angleOperation": {
+    "opId": "1d6d41a9-d2d3-465b-9bd3-a888d54b2f77",
+    "baseRevision": 0,
+    "commandId": "CHAMFER",
+    "args": {
+      "mode": "pairs",
+      "specification": {
+        "method": "angle",
+        "firstDistance": 100,
+        "angleDeg": 45
+      },
+      "trimMode": "no-trim",
+      "pairs": [
+        {
+          "firstHandle": "10",
+          "firstPickPoint": {
+            "x": -500,
+            "y": 0
+          },
+          "secondHandle": "20",
+          "secondPickPoint": {
+            "x": 0,
+            "y": 500
+          }
+        }
+      ],
+      "steps": [
+        {
+          "mode": "pair",
+          "sourceHandles": [
+            "10",
+            "20"
+          ],
+          "resultHandles": [
+            "41"
+          ],
+          "method": "angle",
+          "effectiveDistances": [
+            100,
+            100
+          ],
+          "chamferPoints": [
+            {
+              "x": -100,
+              "y": 0
+            },
+            {
+              "x": 0,
+              "y": 100
+            }
+          ],
+          "skippedVertices": []
+        }
+      ],
+      "multiple": false
+    },
+    "targetHandles": [
+      "10",
+      "20"
+    ],
+    "resultHandles": [
+      "41"
+    ]
+  },
+  "polylineSource": {
+    "schemaVersion": 1,
+    "documentId": "local",
+    "revision": 0,
+    "units": {
+      "linear": "mm",
+      "displayPrecision": 4,
+      "angularPrecision": 6
+    },
+    "currentLayerId": "0",
+    "entities": [
+      {
+        "kind": "polyline",
+        "handle": "10",
+        "layerId": "0",
+        "closed": true,
+        "vertices": [
+          {
+            "x": 0,
+            "y": 0
+          },
+          {
+            "x": 1000,
+            "y": 0
+          },
+          {
+            "x": 1000,
+            "y": 1000
+          },
+          {
+            "x": 0,
+            "y": 1000
+          }
+        ]
+      }
+    ],
+    "layers": [
+      {
+        "id": "0",
+        "name": "0",
+        "visible": true,
+        "frozen": false,
+        "locked": false,
+        "plottable": true
+      }
+    ],
+    "linetypes": [],
+    "textStyles": [],
+    "dimensionStyles": [],
+    "blocks": [],
+    "layouts": [
+      {
+        "id": "model",
+        "name": "Model",
+        "kind": "model",
+        "viewports": [],
+        "entities": []
+      }
+    ],
+    "attachments": [],
+    "metadata": {
+      "createdAt": "2026-08-30T01:10:00.000Z",
+      "updatedAt": "2026-08-30T01:10:00.000Z"
+    }
+  },
+  "polyline": {
+    "schemaVersion": 1,
+    "documentId": "local",
+    "revision": 1,
+    "units": {
+      "linear": "mm",
+      "displayPrecision": 4,
+      "angularPrecision": 6
+    },
+    "currentLayerId": "0",
+    "entities": [
+      {
+        "kind": "polyline",
+        "handle": "10",
+        "layerId": "0",
+        "closed": true,
+        "vertices": [
+          {
+            "x": 100,
+            "y": 0
+          },
+          {
+            "x": 900,
+            "y": 0
+          },
+          {
+            "x": 1000,
+            "y": 100
+          },
+          {
+            "x": 1000,
+            "y": 900
+          },
+          {
+            "x": 900,
+            "y": 1000
+          },
+          {
+            "x": 100,
+            "y": 1000
+          },
+          {
+            "x": 0,
+            "y": 900
+          },
+          {
+            "x": 0,
+            "y": 100
+          }
+        ]
+      }
+    ],
+    "layers": [
+      {
+        "id": "0",
+        "name": "0",
+        "visible": true,
+        "frozen": false,
+        "locked": false,
+        "plottable": true
+      }
+    ],
+    "linetypes": [],
+    "textStyles": [],
+    "dimensionStyles": [],
+    "blocks": [],
+    "layouts": [
+      {
+        "id": "model",
+        "name": "Model",
+        "kind": "model",
+        "viewports": [],
+        "entities": []
+      }
+    ],
+    "attachments": [],
+    "metadata": {
+      "createdAt": "2026-08-30T01:10:00.000Z",
+      "updatedAt": "2026-08-30T04:36:35.051Z"
+    }
+  },
+  "polylineOperation": {
+    "opId": "f03ff8a3-0c34-4972-98c1-cc7b445d66af",
+    "baseRevision": 0,
+    "commandId": "CHAMFER",
+    "args": {
+      "mode": "polyline",
+      "specification": {
+        "method": "distance",
+        "firstDistance": 100,
+        "secondDistance": 100
+      },
+      "trimMode": "trim",
+      "polylineHandles": [
+        "10"
+      ],
+      "steps": [
+        {
+          "mode": "polyline",
+          "sourceHandles": [
+            "10"
+          ],
+          "resultHandles": [
+            "10"
+          ],
+          "method": "distance",
+          "effectiveDistances": null,
+          "chamferPoints": null,
+          "skippedVertices": []
+        }
+      ],
+      "multiple": false
+    },
+    "targetHandles": [
+      "10"
+    ],
+    "resultHandles": [
+      "10"
+    ]
+  },
+  "consoleErrors": [],
+  "status": "PASS"
+}

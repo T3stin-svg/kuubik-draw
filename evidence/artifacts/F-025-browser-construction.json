@@ -1,0 +1,679 @@
+{
+  "rowId": "F-025",
+  "source": {
+    "schemaVersion": 1,
+    "documentId": "local",
+    "revision": 0,
+    "units": {
+      "linear": "mm",
+      "displayPrecision": 4,
+      "angularPrecision": 6
+    },
+    "currentLayerId": "0",
+    "entities": [
+      {
+        "kind": "ray",
+        "handle": "10",
+        "layerId": "0",
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "aci",
+          "aciIndex": 1,
+          "lineweightMm": 0.5
+        },
+        "basePoint": {
+          "x": -100,
+          "y": 0
+        },
+        "direction": {
+          "x": 4,
+          "y": 0
+        }
+      },
+      {
+        "kind": "xline",
+        "handle": "20",
+        "layerId": "0",
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "aci",
+          "aciIndex": 1,
+          "lineweightMm": 0.5
+        },
+        "basePoint": {
+          "x": 0,
+          "y": 0
+        },
+        "direction": {
+          "x": 0,
+          "y": 3
+        }
+      },
+      {
+        "kind": "ray",
+        "handle": "30",
+        "layerId": "0",
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "aci",
+          "aciIndex": 1,
+          "lineweightMm": 0.5
+        },
+        "basePoint": {
+          "x": 200,
+          "y": 200
+        },
+        "direction": {
+          "x": 4,
+          "y": 0
+        }
+      },
+      {
+        "kind": "xline",
+        "handle": "40",
+        "layerId": "0",
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "aci",
+          "aciIndex": 1,
+          "lineweightMm": 0.5
+        },
+        "basePoint": {
+          "x": 300,
+          "y": 200
+        },
+        "direction": {
+          "x": 0,
+          "y": 3
+        }
+      },
+      {
+        "kind": "xline",
+        "handle": "50",
+        "layerId": "0",
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "aci",
+          "aciIndex": 1,
+          "lineweightMm": 0.5
+        },
+        "basePoint": {
+          "x": 400,
+          "y": 400
+        },
+        "direction": {
+          "x": 4,
+          "y": 0
+        }
+      },
+      {
+        "kind": "line",
+        "handle": "60",
+        "layerId": "0",
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "aci",
+          "aciIndex": 1,
+          "lineweightMm": 0.5
+        },
+        "start": {
+          "x": 500,
+          "y": 400
+        },
+        "end": {
+          "x": 500,
+          "y": 500
+        }
+      },
+      {
+        "kind": "ray",
+        "handle": "70",
+        "layerId": "0",
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "aci",
+          "aciIndex": 1,
+          "lineweightMm": 0.5
+        },
+        "basePoint": {
+          "x": 600,
+          "y": 600
+        },
+        "direction": {
+          "x": 4,
+          "y": 0
+        }
+      },
+      {
+        "kind": "xline",
+        "handle": "80",
+        "layerId": "0",
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "aci",
+          "aciIndex": 1,
+          "lineweightMm": 0.5
+        },
+        "basePoint": {
+          "x": 700,
+          "y": 600
+        },
+        "direction": {
+          "x": 0,
+          "y": 3
+        }
+      }
+    ],
+    "layers": [
+      {
+        "id": "0",
+        "name": "0",
+        "visible": true,
+        "frozen": false,
+        "locked": false,
+        "plottable": true
+      }
+    ],
+    "linetypes": [],
+    "textStyles": [],
+    "dimensionStyles": [],
+    "blocks": [],
+    "layouts": [
+      {
+        "id": "model",
+        "name": "Model",
+        "kind": "model",
+        "viewports": [],
+        "entities": []
+      }
+    ],
+    "attachments": [],
+    "metadata": {
+      "createdAt": "2026-08-30T02:00:00.000Z",
+      "updatedAt": "2026-08-30T02:00:00.000Z"
+    }
+  },
+  "committed": {
+    "schemaVersion": 1,
+    "documentId": "local",
+    "revision": 2,
+    "units": {
+      "linear": "mm",
+      "displayPrecision": 4,
+      "angularPrecision": 6
+    },
+    "currentLayerId": "0",
+    "entities": [
+      {
+        "kind": "line",
+        "handle": "10",
+        "layerId": "0",
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "aci",
+          "aciIndex": 1,
+          "lineweightMm": 0.5
+        },
+        "start": {
+          "x": -100,
+          "y": 0
+        },
+        "end": {
+          "x": -10,
+          "y": 0
+        }
+      },
+      {
+        "kind": "ray",
+        "handle": "20",
+        "layerId": "0",
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "aci",
+          "aciIndex": 1,
+          "lineweightMm": 0.5
+        },
+        "basePoint": {
+          "x": 0,
+          "y": 20
+        },
+        "direction": {
+          "x": 0,
+          "y": 1
+        }
+      },
+      {
+        "kind": "ray",
+        "handle": "30",
+        "layerId": "0",
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "aci",
+          "aciIndex": 1,
+          "lineweightMm": 0.5
+        },
+        "basePoint": {
+          "x": 310,
+          "y": 200
+        },
+        "direction": {
+          "x": 1,
+          "y": 0
+        }
+      },
+      {
+        "kind": "ray",
+        "handle": "40",
+        "layerId": "0",
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "aci",
+          "aciIndex": 1,
+          "lineweightMm": 0.5
+        },
+        "basePoint": {
+          "x": 300,
+          "y": 220
+        },
+        "direction": {
+          "x": 0,
+          "y": 1
+        }
+      },
+      {
+        "kind": "ray",
+        "handle": "50",
+        "layerId": "0",
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "aci",
+          "aciIndex": 1,
+          "lineweightMm": 0.5
+        },
+        "basePoint": {
+          "x": 490,
+          "y": 400
+        },
+        "direction": {
+          "x": -1,
+          "y": 0
+        }
+      },
+      {
+        "kind": "line",
+        "handle": "60",
+        "layerId": "0",
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "aci",
+          "aciIndex": 1,
+          "lineweightMm": 0.5
+        },
+        "start": {
+          "x": 500,
+          "y": 420
+        },
+        "end": {
+          "x": 500,
+          "y": 500
+        }
+      },
+      {
+        "kind": "ray",
+        "handle": "70",
+        "layerId": "0",
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "aci",
+          "aciIndex": 1,
+          "lineweightMm": 0.5
+        },
+        "basePoint": {
+          "x": 600,
+          "y": 600
+        },
+        "direction": {
+          "x": 4,
+          "y": 0
+        }
+      },
+      {
+        "kind": "xline",
+        "handle": "80",
+        "layerId": "0",
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "aci",
+          "aciIndex": 1,
+          "lineweightMm": 0.5
+        },
+        "basePoint": {
+          "x": 700,
+          "y": 600
+        },
+        "direction": {
+          "x": 0,
+          "y": 3
+        }
+      },
+      {
+        "kind": "line",
+        "start": {
+          "x": -10,
+          "y": 0
+        },
+        "end": {
+          "x": 0,
+          "y": 20
+        },
+        "handle": "81",
+        "layerId": "0",
+        "appearance": {
+          "lineweightMm": 0.5
+        }
+      },
+      {
+        "kind": "line",
+        "start": {
+          "x": 310,
+          "y": 200
+        },
+        "end": {
+          "x": 300,
+          "y": 220
+        },
+        "handle": "82",
+        "layerId": "0",
+        "appearance": {
+          "lineweightMm": 0.5
+        }
+      },
+      {
+        "kind": "line",
+        "start": {
+          "x": 490,
+          "y": 400
+        },
+        "end": {
+          "x": 500,
+          "y": 420
+        },
+        "handle": "83",
+        "layerId": "0",
+        "appearance": {
+          "lineweightMm": 0.5
+        }
+      },
+      {
+        "kind": "line",
+        "start": {
+          "x": 690,
+          "y": 600
+        },
+        "end": {
+          "x": 700,
+          "y": 620
+        },
+        "handle": "84",
+        "layerId": "0",
+        "appearance": {
+          "lineweightMm": 0.5
+        }
+      }
+    ],
+    "layers": [
+      {
+        "id": "0",
+        "name": "0",
+        "visible": true,
+        "frozen": false,
+        "locked": false,
+        "plottable": true
+      }
+    ],
+    "linetypes": [],
+    "textStyles": [],
+    "dimensionStyles": [],
+    "blocks": [],
+    "layouts": [
+      {
+        "id": "model",
+        "name": "Model",
+        "kind": "model",
+        "viewports": [],
+        "entities": []
+      }
+    ],
+    "attachments": [],
+    "metadata": {
+      "createdAt": "2026-08-30T02:00:00.000Z",
+      "updatedAt": "2026-08-30T04:36:42.500Z"
+    }
+  },
+  "operations": [
+    {
+      "opId": "638a627e-c0a8-40ca-aa18-d3af83feb882",
+      "baseRevision": 0,
+      "commandId": "CHAMFER",
+      "args": {
+        "mode": "pairs",
+        "specification": {
+          "method": "distance",
+          "firstDistance": 10,
+          "secondDistance": 20
+        },
+        "trimMode": "trim",
+        "pairs": [
+          {
+            "firstHandle": "10",
+            "firstPickPoint": {
+              "x": -50,
+              "y": 0
+            },
+            "secondHandle": "20",
+            "secondPickPoint": {
+              "x": 0,
+              "y": 50
+            }
+          },
+          {
+            "firstHandle": "30",
+            "firstPickPoint": {
+              "x": 350,
+              "y": 200
+            },
+            "secondHandle": "40",
+            "secondPickPoint": {
+              "x": 300,
+              "y": 250
+            }
+          },
+          {
+            "firstHandle": "50",
+            "firstPickPoint": {
+              "x": 450,
+              "y": 400
+            },
+            "secondHandle": "60",
+            "secondPickPoint": {
+              "x": 500,
+              "y": 450
+            }
+          }
+        ],
+        "steps": [
+          {
+            "mode": "pair",
+            "sourceHandles": [
+              "10",
+              "20"
+            ],
+            "resultHandles": [
+              "10",
+              "20",
+              "81"
+            ],
+            "method": "distance",
+            "effectiveDistances": [
+              10,
+              20
+            ],
+            "chamferPoints": [
+              {
+                "x": -10,
+                "y": 0
+              },
+              {
+                "x": 0,
+                "y": 20
+              }
+            ],
+            "skippedVertices": []
+          },
+          {
+            "mode": "pair",
+            "sourceHandles": [
+              "30",
+              "40"
+            ],
+            "resultHandles": [
+              "30",
+              "40",
+              "82"
+            ],
+            "method": "distance",
+            "effectiveDistances": [
+              10,
+              20
+            ],
+            "chamferPoints": [
+              {
+                "x": 310,
+                "y": 200
+              },
+              {
+                "x": 300,
+                "y": 220
+              }
+            ],
+            "skippedVertices": []
+          },
+          {
+            "mode": "pair",
+            "sourceHandles": [
+              "50",
+              "60"
+            ],
+            "resultHandles": [
+              "50",
+              "60",
+              "83"
+            ],
+            "method": "distance",
+            "effectiveDistances": [
+              10,
+              20
+            ],
+            "chamferPoints": [
+              {
+                "x": 490,
+                "y": 400
+              },
+              {
+                "x": 500,
+                "y": 420
+              }
+            ],
+            "skippedVertices": []
+          }
+        ],
+        "multiple": true
+      },
+      "targetHandles": [
+        "10",
+        "20",
+        "30",
+        "40",
+        "50",
+        "60"
+      ],
+      "resultHandles": [
+        "10",
+        "20",
+        "81",
+        "30",
+        "40",
+        "82",
+        "50",
+        "60",
+        "83"
+      ]
+    },
+    {
+      "opId": "a0b583a6-1412-4aa4-9c6a-a97b3084fbe4",
+      "baseRevision": 1,
+      "commandId": "CHAMFER",
+      "args": {
+        "mode": "pairs",
+        "specification": {
+          "method": "distance",
+          "firstDistance": 10,
+          "secondDistance": 20
+        },
+        "trimMode": "no-trim",
+        "pairs": [
+          {
+            "firstHandle": "70",
+            "firstPickPoint": {
+              "x": 650,
+              "y": 600
+            },
+            "secondHandle": "80",
+            "secondPickPoint": {
+              "x": 700,
+              "y": 650
+            }
+          }
+        ],
+        "steps": [
+          {
+            "mode": "pair",
+            "sourceHandles": [
+              "70",
+              "80"
+            ],
+            "resultHandles": [
+              "84"
+            ],
+            "method": "distance",
+            "effectiveDistances": [
+              10,
+              20
+            ],
+            "chamferPoints": [
+              {
+                "x": 690,
+                "y": 600
+              },
+              {
+                "x": 700,
+                "y": 620
+              }
+            ],
+            "skippedVertices": []
+          }
+        ],
+        "multiple": false
+      },
+      "targetHandles": [
+        "70",
+        "80"
+      ],
+      "resultHandles": [
+        "84"
+      ]
+    }
+  ],
+  "consoleErrors": [],
+  "status": "PASS"
+}

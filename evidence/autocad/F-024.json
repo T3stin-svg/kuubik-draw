@@ -4,8 +4,8 @@
   "kind": "autocad",
   "authority": "autocad-2024.1.2-live",
   "status": "PASS",
-  "artifactSha256": "2b5e2f06155e78e507a4ad914919b349ea92afb9764a89e20a51a4e3caa10d67",
-  "observedAt": "2026-08-30T00:02:43.810Z",
+  "artifactSha256": "53b497cd26763ddc51a9369235117c842f18eef7245d1613bdfa52d9b61dccd7",
+  "observedAt": "2026-08-30T02:51:55.653Z",
   "workflow": "A newly owned blank AutoCAD 2024.1.2 desktop process runs FILLET Radius, Trim/No Trim, Multiple, command Undo, global Undo/Redo, physical Shift-radius-zero, current-layer output, locked/off/frozen layer behavior, polyline segment-pair and whole-polyline modes, line/arc/circle/ellipse/rational-spline pairs, and RAY/XLINE cases. The parametric result is saved to DXF, reopened in AutoCAD and independently parsed.",
   "result": "All native matrix checks passed. AutoCAD reopen and independent DXF parsing reproduced the exact line, arc, ellipse, rational spline and RAY/XLINE semantics; the owned acad.exe terminated and the exact pre-existing process set was restored.",
   "artifact": "evidence/artifacts/F-024-autocad-readback.json"

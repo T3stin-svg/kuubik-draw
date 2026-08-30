@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-025",
+  "benchmark": "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
+  "autoCad": {
+    "engineVersionPrefix": "24.3",
+    "executableName": "acad.exe",
+    "executableFileVersion": "R24.3.152.0.0",
+    "executableProductVersion": "R24.3.152.0.0",
+    "installedUpdateDisplayName": "Autodesk AutoCAD 2024.1.2 Update",
+    "installedUpdateDisplayVersion": "24.3.152.0",
+    "globalUndoRedoCounts": [6, 4, 6],
+    "construction": {
+      "reverseRayLine": [[-100, 600], [-10, 600]],
+      "trimmedXlineRay": { "basePoint": [0, 620], "direction": [0, 1] },
+      "forwardRay": { "basePoint": [110, 800], "direction": [1, 0] },
+      "reverseXlineRay": { "basePoint": [-10, 1000], "direction": [-1, 0] },
+      "noTrimRay": { "basePoint": [-100, 1200], "direction": [1, 0] },
+      "noTrimXline": { "basePoint": [0, 1200], "direction": [0, 1] }
+    },
+    "polylines": {
+      "adjacent": [[0, 1400], [100, 1400], [100, 1490], [80, 1500], [0, 1500]],
+      "separated": [[200, 1400], [290, 1400], [300, 1420], [300, 1500]],
+      "openClose": [[400, 1490], [400, 1400], [500, 1400], [407.0710678118655, 1492.9289321881345]],
+      "overlap": [[600, 200], [605, 200], [625, 220], [625, 225], [620, 225], [600, 205]],
+      "seamForward": [[620, 1400], [700, 1400], [700, 1500], [600, 1500], [600, 1410]],
+      "seamReverse": [[810, 1400], [900, 1400], [900, 1500], [800, 1500], [800, 1420]],
+      "polylineZero": [[900, 200], [1000, 200], [1000, 300], [900, 300]],
+      "pairZero": [[0, 3400], [100, 3400], [100, 3500], [0, 3500]],
+      "pairZeroSeam": [[200, 3400], [300, 3400], [300, 3500], [200, 3500]],
+      "pairTooShort": [[400, 3400], [405, 3400], [405, 3405], [400, 3405]]
+    },
+    "createdProperties": {
+      "color": 256,
+      "linetype": "ByLayer",
+      "sameAndCrossLineweight": 35,
+      "sameAndCrossTransparency": "25",
+      "reverseLineweight": 25,
+      "reverseTransparency": "15"
+    }
+  },
+  "browser": {
+    "viewport": [1920, 1080],
+    "distanceTargetHandles": ["10", "20", "30", "40"],
+    "distanceResultHandles": ["10", "20", "41", "30", "40", "42"],
+    "distanceSpecification": { "method": "distance", "firstDistance": 100, "secondDistance": 200 },
+    "polylineVertices": [[100, 0], [900, 0], [1000, 100], [1000, 900], [900, 1000], [100, 1000], [0, 900], [0, 100]],
+    "overlapVertices": [[0, 0], [5, 0], [25, 20], [25, 25], [20, 25], [0, 5]],
+    "seamForwardVertices": [[20, 0], [25, 0], [25, 25], [0, 25], [0, 10]],
+    "seamReverseVertices": [[10, 0], [25, 0], [25, 25], [0, 25], [0, 20]],
+    "construction": {
+      "trimmedReverseRayLine": [[-100, 0], [-10, 0]],
+      "trimmedXlineRay": { "basePoint": [0, 20], "direction": [0, 1] },
+      "forwardRay": { "basePoint": [310, 200], "direction": [1, 0] },
+      "forwardXlineRay": { "basePoint": [300, 220], "direction": [0, 1] },
+      "reverseXlineRay": { "basePoint": [490, 400], "direction": [-1, 0] },
+      "noTrimRay": { "basePoint": [600, 600], "direction": [4, 0] },
+      "noTrimXline": { "basePoint": [700, 600], "direction": [0, 3] },
+      "connectorHandles": ["81", "82", "83", "84"]
+    },
+    "zeroPolylineVertices": [[0, 0], [100, 0], [100, 100], [0, 100]],
+    "distanceTooLargeHandles": ["10", "20", "30", "40", "50"],
+    "distanceTooLargePolylineVertices": [[0, 0], [5, 0], [5, 5], [0, 5]]
+  },
+  "readback": {
+    "entityKinds": ["line", "line", "line", "line", "polyline", "line", "line"],
+    "dxfEntityTypes": ["LINE", "LINE", "LINE", "LINE", "LWPOLYLINE", "LINE", "LINE"],
+    "constructionKinds": ["line", "ray", "ray", "ray", "ray", "line", "ray", "xline", "line", "line", "line", "line"],
+    "distanceTooLargeKinds": ["polyline", "polyline", "line", "polyline", "polyline"]
+  },
+  "oracles": {
+    "librecad": "2.2.1.5",
+    "freecad": "1.1.3",
+    "certificationAuthority": false
+  }
+}

@@ -95,6 +95,16 @@ function Invoke-ComRetry {
   } while ($true)
 }
 
+function Get-ComRequiredString {
+  param([Parameter(Mandatory = $true)][scriptblock]$Action, [string]$Name)
+  $readValue = $Action
+  return [string](Invoke-ComRetry {
+    $value = [string](& $readValue)
+    if ([string]::IsNullOrWhiteSpace($value)) { throw "AutoCAD returned an empty $Name." }
+    return $value
+  })
+}
+
 function Invoke-NonNullCom {
   param([Parameter(Mandatory = $true)][scriptblock]$Action, [string]$Label, [int]$TimeoutSeconds = 20)
   $deadline = [DateTime]::UtcNow.AddSeconds($TimeoutSeconds)
@@ -630,7 +640,7 @@ try {
   $shiftSelectExtendPassed = Test-LineSet $shiftExtend (,@(@(0,7700),@(500,7700)))
   $allPassed = $standardPassed -and $quickPassed -and $quickTrimPassed -and $edgeExtendPassed -and $edgeNoPassed -and $erasePassed -and $undoPassed -and $fencePassed -and $crossingPassed -and $shiftSelectExtendPassed -and $lockedPassed -and $hiddenPassed -and $hatchPassed -and $nestedBlockPassed -and $nestedBlockChildLayerPassed -and $rationalSplinePassed -and @($projectPassed.Values | Where-Object { -not $_ }).Count -eq 0 -and @($familyPassed.Values | Where-Object { -not $_ }).Count -eq 0
   $result = [ordered]@{
-    schemaVersion=1; rowId='F-022'; benchmark='AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation'; engine='Autodesk AutoCAD 2024 desktop COM'; engineVersion=[string](Invoke-ComRetry { $acad.Version })
+    schemaVersion=1; rowId='F-022'; benchmark='AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation'; engine='Autodesk AutoCAD 2024 desktop COM'; engineVersion=Get-ComRequiredString { $acad.Version } 'Version'
     automationProcessId=$automationProcessId; automationProcessOwned=$owned; installedUpdateIdentity=$installedUpdateIdentity; automationProcessIdentity=[ordered]@{
       processId=$ownedIdentity.processId; executableName=$ownedIdentity.executableName; executableSha256=$ownedIdentity.executableSha256
       fileVersion=$ownedIdentity.fileVersion; productVersion=$ownedIdentity.productVersion; startTimeSha256=$ownedIdentity.startTimeSha256

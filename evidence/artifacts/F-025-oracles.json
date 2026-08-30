@@ -1,0 +1,298 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-025",
+  "certificationAuthority": false,
+  "generatedAt": "2026-08-30T04:41:05.864Z",
+  "sourceArtifact": "evidence/artifacts/F-025-browser.dxf",
+  "sourceArtifactSha256": "e5135fee04513858fa6cdf72ab0031475e95584dd1a321d90cba1444e6609edd",
+  "sourceSegments": [
+    {
+      "id": "10",
+      "start": {
+        "x": -1000,
+        "y": 0
+      },
+      "end": {
+        "x": -100,
+        "y": 0
+      }
+    },
+    {
+      "id": "20",
+      "start": {
+        "x": 0,
+        "y": 200
+      },
+      "end": {
+        "x": 0,
+        "y": 1000
+      }
+    },
+    {
+      "id": "30",
+      "start": {
+        "x": 1100,
+        "y": 0
+      },
+      "end": {
+        "x": 2000,
+        "y": 0
+      }
+    },
+    {
+      "id": "40",
+      "start": {
+        "x": 1000,
+        "y": 200
+      },
+      "end": {
+        "x": 1000,
+        "y": 1000
+      }
+    },
+    {
+      "id": "41",
+      "start": {
+        "x": -100,
+        "y": 0
+      },
+      "end": {
+        "x": 0,
+        "y": 200
+      }
+    },
+    {
+      "id": "42",
+      "start": {
+        "x": 1100,
+        "y": 0
+      },
+      "end": {
+        "x": 1000,
+        "y": 200
+      }
+    }
+  ],
+  "implementationSha256": {
+    "tools/oracles/freecad-f025-headless.py": "a769f0c199973122ee54147513d86b0da13fb27bf71460bd7ff60eb4c61085a1",
+    "tools/oracles/network-isolation.mjs": "3fb18e9ad145b76e53ed241a0a529bb2ccd4eabe784b04e915d77cdd9203d415",
+    "tools/oracles/probe-tools.mjs": "86b118cdf03da095214901d4f5f3b4460d9994b1280ae991904aedb0b992883e",
+    "tools/oracles/run-fixtures.mjs": "0a97574ac92ef761f092b2c2d2990f5401a652b8f261b243c9724f49f4fa2800",
+    "tools/oracles/run-f025-oracles.mjs": "891cac2032eb9452778c1d1ee9e63a32efa6c5a2bb4137e7bdd984cd493d8c92"
+  },
+  "runnerSha256": "891cac2032eb9452778c1d1ee9e63a32efa6c5a2bb4137e7bdd984cd493d8c92",
+  "freeCadScriptSha256": "a769f0c199973122ee54147513d86b0da13fb27bf71460bd7ff60eb4c61085a1",
+  "networkIsolation": {
+    "proven": false,
+    "reason": "A protected signed network-isolation attestation was not configured."
+  },
+  "reports": [
+    {
+      "oracle": "librecad",
+      "expected": "2.2.1.5",
+      "status": "FIXTURE_PASS_NOT_NETWORK_ISOLATED",
+      "versionMatchesPin": true,
+      "executableSha256MatchesPin": true,
+      "certificationAuthority": false,
+      "executableSha256": "9b5ec58c40c9e88b2fc110678f03c5b071191cd8dd79b3c68d6620b269c03773",
+      "expectedExecutableSha256": "9b5ec58c40c9e88b2fc110678f03c5b071191cd8dd79b3c68d6620b269c03773",
+      "versionOutput": "LibreCAD v2.2.1.5",
+      "sandbox": {
+        "disposableDirectory": true,
+        "inputPolicy": "synthetic-generated-F-025-output-only",
+        "networkIsolationProven": false,
+        "networkPolicy": "not isolated; dead-proxy variables are defense in depth only",
+        "timeoutMs": 30000,
+        "oneProcessPerFixture": true
+      },
+      "fixtureReport": {
+        "fixture": "F-025 browser CHAMFER DXF rendered by LibreCAD 2.2.1.5",
+        "inputSha256": "e5135fee04513858fa6cdf72ab0031475e95584dd1a321d90cba1444e6609edd",
+        "output": {
+          "bytes": 1718,
+          "sha256": "51a5242fcefef97f0943ab21da3349180772c8cdeae2b38742e71f2392eafdec",
+          "hasPdfHeader": true,
+          "hasEof": true,
+          "pages": 1,
+          "imageXObjects": 0,
+          "mediaBox": [
+            0,
+            0,
+            595,
+            842
+          ],
+          "vectorOperators": {
+            "decodedStreams": 1,
+            "moveToOperators": 7,
+            "lineToOperators": 16,
+            "cubicCurveOperators": 24,
+            "paintedPathOperators": 6,
+            "geometry": null
+          }
+        },
+        "checks": {
+          "exitCodeZero": true,
+          "exactBrowserDxfInput": true,
+          "validSinglePageVectorPdf": true,
+          "vectorChamferNetworkPresent": true
+        }
+      }
+    },
+    {
+      "oracle": "freecad",
+      "expected": "1.1.3",
+      "status": "FIXTURE_PASS_NOT_NETWORK_ISOLATED",
+      "versionMatchesPin": true,
+      "executableSha256MatchesPin": true,
+      "certificationAuthority": false,
+      "executableSha256": "b5551d26050ed64981c5767729bb35900fd4975fa7fd31714c17dd714b6fd44c",
+      "expectedExecutableSha256": "b5551d26050ed64981c5767729bb35900fd4975fa7fd31714c17dd714b6fd44c",
+      "versionOutput": "FreeCAD 1.1.3 Revision: 20260725 (Git shallow)",
+      "sandbox": {
+        "disposableDirectory": true,
+        "inputPolicy": "synthetic-generated-F-025-output-only",
+        "networkIsolationProven": false,
+        "networkPolicy": "not isolated; dead-proxy variables are defense in depth only",
+        "timeoutMs": 30000,
+        "oneProcessPerFixture": true
+      },
+      "fixtureReport": {
+        "fixture": "F-025 chamfer line network independently rebuilt by FreeCAD/OCCT",
+        "inputSha256": "ca8acae4bc8ad47157e8f67f9dcd5073aef379a6fa513df94b4d2bdac42010f2",
+        "output": {
+          "certificationAuthority": false,
+          "freecadVersion": [
+            "1",
+            "1",
+            "3",
+            "20260725 (Git shallow)",
+            "Unknown",
+            "2026/07/25 04:52:02",
+            "grafted,grafted",
+            "145529fe741292ff0b3977a01195bf0247425794"
+          ],
+          "result": [
+            {
+              "bounds": {
+                "xmax": -100,
+                "xmin": -1000,
+                "ymax": 0,
+                "ymin": 0
+              },
+              "end": {
+                "x": -100,
+                "y": 0
+              },
+              "id": "10",
+              "length": 900,
+              "start": {
+                "x": -1000,
+                "y": 0
+              }
+            },
+            {
+              "bounds": {
+                "xmax": 0,
+                "xmin": 0,
+                "ymax": 1000,
+                "ymin": 200
+              },
+              "end": {
+                "x": 0,
+                "y": 1000
+              },
+              "id": "20",
+              "length": 800,
+              "start": {
+                "x": 0,
+                "y": 200
+              }
+            },
+            {
+              "bounds": {
+                "xmax": 2000,
+                "xmin": 1100,
+                "ymax": 0,
+                "ymin": 0
+              },
+              "end": {
+                "x": 2000,
+                "y": 0
+              },
+              "id": "30",
+              "length": 900,
+              "start": {
+                "x": 1100,
+                "y": 0
+              }
+            },
+            {
+              "bounds": {
+                "xmax": 1000,
+                "xmin": 1000,
+                "ymax": 1000,
+                "ymin": 200
+              },
+              "end": {
+                "x": 1000,
+                "y": 1000
+              },
+              "id": "40",
+              "length": 800,
+              "start": {
+                "x": 1000,
+                "y": 200
+              }
+            },
+            {
+              "bounds": {
+                "xmax": 0,
+                "xmin": -100,
+                "ymax": 200,
+                "ymin": 0
+              },
+              "end": {
+                "x": 0,
+                "y": 200
+              },
+              "id": "41",
+              "length": 223.60679774997897,
+              "start": {
+                "x": -100,
+                "y": 0
+              }
+            },
+            {
+              "bounds": {
+                "xmax": 1100,
+                "xmin": 1000,
+                "ymax": 200,
+                "ymin": 0
+              },
+              "end": {
+                "x": 1000,
+                "y": 200
+              },
+              "id": "42",
+              "length": 223.60679774997897,
+              "start": {
+                "x": 1100,
+                "y": 0
+              }
+            }
+          ],
+          "status": "PASS"
+        },
+        "checks": {
+          "exitCodeZero": true,
+          "statusPass": true,
+          "notCertificationAuthority": true,
+          "exactPinnedVersion": true,
+          "exactPinnedCommit": true,
+          "everySegmentReconstructed": true
+        }
+      }
+    }
+  ],
+  "status": "SECONDARY_ORACLE_REPORT_COMPLETE"
+}

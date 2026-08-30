@@ -1,6 +1,6 @@
 import { createEmptyDocument } from "@kuubik/cad-core";
 import { describe, expect, it } from "vitest";
-import { prepareCopy, prepareExtend, prepareFillet, prepareMirror, prepareMove, prepareOffset, prepareRotate, prepareScale, prepareTrim, putEntities } from "./modify-command.js";
+import { prepareChamfer, prepareCopy, prepareExtend, prepareFillet, prepareMirror, prepareMove, prepareOffset, prepareRotate, prepareScale, prepareTrim, putEntities } from "./modify-command.js";
 
 function modifyDocument() {
   const document = createEmptyDocument({ documentId: "web-workflows", now: "2026-08-29T00:00:00.000Z" });
@@ -106,6 +106,40 @@ describe("web modify command workflows", () => {
     expect(segmentPair).toMatchObject({
       operationArgs: { mode: "pairs", pairs: [{ firstHandle: "30", firstSegment: 0, secondHandle: "30", secondSegment: 1 }] },
       result: { rejected: [], sourceHandles: ["30"], resultHandles: ["30"], createdHandles: [] },
+    });
+  });
+
+  it("normalizes CHAMFER Distance/Angle, Multiple, Polyline and Shift-corner once for preview and commit", () => {
+    const document = modifyDocument();
+    const pairs = prepareChamfer(document, {
+      mode: "pairs", method: "distance", firstDistanceInput: "10", secondDistanceInput: "20", angleInput: "45", trimMode: "no-trim",
+      pairsInput: "10@25,0>20@50,25; 10@25,0>20@50,25~0", polylineHandlesInput: "",
+    });
+    expect(pairs).toMatchObject({
+      commandId: "CHAMFER",
+      operationArgs: {
+        mode: "pairs", specification: { method: "distance", firstDistance: 10, secondDistance: 20 }, trimMode: "no-trim", multiple: true,
+        pairs: [{ firstHandle: "10" }, { sharpCorner: true }],
+      },
+      result: { rejected: [], createdHandles: ["21"], steps: [{ method: "distance" }, { method: "distance", effectiveDistances: [0, 0] }] },
+    });
+    expect(prepareChamfer(document, {
+      mode: "pairs", method: "distance", firstDistanceInput: "10", secondDistanceInput: "20", angleInput: "45", trimMode: "no-trim",
+      pairsInput: "10@25,0>20@50,25; 10@25,0>20@50,25~0", polylineHandlesInput: "",
+    })).toEqual(pairs);
+
+    document.entities.push({
+      kind: "polyline", handle: "30", layerId: "0", closed: true,
+      vertices: [{ x: 0, y: 0 }, { x: 100, y: 0 }, { x: 100, y: 100 }, { x: 0, y: 100 }],
+    });
+    const polyline = prepareChamfer(document, {
+      mode: "polyline", method: "angle", firstDistanceInput: "5", secondDistanceInput: "999", angleInput: "45", trimMode: "trim",
+      pairsInput: "", polylineHandlesInput: "30",
+    });
+    expect(polyline).toMatchObject({
+      commandId: "CHAMFER",
+      operationArgs: { mode: "polyline", specification: { method: "angle", firstDistance: 5, angleDeg: 45 }, trimMode: "trim", polylineHandles: ["30"] },
+      result: { rejected: [], sourceHandles: ["30"], resultHandles: ["30"], createdHandles: [], steps: [{ mode: "polyline" }] },
     });
   });
 });

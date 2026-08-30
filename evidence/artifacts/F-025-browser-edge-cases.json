@@ -1,0 +1,414 @@
+{
+  "rowId": "F-025",
+  "source": {
+    "schemaVersion": 1,
+    "documentId": "local",
+    "revision": 0,
+    "units": {
+      "linear": "mm",
+      "displayPrecision": 4,
+      "angularPrecision": 6
+    },
+    "currentLayerId": "0",
+    "entities": [
+      {
+        "kind": "polyline",
+        "handle": "10",
+        "layerId": "0",
+        "closed": true,
+        "vertices": [
+          {
+            "x": 0,
+            "y": 0
+          },
+          {
+            "x": 25,
+            "y": 0
+          },
+          {
+            "x": 25,
+            "y": 25
+          },
+          {
+            "x": 0,
+            "y": 25
+          }
+        ]
+      }
+    ],
+    "layers": [
+      {
+        "id": "0",
+        "name": "0",
+        "visible": true,
+        "frozen": false,
+        "locked": false,
+        "plottable": true
+      }
+    ],
+    "linetypes": [],
+    "textStyles": [],
+    "dimensionStyles": [],
+    "blocks": [],
+    "layouts": [
+      {
+        "id": "model",
+        "name": "Model",
+        "kind": "model",
+        "viewports": [],
+        "entities": []
+      }
+    ],
+    "attachments": [],
+    "metadata": {
+      "createdAt": "2026-08-30T01:29:00.000Z",
+      "updatedAt": "2026-08-30T01:29:00.000Z"
+    }
+  },
+  "overlap": {
+    "schemaVersion": 1,
+    "documentId": "local",
+    "revision": 1,
+    "units": {
+      "linear": "mm",
+      "displayPrecision": 4,
+      "angularPrecision": 6
+    },
+    "currentLayerId": "0",
+    "entities": [
+      {
+        "kind": "polyline",
+        "handle": "10",
+        "layerId": "0",
+        "closed": true,
+        "vertices": [
+          {
+            "x": 0,
+            "y": 0
+          },
+          {
+            "x": 5,
+            "y": 0
+          },
+          {
+            "x": 25,
+            "y": 20
+          },
+          {
+            "x": 25,
+            "y": 25
+          },
+          {
+            "x": 20,
+            "y": 25
+          },
+          {
+            "x": 0,
+            "y": 5
+          }
+        ]
+      }
+    ],
+    "layers": [
+      {
+        "id": "0",
+        "name": "0",
+        "visible": true,
+        "frozen": false,
+        "locked": false,
+        "plottable": true
+      }
+    ],
+    "linetypes": [],
+    "textStyles": [],
+    "dimensionStyles": [],
+    "blocks": [],
+    "layouts": [
+      {
+        "id": "model",
+        "name": "Model",
+        "kind": "model",
+        "viewports": [],
+        "entities": []
+      }
+    ],
+    "attachments": [],
+    "metadata": {
+      "createdAt": "2026-08-30T01:29:00.000Z",
+      "updatedAt": "2026-08-30T04:36:37.902Z"
+    }
+  },
+  "forward": {
+    "document": {
+      "schemaVersion": 1,
+      "documentId": "local",
+      "revision": 1,
+      "units": {
+        "linear": "mm",
+        "displayPrecision": 4,
+        "angularPrecision": 6
+      },
+      "currentLayerId": "0",
+      "entities": [
+        {
+          "kind": "polyline",
+          "handle": "10",
+          "layerId": "0",
+          "closed": true,
+          "vertices": [
+            {
+              "x": 20,
+              "y": 0
+            },
+            {
+              "x": 25,
+              "y": 0
+            },
+            {
+              "x": 25,
+              "y": 25
+            },
+            {
+              "x": 0,
+              "y": 25
+            },
+            {
+              "x": 0,
+              "y": 10
+            }
+          ]
+        }
+      ],
+      "layers": [
+        {
+          "id": "0",
+          "name": "0",
+          "visible": true,
+          "frozen": false,
+          "locked": false,
+          "plottable": true
+        }
+      ],
+      "linetypes": [],
+      "textStyles": [],
+      "dimensionStyles": [],
+      "blocks": [],
+      "layouts": [
+        {
+          "id": "model",
+          "name": "Model",
+          "kind": "model",
+          "viewports": [],
+          "entities": []
+        }
+      ],
+      "attachments": [],
+      "metadata": {
+        "createdAt": "2026-08-30T01:29:00.000Z",
+        "updatedAt": "2026-08-30T04:36:38.751Z"
+      }
+    },
+    "operation": {
+      "opId": "593e0587-f852-4f6f-86d3-15d6707bd1d5",
+      "baseRevision": 0,
+      "commandId": "CHAMFER",
+      "args": {
+        "mode": "pairs",
+        "specification": {
+          "method": "distance",
+          "firstDistance": 10,
+          "secondDistance": 20
+        },
+        "trimMode": "trim",
+        "pairs": [
+          {
+            "firstHandle": "10",
+            "firstSegment": 3,
+            "firstPickPoint": {
+              "x": 0,
+              "y": 10
+            },
+            "secondHandle": "10",
+            "secondSegment": 0,
+            "secondPickPoint": {
+              "x": 10,
+              "y": 0
+            }
+          }
+        ],
+        "steps": [
+          {
+            "mode": "pair",
+            "sourceHandles": [
+              "10",
+              "10"
+            ],
+            "resultHandles": [
+              "10"
+            ],
+            "method": "distance",
+            "effectiveDistances": [
+              10,
+              20
+            ],
+            "chamferPoints": [
+              {
+                "x": 0,
+                "y": 10
+              },
+              {
+                "x": 20,
+                "y": 0
+              }
+            ],
+            "skippedVertices": []
+          }
+        ],
+        "multiple": false
+      },
+      "targetHandles": [
+        "10"
+      ],
+      "resultHandles": [
+        "10"
+      ]
+    }
+  },
+  "reverse": {
+    "document": {
+      "schemaVersion": 1,
+      "documentId": "local",
+      "revision": 1,
+      "units": {
+        "linear": "mm",
+        "displayPrecision": 4,
+        "angularPrecision": 6
+      },
+      "currentLayerId": "0",
+      "entities": [
+        {
+          "kind": "polyline",
+          "handle": "10",
+          "layerId": "0",
+          "closed": true,
+          "vertices": [
+            {
+              "x": 10,
+              "y": 0
+            },
+            {
+              "x": 25,
+              "y": 0
+            },
+            {
+              "x": 25,
+              "y": 25
+            },
+            {
+              "x": 0,
+              "y": 25
+            },
+            {
+              "x": 0,
+              "y": 20
+            }
+          ]
+        }
+      ],
+      "layers": [
+        {
+          "id": "0",
+          "name": "0",
+          "visible": true,
+          "frozen": false,
+          "locked": false,
+          "plottable": true
+        }
+      ],
+      "linetypes": [],
+      "textStyles": [],
+      "dimensionStyles": [],
+      "blocks": [],
+      "layouts": [
+        {
+          "id": "model",
+          "name": "Model",
+          "kind": "model",
+          "viewports": [],
+          "entities": []
+        }
+      ],
+      "attachments": [],
+      "metadata": {
+        "createdAt": "2026-08-30T01:29:00.000Z",
+        "updatedAt": "2026-08-30T04:36:39.685Z"
+      }
+    },
+    "operation": {
+      "opId": "9426bd89-2919-4857-9a5e-0fc3c76cbe22",
+      "baseRevision": 0,
+      "commandId": "CHAMFER",
+      "args": {
+        "mode": "pairs",
+        "specification": {
+          "method": "distance",
+          "firstDistance": 10,
+          "secondDistance": 20
+        },
+        "trimMode": "trim",
+        "pairs": [
+          {
+            "firstHandle": "10",
+            "firstSegment": 0,
+            "firstPickPoint": {
+              "x": 10,
+              "y": 0
+            },
+            "secondHandle": "10",
+            "secondSegment": 3,
+            "secondPickPoint": {
+              "x": 0,
+              "y": 10
+            }
+          }
+        ],
+        "steps": [
+          {
+            "mode": "pair",
+            "sourceHandles": [
+              "10",
+              "10"
+            ],
+            "resultHandles": [
+              "10"
+            ],
+            "method": "distance",
+            "effectiveDistances": [
+              10,
+              20
+            ],
+            "chamferPoints": [
+              {
+                "x": 10,
+                "y": 0
+              },
+              {
+                "x": 0,
+                "y": 20
+              }
+            ],
+            "skippedVertices": []
+          }
+        ],
+        "multiple": false
+      },
+      "targetHandles": [
+        "10"
+      ],
+      "resultHandles": [
+        "10"
+      ]
+    }
+  },
+  "status": "PASS"
+}

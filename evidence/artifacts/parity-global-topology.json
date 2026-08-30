@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
   "kind": "global-topology",
-  "observedAt": "2026-08-30T00:31:24.565Z",
+  "observedAt": "2026-08-30T04:54:14.183Z",
   "sourceSha256": {
-    ".github/workflows/ci.yml": "95c4e5fd75881f3236bde03af305dd115f05e1b96d9e96ae1465b17dcd2634f5",
-    "package.json": "b061334a11ec8748d1c65e0b7520df01d38ed42325a31d49a01f373778436edd",
+    ".github/workflows/ci.yml": "908e597e73a8ff6405983156f3d51632532afda05ff01b85a49c16506fc322aa",
+    "package.json": "3df8f0f7102ab745c95930ac709ecdf0759a99a021e18481b5b6c39f70f7c9d4",
     "package-lock.json": "c47743da8743230f2212f3c3ed34153295ef1bcd3865a07b4d743fd1ec544a7a",
     "apps/web/package.json": "909bc418bb8fdc0a541cda6a96fd40ee3089c90b866d073dff2229edfb8ed79e",
     "packages/cad-core/package.json": "de01a0868ec22e30b2ff38fceec29695883ef940639edfcac8dabe2ab4cf29d7",
@@ -12,8 +12,8 @@
     "packages/cad-dxf/package.json": "d4fb40b250d1146e0134ac586e3a8a136a3a0acda25360a175db62773f7545e0",
     "packages/cad-print/package.json": "889433647fa396e8255f3d999838fec2b2a427d26e553c30d21dfc054a599f73",
     "evidence/artifacts/parity-package-v3-to-v4.json": "519a4237eb6d04099c9ff5a6ac97e6e0f8c9faee7276b02da03e37f185b17f97",
-    "parity/rows.mjs": "fc4156ce10f2d5343b26e40c3e47fdd6fc09caf7e71726602f9fd8c94df60d63",
-    "tools/parity-kit/core.mjs": "198ae3203639c3a0740bc71e42fae93a3d23b45aa4e80658b4f74a6c04bd4f00",
+    "parity/rows.mjs": "b4646f2dbb14c7f23a78c322a5db4720846bfce55cc6f5e508940c530ec7f8e4",
+    "tools/parity-kit/core.mjs": "d8de799487130c693c49c4f902fbe2a5aa14942bba3843d4b2452b8e26eb58ba",
     "tools/parity-kit/cli.mjs": "92f30f67ad0d2f419bf705cca94934c34e1dad57fab50777adfffb889d2c4ab2"
   },
   "certifiedRowIds": [
@@ -28,6 +28,7 @@
     "F-022",
     "F-023",
     "F-024",
+    "F-025",
     "F-097",
     "F-098",
     "F-099",
@@ -220,6 +221,28 @@
       "cross": {
         "script": "parity:f024:cross-evidence",
         "command": "node tools/parity/check-f024-cross-evidence.mjs"
+      }
+    },
+    "F-025": {
+      "browser": {
+        "script": "parity:f025:browser-artifact",
+        "command": "node tools/parity/capture-f025-browser.mjs"
+      },
+      "readback": {
+        "script": "parity:f025:readback",
+        "command": "npm run build -w @kuubik/cad-core && npm run build -w @kuubik/cad-dxf && npx vite-node tools/parity/run-f025-readback.mjs"
+      },
+      "autocad": {
+        "script": "parity:f025:autocad",
+        "command": "node tools/autocad/run-f025.mjs"
+      },
+      "oracle": {
+        "script": "parity:f025:oracles",
+        "command": "npm run parity:f025:readback && node tools/oracles/run-f025-oracles.mjs"
+      },
+      "cross": {
+        "script": "parity:f025:cross-evidence",
+        "command": "node tools/parity/check-f025-cross-evidence.mjs"
       }
     },
     "F-097": {
@@ -473,7 +496,9 @@
     "licensedAutoCadJobPresent": true,
     "requiredOracleJobPresent": true,
     "protectedF024AutoCadChainPresent": true,
-    "requiredF024OracleChainPresent": true
+    "requiredF024OracleChainPresent": true,
+    "protectedF025AutoCadChainPresent": true,
+    "requiredF025OracleChainPresent": true
   },
   "status": "PASS"
 }

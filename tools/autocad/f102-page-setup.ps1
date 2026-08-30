@@ -252,6 +252,11 @@ try {
     $scratch.Regen(1)
   } | Out-Null
   Wait-ViewportGeometry $viewport $viewportCenter 390 267
+  Invoke-ComRetry {
+    $paper.PlotType = 5
+    $scratch.Regen(1)
+    if ([int]$paper.PlotType -ne 5) { throw 'AutoCAD did not retain the baseline Layout plot type.' }
+  } | Out-Null
   $baseline = Get-PlotSnapshot $paper $viewport
 
   $a4Media = Set-IsoMedia $paper 'A4' 'portrait'

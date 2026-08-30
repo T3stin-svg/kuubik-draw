@@ -1,6 +1,16 @@
 import type { CadAppearance, CadBlockDefinition, CadEntity, CadPoint2, CadPolyline, CadSpline, KDrawDocumentV1 } from "@kuubik/cad-schema";
 import type { EntityChange } from "./transaction.js";
 import {
+  chamferCadEntityPair,
+  chamferCadPolyline,
+  chamferCadPolylineSegmentPair,
+  chamferCadPolylineSegments,
+  chamferCadPolylineSegmentWithEntity,
+  type ChamferGeometryRejectReason,
+  type ChamferSpecification,
+  type ChamferTrimMode,
+} from "./chamfer.js";
+import {
   filletCadEntityPair,
   filletCadPolyline,
   filletCadPolylineSegmentPair,
@@ -378,6 +388,66 @@ export interface FilletCommandDefinition {
   execute(document: KDrawDocumentV1, args: FilletCommandArgs): FilletCommandResult;
 }
 
+export interface ChamferPairPick {
+  firstHandle: string;
+  firstSegment?: number;
+  firstPickPoint: CadPoint2;
+  secondHandle: string;
+  secondSegment?: number;
+  secondPickPoint: CadPoint2;
+  /** One-shot zero-distance corner used by the AutoCAD Shift+second-object gesture. */
+  sharpCorner?: boolean;
+}
+
+export type ChamferCommandArgs =
+  | {
+      mode: "pairs";
+      specification: ChamferSpecification;
+      trimMode: ChamferTrimMode;
+      pairs: readonly ChamferPairPick[];
+    }
+  | {
+      mode: "polyline";
+      specification: ChamferSpecification;
+      trimMode?: ChamferTrimMode;
+      polylineHandles: readonly string[];
+    };
+
+export interface ChamferRejectedTarget {
+  sourceIndex: number;
+  handles: string[];
+  reason: "missing" | "locked-layer" | ChamferGeometryRejectReason;
+}
+
+export interface ChamferCommandStep {
+  mode: "pair" | "polyline";
+  sourceHandles: string[];
+  resultHandles: string[];
+  method: ChamferSpecification["method"];
+  effectiveDistances: readonly [number, number] | null;
+  chamferPoints: readonly [CadPoint2, CadPoint2] | null;
+  skippedVertices: number[];
+}
+
+export interface ChamferCommandResult {
+  changes: EntityChange[];
+  sourceHandles: string[];
+  resultHandles: string[];
+  createdHandles: string[];
+  rejected: ChamferRejectedTarget[];
+  steps: ChamferCommandStep[];
+  mode: ChamferCommandArgs["mode"];
+  specification: ChamferSpecification;
+  trimMode: ChamferTrimMode;
+  multiple: boolean;
+}
+
+export interface ChamferCommandDefinition {
+  id: "CHAMFER";
+  aliases: readonly string[];
+  execute(document: KDrawDocumentV1, args: ChamferCommandArgs): ChamferCommandResult;
+}
+
 export class CadCommandInputError extends Error {
   constructor(message: string) {
     super(message);
@@ -492,6 +562,42 @@ export function parseFilletRadius(input: string): number {
   const radius = Number(trimmed);
   if (!Number.isFinite(radius) || radius < 0) throw new CadCommandInputError("FILLET radius must be zero or greater.");
   return Object.is(radius, -0) ? 0 : radius;
+}
+
+export function parseChamferDistance(input: string, label = "CHAMFER distance"): number {
+  const trimmed = input.trim();
+  if (!trimmed) throw new CadCommandInputError(`${label} is required.`);
+  const value = Number(trimmed);
+  if (!Number.isFinite(value) || value < 0) throw new CadCommandInputError(`${label} must be zero or greater.`);
+  return Object.is(value, -0) ? 0 : value;
+}
+
+export function parseChamferAngle(input: string): number {
+  const angle = parseChamferDistance(input, "CHAMFER angle");
+  if (angle >= 180) throw new CadCommandInputError("CHAMFER angle must be less than 180 degrees.");
+  return angle;
+}
+
+export function parseChamferPairPicks(input: string): ChamferPairPick[] {
+  try {
+    return parseFilletPairPicks(input).map((pair) => {
+      if (pair.radiusOverride !== undefined && pair.radiusOverride !== 0) {
+        throw new CadCommandInputError("CHAMFER pair override must be ~0 for a Shift sharp corner.");
+      }
+      return {
+        firstHandle: pair.firstHandle,
+        ...(pair.firstSegment === undefined ? {} : { firstSegment: pair.firstSegment }),
+        firstPickPoint: pair.firstPickPoint,
+        secondHandle: pair.secondHandle,
+        ...(pair.secondSegment === undefined ? {} : { secondSegment: pair.secondSegment }),
+        secondPickPoint: pair.secondPickPoint,
+        ...(pair.radiusOverride === 0 ? { sharpCorner: true } : {}),
+      };
+    });
+  } catch (error) {
+    if (error instanceof CadCommandInputError) throw new CadCommandInputError(error.message.replaceAll("FILLET", "CHAMFER"));
+    throw error;
+  }
 }
 
 export function parseCadHandleList(input: string): string[] {
@@ -1839,6 +1945,174 @@ export function executeFillet(document: KDrawDocumentV1, args: FilletCommandArgs
   };
 }
 
+function validateChamferSpecification(specification: ChamferSpecification): void {
+  if (!Number.isFinite(specification.firstDistance) || specification.firstDistance < 0) {
+    throw new CadCommandInputError("CHAMFER first distance must be zero or greater.");
+  }
+  if (specification.method === "distance") {
+    if (!Number.isFinite(specification.secondDistance) || specification.secondDistance < 0) {
+      throw new CadCommandInputError("CHAMFER second distance must be zero or greater.");
+    }
+  } else if (!Number.isFinite(specification.angleDeg) || specification.angleDeg < 0 || specification.angleDeg >= 180) {
+    throw new CadCommandInputError("CHAMFER angle must be between 0 and less than 180 degrees.");
+  }
+}
+
+/**
+ * Executes an ordered AutoCAD-style CHAMFER Multiple/Polyline sequence. Distance/Angle,
+ * Trim/No Trim, sharp Shift-corner and all successful edits share one immutable transaction.
+ */
+export function executeChamfer(document: KDrawDocumentV1, args: ChamferCommandArgs): ChamferCommandResult {
+  validateChamferSpecification(args.specification);
+  if (args.mode === "pairs" && args.pairs.length === 0) throw new CadCommandInputError("CHAMFER requires at least one object pair.");
+  if (args.mode === "polyline" && args.polylineHandles.length === 0) throw new CadCommandInputError("CHAMFER Polyline requires at least one handle.");
+  const layers = new Map(document.layers.map((layer) => [layer.id, layer]));
+  const original = new Map(document.entities.map((entity) => [entity.handle, entity]));
+  const working = new Map(document.entities.map((entity) => [entity.handle, structuredClone(entity)]));
+  const maximumCreated = args.mode === "pairs"
+    ? args.pairs.length
+    : document.entities.reduce((sum, entity) => sum + (entity.kind === "polyline" && args.polylineHandles.includes(entity.handle) ? entity.vertices.length : 0), 0);
+  const allocated = allocateEntityHandles(document, maximumCreated);
+  let allocatedIndex = 0;
+  const touched = new Set<string>();
+  const sourceHandles = new Set<string>();
+  const resultHandles: string[] = [];
+  const createdHandles: string[] = [];
+  const rejected: ChamferRejectedTarget[] = [];
+  const steps: ChamferCommandStep[] = [];
+  const trimMode: ChamferTrimMode = args.trimMode ?? "trim";
+
+  const layerReason = (entity: CadEntity): "locked-layer" | null => layers.get(entity.layerId)?.locked ? "locked-layer" : null;
+  const createdAppearance = (_first: CadEntity, second: CadEntity): CadAppearance | undefined => {
+    const appearance: CadAppearance = {};
+    if (second.appearance?.lineweightMm !== undefined) appearance.lineweightMm = second.appearance.lineweightMm;
+    if (second.appearance?.transparency !== undefined) appearance.transparency = second.appearance.transparency;
+    return Object.keys(appearance).length ? appearance : undefined;
+  };
+
+  if (args.mode === "pairs") {
+    args.pairs.forEach((pair, sourceIndex) => {
+      assertFinitePoint(`CHAMFER pair ${sourceIndex + 1} first pick`, pair.firstPickPoint);
+      assertFinitePoint(`CHAMFER pair ${sourceIndex + 1} second pick`, pair.secondPickPoint);
+      const first = working.get(pair.firstHandle); const second = working.get(pair.secondHandle);
+      const handles = [pair.firstHandle, pair.secondHandle];
+      if (!first || !second) {
+        rejected.push({ sourceIndex, handles, reason: "missing" });
+        return;
+      }
+      const refusedLayer = layerReason(first) ?? layerReason(second);
+      if (refusedLayer) {
+        rejected.push({ sourceIndex, handles, reason: refusedLayer });
+        return;
+      }
+      const specification: ChamferSpecification = pair.sharpCorner
+        ? { method: "distance", firstDistance: 0, secondDistance: 0 }
+        : args.specification;
+      const samePolyline = first.handle === second.handle && first.kind === "polyline" && second.kind === "polyline";
+      const firstSegment = pair.firstSegment ?? (first.kind === "polyline" ? trimClosestPoint(first, pair.firstPickPoint)?.segment : undefined);
+      const secondSegment = pair.secondSegment ?? (second.kind === "polyline" ? trimClosestPoint(second, pair.secondPickPoint)?.segment : undefined);
+      const geometry = samePolyline && firstSegment !== undefined && secondSegment !== undefined
+        ? chamferCadPolylineSegmentPair(first, firstSegment, pair.firstPickPoint, secondSegment, pair.secondPickPoint, specification, trimMode)
+        : first.kind === "polyline" && second.kind === "polyline" && firstSegment !== undefined && secondSegment !== undefined
+          ? chamferCadPolylineSegments(first, firstSegment, pair.firstPickPoint, second, secondSegment, pair.secondPickPoint, specification, trimMode)
+          : first.kind === "polyline" && firstSegment !== undefined
+            ? chamferCadPolylineSegmentWithEntity(first, firstSegment, pair.firstPickPoint, second, pair.secondPickPoint, specification, trimMode, true)
+            : second.kind === "polyline" && secondSegment !== undefined
+              ? chamferCadPolylineSegmentWithEntity(second, secondSegment, pair.secondPickPoint, first, pair.firstPickPoint, specification, trimMode, false)
+              : chamferCadEntityPair(first, pair.firstPickPoint, second, pair.secondPickPoint, specification, trimMode);
+      if (geometry.reason || (!geometry.firstEntity && !geometry.secondEntity && !geometry.line && !geometry.joinedPolyline)) {
+        rejected.push({ sourceIndex, handles, reason: geometry.reason ?? "no-solution" });
+        return;
+      }
+      sourceHandles.add(first.handle); sourceHandles.add(second.handle);
+      const pairResults: string[] = [];
+      if (trimMode === "trim") {
+        if (geometry.joinedPolyline) {
+          working.set(first.handle, { ...geometry.joinedPolyline, handle: first.handle });
+          touched.add(first.handle);
+          pairResults.push(first.handle); resultHandles.push(first.handle);
+        } else {
+          if (geometry.firstEntity) {
+            working.set(first.handle, { ...geometry.firstEntity, handle: first.handle } as CadEntity);
+            touched.add(first.handle); pairResults.push(first.handle); resultHandles.push(first.handle);
+          }
+          if (!samePolyline && geometry.secondEntity) {
+            working.set(second.handle, { ...geometry.secondEntity, handle: second.handle } as CadEntity);
+            touched.add(second.handle); pairResults.push(second.handle); resultHandles.push(second.handle);
+          }
+        }
+      }
+      if (geometry.line && !geometry.joinedPolyline) {
+        const handle = allocated[allocatedIndex++]!;
+        const layerId = first.layerId === second.layerId ? first.layerId : document.currentLayerId;
+        const appearance = createdAppearance(first, second);
+        const line = { ...geometry.line, handle, layerId, ...(appearance ? { appearance } : {}) } as CadEntity;
+        working.set(handle, line); touched.add(handle); createdHandles.push(handle); resultHandles.push(handle); pairResults.push(handle);
+      }
+      steps.push({
+        mode: "pair",
+        sourceHandles: handles,
+        resultHandles: pairResults,
+        method: specification.method,
+        effectiveDistances: geometry.effectiveDistances,
+        chamferPoints: geometry.chamferPoints,
+        skippedVertices: [],
+      });
+    });
+  } else {
+    [...new Set(args.polylineHandles.map((handle) => handle.trim()).filter(Boolean))].forEach((handle, sourceIndex) => {
+      const entity = working.get(handle);
+      if (!entity) { rejected.push({ sourceIndex, handles: [handle], reason: "missing" }); return; }
+      const refusedLayer = layerReason(entity);
+      if (refusedLayer) { rejected.push({ sourceIndex, handles: [handle], reason: refusedLayer }); return; }
+      if (entity.kind !== "polyline") { rejected.push({ sourceIndex, handles: [handle], reason: "unsupported-target" }); return; }
+      const geometry = chamferCadPolyline(entity, args.specification, trimMode);
+      if (geometry.reason || !geometry.entity || geometry.chamferCount === 0) {
+        rejected.push({ sourceIndex, handles: [handle], reason: geometry.reason ?? "no-solution" });
+        return;
+      }
+      sourceHandles.add(handle);
+      const polylineResults: string[] = [];
+      if (trimMode === "trim") {
+        working.set(handle, { ...geometry.entity, handle }); touched.add(handle); resultHandles.push(handle); polylineResults.push(handle);
+      }
+      for (const lineGeometry of geometry.lines) {
+        const lineHandle = allocated[allocatedIndex++]!;
+        const line = { ...lineGeometry, handle: lineHandle, layerId: entity.layerId, ...(entity.appearance ? { appearance: structuredClone(entity.appearance) } : {}) } as CadEntity;
+        working.set(lineHandle, line); touched.add(lineHandle); createdHandles.push(lineHandle); resultHandles.push(lineHandle); polylineResults.push(lineHandle);
+      }
+      steps.push({
+        mode: "polyline",
+        sourceHandles: [handle],
+        resultHandles: polylineResults,
+        method: args.specification.method,
+        effectiveDistances: null,
+        chamferPoints: null,
+        skippedVertices: geometry.skippedVertices,
+      });
+    });
+  }
+
+  const changes: EntityChange[] = [];
+  for (const handle of touched) {
+    const before = original.get(handle); const after = working.get(handle);
+    if (after && (!before || JSON.stringify(before) !== JSON.stringify(after))) changes.push({ type: "put", entity: structuredClone(after) });
+    else if (before && !after) changes.push({ type: "delete", handle });
+  }
+  return {
+    changes,
+    sourceHandles: [...sourceHandles],
+    resultHandles,
+    createdHandles,
+    rejected,
+    steps,
+    mode: args.mode,
+    specification: structuredClone(args.specification),
+    trimMode,
+    multiple: args.mode === "pairs" ? args.pairs.length > 1 : args.polylineHandles.length > 1,
+  };
+}
+
 const rectangleCommand: RectangleCommandDefinition = Object.freeze({
   id: "RECTANGLE",
   aliases: Object.freeze(["RECTANG", "RECTANGLE", "REC"]),
@@ -1905,9 +2179,15 @@ const filletCommand: FilletCommandDefinition = Object.freeze({
   execute: executeFillet,
 });
 
-export const cadCommandRegistry = Object.freeze([rectangleCommand, eraseCommand, moveCommand, copyCommand, rotateCommand, scaleCommand, mirrorCommand, offsetCommand, trimCommand, extendCommand, filletCommand]);
+const chamferCommand: ChamferCommandDefinition = Object.freeze({
+  id: "CHAMFER",
+  aliases: Object.freeze(["CHA", "CHAMFER"]),
+  execute: executeChamfer,
+});
 
-export function resolveCadCommand(token: string): RectangleCommandDefinition | EraseCommandDefinition | MoveCommandDefinition | CopyCommandDefinition | RotateCommandDefinition | ScaleCommandDefinition | MirrorCommandDefinition | OffsetCommandDefinition | TrimCommandDefinition | ExtendCommandDefinition | FilletCommandDefinition | null {
+export const cadCommandRegistry = Object.freeze([rectangleCommand, eraseCommand, moveCommand, copyCommand, rotateCommand, scaleCommand, mirrorCommand, offsetCommand, trimCommand, extendCommand, filletCommand, chamferCommand]);
+
+export function resolveCadCommand(token: string): RectangleCommandDefinition | EraseCommandDefinition | MoveCommandDefinition | CopyCommandDefinition | RotateCommandDefinition | ScaleCommandDefinition | MirrorCommandDefinition | OffsetCommandDefinition | TrimCommandDefinition | ExtendCommandDefinition | FilletCommandDefinition | ChamferCommandDefinition | null {
   const normalized = token.trim().toUpperCase();
   return cadCommandRegistry.find((command) => command.aliases.includes(normalized)) ?? null;
 }

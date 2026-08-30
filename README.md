@@ -11,8 +11,10 @@ efektiivsusvärav on failis [`ARCHITECTURE_ROADMAP.md`](ARCHITECTURE_ROADMAP.md)
 
 - vana Drawi auditi snapshot: **63,9% raw / 68,3% weighted / 60,7% visual**;
 - vana Drawi AutoCADi live-tõendiga read: **22/133**;
-- selle uue eraldatud rakenduse värske avalik sertifikaat:
-  **25/133 · 18,8% raw / 22,6% weighted**;
+- selle uue eraldatud rakenduse lokaalne F-025 sertifikaadikandidaat:
+  **26/133 · 19,5% raw / 23,2% weighted**; viimane avalik roheline seis on
+  endiselt F-024 järel **25/133**, kuni F-025 exact commit läbib GitHub CI;
+- F-025 sõltumatu lõppreview: `0 P0 / 0 P1`;
 - F-024 feature-commit `4462631`, GitHub Actions run `33283660256` ja
   sõltumatu review `0 P0 / 0 P1`;
 - F-023 feature-commit `1f4a96c`, CI portability fix `7e252de`, GitHub Actions
@@ -49,7 +51,14 @@ Shift-raadius-null, `FILLETPOLYARC=0/1`, line/arc/circle/ellipse/polyline/
 rational-SPLINE paarid, RAY/XLINE konstruktsioonijooned, täpse segmendivaliku,
 layer-safe mixed tulemuse, ühe atomaarse Undo/Redo ning DXF/KDRAW1 read-back'i.
 AutoCAD 2024, Chromium, LibreCAD ja FreeCAD kontrollid on rohelised; oracle'id
-ei ole sertifitseerimisautoriteet. Järgmine funktsioonirida on F-025 `CHAMFER`.
+ei ole sertifitseerimisautoriteet.
+F-025 `CHAMFER` lisab Distance/Angle/Method, Trim/No Trim, Multiple/Polyline,
+Shift-nullkauguse, täpse polyline-segmendivaliku ja avatud terminali sulgemise.
+Liiga lühike valitud polyline-segment keeldub muutmata dokumendi ja Undo-olekuga,
+standalone LINE/RAY/XLINE jääb pikendatavaks ning full process-identity ratchet
+kaitseb olemasolevaid AutoCADi protsesse. Chromium, AutoCAD 2024 ning sõltumatu
+DXF/KDRAW1 read-back on rohelised; avalik CI on veel ootel. Järgmine rida on
+F-026 `BREAK`.
 F-097 `Layout tabs` lisab revisioneeritud create/copy/reorder/delete töövoo,
 AutoCADi copy-before-source nimekuju, sõltumatud viewport'i ID-d ja paberiruumi
 handle'id, atomaarse Undo/Redo ning IndexedDB/`.kdraw` taastamise.

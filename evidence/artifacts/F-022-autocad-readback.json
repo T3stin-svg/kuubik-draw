@@ -4,19 +4,19 @@
   "benchmark": "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
   "engine": "Autodesk AutoCAD 2024 desktop COM",
   "engineVersion": "24.3s (LMS Tech)",
-  "automationProcessId": 36232,
+  "automationProcessId": 10636,
   "automationProcessOwned": true,
   "installedUpdateIdentity": {
     "displayName": "Autodesk AutoCAD 2024.1.2 Update",
     "displayVersion": "24.3.152.0"
   },
   "automationProcessIdentity": {
-    "processId": 36232,
+    "processId": 10636,
     "executableName": "acad.exe",
     "executableSha256": "0570749def2fa8dcfb62df1a6671f44245a9ef740dd61d9d0f9110794a76e70e",
     "fileVersion": "R24.3.152.0.0",
     "productVersion": "R24.3.152.0.0",
-    "startTimeSha256": "246aace399603b9b3f43b97b74ffb1df8a0adadcc6e6276e995a5ab1235a2bf8"
+    "startTimeSha256": "aa26c3d3fee5edd7e236609967f8f70bfd91ac3700116e68a2b108774aec29fd"
   },
   "options": {
     "standard": true,
@@ -1427,7 +1427,7 @@
           }
         }
       ],
-      "outputSha256": "5cb5b7c0c19bf814869b5df5ade7b5b4e6187bf27f6f838468b3f4f0a0bb94d9"
+      "outputSha256": "026bd5d2564d567e35fefbf92e8129455c46928ddb4a0d45890e9b750b5eaff9"
     },
     "fence": [
       {
@@ -1675,7 +1675,7 @@
   ],
   "rationalSplineDxfReadback": {
     "sourceSha256": "68d9129c1ffd827b64bd5cd2acb8948d768375c9faa183e5a7d7e39f1fa79224",
-    "outputSha256": "5cb5b7c0c19bf814869b5df5ade7b5b4e6187bf27f6f838468b3f4f0a0bb94d9",
+    "outputSha256": "026bd5d2564d567e35fefbf92e8129455c46928ddb4a0d45890e9b750b5eaff9",
     "splines": [
       {
         "handle": "10",
@@ -1758,14 +1758,14 @@
     ]
   },
   "implementationSha256": {
-    "tools/autocad/f022-standard-matrix.ps1": "97940c4f11fb0309655700aba25bdffd22c735a653804ae1d2b4bc326900b413",
-    "tools/autocad/f022-shift-click.ps1": "dc1592f2bbed183f0f13863e64cf45f66b97ace8fbd942193df48ec4d82d6057",
-    "tools/autocad/f022-runner.test.mjs": "0c151d47fea914633ec669e63b8a6028fe0e923b34f16f531c782200981bbbea",
+    "tools/autocad/f022-standard-matrix.ps1": "6020e3dbc1046b29b0125d6a0e6f583c9713d178015ed78690d657c4df586d9d",
+    "tools/autocad/f022-shift-click.ps1": "832a0fd648c8ba1c4918fad404d4d51d1abf4b61cb0c7dd7ef93a6c308795c99",
+    "tools/autocad/f022-runner.test.mjs": "a6eaee4320513b29b7529b24da727f6246667364c61e11d0544d30400ac45bdb",
     "tools/autocad/run-f022.mjs": "24df4b726eecf2876d2f091829d393f7fdf20c7e1136fd59ce9daa3a4991365a",
     "tools/autocad/process-ownership.test.mjs": "967311b5caa954585c7fce1494afb5322ead5ce99df83c2f2bad14fd178e3050"
   },
-  "matrixScriptSha256": "97940c4f11fb0309655700aba25bdffd22c735a653804ae1d2b4bc326900b413",
-  "shiftHelperSha256": "dc1592f2bbed183f0f13863e64cf45f66b97ace8fbd942193df48ec4d82d6057",
+  "matrixScriptSha256": "6020e3dbc1046b29b0125d6a0e6f583c9713d178015ed78690d657c4df586d9d",
+  "shiftHelperSha256": "832a0fd648c8ba1c4918fad404d4d51d1abf4b61cb0c7dd7ef93a6c308795c99",
   "runnerScriptSha256": "24df4b726eecf2876d2f091829d393f7fdf20c7e1136fd59ce9daa3a4991365a",
-  "observedAt": "2026-08-29T23:56:21.295Z"
+  "observedAt": "2026-08-30T02:48:42.147Z"
 }

@@ -1,6 +1,9 @@
 import {
   parseCadHandleList,
   parseCartesianPoint,
+  parseChamferAngle,
+  parseChamferDistance,
+  parseChamferPairPicks,
   parseCopyDestinations,
   parseExtendTargetPicks,
   parseFilletPairPicks,
@@ -15,6 +18,8 @@ import {
   parseTrimTargetPicks,
   resolveCadCommand,
   type CadChange,
+  type ChamferCommandResult,
+  type ChamferTrimMode,
   type CopyCommandResult,
   type ExtendCommandResult,
   type ExtendTargetAction,
@@ -38,7 +43,7 @@ import {
 import type { CadEntity, KDrawDocumentV1 } from "@kuubik/cad-schema";
 
 export interface PreparedModifyCommand<TResult> {
-  commandId: "MOVE" | "COPY" | "ROTATE" | "SCALE" | "MIRROR" | "OFFSET" | "TRIM" | "EXTEND" | "FILLET";
+  commandId: "MOVE" | "COPY" | "ROTATE" | "SCALE" | "MIRROR" | "OFFSET" | "TRIM" | "EXTEND" | "FILLET" | "CHAMFER";
   operationArgs: Readonly<Record<string, unknown>>;
   result: TResult;
 }
@@ -277,6 +282,33 @@ export function prepareFillet(document: KDrawDocumentV1, input: {
       steps: result.steps,
       multiple: result.multiple,
     },
+    result,
+  };
+}
+
+export function prepareChamfer(document: KDrawDocumentV1, input: {
+  mode: "pairs" | "polyline";
+  method: "distance" | "angle";
+  firstDistanceInput: string;
+  secondDistanceInput: string;
+  angleInput: string;
+  pairsInput: string;
+  polylineHandlesInput: string;
+  trimMode: ChamferTrimMode;
+}): PreparedModifyCommand<ChamferCommandResult> {
+  const command = resolveCadCommand("CHAMFER");
+  if (!command || command.id !== "CHAMFER") throw new Error("CHAMFER command is missing from the registry.");
+  const firstDistance = parseChamferDistance(input.firstDistanceInput, "CHAMFER first distance");
+  const specification = input.method === "distance"
+    ? { method: "distance" as const, firstDistance, secondDistance: parseChamferDistance(input.secondDistanceInput, "CHAMFER second distance") }
+    : { method: "angle" as const, firstDistance, angleDeg: parseChamferAngle(input.angleInput) };
+  const args = input.mode === "pairs"
+    ? { mode: "pairs" as const, specification, trimMode: input.trimMode, pairs: parseChamferPairPicks(input.pairsInput) }
+    : { mode: "polyline" as const, specification, trimMode: input.trimMode, polylineHandles: parseCadHandleList(input.polylineHandlesInput) };
+  const result = command.execute(document, args);
+  return {
+    commandId: command.id,
+    operationArgs: { ...args, steps: result.steps, multiple: result.multiple },
     result,
   };
 }

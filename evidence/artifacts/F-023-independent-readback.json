@@ -2,9 +2,9 @@
   "schemaVersion": 1,
   "rowId": "F-023",
   "source": "production EXTEND registry -> immutable atomic commit -> production DXF/KDRAW1 -> strict importer + dxf-parser + raw group reader -> atomic Undo/Redo",
-  "observedAt": "2026-08-29T22:05:24.091Z",
+  "observedAt": "2026-08-30T03:40:33.187Z",
   "implementationSha256": {
-    "packages/cad-core/src/commands.ts": "04a710df132f77cab823cf2ef5dbe540b5a150a052612dae466d7d0e8703e996",
+    "packages/cad-core/src/commands.ts": "24910e7b4b2b529f845b285aa1e9cb383c1b91da69b98e0c66987a0756092997",
     "packages/cad-core/src/transaction.ts": "e250aa2906e63905202a4b9591367632830745acbf731884f8e711d165750599",
     "packages/cad-core/src/trim.ts": "2a9cf40bbe81d2c24b3453040b66d92615b731771cddeb6c284be6a758818a85",
     "packages/cad-dxf/src/import.ts": "ffdef7a01488d09f32b8bab171b0632092317a5687cd6eca2231629a4fc51f20",

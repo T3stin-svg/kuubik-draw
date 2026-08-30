@@ -81,10 +81,11 @@
 
 ## Certified state and explicit remaining limits
 
-- the new application has **25/133** publicly certified parity rows
-  (**18.8% raw / 22.6% weighted**); F-024 feature commit `4462631` passed
-  GitHub Actions run `33283660256` and independent `0 P0 / 0 P1` review;
-- all 22 legacy-certified rows and the first three new rows F-022/F-023/F-024
+- the new application has a local F-025 certification candidate at **26/133**
+  (**19.5% raw / 23.2% weighted**) with independent `0 P0 / 0 P1` review;
+  the last public-green state remains F-024 at **25/133** until the exact F-025
+  commit passes GitHub Actions;
+- all 22 legacy-certified rows and the first four new rows F-022/F-023/F-024/F-025
   are locally mirrored;
 - spline/NURBS rendering is rejected rather than drawn as a misleading control polygon;
 - Unicode PDF text is rejected until a font-embedding path exists;
@@ -107,7 +108,9 @@ The architecture-efficiency wave in `ARCHITECTURE_ROADMAP.md` is closed with
 public Ubuntu CI and an independent `0 P0 / 0 P1` review. Its App-shell refactor
 was followed by all 22 browser captures, 23 independent read-backs, a fresh
 F-102 native AutoCAD live run, schema-v3 exact stage receipts, real F-003
-Chromium DXF capture and cross-platform content-address verification. The next
-functional row after F-024 is F-025 CHAMFER. F-108 native
+Chromium DXF capture and cross-platform content-address verification. F-025
+CHAMFER now has its complete AutoCAD/Chromium/DXF/KDRAW1 evidence chain and
+zero-open-P0/P1 review; its public CI gate is the remaining promotion step.
+The next functional row is F-026 BREAK. F-108 native
 PC3/CTB/STB remains blocked on a licensed adapter. No production deployment is
 authorized.

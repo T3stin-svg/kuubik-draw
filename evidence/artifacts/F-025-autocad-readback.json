@@ -1,0 +1,6602 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-025",
+  "benchmark": "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
+  "engine": "Autodesk AutoCAD 2024 desktop COM",
+  "engineVersion": "24.3s (LMS Tech)",
+  "automationProcessId": 33868,
+  "automationProcessOwned": true,
+  "installedUpdateIdentity": {
+    "displayName": "Autodesk AutoCAD 2024.1.2 Update",
+    "displayVersion": "24.3.152.0"
+  },
+  "automationProcessIdentity": {
+    "processId": 33868,
+    "executableName": "acad.exe",
+    "executableSha256": "0570749def2fa8dcfb62df1a6671f44245a9ef740dd61d9d0f9110794a76e70e",
+    "fileVersion": "R24.3.152.0.0",
+    "productVersion": "R24.3.152.0.0",
+    "startTimeSha256": "9fc291e622dd08f8a75654b64243a009887195798ff6400e7934dd070a581bbd"
+  },
+  "observations": {
+    "distance": [
+      {
+        "objectName": "AcDbLine",
+        "handle": "2A6",
+        "layer": "F025_DISTANCE",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "transparency": "ByLayer",
+        "details": {
+          "start": [
+            -100,
+            0
+          ],
+          "end": [
+            -10,
+            0
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbLine",
+        "handle": "2A7",
+        "layer": "F025_DISTANCE",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "transparency": "ByLayer",
+        "details": {
+          "start": [
+            0,
+            20
+          ],
+          "end": [
+            0,
+            100
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbLine",
+        "handle": "2A8",
+        "layer": "F025_DISTANCE",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "transparency": "ByLayer",
+        "details": {
+          "start": [
+            -10,
+            0
+          ],
+          "end": [
+            0,
+            20
+          ]
+        }
+      }
+    ],
+    "angleNoTrim": [
+      {
+        "objectName": "AcDbLine",
+        "handle": "2AA",
+        "layer": "F025_ANGLE",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "transparency": "ByLayer",
+        "details": {
+          "start": [
+            200,
+            0
+          ],
+          "end": [
+            300,
+            0
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbLine",
+        "handle": "2AB",
+        "layer": "F025_ANGLE",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "transparency": "ByLayer",
+        "details": {
+          "start": [
+            300,
+            0
+          ],
+          "end": [
+            300,
+            100
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbLine",
+        "handle": "2AC",
+        "layer": "F025_ANGLE",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "transparency": "ByLayer",
+        "details": {
+          "start": [
+            290,
+            0
+          ],
+          "end": [
+            300,
+            10
+          ]
+        }
+      }
+    ],
+    "polyline": [
+      {
+        "objectName": "AcDbPolyline",
+        "handle": "2AD",
+        "layer": "F025_POLY",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "transparency": "ByLayer",
+        "details": {
+          "vertices": [
+            [
+              20,
+              200
+            ],
+            [
+              90,
+              200
+            ],
+            [
+              100,
+              220
+            ],
+            [
+              100,
+              290
+            ],
+            [
+              80,
+              300
+            ],
+            [
+              10,
+              300
+            ],
+            [
+              0,
+              280
+            ],
+            [
+              0,
+              210
+            ]
+          ],
+          "closed": true,
+          "bulges": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      }
+    ],
+    "polylineNoTrim": [
+      {
+        "objectName": "AcDbPolyline",
+        "handle": "2AE",
+        "layer": "F025_POLY_NOTRIM",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "transparency": "ByLayer",
+        "details": {
+          "vertices": [
+            [
+              300,
+              200
+            ],
+            [
+              400,
+              200
+            ],
+            [
+              400,
+              300
+            ],
+            [
+              300,
+              300
+            ]
+          ],
+          "closed": true,
+          "bulges": [
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbLine",
+        "handle": "2AF",
+        "layer": "F025_POLY_NOTRIM",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "transparency": "ByLayer",
+        "details": {
+          "start": [
+            300,
+            210
+          ],
+          "end": [
+            320,
+            200
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbLine",
+        "handle": "2B0",
+        "layer": "F025_POLY_NOTRIM",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "transparency": "ByLayer",
+        "details": {
+          "start": [
+            310,
+            300
+          ],
+          "end": [
+            300,
+            280
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbLine",
+        "handle": "2B1",
+        "layer": "F025_POLY_NOTRIM",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "transparency": "ByLayer",
+        "details": {
+          "start": [
+            400,
+            290
+          ],
+          "end": [
+            380,
+            300
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbLine",
+        "handle": "2B2",
+        "layer": "F025_POLY_NOTRIM",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "transparency": "ByLayer",
+        "details": {
+          "start": [
+            390,
+            200
+          ],
+          "end": [
+            400,
+            220
+          ]
+        }
+      }
+    ],
+    "polylineShort": [
+      {
+        "objectName": "AcDbPolyline",
+        "handle": "2B3",
+        "layer": "F025_POLY_SHORT",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "transparency": "ByLayer",
+        "details": {
+          "vertices": [
+            [
+              500,
+              200
+            ],
+            [
+              505,
+              200
+            ],
+            [
+              505,
+              205
+            ],
+            [
+              500,
+              205
+            ]
+          ],
+          "closed": true,
+          "bulges": [
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      }
+    ],
+    "polylineOverlap": [
+      {
+        "objectName": "AcDbPolyline",
+        "handle": "2B4",
+        "layer": "F025_POLY_OVERLAP",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "transparency": "ByLayer",
+        "details": {
+          "vertices": [
+            [
+              600,
+              200
+            ],
+            [
+              605,
+              200
+            ],
+            [
+              625,
+              220
+            ],
+            [
+              625,
+              225
+            ],
+            [
+              620,
+              225
+            ],
+            [
+              600,
+              205
+            ]
+          ],
+          "closed": true,
+          "bulges": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      }
+    ],
+    "polylineOverlapNoTrim": [
+      {
+        "objectName": "AcDbPolyline",
+        "handle": "2B5",
+        "layer": "F025_POLY_OVERLAP_NOTRIM",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "transparency": "ByLayer",
+        "details": {
+          "vertices": [
+            [
+              700,
+              200
+            ],
+            [
+              725,
+              200
+            ],
+            [
+              725,
+              225
+            ],
+            [
+              700,
+              225
+            ]
+          ],
+          "closed": true,
+          "bulges": [
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbLine",
+        "handle": "2B6",
+        "layer": "F025_POLY_OVERLAP_NOTRIM",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "transparency": "ByLayer",
+        "details": {
+          "start": [
+            700,
+            220
+          ],
+          "end": [
+            720,
+            200
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbLine",
+        "handle": "2B7",
+        "layer": "F025_POLY_OVERLAP_NOTRIM",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "transparency": "ByLayer",
+        "details": {
+          "start": [
+            720,
+            225
+          ],
+          "end": [
+            700,
+            205
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbLine",
+        "handle": "2B8",
+        "layer": "F025_POLY_OVERLAP_NOTRIM",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "transparency": "ByLayer",
+        "details": {
+          "start": [
+            725,
+            205
+          ],
+          "end": [
+            705,
+            225
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbLine",
+        "handle": "2B9",
+        "layer": "F025_POLY_OVERLAP_NOTRIM",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "transparency": "ByLayer",
+        "details": {
+          "start": [
+            705,
+            200
+          ],
+          "end": [
+            725,
+            220
+          ]
+        }
+      }
+    ],
+    "polylineShortNoTrim": [
+      {
+        "objectName": "AcDbPolyline",
+        "handle": "2BA",
+        "layer": "F025_POLY_SHORT_NOTRIM",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "transparency": "ByLayer",
+        "details": {
+          "vertices": [
+            [
+              800,
+              200
+            ],
+            [
+              805,
+              200
+            ],
+            [
+              805,
+              205
+            ],
+            [
+              800,
+              205
+            ]
+          ],
+          "closed": true,
+          "bulges": [
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbLine",
+        "handle": "2BB",
+        "layer": "F025_POLY_SHORT_NOTRIM",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "transparency": "ByLayer",
+        "details": {
+          "start": [
+            800,
+            210
+          ],
+          "end": [
+            810,
+            200
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbLine",
+        "handle": "2BC",
+        "layer": "F025_POLY_SHORT_NOTRIM",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "transparency": "ByLayer",
+        "details": {
+          "start": [
+            810,
+            205
+          ],
+          "end": [
+            800,
+            195
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbLine",
+        "handle": "2BD",
+        "layer": "F025_POLY_SHORT_NOTRIM",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "transparency": "ByLayer",
+        "details": {
+          "start": [
+            805,
+            195
+          ],
+          "end": [
+            795,
+            205
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbLine",
+        "handle": "2BE",
+        "layer": "F025_POLY_SHORT_NOTRIM",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "transparency": "ByLayer",
+        "details": {
+          "start": [
+            795,
+            200
+          ],
+          "end": [
+            805,
+            210
+          ]
+        }
+      }
+    ],
+    "polylineZero": {
+      "before": {
+        "objectName": "AcDbPolyline",
+        "handle": "2BF",
+        "layer": "F025_POLY_ZERO",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "transparency": "ByLayer",
+        "details": {
+          "vertices": [
+            [
+              900,
+              200
+            ],
+            [
+              1000,
+              200
+            ],
+            [
+              1000,
+              300
+            ],
+            [
+              900,
+              300
+            ]
+          ],
+          "closed": true,
+          "bulges": [
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      "entities": [
+        {
+          "objectName": "AcDbPolyline",
+          "handle": "2BF",
+          "layer": "F025_POLY_ZERO",
+          "color": 1,
+          "lineweight": 50,
+          "linetype": "ByLayer",
+          "transparency": "ByLayer",
+          "details": {
+            "vertices": [
+              [
+                900,
+                200
+              ],
+              [
+                1000,
+                200
+              ],
+              [
+                1000,
+                300
+              ],
+              [
+                900,
+                300
+              ]
+            ],
+            "closed": true,
+            "bulges": [
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      ]
+    },
+    "zero": [
+      {
+        "objectName": "AcDbLine",
+        "handle": "2C0",
+        "layer": "F025_ZERO",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "transparency": "ByLayer",
+        "details": {
+          "start": [
+            -100,
+            400
+          ],
+          "end": [
+            0,
+            400
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbLine",
+        "handle": "2C1",
+        "layer": "F025_ZERO",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "transparency": "ByLayer",
+        "details": {
+          "start": [
+            0,
+            400
+          ],
+          "end": [
+            0,
+            500
+          ]
+        }
+      }
+    ],
+    "parallelBefore": [
+      {
+        "objectName": "AcDbLine",
+        "handle": "2C2",
+        "layer": "F025_PARALLEL",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "transparency": "ByLayer",
+        "details": {
+          "start": [
+            200,
+            400
+          ],
+          "end": [
+            300,
+            400
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbLine",
+        "handle": "2C3",
+        "layer": "F025_PARALLEL",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "transparency": "ByLayer",
+        "details": {
+          "start": [
+            200,
+            420
+          ],
+          "end": [
+            300,
+            420
+          ]
+        }
+      }
+    ],
+    "parallelAfter": [
+      {
+        "objectName": "AcDbLine",
+        "handle": "2C2",
+        "layer": "F025_PARALLEL",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "transparency": "ByLayer",
+        "details": {
+          "start": [
+            200,
+            400
+          ],
+          "end": [
+            300,
+            400
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbLine",
+        "handle": "2C3",
+        "layer": "F025_PARALLEL",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "transparency": "ByLayer",
+        "details": {
+          "start": [
+            200,
+            420
+          ],
+          "end": [
+            300,
+            420
+          ]
+        }
+      }
+    ],
+    "rayXline": [
+      {
+        "objectName": "AcDbLine",
+        "handle": "2C6",
+        "layer": "F025_RAY",
+        "color": 1,
+        "lineweight": -1,
+        "linetype": "ByLayer",
+        "transparency": "ByLayer",
+        "details": {
+          "start": [
+            -10,
+            600
+          ],
+          "end": [
+            0,
+            620
+          ]
+        }
+      }
+    ],
+    "rayForward": [
+      {
+        "objectName": "AcDbRay",
+        "handle": "2C7",
+        "layer": "F025_RAY_FORWARD",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "transparency": "ByLayer",
+        "details": {
+          "basePoint": [
+            110,
+            800
+          ],
+          "secondPoint": [
+            111,
+            800
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbRay",
+        "handle": "2C8",
+        "layer": "F025_RAY_FORWARD",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "transparency": "ByLayer",
+        "details": {
+          "basePoint": [
+            100,
+            820
+          ],
+          "secondPoint": [
+            100,
+            821
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbLine",
+        "handle": "2C9",
+        "layer": "F025_RAY_FORWARD",
+        "color": 1,
+        "lineweight": -1,
+        "linetype": "ByLayer",
+        "transparency": "ByLayer",
+        "details": {
+          "start": [
+            110,
+            800
+          ],
+          "end": [
+            100,
+            820
+          ]
+        }
+      }
+    ],
+    "xlineLine": [
+      {
+        "objectName": "AcDbLine",
+        "handle": "2CB",
+        "layer": "F025_XLINE_LINE",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "transparency": "ByLayer",
+        "details": {
+          "start": [
+            0,
+            1020
+          ],
+          "end": [
+            0,
+            1100
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbLine",
+        "handle": "2CC",
+        "layer": "F025_XLINE_LINE",
+        "color": 1,
+        "lineweight": -1,
+        "linetype": "ByLayer",
+        "transparency": "ByLayer",
+        "details": {
+          "start": [
+            -10,
+            1000
+          ],
+          "end": [
+            0,
+            1020
+          ]
+        }
+      }
+    ],
+    "rayNoTrim": [
+      {
+        "objectName": "AcDbRay",
+        "handle": "2CD",
+        "layer": "F025_RAY_NOTRIM",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "transparency": "ByLayer",
+        "details": {
+          "basePoint": [
+            -100,
+            1200
+          ],
+          "secondPoint": [
+            -99,
+            1200
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbXline",
+        "handle": "2CE",
+        "layer": "F025_RAY_NOTRIM",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "transparency": "ByLayer",
+        "details": {
+          "basePoint": [
+            0,
+            1200
+          ],
+          "secondPoint": [
+            0,
+            1201
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbLine",
+        "handle": "2CF",
+        "layer": "F025_RAY_NOTRIM",
+        "color": 1,
+        "lineweight": -1,
+        "linetype": "ByLayer",
+        "transparency": "ByLayer",
+        "details": {
+          "start": [
+            -10,
+            1200
+          ],
+          "end": [
+            0,
+            1220
+          ]
+        }
+      }
+    ],
+    "adjacent": {
+      "entities": [
+        {
+          "objectName": "AcDbPolyline",
+          "handle": "2D0",
+          "layer": "F025_ADJACENT",
+          "color": 1,
+          "lineweight": 50,
+          "linetype": "ByLayer",
+          "transparency": "ByLayer",
+          "details": {
+            "vertices": [
+              [
+                0,
+                1400
+              ],
+              [
+                100,
+                1400
+              ],
+              [
+                100,
+                1490
+              ],
+              [
+                80,
+                1500
+              ],
+              [
+                0,
+                1500
+              ]
+            ],
+            "closed": false,
+            "bulges": [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      ],
+      "input": {
+        "first": {
+          "x": 2818,
+          "y": 1027
+        },
+        "second": {
+          "x": 2650,
+          "y": 354
+        },
+        "shiftSecond": false
+      }
+    },
+    "separated": {
+      "entities": [
+        {
+          "objectName": "AcDbPolyline",
+          "handle": "2D1",
+          "layer": "F025_SEPARATED",
+          "color": 1,
+          "lineweight": 50,
+          "linetype": "ByLayer",
+          "transparency": "ByLayer",
+          "details": {
+            "vertices": [
+              [
+                200,
+                1400
+              ],
+              [
+                290,
+                1400
+              ],
+              [
+                300,
+                1420
+              ],
+              [
+                300,
+                1500
+              ]
+            ],
+            "closed": false,
+            "bulges": [
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      ],
+      "input": {
+        "first": {
+          "x": 2398,
+          "y": 1195
+        },
+        "second": {
+          "x": 2818,
+          "y": 690
+        },
+        "shiftSecond": false
+      }
+    },
+    "openClose": {
+      "entities": [
+        {
+          "objectName": "AcDbPolyline",
+          "handle": "2D2",
+          "layer": "F025_OPEN_CLOSE",
+          "color": 1,
+          "lineweight": 50,
+          "linetype": "ByLayer",
+          "transparency": "ByLayer",
+          "details": {
+            "vertices": [
+              [
+                400,
+                1490
+              ],
+              [
+                400,
+                1400
+              ],
+              [
+                500,
+                1400
+              ],
+              [
+                407.0710678118655,
+                1492.9289321881345
+              ]
+            ],
+            "closed": true,
+            "bulges": [
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      ],
+      "input": {
+        "first": {
+          "x": 1978,
+          "y": 1027
+        },
+        "second": {
+          "x": 2566,
+          "y": 943
+        },
+        "shiftSecond": false
+      }
+    },
+    "seamForward": {
+      "entities": [
+        {
+          "objectName": "AcDbPolyline",
+          "handle": "2D3",
+          "layer": "F025_SEAM_FORWARD",
+          "color": 1,
+          "lineweight": 50,
+          "linetype": "ByLayer",
+          "transparency": "ByLayer",
+          "details": {
+            "vertices": [
+              [
+                620,
+                1400
+              ],
+              [
+                700,
+                1400
+              ],
+              [
+                700,
+                1500
+              ],
+              [
+                600,
+                1500
+              ],
+              [
+                600,
+                1410
+              ]
+            ],
+            "closed": true,
+            "bulges": [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      ],
+      "input": {
+        "first": {
+          "x": 1978,
+          "y": 1027
+        },
+        "second": {
+          "x": 2146,
+          "y": 1195
+        },
+        "shiftSecond": false
+      }
+    },
+    "seamReverse": {
+      "entities": [
+        {
+          "objectName": "AcDbPolyline",
+          "handle": "2D4",
+          "layer": "F025_SEAM_REVERSE",
+          "color": 1,
+          "lineweight": 50,
+          "linetype": "ByLayer",
+          "transparency": "ByLayer",
+          "details": {
+            "vertices": [
+              [
+                810,
+                1400
+              ],
+              [
+                900,
+                1400
+              ],
+              [
+                900,
+                1500
+              ],
+              [
+                800,
+                1500
+              ],
+              [
+                800,
+                1420
+              ]
+            ],
+            "closed": true,
+            "bulges": [
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      ],
+      "input": {
+        "first": {
+          "x": 2146,
+          "y": 1195
+        },
+        "second": {
+          "x": 1978,
+          "y": 1027
+        },
+        "shiftSecond": false
+      }
+    },
+    "pairZero": {
+      "before": {
+        "objectName": "AcDbPolyline",
+        "handle": "2D5",
+        "layer": "F025_PAIR_ZERO",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "transparency": "ByLayer",
+        "details": {
+          "vertices": [
+            [
+              0,
+              3400
+            ],
+            [
+              100,
+              3400
+            ],
+            [
+              100,
+              3500
+            ],
+            [
+              0,
+              3500
+            ]
+          ],
+          "closed": true,
+          "bulges": [
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      "entities": [
+        {
+          "objectName": "AcDbPolyline",
+          "handle": "2D5",
+          "layer": "F025_PAIR_ZERO",
+          "color": 1,
+          "lineweight": 50,
+          "linetype": "ByLayer",
+          "transparency": "ByLayer",
+          "details": {
+            "vertices": [
+              [
+                0,
+                3400
+              ],
+              [
+                100,
+                3400
+              ],
+              [
+                100,
+                3500
+              ],
+              [
+                0,
+                3500
+              ]
+            ],
+            "closed": true,
+            "bulges": [
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      ],
+      "input": {
+        "first": {
+          "x": 2398,
+          "y": 1195
+        },
+        "second": {
+          "x": 2818,
+          "y": 774
+        },
+        "shiftSecond": false
+      }
+    },
+    "pairZeroSeam": {
+      "before": {
+        "objectName": "AcDbPolyline",
+        "handle": "2D6",
+        "layer": "F025_PAIR_ZERO_SEAM",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "transparency": "ByLayer",
+        "details": {
+          "vertices": [
+            [
+              200,
+              3400
+            ],
+            [
+              300,
+              3400
+            ],
+            [
+              300,
+              3500
+            ],
+            [
+              200,
+              3500
+            ]
+          ],
+          "closed": true,
+          "bulges": [
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      "entities": [
+        {
+          "objectName": "AcDbPolyline",
+          "handle": "2D6",
+          "layer": "F025_PAIR_ZERO_SEAM",
+          "color": 1,
+          "lineweight": 50,
+          "linetype": "ByLayer",
+          "transparency": "ByLayer",
+          "details": {
+            "vertices": [
+              [
+                200,
+                3400
+              ],
+              [
+                300,
+                3400
+              ],
+              [
+                300,
+                3500
+              ],
+              [
+                200,
+                3500
+              ]
+            ],
+            "closed": true,
+            "bulges": [
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      ],
+      "input": {
+        "first": {
+          "x": 1978,
+          "y": 774
+        },
+        "second": {
+          "x": 2398,
+          "y": 1195
+        },
+        "shiftSecond": false
+      }
+    },
+    "pairTooShort": {
+      "before": {
+        "objectName": "AcDbPolyline",
+        "handle": "2D7",
+        "layer": "F025_PAIR_TOO_SHORT",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "transparency": "ByLayer",
+        "details": {
+          "vertices": [
+            [
+              400,
+              3400
+            ],
+            [
+              405,
+              3400
+            ],
+            [
+              405,
+              3405
+            ],
+            [
+              400,
+              3405
+            ]
+          ],
+          "closed": true,
+          "bulges": [
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      "entities": [
+        {
+          "objectName": "AcDbPolyline",
+          "handle": "2D7",
+          "layer": "F025_PAIR_TOO_SHORT",
+          "color": 1,
+          "lineweight": 50,
+          "linetype": "ByLayer",
+          "transparency": "ByLayer",
+          "details": {
+            "vertices": [
+              [
+                400,
+                3400
+              ],
+              [
+                405,
+                3400
+              ],
+              [
+                405,
+                3405
+              ],
+              [
+                400,
+                3405
+              ]
+            ],
+            "closed": true,
+            "bulges": [
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      ],
+      "input": {
+        "first": {
+          "x": 2398,
+          "y": 892
+        },
+        "second": {
+          "x": 2516,
+          "y": 774
+        },
+        "shiftSecond": false
+      }
+    },
+    "physicalShift": {
+      "entities": [
+        {
+          "objectName": "AcDbLine",
+          "handle": "2D8",
+          "layer": "F025_SHIFT",
+          "color": 1,
+          "lineweight": 50,
+          "linetype": "ByLayer",
+          "transparency": "ByLayer",
+          "details": {
+            "start": [
+              0,
+              1600
+            ],
+            "end": [
+              100,
+              1600
+            ]
+          }
+        },
+        {
+          "objectName": "AcDbLine",
+          "handle": "2D9",
+          "layer": "F025_SHIFT",
+          "color": 1,
+          "lineweight": 50,
+          "linetype": "ByLayer",
+          "transparency": "ByLayer",
+          "details": {
+            "start": [
+              100,
+              1600
+            ],
+            "end": [
+              100,
+              1700
+            ]
+          }
+        }
+      ],
+      "input": {
+        "first": {
+          "x": 2650,
+          "y": 1195
+        },
+        "second": {
+          "x": 2818,
+          "y": 943
+        },
+        "shiftSecond": true
+      },
+      "distanceAAfter": 10,
+      "distanceBAfter": 20
+    },
+    "multiple": [
+      {
+        "objectName": "AcDbLine",
+        "handle": "2DA",
+        "layer": "F025_MULTIPLE",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "transparency": "ByLayer",
+        "details": {
+          "start": [
+            0,
+            1800
+          ],
+          "end": [
+            90,
+            1800
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbLine",
+        "handle": "2DB",
+        "layer": "F025_MULTIPLE",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "transparency": "ByLayer",
+        "details": {
+          "start": [
+            100,
+            1820
+          ],
+          "end": [
+            100,
+            1900
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbLine",
+        "handle": "2DC",
+        "layer": "F025_MULTIPLE",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "transparency": "ByLayer",
+        "details": {
+          "start": [
+            200,
+            1800
+          ],
+          "end": [
+            290,
+            1800
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbLine",
+        "handle": "2DD",
+        "layer": "F025_MULTIPLE",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "transparency": "ByLayer",
+        "details": {
+          "start": [
+            300,
+            1820
+          ],
+          "end": [
+            300,
+            1900
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbLine",
+        "handle": "2DE",
+        "layer": "F025_MULTIPLE",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "transparency": "ByLayer",
+        "details": {
+          "start": [
+            90,
+            1800
+          ],
+          "end": [
+            100,
+            1820
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbLine",
+        "handle": "2DF",
+        "layer": "F025_MULTIPLE",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "transparency": "ByLayer",
+        "details": {
+          "start": [
+            290,
+            1800
+          ],
+          "end": [
+            300,
+            1820
+          ]
+        }
+      }
+    ],
+    "commandUndo": [
+      {
+        "objectName": "AcDbLine",
+        "handle": "2E0",
+        "layer": "F025_COMMAND_UNDO",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "transparency": "ByLayer",
+        "details": {
+          "start": [
+            0,
+            2000
+          ],
+          "end": [
+            90,
+            2000
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbLine",
+        "handle": "2E1",
+        "layer": "F025_COMMAND_UNDO",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "transparency": "ByLayer",
+        "details": {
+          "start": [
+            100,
+            2020
+          ],
+          "end": [
+            100,
+            2100
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbLine",
+        "handle": "2E2",
+        "layer": "F025_COMMAND_UNDO",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "transparency": "ByLayer",
+        "details": {
+          "start": [
+            200,
+            2000
+          ],
+          "end": [
+            300,
+            2000
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbLine",
+        "handle": "2E3",
+        "layer": "F025_COMMAND_UNDO",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "transparency": "ByLayer",
+        "details": {
+          "start": [
+            300,
+            2000
+          ],
+          "end": [
+            300,
+            2100
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbLine",
+        "handle": "2E4",
+        "layer": "F025_COMMAND_UNDO",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "transparency": "ByLayer",
+        "details": {
+          "start": [
+            90,
+            2000
+          ],
+          "end": [
+            100,
+            2020
+          ]
+        }
+      }
+    ],
+    "globalUndoRedo": {
+      "committed": [
+        {
+          "objectName": "AcDbLine",
+          "handle": "2E6",
+          "layer": "F025_GLOBAL_UNDO_REDO",
+          "color": 1,
+          "lineweight": 50,
+          "linetype": "ByLayer",
+          "transparency": "ByLayer",
+          "details": {
+            "start": [
+              0,
+              2200
+            ],
+            "end": [
+              90,
+              2200
+            ]
+          }
+        },
+        {
+          "objectName": "AcDbLine",
+          "handle": "2E7",
+          "layer": "F025_GLOBAL_UNDO_REDO",
+          "color": 1,
+          "lineweight": 50,
+          "linetype": "ByLayer",
+          "transparency": "ByLayer",
+          "details": {
+            "start": [
+              100,
+              2220
+            ],
+            "end": [
+              100,
+              2300
+            ]
+          }
+        },
+        {
+          "objectName": "AcDbLine",
+          "handle": "2E8",
+          "layer": "F025_GLOBAL_UNDO_REDO",
+          "color": 1,
+          "lineweight": 50,
+          "linetype": "ByLayer",
+          "transparency": "ByLayer",
+          "details": {
+            "start": [
+              200,
+              2200
+            ],
+            "end": [
+              290,
+              2200
+            ]
+          }
+        },
+        {
+          "objectName": "AcDbLine",
+          "handle": "2E9",
+          "layer": "F025_GLOBAL_UNDO_REDO",
+          "color": 1,
+          "lineweight": 50,
+          "linetype": "ByLayer",
+          "transparency": "ByLayer",
+          "details": {
+            "start": [
+              300,
+              2220
+            ],
+            "end": [
+              300,
+              2300
+            ]
+          }
+        },
+        {
+          "objectName": "AcDbLine",
+          "handle": "2EA",
+          "layer": "F025_GLOBAL_UNDO_REDO",
+          "color": 1,
+          "lineweight": 50,
+          "linetype": "ByLayer",
+          "transparency": "ByLayer",
+          "details": {
+            "start": [
+              90,
+              2200
+            ],
+            "end": [
+              100,
+              2220
+            ]
+          }
+        },
+        {
+          "objectName": "AcDbLine",
+          "handle": "2EB",
+          "layer": "F025_GLOBAL_UNDO_REDO",
+          "color": 1,
+          "lineweight": 50,
+          "linetype": "ByLayer",
+          "transparency": "ByLayer",
+          "details": {
+            "start": [
+              290,
+              2200
+            ],
+            "end": [
+              300,
+              2220
+            ]
+          }
+        }
+      ],
+      "undone": [
+        {
+          "objectName": "AcDbLine",
+          "handle": "2E6",
+          "layer": "F025_GLOBAL_UNDO_REDO",
+          "color": 1,
+          "lineweight": 50,
+          "linetype": "ByLayer",
+          "transparency": "ByLayer",
+          "details": {
+            "start": [
+              0,
+              2200
+            ],
+            "end": [
+              100,
+              2200
+            ]
+          }
+        },
+        {
+          "objectName": "AcDbLine",
+          "handle": "2E7",
+          "layer": "F025_GLOBAL_UNDO_REDO",
+          "color": 1,
+          "lineweight": 50,
+          "linetype": "ByLayer",
+          "transparency": "ByLayer",
+          "details": {
+            "start": [
+              100,
+              2200
+            ],
+            "end": [
+              100,
+              2300
+            ]
+          }
+        },
+        {
+          "objectName": "AcDbLine",
+          "handle": "2E8",
+          "layer": "F025_GLOBAL_UNDO_REDO",
+          "color": 1,
+          "lineweight": 50,
+          "linetype": "ByLayer",
+          "transparency": "ByLayer",
+          "details": {
+            "start": [
+              200,
+              2200
+            ],
+            "end": [
+              300,
+              2200
+            ]
+          }
+        },
+        {
+          "objectName": "AcDbLine",
+          "handle": "2E9",
+          "layer": "F025_GLOBAL_UNDO_REDO",
+          "color": 1,
+          "lineweight": 50,
+          "linetype": "ByLayer",
+          "transparency": "ByLayer",
+          "details": {
+            "start": [
+              300,
+              2200
+            ],
+            "end": [
+              300,
+              2300
+            ]
+          }
+        }
+      ],
+      "redone": [
+        {
+          "objectName": "AcDbLine",
+          "handle": "2E6",
+          "layer": "F025_GLOBAL_UNDO_REDO",
+          "color": 1,
+          "lineweight": 50,
+          "linetype": "ByLayer",
+          "transparency": "ByLayer",
+          "details": {
+            "start": [
+              0,
+              2200
+            ],
+            "end": [
+              90,
+              2200
+            ]
+          }
+        },
+        {
+          "objectName": "AcDbLine",
+          "handle": "2E7",
+          "layer": "F025_GLOBAL_UNDO_REDO",
+          "color": 1,
+          "lineweight": 50,
+          "linetype": "ByLayer",
+          "transparency": "ByLayer",
+          "details": {
+            "start": [
+              100,
+              2220
+            ],
+            "end": [
+              100,
+              2300
+            ]
+          }
+        },
+        {
+          "objectName": "AcDbLine",
+          "handle": "2E8",
+          "layer": "F025_GLOBAL_UNDO_REDO",
+          "color": 1,
+          "lineweight": 50,
+          "linetype": "ByLayer",
+          "transparency": "ByLayer",
+          "details": {
+            "start": [
+              200,
+              2200
+            ],
+            "end": [
+              290,
+              2200
+            ]
+          }
+        },
+        {
+          "objectName": "AcDbLine",
+          "handle": "2E9",
+          "layer": "F025_GLOBAL_UNDO_REDO",
+          "color": 1,
+          "lineweight": 50,
+          "linetype": "ByLayer",
+          "transparency": "ByLayer",
+          "details": {
+            "start": [
+              300,
+              2220
+            ],
+            "end": [
+              300,
+              2300
+            ]
+          }
+        },
+        {
+          "objectName": "AcDbLine",
+          "handle": "2EA",
+          "layer": "F025_GLOBAL_UNDO_REDO",
+          "color": 1,
+          "lineweight": 50,
+          "linetype": "ByLayer",
+          "transparency": "ByLayer",
+          "details": {
+            "start": [
+              90,
+              2200
+            ],
+            "end": [
+              100,
+              2220
+            ]
+          }
+        },
+        {
+          "objectName": "AcDbLine",
+          "handle": "2EB",
+          "layer": "F025_GLOBAL_UNDO_REDO",
+          "color": 1,
+          "lineweight": 50,
+          "linetype": "ByLayer",
+          "transparency": "ByLayer",
+          "details": {
+            "start": [
+              290,
+              2200
+            ],
+            "end": [
+              300,
+              2220
+            ]
+          }
+        }
+      ]
+    },
+    "sameSourceLayer": {
+      "source": [
+        {
+          "objectName": "AcDbLine",
+          "handle": "2EC",
+          "layer": "F025_CURRENT_SRC",
+          "color": 1,
+          "lineweight": 50,
+          "linetype": "ByLayer",
+          "transparency": "ByLayer",
+          "details": {
+            "start": [
+              0,
+              2400
+            ],
+            "end": [
+              100,
+              2400
+            ]
+          }
+        },
+        {
+          "objectName": "AcDbLine",
+          "handle": "2ED",
+          "layer": "F025_CURRENT_SRC",
+          "color": 1,
+          "lineweight": 50,
+          "linetype": "ByLayer",
+          "transparency": "ByLayer",
+          "details": {
+            "start": [
+              100,
+              2400
+            ],
+            "end": [
+              100,
+              2500
+            ]
+          }
+        },
+        {
+          "objectName": "AcDbLine",
+          "handle": "2EE",
+          "layer": "F025_CURRENT_SRC",
+          "color": 1,
+          "lineweight": 50,
+          "linetype": "ByLayer",
+          "transparency": "ByLayer",
+          "details": {
+            "start": [
+              90,
+              2400
+            ],
+            "end": [
+              100,
+              2420
+            ]
+          }
+        }
+      ],
+      "current": []
+    },
+    "crossLayer": {
+      "first": [
+        {
+          "objectName": "AcDbLine",
+          "handle": "2EF",
+          "layer": "F025_CROSS_A",
+          "color": 2,
+          "lineweight": 50,
+          "linetype": "Continuous",
+          "transparency": "50",
+          "details": {
+            "start": [
+              0,
+              2600
+            ],
+            "end": [
+              100,
+              2600
+            ]
+          }
+        }
+      ],
+      "second": [
+        {
+          "objectName": "AcDbLine",
+          "handle": "2F0",
+          "layer": "F025_CROSS_B",
+          "color": 3,
+          "lineweight": 35,
+          "linetype": "ByLayer",
+          "transparency": "25",
+          "details": {
+            "start": [
+              100,
+              2600
+            ],
+            "end": [
+              100,
+              2700
+            ]
+          }
+        }
+      ],
+      "current": [
+        {
+          "objectName": "AcDbLine",
+          "handle": "2F1",
+          "layer": "F025_CROSS_OUT",
+          "color": 256,
+          "lineweight": 35,
+          "linetype": "ByLayer",
+          "transparency": "25",
+          "details": {
+            "start": [
+              90,
+              2600
+            ],
+            "end": [
+              100,
+              2620
+            ]
+          }
+        }
+      ]
+    },
+    "sameLayerProperties": [
+      {
+        "objectName": "AcDbLine",
+        "handle": "2F2",
+        "layer": "F025_SAME_PROP",
+        "color": 2,
+        "lineweight": 50,
+        "linetype": "Continuous",
+        "transparency": "50",
+        "details": {
+          "start": [
+            0,
+            3000
+          ],
+          "end": [
+            100,
+            3000
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbLine",
+        "handle": "2F3",
+        "layer": "F025_SAME_PROP",
+        "color": 3,
+        "lineweight": 35,
+        "linetype": "ByLayer",
+        "transparency": "25",
+        "details": {
+          "start": [
+            100,
+            3000
+          ],
+          "end": [
+            100,
+            3100
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbLine",
+        "handle": "2F4",
+        "layer": "F025_SAME_PROP",
+        "color": 256,
+        "lineweight": 35,
+        "linetype": "ByLayer",
+        "transparency": "25",
+        "details": {
+          "start": [
+            90,
+            3000
+          ],
+          "end": [
+            100,
+            3020
+          ]
+        }
+      }
+    ],
+    "crossLayerReverse": {
+      "first": [
+        {
+          "objectName": "AcDbLine",
+          "handle": "2F5",
+          "layer": "F025_CROSS_REVERSE_A",
+          "color": 4,
+          "lineweight": 40,
+          "linetype": "ByLayer",
+          "transparency": "40",
+          "details": {
+            "start": [
+              0,
+              3200
+            ],
+            "end": [
+              100,
+              3200
+            ]
+          }
+        }
+      ],
+      "second": [
+        {
+          "objectName": "AcDbLine",
+          "handle": "2F6",
+          "layer": "F025_CROSS_REVERSE_B",
+          "color": 5,
+          "lineweight": 25,
+          "linetype": "Continuous",
+          "transparency": "15",
+          "details": {
+            "start": [
+              100,
+              3200
+            ],
+            "end": [
+              100,
+              3300
+            ]
+          }
+        }
+      ],
+      "current": [
+        {
+          "objectName": "AcDbLine",
+          "handle": "2F7",
+          "layer": "F025_CROSS_REVERSE_OUT",
+          "color": 256,
+          "lineweight": 25,
+          "linetype": "ByLayer",
+          "transparency": "15",
+          "details": {
+            "start": [
+              90,
+              3200
+            ],
+            "end": [
+              100,
+              3220
+            ]
+          }
+        }
+      ]
+    },
+    "lockedLayer": [
+      {
+        "objectName": "AcDbLine",
+        "handle": "2F8",
+        "layer": "F025_LOCKED",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "transparency": "ByLayer",
+        "details": {
+          "start": [
+            0,
+            2800
+          ],
+          "end": [
+            100,
+            2800
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbLine",
+        "handle": "2F9",
+        "layer": "F025_LOCKED",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "transparency": "ByLayer",
+        "details": {
+          "start": [
+            100,
+            2800
+          ],
+          "end": [
+            100,
+            2900
+          ]
+        }
+      }
+    ],
+    "offLayer": [
+      {
+        "objectName": "AcDbLine",
+        "handle": "2FA",
+        "layer": "F025_OFF",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "transparency": "ByLayer",
+        "details": {
+          "start": [
+            200,
+            2800
+          ],
+          "end": [
+            290,
+            2800
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbLine",
+        "handle": "2FB",
+        "layer": "F025_OFF",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "transparency": "ByLayer",
+        "details": {
+          "start": [
+            300,
+            2810
+          ],
+          "end": [
+            300,
+            2900
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbLine",
+        "handle": "2FC",
+        "layer": "F025_OFF",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "transparency": "ByLayer",
+        "details": {
+          "start": [
+            290,
+            2800
+          ],
+          "end": [
+            300,
+            2810
+          ]
+        }
+      }
+    ],
+    "frozenLayer": [
+      {
+        "objectName": "AcDbLine",
+        "handle": "2FD",
+        "layer": "F025_FROZEN",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "transparency": "ByLayer",
+        "details": {
+          "start": [
+            400,
+            2800
+          ],
+          "end": [
+            490,
+            2800
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbLine",
+        "handle": "2FE",
+        "layer": "F025_FROZEN",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "transparency": "ByLayer",
+        "details": {
+          "start": [
+            500,
+            2810
+          ],
+          "end": [
+            500,
+            2900
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbLine",
+        "handle": "2FF",
+        "layer": "F025_FROZEN",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "transparency": "ByLayer",
+        "details": {
+          "start": [
+            490,
+            2800
+          ],
+          "end": [
+            500,
+            2810
+          ]
+        }
+      }
+    ]
+  },
+  "checks": {
+    "distanceExact": true,
+    "angleNoTrimExact": true,
+    "polylineExact": true,
+    "polylineOverlapExact": true,
+    "polylineOverlapNoTrimExact": true,
+    "polylineShortNoTrimExact": true,
+    "polylineZeroIdentity": true,
+    "zeroSharpExact": true,
+    "parallelUnchanged": true,
+    "rayXlineTrimLeavesChamferOnly": true,
+    "polylineNoTrim": true,
+    "polylineShortSkipped": true,
+    "adjacentPolyline": true,
+    "separatedPolyline": true,
+    "openStartEndClosed": true,
+    "closedSeamBothOrders": true,
+    "samePolylineZeroIdentity": true,
+    "selectedPolylineDistanceTooLargeUnchanged": true,
+    "physicalShiftSharpCorner": true,
+    "multiple": true,
+    "commandUndo": true,
+    "globalUndoRedo": true,
+    "sameSourceLayerOutput": true,
+    "crossLayerCurrentOutput": true,
+    "secondSelectionProperties": true,
+    "lockedLayerRejected": true,
+    "offLayerExplicitHandleEdited": true,
+    "frozenLayerExplicitHandleEdited": true
+  },
+  "dxfOutputSha256": "fe6260007dc69dd1cb56ca8049b7f7a489bd996adc674c4b5e6047b612add672",
+  "cmdNamesAfter": "",
+  "userDocument": {
+    "isolatedOwnedProcess": true,
+    "blankRestored": true
+  },
+  "status": "PASS",
+  "automationProcessTerminated": true,
+  "processSetRestored": true,
+  "preExistingProcesses": [
+    {
+      "processId": 11276,
+      "executablePath": "C:\\Program Files\\Autodesk\\AutoCAD 2024\\acad.exe",
+      "startTimeUtc": "2026-08-29T02:07:35.9810356Z"
+    },
+    {
+      "processId": 28304,
+      "executablePath": "C:\\Program Files\\Autodesk\\AutoCAD 2024\\acad.exe",
+      "startTimeUtc": "2026-08-30T04:04:44.6769957Z"
+    }
+  ],
+  "preExistingProcessIds": [
+    11276,
+    28304
+  ],
+  "dxfReadback": {
+    "sha256": "fe6260007dc69dd1cb56ca8049b7f7a489bd996adc674c4b5e6047b612add672",
+    "layerTypes": {
+      "F025_DISTANCE": {
+        "LINE": 3
+      },
+      "F025_ANGLE": {
+        "LINE": 3
+      },
+      "F025_POLY": {
+        "LWPOLYLINE": 1
+      },
+      "F025_POLY_NOTRIM": {
+        "LWPOLYLINE": 1,
+        "LINE": 4
+      },
+      "F025_POLY_SHORT": {
+        "LWPOLYLINE": 1
+      },
+      "F025_POLY_OVERLAP": {
+        "LWPOLYLINE": 1
+      },
+      "F025_POLY_OVERLAP_NOTRIM": {
+        "LWPOLYLINE": 1,
+        "LINE": 4
+      },
+      "F025_POLY_SHORT_NOTRIM": {
+        "LWPOLYLINE": 1,
+        "LINE": 4
+      },
+      "F025_POLY_ZERO": {
+        "LWPOLYLINE": 1
+      },
+      "F025_ZERO": {
+        "LINE": 2
+      },
+      "F025_PARALLEL": {
+        "LINE": 2
+      },
+      "F025_RAY": {
+        "LINE": 2
+      },
+      "F025_RAY_FORWARD": {
+        "LINE": 1
+      },
+      "F025_XLINE_LINE": {
+        "LINE": 2
+      },
+      "F025_RAY_NOTRIM": {
+        "LINE": 1
+      },
+      "F025_ADJACENT": {
+        "LWPOLYLINE": 1
+      },
+      "F025_SEPARATED": {
+        "LWPOLYLINE": 1
+      },
+      "F025_OPEN_CLOSE": {
+        "LWPOLYLINE": 1
+      },
+      "F025_SEAM_FORWARD": {
+        "LWPOLYLINE": 1
+      },
+      "F025_SEAM_REVERSE": {
+        "LWPOLYLINE": 1
+      },
+      "F025_PAIR_ZERO": {
+        "LWPOLYLINE": 1
+      },
+      "F025_PAIR_ZERO_SEAM": {
+        "LWPOLYLINE": 1
+      },
+      "F025_PAIR_TOO_SHORT": {
+        "LWPOLYLINE": 1
+      },
+      "F025_SHIFT": {
+        "LINE": 2
+      },
+      "F025_MULTIPLE": {
+        "LINE": 6
+      },
+      "F025_COMMAND_UNDO": {
+        "LINE": 5
+      },
+      "F025_GLOBAL_UNDO_REDO": {
+        "LINE": 6
+      },
+      "F025_CURRENT_SRC": {
+        "LINE": 3
+      },
+      "F025_CROSS_A": {
+        "LINE": 1
+      },
+      "F025_CROSS_B": {
+        "LINE": 1
+      },
+      "F025_CROSS_OUT": {
+        "LINE": 1
+      },
+      "F025_SAME_PROP": {
+        "LINE": 3
+      },
+      "F025_CROSS_REVERSE_A": {
+        "LINE": 1
+      },
+      "F025_CROSS_REVERSE_B": {
+        "LINE": 1
+      },
+      "F025_CROSS_REVERSE_OUT": {
+        "LINE": 1
+      },
+      "F025_LOCKED": {
+        "LINE": 2
+      },
+      "F025_OFF": {
+        "LINE": 3
+      },
+      "F025_FROZEN": {
+        "LINE": 3
+      }
+    },
+    "selectedLayerEntities": {
+      "F025_DISTANCE": [
+        {
+          "handle": "2A6",
+          "type": "LINE",
+          "layer": "F025_DISTANCE",
+          "vertices": [
+            {
+              "x": -100,
+              "y": 0
+            },
+            {
+              "x": -10,
+              "y": 0
+            }
+          ],
+          "colorIndex": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "2A7",
+          "type": "LINE",
+          "layer": "F025_DISTANCE",
+          "vertices": [
+            {
+              "x": 0,
+              "y": 20
+            },
+            {
+              "x": 0,
+              "y": 100
+            }
+          ],
+          "colorIndex": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "2A8",
+          "type": "LINE",
+          "layer": "F025_DISTANCE",
+          "vertices": [
+            {
+              "x": -10,
+              "y": 0
+            },
+            {
+              "x": 0,
+              "y": 20
+            }
+          ],
+          "colorIndex": 1,
+          "lineweight": 50
+        }
+      ],
+      "F025_ANGLE": [
+        {
+          "handle": "2AA",
+          "type": "LINE",
+          "layer": "F025_ANGLE",
+          "vertices": [
+            {
+              "x": 200,
+              "y": 0
+            },
+            {
+              "x": 300,
+              "y": 0
+            }
+          ],
+          "colorIndex": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "2AB",
+          "type": "LINE",
+          "layer": "F025_ANGLE",
+          "vertices": [
+            {
+              "x": 300,
+              "y": 0
+            },
+            {
+              "x": 300,
+              "y": 100
+            }
+          ],
+          "colorIndex": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "2AC",
+          "type": "LINE",
+          "layer": "F025_ANGLE",
+          "vertices": [
+            {
+              "x": 290,
+              "y": 0
+            },
+            {
+              "x": 300,
+              "y": 10
+            }
+          ],
+          "colorIndex": 1,
+          "lineweight": 50
+        }
+      ],
+      "F025_POLY": [
+        {
+          "handle": "2AD",
+          "type": "LWPOLYLINE",
+          "layer": "F025_POLY",
+          "vertices": [
+            {
+              "x": 20,
+              "y": 200
+            },
+            {
+              "x": 90,
+              "y": 200
+            },
+            {
+              "x": 100,
+              "y": 220
+            },
+            {
+              "x": 100,
+              "y": 290
+            },
+            {
+              "x": 80,
+              "y": 300
+            },
+            {
+              "x": 10,
+              "y": 300
+            },
+            {
+              "x": 0,
+              "y": 280
+            },
+            {
+              "x": 0,
+              "y": 210
+            }
+          ],
+          "colorIndex": 1,
+          "lineweight": 50
+        }
+      ],
+      "F025_POLY_NOTRIM": [
+        {
+          "handle": "2AE",
+          "type": "LWPOLYLINE",
+          "layer": "F025_POLY_NOTRIM",
+          "vertices": [
+            {
+              "x": 300,
+              "y": 200
+            },
+            {
+              "x": 400,
+              "y": 200
+            },
+            {
+              "x": 400,
+              "y": 300
+            },
+            {
+              "x": 300,
+              "y": 300
+            }
+          ],
+          "colorIndex": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "2AF",
+          "type": "LINE",
+          "layer": "F025_POLY_NOTRIM",
+          "vertices": [
+            {
+              "x": 300,
+              "y": 210
+            },
+            {
+              "x": 320,
+              "y": 200
+            }
+          ],
+          "colorIndex": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "2B0",
+          "type": "LINE",
+          "layer": "F025_POLY_NOTRIM",
+          "vertices": [
+            {
+              "x": 310,
+              "y": 300
+            },
+            {
+              "x": 300,
+              "y": 280
+            }
+          ],
+          "colorIndex": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "2B1",
+          "type": "LINE",
+          "layer": "F025_POLY_NOTRIM",
+          "vertices": [
+            {
+              "x": 400,
+              "y": 290
+            },
+            {
+              "x": 380,
+              "y": 300
+            }
+          ],
+          "colorIndex": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "2B2",
+          "type": "LINE",
+          "layer": "F025_POLY_NOTRIM",
+          "vertices": [
+            {
+              "x": 390,
+              "y": 200
+            },
+            {
+              "x": 400,
+              "y": 220
+            }
+          ],
+          "colorIndex": 1,
+          "lineweight": 50
+        }
+      ],
+      "F025_POLY_SHORT": [
+        {
+          "handle": "2B3",
+          "type": "LWPOLYLINE",
+          "layer": "F025_POLY_SHORT",
+          "vertices": [
+            {
+              "x": 500,
+              "y": 200
+            },
+            {
+              "x": 505,
+              "y": 200
+            },
+            {
+              "x": 505,
+              "y": 205
+            },
+            {
+              "x": 500,
+              "y": 205
+            }
+          ],
+          "colorIndex": 1,
+          "lineweight": 50
+        }
+      ],
+      "F025_POLY_OVERLAP": [
+        {
+          "handle": "2B4",
+          "type": "LWPOLYLINE",
+          "layer": "F025_POLY_OVERLAP",
+          "vertices": [
+            {
+              "x": 600,
+              "y": 200
+            },
+            {
+              "x": 605,
+              "y": 200
+            },
+            {
+              "x": 625,
+              "y": 220
+            },
+            {
+              "x": 625,
+              "y": 225
+            },
+            {
+              "x": 620,
+              "y": 225
+            },
+            {
+              "x": 600,
+              "y": 205
+            }
+          ],
+          "colorIndex": 1,
+          "lineweight": 50
+        }
+      ],
+      "F025_POLY_OVERLAP_NOTRIM": [
+        {
+          "handle": "2B5",
+          "type": "LWPOLYLINE",
+          "layer": "F025_POLY_OVERLAP_NOTRIM",
+          "vertices": [
+            {
+              "x": 700,
+              "y": 200
+            },
+            {
+              "x": 725,
+              "y": 200
+            },
+            {
+              "x": 725,
+              "y": 225
+            },
+            {
+              "x": 700,
+              "y": 225
+            }
+          ],
+          "colorIndex": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "2B6",
+          "type": "LINE",
+          "layer": "F025_POLY_OVERLAP_NOTRIM",
+          "vertices": [
+            {
+              "x": 700,
+              "y": 220
+            },
+            {
+              "x": 720,
+              "y": 200
+            }
+          ],
+          "colorIndex": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "2B7",
+          "type": "LINE",
+          "layer": "F025_POLY_OVERLAP_NOTRIM",
+          "vertices": [
+            {
+              "x": 720,
+              "y": 225
+            },
+            {
+              "x": 700,
+              "y": 205
+            }
+          ],
+          "colorIndex": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "2B8",
+          "type": "LINE",
+          "layer": "F025_POLY_OVERLAP_NOTRIM",
+          "vertices": [
+            {
+              "x": 725,
+              "y": 205
+            },
+            {
+              "x": 705,
+              "y": 225
+            }
+          ],
+          "colorIndex": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "2B9",
+          "type": "LINE",
+          "layer": "F025_POLY_OVERLAP_NOTRIM",
+          "vertices": [
+            {
+              "x": 705,
+              "y": 200
+            },
+            {
+              "x": 725,
+              "y": 220
+            }
+          ],
+          "colorIndex": 1,
+          "lineweight": 50
+        }
+      ],
+      "F025_POLY_SHORT_NOTRIM": [
+        {
+          "handle": "2BA",
+          "type": "LWPOLYLINE",
+          "layer": "F025_POLY_SHORT_NOTRIM",
+          "vertices": [
+            {
+              "x": 800,
+              "y": 200
+            },
+            {
+              "x": 805,
+              "y": 200
+            },
+            {
+              "x": 805,
+              "y": 205
+            },
+            {
+              "x": 800,
+              "y": 205
+            }
+          ],
+          "colorIndex": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "2BB",
+          "type": "LINE",
+          "layer": "F025_POLY_SHORT_NOTRIM",
+          "vertices": [
+            {
+              "x": 800,
+              "y": 210
+            },
+            {
+              "x": 810,
+              "y": 200
+            }
+          ],
+          "colorIndex": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "2BC",
+          "type": "LINE",
+          "layer": "F025_POLY_SHORT_NOTRIM",
+          "vertices": [
+            {
+              "x": 810,
+              "y": 205
+            },
+            {
+              "x": 800,
+              "y": 195
+            }
+          ],
+          "colorIndex": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "2BD",
+          "type": "LINE",
+          "layer": "F025_POLY_SHORT_NOTRIM",
+          "vertices": [
+            {
+              "x": 805,
+              "y": 195
+            },
+            {
+              "x": 795,
+              "y": 205
+            }
+          ],
+          "colorIndex": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "2BE",
+          "type": "LINE",
+          "layer": "F025_POLY_SHORT_NOTRIM",
+          "vertices": [
+            {
+              "x": 795,
+              "y": 200
+            },
+            {
+              "x": 805,
+              "y": 210
+            }
+          ],
+          "colorIndex": 1,
+          "lineweight": 50
+        }
+      ],
+      "F025_POLY_ZERO": [
+        {
+          "handle": "2BF",
+          "type": "LWPOLYLINE",
+          "layer": "F025_POLY_ZERO",
+          "vertices": [
+            {
+              "x": 900,
+              "y": 200
+            },
+            {
+              "x": 1000,
+              "y": 200
+            },
+            {
+              "x": 1000,
+              "y": 300
+            },
+            {
+              "x": 900,
+              "y": 300
+            }
+          ],
+          "colorIndex": 1,
+          "lineweight": 50
+        }
+      ],
+      "F025_ZERO": [
+        {
+          "handle": "2C0",
+          "type": "LINE",
+          "layer": "F025_ZERO",
+          "vertices": [
+            {
+              "x": -100,
+              "y": 400
+            },
+            {
+              "x": 0,
+              "y": 400
+            }
+          ],
+          "colorIndex": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "2C1",
+          "type": "LINE",
+          "layer": "F025_ZERO",
+          "vertices": [
+            {
+              "x": 0,
+              "y": 400
+            },
+            {
+              "x": 0,
+              "y": 500
+            }
+          ],
+          "colorIndex": 1,
+          "lineweight": 50
+        }
+      ],
+      "F025_PARALLEL": [
+        {
+          "handle": "2C2",
+          "type": "LINE",
+          "layer": "F025_PARALLEL",
+          "vertices": [
+            {
+              "x": 200,
+              "y": 400
+            },
+            {
+              "x": 300,
+              "y": 400
+            }
+          ],
+          "colorIndex": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "2C3",
+          "type": "LINE",
+          "layer": "F025_PARALLEL",
+          "vertices": [
+            {
+              "x": 200,
+              "y": 420
+            },
+            {
+              "x": 300,
+              "y": 420
+            }
+          ],
+          "colorIndex": 1,
+          "lineweight": 50
+        }
+      ],
+      "F025_RAY": [
+        {
+          "handle": "2C4",
+          "type": "LINE",
+          "layer": "F025_RAY",
+          "vertices": [
+            {
+              "x": -100,
+              "y": 600
+            },
+            {
+              "x": -10,
+              "y": 600
+            }
+          ],
+          "colorIndex": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "2C6",
+          "type": "LINE",
+          "layer": "F025_RAY",
+          "vertices": [
+            {
+              "x": -10,
+              "y": 600
+            },
+            {
+              "x": 0,
+              "y": 620
+            }
+          ],
+          "colorIndex": 1
+        }
+      ],
+      "F025_RAY_FORWARD": [
+        {
+          "handle": "2C9",
+          "type": "LINE",
+          "layer": "F025_RAY_FORWARD",
+          "vertices": [
+            {
+              "x": 110,
+              "y": 800
+            },
+            {
+              "x": 100,
+              "y": 820
+            }
+          ],
+          "colorIndex": 1
+        }
+      ],
+      "F025_XLINE_LINE": [
+        {
+          "handle": "2CB",
+          "type": "LINE",
+          "layer": "F025_XLINE_LINE",
+          "vertices": [
+            {
+              "x": 0,
+              "y": 1020
+            },
+            {
+              "x": 0,
+              "y": 1100
+            }
+          ],
+          "colorIndex": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "2CC",
+          "type": "LINE",
+          "layer": "F025_XLINE_LINE",
+          "vertices": [
+            {
+              "x": -10,
+              "y": 1000
+            },
+            {
+              "x": 0,
+              "y": 1020
+            }
+          ],
+          "colorIndex": 1
+        }
+      ],
+      "F025_RAY_NOTRIM": [
+        {
+          "handle": "2CF",
+          "type": "LINE",
+          "layer": "F025_RAY_NOTRIM",
+          "vertices": [
+            {
+              "x": -10,
+              "y": 1200
+            },
+            {
+              "x": 0,
+              "y": 1220
+            }
+          ],
+          "colorIndex": 1
+        }
+      ],
+      "F025_ADJACENT": [
+        {
+          "handle": "2D0",
+          "type": "LWPOLYLINE",
+          "layer": "F025_ADJACENT",
+          "vertices": [
+            {
+              "x": 0,
+              "y": 1400
+            },
+            {
+              "x": 100,
+              "y": 1400
+            },
+            {
+              "x": 100,
+              "y": 1490
+            },
+            {
+              "x": 80,
+              "y": 1500
+            },
+            {
+              "x": 0,
+              "y": 1500
+            }
+          ],
+          "colorIndex": 1,
+          "lineweight": 50
+        }
+      ],
+      "F025_SEPARATED": [
+        {
+          "handle": "2D1",
+          "type": "LWPOLYLINE",
+          "layer": "F025_SEPARATED",
+          "vertices": [
+            {
+              "x": 200,
+              "y": 1400
+            },
+            {
+              "x": 290,
+              "y": 1400
+            },
+            {
+              "x": 300,
+              "y": 1420
+            },
+            {
+              "x": 300,
+              "y": 1500
+            }
+          ],
+          "colorIndex": 1,
+          "lineweight": 50
+        }
+      ],
+      "F025_OPEN_CLOSE": [
+        {
+          "handle": "2D2",
+          "type": "LWPOLYLINE",
+          "layer": "F025_OPEN_CLOSE",
+          "vertices": [
+            {
+              "x": 400,
+              "y": 1490
+            },
+            {
+              "x": 400,
+              "y": 1400
+            },
+            {
+              "x": 500,
+              "y": 1400
+            },
+            {
+              "x": 407.0710678118654,
+              "y": 1492.928932188134
+            }
+          ],
+          "colorIndex": 1,
+          "lineweight": 50
+        }
+      ],
+      "F025_SEAM_FORWARD": [
+        {
+          "handle": "2D3",
+          "type": "LWPOLYLINE",
+          "layer": "F025_SEAM_FORWARD",
+          "vertices": [
+            {
+              "x": 620,
+              "y": 1400
+            },
+            {
+              "x": 700,
+              "y": 1400
+            },
+            {
+              "x": 700,
+              "y": 1500
+            },
+            {
+              "x": 600,
+              "y": 1500
+            },
+            {
+              "x": 600,
+              "y": 1410
+            }
+          ],
+          "colorIndex": 1,
+          "lineweight": 50
+        }
+      ],
+      "F025_SEAM_REVERSE": [
+        {
+          "handle": "2D4",
+          "type": "LWPOLYLINE",
+          "layer": "F025_SEAM_REVERSE",
+          "vertices": [
+            {
+              "x": 810,
+              "y": 1400
+            },
+            {
+              "x": 900,
+              "y": 1400
+            },
+            {
+              "x": 900,
+              "y": 1500
+            },
+            {
+              "x": 800,
+              "y": 1500
+            },
+            {
+              "x": 800,
+              "y": 1420
+            }
+          ],
+          "colorIndex": 1,
+          "lineweight": 50
+        }
+      ],
+      "F025_PAIR_ZERO": [
+        {
+          "handle": "2D5",
+          "type": "LWPOLYLINE",
+          "layer": "F025_PAIR_ZERO",
+          "vertices": [
+            {
+              "x": 0,
+              "y": 3400
+            },
+            {
+              "x": 100,
+              "y": 3400
+            },
+            {
+              "x": 100,
+              "y": 3500
+            },
+            {
+              "x": 0,
+              "y": 3500
+            }
+          ],
+          "colorIndex": 1,
+          "lineweight": 50
+        }
+      ],
+      "F025_PAIR_ZERO_SEAM": [
+        {
+          "handle": "2D6",
+          "type": "LWPOLYLINE",
+          "layer": "F025_PAIR_ZERO_SEAM",
+          "vertices": [
+            {
+              "x": 200,
+              "y": 3400
+            },
+            {
+              "x": 300,
+              "y": 3400
+            },
+            {
+              "x": 300,
+              "y": 3500
+            },
+            {
+              "x": 200,
+              "y": 3500
+            }
+          ],
+          "colorIndex": 1,
+          "lineweight": 50
+        }
+      ],
+      "F025_PAIR_TOO_SHORT": [
+        {
+          "handle": "2D7",
+          "type": "LWPOLYLINE",
+          "layer": "F025_PAIR_TOO_SHORT",
+          "vertices": [
+            {
+              "x": 400,
+              "y": 3400
+            },
+            {
+              "x": 405,
+              "y": 3400
+            },
+            {
+              "x": 405,
+              "y": 3405
+            },
+            {
+              "x": 400,
+              "y": 3405
+            }
+          ],
+          "colorIndex": 1,
+          "lineweight": 50
+        }
+      ],
+      "F025_SHIFT": [
+        {
+          "handle": "2D8",
+          "type": "LINE",
+          "layer": "F025_SHIFT",
+          "vertices": [
+            {
+              "x": 0,
+              "y": 1600
+            },
+            {
+              "x": 100,
+              "y": 1600
+            }
+          ],
+          "colorIndex": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "2D9",
+          "type": "LINE",
+          "layer": "F025_SHIFT",
+          "vertices": [
+            {
+              "x": 100,
+              "y": 1600
+            },
+            {
+              "x": 100,
+              "y": 1700
+            }
+          ],
+          "colorIndex": 1,
+          "lineweight": 50
+        }
+      ],
+      "F025_MULTIPLE": [
+        {
+          "handle": "2DA",
+          "type": "LINE",
+          "layer": "F025_MULTIPLE",
+          "vertices": [
+            {
+              "x": 0,
+              "y": 1800
+            },
+            {
+              "x": 90,
+              "y": 1800
+            }
+          ],
+          "colorIndex": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "2DB",
+          "type": "LINE",
+          "layer": "F025_MULTIPLE",
+          "vertices": [
+            {
+              "x": 100,
+              "y": 1820
+            },
+            {
+              "x": 100,
+              "y": 1900
+            }
+          ],
+          "colorIndex": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "2DC",
+          "type": "LINE",
+          "layer": "F025_MULTIPLE",
+          "vertices": [
+            {
+              "x": 200,
+              "y": 1800
+            },
+            {
+              "x": 290,
+              "y": 1800
+            }
+          ],
+          "colorIndex": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "2DD",
+          "type": "LINE",
+          "layer": "F025_MULTIPLE",
+          "vertices": [
+            {
+              "x": 300,
+              "y": 1820
+            },
+            {
+              "x": 300,
+              "y": 1900
+            }
+          ],
+          "colorIndex": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "2DE",
+          "type": "LINE",
+          "layer": "F025_MULTIPLE",
+          "vertices": [
+            {
+              "x": 90,
+              "y": 1800
+            },
+            {
+              "x": 100,
+              "y": 1820
+            }
+          ],
+          "colorIndex": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "2DF",
+          "type": "LINE",
+          "layer": "F025_MULTIPLE",
+          "vertices": [
+            {
+              "x": 290,
+              "y": 1800
+            },
+            {
+              "x": 300,
+              "y": 1820
+            }
+          ],
+          "colorIndex": 1,
+          "lineweight": 50
+        }
+      ],
+      "F025_COMMAND_UNDO": [
+        {
+          "handle": "2E0",
+          "type": "LINE",
+          "layer": "F025_COMMAND_UNDO",
+          "vertices": [
+            {
+              "x": 0,
+              "y": 2000
+            },
+            {
+              "x": 90,
+              "y": 2000
+            }
+          ],
+          "colorIndex": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "2E1",
+          "type": "LINE",
+          "layer": "F025_COMMAND_UNDO",
+          "vertices": [
+            {
+              "x": 100,
+              "y": 2020
+            },
+            {
+              "x": 100,
+              "y": 2100
+            }
+          ],
+          "colorIndex": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "2E2",
+          "type": "LINE",
+          "layer": "F025_COMMAND_UNDO",
+          "vertices": [
+            {
+              "x": 200,
+              "y": 2000
+            },
+            {
+              "x": 300,
+              "y": 2000
+            }
+          ],
+          "colorIndex": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "2E3",
+          "type": "LINE",
+          "layer": "F025_COMMAND_UNDO",
+          "vertices": [
+            {
+              "x": 300,
+              "y": 2000
+            },
+            {
+              "x": 300,
+              "y": 2100
+            }
+          ],
+          "colorIndex": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "2E4",
+          "type": "LINE",
+          "layer": "F025_COMMAND_UNDO",
+          "vertices": [
+            {
+              "x": 90,
+              "y": 2000
+            },
+            {
+              "x": 100,
+              "y": 2020
+            }
+          ],
+          "colorIndex": 1,
+          "lineweight": 50
+        }
+      ],
+      "F025_GLOBAL_UNDO_REDO": [
+        {
+          "handle": "2E6",
+          "type": "LINE",
+          "layer": "F025_GLOBAL_UNDO_REDO",
+          "vertices": [
+            {
+              "x": 0,
+              "y": 2200
+            },
+            {
+              "x": 90,
+              "y": 2200
+            }
+          ],
+          "colorIndex": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "2E7",
+          "type": "LINE",
+          "layer": "F025_GLOBAL_UNDO_REDO",
+          "vertices": [
+            {
+              "x": 100,
+              "y": 2220
+            },
+            {
+              "x": 100,
+              "y": 2300
+            }
+          ],
+          "colorIndex": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "2E8",
+          "type": "LINE",
+          "layer": "F025_GLOBAL_UNDO_REDO",
+          "vertices": [
+            {
+              "x": 200,
+              "y": 2200
+            },
+            {
+              "x": 290,
+              "y": 2200
+            }
+          ],
+          "colorIndex": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "2E9",
+          "type": "LINE",
+          "layer": "F025_GLOBAL_UNDO_REDO",
+          "vertices": [
+            {
+              "x": 300,
+              "y": 2220
+            },
+            {
+              "x": 300,
+              "y": 2300
+            }
+          ],
+          "colorIndex": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "2EA",
+          "type": "LINE",
+          "layer": "F025_GLOBAL_UNDO_REDO",
+          "vertices": [
+            {
+              "x": 90,
+              "y": 2200
+            },
+            {
+              "x": 100,
+              "y": 2220
+            }
+          ],
+          "colorIndex": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "2EB",
+          "type": "LINE",
+          "layer": "F025_GLOBAL_UNDO_REDO",
+          "vertices": [
+            {
+              "x": 290,
+              "y": 2200
+            },
+            {
+              "x": 300,
+              "y": 2220
+            }
+          ],
+          "colorIndex": 1,
+          "lineweight": 50
+        }
+      ],
+      "F025_CURRENT_SRC": [
+        {
+          "handle": "2EC",
+          "type": "LINE",
+          "layer": "F025_CURRENT_SRC",
+          "vertices": [
+            {
+              "x": 0,
+              "y": 2400
+            },
+            {
+              "x": 100,
+              "y": 2400
+            }
+          ],
+          "colorIndex": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "2ED",
+          "type": "LINE",
+          "layer": "F025_CURRENT_SRC",
+          "vertices": [
+            {
+              "x": 100,
+              "y": 2400
+            },
+            {
+              "x": 100,
+              "y": 2500
+            }
+          ],
+          "colorIndex": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "2EE",
+          "type": "LINE",
+          "layer": "F025_CURRENT_SRC",
+          "vertices": [
+            {
+              "x": 90,
+              "y": 2400
+            },
+            {
+              "x": 100,
+              "y": 2420
+            }
+          ],
+          "colorIndex": 1,
+          "lineweight": 50
+        }
+      ],
+      "F025_CURRENT_OUT": [],
+      "F025_CROSS_A": [
+        {
+          "handle": "2EF",
+          "type": "LINE",
+          "layer": "F025_CROSS_A",
+          "vertices": [
+            {
+              "x": 0,
+              "y": 2600
+            },
+            {
+              "x": 100,
+              "y": 2600
+            }
+          ],
+          "colorIndex": 2,
+          "lineType": "Continuous",
+          "lineweight": 50
+        }
+      ],
+      "F025_CROSS_B": [
+        {
+          "handle": "2F0",
+          "type": "LINE",
+          "layer": "F025_CROSS_B",
+          "vertices": [
+            {
+              "x": 100,
+              "y": 2600
+            },
+            {
+              "x": 100,
+              "y": 2700
+            }
+          ],
+          "colorIndex": 3,
+          "lineweight": 35
+        }
+      ],
+      "F025_CROSS_OUT": [
+        {
+          "handle": "2F1",
+          "type": "LINE",
+          "layer": "F025_CROSS_OUT",
+          "vertices": [
+            {
+              "x": 90,
+              "y": 2600
+            },
+            {
+              "x": 100,
+              "y": 2620
+            }
+          ],
+          "lineweight": 35
+        }
+      ],
+      "F025_SAME_PROP": [
+        {
+          "handle": "2F2",
+          "type": "LINE",
+          "layer": "F025_SAME_PROP",
+          "vertices": [
+            {
+              "x": 0,
+              "y": 3000
+            },
+            {
+              "x": 100,
+              "y": 3000
+            }
+          ],
+          "colorIndex": 2,
+          "lineType": "Continuous",
+          "lineweight": 50
+        },
+        {
+          "handle": "2F3",
+          "type": "LINE",
+          "layer": "F025_SAME_PROP",
+          "vertices": [
+            {
+              "x": 100,
+              "y": 3000
+            },
+            {
+              "x": 100,
+              "y": 3100
+            }
+          ],
+          "colorIndex": 3,
+          "lineweight": 35
+        },
+        {
+          "handle": "2F4",
+          "type": "LINE",
+          "layer": "F025_SAME_PROP",
+          "vertices": [
+            {
+              "x": 90,
+              "y": 3000
+            },
+            {
+              "x": 100,
+              "y": 3020
+            }
+          ],
+          "lineweight": 35
+        }
+      ],
+      "F025_CROSS_REVERSE_A": [
+        {
+          "handle": "2F5",
+          "type": "LINE",
+          "layer": "F025_CROSS_REVERSE_A",
+          "vertices": [
+            {
+              "x": 0,
+              "y": 3200
+            },
+            {
+              "x": 100,
+              "y": 3200
+            }
+          ],
+          "colorIndex": 4,
+          "lineweight": 40
+        }
+      ],
+      "F025_CROSS_REVERSE_B": [
+        {
+          "handle": "2F6",
+          "type": "LINE",
+          "layer": "F025_CROSS_REVERSE_B",
+          "vertices": [
+            {
+              "x": 100,
+              "y": 3200
+            },
+            {
+              "x": 100,
+              "y": 3300
+            }
+          ],
+          "colorIndex": 5,
+          "lineType": "Continuous",
+          "lineweight": 25
+        }
+      ],
+      "F025_CROSS_REVERSE_OUT": [
+        {
+          "handle": "2F7",
+          "type": "LINE",
+          "layer": "F025_CROSS_REVERSE_OUT",
+          "vertices": [
+            {
+              "x": 90,
+              "y": 3200
+            },
+            {
+              "x": 100,
+              "y": 3220
+            }
+          ],
+          "lineweight": 25
+        }
+      ],
+      "F025_LOCKED": [
+        {
+          "handle": "2F8",
+          "type": "LINE",
+          "layer": "F025_LOCKED",
+          "vertices": [
+            {
+              "x": 0,
+              "y": 2800
+            },
+            {
+              "x": 100,
+              "y": 2800
+            }
+          ],
+          "colorIndex": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "2F9",
+          "type": "LINE",
+          "layer": "F025_LOCKED",
+          "vertices": [
+            {
+              "x": 100,
+              "y": 2800
+            },
+            {
+              "x": 100,
+              "y": 2900
+            }
+          ],
+          "colorIndex": 1,
+          "lineweight": 50
+        }
+      ],
+      "F025_OFF": [
+        {
+          "handle": "2FA",
+          "type": "LINE",
+          "layer": "F025_OFF",
+          "vertices": [
+            {
+              "x": 200,
+              "y": 2800
+            },
+            {
+              "x": 290,
+              "y": 2800
+            }
+          ],
+          "colorIndex": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "2FB",
+          "type": "LINE",
+          "layer": "F025_OFF",
+          "vertices": [
+            {
+              "x": 300,
+              "y": 2810
+            },
+            {
+              "x": 300,
+              "y": 2900
+            }
+          ],
+          "colorIndex": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "2FC",
+          "type": "LINE",
+          "layer": "F025_OFF",
+          "vertices": [
+            {
+              "x": 290,
+              "y": 2800
+            },
+            {
+              "x": 300,
+              "y": 2810
+            }
+          ],
+          "colorIndex": 1,
+          "lineweight": 50
+        }
+      ],
+      "F025_FROZEN": [
+        {
+          "handle": "2FD",
+          "type": "LINE",
+          "layer": "F025_FROZEN",
+          "vertices": [
+            {
+              "x": 400,
+              "y": 2800
+            },
+            {
+              "x": 490,
+              "y": 2800
+            }
+          ],
+          "colorIndex": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "2FE",
+          "type": "LINE",
+          "layer": "F025_FROZEN",
+          "vertices": [
+            {
+              "x": 500,
+              "y": 2810
+            },
+            {
+              "x": 500,
+              "y": 2900
+            }
+          ],
+          "colorIndex": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "2FF",
+          "type": "LINE",
+          "layer": "F025_FROZEN",
+          "vertices": [
+            {
+              "x": 490,
+              "y": 2800
+            },
+            {
+              "x": 500,
+              "y": 2810
+            }
+          ],
+          "colorIndex": 1,
+          "lineweight": 50
+        }
+      ]
+    },
+    "rawLayerRecords": {
+      "F025_DISTANCE": [
+        {
+          "handle": "2A6",
+          "type": "LINE",
+          "groups": {
+            "5": "2A6",
+            "8": "F025_DISTANCE",
+            "10": "-100.0",
+            "11": "-10.0",
+            "20": "0.0",
+            "21": "0.0",
+            "30": "0.0",
+            "31": "0.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbLine"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        },
+        {
+          "handle": "2A7",
+          "type": "LINE",
+          "groups": {
+            "5": "2A7",
+            "8": "F025_DISTANCE",
+            "10": "0.0",
+            "11": "0.0",
+            "20": "20.0",
+            "21": "100.0",
+            "30": "0.0",
+            "31": "0.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbLine"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        },
+        {
+          "handle": "2A8",
+          "type": "LINE",
+          "groups": {
+            "5": "2A8",
+            "8": "F025_DISTANCE",
+            "10": "-10.0",
+            "11": "0.0",
+            "20": "0.0",
+            "21": "20.0",
+            "30": "0.0",
+            "31": "0.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbLine"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        }
+      ],
+      "F025_ANGLE": [
+        {
+          "handle": "2AA",
+          "type": "LINE",
+          "groups": {
+            "5": "2AA",
+            "8": "F025_ANGLE",
+            "10": "200.0",
+            "11": "300.0",
+            "20": "0.0",
+            "21": "0.0",
+            "30": "0.0",
+            "31": "0.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbLine"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        },
+        {
+          "handle": "2AB",
+          "type": "LINE",
+          "groups": {
+            "5": "2AB",
+            "8": "F025_ANGLE",
+            "10": "300.0",
+            "11": "300.0",
+            "20": "0.0",
+            "21": "100.0",
+            "30": "0.0",
+            "31": "0.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbLine"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        },
+        {
+          "handle": "2AC",
+          "type": "LINE",
+          "groups": {
+            "5": "2AC",
+            "8": "F025_ANGLE",
+            "10": "290.0",
+            "11": "300.0",
+            "20": "0.0",
+            "21": "10.0",
+            "30": "0.0",
+            "31": "0.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbLine"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        }
+      ],
+      "F025_POLY": [
+        {
+          "handle": "2AD",
+          "type": "LWPOLYLINE",
+          "groups": {
+            "5": "2AD",
+            "8": "F025_POLY",
+            "10": [
+              "20.0",
+              "90.0",
+              "100.0",
+              "100.0",
+              "80.0",
+              "10.0",
+              "0.0",
+              "0.0"
+            ],
+            "20": [
+              "200.0",
+              "200.0",
+              "220.0",
+              "290.0",
+              "300.0",
+              "300.0",
+              "280.0",
+              "210.0"
+            ],
+            "43": "0.0",
+            "62": "1",
+            "70": "1",
+            "90": "8",
+            "100": [
+              "AcDbEntity",
+              "AcDbPolyline"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        }
+      ],
+      "F025_POLY_NOTRIM": [
+        {
+          "handle": "2AE",
+          "type": "LWPOLYLINE",
+          "groups": {
+            "5": "2AE",
+            "8": "F025_POLY_NOTRIM",
+            "10": [
+              "300.0",
+              "400.0",
+              "400.0",
+              "300.0"
+            ],
+            "20": [
+              "200.0",
+              "200.0",
+              "300.0",
+              "300.0"
+            ],
+            "43": "0.0",
+            "62": "1",
+            "70": "1",
+            "90": "4",
+            "100": [
+              "AcDbEntity",
+              "AcDbPolyline"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        },
+        {
+          "handle": "2AF",
+          "type": "LINE",
+          "groups": {
+            "5": "2AF",
+            "8": "F025_POLY_NOTRIM",
+            "10": "300.0",
+            "11": "320.0",
+            "20": "210.0",
+            "21": "200.0",
+            "30": "0.0",
+            "31": "0.0",
+            "39": "-1.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbLine"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        },
+        {
+          "handle": "2B0",
+          "type": "LINE",
+          "groups": {
+            "5": "2B0",
+            "8": "F025_POLY_NOTRIM",
+            "10": "310.0",
+            "11": "300.0",
+            "20": "300.0",
+            "21": "280.0",
+            "30": "0.0",
+            "31": "0.0",
+            "39": "-1.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbLine"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        },
+        {
+          "handle": "2B1",
+          "type": "LINE",
+          "groups": {
+            "5": "2B1",
+            "8": "F025_POLY_NOTRIM",
+            "10": "400.0",
+            "11": "380.0",
+            "20": "290.0",
+            "21": "300.0",
+            "30": "0.0",
+            "31": "0.0",
+            "39": "-1.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbLine"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        },
+        {
+          "handle": "2B2",
+          "type": "LINE",
+          "groups": {
+            "5": "2B2",
+            "8": "F025_POLY_NOTRIM",
+            "10": "390.0",
+            "11": "400.0",
+            "20": "200.0",
+            "21": "220.0",
+            "30": "0.0",
+            "31": "0.0",
+            "39": "-1.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbLine"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        }
+      ],
+      "F025_POLY_SHORT": [
+        {
+          "handle": "2B3",
+          "type": "LWPOLYLINE",
+          "groups": {
+            "5": "2B3",
+            "8": "F025_POLY_SHORT",
+            "10": [
+              "500.0",
+              "505.0",
+              "505.0",
+              "500.0"
+            ],
+            "20": [
+              "200.0",
+              "200.0",
+              "205.0",
+              "205.0"
+            ],
+            "43": "0.0",
+            "62": "1",
+            "70": "1",
+            "90": "4",
+            "100": [
+              "AcDbEntity",
+              "AcDbPolyline"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        }
+      ],
+      "F025_POLY_OVERLAP": [
+        {
+          "handle": "2B4",
+          "type": "LWPOLYLINE",
+          "groups": {
+            "5": "2B4",
+            "8": "F025_POLY_OVERLAP",
+            "10": [
+              "600.0",
+              "605.0",
+              "625.0",
+              "625.0",
+              "620.0",
+              "600.0"
+            ],
+            "20": [
+              "200.0",
+              "200.0",
+              "220.0",
+              "225.0",
+              "225.0",
+              "205.0"
+            ],
+            "43": "0.0",
+            "62": "1",
+            "70": "1",
+            "90": "6",
+            "100": [
+              "AcDbEntity",
+              "AcDbPolyline"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        }
+      ],
+      "F025_POLY_OVERLAP_NOTRIM": [
+        {
+          "handle": "2B5",
+          "type": "LWPOLYLINE",
+          "groups": {
+            "5": "2B5",
+            "8": "F025_POLY_OVERLAP_NOTRIM",
+            "10": [
+              "700.0",
+              "725.0",
+              "725.0",
+              "700.0"
+            ],
+            "20": [
+              "200.0",
+              "200.0",
+              "225.0",
+              "225.0"
+            ],
+            "43": "0.0",
+            "62": "1",
+            "70": "1",
+            "90": "4",
+            "100": [
+              "AcDbEntity",
+              "AcDbPolyline"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        },
+        {
+          "handle": "2B6",
+          "type": "LINE",
+          "groups": {
+            "5": "2B6",
+            "8": "F025_POLY_OVERLAP_NOTRIM",
+            "10": "700.0",
+            "11": "720.0",
+            "20": "220.0",
+            "21": "200.0",
+            "30": "0.0",
+            "31": "0.0",
+            "39": "-1.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbLine"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        },
+        {
+          "handle": "2B7",
+          "type": "LINE",
+          "groups": {
+            "5": "2B7",
+            "8": "F025_POLY_OVERLAP_NOTRIM",
+            "10": "720.0",
+            "11": "700.0",
+            "20": "225.0",
+            "21": "205.0",
+            "30": "0.0",
+            "31": "0.0",
+            "39": "-1.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbLine"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        },
+        {
+          "handle": "2B8",
+          "type": "LINE",
+          "groups": {
+            "5": "2B8",
+            "8": "F025_POLY_OVERLAP_NOTRIM",
+            "10": "725.0",
+            "11": "705.0",
+            "20": "205.0",
+            "21": "225.0",
+            "30": "0.0",
+            "31": "0.0",
+            "39": "-1.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbLine"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        },
+        {
+          "handle": "2B9",
+          "type": "LINE",
+          "groups": {
+            "5": "2B9",
+            "8": "F025_POLY_OVERLAP_NOTRIM",
+            "10": "705.0",
+            "11": "725.0",
+            "20": "200.0",
+            "21": "220.0",
+            "30": "0.0",
+            "31": "0.0",
+            "39": "-1.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbLine"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        }
+      ],
+      "F025_POLY_SHORT_NOTRIM": [
+        {
+          "handle": "2BA",
+          "type": "LWPOLYLINE",
+          "groups": {
+            "5": "2BA",
+            "8": "F025_POLY_SHORT_NOTRIM",
+            "10": [
+              "800.0",
+              "805.0",
+              "805.0",
+              "800.0"
+            ],
+            "20": [
+              "200.0",
+              "200.0",
+              "205.0",
+              "205.0"
+            ],
+            "43": "0.0",
+            "62": "1",
+            "70": "1",
+            "90": "4",
+            "100": [
+              "AcDbEntity",
+              "AcDbPolyline"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        },
+        {
+          "handle": "2BB",
+          "type": "LINE",
+          "groups": {
+            "5": "2BB",
+            "8": "F025_POLY_SHORT_NOTRIM",
+            "10": "800.0",
+            "11": "810.0",
+            "20": "210.0",
+            "21": "200.0",
+            "30": "0.0",
+            "31": "0.0",
+            "39": "-1.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbLine"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        },
+        {
+          "handle": "2BC",
+          "type": "LINE",
+          "groups": {
+            "5": "2BC",
+            "8": "F025_POLY_SHORT_NOTRIM",
+            "10": "810.0",
+            "11": "800.0",
+            "20": "205.0",
+            "21": "195.0",
+            "30": "0.0",
+            "31": "0.0",
+            "39": "-1.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbLine"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        },
+        {
+          "handle": "2BD",
+          "type": "LINE",
+          "groups": {
+            "5": "2BD",
+            "8": "F025_POLY_SHORT_NOTRIM",
+            "10": "805.0",
+            "11": "795.0",
+            "20": "195.0",
+            "21": "205.0",
+            "30": "0.0",
+            "31": "0.0",
+            "39": "-1.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbLine"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        },
+        {
+          "handle": "2BE",
+          "type": "LINE",
+          "groups": {
+            "5": "2BE",
+            "8": "F025_POLY_SHORT_NOTRIM",
+            "10": "795.0",
+            "11": "805.0",
+            "20": "200.0",
+            "21": "210.0",
+            "30": "0.0",
+            "31": "0.0",
+            "39": "-1.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbLine"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        }
+      ],
+      "F025_POLY_ZERO": [
+        {
+          "handle": "2BF",
+          "type": "LWPOLYLINE",
+          "groups": {
+            "5": "2BF",
+            "8": "F025_POLY_ZERO",
+            "10": [
+              "900.0",
+              "1000.0",
+              "1000.0",
+              "900.0"
+            ],
+            "20": [
+              "200.0",
+              "200.0",
+              "300.0",
+              "300.0"
+            ],
+            "43": "0.0",
+            "62": "1",
+            "70": "1",
+            "90": "4",
+            "100": [
+              "AcDbEntity",
+              "AcDbPolyline"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        }
+      ],
+      "F025_ZERO": [
+        {
+          "handle": "2C0",
+          "type": "LINE",
+          "groups": {
+            "5": "2C0",
+            "8": "F025_ZERO",
+            "10": "-100.0",
+            "11": "0.0",
+            "20": "400.0",
+            "21": "400.0",
+            "30": "0.0",
+            "31": "0.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbLine"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        },
+        {
+          "handle": "2C1",
+          "type": "LINE",
+          "groups": {
+            "5": "2C1",
+            "8": "F025_ZERO",
+            "10": "0.0",
+            "11": "0.0",
+            "20": "400.0",
+            "21": "500.0",
+            "30": "0.0",
+            "31": "0.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbLine"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        }
+      ],
+      "F025_PARALLEL": [
+        {
+          "handle": "2C2",
+          "type": "LINE",
+          "groups": {
+            "5": "2C2",
+            "8": "F025_PARALLEL",
+            "10": "200.0",
+            "11": "300.0",
+            "20": "400.0",
+            "21": "400.0",
+            "30": "0.0",
+            "31": "0.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbLine"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        },
+        {
+          "handle": "2C3",
+          "type": "LINE",
+          "groups": {
+            "5": "2C3",
+            "8": "F025_PARALLEL",
+            "10": "200.0",
+            "11": "300.0",
+            "20": "420.0",
+            "21": "420.0",
+            "30": "0.0",
+            "31": "0.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbLine"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        }
+      ],
+      "F025_RAY": [
+        {
+          "handle": "2C4",
+          "type": "LINE",
+          "groups": {
+            "5": "2C4",
+            "8": "F025_RAY",
+            "10": "-100.0",
+            "11": "-10.0",
+            "20": "600.0",
+            "21": "600.0",
+            "30": "0.0",
+            "31": "0.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbLine"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        },
+        {
+          "handle": "2C5",
+          "type": "RAY",
+          "groups": {
+            "5": "2C5",
+            "8": "F025_RAY",
+            "10": "0.0",
+            "11": "0.0",
+            "20": "620.0",
+            "21": "1.0",
+            "30": "0.0",
+            "31": "0.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbRay"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        },
+        {
+          "handle": "2C6",
+          "type": "LINE",
+          "groups": {
+            "5": "2C6",
+            "8": "F025_RAY",
+            "10": "-10.0",
+            "11": "0.0",
+            "20": "600.0",
+            "21": "620.0",
+            "30": "0.0",
+            "31": "0.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbLine"
+            ],
+            "330": "1F"
+          }
+        }
+      ],
+      "F025_RAY_FORWARD": [
+        {
+          "handle": "2C7",
+          "type": "RAY",
+          "groups": {
+            "5": "2C7",
+            "8": "F025_RAY_FORWARD",
+            "10": "110.0",
+            "11": "1.0",
+            "20": "800.0",
+            "21": "0.0",
+            "30": "0.0",
+            "31": "0.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbRay"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        },
+        {
+          "handle": "2C8",
+          "type": "RAY",
+          "groups": {
+            "5": "2C8",
+            "8": "F025_RAY_FORWARD",
+            "10": "100.0",
+            "11": "0.0",
+            "20": "820.0",
+            "21": "1.0",
+            "30": "0.0",
+            "31": "0.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbRay"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        },
+        {
+          "handle": "2C9",
+          "type": "LINE",
+          "groups": {
+            "5": "2C9",
+            "8": "F025_RAY_FORWARD",
+            "10": "110.0",
+            "11": "100.0",
+            "20": "800.0",
+            "21": "820.0",
+            "30": "0.0",
+            "31": "0.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbLine"
+            ],
+            "330": "1F"
+          }
+        }
+      ],
+      "F025_XLINE_LINE": [
+        {
+          "handle": "2CA",
+          "type": "RAY",
+          "groups": {
+            "5": "2CA",
+            "8": "F025_XLINE_LINE",
+            "10": "-10.0",
+            "11": "-1.0",
+            "20": "1000.0",
+            "21": "0.0",
+            "30": "0.0",
+            "31": "0.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbRay"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        },
+        {
+          "handle": "2CB",
+          "type": "LINE",
+          "groups": {
+            "5": "2CB",
+            "8": "F025_XLINE_LINE",
+            "10": "0.0",
+            "11": "0.0",
+            "20": "1020.0",
+            "21": "1100.0",
+            "30": "0.0",
+            "31": "0.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbLine"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        },
+        {
+          "handle": "2CC",
+          "type": "LINE",
+          "groups": {
+            "5": "2CC",
+            "8": "F025_XLINE_LINE",
+            "10": "-10.0",
+            "11": "0.0",
+            "20": "1000.0",
+            "21": "1020.0",
+            "30": "0.0",
+            "31": "0.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbLine"
+            ],
+            "330": "1F"
+          }
+        }
+      ],
+      "F025_RAY_NOTRIM": [
+        {
+          "handle": "2CD",
+          "type": "RAY",
+          "groups": {
+            "5": "2CD",
+            "8": "F025_RAY_NOTRIM",
+            "10": "-100.0",
+            "11": "1.0",
+            "20": "1200.0",
+            "21": "0.0",
+            "30": "0.0",
+            "31": "0.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbRay"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        },
+        {
+          "handle": "2CE",
+          "type": "XLINE",
+          "groups": {
+            "5": "2CE",
+            "8": "F025_RAY_NOTRIM",
+            "10": "0.0",
+            "11": "0.0",
+            "20": "1200.0",
+            "21": "1.0",
+            "30": "0.0",
+            "31": "0.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbXline"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        },
+        {
+          "handle": "2CF",
+          "type": "LINE",
+          "groups": {
+            "5": "2CF",
+            "8": "F025_RAY_NOTRIM",
+            "10": "-10.0",
+            "11": "0.0",
+            "20": "1200.0",
+            "21": "1220.0",
+            "30": "0.0",
+            "31": "0.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbLine"
+            ],
+            "330": "1F"
+          }
+        }
+      ],
+      "F025_ADJACENT": [
+        {
+          "handle": "2D0",
+          "type": "LWPOLYLINE",
+          "groups": {
+            "5": "2D0",
+            "8": "F025_ADJACENT",
+            "10": [
+              "0.0",
+              "100.0",
+              "100.0",
+              "80.0",
+              "0.0"
+            ],
+            "20": [
+              "1400.0",
+              "1400.0",
+              "1490.0",
+              "1500.0",
+              "1500.0"
+            ],
+            "43": "0.0",
+            "62": "1",
+            "70": "0",
+            "90": "5",
+            "100": [
+              "AcDbEntity",
+              "AcDbPolyline"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        }
+      ],
+      "F025_SEPARATED": [
+        {
+          "handle": "2D1",
+          "type": "LWPOLYLINE",
+          "groups": {
+            "5": "2D1",
+            "8": "F025_SEPARATED",
+            "10": [
+              "200.0",
+              "290.0",
+              "300.0",
+              "300.0"
+            ],
+            "20": [
+              "1400.0",
+              "1400.0",
+              "1420.0",
+              "1500.0"
+            ],
+            "43": "0.0",
+            "62": "1",
+            "70": "0",
+            "90": "4",
+            "100": [
+              "AcDbEntity",
+              "AcDbPolyline"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        }
+      ],
+      "F025_OPEN_CLOSE": [
+        {
+          "handle": "2D2",
+          "type": "LWPOLYLINE",
+          "groups": {
+            "5": "2D2",
+            "8": "F025_OPEN_CLOSE",
+            "10": [
+              "400.0",
+              "400.0",
+              "500.0",
+              "407.0710678118654"
+            ],
+            "20": [
+              "1490.0",
+              "1400.0",
+              "1400.0",
+              "1492.928932188134"
+            ],
+            "43": "0.0",
+            "62": "1",
+            "70": "1",
+            "90": "4",
+            "100": [
+              "AcDbEntity",
+              "AcDbPolyline"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        }
+      ],
+      "F025_SEAM_FORWARD": [
+        {
+          "handle": "2D3",
+          "type": "LWPOLYLINE",
+          "groups": {
+            "5": "2D3",
+            "8": "F025_SEAM_FORWARD",
+            "10": [
+              "620.0",
+              "700.0",
+              "700.0",
+              "600.0",
+              "600.0"
+            ],
+            "20": [
+              "1400.0",
+              "1400.0",
+              "1500.0",
+              "1500.0",
+              "1410.0"
+            ],
+            "43": "0.0",
+            "62": "1",
+            "70": "1",
+            "90": "5",
+            "100": [
+              "AcDbEntity",
+              "AcDbPolyline"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        }
+      ],
+      "F025_SEAM_REVERSE": [
+        {
+          "handle": "2D4",
+          "type": "LWPOLYLINE",
+          "groups": {
+            "5": "2D4",
+            "8": "F025_SEAM_REVERSE",
+            "10": [
+              "810.0",
+              "900.0",
+              "900.0",
+              "800.0",
+              "800.0"
+            ],
+            "20": [
+              "1400.0",
+              "1400.0",
+              "1500.0",
+              "1500.0",
+              "1420.0"
+            ],
+            "43": "0.0",
+            "62": "1",
+            "70": "1",
+            "90": "5",
+            "100": [
+              "AcDbEntity",
+              "AcDbPolyline"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        }
+      ],
+      "F025_PAIR_ZERO": [
+        {
+          "handle": "2D5",
+          "type": "LWPOLYLINE",
+          "groups": {
+            "5": "2D5",
+            "8": "F025_PAIR_ZERO",
+            "10": [
+              "0.0",
+              "100.0",
+              "100.0",
+              "0.0"
+            ],
+            "20": [
+              "3400.0",
+              "3400.0",
+              "3500.0",
+              "3500.0"
+            ],
+            "43": "0.0",
+            "62": "1",
+            "70": "1",
+            "90": "4",
+            "100": [
+              "AcDbEntity",
+              "AcDbPolyline"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        }
+      ],
+      "F025_PAIR_ZERO_SEAM": [
+        {
+          "handle": "2D6",
+          "type": "LWPOLYLINE",
+          "groups": {
+            "5": "2D6",
+            "8": "F025_PAIR_ZERO_SEAM",
+            "10": [
+              "200.0",
+              "300.0",
+              "300.0",
+              "200.0"
+            ],
+            "20": [
+              "3400.0",
+              "3400.0",
+              "3500.0",
+              "3500.0"
+            ],
+            "43": "0.0",
+            "62": "1",
+            "70": "1",
+            "90": "4",
+            "100": [
+              "AcDbEntity",
+              "AcDbPolyline"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        }
+      ],
+      "F025_PAIR_TOO_SHORT": [
+        {
+          "handle": "2D7",
+          "type": "LWPOLYLINE",
+          "groups": {
+            "5": "2D7",
+            "8": "F025_PAIR_TOO_SHORT",
+            "10": [
+              "400.0",
+              "405.0",
+              "405.0",
+              "400.0"
+            ],
+            "20": [
+              "3400.0",
+              "3400.0",
+              "3405.0",
+              "3405.0"
+            ],
+            "43": "0.0",
+            "62": "1",
+            "70": "1",
+            "90": "4",
+            "100": [
+              "AcDbEntity",
+              "AcDbPolyline"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        }
+      ],
+      "F025_SHIFT": [
+        {
+          "handle": "2D8",
+          "type": "LINE",
+          "groups": {
+            "5": "2D8",
+            "8": "F025_SHIFT",
+            "10": "0.0",
+            "11": "100.0",
+            "20": "1600.0",
+            "21": "1600.0",
+            "30": "0.0",
+            "31": "0.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbLine"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        },
+        {
+          "handle": "2D9",
+          "type": "LINE",
+          "groups": {
+            "5": "2D9",
+            "8": "F025_SHIFT",
+            "10": "100.0",
+            "11": "100.0",
+            "20": "1600.0",
+            "21": "1700.0",
+            "30": "0.0",
+            "31": "0.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbLine"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        }
+      ],
+      "F025_MULTIPLE": [
+        {
+          "handle": "2DA",
+          "type": "LINE",
+          "groups": {
+            "5": "2DA",
+            "8": "F025_MULTIPLE",
+            "10": "0.0",
+            "11": "90.0",
+            "20": "1800.0",
+            "21": "1800.0",
+            "30": "0.0",
+            "31": "0.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbLine"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        },
+        {
+          "handle": "2DB",
+          "type": "LINE",
+          "groups": {
+            "5": "2DB",
+            "8": "F025_MULTIPLE",
+            "10": "100.0",
+            "11": "100.0",
+            "20": "1820.0",
+            "21": "1900.0",
+            "30": "0.0",
+            "31": "0.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbLine"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        },
+        {
+          "handle": "2DC",
+          "type": "LINE",
+          "groups": {
+            "5": "2DC",
+            "8": "F025_MULTIPLE",
+            "10": "200.0",
+            "11": "290.0",
+            "20": "1800.0",
+            "21": "1800.0",
+            "30": "0.0",
+            "31": "0.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbLine"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        },
+        {
+          "handle": "2DD",
+          "type": "LINE",
+          "groups": {
+            "5": "2DD",
+            "8": "F025_MULTIPLE",
+            "10": "300.0",
+            "11": "300.0",
+            "20": "1820.0",
+            "21": "1900.0",
+            "30": "0.0",
+            "31": "0.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbLine"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        },
+        {
+          "handle": "2DE",
+          "type": "LINE",
+          "groups": {
+            "5": "2DE",
+            "8": "F025_MULTIPLE",
+            "10": "90.0",
+            "11": "100.0",
+            "20": "1800.0",
+            "21": "1820.0",
+            "30": "0.0",
+            "31": "0.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbLine"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        },
+        {
+          "handle": "2DF",
+          "type": "LINE",
+          "groups": {
+            "5": "2DF",
+            "8": "F025_MULTIPLE",
+            "10": "290.0",
+            "11": "300.0",
+            "20": "1800.0",
+            "21": "1820.0",
+            "30": "0.0",
+            "31": "0.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbLine"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        }
+      ],
+      "F025_COMMAND_UNDO": [
+        {
+          "handle": "2E0",
+          "type": "LINE",
+          "groups": {
+            "5": "2E0",
+            "8": "F025_COMMAND_UNDO",
+            "10": "0.0",
+            "11": "90.0",
+            "20": "2000.0",
+            "21": "2000.0",
+            "30": "0.0",
+            "31": "0.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbLine"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        },
+        {
+          "handle": "2E1",
+          "type": "LINE",
+          "groups": {
+            "5": "2E1",
+            "8": "F025_COMMAND_UNDO",
+            "10": "100.0",
+            "11": "100.0",
+            "20": "2020.0",
+            "21": "2100.0",
+            "30": "0.0",
+            "31": "0.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbLine"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        },
+        {
+          "handle": "2E2",
+          "type": "LINE",
+          "groups": {
+            "5": "2E2",
+            "8": "F025_COMMAND_UNDO",
+            "10": "200.0",
+            "11": "300.0",
+            "20": "2000.0",
+            "21": "2000.0",
+            "30": "0.0",
+            "31": "0.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbLine"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        },
+        {
+          "handle": "2E3",
+          "type": "LINE",
+          "groups": {
+            "5": "2E3",
+            "8": "F025_COMMAND_UNDO",
+            "10": "300.0",
+            "11": "300.0",
+            "20": "2000.0",
+            "21": "2100.0",
+            "30": "0.0",
+            "31": "0.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbLine"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        },
+        {
+          "handle": "2E4",
+          "type": "LINE",
+          "groups": {
+            "5": "2E4",
+            "8": "F025_COMMAND_UNDO",
+            "10": "90.0",
+            "11": "100.0",
+            "20": "2000.0",
+            "21": "2020.0",
+            "30": "0.0",
+            "31": "0.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbLine"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        }
+      ],
+      "F025_GLOBAL_UNDO_REDO": [
+        {
+          "handle": "2E6",
+          "type": "LINE",
+          "groups": {
+            "5": "2E6",
+            "8": "F025_GLOBAL_UNDO_REDO",
+            "10": "0.0",
+            "11": "90.0",
+            "20": "2200.0",
+            "21": "2200.0",
+            "30": "0.0",
+            "31": "0.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbLine"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        },
+        {
+          "handle": "2E7",
+          "type": "LINE",
+          "groups": {
+            "5": "2E7",
+            "8": "F025_GLOBAL_UNDO_REDO",
+            "10": "100.0",
+            "11": "100.0",
+            "20": "2220.0",
+            "21": "2300.0",
+            "30": "0.0",
+            "31": "0.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbLine"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        },
+        {
+          "handle": "2E8",
+          "type": "LINE",
+          "groups": {
+            "5": "2E8",
+            "8": "F025_GLOBAL_UNDO_REDO",
+            "10": "200.0",
+            "11": "290.0",
+            "20": "2200.0",
+            "21": "2200.0",
+            "30": "0.0",
+            "31": "0.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbLine"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        },
+        {
+          "handle": "2E9",
+          "type": "LINE",
+          "groups": {
+            "5": "2E9",
+            "8": "F025_GLOBAL_UNDO_REDO",
+            "10": "300.0",
+            "11": "300.0",
+            "20": "2220.0",
+            "21": "2300.0",
+            "30": "0.0",
+            "31": "0.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbLine"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        },
+        {
+          "handle": "2EA",
+          "type": "LINE",
+          "groups": {
+            "5": "2EA",
+            "8": "F025_GLOBAL_UNDO_REDO",
+            "10": "90.0",
+            "11": "100.0",
+            "20": "2200.0",
+            "21": "2220.0",
+            "30": "0.0",
+            "31": "0.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbLine"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        },
+        {
+          "handle": "2EB",
+          "type": "LINE",
+          "groups": {
+            "5": "2EB",
+            "8": "F025_GLOBAL_UNDO_REDO",
+            "10": "290.0",
+            "11": "300.0",
+            "20": "2200.0",
+            "21": "2220.0",
+            "30": "0.0",
+            "31": "0.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbLine"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        }
+      ],
+      "F025_CURRENT_SRC": [
+        {
+          "handle": "2EC",
+          "type": "LINE",
+          "groups": {
+            "5": "2EC",
+            "8": "F025_CURRENT_SRC",
+            "10": "0.0",
+            "11": "100.0",
+            "20": "2400.0",
+            "21": "2400.0",
+            "30": "0.0",
+            "31": "0.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbLine"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        },
+        {
+          "handle": "2ED",
+          "type": "LINE",
+          "groups": {
+            "5": "2ED",
+            "8": "F025_CURRENT_SRC",
+            "10": "100.0",
+            "11": "100.0",
+            "20": "2400.0",
+            "21": "2500.0",
+            "30": "0.0",
+            "31": "0.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbLine"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        },
+        {
+          "handle": "2EE",
+          "type": "LINE",
+          "groups": {
+            "5": "2EE",
+            "8": "F025_CURRENT_SRC",
+            "10": "90.0",
+            "11": "100.0",
+            "20": "2400.0",
+            "21": "2420.0",
+            "30": "0.0",
+            "31": "0.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbLine"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        }
+      ],
+      "F025_CURRENT_OUT": [],
+      "F025_CROSS_A": [
+        {
+          "handle": "2EF",
+          "type": "LINE",
+          "groups": {
+            "5": "2EF",
+            "6": "Continuous",
+            "8": "F025_CROSS_A",
+            "10": "0.0",
+            "11": "100.0",
+            "20": "2600.0",
+            "21": "2600.0",
+            "30": "0.0",
+            "31": "0.0",
+            "62": "2",
+            "100": [
+              "AcDbEntity",
+              "AcDbLine"
+            ],
+            "330": "1F",
+            "370": "50",
+            "440": "33554559"
+          }
+        }
+      ],
+      "F025_CROSS_B": [
+        {
+          "handle": "2F0",
+          "type": "LINE",
+          "groups": {
+            "5": "2F0",
+            "8": "F025_CROSS_B",
+            "10": "100.0",
+            "11": "100.0",
+            "20": "2600.0",
+            "21": "2700.0",
+            "30": "0.0",
+            "31": "0.0",
+            "62": "3",
+            "100": [
+              "AcDbEntity",
+              "AcDbLine"
+            ],
+            "330": "1F",
+            "370": "35",
+            "440": "33554623"
+          }
+        }
+      ],
+      "F025_CROSS_OUT": [
+        {
+          "handle": "2F1",
+          "type": "LINE",
+          "groups": {
+            "5": "2F1",
+            "8": "F025_CROSS_OUT",
+            "10": "90.0",
+            "11": "100.0",
+            "20": "2600.0",
+            "21": "2620.0",
+            "30": "0.0",
+            "31": "0.0",
+            "100": [
+              "AcDbEntity",
+              "AcDbLine"
+            ],
+            "330": "1F",
+            "370": "35",
+            "440": "33554623"
+          }
+        }
+      ],
+      "F025_SAME_PROP": [
+        {
+          "handle": "2F2",
+          "type": "LINE",
+          "groups": {
+            "5": "2F2",
+            "6": "Continuous",
+            "8": "F025_SAME_PROP",
+            "10": "0.0",
+            "11": "100.0",
+            "20": "3000.0",
+            "21": "3000.0",
+            "30": "0.0",
+            "31": "0.0",
+            "62": "2",
+            "100": [
+              "AcDbEntity",
+              "AcDbLine"
+            ],
+            "330": "1F",
+            "370": "50",
+            "440": "33554559"
+          }
+        },
+        {
+          "handle": "2F3",
+          "type": "LINE",
+          "groups": {
+            "5": "2F3",
+            "8": "F025_SAME_PROP",
+            "10": "100.0",
+            "11": "100.0",
+            "20": "3000.0",
+            "21": "3100.0",
+            "30": "0.0",
+            "31": "0.0",
+            "62": "3",
+            "100": [
+              "AcDbEntity",
+              "AcDbLine"
+            ],
+            "330": "1F",
+            "370": "35",
+            "440": "33554623"
+          }
+        },
+        {
+          "handle": "2F4",
+          "type": "LINE",
+          "groups": {
+            "5": "2F4",
+            "8": "F025_SAME_PROP",
+            "10": "90.0",
+            "11": "100.0",
+            "20": "3000.0",
+            "21": "3020.0",
+            "30": "0.0",
+            "31": "0.0",
+            "100": [
+              "AcDbEntity",
+              "AcDbLine"
+            ],
+            "330": "1F",
+            "370": "35",
+            "440": "33554623"
+          }
+        }
+      ],
+      "F025_CROSS_REVERSE_A": [
+        {
+          "handle": "2F5",
+          "type": "LINE",
+          "groups": {
+            "5": "2F5",
+            "8": "F025_CROSS_REVERSE_A",
+            "10": "0.0",
+            "11": "100.0",
+            "20": "3200.0",
+            "21": "3200.0",
+            "30": "0.0",
+            "31": "0.0",
+            "62": "4",
+            "100": [
+              "AcDbEntity",
+              "AcDbLine"
+            ],
+            "330": "1F",
+            "370": "40",
+            "440": "33554585"
+          }
+        }
+      ],
+      "F025_CROSS_REVERSE_B": [
+        {
+          "handle": "2F6",
+          "type": "LINE",
+          "groups": {
+            "5": "2F6",
+            "6": "Continuous",
+            "8": "F025_CROSS_REVERSE_B",
+            "10": "100.0",
+            "11": "100.0",
+            "20": "3200.0",
+            "21": "3300.0",
+            "30": "0.0",
+            "31": "0.0",
+            "62": "5",
+            "100": [
+              "AcDbEntity",
+              "AcDbLine"
+            ],
+            "330": "1F",
+            "370": "25",
+            "440": "33554648"
+          }
+        }
+      ],
+      "F025_CROSS_REVERSE_OUT": [
+        {
+          "handle": "2F7",
+          "type": "LINE",
+          "groups": {
+            "5": "2F7",
+            "8": "F025_CROSS_REVERSE_OUT",
+            "10": "90.0",
+            "11": "100.0",
+            "20": "3200.0",
+            "21": "3220.0",
+            "30": "0.0",
+            "31": "0.0",
+            "100": [
+              "AcDbEntity",
+              "AcDbLine"
+            ],
+            "330": "1F",
+            "370": "25",
+            "440": "33554648"
+          }
+        }
+      ],
+      "F025_LOCKED": [
+        {
+          "handle": "2F8",
+          "type": "LINE",
+          "groups": {
+            "5": "2F8",
+            "8": "F025_LOCKED",
+            "10": "0.0",
+            "11": "100.0",
+            "20": "2800.0",
+            "21": "2800.0",
+            "30": "0.0",
+            "31": "0.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbLine"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        },
+        {
+          "handle": "2F9",
+          "type": "LINE",
+          "groups": {
+            "5": "2F9",
+            "8": "F025_LOCKED",
+            "10": "100.0",
+            "11": "100.0",
+            "20": "2800.0",
+            "21": "2900.0",
+            "30": "0.0",
+            "31": "0.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbLine"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        }
+      ],
+      "F025_OFF": [
+        {
+          "handle": "2FA",
+          "type": "LINE",
+          "groups": {
+            "5": "2FA",
+            "8": "F025_OFF",
+            "10": "200.0",
+            "11": "290.0",
+            "20": "2800.0",
+            "21": "2800.0",
+            "30": "0.0",
+            "31": "0.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbLine"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        },
+        {
+          "handle": "2FB",
+          "type": "LINE",
+          "groups": {
+            "5": "2FB",
+            "8": "F025_OFF",
+            "10": "300.0",
+            "11": "300.0",
+            "20": "2810.0",
+            "21": "2900.0",
+            "30": "0.0",
+            "31": "0.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbLine"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        },
+        {
+          "handle": "2FC",
+          "type": "LINE",
+          "groups": {
+            "5": "2FC",
+            "8": "F025_OFF",
+            "10": "290.0",
+            "11": "300.0",
+            "20": "2800.0",
+            "21": "2810.0",
+            "30": "0.0",
+            "31": "0.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbLine"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        }
+      ],
+      "F025_FROZEN": [
+        {
+          "handle": "2FD",
+          "type": "LINE",
+          "groups": {
+            "5": "2FD",
+            "8": "F025_FROZEN",
+            "10": "400.0",
+            "11": "490.0",
+            "20": "2800.0",
+            "21": "2800.0",
+            "30": "0.0",
+            "31": "0.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbLine"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        },
+        {
+          "handle": "2FE",
+          "type": "LINE",
+          "groups": {
+            "5": "2FE",
+            "8": "F025_FROZEN",
+            "10": "500.0",
+            "11": "500.0",
+            "20": "2810.0",
+            "21": "2900.0",
+            "30": "0.0",
+            "31": "0.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbLine"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        },
+        {
+          "handle": "2FF",
+          "type": "LINE",
+          "groups": {
+            "5": "2FF",
+            "8": "F025_FROZEN",
+            "10": "490.0",
+            "11": "500.0",
+            "20": "2800.0",
+            "21": "2810.0",
+            "30": "0.0",
+            "31": "0.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbLine"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        }
+      ]
+    },
+    "rawConstructionRecords": {
+      "F025_DISTANCE": [],
+      "F025_ANGLE": [],
+      "F025_POLY": [],
+      "F025_POLY_NOTRIM": [],
+      "F025_POLY_SHORT": [],
+      "F025_POLY_OVERLAP": [],
+      "F025_POLY_OVERLAP_NOTRIM": [],
+      "F025_POLY_SHORT_NOTRIM": [],
+      "F025_POLY_ZERO": [],
+      "F025_ZERO": [],
+      "F025_PARALLEL": [],
+      "F025_RAY": [
+        {
+          "handle": "2C5",
+          "type": "RAY",
+          "groups": {
+            "5": "2C5",
+            "8": "F025_RAY",
+            "10": "0.0",
+            "11": "0.0",
+            "20": "620.0",
+            "21": "1.0",
+            "30": "0.0",
+            "31": "0.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbRay"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        }
+      ],
+      "F025_RAY_FORWARD": [
+        {
+          "handle": "2C7",
+          "type": "RAY",
+          "groups": {
+            "5": "2C7",
+            "8": "F025_RAY_FORWARD",
+            "10": "110.0",
+            "11": "1.0",
+            "20": "800.0",
+            "21": "0.0",
+            "30": "0.0",
+            "31": "0.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbRay"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        },
+        {
+          "handle": "2C8",
+          "type": "RAY",
+          "groups": {
+            "5": "2C8",
+            "8": "F025_RAY_FORWARD",
+            "10": "100.0",
+            "11": "0.0",
+            "20": "820.0",
+            "21": "1.0",
+            "30": "0.0",
+            "31": "0.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbRay"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        }
+      ],
+      "F025_XLINE_LINE": [
+        {
+          "handle": "2CA",
+          "type": "RAY",
+          "groups": {
+            "5": "2CA",
+            "8": "F025_XLINE_LINE",
+            "10": "-10.0",
+            "11": "-1.0",
+            "20": "1000.0",
+            "21": "0.0",
+            "30": "0.0",
+            "31": "0.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbRay"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        }
+      ],
+      "F025_RAY_NOTRIM": [
+        {
+          "handle": "2CD",
+          "type": "RAY",
+          "groups": {
+            "5": "2CD",
+            "8": "F025_RAY_NOTRIM",
+            "10": "-100.0",
+            "11": "1.0",
+            "20": "1200.0",
+            "21": "0.0",
+            "30": "0.0",
+            "31": "0.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbRay"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        },
+        {
+          "handle": "2CE",
+          "type": "XLINE",
+          "groups": {
+            "5": "2CE",
+            "8": "F025_RAY_NOTRIM",
+            "10": "0.0",
+            "11": "0.0",
+            "20": "1200.0",
+            "21": "1.0",
+            "30": "0.0",
+            "31": "0.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbXline"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        }
+      ],
+      "F025_ADJACENT": [],
+      "F025_SEPARATED": [],
+      "F025_OPEN_CLOSE": [],
+      "F025_SEAM_FORWARD": [],
+      "F025_SEAM_REVERSE": [],
+      "F025_PAIR_ZERO": [],
+      "F025_PAIR_ZERO_SEAM": [],
+      "F025_PAIR_TOO_SHORT": [],
+      "F025_SHIFT": [],
+      "F025_MULTIPLE": [],
+      "F025_COMMAND_UNDO": [],
+      "F025_GLOBAL_UNDO_REDO": [],
+      "F025_CURRENT_SRC": [],
+      "F025_CURRENT_OUT": [],
+      "F025_CROSS_A": [],
+      "F025_CROSS_B": [],
+      "F025_CROSS_OUT": [],
+      "F025_SAME_PROP": [],
+      "F025_CROSS_REVERSE_A": [],
+      "F025_CROSS_REVERSE_B": [],
+      "F025_CROSS_REVERSE_OUT": [],
+      "F025_LOCKED": [],
+      "F025_OFF": [],
+      "F025_FROZEN": []
+    }
+  },
+  "implementationSha256": {
+    "tools/autocad/f025-standard-matrix.ps1": "91bdf5e84d29f0b07b81346e8fe70f34f18dac512d04ab4ff61c3a3459c9b70d",
+    "tools/autocad/f022-shift-click.ps1": "832a0fd648c8ba1c4918fad404d4d51d1abf4b61cb0c7dd7ef93a6c308795c99",
+    "tools/autocad/f025-runner.test.mjs": "d2bc11fefeb2f41ea23eeefaee66dfc17f040f589f8c4b7576599aca25136335",
+    "tools/autocad/process-ownership.mjs": "9f1d48d1b1058a631ef8d6df03c1beedc836688c06e0658a302ba424d654937d",
+    "tools/autocad/run-f025.mjs": "e282a9258339bdcd575aad5f5c1c03051146f83eba7676609de0f1fcd9372785"
+  },
+  "matrixScriptSha256": "91bdf5e84d29f0b07b81346e8fe70f34f18dac512d04ab4ff61c3a3459c9b70d",
+  "runnerSha256": "e282a9258339bdcd575aad5f5c1c03051146f83eba7676609de0f1fcd9372785",
+  "observedAt": "2026-08-30T04:39:35.315Z"
+}

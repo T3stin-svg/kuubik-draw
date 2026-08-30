@@ -1,7 +1,7 @@
 param(
   [Parameter(Mandatory = $true)][long]$MainWindowHandle,
   [Parameter(Mandatory = $true)][int]$ExpectedProcessId,
-  [ValidateSet('ShiftClick','Escape')][string]$Action = 'ShiftClick',
+  [ValidateSet('Click','ShiftClick','Escape')][string]$Action = 'ShiftClick',
   [int]$ScreenX = -1,
   [int]$ScreenY = -1,
   [int]$DelayMilliseconds = 1000
@@ -155,6 +155,17 @@ public static class F022PhysicalInput {
     SafeKeyPress(window, expectedProcessId, VK_RETURN);
   }
 
+  public static void ClickOwned(long mainWindowHandle, uint expectedProcessId, int x, int y) {
+    IntPtr window = ActivateOwned(mainWindowHandle, expectedProcessId);
+    if (!SetCursorPos(x, y)) throw new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error(), "Cursor could not be positioned over the AutoCAD model viewport.");
+    System.Threading.Thread.Sleep(150);
+    EnsureForeground(window, expectedProcessId);
+    Send(Mouse(MOUSEEVENTF_LEFTDOWN));
+    System.Threading.Thread.Sleep(80);
+    EnsureForeground(window, expectedProcessId);
+    Send(Mouse(MOUSEEVENTF_LEFTUP));
+  }
+
   public static void EscapeOwned(long mainWindowHandle, uint expectedProcessId) {
     IntPtr window = ActivateOwned(mainWindowHandle, expectedProcessId);
     SafeKeyPress(window, expectedProcessId, 0x1B);
@@ -164,12 +175,15 @@ public static class F022PhysicalInput {
 '@
 
 if ($ExpectedProcessId -le 0) { throw 'F-022 expected AutoCAD process id must be positive.' }
-if ($Action -eq 'ShiftClick' -and ($ScreenX -lt 0 -or $ScreenY -lt 0)) { throw 'F-022 screen coordinates must be non-negative.' }
+if ($Action -ne 'Escape' -and ($ScreenX -lt 0 -or $ScreenY -lt 0)) { throw 'F-022 screen coordinates must be non-negative.' }
 Start-Sleep -Milliseconds $DelayMilliseconds
 [string]$kind = ''
 if ($Action -eq 'ShiftClick') {
   [F022PhysicalInput]::ShiftClickAndEnter($MainWindowHandle, [uint32]$ExpectedProcessId, $ScreenX, $ScreenY)
   $kind = 'physical-shift-click'
+} elseif ($Action -eq 'Click') {
+  [F022PhysicalInput]::ClickOwned($MainWindowHandle, [uint32]$ExpectedProcessId, $ScreenX, $ScreenY)
+  $kind = 'physical-click'
 } else {
   [F022PhysicalInput]::EscapeOwned($MainWindowHandle, [uint32]$ExpectedProcessId)
   $kind = 'owned-escape'

@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-025",
+  "kind": "autocad",
+  "authority": "autocad-2024.1.2-live",
+  "status": "PASS",
+  "artifactSha256": "ee3a35c5834b4786598bc1b5a821cded369e97113e3646e41d2269152cc17368",
+  "observedAt": "2026-08-30T04:39:35.315Z",
+  "workflow": "A newly owned blank AutoCAD 2024.1.2 desktop process runs CHAMFER Distance, Angle, Method, Trim/No Trim, Multiple, Polyline, command Undo, global Undo/Redo, physical Shift zero-distance, current-layer output, protected-layer behavior, selected polyline segment pairs, open-polyline terminal closure, oversized-distance rejection and LINE/RAY/XLINE extension. The result is saved to DXF, reopened in AutoCAD and independently parsed.",
+  "result": "All native matrix checks passed. The oversized selected-polyline case remained byte-semantically unchanged, exact geometry and properties survived reopen/read-back, and the full pre-existing AutoCAD process identity set was restored using PID, executable path and start time.",
+  "artifact": "evidence/artifacts/F-025-autocad-readback.json"
+}

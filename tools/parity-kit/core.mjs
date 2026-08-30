@@ -12,6 +12,7 @@ export const PARITY_STAGE_ORDER = Object.freeze(["browser", "readback", "oracle"
 export const GLOBAL_TOPOLOGY_RECEIPT_PATH = "evidence/artifacts/parity-global-topology.json";
 export const PACKAGE_SEMANTIC_MIGRATION_PATH = "evidence/artifacts/parity-package-v3-to-v4.json";
 export const PACKAGE_SEMANTIC_MIGRATION_BASE = "46d827801a7aebc7070143ff36435f355df6252b";
+export const PACKAGE_SEMANTIC_MIGRATION_TARGET = "44626312ad7ce26bd6c0a03c4098e17ad197400f";
 export const PACKAGE_SEMANTIC_MIGRATION_BASE_MANIFEST_SHA256 = "7f69dcae5325e072849411c5aed4034bb18d4ce0525dd3c4e3d8bc9fe3f185ef";
 export const PACKAGE_WORKSPACE_MANIFEST_PATHS = Object.freeze([
   "apps/web/package.json",
@@ -467,16 +468,17 @@ function gitObjectBytes(revision, path) {
 }
 
 export async function buildPackageSemanticMigrationReceipt(observedAt = new Date().toISOString()) {
-  const [currentPackageBytes, currentLockBytes] = await Promise.all([
-    readFile(resolve(REPO_ROOT, "package.json")),
-    readFile(resolve(REPO_ROOT, "package-lock.json")),
-  ]);
+  // This receipt proves one completed historical v3 -> v4 migration. Read both
+  // endpoints from Git so later row scripts are governed by the current global
+  // topology/content-address ratchets without rewriting historical evidence.
+  const currentPackageBytes = gitObjectBytes(PACKAGE_SEMANTIC_MIGRATION_TARGET, "package.json");
+  const currentLockBytes = gitObjectBytes(PACKAGE_SEMANTIC_MIGRATION_TARGET, "package-lock.json");
   const previousPackageBytes = gitObjectBytes(PACKAGE_SEMANTIC_MIGRATION_BASE, "package.json");
   const previousLockBytes = gitObjectBytes(PACKAGE_SEMANTIC_MIGRATION_BASE, "package-lock.json");
   const baseManifestBytes = gitObjectBytes(PACKAGE_SEMANTIC_MIGRATION_BASE, "parity/content-addresses.json");
   const [previousWorkspacePackages, currentWorkspacePackages] = await Promise.all([
     Promise.all(PACKAGE_WORKSPACE_MANIFEST_PATHS.map(async (path) => [path, gitObjectBytes(PACKAGE_SEMANTIC_MIGRATION_BASE, path)])),
-    Promise.all(PACKAGE_WORKSPACE_MANIFEST_PATHS.map(async (path) => [path, await readFile(resolve(REPO_ROOT, path))])),
+    Promise.all(PACKAGE_WORKSPACE_MANIFEST_PATHS.map(async (path) => [path, gitObjectBytes(PACKAGE_SEMANTIC_MIGRATION_TARGET, path)])),
   ]);
   const previousPackage = JSON.parse(previousPackageBytes.toString("utf8"));
   const currentPackage = JSON.parse(currentPackageBytes.toString("utf8"));
@@ -512,7 +514,7 @@ export async function buildPackageSemanticMigrationReceipt(observedAt = new Date
     return [path, { previous: sourceContentAddress(previous), current: sourceContentAddress(current) }];
   }));
   const baseManifest = JSON.parse(baseManifestBytes.toString("utf8"));
-  const currentManifest = await buildContentAddressManifest();
+  const currentManifest = JSON.parse(gitObjectBytes(PACKAGE_SEMANTIC_MIGRATION_TARGET, "parity/content-addresses.json").toString("utf8"));
   const nonPackageCompatibilityErrors = staleEvidenceBindings(baseManifest, currentManifest, {
     allowV3ToV4: true,
     ignoredSourcePaths: ["package.json", "package-lock.json", ...PACKAGE_WORKSPACE_MANIFEST_PATHS],
@@ -600,6 +602,17 @@ export async function buildGlobalTopologyReceipt(observedAt = new Date().toISOSt
     requiredF024OracleChainPresent: workflowJobContainsOrderedRuns(ciBytes.toString("utf8"), "required-oracles", [
       "npm run parity:f024:oracles",
       "npm run parity:f024:cross-evidence",
+    ]),
+    protectedF025AutoCadChainPresent: workflowJobContainsOrderedRuns(ciBytes.toString("utf8"), "autocad-2024-certification", [
+      "npm run parity:f025:browser-artifact",
+      "npm run parity:f025:readback",
+      "npm run parity:f025:autocad",
+      "npm run parity:f025:oracles",
+      "npm run parity:f025:cross-evidence",
+    ]),
+    requiredF025OracleChainPresent: workflowJobContainsOrderedRuns(ciBytes.toString("utf8"), "required-oracles", [
+      "npm run parity:f025:oracles",
+      "npm run parity:f025:cross-evidence",
     ]),
   };
   if (Object.values(checks).some((value) => value !== true)) throw new Error(`Global topology receipt failed: ${JSON.stringify(checks)}`);

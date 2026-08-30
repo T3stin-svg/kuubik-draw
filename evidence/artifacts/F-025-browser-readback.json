@@ -1,0 +1,126 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-025",
+  "status": "PASS",
+  "checks": {
+    "browserWorkflowPassedWithoutErrors": true,
+    "distanceMultipleExact": true,
+    "exactAtomicOperation": true,
+    "atomicUndoRedoAndKdraw": true,
+    "angleNoTrimExact": true,
+    "polylineExact": true,
+    "shiftNoOpPreviewEqualsCommit": true,
+    "canvasPolylineToPairTransitionExact": true,
+    "polylineOverlapAndClosedSeamsExact": true,
+    "currentLayerSecondSelectionPropertiesExact": true,
+    "constructionBrowserCommitAndKdrawExact": true,
+    "constructionDxfExact": true,
+    "zeroPolylineAndPairAreOutputIdentity": true,
+    "oversizedSelectedPolylineTrimFailsClosed": true,
+    "independentDxfExact": true
+  },
+  "artifacts": {
+    "evidence/artifacts/F-025-browser-matrix.json": {
+      "sha256": "6326e4a46c4b017edb859e49026924edb4f2ad8780fba63e90d4b77332efdf2b",
+      "byteLength": 12745
+    },
+    "evidence/artifacts/F-025-browser-modes.json": {
+      "sha256": "6a0c1a9ab5cca6ec20eed076d0b321313aed68c33f9bbafd6dd39fc36749d77f",
+      "byteLength": 8740
+    },
+    "evidence/artifacts/F-025-browser-shift-no-op.json": {
+      "sha256": "db5f4cffb49ee82fe3b331ff70359f664861c2cf0777455d4d529c42aac54be5",
+      "byteLength": 2617
+    },
+    "evidence/artifacts/F-025-browser-mode-transition.json": {
+      "sha256": "8b03f367862920d6a78ac3f3dcdb56873b6b66bd4ea7262d27c92973c086f134",
+      "byteLength": 4767
+    },
+    "evidence/artifacts/F-025-browser-edge-cases.json": {
+      "sha256": "b848c1d4d14b76008fba6c67c969ecaa39e109ee653a2e9511d75467cc6516fc",
+      "byteLength": 8342
+    },
+    "evidence/artifacts/F-025-browser-seam-forward.kdraw": {
+      "sha256": "540576e2a4d01d0fe3a74ae7ac231b92d09c598c8fde57753b62e08ef7fbfefa",
+      "byteLength": 1228
+    },
+    "evidence/artifacts/F-025-browser-seam-reverse.kdraw": {
+      "sha256": "f8542b4e3bea828bb204852388f10e684c839c47fad2a9db2e0baa5432a38a18",
+      "byteLength": 1228
+    },
+    "evidence/artifacts/F-025-browser-properties.json": {
+      "sha256": "cc80eadc1a52d8639ad0aac9ec9821b61031d782335ecbd97e74fef262f6a1df",
+      "byteLength": 6728
+    },
+    "evidence/artifacts/F-025-browser-properties.dxf": {
+      "sha256": "4bb0a27127482cdb0d957dbff6e86b665f037ca060152aaab20d635062249a3a",
+      "byteLength": 5068
+    },
+    "evidence/artifacts/F-025-browser-properties.kdraw": {
+      "sha256": "aeddab11e930a0db3ee0320f43e2878dff585f42a1b7f8b5f78e9c29168d1e2c",
+      "byteLength": 2433
+    },
+    "evidence/artifacts/F-025-browser-construction.json": {
+      "sha256": "94f077f6dfa453179f2d52ecd0edba0332814e8e9d0a778ab23f5d463ab226ce",
+      "byteLength": 13669
+    },
+    "evidence/artifacts/F-025-browser-construction.dxf": {
+      "sha256": "f33dc58ea5683a149ff5a5619185e59120935b59179e19d4dee25b98977e755f",
+      "byteLength": 5341
+    },
+    "evidence/artifacts/F-025-browser-construction.kdraw": {
+      "sha256": "86b2ce91e95c504326557f364ba3d4fdaa0c35eae9cc236f83c6734092138c44",
+      "byteLength": 3649
+    },
+    "evidence/artifacts/F-025-browser-zero.json": {
+      "sha256": "97bc735194dd8b786890c4ff6e1d7cc3edb0107771fefdb63c1390df14259086",
+      "byteLength": 2509
+    },
+    "evidence/artifacts/F-025-browser-zero.dxf": {
+      "sha256": "bd44151980679b01146114f2beddd9f44dad8412c6f3d2d9e1aba5c94e311e56",
+      "byteLength": 3878
+    },
+    "evidence/artifacts/F-025-browser-zero.kdraw": {
+      "sha256": "e0fc29bef10cc40054d65a30287e9d784399b5d5bef7d7f214d02a0d667ba3ca",
+      "byteLength": 1212
+    },
+    "evidence/artifacts/F-025-browser-distance-too-large.json": {
+      "sha256": "3895d86a42674c650527bd4757ac16c65c4f94754bf2841d85a064cf8d9b5670",
+      "byteLength": 5404
+    },
+    "evidence/artifacts/F-025-browser-distance-too-large.dxf": {
+      "sha256": "34b6db88580c7e728a89249f219e76222fa2d111cd07324dbc01d16146bb22c5",
+      "byteLength": 4480
+    },
+    "evidence/artifacts/F-025-browser-distance-too-large.kdraw": {
+      "sha256": "f4ca4ea3ba8e732dca372f4b831e7e48416490da3d0786fc2305267ae67c867a",
+      "byteLength": 1861
+    },
+    "evidence/artifacts/F-025-browser.dxf": {
+      "sha256": "e5135fee04513858fa6cdf72ab0031475e95584dd1a321d90cba1444e6609edd",
+      "byteLength": 4465
+    },
+    "evidence/artifacts/F-025-browser.kdraw": {
+      "sha256": "fb0e3e948cc1b2964f89a567ea0fab0e14929f4e3c9e567f1bfd6b1700c5a5bb",
+      "byteLength": 1861
+    }
+  },
+  "sourceSha256": {
+    "apps/web/src/App.tsx": "1aae2dadca18d8377e4b5646091a92e741acac8446dde659447b9a2798a944b7",
+    "apps/web/src/workflows/modify-command.ts": "175b89d807bf69c068290672ae7a9bbff0a1781a4a2fdecf04c69dadcd882198",
+    "apps/web/src/workflows/modify-command.test.ts": "5d5f40af67ca384e8fdd9e07b0905e5ce85f1f10d8b14ecb79c927e3bfb71f7d",
+    "packages/cad-core/src/chamfer.ts": "0142afb06c0d468a7f1b5e1b1bc45a3319a271cf75c12b302d6e155c0494e6bc",
+    "packages/cad-core/src/commands.ts": "24910e7b4b2b529f845b285aa1e9cb383c1b91da69b98e0c66987a0756092997",
+    "packages/cad-core/src/index.ts": "76e8aefd21b5bda42fa48a43e407cd6b2e388785947a43d127393e9820fabc18",
+    "packages/cad-core/src/container.ts": "931db68e6aa0688ac9a7aa6d5ac56c07d1cd5e0126adec836f27258011419502",
+    "packages/cad-core/src/transaction.ts": "e250aa2906e63905202a4b9591367632830745acbf731884f8e711d165750599",
+    "packages/cad-core/test/chamfer.test.ts": "ad7b4a17d2e016e01cf4a0cb1df0b68642d2a77dbc047a3226994f571264a523",
+    "packages/cad-core/test/f025-mutation-proven.test.ts": "1a501923bb2fdf52a6fbe8b2aa9f27e753600b52cb3cc1c2106fe22f3c04ff7b",
+    "packages/cad-dxf/src/import.ts": "ffdef7a01488d09f32b8bab171b0632092317a5687cd6eca2231629a4fc51f20",
+    "packages/cad-dxf/src/index.ts": "82ca8f21ac22b29cd0f36be39f51b379ffd9307ec96c69c45d93da713cc9b2bd",
+    "packages/cad-dxf/test/f025-chamfer-roundtrip.test.ts": "911e57219188970a0894abe3570583d60b1870233e025adeee20cb5aaa46cdc3",
+    "e2e/f025-chamfer.spec.ts": "2339a5fc1e4a83db5a445a762ac508645756fd7713ffb6545c4b35f049373165",
+    "tools/parity/capture-f025-browser.mjs": "c9152215b1052e986331337882c2b0a3cbe02dc36d8d38e339880f7d16b7a9c7",
+    "tools/parity/build-f025-browser-readback.mjs": "1465e9f9060c763b90bd922ed6ccb60dc184a864a7e60d86f9de8fcc64ed3cca"
+  }
+}

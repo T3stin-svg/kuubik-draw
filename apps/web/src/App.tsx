@@ -1,15 +1,15 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ISO_PAPER_MEDIA, MAX_PAGE_SETUP_TEMPLATE_BYTES, STANDARD_VIEWPORT_SCALE_DENOMINATORS, allocateEntityHandles, applyNamedPageSetup, buildLayoutPublishPlan, CadCommandInputError, CadSession, clearNamedPageSetupAssignment, createPageSetupTemplate, LayoutCommandError, LayoutPublishSettingsError, NoOpOperationError, PageSetupLibraryError, copyPaperLayout, createEmptyDocument, createPaperLayout, createPaperViewport, deleteNamedPageSetup, deletePaperLayout, deletePaperViewport, formatViewportScale, importPageSetupTemplate, metadataWithLayoutPublishSettings, movePaperLayout, panPaperViewportByPixels, paperDefinitionForPageSetup, parseCartesianPoint, parsePageSetupTemplate, renameNamedPageSetup, renamePaperLayout, replaceDrawingContentPreservingLayouts, resolveCadCommand, resolveLayoutPublishSettings, resolveModelPageSetup, resolvePageSetup, resolvePageSetupLibrary, resolvePaperDefinition, sanitizePdfFileStem, saveNamedPageSetup, serializeKDraw, serializePageSetupTemplate, setModelLayoutPageSetup, setPaperLayoutPageSetup, setPaperViewportDisplayLocked, setPaperViewportView, viewportScaleDenominator, zoomPaperViewportAtModelPoint, type CadChange, type CopyRejectedTarget, type ExtendRejectedTarget, type ExtendTargetAction, type FilletRejectedTarget, type FilletTrimMode, type LayoutPublishSettingsV1, type MirrorRejectedTarget, type MoveRejectedTarget, type OffsetLayerMode, type OffsetRejectedTarget, type RotateRejectedTarget, type ScaleRejectedTarget, type TrimEdgeMode, type TrimMode, type TrimProjectMode, type TrimRejectedTarget, type TrimTargetAction } from "@kuubik/cad-core";
+import { ISO_PAPER_MEDIA, MAX_PAGE_SETUP_TEMPLATE_BYTES, STANDARD_VIEWPORT_SCALE_DENOMINATORS, allocateEntityHandles, applyNamedPageSetup, buildLayoutPublishPlan, CadCommandInputError, CadSession, clearNamedPageSetupAssignment, createPageSetupTemplate, LayoutCommandError, LayoutPublishSettingsError, NoOpOperationError, PageSetupLibraryError, copyPaperLayout, createEmptyDocument, createPaperLayout, createPaperViewport, deleteNamedPageSetup, deletePaperLayout, deletePaperViewport, formatViewportScale, importPageSetupTemplate, metadataWithLayoutPublishSettings, movePaperLayout, panPaperViewportByPixels, paperDefinitionForPageSetup, parseCartesianPoint, parsePageSetupTemplate, renameNamedPageSetup, renamePaperLayout, replaceDrawingContentPreservingLayouts, resolveCadCommand, resolveLayoutPublishSettings, resolveModelPageSetup, resolvePageSetup, resolvePageSetupLibrary, resolvePaperDefinition, sanitizePdfFileStem, saveNamedPageSetup, serializeKDraw, serializePageSetupTemplate, setModelLayoutPageSetup, setPaperLayoutPageSetup, setPaperViewportDisplayLocked, setPaperViewportView, viewportScaleDenominator, zoomPaperViewportAtModelPoint, type CadChange, type ChamferRejectedTarget, type ChamferTrimMode, type CopyRejectedTarget, type ExtendRejectedTarget, type ExtendTargetAction, type FilletRejectedTarget, type FilletTrimMode, type LayoutPublishSettingsV1, type MirrorRejectedTarget, type MoveRejectedTarget, type OffsetLayerMode, type OffsetRejectedTarget, type RotateRejectedTarget, type ScaleRejectedTarget, type TrimEdgeMode, type TrimMode, type TrimProjectMode, type TrimRejectedTarget, type TrimTargetAction } from "@kuubik/cad-core";
 import { DxfImportError, MAX_DXF_IMPORT_BYTES, exportDxf, importDxf } from "@kuubik/cad-dxf";
 import { exportLayoutSvg, exportLayoutsVectorPdf, exportLayoutVectorPdf, exportModelSvg, exportModelVectorPdf, type LayoutPlotOptions, type ModelPlotOptions } from "@kuubik/cad-print";
 import { CadCanvasRenderer, pickCadEntity, pannedViewportWorldCenter, selectCadEntityHitsByCrossingPolygon, selectCadEntityHitsByFence, viewportScreenToWorld, viewportScreenTransform, type Viewport2D } from "@kuubik/cad-renderer";
 import type { CadEntity, CadLayout, CadPageSetup, CadPaperRect, CadPlotStyle, CadViewport, KDrawDocumentV1 } from "@kuubik/cad-schema";
 import { KDrawIndexedDb, StorageRevisionConflictError } from "./indexed-db.js";
-import { prepareCopy, prepareExtend, prepareFillet, prepareMirror, prepareMove, prepareOffset, prepareRotate, prepareScale, prepareTrim, putEntities } from "./workflows/modify-command.js";
+import { prepareChamfer, prepareCopy, prepareExtend, prepareFillet, prepareMirror, prepareMove, prepareOffset, prepareRotate, prepareScale, prepareTrim, putEntities } from "./workflows/modify-command.js";
 import "./style.css";
 
 const LOCAL_DOCUMENT_ID = "local";
-const MODEL_SPACE_COMMANDS = new Set(["LINE", "RECTANGLE", "MOVE", "COPY", "ROTATE", "SCALE", "MIRROR", "OFFSET", "TRIM", "EXTEND", "FILLET", "ERASE"]);
+const MODEL_SPACE_COMMANDS = new Set(["LINE", "RECTANGLE", "MOVE", "COPY", "ROTATE", "SCALE", "MIRROR", "OFFSET", "TRIM", "EXTEND", "FILLET", "CHAMFER", "ERASE"]);
 const MODEL_VIEW_WORLD = Object.freeze({ minX: -500, minY: -500, maxX: 2500, maxY: 2500 });
 
 function nextInteractiveHandle(document: KDrawDocumentV1): string {
@@ -298,7 +298,18 @@ export function App() {
   const [filletFirstCanvasPick, setFilletFirstCanvasPick] = useState<{ handle: string; segment?: number; point: { x: number; y: number } } | null>(null);
   const [filletCanvasSessionActive, setFilletCanvasSessionActive] = useState(false);
   const [lastFilletRejected, setLastFilletRejected] = useState<FilletRejectedTarget[]>([]);
-  const [previewCommand, setPreviewCommand] = useState<"MOVE" | "COPY" | "ROTATE" | "SCALE" | "MIRROR" | "OFFSET" | "TRIM" | "EXTEND" | "FILLET">("MOVE");
+  const [chamferMode, setChamferMode] = useState<"pairs" | "polyline">("pairs");
+  const [chamferMethod, setChamferMethod] = useState<"distance" | "angle">("distance");
+  const [chamferFirstDistanceInput, setChamferFirstDistanceInput] = useState("100");
+  const [chamferSecondDistanceInput, setChamferSecondDistanceInput] = useState("100");
+  const [chamferAngleInput, setChamferAngleInput] = useState("45");
+  const [chamferTrimMode, setChamferTrimMode] = useState<ChamferTrimMode>("trim");
+  const [chamferPairsInput, setChamferPairsInput] = useState("10@400,0>20@500,100");
+  const [chamferPolylineHandlesInput, setChamferPolylineHandlesInput] = useState("10");
+  const [chamferFirstCanvasPick, setChamferFirstCanvasPick] = useState<{ handle: string; segment?: number; point: { x: number; y: number } } | null>(null);
+  const [chamferCanvasSessionActive, setChamferCanvasSessionActive] = useState(false);
+  const [lastChamferRejected, setLastChamferRejected] = useState<ChamferRejectedTarget[]>([]);
+  const [previewCommand, setPreviewCommand] = useState<"MOVE" | "COPY" | "ROTATE" | "SCALE" | "MIRROR" | "OFFSET" | "TRIM" | "EXTEND" | "FILLET" | "CHAMFER">("MOVE");
   const activeLayer = document.layers.find((layer) => layer.id === document.currentLayerId)!;
   const activeLayout = document.layouts.find((layout) => layout.id === activeLayoutId) ?? document.layouts[0]!;
   const selectedViewport = activeLayout.kind === "paper"
@@ -486,6 +497,33 @@ export function App() {
       return null;
     }
   }, [document, filletMode, filletPairsInput, filletPolylineArc, filletPolylineHandlesInput, filletRadiusInput, filletTrimMode, previewCommand]);
+  const chamferPreview = useMemo((): { entities: CadEntity[]; sourceHandles: string[]; steps: number; trimMode: ChamferTrimMode } | null => {
+    if (previewCommand !== "CHAMFER") return null;
+    try {
+      const { result } = prepareChamfer(document, {
+        mode: chamferMode,
+        method: chamferMethod,
+        firstDistanceInput: chamferFirstDistanceInput,
+        secondDistanceInput: chamferSecondDistanceInput,
+        angleInput: chamferAngleInput,
+        pairsInput: chamferPairsInput,
+        polylineHandlesInput: chamferPolylineHandlesInput,
+        trimMode: chamferTrimMode,
+      });
+      const successfulSourceHandles = new Set(result.sourceHandles);
+      return {
+        entities: putEntities(result.changes),
+        sourceHandles: result.changes.flatMap((change) => {
+          const handle = change.type === "put" ? change.entity.handle : change.handle;
+          return successfulSourceHandles.has(handle) ? [handle] : [];
+        }),
+        steps: result.steps.length,
+        trimMode: result.trimMode,
+      };
+    } catch {
+      return null;
+    }
+  }, [chamferAngleInput, chamferFirstDistanceInput, chamferMethod, chamferMode, chamferPairsInput, chamferPolylineHandlesInput, chamferSecondDistanceInput, chamferTrimMode, document, previewCommand]);
 
   useEffect(() => {
     let active = true;
@@ -598,12 +636,13 @@ export function App() {
         widthPx,
         heightPx,
         devicePixelRatio: ratio,
-      }, document.layers, activeLayout.kind === "model" ? [...(movePreview?.entities ?? []), ...(copyPreview?.entities ?? []), ...(rotatePreview?.entities ?? []), ...(scalePreview?.entities ?? []), ...(mirrorPreview?.entities ?? []), ...(offsetPreview?.entities ?? []), ...(trimPreview?.entities ?? []), ...(extendPreview?.entities ?? []), ...(filletPreview?.entities ?? [])] : [], [
+      }, document.layers, activeLayout.kind === "model" ? [...(movePreview?.entities ?? []), ...(copyPreview?.entities ?? []), ...(rotatePreview?.entities ?? []), ...(scalePreview?.entities ?? []), ...(mirrorPreview?.entities ?? []), ...(offsetPreview?.entities ?? []), ...(trimPreview?.entities ?? []), ...(extendPreview?.entities ?? []), ...(filletPreview?.entities ?? []), ...(chamferPreview?.entities ?? [])] : [], [
         ...(mirrorPreview?.eraseSource ? mirrorPreview.sourceHandles : []),
         ...(offsetPreview?.eraseSource ? offsetPreview.sourceHandles : []),
         ...(trimPreview?.sourceHandles ?? []),
         ...(extendPreview?.sourceHandles ?? []),
         ...(filletPreview?.trimMode === "trim" ? filletPreview.sourceHandles : []),
+        ...(chamferPreview?.trimMode === "trim" ? chamferPreview.sourceHandles : []),
       ], activePaper && activePageSetup?.displayPlotStyles ? {
         plotStyle: activePageSetup.plotStyle ?? { profile: "monochrome", plotLineweights: true, plotTransparency: true },
         pixelsPerMillimeter: widthPx / activePaper.widthMm,
@@ -613,7 +652,7 @@ export function App() {
     const observer = new ResizeObserver(render);
     observer.observe(element);
     return () => observer.disconnect();
-  }, [activeLayout, activePageSetup, activePaper, copyPreview, document, extendPreview, filletPreview, mirrorPreview, movePreview, offsetPreview, rotatePreview, scalePreview, trimPreview]);
+  }, [activeLayout, activePageSetup, activePaper, chamferPreview, copyPreview, document, extendPreview, filletPreview, mirrorPreview, movePreview, offsetPreview, rotatePreview, scalePreview, trimPreview]);
 
   async function recoverFromStorageConflict(error: unknown): Promise<void> {
     if (!(error instanceof StorageRevisionConflictError)) throw error;
@@ -1054,7 +1093,7 @@ export function App() {
   }
 
   function selectModifyTargetFromCanvas(event: React.PointerEvent<HTMLCanvasElement>): void {
-    if (!modelSpaceEditing || (previewCommand !== "TRIM" && previewCommand !== "EXTEND" && previewCommand !== "FILLET") || event.button !== 0) return;
+    if (!modelSpaceEditing || (previewCommand !== "TRIM" && previewCommand !== "EXTEND" && previewCommand !== "FILLET" && previewCommand !== "CHAMFER") || event.button !== 0) return;
     const element = event.currentTarget;
     const rect = element.getBoundingClientRect();
     if (!(rect.width > 0 && rect.height > 0)) return;
@@ -1079,6 +1118,29 @@ export function App() {
     }
     const cleanCoordinate = (value: number): number => Number(value.toFixed(6));
     const pickPoint = { x: cleanCoordinate(hit.point.x), y: cleanCoordinate(hit.point.y) };
+    if (previewCommand === "CHAMFER") {
+      setChamferMode("pairs");
+      if (!chamferFirstCanvasPick) {
+        if (!chamferCanvasSessionActive) setChamferPairsInput("");
+        setChamferCanvasSessionActive(true);
+        const entity = document.entities.find((candidate) => candidate.handle === hit.handle);
+        const segment = entity?.kind === "polyline" ? hit.segment : undefined;
+        setChamferFirstCanvasPick({ handle: hit.handle, ...(segment === undefined ? {} : { segment }), point: pickPoint });
+        setStatus(`CHAMFER esimene objekt: ${hit.handle}${segment === undefined ? "" : ` segment ${segment}`}; vali teine objekt`);
+        return;
+      }
+      const secondEntity = document.entities.find((candidate) => candidate.handle === hit.handle);
+      const secondSegment = secondEntity?.kind === "polyline" ? hit.segment : undefined;
+      const firstToken = `${chamferFirstCanvasPick.handle}${chamferFirstCanvasPick.segment === undefined ? "" : `#${chamferFirstCanvasPick.segment}`}`;
+      const secondToken = `${hit.handle}${secondSegment === undefined ? "" : `#${secondSegment}`}`;
+      const pair = `${firstToken}@${chamferFirstCanvasPick.point.x},${chamferFirstCanvasPick.point.y}>${secondToken}@${pickPoint.x},${pickPoint.y}${event.shiftKey ? "~0" : ""}`;
+      setChamferPairsInput((current) => current.trim() ? `${current.trim()}; ${pair}` : pair);
+      setChamferFirstCanvasPick(null);
+      setStatus(event.shiftKey
+        ? `CHAMFER Shift-teine objekt: ${hit.handle}; see paar kasutab nullkaugusega teravat nurka`
+        : `CHAMFER paar lisatud: ${chamferFirstCanvasPick.handle}+${hit.handle}; vali järgmine esimene objekt või käivita CHAMFER`);
+      return;
+    }
     if (previewCommand === "FILLET") {
       setFilletMode("pairs");
       if (!filletFirstCanvasPick) {
@@ -1281,6 +1343,72 @@ export function App() {
     } catch (error) {
       if (error instanceof StorageRevisionConflictError) await recoverFromStorageConflict(error);
       else if (error instanceof CadCommandInputError) setStatus(`FILLET viga: ${error.message}`);
+      else throw error;
+    } finally {
+      committing.current = false;
+    }
+  }
+
+  function undoChamferSource(): void {
+    if (chamferFirstCanvasPick) {
+      setChamferFirstCanvasPick(null);
+      setStatus("CHAMFER Undo: pooleliolev esimese objekti valik tühistatud");
+      return;
+    }
+    if (chamferMode === "pairs") {
+      const tokens = chamferPairsInput.split(/[;\r\n]+/).map((token) => token.trim()).filter(Boolean);
+      if (tokens.length === 0) {
+        setStatus("CHAMFER Undo: käsk on täielikult tagasi võetud; globaalset UNDO sammu ei loodud");
+        return;
+      }
+      tokens.pop();
+      setChamferPairsInput(tokens.join("; "));
+      setPreviewCommand("CHAMFER");
+      setStatus(tokens.length ? `CHAMFER Undo: viimane paar eemaldatud; ${tokens.length} paari jääb` : "CHAMFER Undo: kõik paarid eemaldatud; globaalset UNDO sammu ei loodud");
+      return;
+    }
+    const handles = chamferPolylineHandlesInput.split(/[,;\s]+/u).map((token) => token.trim()).filter(Boolean);
+    if (handles.length === 0) {
+      setStatus("CHAMFER Polyline Undo: käsk on täielikult tagasi võetud; globaalset UNDO sammu ei loodud");
+      return;
+    }
+    handles.pop();
+    setChamferPolylineHandlesInput(handles.join(","));
+    setPreviewCommand("CHAMFER");
+    setStatus(handles.length ? `CHAMFER Polyline Undo: viimane objekt eemaldatud; ${handles.length} jääb` : "CHAMFER Polyline Undo: kõik objektid eemaldatud; globaalset UNDO sammu ei loodud");
+  }
+
+  async function chamferTargets(): Promise<void> {
+    if (committing.current) return;
+    setPreviewCommand("CHAMFER");
+    committing.current = true;
+    try {
+      const prepared = prepareChamfer(document, {
+        mode: chamferMode,
+        method: chamferMethod,
+        firstDistanceInput: chamferFirstDistanceInput,
+        secondDistanceInput: chamferSecondDistanceInput,
+        angleInput: chamferAngleInput,
+        pairsInput: chamferPairsInput,
+        polylineHandlesInput: chamferPolylineHandlesInput,
+        trimMode: chamferTrimMode,
+      });
+      const { result } = prepared;
+      setLastChamferRejected(result.rejected);
+      if (result.changes.length === 0) {
+        const suffix = result.rejected.length ? `; ${result.rejected.length} lukus, peidetud, puudu või sobimatu` : "";
+        setStatus(`CHAMFER ei muutnud geomeetriat${suffix}`);
+        return;
+      }
+      await commitChanges(prepared.commandId, prepared.operationArgs, result.changes, result.resultHandles, result.sourceHandles);
+      setChamferFirstCanvasPick(null);
+      setChamferCanvasSessionActive(false);
+      setSelectedHandles([]);
+      const suffix = result.rejected.length ? `; ${result.rejected.length} jäi muutmata` : "";
+      setStatus(`${result.steps.length} CHAMFER sammu salvestatud ühe Undo-operatsioonina${suffix}`);
+    } catch (error) {
+      if (error instanceof StorageRevisionConflictError) await recoverFromStorageConflict(error);
+      else if (error instanceof CadCommandInputError) setStatus(`CHAMFER viga: ${error.message}`);
       else throw error;
     } finally {
       committing.current = false;
@@ -2385,6 +2513,55 @@ export function App() {
         </label>
         <button type="button" onClick={() => void filletTargets()} disabled={!modelSpaceEditing}>FILLET</button>
         <button type="button" onClick={undoFilletSource} disabled={!modelSpaceEditing}>FILLET Undo</button>
+        <label className="coordinate-input">
+          <span>CHAMFER režiim</span>
+          <select aria-label="CHAMFER režiim" value={chamferMode} onFocus={() => setPreviewCommand("CHAMFER")} onChange={(event) => { setPreviewCommand("CHAMFER"); setChamferMode(event.target.value as "pairs" | "polyline"); setChamferFirstCanvasPick(null); setChamferCanvasSessionActive(false); }}>
+            <option value="pairs">Object pairs / Multiple</option>
+            <option value="polyline">Polyline</option>
+          </select>
+        </label>
+        <label className="coordinate-input">
+          <span>CHAMFER Method</span>
+          <select aria-label="CHAMFER Method" value={chamferMethod} onFocus={() => setPreviewCommand("CHAMFER")} onChange={(event) => { setPreviewCommand("CHAMFER"); setChamferMethod(event.target.value as "distance" | "angle"); }}>
+            <option value="distance">Distance</option>
+            <option value="angle">Angle</option>
+          </select>
+        </label>
+        <label className="coordinate-input">
+          <span>CHAMFER esimene kaugus</span>
+          <input aria-label="CHAMFER esimene kaugus" value={chamferFirstDistanceInput} onFocus={() => setPreviewCommand("CHAMFER")} onChange={(event) => { setPreviewCommand("CHAMFER"); setChamferFirstDistanceInput(event.target.value); }} placeholder="0 või suurem" />
+        </label>
+        {chamferMethod === "distance" ? (
+          <label className="coordinate-input">
+            <span>CHAMFER teine kaugus</span>
+            <input aria-label="CHAMFER teine kaugus" value={chamferSecondDistanceInput} onFocus={() => setPreviewCommand("CHAMFER")} onChange={(event) => { setPreviewCommand("CHAMFER"); setChamferSecondDistanceInput(event.target.value); }} placeholder="0 või suurem" />
+          </label>
+        ) : (
+          <label className="coordinate-input">
+            <span>CHAMFER nurk</span>
+            <input aria-label="CHAMFER nurk" value={chamferAngleInput} onFocus={() => setPreviewCommand("CHAMFER")} onChange={(event) => { setPreviewCommand("CHAMFER"); setChamferAngleInput(event.target.value); }} placeholder="0…&lt;180°" />
+          </label>
+        )}
+        {chamferMode === "pairs" ? (
+          <label className="coordinate-input">
+            <span>CHAMFER objektipaarid</span>
+            <input aria-label="CHAMFER paarid" value={chamferPairsInput} onFocus={() => setPreviewCommand("CHAMFER")} onChange={(event) => { setPreviewCommand("CHAMFER"); setChamferPairsInput(event.target.value); setChamferFirstCanvasPick(null); setChamferCanvasSessionActive(false); }} placeholder="10#0@x,y&gt;10#1@x,y; ..." />
+          </label>
+        ) : (
+          <label className="coordinate-input">
+            <span>CHAMFER Polyline handle’id</span>
+            <input aria-label="CHAMFER Polyline handle'id" value={chamferPolylineHandlesInput} onFocus={() => setPreviewCommand("CHAMFER")} onChange={(event) => { setPreviewCommand("CHAMFER"); setChamferPolylineHandlesInput(event.target.value); }} placeholder="10,20" />
+          </label>
+        )}
+        <label className="coordinate-input">
+          <span>CHAMFER Trim</span>
+          <select aria-label="CHAMFER Trim" value={chamferTrimMode} onFocus={() => setPreviewCommand("CHAMFER")} onChange={(event) => { setPreviewCommand("CHAMFER"); setChamferTrimMode(event.target.value as ChamferTrimMode); }}>
+            <option value="trim">Trim</option>
+            <option value="no-trim">No Trim</option>
+          </select>
+        </label>
+        <button type="button" onClick={() => void chamferTargets()} disabled={!modelSpaceEditing}>CHAMFER</button>
+        <button type="button" onClick={undoChamferSource} disabled={!modelSpaceEditing}>CHAMFER Undo</button>
         <button type="button" onClick={() => void eraseSelected()} disabled={!modelSpaceEditing || selectedHandles.length === 0}>ERASE</button>
         <button type="button" onClick={() => void undoLast()} disabled={!canUndoInActiveLayout}>UNDO</button>
         <button type="button" onClick={() => void redoLast()} disabled={!canRedoInActiveLayout}>REDO</button>
@@ -2409,6 +2586,7 @@ export function App() {
         {trimPreview && <span data-testid="trim-preview" data-hidden-source-count={trimPreview.sourceHandles.length}>TRIM eelvaade: {trimPreview.entities.length} tulemust · {trimPreview.steps} sammu</span>}
         {extendPreview && <span data-testid="extend-preview" data-hidden-source-count={extendPreview.sourceHandles.length}>EXTEND eelvaade: {extendPreview.entities.length} tulemust · {extendPreview.steps} sammu</span>}
         {filletPreview && <span data-testid="fillet-preview" data-hidden-source-count={filletPreview.trimMode === "trim" ? filletPreview.sourceHandles.length : 0}>FILLET eelvaade: {filletPreview.entities.length} tulemust · {filletPreview.steps} sammu</span>}
+        {chamferPreview && <span data-testid="chamfer-preview" data-hidden-source-count={chamferPreview.trimMode === "trim" ? chamferPreview.sourceHandles.length : 0}>CHAMFER eelvaade: {chamferPreview.entities.length} tulemust · {chamferPreview.steps} sammu</span>}
         {lastMoveRejected.length > 0 && (
           <span data-testid="move-rejected" data-rejected={JSON.stringify(lastMoveRejected)}>
             MOVE muutmata: {lastMoveRejected.map(({ handle, reason }) => `${handle} (${reason})`).join(", ")}
@@ -2452,6 +2630,11 @@ export function App() {
         {lastFilletRejected.length > 0 && (
           <span data-testid="fillet-rejected" data-rejected={JSON.stringify(lastFilletRejected)}>
             FILLET muutmata: {lastFilletRejected.map(({ handles, sourceIndex, reason }) => `${handles.join("+")}#${sourceIndex + 1} (${reason})`).join(", ")}
+          </span>
+        )}
+        {lastChamferRejected.length > 0 && (
+          <span data-testid="chamfer-rejected" data-rejected={JSON.stringify(lastChamferRejected)}>
+            CHAMFER muutmata: {lastChamferRejected.map(({ handles, sourceIndex, reason }) => `${handles.join("+")}#${sourceIndex + 1} (${reason})`).join(", ")}
           </span>
         )}
       </section>
