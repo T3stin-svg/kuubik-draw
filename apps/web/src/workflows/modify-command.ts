@@ -16,6 +16,7 @@ import {
   parseRotationAngleInput,
   parseScaleFactorInput,
   parseScaleLengthInput,
+  parseStretchRegions,
   parseTrimTargetPicks,
   resolveCadCommand,
   type CadChange,
@@ -36,6 +37,7 @@ import {
   type RotateCommandResult,
   type ScaleCommandResult,
   type ScaleFactorSpec,
+  type StretchCommandResult,
   type TrimCommandResult,
   type TrimEdgeMode,
   type TrimMode,
@@ -45,7 +47,7 @@ import {
 import type { CadEntity, KDrawDocumentV1 } from "@kuubik/cad-schema";
 
 export interface PreparedModifyCommand<TResult> {
-  commandId: "MOVE" | "COPY" | "ROTATE" | "SCALE" | "MIRROR" | "OFFSET" | "TRIM" | "EXTEND" | "FILLET" | "CHAMFER" | "BREAK";
+  commandId: "MOVE" | "COPY" | "ROTATE" | "SCALE" | "MIRROR" | "OFFSET" | "TRIM" | "EXTEND" | "FILLET" | "CHAMFER" | "BREAK" | "STRETCH";
   operationArgs: Readonly<Record<string, unknown>>;
   result: TResult;
 }
@@ -325,6 +327,25 @@ export function prepareBreak(document: KDrawDocumentV1, input: {
   return {
     commandId: command.id,
     operationArgs: { targets, steps: result.steps, multiple: result.multiple },
+    result,
+  };
+}
+
+export function prepareStretch(document: KDrawDocumentV1, input: {
+  crossingInput: string;
+  individualHandles: readonly string[];
+  baseInput: string;
+  destinationInput: string;
+}): PreparedModifyCommand<StretchCommandResult> {
+  const command = resolveCadCommand("STRETCH");
+  if (!command || command.id !== "STRETCH") throw new Error("STRETCH command is missing from the registry.");
+  const regions = parseStretchRegions(input.crossingInput);
+  const basePoint = parseCartesianPoint(input.baseInput);
+  const destinationPoint = parseMoveDestination(input.destinationInput, basePoint);
+  const result = command.execute(document, { regions, individualHandles: input.individualHandles, basePoint, destinationPoint });
+  return {
+    commandId: command.id,
+    operationArgs: { regions, basePoint, destinationPoint, delta: result.delta, steps: result.steps },
     result,
   };
 }

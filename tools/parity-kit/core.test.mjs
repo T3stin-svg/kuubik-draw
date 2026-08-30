@@ -173,9 +173,9 @@ describe("parity kit", () => {
     expect(semanticValue({ generatedAt: "now", value: 1 })).toEqual({ value: 1 });
   });
 
-  it("maps shared modify sources through certified F-025 and package locks to every certified row", () => {
+  it("maps shared modify sources through certified F-025, uncertified F-027 and package locks to every certified row", () => {
     expect(affectedRows(["packages/cad-core/src/trim.ts"]).rows).toEqual(["F-022", "F-023", "F-024", "F-026"]);
-    expect(affectedRows(["apps/web/src/workflows/modify-command.ts"]).rows).toEqual(["F-015", "F-016", "F-017", "F-018", "F-019", "F-020", "F-021", "F-022", "F-023", "F-024", "F-025", "F-026"]);
+    expect(affectedRows(["apps/web/src/workflows/modify-command.ts"]).rows).toEqual(["F-015", "F-016", "F-017", "F-018", "F-019", "F-020", "F-021", "F-022", "F-023", "F-024", "F-025", "F-026", "F-027"]);
     expect(affectedRows(["apps/web/src/workflows/modify-command.ts"]).rows).not.toContain("F-114");
     expect(affectedRows(["package-lock.json"]).rows).toHaveLength(26);
     expect(affectedRows(["package-lock.json"]).rows).toContain("F-024");
@@ -183,6 +183,7 @@ describe("parity kit", () => {
     expect(affectedRows(["apps/web/package.json"]).rows).toHaveLength(26);
     expect(affectedRows(["packages/cad-core/package.json"]).rows).toHaveLength(26);
     expect(sourceToRows().get("packages/cad-core/src/trim.ts")).toEqual(["F-022", "F-023", "F-024", "F-026"]);
+    expect(sourceToRows().get("packages/cad-core/src/stretch.ts")).toEqual(["F-027"]);
     expect(sourceToRows().get("tools/autocad/f022-shift-click.ps1")).toEqual(["F-022", "F-023", "F-024", "F-025"]);
     expect(sourceToRows().get("packages/cad-core/src/chamfer.ts")).toEqual(["F-025"]);
     for (const sharedSource of ["tools/autocad/f109-desktop-readback.ps1", "tools/autocad/f109-runner.test.mjs", "parity/expected/F-109.json"]) {

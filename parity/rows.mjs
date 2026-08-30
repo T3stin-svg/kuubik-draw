@@ -156,11 +156,12 @@ export const SOURCE_GROUPS = Object.freeze({
  * score in parity/local-certifications.json.
  */
 export const UNCERTIFIED_SOURCE_ROWS = Object.freeze({
-  "apps/web/src/App.tsx": Object.freeze(["F-026"]),
-  "apps/web/src/workflows/modify-command.ts": Object.freeze(["F-026"]),
+  "apps/web/src/App.tsx": Object.freeze(["F-026", "F-027"]),
+  "apps/web/src/workflows/modify-command.ts": Object.freeze(["F-026", "F-027"]),
   "packages/cad-core/src/break.ts": Object.freeze(["F-026"]),
-  "packages/cad-core/src/commands.ts": Object.freeze(["F-026"]),
-  "packages/cad-core/src/index.ts": Object.freeze(["F-026"]),
+  "packages/cad-core/src/commands.ts": Object.freeze(["F-026", "F-027"]),
+  "packages/cad-core/src/index.ts": Object.freeze(["F-026", "F-027"]),
+  "packages/cad-core/src/stretch.ts": Object.freeze(["F-027"]),
   "packages/cad-core/src/trim.ts": Object.freeze(["F-026"]),
 });
 

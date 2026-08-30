@@ -34,6 +34,10 @@ button { font: inherit; }
 .coordinate-input input:focus { outline: 1px solid #5da9e9; border-color: #5da9e9; }
 .drawing-area { position: relative; min-height: 0; padding: 1px; overflow: hidden; background: #0b0e11; }
 .drawing-area canvas { display: block; width: 100%; height: 100%; background: #191d21; }
+.stretch-crossing-draft { position: absolute; z-index: 4; pointer-events: none; border: 1px dashed #5cd68b; background: rgb(53 180 103 / 14%); box-sizing: border-box; }
+.stretch-polygon-draft { position: absolute; inset: 0; z-index: 4; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
+.stretch-polygon-draft polyline { fill: rgb(53 180 103 / 14%); stroke: #5cd68b; stroke-width: 1; stroke-dasharray: 5 4; }
+.stretch-polygon-draft circle { fill: #5cd68b; stroke: #17201a; stroke-width: 1; }
 .drawing-area.paper-mode { padding: 0; background: #343a40; }
 .paper-space-desk {
   display: flex;

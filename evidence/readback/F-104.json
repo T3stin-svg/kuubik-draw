@@ -4,7 +4,7 @@
   "kind": "readback",
   "authority": "independent-parser",
   "status": "PASS",
-  "artifactSha256": "818fcb74cdd41f57ff90d4a72b0584ca767613197ba036240bde0741d85e83af",
+  "artifactSha256": "f850f6fc455468c42d79b43d1490848b3671095242967cccbfd6055db7853b03",
   "observedAt": "2026-08-29T10:46:06.775Z",
   "workflow": "The built production cad-print package exports the shared F-104 document twice, serializes KDRAW1, then independent XML, strict pypdf, pdfplumber, Poppler PDF and Chromium SVG raster readers inspect physical size, clips, operators, text and pixels. Scale and clip mutations are applied separately.",
   "result": "Production output matched the Chromium bytes exactly, remained deterministic across structured reload, contained one A3 vector page with no images, rendered both clipped viewport contents from the SVG itself, and preserved two viewport cameras in KDRAW1. Both scale and polygon-clip mutations changed SVG and PDF hashes, proving the gate is sensitive to the owned F-104 behavior.",

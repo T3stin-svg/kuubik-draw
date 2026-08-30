@@ -20,6 +20,7 @@ import {
   type FilletTrimMode,
 } from "./fillet.js";
 import { offsetCadEntity, type OffsetGeometryMode, type OffsetGeometryRejectReason } from "./offset.js";
+import { stretchCadEntity, validateStretchRegions, type StretchGeometryRejectReason, type StretchRegion } from "./stretch.js";
 import {
   extendCadEntity,
   trimClosestPoint,
@@ -371,6 +372,41 @@ export interface BreakCommandDefinition {
   execute(document: KDrawDocumentV1, args: BreakCommandArgs): BreakCommandResult;
 }
 
+export interface StretchCommandArgs {
+  regions: readonly StretchRegion[];
+  individualHandles: readonly string[];
+  basePoint: CadPoint2;
+  destinationPoint: CadPoint2;
+}
+
+export interface StretchRejectedTarget {
+  handle: string;
+  reason: "missing" | "locked-layer" | StretchGeometryRejectReason;
+}
+
+export interface StretchCommandStep {
+  handle: string;
+  mode: "move" | "stretch";
+  movedPointCount: number;
+}
+
+export interface StretchCommandResult {
+  changes: EntityChange[];
+  sourceHandles: string[];
+  resultHandles: string[];
+  movedHandles: string[];
+  stretchedHandles: string[];
+  rejected: StretchRejectedTarget[];
+  steps: StretchCommandStep[];
+  delta: CadPoint2;
+}
+
+export interface StretchCommandDefinition {
+  id: "STRETCH";
+  aliases: readonly string[];
+  execute(document: KDrawDocumentV1, args: StretchCommandArgs): StretchCommandResult;
+}
+
 export interface FilletPairPick {
   firstHandle: string;
   firstSegment?: number;
@@ -579,6 +615,23 @@ export function parseBreakTargetPicks(input: string): BreakTargetPick[] {
       ? { handle, firstPoint, mode: "at-point" }
       : { handle, firstPoint, secondPoint: parseCartesianPoint(secondToken), mode: "two-point" };
   });
+}
+
+/** Parses one or more crossing windows/polygons separated by `|`. */
+export function parseStretchRegions(input: string): StretchRegion[] {
+  if (!input.trim()) return [];
+  const regions = input.split("|").map((group) => {
+    const points = group.split(/[;\r\n]+/u).map((token) => token.trim()).filter(Boolean).map(parseCartesianPoint);
+    if (points.length === 2) return { kind: "crossing-window" as const, points };
+    if (points.length >= 3) return { kind: "crossing-polygon" as const, points };
+    throw new CadCommandInputError("STRETCH selection must contain two window corners or at least three polygon points.");
+  });
+  try {
+    validateStretchRegions(regions);
+  } catch (error) {
+    throw new CadCommandInputError(error instanceof Error ? error.message : "STRETCH selection is invalid.");
+  }
+  return regions;
 }
 
 function parseFilletObjectPick(token: string): { handle: string; segment?: number; pickPoint: CadPoint2 } {
@@ -1817,6 +1870,61 @@ export function executeExtend(document: KDrawDocumentV1, args: ExtendCommandArgs
   };
 }
 
+/** Executes AutoCAD crossing/individual STRETCH as one immutable document operation. */
+export function executeStretch(document: KDrawDocumentV1, args: StretchCommandArgs): StretchCommandResult {
+  assertFinitePoint("STRETCH base point", args.basePoint);
+  assertFinitePoint("STRETCH destination point", args.destinationPoint);
+  const individualHandles = [...new Set(args.individualHandles.map((handle) => handle.trim()).filter(Boolean))];
+  if (args.regions.length === 0 && individualHandles.length === 0) {
+    throw new CadCommandInputError("STRETCH requires a crossing selection or an individual selection.");
+  }
+  try {
+    validateStretchRegions(args.regions);
+  } catch (error) {
+    throw new CadCommandInputError(error instanceof Error ? error.message : "STRETCH selection is invalid.");
+  }
+  const delta = { x: args.destinationPoint.x - args.basePoint.x, y: args.destinationPoint.y - args.basePoint.y };
+  const individual = new Set(individualHandles);
+  const entities = new Map(document.entities.map((entity) => [entity.handle, entity]));
+  const layers = new Map(document.layers.map((layer) => [layer.id, layer]));
+  const changes: EntityChange[] = [];
+  const sourceHandles: string[] = [];
+  const movedHandles: string[] = [];
+  const stretchedHandles: string[] = [];
+  const rejected: StretchRejectedTarget[] = individualHandles
+    .filter((handle) => !entities.has(handle))
+    .map((handle) => ({ handle, reason: "missing" as const }));
+  const steps: StretchCommandStep[] = [];
+
+  for (const entity of document.entities) {
+    const geometry = stretchCadEntity(entity, args.regions, delta, individual.has(entity.handle));
+    if (!geometry.selected) continue;
+    if (layers.get(entity.layerId)?.locked) {
+      rejected.push({ handle: entity.handle, reason: "locked-layer" });
+      continue;
+    }
+    if (!geometry.entity || !geometry.mode) {
+      rejected.push({ handle: entity.handle, reason: geometry.reason ?? "degenerate-geometry" });
+      continue;
+    }
+    changes.push({ type: "put", entity: geometry.entity });
+    sourceHandles.push(entity.handle);
+    if (geometry.mode === "move") movedHandles.push(entity.handle);
+    else stretchedHandles.push(entity.handle);
+    steps.push({ handle: entity.handle, mode: geometry.mode, movedPointCount: geometry.movedPointCount });
+  }
+  return {
+    changes,
+    sourceHandles,
+    resultHandles: [...sourceHandles],
+    movedHandles,
+    stretchedHandles,
+    rejected,
+    steps,
+    delta,
+  };
+}
+
 /** Executes an ordered BREAK sequence as one immutable document operation. */
 export function executeBreak(document: KDrawDocumentV1, args: BreakCommandArgs): BreakCommandResult {
   if (args.targets.length === 0) throw new CadCommandInputError("BREAK requires at least one target.");
@@ -2317,9 +2425,15 @@ const breakCommand: BreakCommandDefinition = Object.freeze({
   execute: executeBreak,
 });
 
-export const cadCommandRegistry = Object.freeze([rectangleCommand, eraseCommand, moveCommand, copyCommand, rotateCommand, scaleCommand, mirrorCommand, offsetCommand, trimCommand, extendCommand, filletCommand, chamferCommand, breakCommand]);
+const stretchCommand: StretchCommandDefinition = Object.freeze({
+  id: "STRETCH",
+  aliases: Object.freeze(["S", "STRETCH"]),
+  execute: executeStretch,
+});
 
-export function resolveCadCommand(token: string): RectangleCommandDefinition | EraseCommandDefinition | MoveCommandDefinition | CopyCommandDefinition | RotateCommandDefinition | ScaleCommandDefinition | MirrorCommandDefinition | OffsetCommandDefinition | TrimCommandDefinition | ExtendCommandDefinition | FilletCommandDefinition | ChamferCommandDefinition | BreakCommandDefinition | null {
+export const cadCommandRegistry = Object.freeze([rectangleCommand, eraseCommand, moveCommand, copyCommand, rotateCommand, scaleCommand, mirrorCommand, offsetCommand, trimCommand, extendCommand, filletCommand, chamferCommand, breakCommand, stretchCommand]);
+
+export function resolveCadCommand(token: string): RectangleCommandDefinition | EraseCommandDefinition | MoveCommandDefinition | CopyCommandDefinition | RotateCommandDefinition | ScaleCommandDefinition | MirrorCommandDefinition | OffsetCommandDefinition | TrimCommandDefinition | ExtendCommandDefinition | FilletCommandDefinition | ChamferCommandDefinition | BreakCommandDefinition | StretchCommandDefinition | null {
   const normalized = token.trim().toUpperCase();
   return cadCommandRegistry.find((command) => command.aliases.includes(normalized)) ?? null;
 }

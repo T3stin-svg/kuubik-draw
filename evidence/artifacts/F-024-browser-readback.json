@@ -2,12 +2,12 @@
   "schemaVersion": 1,
   "rowId": "F-024",
   "source": "Chromium 1920x1080 visible FILLET controls, IndexedDB, production DXF/KDRAW1 downloads and two-step Undo/Redo",
-  "observedAt": "2026-08-30T06:10:17.859Z",
+  "observedAt": "2026-08-30T08:25:31.453Z",
   "implementationSha256": {
-    "apps/web/src/App.tsx": "4fd63d45a2e002abc3c8e46de93a0ad49b8fd797bcd923585669457959eff806",
-    "apps/web/src/workflows/modify-command.ts": "e1017aae7232f43399cbcd57eb301c530a7b6b31b322f50597ae929afb068066",
-    "apps/web/src/workflows/modify-command.test.ts": "c24df8aa3e94652107a758265fa55cb5a03a27e1b8b60a723cdddb7578bac481",
-    "packages/cad-core/src/commands.ts": "9e24d22e58b2793996306fa912038d9318df823f2e07101e4b3b34fa6ec55304",
+    "apps/web/src/App.tsx": "1f7a21731e70245bbe0e696e9ec34a52ada002985cec6d0b3126a5f8d3313bb3",
+    "apps/web/src/workflows/modify-command.ts": "cf95272f005691140541de01bc1be02009c03342b9520fa0cf70a21d9e50f332",
+    "apps/web/src/workflows/modify-command.test.ts": "b9b303e1a53ce508b9cf28a7aad1ccd226194f48275deb74b66aa54e5e5e546b",
+    "packages/cad-core/src/commands.ts": "a69c694cd82a59269ac9b56b0deeb85870c298f23555bcf011a747e68297645d",
     "packages/cad-core/src/container.ts": "931db68e6aa0688ac9a7aa6d5ac56c07d1cd5e0126adec836f27258011419502",
     "packages/cad-core/src/fillet.ts": "96c5f6f3d8a54c085d46e84aa06047552c7187b3364ba6985efa2e7cb195c022",
     "packages/cad-core/src/trim.ts": "2b79501c802c648e6fb1a38134c339a549852794f063c8c22c04e8d7d728185e",
@@ -248,7 +248,7 @@
       "attachments": [],
       "metadata": {
         "createdAt": "2026-08-29T17:30:00.000Z",
-        "updatedAt": "2026-08-30T06:10:16.627Z"
+        "updatedAt": "2026-08-30T08:25:30.153Z"
       }
     },
     "committed": {
@@ -384,12 +384,12 @@
       "attachments": [],
       "metadata": {
         "createdAt": "2026-08-29T17:30:00.000Z",
-        "updatedAt": "2026-08-30T06:10:16.993Z"
+        "updatedAt": "2026-08-30T08:25:30.518Z"
       }
     },
     "operations": [
       {
-        "opId": "f29578c5-8667-49b9-8b7a-17ccacd0b72a",
+        "opId": "6cc7fdf4-a55f-4852-ae62-a3d0a163869f",
         "baseRevision": 0,
         "commandId": "FILLET",
         "args": {
@@ -446,7 +446,7 @@
         ]
       },
       {
-        "opId": "2b6f55b9-82ea-44be-9774-e3140ce87341",
+        "opId": "d63d97ba-5fec-403c-bcc4-67bf2e0954cf",
         "baseRevision": 1,
         "commandId": "FILLET",
         "args": {
@@ -616,7 +616,7 @@
       "attachments": [],
       "metadata": {
         "createdAt": "2026-08-29T17:30:00.000Z",
-        "updatedAt": "2026-08-30T06:10:16.993Z"
+        "updatedAt": "2026-08-30T08:25:30.518Z"
       }
     },
     "undoRestored": {
@@ -726,7 +726,7 @@
       "attachments": [],
       "metadata": {
         "createdAt": "2026-08-29T17:30:00.000Z",
-        "updatedAt": "2026-08-30T06:10:17.276Z"
+        "updatedAt": "2026-08-30T08:25:30.867Z"
       }
     },
     "redone": {
@@ -862,7 +862,7 @@
       "attachments": [],
       "metadata": {
         "createdAt": "2026-08-29T17:30:00.000Z",
-        "updatedAt": "2026-08-30T06:10:17.479Z"
+        "updatedAt": "2026-08-30T08:25:31.078Z"
       }
     },
     "consoleErrors": [],
@@ -1178,11 +1178,11 @@
       "attachments": [],
       "metadata": {
         "createdAt": "2026-08-29T17:20:00.000Z",
-        "updatedAt": "2026-08-30T06:10:13.260Z"
+        "updatedAt": "2026-08-30T08:25:26.769Z"
       }
     },
     "operation": {
-      "opId": "64f4eeb7-5cc3-40dd-83ae-2d2e207eb9d2",
+      "opId": "7db8a426-d2a4-4a21-bc3a-8c4805e89c05",
       "baseRevision": 0,
       "commandId": "FILLET",
       "args": {
@@ -1610,11 +1610,11 @@
       "attachments": [],
       "metadata": {
         "createdAt": "2026-08-29T17:25:00.000Z",
-        "updatedAt": "2026-08-30T06:10:14.348Z"
+        "updatedAt": "2026-08-30T08:25:27.857Z"
       }
     },
     "operation": {
-      "opId": "a4bcbdce-09b4-487c-a6ea-623a544f89d7",
+      "opId": "2e879a1b-bca8-4ae2-9d10-8218682f72c7",
       "baseRevision": 0,
       "commandId": "FILLET",
       "args": {
@@ -2268,12 +2268,12 @@
       "attachments": [],
       "metadata": {
         "createdAt": "2026-08-29T22:00:00.000Z",
-        "updatedAt": "2026-08-30T06:10:15.743Z"
+        "updatedAt": "2026-08-30T08:25:29.236Z"
       }
     },
     "operations": [
       {
-        "opId": "344722da-5ce0-4c1d-8799-4ff32e42b3bf",
+        "opId": "b86101b3-4e8f-43be-8ca6-a8181646c04c",
         "baseRevision": 0,
         "commandId": "FILLET",
         "args": {
@@ -2415,7 +2415,7 @@
         ]
       },
       {
-        "opId": "b4b5dc75-dd39-4d80-b258-e6adfb00121b",
+        "opId": "5f2af7a4-1ef7-4480-8e30-7214f991f055",
         "baseRevision": 1,
         "commandId": "FILLET",
         "args": {
@@ -2535,9 +2535,9 @@
       ]
     },
     "kdraw": {
-      "sha256": "5d71a44cd6358499c53bf995fc53273c825508dda4f3be85fc2183865ae444c0",
+      "sha256": "b6326cbe29c860317abe54879d97a998b3b2fab066005ee58dee7ead7ec8ee0d",
       "byteLength": 2205,
-      "documentSha256": "1df8eb6d436bb9c39455f502166398cfedcdb755a856c5f43f7cc6d968bfc499",
+      "documentSha256": "e31405db7711c7e8f0ddc20357a30075a18918777f0b5b480043956f15ed9698",
       "productionDeserializer": true
     },
     "parametricDxf": {
@@ -2593,9 +2593,9 @@
       ]
     },
     "parametricKdraw": {
-      "sha256": "ef808bf843c3c7e35530ec8a78e470b084cc3700351de4529db257f6a27906c0",
+      "sha256": "fe6d4f738edf4f3d33dd4dd4eafb25471dd18543d33af77756f5a17568f1fa7f",
       "byteLength": 3209,
-      "documentSha256": "5e5524104a8403cbae79c3281d2f5615b6ee7e04f287e11346f0add7581a9921",
+      "documentSha256": "2e46c452fdf85789aa760355cae839344349960de844cc97432b7254849a0aa3",
       "productionDeserializer": true
     },
     "constructionDxf": {
@@ -2653,9 +2653,9 @@
       "byteLength": 5111
     },
     "constructionKdraw": {
-      "sha256": "e7c063fa2a078fe4b8355dc66537b01de2013456f7ac1a530ece73e94146a6c5",
+      "sha256": "428826a64ec12fb3eed27bb0f3991f0c9caab393194a531f209d5a5e6ad299fd",
       "byteLength": 4917,
-      "documentSha256": "2d485a11a421b8b2230da0ec35c596151e101046943c43570391481c31edf077",
+      "documentSha256": "cb1ef8b3006e4b7fb079eab231ce88d4ccb9c8a4a40ab3f9d131da25791379e7",
       "productionDeserializer": true
     }
   },

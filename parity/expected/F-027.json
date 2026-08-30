@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-027",
+  "benchmark": "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
+  "delta": { "x": 25, "y": 5 },
+  "quarterEllipse": {
+    "center": { "x": 9.852004872791, "y": -1.07776424224631 },
+    "majorAxis": { "x": 115.564843901568, "y": 2.120881991279924 },
+    "ratio": 0.444723039979619,
+    "startParameter": 0.077190120252004,
+    "endParameter": 1.647986447046899
+  },
+  "requiredCandidateChecks": [
+    "nativeCoreReference",
+    "browserWorkflow",
+    "physicalCrossingWindow",
+    "physicalCrossingPolygon",
+    "quarterEllipseBrowserDxfKdraw",
+    "productionReadback",
+    "secondaryOracles",
+    "sourceHashCoverage"
+  ],
+  "remainingCertificationRequirements": [
+    "isolatedOwnedAutoCadDesktopLive",
+    "independentZeroP0P1Review"
+  ]
+}

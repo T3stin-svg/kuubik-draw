@@ -1,6 +1,6 @@
 import { createEmptyDocument } from "@kuubik/cad-core";
 import { describe, expect, it } from "vitest";
-import { prepareBreak, prepareChamfer, prepareCopy, prepareExtend, prepareFillet, prepareMirror, prepareMove, prepareOffset, prepareRotate, prepareScale, prepareTrim, putEntities } from "./modify-command.js";
+import { prepareBreak, prepareChamfer, prepareCopy, prepareExtend, prepareFillet, prepareMirror, prepareMove, prepareOffset, prepareRotate, prepareScale, prepareStretch, prepareTrim, putEntities } from "./modify-command.js";
 
 function modifyDocument() {
   const document = createEmptyDocument({ documentId: "web-workflows", now: "2026-08-29T00:00:00.000Z" });
@@ -165,5 +165,29 @@ describe("web modify command workflows", () => {
       },
     });
     expect(prepareBreak(document, { targetsInput: "10@25,0>75,0; 20@50,0>@" })).toEqual(prepared);
+  });
+
+  it("normalizes STRETCH crossing windows, polygons, individual selection and relative displacement once", () => {
+    const document = modifyDocument();
+    const prepared = prepareStretch(document, {
+      crossingInput: "40,-10; 110,20 | 45,-60; 60,-60; 60,-40; 45,-40",
+      individualHandles: ["20"],
+      baseInput: "0,0",
+      destinationInput: "@25,5",
+    });
+    expect(prepared).toMatchObject({
+      commandId: "STRETCH",
+      operationArgs: {
+        regions: [{ kind: "crossing-window" }, { kind: "crossing-polygon" }],
+        basePoint: { x: 0, y: 0 }, destinationPoint: { x: 25, y: 5 }, delta: { x: 25, y: 5 },
+      },
+      result: {
+        sourceHandles: ["10", "20"], stretchedHandles: ["10"], movedHandles: ["20"], rejected: [],
+      },
+    });
+    expect(prepareStretch(document, {
+      crossingInput: "40,-10; 110,20 | 45,-60; 60,-60; 60,-40; 45,-40",
+      individualHandles: ["20"], baseInput: "0,0", destinationInput: "@25,5",
+    })).toEqual(prepared);
   });
 });

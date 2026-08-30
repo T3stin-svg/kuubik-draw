@@ -4,8 +4,8 @@
   "kind": "readback",
   "authority": "independent-parser",
   "status": "PASS",
-  "artifactSha256": "342dc695dd85ccbf42bf972b6a3b1325ffdd17aa7d0097261413a11e220d0cf5",
-  "observedAt": "2026-08-30T06:10:22.444Z",
+  "artifactSha256": "d7a0596cd3f7c508e381885343fa6fb2d2f2599d8378386bfbcee0ed806747c9",
+  "observedAt": "2026-08-30T08:28:48.601Z",
   "workflow": "Production cad-core FILLET operations are committed atomically, exported through cad-dxf and KDRAW1, then read through strict Kuubik import, independent dxf-parser semantics and independent KDRAW1 checksum decoding. Polyline join, FILLETPOLYARC, No Trim, rational spline and RAY/XLINE cases are included.",
   "result": "Entity kinds, handles, geometry, layers, appearances, widths, bulges, spline data and construction-line direction vectors matched the contract; output byte hashes matched and multi-step Undo/Redo restored each exact revision.",
   "artifact": "evidence/artifacts/F-024-independent-readback.json"

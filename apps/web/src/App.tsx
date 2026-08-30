@@ -1,15 +1,15 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ISO_PAPER_MEDIA, MAX_PAGE_SETUP_TEMPLATE_BYTES, STANDARD_VIEWPORT_SCALE_DENOMINATORS, allocateEntityHandles, applyNamedPageSetup, buildLayoutPublishPlan, CadCommandInputError, CadSession, clearNamedPageSetupAssignment, createPageSetupTemplate, LayoutCommandError, LayoutPublishSettingsError, NoOpOperationError, PageSetupLibraryError, copyPaperLayout, createEmptyDocument, createPaperLayout, createPaperViewport, deleteNamedPageSetup, deletePaperLayout, deletePaperViewport, formatViewportScale, importPageSetupTemplate, metadataWithLayoutPublishSettings, movePaperLayout, panPaperViewportByPixels, paperDefinitionForPageSetup, parseCartesianPoint, parsePageSetupTemplate, renameNamedPageSetup, renamePaperLayout, replaceDrawingContentPreservingLayouts, resolveCadCommand, resolveLayoutPublishSettings, resolveModelPageSetup, resolvePageSetup, resolvePageSetupLibrary, resolvePaperDefinition, sanitizePdfFileStem, saveNamedPageSetup, serializeKDraw, serializePageSetupTemplate, setModelLayoutPageSetup, setPaperLayoutPageSetup, setPaperViewportDisplayLocked, setPaperViewportView, viewportScaleDenominator, zoomPaperViewportAtModelPoint, type BreakMode, type BreakRejectedTarget, type CadChange, type ChamferRejectedTarget, type ChamferTrimMode, type CopyRejectedTarget, type ExtendRejectedTarget, type ExtendTargetAction, type FilletRejectedTarget, type FilletTrimMode, type LayoutPublishSettingsV1, type MirrorRejectedTarget, type MoveRejectedTarget, type OffsetLayerMode, type OffsetRejectedTarget, type RotateRejectedTarget, type ScaleRejectedTarget, type TrimEdgeMode, type TrimMode, type TrimProjectMode, type TrimRejectedTarget, type TrimTargetAction } from "@kuubik/cad-core";
+import { ISO_PAPER_MEDIA, MAX_PAGE_SETUP_TEMPLATE_BYTES, STANDARD_VIEWPORT_SCALE_DENOMINATORS, allocateEntityHandles, applyNamedPageSetup, buildLayoutPublishPlan, CadCommandInputError, CadSession, clearNamedPageSetupAssignment, createPageSetupTemplate, LayoutCommandError, LayoutPublishSettingsError, NoOpOperationError, PageSetupLibraryError, copyPaperLayout, createEmptyDocument, createPaperLayout, createPaperViewport, deleteNamedPageSetup, deletePaperLayout, deletePaperViewport, formatViewportScale, importPageSetupTemplate, metadataWithLayoutPublishSettings, movePaperLayout, panPaperViewportByPixels, paperDefinitionForPageSetup, parseCartesianPoint, parsePageSetupTemplate, renameNamedPageSetup, renamePaperLayout, replaceDrawingContentPreservingLayouts, resolveCadCommand, resolveLayoutPublishSettings, resolveModelPageSetup, resolvePageSetup, resolvePageSetupLibrary, resolvePaperDefinition, sanitizePdfFileStem, saveNamedPageSetup, serializeKDraw, serializePageSetupTemplate, setModelLayoutPageSetup, setPaperLayoutPageSetup, setPaperViewportDisplayLocked, setPaperViewportView, viewportScaleDenominator, zoomPaperViewportAtModelPoint, type BreakMode, type BreakRejectedTarget, type CadChange, type ChamferRejectedTarget, type ChamferTrimMode, type CopyRejectedTarget, type ExtendRejectedTarget, type ExtendTargetAction, type FilletRejectedTarget, type FilletTrimMode, type LayoutPublishSettingsV1, type MirrorRejectedTarget, type MoveRejectedTarget, type OffsetLayerMode, type OffsetRejectedTarget, type RotateRejectedTarget, type ScaleRejectedTarget, type StretchRejectedTarget, type TrimEdgeMode, type TrimMode, type TrimProjectMode, type TrimRejectedTarget, type TrimTargetAction } from "@kuubik/cad-core";
 import { DxfImportError, MAX_DXF_IMPORT_BYTES, exportDxf, importDxf } from "@kuubik/cad-dxf";
 import { exportLayoutSvg, exportLayoutsVectorPdf, exportLayoutVectorPdf, exportModelSvg, exportModelVectorPdf, type LayoutPlotOptions, type ModelPlotOptions } from "@kuubik/cad-print";
 import { CadCanvasRenderer, pickCadEntity, pannedViewportWorldCenter, selectCadEntityHitsByCrossingPolygon, selectCadEntityHitsByFence, viewportScreenToWorld, viewportScreenTransform, type Viewport2D } from "@kuubik/cad-renderer";
 import type { CadEntity, CadLayout, CadPageSetup, CadPaperRect, CadPlotStyle, CadViewport, KDrawDocumentV1 } from "@kuubik/cad-schema";
 import { KDrawIndexedDb, StorageRevisionConflictError } from "./indexed-db.js";
-import { prepareBreak, prepareChamfer, prepareCopy, prepareExtend, prepareFillet, prepareMirror, prepareMove, prepareOffset, prepareRotate, prepareScale, prepareTrim, putEntities } from "./workflows/modify-command.js";
+import { prepareBreak, prepareChamfer, prepareCopy, prepareExtend, prepareFillet, prepareMirror, prepareMove, prepareOffset, prepareRotate, prepareScale, prepareStretch, prepareTrim, putEntities } from "./workflows/modify-command.js";
 import "./style.css";
 
 const LOCAL_DOCUMENT_ID = "local";
-const MODEL_SPACE_COMMANDS = new Set(["LINE", "RECTANGLE", "MOVE", "COPY", "ROTATE", "SCALE", "MIRROR", "OFFSET", "TRIM", "EXTEND", "FILLET", "CHAMFER", "BREAK", "ERASE"]);
+const MODEL_SPACE_COMMANDS = new Set(["LINE", "RECTANGLE", "MOVE", "COPY", "ROTATE", "SCALE", "MIRROR", "OFFSET", "TRIM", "EXTEND", "FILLET", "CHAMFER", "BREAK", "STRETCH", "ERASE"]);
 const MODEL_VIEW_WORLD = Object.freeze({ minX: -500, minY: -500, maxX: 2500, maxY: 2500 });
 
 function nextInteractiveHandle(document: KDrawDocumentV1): string {
@@ -314,7 +314,22 @@ export function App() {
   const [breakFirstCanvasPick, setBreakFirstCanvasPick] = useState<{ handle: string; point: { x: number; y: number } } | null>(null);
   const [breakCanvasSessionActive, setBreakCanvasSessionActive] = useState(false);
   const [lastBreakRejected, setLastBreakRejected] = useState<BreakRejectedTarget[]>([]);
-  const [previewCommand, setPreviewCommand] = useState<"MOVE" | "COPY" | "ROTATE" | "SCALE" | "MIRROR" | "OFFSET" | "TRIM" | "EXTEND" | "FILLET" | "CHAMFER" | "BREAK">("MOVE");
+  const [stretchCrossingInput, setStretchCrossingInput] = useState("400,-100; 1100,100");
+  const [stretchBaseInput, setStretchBaseInput] = useState("0,0");
+  const [stretchDestinationInput, setStretchDestinationInput] = useState("250,50");
+  const [stretchSelectionMode, setStretchSelectionMode] = useState<"crossing-window" | "crossing-polygon">("crossing-window");
+  const [stretchPolygonPoints, setStretchPolygonPoints] = useState<Array<{
+    world: { x: number; y: number };
+    pixel: { x: number; y: number };
+  }>>([]);
+  const [stretchDrag, setStretchDrag] = useState<{
+    pointerId: number;
+    startPx: { x: number; y: number };
+    currentPx: { x: number; y: number };
+    startWorld: { x: number; y: number };
+  } | null>(null);
+  const [lastStretchRejected, setLastStretchRejected] = useState<StretchRejectedTarget[]>([]);
+  const [previewCommand, setPreviewCommand] = useState<"MOVE" | "COPY" | "ROTATE" | "SCALE" | "MIRROR" | "OFFSET" | "TRIM" | "EXTEND" | "FILLET" | "CHAMFER" | "BREAK" | "STRETCH">("MOVE");
   const activeLayer = document.layers.find((layer) => layer.id === document.currentLayerId)!;
   const activeLayout = document.layouts.find((layout) => layout.id === activeLayoutId) ?? document.layouts[0]!;
   const selectedViewport = activeLayout.kind === "paper"
@@ -542,6 +557,25 @@ export function App() {
       return null;
     }
   }, [breakTargetsInput, document, previewCommand]);
+  const stretchPreview = useMemo((): { entities: CadEntity[]; sourceHandles: string[]; steps: number; delta: { x: number; y: number } } | null => {
+    if (previewCommand !== "STRETCH") return null;
+    try {
+      const { result } = prepareStretch(document, {
+        crossingInput: stretchCrossingInput,
+        individualHandles: selectedHandles,
+        baseInput: stretchBaseInput,
+        destinationInput: stretchDestinationInput,
+      });
+      return {
+        entities: putEntities(result.changes),
+        sourceHandles: result.sourceHandles,
+        steps: result.steps.length,
+        delta: result.delta,
+      };
+    } catch {
+      return null;
+    }
+  }, [document, previewCommand, selectedHandles, stretchBaseInput, stretchCrossingInput, stretchDestinationInput]);
 
   useEffect(() => {
     let active = true;
@@ -654,7 +688,7 @@ export function App() {
         widthPx,
         heightPx,
         devicePixelRatio: ratio,
-      }, document.layers, activeLayout.kind === "model" ? [...(movePreview?.entities ?? []), ...(copyPreview?.entities ?? []), ...(rotatePreview?.entities ?? []), ...(scalePreview?.entities ?? []), ...(mirrorPreview?.entities ?? []), ...(offsetPreview?.entities ?? []), ...(trimPreview?.entities ?? []), ...(extendPreview?.entities ?? []), ...(filletPreview?.entities ?? []), ...(chamferPreview?.entities ?? []), ...(breakPreview?.entities ?? [])] : [], [
+      }, document.layers, activeLayout.kind === "model" ? [...(movePreview?.entities ?? []), ...(copyPreview?.entities ?? []), ...(rotatePreview?.entities ?? []), ...(scalePreview?.entities ?? []), ...(mirrorPreview?.entities ?? []), ...(offsetPreview?.entities ?? []), ...(trimPreview?.entities ?? []), ...(extendPreview?.entities ?? []), ...(filletPreview?.entities ?? []), ...(chamferPreview?.entities ?? []), ...(breakPreview?.entities ?? []), ...(stretchPreview?.entities ?? [])] : [], [
         ...(mirrorPreview?.eraseSource ? mirrorPreview.sourceHandles : []),
         ...(offsetPreview?.eraseSource ? offsetPreview.sourceHandles : []),
         ...(trimPreview?.sourceHandles ?? []),
@@ -662,6 +696,7 @@ export function App() {
         ...(filletPreview?.trimMode === "trim" ? filletPreview.sourceHandles : []),
         ...(chamferPreview?.trimMode === "trim" ? chamferPreview.sourceHandles : []),
         ...(breakPreview?.sourceHandles ?? []),
+        ...(stretchPreview?.sourceHandles ?? []),
       ], activePaper && activePageSetup?.displayPlotStyles ? {
         plotStyle: activePageSetup.plotStyle ?? { profile: "monochrome", plotLineweights: true, plotTransparency: true },
         pixelsPerMillimeter: widthPx / activePaper.widthMm,
@@ -671,7 +706,7 @@ export function App() {
     const observer = new ResizeObserver(render);
     observer.observe(element);
     return () => observer.disconnect();
-  }, [activeLayout, activePageSetup, activePaper, breakPreview, chamferPreview, copyPreview, document, extendPreview, filletPreview, mirrorPreview, movePreview, offsetPreview, rotatePreview, scalePreview, trimPreview]);
+  }, [activeLayout, activePageSetup, activePaper, breakPreview, chamferPreview, copyPreview, document, extendPreview, filletPreview, mirrorPreview, movePreview, offsetPreview, rotatePreview, scalePreview, stretchPreview, trimPreview]);
 
   async function recoverFromStorageConflict(error: unknown): Promise<void> {
     if (!(error instanceof StorageRevisionConflictError)) throw error;
@@ -1112,7 +1147,7 @@ export function App() {
   }
 
   function selectModifyTargetFromCanvas(event: React.PointerEvent<HTMLCanvasElement>): void {
-    if (!modelSpaceEditing || (previewCommand !== "TRIM" && previewCommand !== "EXTEND" && previewCommand !== "FILLET" && previewCommand !== "CHAMFER" && previewCommand !== "BREAK") || event.button !== 0) return;
+    if (!modelSpaceEditing || event.button !== 0) return;
     const element = event.currentTarget;
     const rect = element.getBoundingClientRect();
     if (!(rect.width > 0 && rect.height > 0)) return;
@@ -1125,6 +1160,19 @@ export function App() {
     const point = viewportScreenToWorld(viewport, { x: event.clientX - rect.left, y: event.clientY - rect.top });
     const cleanCoordinate = (value: number): number => Number(value.toFixed(6));
     const pickPoint = { x: cleanCoordinate(point.x), y: cleanCoordinate(point.y) };
+    if (previewCommand === "STRETCH") {
+      const startPx = { x: event.clientX - rect.left, y: event.clientY - rect.top };
+      if (stretchSelectionMode === "crossing-polygon") {
+        setStretchPolygonPoints((current) => [...current, { world: pickPoint, pixel: startPx }]);
+        setStatus(`STRETCH Crossing Polygon: punkt ${stretchPolygonPoints.length + 1} lisatud (${pickPoint.x},${pickPoint.y})`);
+        return;
+      }
+      element.setPointerCapture(event.pointerId);
+      setStretchDrag({ pointerId: event.pointerId, startPx, currentPx: startPx, startWorld: pickPoint });
+      setStatus(`STRETCH Crossing: esimene nurk ${pickPoint.x},${pickPoint.y}; lohista vastasnurka`);
+      return;
+    }
+    if (previewCommand !== "TRIM" && previewCommand !== "EXTEND" && previewCommand !== "FILLET" && previewCommand !== "CHAMFER" && previewCommand !== "BREAK") return;
     if (previewCommand === "BREAK" && breakFirstCanvasPick) {
       const target = `${breakFirstCanvasPick.handle}@${breakFirstCanvasPick.point.x},${breakFirstCanvasPick.point.y}>${pickPoint.x},${pickPoint.y}`;
       setBreakTargetsInput((current) => current.trim() ? `${current.trim()}; ${target}` : target);
@@ -1219,6 +1267,47 @@ export function App() {
     setStatus(event.shiftKey
       ? `EXTEND Shift-valik: ${hit.handle} kärbitakse`
       : `EXTEND valik: ${hit.handle} · extend`);
+  }
+
+  function updateStretchDrag(event: React.PointerEvent<HTMLCanvasElement>): void {
+    if (!stretchDrag || stretchDrag.pointerId !== event.pointerId) return;
+    const rect = event.currentTarget.getBoundingClientRect();
+    setStretchDrag((current) => current && current.pointerId === event.pointerId
+      ? { ...current, currentPx: { x: event.clientX - rect.left, y: event.clientY - rect.top } }
+      : current);
+  }
+
+  function finishStretchDrag(event: React.PointerEvent<HTMLCanvasElement>): void {
+    if (!stretchDrag || stretchDrag.pointerId !== event.pointerId) return;
+    const element = event.currentTarget;
+    const rect = element.getBoundingClientRect();
+    const currentPx = { x: event.clientX - rect.left, y: event.clientY - rect.top };
+    if (element.hasPointerCapture(event.pointerId)) element.releasePointerCapture(event.pointerId);
+    const distancePx = Math.hypot(currentPx.x - stretchDrag.startPx.x, currentPx.y - stretchDrag.startPx.y);
+    setStretchDrag(null);
+    if (distancePx < 3) {
+      setStatus("STRETCH Crossing: lohista vähemalt 3 px suurune crossing-aken");
+      return;
+    }
+    const viewport: Viewport2D = { world: MODEL_VIEW_WORLD, widthPx: rect.width, heightPx: rect.height, devicePixelRatio: window.devicePixelRatio || 1 };
+    const point = viewportScreenToWorld(viewport, currentPx);
+    const endWorld = { x: Number(point.x.toFixed(6)), y: Number(point.y.toFixed(6)) };
+    const region = `${stretchDrag.startWorld.x},${stretchDrag.startWorld.y}; ${endWorld.x},${endWorld.y}`;
+    setStretchCrossingInput((current) => current.trim() ? `${current.trim()} | ${region}` : region);
+    setPreviewCommand("STRETCH");
+    setStatus(`STRETCH Crossing lisatud: ${stretchDrag.startWorld.x},${stretchDrag.startWorld.y} → ${endWorld.x},${endWorld.y}`);
+  }
+
+  function finishStretchPolygon(): void {
+    if (stretchPolygonPoints.length < 3) {
+      setStatus("STRETCH Crossing Polygon vajab vähemalt kolme punkti");
+      return;
+    }
+    const region = stretchPolygonPoints.map(({ world }) => `${world.x},${world.y}`).join("; ");
+    setStretchCrossingInput((current) => current.trim() ? `${current.trim()} | ${region}` : region);
+    setStretchPolygonPoints([]);
+    setPreviewCommand("STRETCH");
+    setStatus(`STRETCH Crossing Polygon lisatud: ${stretchPolygonPoints.length} punkti`);
   }
 
   async function trimTargets(): Promise<void> {
@@ -1494,6 +1583,61 @@ export function App() {
     } catch (error) {
       if (error instanceof StorageRevisionConflictError) await recoverFromStorageConflict(error);
       else if (error instanceof CadCommandInputError) setStatus(`BREAK viga: ${error.message}`);
+      else throw error;
+    } finally {
+      committing.current = false;
+    }
+  }
+
+  function undoStretchSelection(): void {
+    if (stretchPolygonPoints.length > 0) {
+      setStretchPolygonPoints((current) => current.slice(0, -1));
+      setPreviewCommand("STRETCH");
+      setStatus(`STRETCH Undo: Crossing Polygoni viimane punkt eemaldatud; ${stretchPolygonPoints.length - 1} jääb`);
+      return;
+    }
+    const regions = stretchCrossingInput.split("|").map((region) => region.trim()).filter(Boolean);
+    if (regions.length > 0) {
+      regions.pop();
+      setStretchCrossingInput(regions.join(" | "));
+      setPreviewCommand("STRETCH");
+      setStatus(regions.length ? `STRETCH Undo: viimane crossing eemaldatud; ${regions.length} jääb` : "STRETCH Undo: crossing-valikud eemaldatud; individuaalvalik säilib");
+      return;
+    }
+    if (selectedHandles.length > 0) {
+      setSelectedHandles((current) => current.slice(0, -1));
+      setPreviewCommand("STRETCH");
+      setStatus("STRETCH Undo: viimane individuaalselt valitud objekt eemaldatud");
+      return;
+    }
+    setStatus("STRETCH Undo: käsk on täielikult tagasi võetud; globaalset UNDO sammu ei loodud");
+  }
+
+  async function stretchTargets(): Promise<void> {
+    if (committing.current) return;
+    setPreviewCommand("STRETCH");
+    committing.current = true;
+    try {
+      const prepared = prepareStretch(document, {
+        crossingInput: stretchCrossingInput,
+        individualHandles: selectedHandles,
+        baseInput: stretchBaseInput,
+        destinationInput: stretchDestinationInput,
+      });
+      const { result } = prepared;
+      setLastStretchRejected(result.rejected);
+      if (result.changes.length === 0) {
+        const suffix = result.rejected.length ? `; ${result.rejected.length} lukus, puudu, muutumatu või sobimatu` : "";
+        setStatus(`STRETCH ei muutnud geomeetriat${suffix}`);
+        return;
+      }
+      await commitChanges(prepared.commandId, prepared.operationArgs, result.changes, result.resultHandles, result.sourceHandles);
+      setSelectedHandles([]);
+      const suffix = result.rejected.length ? `; ${result.rejected.length} jäi muutmata` : "";
+      setStatus(`${result.stretchedHandles.length} venitatud ja ${result.movedHandles.length} liigutatud ühe Undo-operatsioonina${suffix}`);
+    } catch (error) {
+      if (error instanceof StorageRevisionConflictError) await recoverFromStorageConflict(error);
+      else if (error instanceof CadCommandInputError) setStatus(`STRETCH viga: ${error.message}`);
       else throw error;
     } finally {
       committing.current = false;
@@ -2660,6 +2804,38 @@ export function App() {
         </label>
         <button type="button" onClick={() => void breakTargets()} disabled={!modelSpaceEditing || breakFirstCanvasPick !== null}>BREAK</button>
         <button type="button" onClick={undoBreakTarget} disabled={!modelSpaceEditing}>BREAK Undo</button>
+        <label className="coordinate-input">
+          <span>STRETCH crossing</span>
+          <input aria-label="STRETCH crossing" value={stretchCrossingInput} onFocus={() => setPreviewCommand("STRETCH")} onChange={(event) => { setPreviewCommand("STRETCH"); setStretchCrossingInput(event.target.value); }} placeholder="x1,y1; x2,y2 | polygon..." />
+        </label>
+        <label className="coordinate-input">
+          <span>STRETCH valikuviis</span>
+          <select
+            aria-label="STRETCH valikuviis"
+            value={stretchSelectionMode}
+            onFocus={() => setPreviewCommand("STRETCH")}
+            onChange={(event) => {
+              setPreviewCommand("STRETCH");
+              setStretchSelectionMode(event.target.value as "crossing-window" | "crossing-polygon");
+              setStretchDrag(null);
+              setStretchPolygonPoints([]);
+            }}
+          >
+            <option value="crossing-window">Crossing Window</option>
+            <option value="crossing-polygon">Crossing Polygon</option>
+          </select>
+        </label>
+        <button type="button" onClick={finishStretchPolygon} disabled={!modelSpaceEditing || stretchSelectionMode !== "crossing-polygon"}>Lõpeta STRETCH Polygon</button>
+        <label className="coordinate-input">
+          <span>STRETCH baaspunkt</span>
+          <input aria-label="STRETCH baaspunkt" value={stretchBaseInput} onFocus={() => setPreviewCommand("STRETCH")} onChange={(event) => { setPreviewCommand("STRETCH"); setStretchBaseInput(event.target.value); }} placeholder="0,0" />
+        </label>
+        <label className="coordinate-input">
+          <span>STRETCH teine punkt / nihe</span>
+          <input aria-label="STRETCH sihtpunkt" value={stretchDestinationInput} onFocus={() => setPreviewCommand("STRETCH")} onChange={(event) => { setPreviewCommand("STRETCH"); setStretchDestinationInput(event.target.value); }} placeholder="250,50 või @250,50" />
+        </label>
+        <button type="button" onClick={() => void stretchTargets()} disabled={!modelSpaceEditing}>STRETCH</button>
+        <button type="button" onClick={undoStretchSelection} disabled={!modelSpaceEditing}>STRETCH Undo</button>
         <button type="button" onClick={() => void eraseSelected()} disabled={!modelSpaceEditing || selectedHandles.length === 0}>ERASE</button>
         <button type="button" onClick={() => void undoLast()} disabled={!canUndoInActiveLayout}>UNDO</button>
         <button type="button" onClick={() => void redoLast()} disabled={!canRedoInActiveLayout}>REDO</button>
@@ -2686,6 +2862,7 @@ export function App() {
         {filletPreview && <span data-testid="fillet-preview" data-hidden-source-count={filletPreview.trimMode === "trim" ? filletPreview.sourceHandles.length : 0}>FILLET eelvaade: {filletPreview.entities.length} tulemust · {filletPreview.steps} sammu</span>}
         {chamferPreview && <span data-testid="chamfer-preview" data-hidden-source-count={chamferPreview.trimMode === "trim" ? chamferPreview.sourceHandles.length : 0}>CHAMFER eelvaade: {chamferPreview.entities.length} tulemust · {chamferPreview.steps} sammu</span>}
         {breakPreview && <span data-testid="break-preview" data-hidden-source-count={breakPreview.sourceHandles.length}>BREAK eelvaade: {breakPreview.entities.length} tulemust · {breakPreview.steps} sammu</span>}
+        {stretchPreview && <span data-testid="stretch-preview" data-hidden-source-count={stretchPreview.sourceHandles.length}>STRETCH eelvaade: {stretchPreview.entities.length} tulemust · {stretchPreview.steps} sammu · Δ{stretchPreview.delta.x},{stretchPreview.delta.y}</span>}
         {lastMoveRejected.length > 0 && (
           <span data-testid="move-rejected" data-rejected={JSON.stringify(lastMoveRejected)}>
             MOVE muutmata: {lastMoveRejected.map(({ handle, reason }) => `${handle} (${reason})`).join(", ")}
@@ -2741,6 +2918,11 @@ export function App() {
             BREAK muutmata: {lastBreakRejected.map(({ handle, targetIndex, reason }) => `${handle}#${targetIndex + 1} (${reason})`).join(", ")}
           </span>
         )}
+        {lastStretchRejected.length > 0 && (
+          <span data-testid="stretch-rejected" data-rejected={JSON.stringify(lastStretchRejected)}>
+            STRETCH muutmata: {lastStretchRejected.map(({ handle, reason }) => `${handle} (${reason})`).join(", ")}
+          </span>
+        )}
       </section>
       <section className={`drawing-area ${activePaper ? "paper-mode" : "model-mode"}`} data-mode={activePaper ? "paper" : "model"}>
         {activePaper ? (
@@ -2793,7 +2975,30 @@ export function App() {
             </div>
           </div>
         ) : (
-          <canvas ref={canvas} aria-label="Kuubik Draw joonestusala" onPointerDown={selectModifyTargetFromCanvas} />
+          <>
+            <canvas
+              ref={canvas}
+              aria-label="Kuubik Draw joonestusala"
+              onPointerDown={selectModifyTargetFromCanvas}
+              onPointerMove={updateStretchDrag}
+              onPointerUp={finishStretchDrag}
+              onPointerCancel={() => setStretchDrag(null)}
+            />
+            {stretchPolygonPoints.length > 0 && <svg className="stretch-polygon-draft" data-testid="stretch-polygon-draft" aria-hidden="true">
+              <polyline points={stretchPolygonPoints.map(({ pixel }) => `${pixel.x},${pixel.y}`).join(" ")} />
+              {stretchPolygonPoints.map(({ pixel }, index) => <circle key={`${pixel.x}:${pixel.y}:${index}`} cx={pixel.x} cy={pixel.y} r="3" />)}
+            </svg>}
+            {stretchDrag && <div
+              className="stretch-crossing-draft"
+              data-testid="stretch-crossing-draft"
+              style={{
+                left: Math.min(stretchDrag.startPx.x, stretchDrag.currentPx.x),
+                top: Math.min(stretchDrag.startPx.y, stretchDrag.currentPx.y),
+                width: Math.abs(stretchDrag.currentPx.x - stretchDrag.startPx.x),
+                height: Math.abs(stretchDrag.currentPx.y - stretchDrag.startPx.y),
+              }}
+            />}
+          </>
         )}
       </section>
       <section className="layoutbar" aria-label="Model ja Layout vahelehed">

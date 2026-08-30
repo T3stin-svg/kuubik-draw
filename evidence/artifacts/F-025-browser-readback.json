@@ -21,11 +21,11 @@
   },
   "artifacts": {
     "evidence/artifacts/F-025-browser-matrix.json": {
-      "sha256": "9725f9d010b1a293212ab6d806edad5b796eab51142e0885e76ffafadeb19c3e",
+      "sha256": "1baedf774bfb25e4112455121eb05ac4a58320ef3adf8ae4544803c22186e997",
       "byteLength": 12745
     },
     "evidence/artifacts/F-025-browser-modes.json": {
-      "sha256": "2b3769c77f6221a507d9383db1c57f0f20acd7c636eb3cf589184b5e4c56ff9f",
+      "sha256": "dd42ebad56c49d283cee5328de220e9eafa232b4d8809be0e8dea07d4824b55c",
       "byteLength": 8740
     },
     "evidence/artifacts/F-025-browser-shift-no-op.json": {
@@ -33,23 +33,23 @@
       "byteLength": 2617
     },
     "evidence/artifacts/F-025-browser-mode-transition.json": {
-      "sha256": "48299d9a21f5245d9897d56ef320ef24738cf97dcaed27196d5bfc747e1093b1",
+      "sha256": "685a154b5187e145f008473bc03e386f24c1b7a1af28795d1554e0a42bb1fc15",
       "byteLength": 4767
     },
     "evidence/artifacts/F-025-browser-edge-cases.json": {
-      "sha256": "f0919e987b468aee72b7662cc399b6f1a9fd5e2b488bbf08518c3969e753cd6a",
+      "sha256": "aa7fd6994d22ddb53e9d1bc3ad892e23254425e72ef2af693ba0675d191240b0",
       "byteLength": 8342
     },
     "evidence/artifacts/F-025-browser-seam-forward.kdraw": {
-      "sha256": "31a269b23a5a437373598f5b915feee377541de79dc319b196536634383959de",
+      "sha256": "db727f9858452272e941298c52e3735bbdaaae5cc2a3f26df75bafae5e323a08",
       "byteLength": 1228
     },
     "evidence/artifacts/F-025-browser-seam-reverse.kdraw": {
-      "sha256": "1474b784f08e4ce6e9d40f6d9f2e6a529a337e335bd51197ce99d838b9ef7a9e",
+      "sha256": "0a2c8494aa5dada6ae5e7be005fdea3722dcf8d1be2fc4600df70b2eff639951",
       "byteLength": 1228
     },
     "evidence/artifacts/F-025-browser-properties.json": {
-      "sha256": "fded5bfa0260001c68687550b024c761951180081b633213902f1c8b6b6e1f63",
+      "sha256": "93e1f65d3f0cab40d374f32959fe0212e53fddedd82830bf18dad37340829827",
       "byteLength": 6728
     },
     "evidence/artifacts/F-025-browser-properties.dxf": {
@@ -57,11 +57,11 @@
       "byteLength": 5068
     },
     "evidence/artifacts/F-025-browser-properties.kdraw": {
-      "sha256": "387b02b5381bff13dd8933095c41a8086908698ac31672aad2c83e158e550310",
+      "sha256": "42fbd59cf9cdd9b8590c2cd96dd6d7074f0b2c8a75274c821e6c699f3b0d0c8d",
       "byteLength": 2433
     },
     "evidence/artifacts/F-025-browser-construction.json": {
-      "sha256": "349c7170c6b3818bf1573edd7eba21d955b57b14ad89e2617c639bd1ffe326e0",
+      "sha256": "bd0c5833687bfb3f2e38012ca2f65b197e3f7c42e6c0cb6c0e2a7e4d5254a2ab",
       "byteLength": 13669
     },
     "evidence/artifacts/F-025-browser-construction.dxf": {
@@ -69,7 +69,7 @@
       "byteLength": 5341
     },
     "evidence/artifacts/F-025-browser-construction.kdraw": {
-      "sha256": "57cff18c4785ce9173f32915315c8ba9bd5d1d3d1dc1160b74cdab7e36138a58",
+      "sha256": "1f535d02e84c929f0ee052176c0e089125ac1a877aa30f81929dc2b5166b03cb",
       "byteLength": 3649
     },
     "evidence/artifacts/F-025-browser-zero.json": {
@@ -81,7 +81,7 @@
       "byteLength": 3878
     },
     "evidence/artifacts/F-025-browser-zero.kdraw": {
-      "sha256": "3b72ead441e7dbecc899c588e63ce4e6dcf9e2715a7ddab4c0cebf2ed4fe8296",
+      "sha256": "24963a3b916a023a81b96f71b026a6fa4306cf265c71a2b30bb8318700d9ae05",
       "byteLength": 1212
     },
     "evidence/artifacts/F-025-browser-distance-too-large.json": {
@@ -93,7 +93,7 @@
       "byteLength": 4480
     },
     "evidence/artifacts/F-025-browser-distance-too-large.kdraw": {
-      "sha256": "2833a1e74f2848337b967f52821aa3101976f46cd1d83027dc4016ed27fae155",
+      "sha256": "96c826e6a4121682a30418afaf78e1ef93377ed5de34bb435005efb11667d389",
       "byteLength": 1861
     },
     "evidence/artifacts/F-025-browser.dxf": {
@@ -101,17 +101,17 @@
       "byteLength": 4465
     },
     "evidence/artifacts/F-025-browser.kdraw": {
-      "sha256": "62899ef2fba8d7aa41126fee56cd045ec7075dfc7ca066fbac45cafb840b811b",
+      "sha256": "f288015b23ce88db024cbd957f799b8e9d41258d0a0f1e3b5550ea8554334a45",
       "byteLength": 1861
     }
   },
   "sourceSha256": {
-    "apps/web/src/App.tsx": "4fd63d45a2e002abc3c8e46de93a0ad49b8fd797bcd923585669457959eff806",
-    "apps/web/src/workflows/modify-command.ts": "e1017aae7232f43399cbcd57eb301c530a7b6b31b322f50597ae929afb068066",
-    "apps/web/src/workflows/modify-command.test.ts": "c24df8aa3e94652107a758265fa55cb5a03a27e1b8b60a723cdddb7578bac481",
+    "apps/web/src/App.tsx": "1f7a21731e70245bbe0e696e9ec34a52ada002985cec6d0b3126a5f8d3313bb3",
+    "apps/web/src/workflows/modify-command.ts": "cf95272f005691140541de01bc1be02009c03342b9520fa0cf70a21d9e50f332",
+    "apps/web/src/workflows/modify-command.test.ts": "b9b303e1a53ce508b9cf28a7aad1ccd226194f48275deb74b66aa54e5e5e546b",
     "packages/cad-core/src/chamfer.ts": "0142afb06c0d468a7f1b5e1b1bc45a3319a271cf75c12b302d6e155c0494e6bc",
-    "packages/cad-core/src/commands.ts": "9e24d22e58b2793996306fa912038d9318df823f2e07101e4b3b34fa6ec55304",
-    "packages/cad-core/src/index.ts": "9a3034316d7a4997a457a51e92f3208349d889272fa908d2b98f00dce335c40a",
+    "packages/cad-core/src/commands.ts": "a69c694cd82a59269ac9b56b0deeb85870c298f23555bcf011a747e68297645d",
+    "packages/cad-core/src/index.ts": "97de6f5ca45dc6f8f05e2e24d0bbaf5f0a793be00fa7b7e63aa51be234074435",
     "packages/cad-core/src/container.ts": "931db68e6aa0688ac9a7aa6d5ac56c07d1cd5e0126adec836f27258011419502",
     "packages/cad-core/src/transaction.ts": "e250aa2906e63905202a4b9591367632830745acbf731884f8e711d165750599",
     "packages/cad-core/test/chamfer.test.ts": "ad7b4a17d2e016e01cf4a0cb1df0b68642d2a77dbc047a3226994f571264a523",

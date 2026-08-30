@@ -1,0 +1,77 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-027",
+  "status": "PASS",
+  "checks": {
+    "browserWorkflowPassedWithoutErrors": true,
+    "exactPartialAndWholeGeometry": true,
+    "exactAtomicOperation": true,
+    "atomicUndoExact": true,
+    "atomicRedoExact": true,
+    "capturedKdrawPayloadExact": true,
+    "downloadedKdrawContainerExact": true,
+    "independentDxfExact": true,
+    "lockedLayerRefusalExact": true,
+    "physicalCanvasCrossingDrag": true,
+    "physicalCanvasCrossingPolygon": true,
+    "nativeMatchedQuarterEllipseOutput": true
+  },
+  "artifacts": {
+    "evidence/artifacts/F-027-browser-matrix.json": {
+      "sha256": "883195f3045d6a29e1dd73da44985613dae187051a9899f782cdedf3163ba866",
+      "byteLength": 9185
+    },
+    "evidence/artifacts/F-027-browser-locked.json": {
+      "sha256": "33ba2fc46f24b7e8dd85bf349ebc9a0f73d40b44d00f3f0c26e2aadc5de76205",
+      "byteLength": 2479
+    },
+    "evidence/artifacts/F-027-browser-drag.json": {
+      "sha256": "0628070768e4c13212681d7d850609be55083f4dd3ffce1257f6dc6065b4103b",
+      "byteLength": 209
+    },
+    "evidence/artifacts/F-027-browser-polygon.json": {
+      "sha256": "83ee543ff4a04ff4584ca156417c01811c1eafc3e5f72429a4aa9949577f9308",
+      "byteLength": 295
+    },
+    "evidence/artifacts/F-027-browser-ellipse.json": {
+      "sha256": "91ab1bad5f343a6be347afa256b8db4c33752b5d2f995bd0931067926088f487",
+      "byteLength": 4345
+    },
+    "evidence/artifacts/F-027-browser-ellipse.dxf": {
+      "sha256": "90d2859a7dbbfe6388bd75dceee843501c93291abe7f17b8d828dfa378f68082",
+      "byteLength": 3966
+    },
+    "evidence/artifacts/F-027-browser-ellipse.kdraw": {
+      "sha256": "483d2afb39742dec98e91e20b6f6ad92729a94ffb6b01f77cd5e7bccb1d0e065",
+      "byteLength": 1440
+    },
+    "evidence/artifacts/F-027-browser.dxf": {
+      "sha256": "5a3d291cc07bcd6a077197faee374f9161e0a99461dadff49a16a1aa163e507d",
+      "byteLength": 4068
+    },
+    "evidence/artifacts/F-027-browser.kdraw": {
+      "sha256": "4489f47c21136a566c4eb4f19522cd97dcee73c96d7d895332f9d71c95a739c8",
+      "byteLength": 1488
+    }
+  },
+  "sourceSha256": {
+    "apps/web/src/App.tsx": "1f7a21731e70245bbe0e696e9ec34a52ada002985cec6d0b3126a5f8d3313bb3",
+    "apps/web/src/style.css": "a80c95ed39377fbfe7e9d49717afd3778fc93cf401010cb51118012a51a890ff",
+    "apps/web/src/workflows/modify-command.ts": "cf95272f005691140541de01bc1be02009c03342b9520fa0cf70a21d9e50f332",
+    "apps/web/src/workflows/modify-command.test.ts": "b9b303e1a53ce508b9cf28a7aad1ccd226194f48275deb74b66aa54e5e5e546b",
+    "packages/cad-core/src/stretch.ts": "1682953cb896ac7dc3cb75e8e546bc6d71bcf14f1cec721500278b8849aa2f42",
+    "packages/cad-core/src/commands.ts": "a69c694cd82a59269ac9b56b0deeb85870c298f23555bcf011a747e68297645d",
+    "packages/cad-core/src/index.ts": "97de6f5ca45dc6f8f05e2e24d0bbaf5f0a793be00fa7b7e63aa51be234074435",
+    "packages/cad-core/src/trim.ts": "2b79501c802c648e6fb1a38134c339a549852794f063c8c22c04e8d7d728185e",
+    "packages/cad-core/src/container.ts": "931db68e6aa0688ac9a7aa6d5ac56c07d1cd5e0126adec836f27258011419502",
+    "packages/cad-core/src/transaction.ts": "e250aa2906e63905202a4b9591367632830745acbf731884f8e711d165750599",
+    "packages/cad-core/test/stretch.test.ts": "f22317d2eff9ad79de3ed34285c515dedc8e7f59f4e579739e3b4f10cb02e7fd",
+    "packages/cad-core/test/f027-mutation-proven.test.ts": "a07e175798acc610b550cd72000ef2161be63340b09548e54131eddc98e703e4",
+    "packages/cad-dxf/src/import.ts": "ffdef7a01488d09f32b8bab171b0632092317a5687cd6eca2231629a4fc51f20",
+    "packages/cad-dxf/src/index.ts": "82ca8f21ac22b29cd0f36be39f51b379ffd9307ec96c69c45d93da713cc9b2bd",
+    "packages/cad-dxf/test/f027-stretch-roundtrip.test.ts": "d252e316ff243b9ba002263396b0539ca2550f3d7e47656dc8b78a56cdd2c275",
+    "e2e/f027-stretch.spec.ts": "de111d50796fcdef8d881be9fc74dcbce67fc591fffb2837ae8ec38f932042d4",
+    "tools/parity/capture-f027-browser.mjs": "c8f8f50af7a29f76706c323277fb869cf51b05d6ac66eee48e7312ac2e75858c",
+    "tools/parity/build-f027-browser-readback.mjs": "f90d6546c4c312079558591a23a42360c664d0c5e53bbebe40e7756eb6049b2f"
+  }
+}

@@ -23,6 +23,11 @@ efektiivsusvärav on failis [`ARCHITECTURE_ROADMAP.md`](ARCHITECTURE_ROADMAP.md)
 - avalikult suletud arhitektuurivärav: lõpp-HEAD `d097b34`, GitHub Actions
   run `33250270350`, sõltumatu review `0 P0 / 0 P1`;
 - native DWG/DWT/XREF ja PC3/CTB/STB pariteet on veel blokeeritud.
+- F-026 `BREAK` on avalik kandidaat, kuid ootab eraldatud omatud AutoCAD
+  Desktopi maatriksit ja sõltumatut `0 P0 / 0 P1` review'd;
+- F-027 `STRETCH` on kohalik kandidaat: typed crossing window/polygon,
+  preview=commit, atomic Undo/Redo ning DXF/KDRAW1 read-back on rohelised, kuid
+  rida ei ole samade kahe lõppväravata sertifitseeritud.
 
 Need arvud on vana Drawi auditi muutmatu snapshot. Uus rakendus ei päri skoori
 enne, kui sama töövoog on siin reprodutseeritud ja tõendatud. LibreCADi või
@@ -59,7 +64,8 @@ Liiga lühike valitud polyline-segment keeldub muutmata dokumendi ja Undo-olekug
 standalone LINE/RAY/XLINE jääb pikendatavaks ning full process-identity ratchet
 kaitseb olemasolevaid AutoCADi protsesse. Chromium, AutoCAD 2024 ning sõltumatu
 DXF/KDRAW1 read-back on rohelised; sama exact commit läbis ka avaliku CI.
-Järgmine rida on F-026 `BREAK`.
+F-026 `BREAK` ja F-027 `STRETCH` jäävad kandidaatideks ega mõjuta skoori enne
+eraldatud AutoCAD Desktopi tõendit, sõltumatut review'd ja rohelist avalikku CI-d.
 F-097 `Layout tabs` lisab revisioneeritud create/copy/reorder/delete töövoo,
 AutoCADi copy-before-source nimekuju, sõltumatud viewport'i ID-d ja paberiruumi
 handle'id, atomaarse Undo/Redo ning IndexedDB/`.kdraw` taastamise.

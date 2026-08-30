@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-027",
+  "source": "AutoCAD 2024 Core reference + Chromium crossing window/polygon + production DXF/KDRAW1 read-back + secondary LibreCAD/FreeCAD reports",
+  "sourceSha256": {
+    "nativeCore": "d6a9f30abcd22d24d4f0ae4a35a159d397239316c634bd948ac3f03a02e1677b",
+    "browser": "815c35a868de85fcc841b4cf57dff439b61810c95b305f9b3fd218cd76444813",
+    "browserEllipseDxf": "90d2859a7dbbfe6388bd75dceee843501c93291abe7f17b8d828dfa378f68082",
+    "browserEllipseKdraw": "483d2afb39742dec98e91e20b6f6ad92729a94ffb6b01f77cd5e7bccb1d0e065",
+    "readback": "bf74808a72250b239d5952d5cf2ab2e76ab969f9ebd62a8f2ddc983216a1d424",
+    "productionDxf": "cb4b5c3677e8ff6073f67454472f61a64fa0a3f32c05553f8b8dfb18201e2892",
+    "productionKdraw": "21f296f807527c78be8582dca698143d0fea894a9e7a263d2fe34c8bd519980f",
+    "oracles": "8ae4876140ca76be6dc02c181b644e974c0be4163e5416b4526b4d63a309a74e"
+  },
+  "implementationSha256": {
+    "apps/web/src/App.tsx": "1f7a21731e70245bbe0e696e9ec34a52ada002985cec6d0b3126a5f8d3313bb3",
+    "apps/web/src/style.css": "a80c95ed39377fbfe7e9d49717afd3778fc93cf401010cb51118012a51a890ff",
+    "apps/web/src/workflows/modify-command.ts": "cf95272f005691140541de01bc1be02009c03342b9520fa0cf70a21d9e50f332",
+    "apps/web/src/workflows/modify-command.test.ts": "b9b303e1a53ce508b9cf28a7aad1ccd226194f48275deb74b66aa54e5e5e546b",
+    "packages/cad-core/src/stretch.ts": "1682953cb896ac7dc3cb75e8e546bc6d71bcf14f1cec721500278b8849aa2f42",
+    "packages/cad-core/src/commands.ts": "a69c694cd82a59269ac9b56b0deeb85870c298f23555bcf011a747e68297645d",
+    "packages/cad-core/src/index.ts": "97de6f5ca45dc6f8f05e2e24d0bbaf5f0a793be00fa7b7e63aa51be234074435",
+    "packages/cad-core/src/trim.ts": "2b79501c802c648e6fb1a38134c339a549852794f063c8c22c04e8d7d728185e",
+    "packages/cad-core/src/container.ts": "931db68e6aa0688ac9a7aa6d5ac56c07d1cd5e0126adec836f27258011419502",
+    "packages/cad-core/src/transaction.ts": "e250aa2906e63905202a4b9591367632830745acbf731884f8e711d165750599",
+    "packages/cad-core/test/stretch.test.ts": "f22317d2eff9ad79de3ed34285c515dedc8e7f59f4e579739e3b4f10cb02e7fd",
+    "packages/cad-core/test/f027-mutation-proven.test.ts": "a07e175798acc610b550cd72000ef2161be63340b09548e54131eddc98e703e4",
+    "packages/cad-dxf/src/import.ts": "ffdef7a01488d09f32b8bab171b0632092317a5687cd6eca2231629a4fc51f20",
+    "packages/cad-dxf/src/index.ts": "82ca8f21ac22b29cd0f36be39f51b379ffd9307ec96c69c45d93da713cc9b2bd",
+    "packages/cad-dxf/test/f027-stretch-roundtrip.test.ts": "d252e316ff243b9ba002263396b0539ca2550f3d7e47656dc8b78a56cdd2c275",
+    "e2e/f027-stretch.spec.ts": "de111d50796fcdef8d881be9fc74dcbce67fc591fffb2837ae8ec38f932042d4",
+    "parity/autocad/F-027-core-measure.scr": "3b14dfb0345a6f14d16ed8b17eac32c657a61ce0498b5e358fae706c3d827810",
+    "tools/autocad/F027StretchPoints.cs": "f1cda9181aee8e2dc4f6a98d257470ab36602d0251de1c40dda05295397cbaa3",
+    "tools/autocad/run-f027-core.mjs": "952c2461de5272e43b8f84a230cebfcf6ad9d19e00db410bf768462fde4f544c",
+    "tools/parity/capture-f027-browser.mjs": "c8f8f50af7a29f76706c323277fb869cf51b05d6ac66eee48e7312ac2e75858c",
+    "tools/parity/build-f027-browser-readback.mjs": "f90d6546c4c312079558591a23a42360c664d0c5e53bbebe40e7756eb6049b2f",
+    "tools/parity/run-f027-readback.mjs": "2de12bc9073f42a9d9b79fafd78add5a52f574877ffd5c4d3e9d564396706f65",
+    "tools/oracles/freecad-f027-headless.py": "a6f52f4f62a3c06b737edbed82fa56165247c79b6808e1fd4f137d4cd06e0d0f",
+    "tools/oracles/network-isolation.mjs": "3fb18e9ad145b76e53ed241a0a529bb2ccd4eabe784b04e915d77cdd9203d415",
+    "tools/oracles/probe-tools.mjs": "86b118cdf03da095214901d4f5f3b4460d9994b1280ae991904aedb0b992883e",
+    "tools/oracles/run-fixtures.mjs": "0a97574ac92ef761f092b2c2d2990f5401a652b8f261b243c9724f49f4fa2800",
+    "tools/oracles/run-f027-oracles.mjs": "3d91316d5d0d85c0ca7e08104bcf3f3aa424dcf7e397dce07cf288145af0cabe",
+    "parity/F-027-scope.md": "f4dda97659b215ce0555d86ae489a4307c825ad22319cda098c725832d361ac9",
+    "parity/expected/F-027.json": "060c99625482619dc6287ce356426f7602363c76f62b2f57441c934cb84e806a",
+    "tools/parity/check-f027-cross-evidence.mjs": "e0331166fd78399957e8db951fa3135b5863ede7c4750dd3dfe684dfeda305a0"
+  },
+  "checks": {
+    "nativeCoreReference": true,
+    "browserWorkflow": true,
+    "physicalCrossingWindow": true,
+    "physicalCrossingPolygon": true,
+    "quarterEllipseBrowserDxfKdraw": true,
+    "productionReadback": true,
+    "secondaryOracles": true,
+    "sourceHashCoverage": true,
+    "certificationStillClosed": true
+  },
+  "remainingCertificationRequirements": [
+    "isolatedOwnedAutoCadDesktopLive",
+    "independentZeroP0P1Review"
+  ],
+  "status": "CANDIDATE_PASS_DESKTOP_AND_REVIEW_REQUIRED"
+}
