@@ -4,7 +4,7 @@
   "kind": "readback",
   "authority": "independent-parser",
   "status": "PASS",
-  "artifactSha256": "8671d6f43c95024e62352d4baa5d9663639886f7f13daefd8e96e96b3871196f",
+  "artifactSha256": "506396a906e79f9d5cca59a35cb8df167dd99943ec1a62354de79d87e48064b5",
   "observedAt": "2026-08-29T10:46:20.940Z",
   "workflow": "A second production invocation serializes the named page setup/template independently, compares it byte-for-byte with the Chromium download, imports it into a fresh document, serializes KDRAW1 and validates its manifest checksum on reopen.",
   "result": "Template bytes were deterministic and identical, a consistent plot-style mutation changed the hash, dangling and stale named-setup references were rejected, KDRAW1 checksum read-back passed, existing geometry was preserved and the imported layout contained no entities.",

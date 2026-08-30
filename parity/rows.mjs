@@ -11,6 +11,7 @@ export const SOURCE_GROUPS = Object.freeze({
   "web-shell": Object.freeze([
     "apps/web/src/main.tsx",
     "apps/web/src/App.tsx",
+    "apps/web/src/context-menu.ts",
     "apps/web/src/indexed-db.ts",
     "apps/web/src/style.css",
   ]),

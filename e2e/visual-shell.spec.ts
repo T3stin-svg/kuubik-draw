@@ -85,6 +85,48 @@ test("AutoCAD-style shell keeps all eight primary zones visible at 1920x1080", a
   await expect(page.getByText("LINE Specify first point")).toBeVisible();
   if (captureRoot) await writeFile(resolve(captureRoot, "visual-shell-active-command.png"), await page.screenshot());
 
+  await modelCanvas.click({ button: "right", position: { x: 1200, y: 320 } });
+  const activeContextMenu = page.getByRole("menu", { name: "Drawing context menu" });
+  const cancelLine = activeContextMenu.getByRole("menuitem", { name: /Cancel LINE/u });
+  const unavailableQuickSelect = activeContextMenu.getByRole("menuitem", { name: "Quick Select…" });
+  await expect(activeContextMenu).toBeVisible();
+  await expect(cancelLine).toBeEnabled();
+  await expect(cancelLine).toBeFocused();
+  await expect(unavailableQuickSelect).toBeDisabled();
+  const contextMenuGeometry = await activeContextMenu.evaluate((element) => {
+    const rect = element.getBoundingClientRect();
+    const style = getComputedStyle(element);
+    const firstItem = element.querySelector<HTMLElement>('[role="menuitem"]')!;
+    const separator = element.querySelector<HTMLElement>('[role="separator"]')!;
+    const disabledItem = element.querySelector<HTMLButtonElement>('[role="menuitem"]:disabled')!;
+    return {
+      x: rect.x, y: rect.y, width: rect.width, height: rect.height,
+      itemHeight: firstItem.getBoundingClientRect().height,
+      separatorHeight: separator.getBoundingClientRect().height,
+      backgroundColor: style.backgroundColor,
+      borderColor: style.borderTopColor,
+      disabledColor: getComputedStyle(disabledItem).color,
+    };
+  });
+  expect(contextMenuGeometry).toMatchObject({
+    x: 1200, y: 501, width: 200, height: 371,
+    itemHeight: 20.5, separatorHeight: 1,
+    backgroundColor: "rgb(240, 240, 240)",
+    borderColor: "rgb(160, 160, 160)",
+    disabledColor: "rgb(160, 160, 160)",
+  });
+  await cancelLine.hover();
+  await expect.poll(() => cancelLine.evaluate((element) => getComputedStyle(element).backgroundColor)).toBe("rgb(204, 232, 255)");
+  await page.keyboard.press("End");
+  await expect(activeContextMenu.getByRole("menuitem", { name: /Properties/u })).toBeFocused();
+  await page.keyboard.press("Escape");
+  await expect(activeContextMenu).toBeHidden();
+  await expect(page.getByRole("button", { name: "Ribbon Line command" })).toHaveAttribute("aria-pressed", "true");
+  await modelCanvas.click({ button: "right", position: { x: 1200, y: 320 } });
+  await page.getByRole("menu", { name: "Drawing context menu" }).getByRole("menuitem", { name: /Cancel LINE/u }).click();
+  await expect(page.getByRole("button", { name: "Ribbon Line command" })).toHaveAttribute("aria-pressed", "false");
+  await expect(page.getByText("Command: *Cancel* (LINE)")).toBeVisible();
+
   await page.reload();
   await page.getByLabel("Esimene nurk").fill("100,100");
   await page.getByLabel("Teine nurk").fill("900,600");
@@ -107,6 +149,22 @@ test("AutoCAD-style shell keeps all eight primary zones visible at 1920x1080", a
   await page.getByLabel("Kuubik Draw joonestusala").hover({ position: { x: 1200, y: 320 } });
   await expect(page.getByTestId("cad-crosshair")).toBeVisible();
   if (captureRoot) await writeFile(resolve(captureRoot, "visual-shell-selected-properties.png"), await page.screenshot());
+
+  await page.getByLabel("Kuubik Draw joonestusala").click({ button: "right", position: { x: 1200, y: 320 } });
+  const selectedContextMenu = page.getByRole("menu", { name: "Drawing context menu" });
+  await expect(selectedContextMenu.getByRole("menuitem", { name: "Repeat last command" })).toBeDisabled();
+  await expect(selectedContextMenu.getByRole("menuitem", { name: /Erase/u })).toBeEnabled();
+  await expect(selectedContextMenu.getByRole("menuitem", { name: /Deselect All/u })).toBeEnabled();
+  const propertiesMenuItem = selectedContextMenu.getByRole("menuitem", { name: /Properties/u });
+  await propertiesMenuItem.hover();
+  if (captureRoot) await writeFile(resolve(captureRoot, "visual-shell-context-menu.png"), await page.screenshot());
+  await page.keyboard.press("Escape");
+  await expect(selectedContextMenu).toBeHidden();
+  await expect(page.getByRole("complementary", { name: "Properties palette" }).getByText("1 selected")).toBeVisible();
+  await page.getByLabel("Kuubik Draw joonestusala").click({ button: "right", position: { x: 1200, y: 320 } });
+  await page.getByRole("menu", { name: "Drawing context menu" }).getByRole("menuitem", { name: "Count" }).click();
+  await expect(page.getByText("Count: 1 object")).toBeVisible();
+  await expect(page.getByRole("complementary", { name: "Properties palette" }).getByText("1 selected")).toBeVisible();
 
   await page.getByRole("button", { name: "Uus kiht", exact: true }).click();
   await expect(page.getByRole("table", { name: "Kihtide loend" }).getByText("Layer 1")).toBeVisible();
@@ -163,6 +221,15 @@ test("AutoCAD-style shell keeps all eight primary zones visible at 1920x1080", a
         modelNavigation,
         selectedProperties: true,
         selectionPixels,
+        contextMenu: {
+          activeCommand: true,
+          selectedObject: true,
+          keyboardNavigation: true,
+          escapeDismissalPreservesCommandAndSelection: true,
+          cancelAction: true,
+          countAction: true,
+          geometry: contextMenuGeometry,
+        },
         layerManagerRows: await page.getByRole("table", { name: "Kihtide loend" }).getByRole("row").count(),
         layoutPaperSpace: await page.getByTestId("paper-space-sheet").isVisible(),
         commandHistory: await page.getByRole("log", { name: "Käsuajalugu" }).isVisible(),

@@ -20,4 +20,19 @@ describe("AutoCAD visual-reference runner ratchet", () => {
     expect(source).toContain("originalWindow");
     expect(source).toMatch(/finally\s*\{\s*\[void\]\[VisualAuditWindowProcess\]::MoveWindow/gu);
   });
+
+  it("captures the native popup only from an owned AutoCAD process", async () => {
+    const source = await readFile(new URL("capture-autocad-context-menu.ps1", import.meta.url), "utf8");
+    expect(source.match(/New-Object\s+-ComObject\s+AutoCAD\.Application\.24\.3/gu)).toHaveLength(1);
+    expect(source).not.toContain("GetActiveObject");
+    expect(source).toContain("Visual context-menu audit refuses to use a pre-existing AutoCAD process.");
+    expect(source).toContain("Test-OwnedProcessIdentity");
+    expect(source).toContain("SetCursorPos");
+    expect(source).toContain("WindowFromPoint");
+    expect(source).toContain("$menuClass -ne '#32768'");
+    expect(source).toContain("[int]$menuProcessId -ne $automationProcessId");
+    expect(source).toContain("redistributablePixelsIncluded = $false");
+    expect(source).toContain("Private AutoCAD reference pixels and process reports must not be written into the public repository.");
+    expect(source).toContain("processSetRestored");
+  });
 });

@@ -4,6 +4,7 @@ import { DxfImportError, MAX_DXF_IMPORT_BYTES, exportDxf, importDxf } from "@kuu
 import { exportLayoutSvg, exportLayoutsVectorPdf, exportLayoutVectorPdf, exportModelSvg, exportModelVectorPdf, type LayoutPlotOptions, type ModelPlotOptions } from "@kuubik/cad-print";
 import { CadCanvasRenderer, pickCadEntity, pannedViewportWorldCenter, selectCadEntityHitsByCrossingPolygon, selectCadEntityHitsByFence, viewportScreenToWorld, viewportScreenTransform, type Viewport2D } from "@kuubik/cad-renderer";
 import type { CadEntity, CadLayout, CadPageSetup, CadPaperRect, CadPlotStyle, CadViewport, KDrawDocumentV1 } from "@kuubik/cad-schema";
+import { clampCadContextMenuPosition } from "./context-menu.js";
 import { KDrawIndexedDb, StorageRevisionConflictError } from "./indexed-db.js";
 import { prepareAlign, prepareBreak, prepareChamfer, prepareCopy, prepareExtend, prepareFillet, prepareLengthen, prepareMatchProperties, prepareMirror, prepareMove, prepareOffset, prepareRotate, prepareScale, prepareStretch, prepareTrim, putEntities } from "./workflows/modify-command.js";
 import "./style.css";
@@ -31,6 +32,7 @@ const MATCH_PROPERTY_LABELS: Readonly<Record<keyof MatchPropertiesSettings, stri
 });
 const MODEL_SPACE_COMMANDS = new Set(["LINE", "RECTANGLE", "MOVE", "COPY", "ROTATE", "SCALE", "MIRROR", "OFFSET", "TRIM", "EXTEND", "FILLET", "CHAMFER", "BREAK", "STRETCH", "LENGTHEN", "ALIGN", "MATCHPROP", "ERASE"]);
 const MODEL_VIEW_WORLD = Object.freeze({ minX: -500, minY: -500, maxX: 2500, maxY: 2500 });
+const DRAWING_CONTEXT_MENU_SIZE = Object.freeze({ width: 200, height: 371 });
 
 function loadMatchPropertiesSettings(): MatchPropertiesSettings {
   if (typeof window === "undefined") return { ...DEFAULT_MATCH_PROPERTIES_SETTINGS };
@@ -253,6 +255,12 @@ export function App() {
     pixel: { x: number; y: number };
     world: { x: number; y: number };
   } | null>(null);
+  const [drawingContextMenu, setDrawingContextMenu] = useState<{
+    x: number;
+    y: number;
+    world: { x: number; y: number };
+  } | null>(null);
+  const drawingContextMenuRef = useRef<HTMLElement>(null);
   const [activeLayoutId, setActiveLayoutId] = useState("model");
   const [selectedViewportId, setSelectedViewportId] = useState<string | null>(null);
   const [modelViewportId, setModelViewportId] = useState<string | null>(null);
@@ -421,7 +429,13 @@ export function App() {
     const onKeyDown = (event: KeyboardEvent): void => {
       if (event.key === "F2" && !event.repeat) {
         event.preventDefault();
+        setDrawingContextMenu(null);
         setCommandHistoryOpen((open) => !open);
+        return;
+      }
+      if (event.key === "Escape" && drawingContextMenu) {
+        event.preventDefault();
+        setDrawingContextMenu(null);
         return;
       }
       if (event.key === "Escape" && commandHistoryOpen) {
@@ -429,9 +443,33 @@ export function App() {
         setCommandHistoryOpen(false);
       }
     };
+    const onPointerDown = (event: PointerEvent): void => {
+      if (drawingContextMenu && !drawingContextMenuRef.current?.contains(event.target as Node)) setDrawingContextMenu(null);
+    };
+    const closeContextMenu = (): void => setDrawingContextMenu(null);
     window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [commandHistoryOpen]);
+    window.addEventListener("pointerdown", onPointerDown, true);
+    window.addEventListener("resize", closeContextMenu);
+    window.addEventListener("blur", closeContextMenu);
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+      window.removeEventListener("pointerdown", onPointerDown, true);
+      window.removeEventListener("resize", closeContextMenu);
+      window.removeEventListener("blur", closeContextMenu);
+    };
+  }, [commandHistoryOpen, drawingContextMenu]);
+
+  useEffect(() => {
+    setDrawingContextMenu(null);
+  }, [activeLayoutId]);
+
+  useEffect(() => {
+    if (!drawingContextMenu) return;
+    const frame = window.requestAnimationFrame(() => {
+      drawingContextMenuRef.current?.querySelector<HTMLButtonElement>('[role="menuitem"]:not(:disabled)')?.focus();
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [drawingContextMenu]);
   const activeLayout = document.layouts.find((layout) => layout.id === activeLayoutId) ?? document.layouts[0]!;
   const selectedViewport = activeLayout.kind === "paper"
     ? activeLayout.viewports.find((viewport) => viewport.id === selectedViewportId) ?? null
@@ -1494,6 +1532,47 @@ export function App() {
     setStatus(event.shiftKey
       ? `EXTEND Shift-valik: ${hit.handle} kärbitakse`
       : `EXTEND valik: ${hit.handle} · extend`);
+  }
+
+  function openDrawingContextMenu(event: React.MouseEvent<HTMLCanvasElement>): void {
+    event.preventDefault();
+    if (!modelSpaceEditing || commandHistoryOpen) return;
+    const rect = event.currentTarget.getBoundingClientRect();
+    if (!(rect.width > 0 && rect.height > 0)) return;
+    const viewport: Viewport2D = {
+      world: MODEL_VIEW_WORLD,
+      widthPx: rect.width,
+      heightPx: rect.height,
+      devicePixelRatio: window.devicePixelRatio || 1,
+    };
+    const anchor = { x: event.clientX - rect.left, y: event.clientY - rect.top };
+    const position = clampCadContextMenuPosition(anchor, DRAWING_CONTEXT_MENU_SIZE, { width: rect.width, height: rect.height });
+    const world = viewportScreenToWorld(viewport, anchor);
+    setCursorReadout({ pixel: anchor, world });
+    setDrawingContextMenu({ ...position, world });
+  }
+
+  function closeDrawingContextMenu(): void {
+    setDrawingContextMenu(null);
+  }
+
+  function cancelActiveCommandFromContextMenu(): void {
+    const command = activeCommandPrompt;
+    setActiveCommandPrompt(null);
+    closeDrawingContextMenu();
+    setStatus(command ? `Command: *Cancel* (${command})` : "Command: *Cancel*");
+  }
+
+  function focusContextMenuItem(event: React.KeyboardEvent<HTMLElement>): void {
+    if (event.key !== "ArrowDown" && event.key !== "ArrowUp" && event.key !== "Home" && event.key !== "End") return;
+    const items = Array.from(event.currentTarget.querySelectorAll<HTMLButtonElement>('[role="menuitem"]:not(:disabled)'));
+    if (items.length === 0) return;
+    event.preventDefault();
+    const current = items.indexOf(window.document.activeElement as HTMLButtonElement);
+    if (event.key === "Home") items[0]!.focus();
+    else if (event.key === "End") items.at(-1)!.focus();
+    else if (event.key === "ArrowDown") items[(current + 1 + items.length) % items.length]!.focus();
+    else items[(current - 1 + items.length) % items.length]!.focus();
   }
 
   function updateStretchDrag(event: React.PointerEvent<HTMLCanvasElement>): void {
@@ -3654,6 +3733,7 @@ export function App() {
               onPointerUp={finishStretchDrag}
               onPointerCancel={() => setStretchDrag(null)}
               onPointerLeave={() => { if (!stretchDrag) setCursorReadout(null); }}
+              onContextMenu={openDrawingContextMenu}
             />
             {cursorReadout && <div
               className="cad-crosshair"
@@ -3667,6 +3747,42 @@ export function App() {
               <span className="view-north">N</span><span className="view-east">E</span><span className="view-south">S</span><span className="view-west">W</span>
               <strong>TOP</strong><small>WCS</small>
             </div>
+            {drawingContextMenu && <nav
+              ref={drawingContextMenuRef}
+              className="cad-context-menu"
+              data-testid="cad-context-menu"
+              role="menu"
+              aria-label="Drawing context menu"
+              aria-orientation="vertical"
+              data-world-x={drawingContextMenu.world.x.toFixed(6)}
+              data-world-y={drawingContextMenu.world.y.toFixed(6)}
+              style={{ left: drawingContextMenu.x, top: drawingContextMenu.y }}
+              onKeyDown={focusContextMenuItem}
+            >
+              <button type="button" role="menuitem" disabled={!activeCommandPrompt} onClick={cancelActiveCommandFromContextMenu}>
+                <span>{activeCommandPrompt ? `Cancel ${activeCommandPrompt}` : "Repeat last command"}</span><kbd>Esc</kbd>
+              </button>
+              <button type="button" role="menuitem" disabled><span>Recent Input</span><span aria-hidden="true">›</span></button>
+              <div role="separator" />
+              <button type="button" role="menuitem" disabled><span>Clipboard</span><span aria-hidden="true">›</span></button>
+              <div role="separator" />
+              <button type="button" role="menuitem" disabled><span>Isolate Objects</span><span aria-hidden="true">›</span></button>
+              <div role="separator" />
+              <button type="button" role="menuitem" disabled={!canUndoInActiveLayout} onClick={() => { closeDrawingContextMenu(); void undoLast(); }}><span>Undo</span><kbd>Ctrl+Z</kbd></button>
+              <button type="button" role="menuitem" disabled={!canRedoInActiveLayout} onClick={() => { closeDrawingContextMenu(); void redoLast(); }}><span>Redo</span><kbd>Ctrl+Y</kbd></button>
+              <button type="button" role="menuitem" disabled><span>Pan</span></button>
+              <button type="button" role="menuitem" disabled><span>Zoom</span></button>
+              <button type="button" role="menuitem" disabled><span>SteeringWheels</span></button>
+              <div role="separator" />
+              <button type="button" role="menuitem" disabled><span>Action Recorder</span><span aria-hidden="true">›</span></button>
+              <div role="separator" />
+              <button type="button" role="menuitem" disabled><span>Subobject Selection Filter</span><span aria-hidden="true">›</span></button>
+              <button type="button" role="menuitem" disabled={selectedHandles.length === 0} onClick={() => { closeDrawingContextMenu(); void eraseSelected(); }}><span>Erase</span><kbd>Del</kbd></button>
+              <button type="button" role="menuitem" disabled={selectedHandles.length === 0} onClick={() => { setSelectedHandles([]); closeDrawingContextMenu(); setStatus("Selection cleared"); }}><span>Deselect All</span><kbd>Esc</kbd></button>
+              <button type="button" role="menuitem" onClick={() => { closeDrawingContextMenu(); setStatus(`Count: ${selectedHandles.length || document.entities.length} object${(selectedHandles.length || document.entities.length) === 1 ? "" : "s"}`); }}><span>Count</span></button>
+              <button type="button" role="menuitem" disabled><span>Quick Select…</span></button>
+              <button type="button" role="menuitem" onClick={() => { closeDrawingContextMenu(); setStatus(selectedHandles.length ? `Properties: ${selectedHandles.length} selected` : "Properties: no selection"); }}><span>Properties</span><kbd>Ctrl+1</kbd></button>
+            </nav>}
             {stretchPolygonPoints.length > 0 && <svg className="stretch-polygon-draft" data-testid="stretch-polygon-draft" aria-hidden="true">
               <polyline points={stretchPolygonPoints.map(({ pixel }) => `${pixel.x},${pixel.y}`).join(" ")} />
               {stretchPolygonPoints.map(({ pixel }, index) => <circle key={`${pixel.x}:${pixel.y}:${index}`} cx={pixel.x} cy={pixel.y} r="3" />)}

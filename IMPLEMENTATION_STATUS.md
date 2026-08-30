@@ -394,3 +394,42 @@ Chromium **108/108**. Parity-kit, parity, visual, license and public-tree
 checks pass. Pinned Gitleaks 8.30.1 reports zero findings across 1,051
 git-visible source files. LibreCAD 2.2.1.5 and FreeCAD 1.1.3 pass as
 `FIXTURE_PASS_NOT_NETWORK_ISOLATED`, with `certificationAuthority:false`.
+
+## 2026-08-31 AutoCAD drawing context-menu visual fidelity wave 6
+
+An owned scratch AutoCAD 2024.1.2 process now provides a private native
+drawing-context reference without redistributing Autodesk pixels. The runner
+rejects pre-existing process ownership, fixes the main window at 1920x1080 and
+96 DPI, resolves the Win32 `#32768` popup under the pointer, verifies that the
+popup belongs to the owned process, records its geometry and colors, dismisses
+it and proves that the pre-existing AutoCAD process set is unchanged. The
+measured native envelope is exactly 200x371 px with a `#f0f0f0` surface and
+`#a0a0a0` border/separators.
+
+Kuubik now opens a keyboard-accessible drawing context menu at the real model
+canvas world position. Its 200x371 px envelope and measured colors match the
+native reference exactly. Active-command and selected-object variants expose
+working Cancel, Undo, Redo, Erase, Deselect All, Count and Properties actions;
+unsupported entries remain visibly disabled instead of pretending to work.
+Arrow/Home/End navigation, focus, hover, outside-click, blur, resize and Escape
+dismissal are covered. Escape closes only the popup and preserves the active
+command or selection.
+
+The fixed Chromium evidence under `evidence/artifacts/visual-shell-wave-6`
+contains all six audit states, the selected-object context state and zero
+console errors. The public comparison stores only dimensions, colors and the
+private screenshot SHA-256. All 29 certified functional rows received fresh
+browser, independent read-back, applicable cross-evidence, global-topology and
+content-address receipts after the shared App/style change.
+
+Scores remain deliberately unchanged at **29/133, 21.8% raw / 25.2%
+weighted**, and **60.7% visual** with **1/6 paired states PASS**. A precise
+context-menu supplement is not a complete same-environment re-audit of all
+five visual categories. No preview or production deployment was performed.
+
+The complete local gate passes typecheck, lint, production build, **84 Vitest
+files / 504 tests**, mutation **78/78**, DXF **47/47**, PDF **20/20** and
+Chromium **108/108**. Parity-kit, parity, visual, license and public-tree pass.
+Pinned Gitleaks 8.30.1 found zero leaks in 1,064 git-visible source files.
+LibreCAD 2.2.1.5 and FreeCAD 1.1.3 fixtures pass as secondary non-authorities
+with honest `FIXTURE_PASS_NOT_NETWORK_ISOLATED` status.

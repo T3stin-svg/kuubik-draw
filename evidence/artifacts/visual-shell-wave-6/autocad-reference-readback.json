@@ -1,0 +1,120 @@
+{
+  "reference": {
+    "product": "AutoCAD 2024.1.2",
+    "engineVersion": "24.3s (LMS Tech)",
+    "workspace": "Drafting & Annotation",
+    "viewport": [1920, 1080],
+    "windowsDpiScalePercent": 100,
+    "redistributablePixelsIncluded": false
+  },
+  "sources": [
+    {
+      "state": "empty-workspace",
+      "ref": "private://autocad-2024/idle",
+      "sha256": "0e014882f8fa7231800f02702c30f4a8697d7fd49ef860b487d0768dbda48640"
+    },
+    {
+      "state": "active-drawing-command",
+      "ref": "private://autocad-2024/line-active",
+      "sha256": "08505f04ee81f68e2adf76aa2cd06a0d5f9d12778ff1391bcd167ddb4cbaf4bc"
+    },
+    {
+      "state": "selected-properties",
+      "ref": "private://autocad-2024/selected-properties",
+      "sha256": "6a9037b0ec7bad08692f2ebdbd3da4b09aa125bde1efc2a3de66223b9c82ef0c"
+    },
+    {
+      "state": "layout-paper-space",
+      "ref": "private://autocad-2024/layout",
+      "sha256": "bda16d92411c9f257c6a481ba901d7cf3f974747652cf6012d0199129c013ada"
+    },
+    {
+      "state": "command-history-context",
+      "ref": "private://autocad-2024/command-history-context",
+      "sha256": "7d09b94155baeed852ede285b895061713372f87e8486e55d5cfe89d406bc07e"
+    },
+    {
+      "state": "drawing-context-menu",
+      "ref": "private://autocad-2024/drawing-context-menu",
+      "sha256": "2d9a8a12e0f5eb82c9a2fb790817fb6c2ddb093e71646c1decce5980139953ff"
+    }
+  ],
+  "measuredReference": {
+    "commandHistory": {
+      "x": 0,
+      "y": 0,
+      "width": 1920,
+      "height": 1080,
+      "contentTop": 53,
+      "contentBottom": 1052,
+      "promptTop": 1052,
+      "titleAndMenuBackgroundRgb": [255, 255, 255],
+      "contentBackgroundRgb": [200, 200, 200],
+      "promptBackgroundRgb": [255, 255, 255]
+    },
+    "contextMenu": {
+      "width": 200,
+      "height": 371,
+      "backgroundRgb": [240, 240, 240],
+      "borderRgb": [160, 160, 160],
+      "separatorRgb": [160, 160, 160],
+      "separatorHighlightRgb": [255, 255, 255]
+    }
+  },
+  "measuredKuubik": {
+    "commandHistory": {
+      "x": 0,
+      "y": 0,
+      "width": 1920,
+      "height": 1080,
+      "contentTop": 53,
+      "contentBottom": 1051,
+      "promptTop": 1051,
+      "titlebarHeight": 30,
+      "menubarHeight": 22,
+      "promptHeight": 28,
+      "titleAndMenuBackgroundRgb": [255, 255, 255],
+      "contentBackgroundRgb": [200, 200, 200],
+      "promptBackgroundRgb": [255, 255, 255]
+    },
+    "contextMenu": {
+      "width": 200,
+      "height": 371,
+      "itemHeight": 20.5,
+      "separatorHeight": 1,
+      "backgroundRgb": [240, 240, 240],
+      "borderRgb": [160, 160, 160],
+      "disabledRgb": [160, 160, 160]
+    }
+  },
+  "deltaPx": {
+    "commandHistoryX": 0,
+    "commandHistoryY": 0,
+    "commandHistoryWidth": 0,
+    "commandHistoryHeight": 0,
+    "contentTop": 0,
+    "contentBottom": -1,
+    "promptTop": -1,
+    "contextMenuWidth": 0,
+    "contextMenuHeight": 0
+  },
+  "nativeCapture": {
+    "automationProcessOwned": true,
+    "automationProcessTerminated": true,
+    "processSetRestored": true,
+    "commandNamesAfter": "",
+    "commandActiveAfter": 0,
+    "status": "PASS"
+  },
+  "nativeContextCapture": {
+    "automationProcessOwned": true,
+    "automationProcessTerminated": true,
+    "processSetRestored": true,
+    "popupClassName": "#32768",
+    "popupProcessOwned": true,
+    "shortcutMenu": 11,
+    "windowDpi": 96,
+    "status": "PASS"
+  },
+  "scope": "Command-history remains one of six paired PASS states. The additional native drawing-context menu is a measured interaction-state supplement and does not authorize a five-category score increase."
+}

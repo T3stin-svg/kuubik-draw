@@ -32,7 +32,7 @@ if (VISUAL_BASELINE.claimedScore > VISUAL_BASELINE.baselineScore && !allStatesPa
 }
 
 for (const state of VISUAL_STATES) {
-  for (const evidencePath of [state.kuubikEvidence, state.measuredReadback, state.comparisonReadback]) {
+  for (const evidencePath of [state.kuubikEvidence, state.supplementalKuubikEvidence, state.measuredReadback, state.comparisonReadback]) {
     if (evidencePath) await access(resolve(evidencePath));
   }
 }
@@ -58,6 +58,22 @@ if (commandHistoryState.status === "PASS") {
     && actual.promptBackgroundColor === "rgb(255, 255, 255)";
   if (!bounded || !colorsExact || comparisonReadback.nativeCapture.status !== "PASS") {
     throw new Error("Command-history paired visual state is outside the measured AutoCAD reference tolerance");
+  }
+
+  const contextMenu = browserReadback.states.contextMenu?.geometry;
+  const contextReference = comparisonReadback.measuredReference.contextMenu;
+  const contextDimensionsExact = Math.abs(contextMenu.width - contextReference.width) <= VISUAL_ACCEPTANCE.repeatedControlTolerancePx
+    && Math.abs(contextMenu.height - contextReference.height) <= VISUAL_ACCEPTANCE.repeatedControlTolerancePx;
+  const contextColorsExact = contextMenu.backgroundColor === `rgb(${contextReference.backgroundRgb.join(", ")})`
+    && contextMenu.borderColor === `rgb(${contextReference.borderRgb.join(", ")})`;
+  const interactionStatesComplete = browserReadback.states.contextMenu.activeCommand
+    && browserReadback.states.contextMenu.selectedObject
+    && browserReadback.states.contextMenu.keyboardNavigation
+    && browserReadback.states.contextMenu.escapeDismissalPreservesCommandAndSelection
+    && browserReadback.states.contextMenu.cancelAction
+    && browserReadback.states.contextMenu.countAction;
+  if (!contextDimensionsExact || !contextColorsExact || !interactionStatesComplete || comparisonReadback.nativeContextCapture.status !== "PASS") {
+    throw new Error("Drawing context-menu supplement is outside the measured AutoCAD reference tolerance");
   }
 }
 
