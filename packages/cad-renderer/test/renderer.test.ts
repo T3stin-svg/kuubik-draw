@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { CadCanvasRenderer, entityGripPoints, pannedViewportWorldCenter, viewportScreenToWorld, viewportWorldToScreen, type Canvas2DContext } from "../src/index.js";
+import { CadCanvasRenderer, entityGripPoints, pannedViewportWorldCenter, viewportGridSpacing, viewportScreenToWorld, viewportWorldToScreen, type Canvas2DContext } from "../src/index.js";
 
 function fakeContext() {
   const calls: Array<[string, ...number[]]> = [];
@@ -30,6 +30,26 @@ function fakeContext() {
 }
 
 describe("Canvas2D parity invariants", () => {
+  it("uses deterministic 1/2/5 grid spacing and rejects invalid density", () => {
+    const viewport = { world: { minX: 0, minY: 0, maxX: 100, maxY: 100 }, widthPx: 1000, heightPx: 1000, devicePixelRatio: 1 };
+    expect(viewportGridSpacing(viewport, 20)).toBe(2);
+    expect(viewportGridSpacing({ ...viewport, widthPx: 400 }, 20)).toBe(5);
+    expect(() => viewportGridSpacing(viewport, 0)).toThrow("positive");
+  });
+
+  it("draws the model grid as two display-only minor/major passes", () => {
+    const renderer = new CadCanvasRenderer();
+    renderer.setEntities([]);
+    const { context, calls } = fakeContext();
+    const viewport = { world: { minX: -50, minY: -50, maxX: 50, maxY: 50 }, widthPx: 1000, heightPx: 500, devicePixelRatio: 2 };
+    const before = structuredClone(viewport);
+    renderer.render(context, viewport, [], null, [], { grid: { enabled: true } });
+    expect(calls.filter(([call]) => call === "stroke")).toHaveLength(2);
+    expect(calls.some(([call]) => call === "move")).toBe(true);
+    expect(calls.some(([call, x]) => call === "move" && x <= -100)).toBe(true);
+    expect(viewport).toEqual(before);
+  });
+
   it("uses the shared F-103 plot resolver for ByLayer ink, physical width and solid-hatch alpha", () => {
     const renderer = new CadCanvasRenderer();
     renderer.setEntities([

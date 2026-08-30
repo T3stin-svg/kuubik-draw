@@ -115,6 +115,20 @@ button { font: inherit; }
 .document-menu, .new-drawing-tab { padding: 0 !important; font-size: 15px !important; }
 .drawing-area { position: relative; min-height: 0; padding: 0; overflow: hidden; background: #111416; box-shadow: inset 0 1px #090b0c; }
 .drawing-area canvas { display: block; width: 100%; height: 100%; background: #1e2225; }
+.cad-crosshair { position: absolute; z-index: 3; width: 77px; height: 77px; pointer-events: none; color: #e6edf1; filter: drop-shadow(0 0 1px #101416); transform: translate(-38px, -38px); }
+.cad-crosshair i { position: absolute; display: block; pointer-events: none; }
+.cad-crosshair-horizontal { left: 0; top: 38px; width: 77px; height: 1px; background: currentcolor; }
+.cad-crosshair-vertical { left: 38px; top: 0; width: 1px; height: 77px; background: currentcolor; }
+.cad-pickbox { left: 34px; top: 34px; width: 9px; height: 9px; background: #1e2225; border: 1px solid currentcolor; box-sizing: border-box; }
+.view-orientation-indicator { position: absolute; z-index: 3; top: 20px; right: 24px; width: 76px; height: 82px; color: #c9d2d8; pointer-events: none; font: 9px "Segoe UI", sans-serif; text-align: center; }
+.view-orientation-indicator::before { position: absolute; top: 15px; left: 14px; width: 46px; height: 46px; content: ""; background: rgb(47 57 64 / 82%); border: 1px solid #77838b; transform: rotate(45deg); box-shadow: inset 0 0 0 1px #20272c, 0 2px 5px rgb(0 0 0 / 35%); }
+.view-orientation-indicator strong { position: absolute; z-index: 1; top: 30px; left: 0; width: 100%; color: #f0f4f6; font-size: 10px; font-weight: 600; letter-spacing: .05em; }
+.view-orientation-indicator small { position: absolute; top: 70px; left: 0; width: 100%; color: #aeb9c0; font-size: 8px; letter-spacing: .08em; }
+.view-orientation-indicator span { position: absolute; z-index: 1; width: 12px; height: 12px; line-height: 12px; }
+.view-north { top: 0; left: 32px; }
+.view-east { top: 33px; right: 0; }
+.view-south { top: 58px; left: 32px; }
+.view-west { top: 33px; left: 0; }
 .properties-palette {
   position: absolute;
   z-index: 7;
@@ -338,4 +352,7 @@ button { font: inherit; }
 .coordinate-readout { min-width: 170px; color: #b9c2c9; font-family: Consolas, "Courier New", monospace; }
 .status-toggles { display: flex; align-items: stretch; height: 100%; margin-left: auto; }
 .status-toggle, .status-space { display: flex; align-items: center; padding: 0 8px; color: #a7b0b7; border-left: 1px solid #30373c; }
+.status-toggles button.status-toggle { min-width: 0; min-height: 0; margin: 0; border: 0; border-left: 1px solid #30373c; border-radius: 0; background: transparent; font: inherit; cursor: pointer; }
+.status-toggles button.status-toggle:hover { color: #eef4f7; background: #30383e; }
 .status-toggle.active { color: #eef4f7; background: #176a99; }
+.status-toggles button.status-toggle.active { background: #176a99; }

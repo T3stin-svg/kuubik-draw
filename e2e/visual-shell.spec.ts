@@ -36,6 +36,43 @@ test("AutoCAD-style shell keeps all eight primary zones visible at 1920x1080", a
   await expect(palette.getByText("Transparency")).toBeVisible();
   const ribbonPrimary = await page.getByLabel("Home ribbon").evaluate((element) => ({ clientWidth: element.clientWidth, scrollWidth: element.scrollWidth }));
   expect(ribbonPrimary.scrollWidth).toBeLessThanOrEqual(ribbonPrimary.clientWidth);
+  const modelCanvas = page.getByLabel("Kuubik Draw joonestusala");
+  const gridToggle = page.getByRole("button", { name: "Grid display" });
+  await expect(gridToggle).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByTestId("view-orientation-indicator")).toBeVisible();
+  const canvasInkPixels = () => modelCanvas.evaluate((canvas) => {
+    const element = canvas as HTMLCanvasElement;
+    const context = element.getContext("2d", { willReadFrequently: true });
+    if (!context) return 0;
+    const pixels = context.getImageData(0, 0, element.width, element.height).data;
+    let count = 0;
+    for (let index = 3; index < pixels.length; index += 4) if (pixels[index]! > 0) count += 1;
+    return count;
+  });
+  const gridInkPixels = await canvasInkPixels();
+  expect(gridInkPixels).toBeGreaterThan(5_000);
+  await gridToggle.click();
+  await expect(gridToggle).toHaveAttribute("aria-pressed", "false");
+  await expect.poll(canvasInkPixels).toBe(0);
+  await gridToggle.click();
+  await expect(gridToggle).toHaveAttribute("aria-pressed", "true");
+  await expect.poll(canvasInkPixels).toBeGreaterThan(5_000);
+  await modelCanvas.hover({ position: { x: 1200, y: 320 } });
+  const crosshair = page.getByTestId("cad-crosshair");
+  await expect(crosshair).toBeVisible();
+  await expect(page.getByTestId("coordinate-readout")).not.toHaveText("0.0000, 0.0000, 0.0000");
+  const modelNavigation = {
+    gridInkPixels,
+    gridPressed: await gridToggle.getAttribute("aria-pressed"),
+    crosshairWorld: {
+      x: await crosshair.getAttribute("data-world-x"),
+      y: await crosshair.getAttribute("data-world-y"),
+    },
+    coordinateReadout: await page.getByTestId("coordinate-readout").textContent(),
+    viewIndicator: await page.getByTestId("view-orientation-indicator").getAttribute("aria-label"),
+  };
+  await page.getByRole("navigation", { name: "Ribbon vahelehed" }).hover();
+  await expect(crosshair).toBeHidden();
 
   if (captureRoot) {
     await mkdir(captureRoot, { recursive: true });
@@ -67,6 +104,8 @@ test("AutoCAD-style shell keeps all eight primary zones visible at 1920x1080", a
     return count;
   });
   expect(selectionPixels).toBeGreaterThan(150);
+  await page.getByLabel("Kuubik Draw joonestusala").hover({ position: { x: 1200, y: 320 } });
+  await expect(page.getByTestId("cad-crosshair")).toBeVisible();
   if (captureRoot) await writeFile(resolve(captureRoot, "visual-shell-selected-properties.png"), await page.screenshot());
 
   await page.getByRole("button", { name: "Uus kiht", exact: true }).click();
@@ -121,6 +160,7 @@ test("AutoCAD-style shell keeps all eight primary zones visible at 1920x1080", a
       states: {
         emptyWorkspace: true,
         activeDrawingCommand: true,
+        modelNavigation,
         selectedProperties: true,
         selectionPixels,
         layerManagerRows: await page.getByRole("table", { name: "Kihtide loend" }).getByRole("row").count(),

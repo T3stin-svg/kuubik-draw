@@ -4,8 +4,8 @@
   "kind": "readback",
   "authority": "independent-parser",
   "status": "PASS",
-  "artifactSha256": "cb753161bda1b19fc2979d2d3d5e1de67494cc175116dada3caf76cbccaea8ee",
-  "observedAt": "2026-08-30T19:43:21.179Z",
+  "artifactSha256": "9d5eb2f92291c0f025b96626549611b684dd0bc1bcb2325b13734c6f83f274ec",
+  "observedAt": "2026-08-30T20:16:57.606Z",
   "workflow": "Production cad-core locks a viewport, rejects zoom, pan and direct scale/center/twist view application without mutation, commits a model LINE, unlocks and changes/pans the camera, relocks and performs undo/redo, serializes KDRAW1, then a separate reader validates magic, envelope, payload length, manifest SHA-256 and document SHA-256 before parsing document.json without deserializeKDraw.",
   "result": "All three refused operations returned VIEWPORT_LOCKED at revision 1 with an exact unchanged camera; the locked viewport allowed the model LINE, unlock/navigation/relock produced one atomic operation each, undo/redo restored false/true, and the independent reader recovered revision 8 with two entities and the exact locked camera.",
   "artifact": "evidence/artifacts/F-101-independent-readback.json"

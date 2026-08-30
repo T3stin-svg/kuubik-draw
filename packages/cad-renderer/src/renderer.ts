@@ -52,11 +52,82 @@ export interface RenderOptions {
   previewAppearance?: "highlight" | "resolved";
   /** Model-space entities currently selected by the user. Selection is a screen-only overlay. */
   selectedHandles?: readonly string[];
+  /** AutoCAD-familiar world-aligned model grid. It is display-only and never enters the document. */
+  grid?: ViewportGridOptions;
+}
+
+export interface ViewportGridOptions {
+  enabled: boolean;
+  minorColor?: string;
+  majorColor?: string;
+  targetSpacingPx?: number;
+  majorEvery?: number;
 }
 
 const SELECTION_COLOR = "#4ea9f3";
 const GRIP_FILL = "#00a8ff";
 const GRIP_STROKE = "#0b2438";
+
+/** Selects a stable 1/2/5 decade spacing close to the requested screen density. */
+export function viewportGridSpacing(viewport: Viewport2D, targetSpacingPx = 20): number {
+  if (!Number.isFinite(targetSpacingPx) || targetSpacingPx <= 0) throw new TypeError("Grid target spacing must be positive.");
+  const worldUnitsPerPixel = viewportScreenTransform(viewport).worldUnitsPerPixel;
+  const desired = worldUnitsPerPixel * targetSpacingPx;
+  const decade = 10 ** Math.floor(Math.log10(desired));
+  const normalized = desired / decade;
+  const step = normalized <= 1 ? 1 : normalized <= 2 ? 2 : normalized <= 5 ? 5 : 10;
+  return step * decade;
+}
+
+function drawViewportGrid(
+  context: Canvas2DContext,
+  viewport: Viewport2D,
+  transform: ReturnType<typeof viewportScreenTransform>,
+  options: ViewportGridOptions,
+): void {
+  if (!options.enabled) return;
+  const spacing = viewportGridSpacing(viewport, options.targetSpacingPx ?? 20);
+  const majorEvery = Math.max(2, Math.round(options.majorEvery ?? 5));
+  const scale = 1 / transform.worldUnitsPerPixel;
+  const visibleCorners = [
+    viewportScreenToWorld(viewport, { x: 0, y: 0 }),
+    viewportScreenToWorld(viewport, { x: viewport.widthPx, y: 0 }),
+    viewportScreenToWorld(viewport, { x: viewport.widthPx, y: viewport.heightPx }),
+    viewportScreenToWorld(viewport, { x: 0, y: viewport.heightPx }),
+  ];
+  const visibleBounds = {
+    minX: Math.min(...visibleCorners.map(({ x }) => x)),
+    minY: Math.min(...visibleCorners.map(({ y }) => y)),
+    maxX: Math.max(...visibleCorners.map(({ x }) => x)),
+    maxY: Math.max(...visibleCorners.map(({ y }) => y)),
+  };
+  const firstX = Math.floor(visibleBounds.minX / spacing);
+  const lastX = Math.ceil(visibleBounds.maxX / spacing);
+  const firstY = Math.floor(visibleBounds.minY / spacing);
+  const lastY = Math.ceil(visibleBounds.maxY / spacing);
+  const drawPass = (major: boolean) => {
+    context.beginPath();
+    for (let index = firstX; index <= lastX; index += 1) {
+      if ((index % majorEvery === 0) !== major) continue;
+      const x = index * spacing;
+      context.moveTo(x, visibleBounds.minY);
+      context.lineTo(x, visibleBounds.maxY);
+    }
+    for (let index = firstY; index <= lastY; index += 1) {
+      if ((index % majorEvery === 0) !== major) continue;
+      const y = index * spacing;
+      context.moveTo(visibleBounds.minX, y);
+      context.lineTo(visibleBounds.maxX, y);
+    }
+    context.strokeStyle = major ? (options.majorColor ?? "#3d4850") : (options.minorColor ?? "#303940");
+    context.lineWidth = (major ? 0.7 : 0.45) / scale;
+    context.globalAlpha = major ? 0.9 : 0.72;
+    context.setLineDash?.([]);
+    context.stroke();
+  };
+  drawPass(false);
+  drawPass(true);
+}
 
 function midpoint(first: CadPoint2, second: CadPoint2): CadPoint2 {
   return { x: (first.x + second.x) / 2, y: (first.y + second.y) / 2 };
@@ -529,6 +600,7 @@ export class CadCanvasRenderer {
     context.scale(scale * viewport.devicePixelRatio, -scale * viewport.devicePixelRatio);
     context.rotate(rotationRad);
     context.translate(-transform.worldCenter.x, -transform.worldCenter.y);
+    if (options.grid?.enabled) drawViewportGrid(context, viewport, transform, options.grid);
     let drawnEntities = 0;
     for (const handle of candidateHandles) {
       const entity = this.#entities.get(handle);

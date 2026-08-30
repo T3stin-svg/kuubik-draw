@@ -248,6 +248,11 @@ export function App() {
   const [activeCommandPrompt, setActiveCommandPrompt] = useState<string | null>(null);
   const [commandHistoryOpen, setCommandHistoryOpen] = useState(false);
   const [commandHistory, setCommandHistory] = useState<string[]>(["Uus kohalik dokument"]);
+  const [gridEnabled, setGridEnabled] = useState(true);
+  const [cursorReadout, setCursorReadout] = useState<{
+    pixel: { x: number; y: number };
+    world: { x: number; y: number };
+  } | null>(null);
   const [activeLayoutId, setActiveLayoutId] = useState("model");
   const [selectedViewportId, setSelectedViewportId] = useState<string | null>(null);
   const [modelViewportId, setModelViewportId] = useState<string | null>(null);
@@ -868,13 +873,14 @@ export function App() {
       } : {
         ...(activeLayout.kind === "model" ? { selectedHandles } : {}),
         ...(matchPropertiesPreview ? { previewAppearance: "resolved" as const } : {}),
+        ...(activeLayout.kind === "model" ? { grid: { enabled: gridEnabled } } : {}),
       });
     };
     render();
     const observer = new ResizeObserver(render);
     observer.observe(element);
     return () => observer.disconnect();
-  }, [activeLayout, activePageSetup, activePaper, alignPreview, breakPreview, chamferPreview, copyPreview, document, extendPreview, filletPreview, lengthenPreview, matchPropertiesPreview, mirrorPreview, movePreview, offsetPreview, rotatePreview, scalePreview, selectedHandles, stretchPreview, trimPreview]);
+  }, [activeLayout, activePageSetup, activePaper, alignPreview, breakPreview, chamferPreview, copyPreview, document, extendPreview, filletPreview, gridEnabled, lengthenPreview, matchPropertiesPreview, mirrorPreview, movePreview, offsetPreview, rotatePreview, scalePreview, selectedHandles, stretchPreview, trimPreview]);
 
   async function recoverFromStorageConflict(error: unknown): Promise<void> {
     if (!(error instanceof StorageRevisionConflictError)) throw error;
@@ -1496,6 +1502,22 @@ export function App() {
     setStretchDrag((current) => current && current.pointerId === event.pointerId
       ? { ...current, currentPx: { x: event.clientX - rect.left, y: event.clientY - rect.top } }
       : current);
+  }
+
+  function updateModelPointer(event: React.PointerEvent<HTMLCanvasElement>): void {
+    const rect = event.currentTarget.getBoundingClientRect();
+    const pixel = { x: event.clientX - rect.left, y: event.clientY - rect.top };
+    const world = viewportScreenToWorld({
+      world: MODEL_VIEW_WORLD,
+      widthPx: rect.width,
+      heightPx: rect.height,
+      devicePixelRatio: window.devicePixelRatio || 1,
+    }, pixel);
+    setCursorReadout({
+      pixel,
+      world: { x: Number(world.x.toFixed(6)), y: Number(world.y.toFixed(6)) },
+    });
+    updateStretchDrag(event);
   }
 
   function finishStretchDrag(event: React.PointerEvent<HTMLCanvasElement>): void {
@@ -3628,10 +3650,23 @@ export function App() {
               aria-label="Kuubik Draw joonestusala"
               data-selected-handles={selectedHandles.join(",")}
               onPointerDown={selectModifyTargetFromCanvas}
-              onPointerMove={updateStretchDrag}
+              onPointerMove={updateModelPointer}
               onPointerUp={finishStretchDrag}
               onPointerCancel={() => setStretchDrag(null)}
+              onPointerLeave={() => { if (!stretchDrag) setCursorReadout(null); }}
             />
+            {cursorReadout && <div
+              className="cad-crosshair"
+              data-testid="cad-crosshair"
+              data-world-x={cursorReadout.world.x}
+              data-world-y={cursorReadout.world.y}
+              style={{ left: cursorReadout.pixel.x, top: cursorReadout.pixel.y }}
+              aria-hidden="true"
+            ><i className="cad-crosshair-horizontal" /><i className="cad-crosshair-vertical" /><i className="cad-pickbox" /></div>}
+            <div className="view-orientation-indicator" data-testid="view-orientation-indicator" role="img" aria-label="Top view, world coordinate system">
+              <span className="view-north">N</span><span className="view-east">E</span><span className="view-south">S</span><span className="view-west">W</span>
+              <strong>TOP</strong><small>WCS</small>
+            </div>
             {stretchPolygonPoints.length > 0 && <svg className="stretch-polygon-draft" data-testid="stretch-polygon-draft" aria-hidden="true">
               <polyline points={stretchPolygonPoints.map(({ pixel }) => `${pixel.x},${pixel.y}`).join(" ")} />
               {stretchPolygonPoints.map(({ pixel }, index) => <circle key={`${pixel.x}:${pixel.y}:${index}`} cx={pixel.x} cy={pixel.y} r="3" />)}
@@ -3967,9 +4002,9 @@ export function App() {
         <span className="layout-space">{activeSpace}</span>
       </section>
       <footer className="statusbar" data-visual-zone="statusbar">
-        <span className="coordinate-readout">0.0000, 0.0000, 0.0000</span>
+        <span className="coordinate-readout" data-testid="coordinate-readout">{cursorReadout ? `${cursorReadout.world.x.toFixed(4)}, ${cursorReadout.world.y.toFixed(4)}, 0.0000` : "0.0000, 0.0000, 0.0000"}</span>
         <span className="status-toggles">
-          <span className="status-toggle">GRID</span>
+          <button type="button" className={`status-toggle${gridEnabled ? " active" : ""}`} aria-label="Grid display" aria-pressed={gridEnabled} onClick={() => setGridEnabled((current) => !current)}>GRID</button>
           <span className="status-toggle active">ORTHO</span>
           <span className="status-toggle active">OSNAP</span>
           <span className="status-toggle">OTRACK</span>

@@ -361,3 +361,36 @@ Chromium **108/108**. Parity-kit, parity, visual, license and public-tree
 checks pass. Pinned Gitleaks 8.30.1 found zero leaks in 1,042 git-visible
 source files. LibreCAD 2.2.1.5 and FreeCAD 1.1.3 passed as
 `FIXTURE_PASS_NOT_NETWORK_ISOLATED`, with `certificationAuthority:false`.
+
+## 2026-08-30 AutoCAD model-space navigation visual fidelity wave 5
+
+Kuubik model space now uses a deterministic world-aligned 1/2/5-decade grid
+that adapts to screen density and fills the complete visible canvas, including
+non-square viewports. GRID is a real status-bar toggle. Pointer movement uses
+the same invertible viewport transform as selection and Modify commands to
+drive a screen-sized crosshair and four-decimal live X/Y/Z readout. An
+original Kuubik TOP/WCS orientation indicator communicates the fixed 2D view
+without copying Autodesk assets.
+
+The fixed 1920x1080 Chromium evidence under
+`evidence/artifacts/visual-shell-wave-5` measures 219,710 grid pixels, proves
+the GRID on/off/on lifecycle, records exact cursor world coordinates, captures
+all six required states and reports zero console errors. Renderer unit tests
+prove deterministic spacing, full rectangular-canvas coverage and that the
+display-only grid cannot mutate its viewport input.
+
+The score remains deliberately **29/133, 21.8% raw / 25.2% weighted**, and
+**60.7% visual** with **1/6 paired states PASS**. A more AutoCAD-familiar model
+space is not a complete same-environment re-audit of all five fixed visual
+categories. All 29 certified functional rows received fresh browser,
+independent read-back, applicable cross-evidence, global-topology and
+content-address receipts after the shared App/renderer change. LibreCAD and
+FreeCAD remain secondary non-authorities. No preview or production deployment
+was performed.
+
+The complete local gate passes typecheck, lint, production build, **83 Vitest
+files / 500 tests**, mutation **78/78**, DXF **47/47**, PDF **20/20** and
+Chromium **108/108**. Parity-kit, parity, visual, license and public-tree
+checks pass. Pinned Gitleaks 8.30.1 reports zero findings across 1,051
+git-visible source files. LibreCAD 2.2.1.5 and FreeCAD 1.1.3 pass as
+`FIXTURE_PASS_NOT_NETWORK_ISOLATED`, with `certificationAuthority:false`.
