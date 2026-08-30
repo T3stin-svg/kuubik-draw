@@ -245,6 +245,9 @@ export function App() {
   const committing = useRef(false);
   const [document, setDocument] = useState<KDrawDocumentV1>(session.current.document);
   const [status, setStatus] = useState("Uus kohalik dokument");
+  const [activeCommandPrompt, setActiveCommandPrompt] = useState<string | null>(null);
+  const [commandHistoryOpen, setCommandHistoryOpen] = useState(false);
+  const [commandHistory, setCommandHistory] = useState<string[]>(["Uus kohalik dokument"]);
   const [activeLayoutId, setActiveLayoutId] = useState("model");
   const [selectedViewportId, setSelectedViewportId] = useState<string | null>(null);
   const [modelViewportId, setModelViewportId] = useState<string | null>(null);
@@ -396,6 +399,13 @@ export function App() {
   } | null>(null);
   const [previewCommand, setPreviewCommand] = useState<"MOVE" | "COPY" | "ROTATE" | "SCALE" | "MIRROR" | "OFFSET" | "TRIM" | "EXTEND" | "FILLET" | "CHAMFER" | "BREAK" | "STRETCH" | "LENGTHEN" | "ALIGN" | "MATCHPROP">("MOVE");
   const activeLayer = document.layers.find((layer) => layer.id === document.currentLayerId)!;
+  const primarySelectedEntity = selectedHandles.length === 1
+    ? document.entities.find((entity) => entity.handle === selectedHandles[0]) ?? null
+    : null;
+
+  useEffect(() => {
+    setCommandHistory((previous) => previous.at(-1) === status ? previous : [...previous.slice(-19), status]);
+  }, [status]);
   const activeLayout = document.layouts.find((layout) => layout.id === activeLayoutId) ?? document.layouts[0]!;
   const selectedViewport = activeLayout.kind === "paper"
     ? activeLayout.viewports.find((viewport) => viewport.id === selectedViewportId) ?? null
@@ -1292,7 +1302,10 @@ export function App() {
       devicePixelRatio: window.devicePixelRatio || 1,
     };
     const point = viewportScreenToWorld(viewport, { x: event.clientX - rect.left, y: event.clientY - rect.top });
-    const cleanCoordinate = (value: number): number => Number(value.toFixed(6));
+    const cleanCoordinate = (value: number): number => {
+      const integer = Math.round(value);
+      return Number((Math.abs(value - integer) <= 1e-4 ? integer : value).toFixed(6));
+    };
     const pickPoint = { x: cleanCoordinate(point.x), y: cleanCoordinate(point.y) };
     if (previewCommand === "STRETCH") {
       const startPx = { x: event.clientX - rect.left, y: event.clientY - rect.top };
@@ -2860,11 +2873,72 @@ export function App() {
 
   return (
     <main className="app-shell">
-      <header className="titlebar">
-        <strong>Kuubik Draw</strong>
-        <span>GPL 2D CAD · eksperimentaalne</span>
+      <header className="titlebar" data-visual-zone="titlebar">
+        <span className="application-mark" aria-label="Kuubik Draw rakenduse menüü">K</span>
+        <span className="product-name">Kuubik Draw</span>
+        <span className="quick-access" aria-label="Kiirpääsuriba">
+          <button type="button" aria-label="Kiirpääsu Undo" onClick={() => void undoLast()} disabled={!canUndoInActiveLayout}>↶</button>
+          <button type="button" aria-label="Kiirpääsu Redo" onClick={() => void redoLast()} disabled={!canRedoInActiveLayout}>↷</button>
+        </span>
+        <strong className="document-title">{document.metadata.title || document.documentId}.kdraw — Kuubik Draw</strong>
+        <span className="workspace-name">2D Drafting &amp; Annotation</span>
+        <span className="product-badge">GPL · experimental</span>
       </header>
-      <section className="ribbon" aria-label="Joonestustööriistad">
+      <nav className="ribbon-tabs" aria-label="Ribbon vahelehed" data-visual-zone="ribbon-tabs">
+        <button type="button" className="application-tab">File</button>
+        <button type="button" className="active" aria-current="page">Home</button>
+        <button type="button" disabled>Insert</button>
+        <button type="button" disabled>Annotate</button>
+        <button type="button" disabled>Parametric</button>
+        <button type="button" disabled>View</button>
+        <button type="button" disabled>Manage</button>
+        <button type="button" disabled>Output</button>
+      </nav>
+      <section className="ribbon" aria-label="Joonestustööriistad" data-visual-zone="ribbon">
+        <div className="ribbon-primary" aria-label="Home ribbon">
+          <section className="ribbon-panel" aria-label="Draw panel">
+            <div className="ribbon-panel-tools">
+              <button type="button" className="ribbon-tool ribbon-tool-large" aria-label="Ribbon Line command" aria-pressed={activeCommandPrompt === "LINE"} onClick={() => { setActiveCommandPrompt("LINE"); setStatus("LINE Specify first point"); }} disabled={!modelSpaceEditing || activeLayer.locked}><span className="ribbon-glyph">╱</span><span>Line</span></button>
+              <button type="button" className="ribbon-tool" aria-label="Ribbon Rectangle command" aria-pressed={activeCommandPrompt === "RECTANGLE"} onClick={() => { setActiveCommandPrompt("RECTANGLE"); setStatus("RECTANGLE Specify first corner point"); }} disabled={!modelSpaceEditing || activeLayer.locked}><span className="ribbon-glyph">□</span><span>Rectangle</span></button>
+            </div>
+            <strong>Draw</strong>
+          </section>
+          <section className="ribbon-panel" aria-label="Modify panel">
+            <div className="ribbon-panel-tools ribbon-tool-grid">
+              <button type="button" className="ribbon-tool" aria-label="Ribbon Move command" aria-pressed={activeCommandPrompt === "MOVE"} onClick={() => { setActiveCommandPrompt("MOVE"); setPreviewCommand("MOVE"); setStatus("MOVE Select objects"); }} disabled={!modelSpaceEditing}><span className="ribbon-glyph">✥</span><span>Move</span></button>
+              <button type="button" className="ribbon-tool" aria-label="Ribbon Copy command" aria-pressed={activeCommandPrompt === "COPY"} onClick={() => { setActiveCommandPrompt("COPY"); setPreviewCommand("COPY"); setStatus("COPY Select objects"); }} disabled={!modelSpaceEditing}><span className="ribbon-glyph">▣</span><span>Copy</span></button>
+              <button type="button" className="ribbon-tool" aria-label="Ribbon Rotate command" aria-pressed={activeCommandPrompt === "ROTATE"} onClick={() => { setActiveCommandPrompt("ROTATE"); setPreviewCommand("ROTATE"); setStatus("ROTATE Select objects"); }} disabled={!modelSpaceEditing}><span className="ribbon-glyph">↻</span><span>Rotate</span></button>
+              <button type="button" className="ribbon-tool" aria-label="Ribbon Mirror command" aria-pressed={activeCommandPrompt === "MIRROR"} onClick={() => { setActiveCommandPrompt("MIRROR"); setPreviewCommand("MIRROR"); setStatus("MIRROR Select objects"); }} disabled={!modelSpaceEditing}><span className="ribbon-glyph">◫</span><span>Mirror</span></button>
+              <button type="button" className="ribbon-tool" aria-label="Ribbon Trim command" aria-pressed={activeCommandPrompt === "TRIM"} onClick={() => { setActiveCommandPrompt("TRIM"); setPreviewCommand("TRIM"); setStatus("TRIM Select cutting edges or objects to trim"); }} disabled={!modelSpaceEditing}><span className="ribbon-glyph">⌁</span><span>Trim</span></button>
+              <button type="button" className="ribbon-tool" aria-label="Ribbon Offset command" aria-pressed={activeCommandPrompt === "OFFSET"} onClick={() => { setActiveCommandPrompt("OFFSET"); setPreviewCommand("OFFSET"); setStatus("OFFSET Specify offset distance or Through"); }} disabled={!modelSpaceEditing}><span className="ribbon-glyph">≋</span><span>Offset</span></button>
+            </div>
+            <strong>Modify</strong>
+          </section>
+          <section className="ribbon-panel" aria-label="Layers panel">
+            <div className="ribbon-layer-tools">
+              <span className="ribbon-layer-current"><span aria-hidden="true">●</span>{activeLayer.name}</span>
+              <button type="button" className="ribbon-tool" aria-label="Ribbon New layer command" onClick={() => void createLayer()}><span className="ribbon-glyph">▤</span><span>New Layer</span></button>
+              <button type="button" className="ribbon-tool" aria-label="Ribbon Layer lock command" onClick={() => void toggleActiveLayerLock()}><span className="ribbon-glyph">{activeLayer.locked ? "🔒" : "🔓"}</span><span>{activeLayer.locked ? "Unlock" : "Lock"}</span></button>
+            </div>
+            <strong>Layers</strong>
+          </section>
+          <section className="ribbon-panel" aria-label="Properties panel">
+            <div className="ribbon-property-stack">
+              <span><i className="property-swatch" />ByLayer</span>
+              <span>— ByLayer</span>
+              <span>▔ ByLayer</span>
+            </div>
+            <strong>Properties</strong>
+          </section>
+          <section className="ribbon-panel ribbon-panel-spacer" aria-label="Annotation panel">
+            <div className="ribbon-panel-tools">
+              <button type="button" className="ribbon-tool ribbon-tool-large" aria-label="Ribbon Text unavailable" disabled><span className="ribbon-glyph ribbon-letter">A</span><span>Text</span></button>
+              <button type="button" className="ribbon-tool" aria-label="Ribbon Dimension unavailable" disabled><span className="ribbon-glyph">↔</span><span>Dimension</span></button>
+            </div>
+            <strong>Annotation</strong>
+          </section>
+        </div>
+        <div className="ribbon-parameters" aria-label="Käsu parameetrid">
         <button type="button" onClick={() => void addSyntheticLine()} disabled={!modelSpaceEditing || activeLayer.locked}>LINE test</button>
         <label className="coordinate-input">
           <span>Esimene nurk</span>
@@ -3459,7 +3533,14 @@ export function App() {
             MATCHPROP muutmata: {lastMatchRejected.map(({ handle, reason }) => `${handle} (${reason})`).join(", ")}
           </span>
         )}
+        </div>
       </section>
+      <nav className="document-tabs" aria-label="Joonise vahelehed" data-visual-zone="document-tabs">
+        <button type="button" className="document-menu" aria-label="Jooniste menüü">☰</button>
+        <button type="button" className="start-tab" disabled>Start</button>
+        <button type="button" className="drawing-tab active" aria-current="page">{document.metadata.title || document.documentId}.kdraw<span aria-hidden="true">×</span></button>
+        <button type="button" className="new-drawing-tab" aria-label="Uus joonis" disabled>＋</button>
+      </nav>
       <section className={`drawing-area ${activePaper ? "paper-mode" : "model-mode"}`} data-mode={activePaper ? "paper" : "model"}>
         {activePaper ? (
           <div className="paper-space-desk" data-testid="paper-space-desk" ref={paperDesk}>
@@ -3541,6 +3622,56 @@ export function App() {
             />}
           </>
         )}
+        <aside className="properties-palette" aria-label="Properties palette" data-visual-zone="properties-palette" data-dock="left">
+          <section className="layer-manager" aria-label="Layer Properties Manager">
+            <header><strong>LAYER PROPERTIES MANAGER</strong><span>×</span></header>
+            <div className="layer-current">Current layer: <strong>{activeLayer.name}</strong></div>
+            <div className="layer-toolbar" aria-hidden="true">▤　▱　☀　🔒　⌕</div>
+            <div className="layer-grid" role="table" aria-label="Kihtide loend">
+              <div className="layer-grid-header" role="row"><span>Name</span><span>On</span><span>Freeze</span><span>Lock</span></div>
+              {document.layers.map((layer) => (
+                <div className={layer.id === activeLayer.id ? "layer-grid-row active" : "layer-grid-row"} role="row" key={layer.id}>
+                  <span>{layer.id === activeLayer.id ? "✓ " : ""}{layer.name}</span><span>{layer.visible ? "●" : "○"}</span><span>{layer.frozen ? "❄" : "☀"}</span><span>{layer.locked ? "🔒" : "🔓"}</span>
+                </div>
+              ))}
+            </div>
+          </section>
+          <header>
+            <strong>PROPERTIES</strong>
+            <span>{selectedHandles.length === 0 ? "No selection" : `${selectedHandles.length} selected`}</span>
+          </header>
+          <section>
+            <h2>General</h2>
+            <dl>
+              <div><dt>Type</dt><dd>{primarySelectedEntity?.kind.toUpperCase() ?? (selectedHandles.length > 1 ? "Multiple" : "None")}</dd></div>
+              <div><dt>Handle</dt><dd>{primarySelectedEntity?.handle ?? "—"}</dd></div>
+              <div><dt>Layer</dt><dd>{primarySelectedEntity?.layerId ?? activeLayer.name}</dd></div>
+              <div><dt>Color</dt><dd>{primarySelectedEntity?.appearance?.color ?? "ByLayer"}</dd></div>
+              <div><dt>Linetype</dt><dd>{primarySelectedEntity?.appearance?.linetypeId ?? "ByLayer"}</dd></div>
+            </dl>
+          </section>
+          <section>
+            <h2>Layer</h2>
+            <dl>
+              <div><dt>Current</dt><dd>{activeLayer.name}</dd></div>
+              <div><dt>State</dt><dd>{activeLayer.locked ? "Locked" : activeLayer.frozen ? "Frozen" : "On"}</dd></div>
+            </dl>
+          </section>
+        </aside>
+      </section>
+      <section className="command-line" aria-label="Käsurida" data-visual-zone="command-line">
+        {commandHistoryOpen && (
+          <div className="command-history-window" role="log" aria-label="Käsuajalugu">
+            {commandHistory.map((entry, index) => <div key={`${index}-${entry}`}>Command: {entry}</div>)}
+          </div>
+        )}
+        <div className="command-history" role="status" aria-live="polite">{status}</div>
+        <div className="command-prompt">
+          <button type="button" className="command-history-toggle" aria-label={commandHistoryOpen ? "Sulge käsuajalugu" : "Ava käsuajalugu"} aria-expanded={commandHistoryOpen} onClick={() => setCommandHistoryOpen((open) => !open)}>⌃</button>
+          <span>Command:</span>
+          {activeCommandPrompt && <strong>{activeCommandPrompt}</strong>}
+          <span className="command-caret" aria-hidden="true" />
+        </div>
       </section>
       <section className="layoutbar" aria-label="Model ja Layout vahelehed">
         {document.layouts.map((layout) => (
@@ -3782,9 +3913,16 @@ export function App() {
         </details>
         <span className="layout-space">{activeSpace}</span>
       </section>
-      <footer className="statusbar">
-        <span>{status}</span>
-        <span>{activeSpace} · mm · SNAP</span>
+      <footer className="statusbar" data-visual-zone="statusbar">
+        <span className="coordinate-readout">0.0000, 0.0000, 0.0000</span>
+        <span className="status-toggles">
+          <span className="status-toggle">GRID</span>
+          <span className="status-toggle active">ORTHO</span>
+          <span className="status-toggle active">OSNAP</span>
+          <span className="status-toggle">OTRACK</span>
+          <span className="status-toggle">DYN</span>
+          <span className="status-space">{activeSpace} · mm · SNAP</span>
+        </span>
       </footer>
     </main>
   );

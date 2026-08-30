@@ -15,6 +15,11 @@
 - developer-only pinned LibreCAD/FreeCAD fixtures with executable-SHA checks,
   disposable profiles and independent geometry read-back; they never certify an AutoCAD row;
 - dependency-license, public-tree, Gitleaks, build, unit, mutation and Chromium gates.
+- first AutoCAD-style visual shell wave with an eight-zone 1920×1080 dark
+  workspace, dense Home ribbon, document tabs, docked Layer/Properties surface,
+  command history, layout tabs and status toggles. Six Kuubik states are captured
+  under `evidence/artifacts/visual-shell-wave-1`; the fixed visual score remains
+  60.7% until equivalent AutoCAD reference states pass paired measurement.
 - declarative parity-kit with source-to-row dependency mapping, fail-closed
   runtime coverage, semantic JSON/KDRAW1 content addresses, one-row execution
   and fast/row/full CI tiers; MOVE…TRIM preview and commit now share one typed
@@ -101,6 +106,9 @@
 - 50,000-entity R-tree query passes, but 30 FPS browser pan/zoom is not yet proved;
 - native DWG/DWT/XREF and PC3/CTB/STB remain deferred;
 - no preview or production deployment has been made.
+- all 29 certified rows were re-captured and independently read back after the
+  visual shell change; F-102 additionally passed a fresh owned AutoCAD 2024 live
+  Display/PAGESETUP/PDF/DWG run using the new measured browser viewport.
 
 The F-027 full local gate passes 70 test files / 443 Vitest tests,
 68 mutation tests, 43 DXF tests, 20 PDF tests and 99 Chromium E2E tests,

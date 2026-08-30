@@ -4,7 +4,7 @@
   "kind": "browser",
   "authority": "kuubik-draw-browser",
   "status": "PASS",
-  "artifactSha256": "008995043186219f7db4e61afabb5b26dc201cc560a84c974eabc8f0d3109477",
+  "artifactSha256": "fb51aa1f3e6718934ba09f5bf5a7bbcb57fe134ab2f5650ebd5b125135d3d867",
   "observedAt": "2026-08-29T10:46:27.008Z",
   "workflow": "Chromium at 1920x1080 imports the visible DXF file, edits all imported objects with MOVE, undoes the edit, atomically undoes and redoes DXFIN, reloads IndexedDB revision 5 and uses the visible DXF export control.",
   "result": "The document retained 40 editable objects, five layers and millimetre units through edit, Undo/Redo and reload. The second-generation browser download was byte-for-byte identical to the source production DXF, unsupported partial import was refused without a revision, and Chromium reported zero console or page errors.",

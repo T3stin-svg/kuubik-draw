@@ -31,6 +31,12 @@ efektiivsusvärav on failis [`ARCHITECTURE_ROADMAP.md`](ARCHITECTURE_ROADMAP.md)
 - native DWG/DWT/XREF ja PC3/CTB/STB pariteet on veel blokeeritud.
 - F-027 `STRETCH` ja F-029 `ALIGN` on avalikult sertifitseeritud;
   production deploy'd ei ole tehtud.
+- omaniku ajutise visuaalprioriteedi esimene laine lisab AutoCADi-laadse tumeda
+  kaheksatsoonilise shell'i, Home-ribboni, dokumendivahelehed, vasakule dock'itud
+  Layer Properties/Properties pinna, käsurea ajaloo ning AutoCADi-laadse
+  layout/status-riba. Kuus 1920×1080 Kuubiku olekut on jäädvustatud ja kõik 29
+  sertifitseeritud funktsioonirida on uue kesta all uuesti tõendatud; visuaalskoor
+  jääb ausalt **60,7%**, kuni kuus vastavat AutoCADi paarpilti on mõõdetud.
 
 Need arvud on vana Drawi auditi muutmatu snapshot. Uus rakendus ei päri skoori
 enne, kui sama töövoog on siin reprodutseeritud ja tõendatud. LibreCADi või

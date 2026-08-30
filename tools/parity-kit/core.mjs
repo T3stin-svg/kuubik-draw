@@ -709,6 +709,10 @@ function evidenceKindsAffectedBySources(previousSources, currentSources, sourceP
       affected.add("global");
       continue;
     }
+    if (["parity/autocad-2024-visual.manifest.mjs", "parity/check-visual.mjs"].includes(path)) {
+      affected.add("global");
+      continue;
+    }
     if (path === "playwright.config.ts" || path.startsWith("e2e/")) { affected.add("browser"); affected.add("cross"); continue; }
     if (path.startsWith("apps/web/") || /^packages\/(?:cad-core|cad-dxf|cad-print|cad-renderer)\//u.test(path)) {
       affected.add("browser");

@@ -27,28 +27,28 @@
     "atPointCapabilityExact": true
   },
   "evidenceSha256": {
-    "evidence/artifacts/F-026-browser-readback.json": "625dced3153df5fb7b9567cdeec094764e18bb7dc42948366a82506763f97324",
-    "evidence/artifacts/F-026-browser-matrix.json": "e4071c74319bdcf26dfc4adcfb9c58940c5b1b49612cab0bd17606fc7cfa995b",
-    "evidence/artifacts/F-026-independent-readback.json": "2953570ca7a4b2f8422d056fe50ad3625e67266ee8946a7f844b4ad246c7b73b",
+    "evidence/artifacts/F-026-browser-readback.json": "f326efb374afa8c44b64930743eaef7e5299b8c65dbea525cae4d6d7a2204784",
+    "evidence/artifacts/F-026-browser-matrix.json": "99279b60292ac301f00cfc2af806b192c23b553b21c81c8c7bf24651bce0c2cf",
+    "evidence/artifacts/F-026-independent-readback.json": "11a5ca475a4591862c6cea4effc6fdcc2d2263810996605832e9789dbf3dfe89",
     "evidence/artifacts/F-026-autocad-readback.json": "879be7531123b0aec5dbf544bd7bdf4611c8d34c4e1bcec63f4f6215abe1db09",
     "evidence/artifacts/F-026-autocad-core.json": "39de05789a2aac5cdf9eac093053877d0b9dfe07a7e81c8d343ff85314c80c4a",
-    "evidence/artifacts/F-026-oracles.json": "991d0fe3599618fd83639e19772f3ea3241ecf91f12936c568f386a861355f92"
+    "evidence/artifacts/F-026-oracles.json": "28f7b680b81ee3691094c9c4b33d9510a7ba8733b327472c44c6de7f09342f7f"
   },
   "nestedReceipts": {
     "browserArtifacts": {
       "evidence/artifacts/F-026-browser-matrix.json": {
-        "expected": "e4071c74319bdcf26dfc4adcfb9c58940c5b1b49612cab0bd17606fc7cfa995b",
-        "actual": "e4071c74319bdcf26dfc4adcfb9c58940c5b1b49612cab0bd17606fc7cfa995b",
+        "expected": "99279b60292ac301f00cfc2af806b192c23b553b21c81c8c7bf24651bce0c2cf",
+        "actual": "99279b60292ac301f00cfc2af806b192c23b553b21c81c8c7bf24651bce0c2cf",
         "byteLength": 10034
       },
       "evidence/artifacts/F-026-browser-canvas.json": {
-        "expected": "1ae55882c8a5c880e161a93b852105ec21cdbeea450ac812896fe5233e258dd1",
-        "actual": "1ae55882c8a5c880e161a93b852105ec21cdbeea450ac812896fe5233e258dd1",
+        "expected": "51b3e1547dfc1a2f32376b958150eff08a9b07c58a0dbe5daf2309e16cdf4a1f",
+        "actual": "51b3e1547dfc1a2f32376b958150eff08a9b07c58a0dbe5daf2309e16cdf4a1f",
         "byteLength": 3438
       },
       "evidence/artifacts/F-026-browser-at-point.json": {
-        "expected": "9539d3309d0ca9087b66aaa634a252fdf3fbc833e20ff31d795aaad79f469bdb",
-        "actual": "9539d3309d0ca9087b66aaa634a252fdf3fbc833e20ff31d795aaad79f469bdb",
+        "expected": "b64a7ae713ce3c619c7dcb9beac66dccf8762f17625e77a7c153caf373ebaea0",
+        "actual": "b64a7ae713ce3c619c7dcb9beac66dccf8762f17625e77a7c153caf373ebaea0",
         "byteLength": 9938
       },
       "evidence/artifacts/F-026-browser.dxf": {
@@ -57,16 +57,16 @@
         "byteLength": 4160
       },
       "evidence/artifacts/F-026-browser.kdraw": {
-        "expected": "84bee2a64219699ac9e283cef1f900c6c796c9b14bfc7f312703c2c51ff64ba3",
-        "actual": "84bee2a64219699ac9e283cef1f900c6c796c9b14bfc7f312703c2c51ff64ba3",
+        "expected": "913a538ce7250892627697e984fd19b753f9b066e67bb479ad27a9f065a831d9",
+        "actual": "913a538ce7250892627697e984fd19b753f9b066e67bb479ad27a9f065a831d9",
         "byteLength": 1717
       }
     },
     "browserSources": {
       "apps/web/src/App.tsx": {
-        "expected": "239cc76784db5313fe70639ee8651177f9b28f2806f0660b885fd8ef4ba9fff3",
-        "actual": "239cc76784db5313fe70639ee8651177f9b28f2806f0660b885fd8ef4ba9fff3",
-        "byteLength": 216913
+        "expected": "cd786f3324f68b645f0b92e7d1be60b8829795f8439359acbb08e65a011ec7d0",
+        "actual": "cd786f3324f68b645f0b92e7d1be60b8829795f8439359acbb08e65a011ec7d0",
+        "byteLength": 228506
       },
       "apps/web/src/workflows/modify-command.ts": {
         "expected": "9d1f7d0b1d3e308eac2a5d4055436626e3a497cbaaf116c05957e1fde15616c7",
@@ -262,8 +262,8 @@
         "byteLength": 5494
       },
       "evidence/artifacts/F-026-independent-readback.json": {
-        "expected": "2953570ca7a4b2f8422d056fe50ad3625e67266ee8946a7f844b4ad246c7b73b",
-        "actual": "2953570ca7a4b2f8422d056fe50ad3625e67266ee8946a7f844b4ad246c7b73b",
+        "expected": "11a5ca475a4591862c6cea4effc6fdcc2d2263810996605832e9789dbf3dfe89",
+        "actual": "11a5ca475a4591862c6cea4effc6fdcc2d2263810996605832e9789dbf3dfe89",
         "byteLength": 27199
       },
       "tools/oracles/freecad-f026-headless.py": {
@@ -294,7 +294,7 @@
     }
   },
   "browserDxfSha256": "28651cb1560005165e4b83f1b8730cffb4327e0dced7b0f2424a287712dc45e5",
-  "browserKdrawSha256": "84bee2a64219699ac9e283cef1f900c6c796c9b14bfc7f312703c2c51ff64ba3",
+  "browserKdrawSha256": "913a538ce7250892627697e984fd19b753f9b066e67bb479ad27a9f065a831d9",
   "productionDxfSha256": "c3e8b4e15a5ad9e6e65bd8bc64916e7c5671f12f6e97f6f4ae8dde5b80a90085",
   "productionKdrawSha256": "4d7259927f1815d144d949e49f609aa89b397ba01784ef787201c229d3e456a6",
   "certificationAuthorities": {
