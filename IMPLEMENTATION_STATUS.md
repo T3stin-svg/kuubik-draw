@@ -81,12 +81,9 @@
 
 ## Certified state and explicit remaining limits
 
-- the new application has **24/133** publicly certified parity rows
-  (**18.0% raw / 21.7% weighted**); F-023 feature commit `1f4a96c` and CI
-  portability fix `7e252de` passed GitHub Actions run `33260160549`;
-- the F-024 local release candidate has **25/133** rows
-  (**18.8% raw / 22.6% weighted**) with a complete local gate and independent
-  `0 P0 / 0 P1` review; public GitHub Actions is still pending;
+- the new application has **25/133** publicly certified parity rows
+  (**18.8% raw / 22.6% weighted**); F-024 feature commit `4462631` passed
+  GitHub Actions run `33283660256` and independent `0 P0 / 0 P1` review;
 - all 22 legacy-certified rows and the first three new rows F-022/F-023/F-024
   are locally mirrored;
 - spline/NURBS rendering is rejected rather than drawn as a misleading control polygon;
@@ -98,20 +95,19 @@
 - native DWG/DWT/XREF and PC3/CTB/STB remain deferred;
 - no preview or production deployment has been made.
 
-The F-024 final local full gate passed 56 test files / 351 Vitest tests,
+The F-024 final full gate passed 56 test files / 351 Vitest tests,
 50 mutation tests, 36 DXF tests, 20 PDF tests and 79 Chromium E2E tests.
-GitHub Actions run `33260160549` passed both `fast` and full `verify` jobs on
-the exact public commit `7e252de`; the preceding shallow-checkout failure is
-ratcheted by requiring every checkout step to fetch the pinned schema-v3
-migration base. The checked-in licensed AutoCAD evidence is fresh for
-F-022/F-023/F-109/F-111. LibreCAD/FreeCAD remain secondary oracles and report
-`FIXTURE_PASS_NOT_NETWORK_ISOLATED`, not certification authority.
+GitHub Actions run `33283660256` passed both `fast` and full `verify` jobs on
+the exact public commit `4462631`. The checked-in licensed AutoCAD evidence is
+fresh for F-016/F-017/F-018/F-024/F-098/F-100/F-101/F-105; LibreCAD/FreeCAD
+remain secondary oracles and report `FIXTURE_PASS_NOT_NETWORK_ISOLATED`, not
+certification authority.
 
 The architecture-efficiency wave in `ARCHITECTURE_ROADMAP.md` is closed with
 public Ubuntu CI and an independent `0 P0 / 0 P1` review. Its App-shell refactor
 was followed by all 22 browser captures, 23 independent read-backs, a fresh
 F-102 native AutoCAD live run, schema-v3 exact stage receipts, real F-003
 Chromium DXF capture and cross-platform content-address verification. The next
-functional row after the local F-024 candidate is F-025 CHAMFER. F-108 native
+functional row after F-024 is F-025 CHAMFER. F-108 native
 PC3/CTB/STB remains blocked on a licensed adapter. No production deployment is
 authorized.

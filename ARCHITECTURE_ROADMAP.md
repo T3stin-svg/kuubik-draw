@@ -33,9 +33,9 @@ selles teekaardis teadlikult `Won't have`.
 
 ## Now
 
-1. F-023 on avalikult sertifitseeritud: **24/133 · 18,0% raw / 21,7% weighted**;
-   F-024 lokaalne release-kandidaat on **25/133 · 18,8% raw / 22,6% weighted**
-   ning ootab avalikku GitHub Actionsi väravat.
+1. F-024 on avalikult sertifitseeritud: **25/133 · 18,8% raw / 22,6% weighted**;
+   feature-commit `4462631` läbis GitHub Actions run'i `33283660256` ja
+   sõltumatu lõppreview oli `0 P0 / 0 P1`.
 2. Quick/Standard TRIM ja EXTEND, closed bulge/width polyline, hidden/locked target,
    ignored HATCH loop, nested block layer-semantika ja rational SPLINE läbivad
    AutoCAD 2024.1.2, Chromiumi ning sõltumatu DXF/KDRAW1 read-back'i.
@@ -109,8 +109,7 @@ ainult pärast kõigi tõendite ja sõltumatu P0/P1 review läbimist.
 
 ## Later
 
-1. Sulgeda F-024 avaliku CI-ga, rakendada F-025 `CHAMFER` ning jätkata
-   mõjupõhises P0 → P1 → P2 järjekorras
+1. Rakendada F-025 `CHAMFER` ning jätkata mõjupõhises P0 → P1 → P2 järjekorras
    kuni 133/133.
 2. Native DWG/DWT/XREF ja PC3/CTB/STB ainult litsentsitud ODA/RealDWG teega.
 3. Pärast funktsionaalset 133/133 väravat viia kõik viis visuaalkategooriat
