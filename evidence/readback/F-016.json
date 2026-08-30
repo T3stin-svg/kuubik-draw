@@ -4,8 +4,8 @@
   "kind": "readback",
   "authority": "independent-parser",
   "status": "PASS",
-  "artifactSha256": "541e8ee8c2c6bd687ebc2bb90011f13fc90cb5c0412fefe4203cb1214d917f27",
-  "observedAt": "2026-08-30T03:40:01.002Z",
+  "artifactSha256": "b8feb94d0c701a6f2f7dd614130031758aa0b37a82d318aa5b7c0804cc67cfe2",
+  "observedAt": "2026-08-30T06:08:17.606Z",
   "workflow": "Production cad-core MOVE plus cad-dxf output parsed by dxf-parser@1.1.2, then the full standard matrix serialized by the production .kdraw writer and independently decoded with manifest byte-length/SHA-256 verification before one-step UNDO",
   "result": "DXF LINE/LWPOLYLINE endpoints and all twelve standard .kdraw entity families read back at exact +500,+750 with stable handles and properties; the opaque proxy payload remained byte-identical, locked/proxy rejects were explicit, and one UNDO restored every original entity.",
   "artifact": "evidence/artifacts/F-016-independent-readback.json"

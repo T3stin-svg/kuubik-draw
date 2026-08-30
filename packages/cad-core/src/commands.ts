@@ -1,5 +1,6 @@
 import type { CadAppearance, CadBlockDefinition, CadEntity, CadPoint2, CadPolyline, CadSpline, KDrawDocumentV1 } from "@kuubik/cad-schema";
 import type { EntityChange } from "./transaction.js";
+import { breakCadEntity, type BreakGeometryRejectReason, type BreakMode } from "./break.js";
 import {
   chamferCadEntityPair,
   chamferCadPolyline,
@@ -328,6 +329,48 @@ export interface ExtendCommandDefinition {
   execute(document: KDrawDocumentV1, args: ExtendCommandArgs): ExtendCommandResult;
 }
 
+export interface BreakTargetPick {
+  handle: string;
+  firstPoint: CadPoint2;
+  secondPoint?: CadPoint2;
+  mode?: BreakMode;
+}
+
+export interface BreakCommandArgs {
+  targets: readonly BreakTargetPick[];
+}
+
+export interface BreakRejectedTarget {
+  handle: string;
+  targetIndex: number;
+  reason: "missing" | "locked-layer" | BreakGeometryRejectReason;
+}
+
+export interface BreakCommandStep {
+  sourceHandle: string;
+  resultHandles: string[];
+  targetIndex: number;
+  mode: BreakMode;
+  breakPoints: readonly [CadPoint2, CadPoint2];
+  removedInterval: { start: number; end: number; wraps: boolean } | null;
+}
+
+export interface BreakCommandResult {
+  changes: EntityChange[];
+  sourceHandles: string[];
+  resultHandles: string[];
+  createdHandles: string[];
+  rejected: BreakRejectedTarget[];
+  steps: BreakCommandStep[];
+  multiple: boolean;
+}
+
+export interface BreakCommandDefinition {
+  id: "BREAK";
+  aliases: readonly string[];
+  execute(document: KDrawDocumentV1, args: BreakCommandArgs): BreakCommandResult;
+}
+
 export interface FilletPairPick {
   firstHandle: string;
   firstSegment?: number;
@@ -516,6 +559,26 @@ export function parseTrimTargetPicks(input: string, action: TrimTargetAction = "
 
 export function parseExtendTargetPicks(input: string, action: ExtendTargetAction = "extend"): ExtendTargetPick[] {
   return parseTargetPicks(input, action, "EXTEND");
+}
+
+/** Parses `handle@firstX,firstY>secondX,secondY` or `handle@x,y>@` entries. */
+export function parseBreakTargetPicks(input: string): BreakTargetPick[] {
+  const tokens = input.split(/[;\r\n]+/).map((token) => token.trim()).filter(Boolean);
+  if (tokens.length === 0) throw new CadCommandInputError("BREAK requires at least one target.");
+  return tokens.map((token) => {
+    const at = token.indexOf("@");
+    const arrow = token.indexOf(">", at + 1);
+    if (at <= 0 || arrow <= at + 1 || arrow === token.length - 1) {
+      throw new CadCommandInputError("BREAK targets must use handle@firstX,firstY>secondX,secondY or handle@x,y>@ format.");
+    }
+    const handle = token.slice(0, at).trim();
+    if (!handle || /\s/u.test(handle)) throw new CadCommandInputError("BREAK target handle is invalid.");
+    const firstPoint = parseCartesianPoint(token.slice(at + 1, arrow));
+    const secondToken = token.slice(arrow + 1).trim();
+    return secondToken === "@"
+      ? { handle, firstPoint, mode: "at-point" }
+      : { handle, firstPoint, secondPoint: parseCartesianPoint(secondToken), mode: "two-point" };
+  });
 }
 
 function parseFilletObjectPick(token: string): { handle: string; segment?: number; pickPoint: CadPoint2 } {
@@ -1754,6 +1817,69 @@ export function executeExtend(document: KDrawDocumentV1, args: ExtendCommandArgs
   };
 }
 
+/** Executes an ordered BREAK sequence as one immutable document operation. */
+export function executeBreak(document: KDrawDocumentV1, args: BreakCommandArgs): BreakCommandResult {
+  if (args.targets.length === 0) throw new CadCommandInputError("BREAK requires at least one target.");
+  const layers = new Map(document.layers.map((layer) => [layer.id, layer]));
+  const original = new Map(document.entities.map((entity) => [entity.handle, entity]));
+  const working = new Map(document.entities.map((entity) => [entity.handle, structuredClone(entity)]));
+  const allocated = allocateEntityHandles(document, args.targets.length);
+  let allocatedIndex = 0;
+  const touched = new Set<string>();
+  const sourceHandles: string[] = [];
+  const resultHandles: string[] = [];
+  const createdHandles: string[] = [];
+  const rejected: BreakRejectedTarget[] = [];
+  const steps: BreakCommandStep[] = [];
+
+  args.targets.forEach((target, targetIndex) => {
+    assertFinitePoint(`BREAK target ${targetIndex + 1} first point`, target.firstPoint);
+    if (target.secondPoint) assertFinitePoint(`BREAK target ${targetIndex + 1} second point`, target.secondPoint);
+    const entity = working.get(target.handle);
+    if (!entity) { rejected.push({ handle: target.handle, targetIndex, reason: "missing" }); return; }
+    const layer = layers.get(entity.layerId);
+    if (layer?.locked) { rejected.push({ handle: target.handle, targetIndex, reason: "locked-layer" }); return; }
+    const mode = target.mode ?? (target.secondPoint ? "two-point" : "at-point");
+    if (mode === "two-point" && !target.secondPoint) {
+      throw new CadCommandInputError(`BREAK target ${targetIndex + 1} requires a second point.`);
+    }
+    const geometry = breakCadEntity(entity, target.firstPoint, target.secondPoint ?? target.firstPoint, mode);
+    if (geometry.reason || !geometry.breakPoints) {
+      rejected.push({ handle: target.handle, targetIndex, reason: geometry.reason ?? "degenerate-geometry" });
+      return;
+    }
+    const outputs = geometry.entities.map((piece, index) => {
+      const handle = index === 0 ? entity.handle : allocated[allocatedIndex++]!;
+      return { ...piece, handle } as CadEntity;
+    });
+    working.delete(entity.handle);
+    touched.add(entity.handle);
+    outputs.forEach((output, index) => {
+      working.set(output.handle, output);
+      touched.add(output.handle);
+      resultHandles.push(output.handle);
+      if (index > 0) createdHandles.push(output.handle);
+    });
+    sourceHandles.push(entity.handle);
+    steps.push({
+      sourceHandle: entity.handle,
+      resultHandles: outputs.map((output) => output.handle),
+      targetIndex,
+      mode,
+      breakPoints: geometry.breakPoints,
+      removedInterval: geometry.removedInterval,
+    });
+  });
+
+  const changes: EntityChange[] = [];
+  for (const handle of touched) {
+    const before = original.get(handle); const after = working.get(handle);
+    if (after) changes.push({ type: "put", entity: structuredClone(after) });
+    else if (before) changes.push({ type: "delete", handle });
+  }
+  return { changes, sourceHandles, resultHandles, createdHandles, rejected, steps, multiple: args.targets.length > 1 };
+}
+
 /**
  * Executes an ordered FILLET Multiple sequence against an immutable working map. Pair output arcs
  * receive deterministic handles, and all successful pair/polyline edits form one global Undo step.
@@ -2185,9 +2311,15 @@ const chamferCommand: ChamferCommandDefinition = Object.freeze({
   execute: executeChamfer,
 });
 
-export const cadCommandRegistry = Object.freeze([rectangleCommand, eraseCommand, moveCommand, copyCommand, rotateCommand, scaleCommand, mirrorCommand, offsetCommand, trimCommand, extendCommand, filletCommand, chamferCommand]);
+const breakCommand: BreakCommandDefinition = Object.freeze({
+  id: "BREAK",
+  aliases: Object.freeze(["BR", "BREAK", "BREAKATPOINT"]),
+  execute: executeBreak,
+});
 
-export function resolveCadCommand(token: string): RectangleCommandDefinition | EraseCommandDefinition | MoveCommandDefinition | CopyCommandDefinition | RotateCommandDefinition | ScaleCommandDefinition | MirrorCommandDefinition | OffsetCommandDefinition | TrimCommandDefinition | ExtendCommandDefinition | FilletCommandDefinition | ChamferCommandDefinition | null {
+export const cadCommandRegistry = Object.freeze([rectangleCommand, eraseCommand, moveCommand, copyCommand, rotateCommand, scaleCommand, mirrorCommand, offsetCommand, trimCommand, extendCommand, filletCommand, chamferCommand, breakCommand]);
+
+export function resolveCadCommand(token: string): RectangleCommandDefinition | EraseCommandDefinition | MoveCommandDefinition | CopyCommandDefinition | RotateCommandDefinition | ScaleCommandDefinition | MirrorCommandDefinition | OffsetCommandDefinition | TrimCommandDefinition | ExtendCommandDefinition | FilletCommandDefinition | ChamferCommandDefinition | BreakCommandDefinition | null {
   const normalized = token.trim().toUpperCase();
   return cadCommandRegistry.find((command) => command.aliases.includes(normalized)) ?? null;
 }

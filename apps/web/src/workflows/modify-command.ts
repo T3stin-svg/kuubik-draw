@@ -1,5 +1,6 @@
 import {
   parseCadHandleList,
+  parseBreakTargetPicks,
   parseCartesianPoint,
   parseChamferAngle,
   parseChamferDistance,
@@ -18,6 +19,7 @@ import {
   parseTrimTargetPicks,
   resolveCadCommand,
   type CadChange,
+  type BreakCommandResult,
   type ChamferCommandResult,
   type ChamferTrimMode,
   type CopyCommandResult,
@@ -43,7 +45,7 @@ import {
 import type { CadEntity, KDrawDocumentV1 } from "@kuubik/cad-schema";
 
 export interface PreparedModifyCommand<TResult> {
-  commandId: "MOVE" | "COPY" | "ROTATE" | "SCALE" | "MIRROR" | "OFFSET" | "TRIM" | "EXTEND" | "FILLET" | "CHAMFER";
+  commandId: "MOVE" | "COPY" | "ROTATE" | "SCALE" | "MIRROR" | "OFFSET" | "TRIM" | "EXTEND" | "FILLET" | "CHAMFER" | "BREAK";
   operationArgs: Readonly<Record<string, unknown>>;
   result: TResult;
 }
@@ -309,6 +311,20 @@ export function prepareChamfer(document: KDrawDocumentV1, input: {
   return {
     commandId: command.id,
     operationArgs: { ...args, steps: result.steps, multiple: result.multiple },
+    result,
+  };
+}
+
+export function prepareBreak(document: KDrawDocumentV1, input: {
+  targetsInput: string;
+}): PreparedModifyCommand<BreakCommandResult> {
+  const command = resolveCadCommand("BREAK");
+  if (!command || command.id !== "BREAK") throw new Error("BREAK command is missing from the registry.");
+  const targets = parseBreakTargetPicks(input.targetsInput);
+  const result = command.execute(document, { targets });
+  return {
+    commandId: command.id,
+    operationArgs: { targets, steps: result.steps, multiple: result.multiple },
     result,
   };
 }

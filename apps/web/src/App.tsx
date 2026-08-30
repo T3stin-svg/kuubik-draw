@@ -1,15 +1,15 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ISO_PAPER_MEDIA, MAX_PAGE_SETUP_TEMPLATE_BYTES, STANDARD_VIEWPORT_SCALE_DENOMINATORS, allocateEntityHandles, applyNamedPageSetup, buildLayoutPublishPlan, CadCommandInputError, CadSession, clearNamedPageSetupAssignment, createPageSetupTemplate, LayoutCommandError, LayoutPublishSettingsError, NoOpOperationError, PageSetupLibraryError, copyPaperLayout, createEmptyDocument, createPaperLayout, createPaperViewport, deleteNamedPageSetup, deletePaperLayout, deletePaperViewport, formatViewportScale, importPageSetupTemplate, metadataWithLayoutPublishSettings, movePaperLayout, panPaperViewportByPixels, paperDefinitionForPageSetup, parseCartesianPoint, parsePageSetupTemplate, renameNamedPageSetup, renamePaperLayout, replaceDrawingContentPreservingLayouts, resolveCadCommand, resolveLayoutPublishSettings, resolveModelPageSetup, resolvePageSetup, resolvePageSetupLibrary, resolvePaperDefinition, sanitizePdfFileStem, saveNamedPageSetup, serializeKDraw, serializePageSetupTemplate, setModelLayoutPageSetup, setPaperLayoutPageSetup, setPaperViewportDisplayLocked, setPaperViewportView, viewportScaleDenominator, zoomPaperViewportAtModelPoint, type CadChange, type ChamferRejectedTarget, type ChamferTrimMode, type CopyRejectedTarget, type ExtendRejectedTarget, type ExtendTargetAction, type FilletRejectedTarget, type FilletTrimMode, type LayoutPublishSettingsV1, type MirrorRejectedTarget, type MoveRejectedTarget, type OffsetLayerMode, type OffsetRejectedTarget, type RotateRejectedTarget, type ScaleRejectedTarget, type TrimEdgeMode, type TrimMode, type TrimProjectMode, type TrimRejectedTarget, type TrimTargetAction } from "@kuubik/cad-core";
+import { ISO_PAPER_MEDIA, MAX_PAGE_SETUP_TEMPLATE_BYTES, STANDARD_VIEWPORT_SCALE_DENOMINATORS, allocateEntityHandles, applyNamedPageSetup, buildLayoutPublishPlan, CadCommandInputError, CadSession, clearNamedPageSetupAssignment, createPageSetupTemplate, LayoutCommandError, LayoutPublishSettingsError, NoOpOperationError, PageSetupLibraryError, copyPaperLayout, createEmptyDocument, createPaperLayout, createPaperViewport, deleteNamedPageSetup, deletePaperLayout, deletePaperViewport, formatViewportScale, importPageSetupTemplate, metadataWithLayoutPublishSettings, movePaperLayout, panPaperViewportByPixels, paperDefinitionForPageSetup, parseCartesianPoint, parsePageSetupTemplate, renameNamedPageSetup, renamePaperLayout, replaceDrawingContentPreservingLayouts, resolveCadCommand, resolveLayoutPublishSettings, resolveModelPageSetup, resolvePageSetup, resolvePageSetupLibrary, resolvePaperDefinition, sanitizePdfFileStem, saveNamedPageSetup, serializeKDraw, serializePageSetupTemplate, setModelLayoutPageSetup, setPaperLayoutPageSetup, setPaperViewportDisplayLocked, setPaperViewportView, viewportScaleDenominator, zoomPaperViewportAtModelPoint, type BreakMode, type BreakRejectedTarget, type CadChange, type ChamferRejectedTarget, type ChamferTrimMode, type CopyRejectedTarget, type ExtendRejectedTarget, type ExtendTargetAction, type FilletRejectedTarget, type FilletTrimMode, type LayoutPublishSettingsV1, type MirrorRejectedTarget, type MoveRejectedTarget, type OffsetLayerMode, type OffsetRejectedTarget, type RotateRejectedTarget, type ScaleRejectedTarget, type TrimEdgeMode, type TrimMode, type TrimProjectMode, type TrimRejectedTarget, type TrimTargetAction } from "@kuubik/cad-core";
 import { DxfImportError, MAX_DXF_IMPORT_BYTES, exportDxf, importDxf } from "@kuubik/cad-dxf";
 import { exportLayoutSvg, exportLayoutsVectorPdf, exportLayoutVectorPdf, exportModelSvg, exportModelVectorPdf, type LayoutPlotOptions, type ModelPlotOptions } from "@kuubik/cad-print";
 import { CadCanvasRenderer, pickCadEntity, pannedViewportWorldCenter, selectCadEntityHitsByCrossingPolygon, selectCadEntityHitsByFence, viewportScreenToWorld, viewportScreenTransform, type Viewport2D } from "@kuubik/cad-renderer";
 import type { CadEntity, CadLayout, CadPageSetup, CadPaperRect, CadPlotStyle, CadViewport, KDrawDocumentV1 } from "@kuubik/cad-schema";
 import { KDrawIndexedDb, StorageRevisionConflictError } from "./indexed-db.js";
-import { prepareChamfer, prepareCopy, prepareExtend, prepareFillet, prepareMirror, prepareMove, prepareOffset, prepareRotate, prepareScale, prepareTrim, putEntities } from "./workflows/modify-command.js";
+import { prepareBreak, prepareChamfer, prepareCopy, prepareExtend, prepareFillet, prepareMirror, prepareMove, prepareOffset, prepareRotate, prepareScale, prepareTrim, putEntities } from "./workflows/modify-command.js";
 import "./style.css";
 
 const LOCAL_DOCUMENT_ID = "local";
-const MODEL_SPACE_COMMANDS = new Set(["LINE", "RECTANGLE", "MOVE", "COPY", "ROTATE", "SCALE", "MIRROR", "OFFSET", "TRIM", "EXTEND", "FILLET", "CHAMFER", "ERASE"]);
+const MODEL_SPACE_COMMANDS = new Set(["LINE", "RECTANGLE", "MOVE", "COPY", "ROTATE", "SCALE", "MIRROR", "OFFSET", "TRIM", "EXTEND", "FILLET", "CHAMFER", "BREAK", "ERASE"]);
 const MODEL_VIEW_WORLD = Object.freeze({ minX: -500, minY: -500, maxX: 2500, maxY: 2500 });
 
 function nextInteractiveHandle(document: KDrawDocumentV1): string {
@@ -309,7 +309,12 @@ export function App() {
   const [chamferFirstCanvasPick, setChamferFirstCanvasPick] = useState<{ handle: string; segment?: number; point: { x: number; y: number } } | null>(null);
   const [chamferCanvasSessionActive, setChamferCanvasSessionActive] = useState(false);
   const [lastChamferRejected, setLastChamferRejected] = useState<ChamferRejectedTarget[]>([]);
-  const [previewCommand, setPreviewCommand] = useState<"MOVE" | "COPY" | "ROTATE" | "SCALE" | "MIRROR" | "OFFSET" | "TRIM" | "EXTEND" | "FILLET" | "CHAMFER">("MOVE");
+  const [breakMode, setBreakMode] = useState<BreakMode>("two-point");
+  const [breakTargetsInput, setBreakTargetsInput] = useState("10@250,0>750,0");
+  const [breakFirstCanvasPick, setBreakFirstCanvasPick] = useState<{ handle: string; point: { x: number; y: number } } | null>(null);
+  const [breakCanvasSessionActive, setBreakCanvasSessionActive] = useState(false);
+  const [lastBreakRejected, setLastBreakRejected] = useState<BreakRejectedTarget[]>([]);
+  const [previewCommand, setPreviewCommand] = useState<"MOVE" | "COPY" | "ROTATE" | "SCALE" | "MIRROR" | "OFFSET" | "TRIM" | "EXTEND" | "FILLET" | "CHAMFER" | "BREAK">("MOVE");
   const activeLayer = document.layers.find((layer) => layer.id === document.currentLayerId)!;
   const activeLayout = document.layouts.find((layout) => layout.id === activeLayoutId) ?? document.layouts[0]!;
   const selectedViewport = activeLayout.kind === "paper"
@@ -524,6 +529,19 @@ export function App() {
       return null;
     }
   }, [chamferAngleInput, chamferFirstDistanceInput, chamferMethod, chamferMode, chamferPairsInput, chamferPolylineHandlesInput, chamferSecondDistanceInput, chamferTrimMode, document, previewCommand]);
+  const breakPreview = useMemo((): { entities: CadEntity[]; sourceHandles: string[]; steps: number } | null => {
+    if (previewCommand !== "BREAK") return null;
+    try {
+      const { result } = prepareBreak(document, { targetsInput: breakTargetsInput });
+      return {
+        entities: putEntities(result.changes),
+        sourceHandles: result.sourceHandles,
+        steps: result.steps.length,
+      };
+    } catch {
+      return null;
+    }
+  }, [breakTargetsInput, document, previewCommand]);
 
   useEffect(() => {
     let active = true;
@@ -636,13 +654,14 @@ export function App() {
         widthPx,
         heightPx,
         devicePixelRatio: ratio,
-      }, document.layers, activeLayout.kind === "model" ? [...(movePreview?.entities ?? []), ...(copyPreview?.entities ?? []), ...(rotatePreview?.entities ?? []), ...(scalePreview?.entities ?? []), ...(mirrorPreview?.entities ?? []), ...(offsetPreview?.entities ?? []), ...(trimPreview?.entities ?? []), ...(extendPreview?.entities ?? []), ...(filletPreview?.entities ?? []), ...(chamferPreview?.entities ?? [])] : [], [
+      }, document.layers, activeLayout.kind === "model" ? [...(movePreview?.entities ?? []), ...(copyPreview?.entities ?? []), ...(rotatePreview?.entities ?? []), ...(scalePreview?.entities ?? []), ...(mirrorPreview?.entities ?? []), ...(offsetPreview?.entities ?? []), ...(trimPreview?.entities ?? []), ...(extendPreview?.entities ?? []), ...(filletPreview?.entities ?? []), ...(chamferPreview?.entities ?? []), ...(breakPreview?.entities ?? [])] : [], [
         ...(mirrorPreview?.eraseSource ? mirrorPreview.sourceHandles : []),
         ...(offsetPreview?.eraseSource ? offsetPreview.sourceHandles : []),
         ...(trimPreview?.sourceHandles ?? []),
         ...(extendPreview?.sourceHandles ?? []),
         ...(filletPreview?.trimMode === "trim" ? filletPreview.sourceHandles : []),
         ...(chamferPreview?.trimMode === "trim" ? chamferPreview.sourceHandles : []),
+        ...(breakPreview?.sourceHandles ?? []),
       ], activePaper && activePageSetup?.displayPlotStyles ? {
         plotStyle: activePageSetup.plotStyle ?? { profile: "monochrome", plotLineweights: true, plotTransparency: true },
         pixelsPerMillimeter: widthPx / activePaper.widthMm,
@@ -652,7 +671,7 @@ export function App() {
     const observer = new ResizeObserver(render);
     observer.observe(element);
     return () => observer.disconnect();
-  }, [activeLayout, activePageSetup, activePaper, chamferPreview, copyPreview, document, extendPreview, filletPreview, mirrorPreview, movePreview, offsetPreview, rotatePreview, scalePreview, trimPreview]);
+  }, [activeLayout, activePageSetup, activePaper, breakPreview, chamferPreview, copyPreview, document, extendPreview, filletPreview, mirrorPreview, movePreview, offsetPreview, rotatePreview, scalePreview, trimPreview]);
 
   async function recoverFromStorageConflict(error: unknown): Promise<void> {
     if (!(error instanceof StorageRevisionConflictError)) throw error;
@@ -1093,7 +1112,7 @@ export function App() {
   }
 
   function selectModifyTargetFromCanvas(event: React.PointerEvent<HTMLCanvasElement>): void {
-    if (!modelSpaceEditing || (previewCommand !== "TRIM" && previewCommand !== "EXTEND" && previewCommand !== "FILLET" && previewCommand !== "CHAMFER") || event.button !== 0) return;
+    if (!modelSpaceEditing || (previewCommand !== "TRIM" && previewCommand !== "EXTEND" && previewCommand !== "FILLET" && previewCommand !== "CHAMFER" && previewCommand !== "BREAK") || event.button !== 0) return;
     const element = event.currentTarget;
     const rect = element.getBoundingClientRect();
     if (!(rect.width > 0 && rect.height > 0)) return;
@@ -1104,6 +1123,15 @@ export function App() {
       devicePixelRatio: window.devicePixelRatio || 1,
     };
     const point = viewportScreenToWorld(viewport, { x: event.clientX - rect.left, y: event.clientY - rect.top });
+    const cleanCoordinate = (value: number): number => Number(value.toFixed(6));
+    const pickPoint = { x: cleanCoordinate(point.x), y: cleanCoordinate(point.y) };
+    if (previewCommand === "BREAK" && breakFirstCanvasPick) {
+      const target = `${breakFirstCanvasPick.handle}@${breakFirstCanvasPick.point.x},${breakFirstCanvasPick.point.y}>${pickPoint.x},${pickPoint.y}`;
+      setBreakTargetsInput((current) => current.trim() ? `${current.trim()}; ${target}` : target);
+      setBreakFirstCanvasPick(null);
+      setStatus(`BREAK teine punkt lisatud objektile ${breakFirstCanvasPick.handle}; vali järgmine objekt või käivita BREAK`);
+      return;
+    }
     const tolerance = viewportScreenTransform(viewport).worldUnitsPerPixel * 8;
     const hiddenLayers = new Set(document.layers.filter((layer) => !layer.visible || layer.frozen).map((layer) => layer.id));
     const hits = document.entities.flatMap((entity, index) => {
@@ -1116,8 +1144,20 @@ export function App() {
       setStatus(`${previewCommand} valik: objekti ei leitud ${tolerance.toFixed(3)} ühiku raadiuses`);
       return;
     }
-    const cleanCoordinate = (value: number): number => Number(value.toFixed(6));
-    const pickPoint = { x: cleanCoordinate(hit.point.x), y: cleanCoordinate(hit.point.y) };
+    const entityPickPoint = { x: cleanCoordinate(hit.point.x), y: cleanCoordinate(hit.point.y) };
+    if (previewCommand === "BREAK") {
+      if (!breakCanvasSessionActive) setBreakTargetsInput("");
+      setBreakCanvasSessionActive(true);
+      if (breakMode === "at-point") {
+        const target = `${hit.handle}@${entityPickPoint.x},${entityPickPoint.y}>@`;
+        setBreakTargetsInput((current) => breakCanvasSessionActive && current.trim() ? `${current.trim()}; ${target}` : target);
+        setStatus(`BREAK at point lisatud: ${hit.handle}; vali järgmine objekt või käivita BREAK`);
+        return;
+      }
+      setBreakFirstCanvasPick({ handle: hit.handle, point: entityPickPoint });
+      setStatus(`BREAK objekt ${hit.handle} ja esimene punkt valitud; vali teine katkestuspunkt`);
+      return;
+    }
     if (previewCommand === "CHAMFER") {
       setChamferMode("pairs");
       if (!chamferFirstCanvasPick) {
@@ -1125,7 +1165,7 @@ export function App() {
         setChamferCanvasSessionActive(true);
         const entity = document.entities.find((candidate) => candidate.handle === hit.handle);
         const segment = entity?.kind === "polyline" ? hit.segment : undefined;
-        setChamferFirstCanvasPick({ handle: hit.handle, ...(segment === undefined ? {} : { segment }), point: pickPoint });
+        setChamferFirstCanvasPick({ handle: hit.handle, ...(segment === undefined ? {} : { segment }), point: entityPickPoint });
         setStatus(`CHAMFER esimene objekt: ${hit.handle}${segment === undefined ? "" : ` segment ${segment}`}; vali teine objekt`);
         return;
       }
@@ -1133,7 +1173,7 @@ export function App() {
       const secondSegment = secondEntity?.kind === "polyline" ? hit.segment : undefined;
       const firstToken = `${chamferFirstCanvasPick.handle}${chamferFirstCanvasPick.segment === undefined ? "" : `#${chamferFirstCanvasPick.segment}`}`;
       const secondToken = `${hit.handle}${secondSegment === undefined ? "" : `#${secondSegment}`}`;
-      const pair = `${firstToken}@${chamferFirstCanvasPick.point.x},${chamferFirstCanvasPick.point.y}>${secondToken}@${pickPoint.x},${pickPoint.y}${event.shiftKey ? "~0" : ""}`;
+      const pair = `${firstToken}@${chamferFirstCanvasPick.point.x},${chamferFirstCanvasPick.point.y}>${secondToken}@${entityPickPoint.x},${entityPickPoint.y}${event.shiftKey ? "~0" : ""}`;
       setChamferPairsInput((current) => current.trim() ? `${current.trim()}; ${pair}` : pair);
       setChamferFirstCanvasPick(null);
       setStatus(event.shiftKey
@@ -1148,7 +1188,7 @@ export function App() {
         setFilletCanvasSessionActive(true);
         const entity = document.entities.find((candidate) => candidate.handle === hit.handle);
         const segment = entity?.kind === "polyline" ? hit.segment : undefined;
-        setFilletFirstCanvasPick({ handle: hit.handle, ...(segment === undefined ? {} : { segment }), point: pickPoint });
+        setFilletFirstCanvasPick({ handle: hit.handle, ...(segment === undefined ? {} : { segment }), point: entityPickPoint });
         setStatus(`FILLET esimene objekt: ${hit.handle}${segment === undefined ? "" : ` segment ${segment}`}; vali teine objekt${event.shiftKey ? " (Shift rakendub teisele valikule)" : ""}`);
         return;
       }
@@ -1156,7 +1196,7 @@ export function App() {
       const secondSegment = secondEntity?.kind === "polyline" ? hit.segment : undefined;
       const firstToken = `${filletFirstCanvasPick.handle}${filletFirstCanvasPick.segment === undefined ? "" : `#${filletFirstCanvasPick.segment}`}`;
       const secondToken = `${hit.handle}${secondSegment === undefined ? "" : `#${secondSegment}`}`;
-      const pair = `${firstToken}@${filletFirstCanvasPick.point.x},${filletFirstCanvasPick.point.y}>${secondToken}@${pickPoint.x},${pickPoint.y}${event.shiftKey ? "~0" : ""}`;
+      const pair = `${firstToken}@${filletFirstCanvasPick.point.x},${filletFirstCanvasPick.point.y}>${secondToken}@${entityPickPoint.x},${entityPickPoint.y}${event.shiftKey ? "~0" : ""}`;
       setFilletPairsInput((current) => current.trim() ? `${current.trim()}; ${pair}` : pair);
       setFilletFirstCanvasPick(null);
       setStatus(event.shiftKey
@@ -1167,7 +1207,7 @@ export function App() {
     if (previewCommand === "TRIM") {
       const action: TrimTargetAction = event.shiftKey ? "extend" : trimTargetAction === "extend" ? "trim" : trimTargetAction;
       setTrimTargetAction(action);
-      setTrimTargetsInput(`${hit.handle}@${pickPoint.x},${pickPoint.y}`);
+      setTrimTargetsInput(`${hit.handle}@${entityPickPoint.x},${entityPickPoint.y}`);
       setStatus(event.shiftKey
         ? `TRIM Shift-valik: ${hit.handle} pikendatakse`
         : `TRIM valik: ${hit.handle} · ${action}`);
@@ -1175,7 +1215,7 @@ export function App() {
     }
     const action: ExtendTargetAction = event.shiftKey ? "trim" : "extend";
     setExtendTargetAction(action);
-    setExtendTargetsInput(`${hit.handle}@${pickPoint.x},${pickPoint.y}`);
+    setExtendTargetsInput(`${hit.handle}@${entityPickPoint.x},${entityPickPoint.y}`);
     setStatus(event.shiftKey
       ? `EXTEND Shift-valik: ${hit.handle} kärbitakse`
       : `EXTEND valik: ${hit.handle} · extend`);
@@ -1409,6 +1449,51 @@ export function App() {
     } catch (error) {
       if (error instanceof StorageRevisionConflictError) await recoverFromStorageConflict(error);
       else if (error instanceof CadCommandInputError) setStatus(`CHAMFER viga: ${error.message}`);
+      else throw error;
+    } finally {
+      committing.current = false;
+    }
+  }
+
+  function undoBreakTarget(): void {
+    if (breakFirstCanvasPick) {
+      setBreakFirstCanvasPick(null);
+      setStatus("BREAK Undo: pooleliolev objekt ja esimene punkt tühistatud");
+      return;
+    }
+    const targets = breakTargetsInput.split(/[;\r\n]+/).map((target) => target.trim()).filter(Boolean);
+    if (targets.length === 0) {
+      setStatus("BREAK Undo: käsk on täielikult tagasi võetud; globaalset UNDO sammu ei loodud");
+      return;
+    }
+    targets.pop();
+    setBreakTargetsInput(targets.join("; "));
+    setPreviewCommand("BREAK");
+    setStatus(targets.length ? `BREAK Undo: viimane siht eemaldatud; ${targets.length} jääb` : "BREAK Undo: kõik sihid eemaldatud; globaalset UNDO sammu ei loodud");
+  }
+
+  async function breakTargets(): Promise<void> {
+    if (committing.current) return;
+    setPreviewCommand("BREAK");
+    committing.current = true;
+    try {
+      const prepared = prepareBreak(document, { targetsInput: breakTargetsInput });
+      const { result } = prepared;
+      setLastBreakRejected(result.rejected);
+      if (result.changes.length === 0) {
+        const suffix = result.rejected.length ? `; ${result.rejected.length} lukus, peidetud, puudu või sobimatu` : "";
+        setStatus(`BREAK ei muutnud geomeetriat${suffix}`);
+        return;
+      }
+      await commitChanges(prepared.commandId, prepared.operationArgs, result.changes, result.resultHandles, result.sourceHandles);
+      setBreakFirstCanvasPick(null);
+      setBreakCanvasSessionActive(false);
+      setSelectedHandles([]);
+      const suffix = result.rejected.length ? `; ${result.rejected.length} jäi muutmata` : "";
+      setStatus(`${result.steps.length} BREAK sammu salvestatud ühe Undo-operatsioonina${suffix}`);
+    } catch (error) {
+      if (error instanceof StorageRevisionConflictError) await recoverFromStorageConflict(error);
+      else if (error instanceof CadCommandInputError) setStatus(`BREAK viga: ${error.message}`);
       else throw error;
     } finally {
       committing.current = false;
@@ -2562,6 +2647,19 @@ export function App() {
         </label>
         <button type="button" onClick={() => void chamferTargets()} disabled={!modelSpaceEditing}>CHAMFER</button>
         <button type="button" onClick={undoChamferSource} disabled={!modelSpaceEditing}>CHAMFER Undo</button>
+        <label className="coordinate-input">
+          <span>BREAK režiim</span>
+          <select aria-label="BREAK režiim" value={breakMode} onFocus={() => setPreviewCommand("BREAK")} onChange={(event) => { setPreviewCommand("BREAK"); setBreakMode(event.target.value as BreakMode); setBreakFirstCanvasPick(null); setBreakCanvasSessionActive(false); }}>
+            <option value="two-point">Kaks punkti</option>
+            <option value="at-point">Ühes punktis</option>
+          </select>
+        </label>
+        <label className="coordinate-input">
+          <span>BREAK sihid</span>
+          <input aria-label="BREAK sihid" value={breakTargetsInput} onFocus={() => setPreviewCommand("BREAK")} onChange={(event) => { setPreviewCommand("BREAK"); setBreakTargetsInput(event.target.value); setBreakFirstCanvasPick(null); setBreakCanvasSessionActive(false); }} placeholder="10@x1,y1&gt;x2,y2; 20@x,y&gt;@" />
+        </label>
+        <button type="button" onClick={() => void breakTargets()} disabled={!modelSpaceEditing || breakFirstCanvasPick !== null}>BREAK</button>
+        <button type="button" onClick={undoBreakTarget} disabled={!modelSpaceEditing}>BREAK Undo</button>
         <button type="button" onClick={() => void eraseSelected()} disabled={!modelSpaceEditing || selectedHandles.length === 0}>ERASE</button>
         <button type="button" onClick={() => void undoLast()} disabled={!canUndoInActiveLayout}>UNDO</button>
         <button type="button" onClick={() => void redoLast()} disabled={!canRedoInActiveLayout}>REDO</button>
@@ -2587,6 +2685,7 @@ export function App() {
         {extendPreview && <span data-testid="extend-preview" data-hidden-source-count={extendPreview.sourceHandles.length}>EXTEND eelvaade: {extendPreview.entities.length} tulemust · {extendPreview.steps} sammu</span>}
         {filletPreview && <span data-testid="fillet-preview" data-hidden-source-count={filletPreview.trimMode === "trim" ? filletPreview.sourceHandles.length : 0}>FILLET eelvaade: {filletPreview.entities.length} tulemust · {filletPreview.steps} sammu</span>}
         {chamferPreview && <span data-testid="chamfer-preview" data-hidden-source-count={chamferPreview.trimMode === "trim" ? chamferPreview.sourceHandles.length : 0}>CHAMFER eelvaade: {chamferPreview.entities.length} tulemust · {chamferPreview.steps} sammu</span>}
+        {breakPreview && <span data-testid="break-preview" data-hidden-source-count={breakPreview.sourceHandles.length}>BREAK eelvaade: {breakPreview.entities.length} tulemust · {breakPreview.steps} sammu</span>}
         {lastMoveRejected.length > 0 && (
           <span data-testid="move-rejected" data-rejected={JSON.stringify(lastMoveRejected)}>
             MOVE muutmata: {lastMoveRejected.map(({ handle, reason }) => `${handle} (${reason})`).join(", ")}
@@ -2635,6 +2734,11 @@ export function App() {
         {lastChamferRejected.length > 0 && (
           <span data-testid="chamfer-rejected" data-rejected={JSON.stringify(lastChamferRejected)}>
             CHAMFER muutmata: {lastChamferRejected.map(({ handles, sourceIndex, reason }) => `${handles.join("+")}#${sourceIndex + 1} (${reason})`).join(", ")}
+          </span>
+        )}
+        {lastBreakRejected.length > 0 && (
+          <span data-testid="break-rejected" data-rejected={JSON.stringify(lastBreakRejected)}>
+            BREAK muutmata: {lastBreakRejected.map(({ handle, targetIndex, reason }) => `${handle}#${targetIndex + 1} (${reason})`).join(", ")}
           </span>
         )}
       </section>

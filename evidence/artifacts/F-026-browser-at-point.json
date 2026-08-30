@@ -1,0 +1,243 @@
+{
+  "rowId": "F-026",
+  "source": {
+    "schemaVersion": 1,
+    "documentId": "local",
+    "revision": 0,
+    "units": {
+      "linear": "mm",
+      "displayPrecision": 4,
+      "angularPrecision": 6
+    },
+    "currentLayerId": "0",
+    "entities": [
+      {
+        "kind": "arc",
+        "handle": "10",
+        "layerId": "0",
+        "center": {
+          "x": 1000,
+          "y": 1000
+        },
+        "radius": 400,
+        "startAngleRad": 0,
+        "endAngleRad": 3.141592653589793,
+        "counterClockwise": true
+      },
+      {
+        "kind": "line",
+        "handle": "20",
+        "layerId": "locked",
+        "start": {
+          "x": 0,
+          "y": 0
+        },
+        "end": {
+          "x": 1000,
+          "y": 0
+        }
+      }
+    ],
+    "layers": [
+      {
+        "id": "0",
+        "name": "0",
+        "visible": true,
+        "frozen": false,
+        "locked": false,
+        "plottable": true
+      },
+      {
+        "id": "locked",
+        "name": "LOCKED",
+        "visible": true,
+        "frozen": false,
+        "locked": true,
+        "plottable": true
+      }
+    ],
+    "linetypes": [],
+    "textStyles": [],
+    "dimensionStyles": [],
+    "blocks": [],
+    "layouts": [
+      {
+        "id": "model",
+        "name": "Model",
+        "kind": "model",
+        "viewports": [],
+        "entities": []
+      }
+    ],
+    "attachments": [],
+    "metadata": {
+      "createdAt": "2026-08-30T06:20:00.000Z",
+      "updatedAt": "2026-08-30T06:20:00.000Z"
+    }
+  },
+  "opened": {
+    "schemaVersion": 1,
+    "documentId": "local",
+    "revision": 1,
+    "units": {
+      "linear": "mm",
+      "displayPrecision": 4,
+      "angularPrecision": 6
+    },
+    "currentLayerId": "0",
+    "entities": [
+      {
+        "handle": "10",
+        "layerId": "0",
+        "kind": "arc",
+        "center": {
+          "x": 1000,
+          "y": 1000
+        },
+        "radius": 400,
+        "startAngleRad": 0,
+        "endAngleRad": 1.570796326795,
+        "counterClockwise": true
+      },
+      {
+        "kind": "line",
+        "handle": "20",
+        "layerId": "locked",
+        "start": {
+          "x": 0,
+          "y": 0
+        },
+        "end": {
+          "x": 1000,
+          "y": 0
+        }
+      },
+      {
+        "handle": "21",
+        "layerId": "0",
+        "kind": "arc",
+        "center": {
+          "x": 1000,
+          "y": 1000
+        },
+        "radius": 400,
+        "startAngleRad": 1.570796326795,
+        "endAngleRad": 3.14159265359,
+        "counterClockwise": true
+      }
+    ],
+    "layers": [
+      {
+        "id": "0",
+        "name": "0",
+        "visible": true,
+        "frozen": false,
+        "locked": false,
+        "plottable": true
+      },
+      {
+        "id": "locked",
+        "name": "LOCKED",
+        "visible": true,
+        "frozen": false,
+        "locked": true,
+        "plottable": true
+      }
+    ],
+    "linetypes": [],
+    "textStyles": [],
+    "dimensionStyles": [],
+    "blocks": [],
+    "layouts": [
+      {
+        "id": "model",
+        "name": "Model",
+        "kind": "model",
+        "viewports": [],
+        "entities": []
+      }
+    ],
+    "attachments": [],
+    "metadata": {
+      "createdAt": "2026-08-30T06:20:00.000Z",
+      "updatedAt": "2026-08-30T06:04:53.506Z"
+    }
+  },
+  "lockedRestored": {
+    "schemaVersion": 1,
+    "documentId": "local",
+    "revision": 0,
+    "units": {
+      "linear": "mm",
+      "displayPrecision": 4,
+      "angularPrecision": 6
+    },
+    "currentLayerId": "0",
+    "entities": [
+      {
+        "kind": "arc",
+        "handle": "10",
+        "layerId": "0",
+        "center": {
+          "x": 1000,
+          "y": 1000
+        },
+        "radius": 400,
+        "startAngleRad": 0,
+        "endAngleRad": 3.141592653589793,
+        "counterClockwise": true
+      },
+      {
+        "kind": "line",
+        "handle": "20",
+        "layerId": "locked",
+        "start": {
+          "x": 0,
+          "y": 0
+        },
+        "end": {
+          "x": 1000,
+          "y": 0
+        }
+      }
+    ],
+    "layers": [
+      {
+        "id": "0",
+        "name": "0",
+        "visible": true,
+        "frozen": false,
+        "locked": false,
+        "plottable": true
+      },
+      {
+        "id": "locked",
+        "name": "LOCKED",
+        "visible": true,
+        "frozen": false,
+        "locked": true,
+        "plottable": true
+      }
+    ],
+    "linetypes": [],
+    "textStyles": [],
+    "dimensionStyles": [],
+    "blocks": [],
+    "layouts": [
+      {
+        "id": "model",
+        "name": "Model",
+        "kind": "model",
+        "viewports": [],
+        "entities": []
+      }
+    ],
+    "attachments": [],
+    "metadata": {
+      "createdAt": "2026-08-30T06:20:00.000Z",
+      "updatedAt": "2026-08-30T06:20:00.000Z"
+    }
+  },
+  "lockedOperations": [],
+  "status": "PASS"
+}

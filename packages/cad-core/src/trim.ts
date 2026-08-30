@@ -952,7 +952,10 @@ export function trimCurvePiece(entity: CadEntity, curve: TrimCurve, from: number
     return first && second ? joinSplineIntervals(first, second) : null;
   }
   const start = trimPointAt(curve, from); const end = trimPointAt(curve, to);
-  if (distance(start, end) <= TRIM_EPSILON) return null;
+  const fullRevolution = (curve.kind === "arc" || curve.kind === "ellipse")
+    && Math.abs(curve.sweep) >= FULL_TURN - TRIM_EPSILON
+    && to - from >= 1 - TRIM_EPSILON;
+  if (distance(start, end) <= TRIM_EPSILON && !fullRevolution) return null;
   const base = entityBase(entity);
   if (curve.kind === "line") return { ...base, kind: "line", start, end } as CadEntity;
   if (curve.kind === "arc") {
@@ -974,7 +977,8 @@ function interpolateWidth(start: CadPolylineVertex, parameter: number): number |
   return clean(value);
 }
 
-function polylinePiece(entity: CadPolyline, curves: readonly TrimCurve[], from: number, to: number): CadPolyline | null {
+/** Returns an exact open sub-path of a polyline while preserving bulges, widths and base data. */
+export function trimPolylinePiece(entity: CadPolyline, curves: readonly TrimCurve[], from: number, to: number): CadPolyline | null {
   if (!(to - from > TRIM_EPSILON)) return null;
   const count = curves.length; const vertices: CadPolylineVertex[] = [];
   let cursor = from;
@@ -1064,13 +1068,13 @@ function trimPolyline(entity: CadPolyline, curves: readonly TrimCurve[], pickedS
       const probe = pick < current ? pick + count : pick;
       if (probe >= current - TRIM_EPSILON && probe <= next + TRIM_EPSILON) { lower = current; upper = next; break; }
     }
-    const kept = polylinePiece(entity, curves, upper, lower + count);
+    const kept = trimPolylinePiece(entity, curves, upper, lower + count);
     return kept ? { entities: [kept], intersectionPoints: closedIntersections.map((item) => item.point), removedInterval: { start: lower / count, end: (upper % count) / count, wraps: upper > count }, reason: null } : { entities: [], intersectionPoints: points, removedInterval: null, reason: "degenerate-geometry" };
   }
   if (parameters.length === 0) return { entities: [], intersectionPoints: points, removedInterval: null, reason: "no-intersection" };
   const cuts = [0, ...parameters, count]; let removeIndex = -1;
   for (let index = 0; index < cuts.length - 1; index += 1) if (pick >= cuts[index]! - TRIM_EPSILON && pick <= cuts[index + 1]! + TRIM_EPSILON) { removeIndex = index; break; }
-  const pieces = removeIndex < 0 ? [] : [polylinePiece(entity, curves, 0, cuts[removeIndex]!), polylinePiece(entity, curves, cuts[removeIndex + 1]!, count)].filter((piece): piece is CadPolyline => piece !== null);
+  const pieces = removeIndex < 0 ? [] : [trimPolylinePiece(entity, curves, 0, cuts[removeIndex]!), trimPolylinePiece(entity, curves, cuts[removeIndex + 1]!, count)].filter((piece): piece is CadPolyline => piece !== null);
   return { entities: pieces, intersectionPoints: points, removedInterval: removeIndex < 0 ? null : { start: cuts[removeIndex]! / count, end: cuts[removeIndex + 1]! / count, wraps: false }, reason: pieces.length ? null : "degenerate-geometry" };
 }
 

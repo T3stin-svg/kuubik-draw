@@ -1,0 +1,1204 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-026",
+  "source": "production BREAKATPOINT alias -> BREAK registry -> immutable atomic commit -> production DXF/KDRAW1 -> strict importer + dxf-parser -> Undo/Redo",
+  "observedAt": "2026-08-30T06:04:59.558Z",
+  "status": "PASS",
+  "implementationSha256": {
+    "packages/cad-core/src/break.ts": "2e20753fe212dda2d8123273d6a22c99874ce12c9c8310402efc83a602f06a1a",
+    "packages/cad-core/src/commands.ts": "9e24d22e58b2793996306fa912038d9318df823f2e07101e4b3b34fa6ec55304",
+    "packages/cad-core/src/index.ts": "9a3034316d7a4997a457a51e92f3208349d889272fa908d2b98f00dce335c40a",
+    "packages/cad-core/src/trim.ts": "2b79501c802c648e6fb1a38134c339a549852794f063c8c22c04e8d7d728185e",
+    "packages/cad-core/src/container.ts": "931db68e6aa0688ac9a7aa6d5ac56c07d1cd5e0126adec836f27258011419502",
+    "packages/cad-core/src/transaction.ts": "e250aa2906e63905202a4b9591367632830745acbf731884f8e711d165750599",
+    "packages/cad-core/test/break.test.ts": "188fd2a4f80407af9b8ddbc0e4ce422c72e0b6483c50c38550ff1894d2b64675",
+    "packages/cad-core/test/f026-mutation-proven.test.ts": "5dd19acc5caa07515650c2edd9f672a29192c7412acbed54a879d01ee39da8d2",
+    "packages/cad-dxf/src/import.ts": "ffdef7a01488d09f32b8bab171b0632092317a5687cd6eca2231629a4fc51f20",
+    "packages/cad-dxf/src/index.ts": "82ca8f21ac22b29cd0f36be39f51b379ffd9307ec96c69c45d93da713cc9b2bd",
+    "packages/cad-dxf/test/f026-break-roundtrip.test.ts": "d563ca09c1f6c59199d738b1de085d11892e9438c197a8558133325b7f1883e8",
+    "tools/parity/run-f026-readback.mjs": "2efd953ab152a8fdd6538da2d8eeef9e48f4f7006bd781e6d92c6c9ead30b43c"
+  },
+  "command": {
+    "targets": [
+      {
+        "handle": "10",
+        "firstPoint": {
+          "x": 50,
+          "y": 20
+        },
+        "mode": "at-point"
+      },
+      {
+        "handle": "20",
+        "firstPoint": {
+          "x": 250,
+          "y": 0
+        },
+        "secondPoint": {
+          "x": 200,
+          "y": 50
+        },
+        "mode": "two-point"
+      },
+      {
+        "handle": "30",
+        "firstPoint": {
+          "x": 400,
+          "y": 0
+        },
+        "secondPoint": {
+          "x": 350,
+          "y": 25
+        },
+        "mode": "two-point"
+      },
+      {
+        "handle": "40",
+        "firstPoint": {
+          "x": 25,
+          "y": 100
+        },
+        "secondPoint": {
+          "x": 175,
+          "y": 100
+        },
+        "mode": "two-point"
+      },
+      {
+        "handle": "50",
+        "firstPoint": {
+          "x": 25,
+          "y": 300
+        },
+        "secondPoint": {
+          "x": 75,
+          "y": 300
+        },
+        "mode": "two-point"
+      }
+    ],
+    "result": {
+      "changes": [
+        {
+          "type": "put",
+          "entity": {
+            "handle": "10",
+            "layerId": "0",
+            "appearance": {
+              "color": "#ff0000",
+              "colorMethod": "aci",
+              "aciIndex": 1,
+              "lineweightMm": 0.5
+            },
+            "extensionData": {
+              "rowId": "F-026"
+            },
+            "kind": "line",
+            "start": {
+              "x": 0,
+              "y": 0
+            },
+            "end": {
+              "x": 50,
+              "y": 0
+            }
+          }
+        },
+        {
+          "type": "put",
+          "entity": {
+            "handle": "51",
+            "layerId": "0",
+            "appearance": {
+              "color": "#ff0000",
+              "colorMethod": "aci",
+              "aciIndex": 1,
+              "lineweightMm": 0.5
+            },
+            "extensionData": {
+              "rowId": "F-026"
+            },
+            "kind": "line",
+            "start": {
+              "x": 50,
+              "y": 0
+            },
+            "end": {
+              "x": 100,
+              "y": 0
+            }
+          }
+        },
+        {
+          "type": "put",
+          "entity": {
+            "handle": "20",
+            "layerId": "0",
+            "kind": "arc",
+            "center": {
+              "x": 200,
+              "y": 0
+            },
+            "radius": 50,
+            "startAngleRad": 1.570796326795,
+            "endAngleRad": 6.28318530718,
+            "counterClockwise": true
+          }
+        },
+        {
+          "type": "put",
+          "entity": {
+            "handle": "30",
+            "layerId": "0",
+            "kind": "ellipse",
+            "center": {
+              "x": 350,
+              "y": 0
+            },
+            "majorAxis": {
+              "x": 50,
+              "y": 0
+            },
+            "ratio": 0.5,
+            "startParameter": 1.570796326795,
+            "endParameter": 6.28318530718
+          }
+        },
+        {
+          "type": "put",
+          "entity": {
+            "kind": "polyline",
+            "handle": "40",
+            "layerId": "0",
+            "closed": false,
+            "vertices": [
+              {
+                "x": 0,
+                "y": 100,
+                "startWidth": 2,
+                "endWidth": 2.5
+              },
+              {
+                "x": 25,
+                "y": 100,
+                "startWidth": 2,
+                "endWidth": 2.5
+              }
+            ]
+          }
+        },
+        {
+          "type": "put",
+          "entity": {
+            "kind": "polyline",
+            "handle": "52",
+            "layerId": "0",
+            "closed": false,
+            "vertices": [
+              {
+                "x": 175,
+                "y": 100,
+                "startWidth": 5.5,
+                "endWidth": 6
+              },
+              {
+                "x": 200,
+                "y": 100,
+                "startWidth": 5.5,
+                "endWidth": 6
+              }
+            ]
+          }
+        },
+        {
+          "type": "put",
+          "entity": {
+            "kind": "spline",
+            "handle": "50",
+            "layerId": "0",
+            "degree": 3,
+            "controlPoints": [
+              {
+                "x": 0,
+                "y": 300
+              },
+              {
+                "x": 8.333333333333,
+                "y": 300
+              },
+              {
+                "x": 16.666666666667,
+                "y": 300
+              },
+              {
+                "x": 25,
+                "y": 300
+              }
+            ],
+            "knots": [
+              0,
+              0,
+              0,
+              0,
+              0.25,
+              0.25,
+              0.25,
+              0.25
+            ],
+            "weights": [
+              2,
+              2,
+              2,
+              2
+            ],
+            "closed": false,
+            "periodic": false
+          }
+        },
+        {
+          "type": "put",
+          "entity": {
+            "kind": "spline",
+            "handle": "53",
+            "layerId": "0",
+            "degree": 3,
+            "controlPoints": [
+              {
+                "x": 75,
+                "y": 300
+              },
+              {
+                "x": 83.333333333334,
+                "y": 300
+              },
+              {
+                "x": 91.666666666667,
+                "y": 300
+              },
+              {
+                "x": 100,
+                "y": 300
+              }
+            ],
+            "knots": [
+              0.75,
+              0.75,
+              0.75,
+              0.75,
+              1,
+              1,
+              1,
+              1
+            ],
+            "weights": [
+              2,
+              2,
+              2,
+              2
+            ],
+            "closed": false,
+            "periodic": false
+          }
+        }
+      ],
+      "sourceHandles": [
+        "10",
+        "20",
+        "30",
+        "40",
+        "50"
+      ],
+      "resultHandles": [
+        "10",
+        "51",
+        "20",
+        "30",
+        "40",
+        "52",
+        "50",
+        "53"
+      ],
+      "createdHandles": [
+        "51",
+        "52",
+        "53"
+      ],
+      "rejected": [],
+      "steps": [
+        {
+          "sourceHandle": "10",
+          "resultHandles": [
+            "10",
+            "51"
+          ],
+          "targetIndex": 0,
+          "mode": "at-point",
+          "breakPoints": [
+            {
+              "x": 50,
+              "y": 0
+            },
+            {
+              "x": 50,
+              "y": 0
+            }
+          ],
+          "removedInterval": null
+        },
+        {
+          "sourceHandle": "20",
+          "resultHandles": [
+            "20"
+          ],
+          "targetIndex": 1,
+          "mode": "two-point",
+          "breakPoints": [
+            {
+              "x": 250,
+              "y": 0
+            },
+            {
+              "x": 200,
+              "y": 50
+            }
+          ],
+          "removedInterval": {
+            "start": 0,
+            "end": 0.25,
+            "wraps": false
+          }
+        },
+        {
+          "sourceHandle": "30",
+          "resultHandles": [
+            "30"
+          ],
+          "targetIndex": 2,
+          "mode": "two-point",
+          "breakPoints": [
+            {
+              "x": 400,
+              "y": 0
+            },
+            {
+              "x": 350,
+              "y": 25
+            }
+          ],
+          "removedInterval": {
+            "start": 0,
+            "end": 0.25,
+            "wraps": false
+          }
+        },
+        {
+          "sourceHandle": "40",
+          "resultHandles": [
+            "40",
+            "52"
+          ],
+          "targetIndex": 3,
+          "mode": "two-point",
+          "breakPoints": [
+            {
+              "x": 25,
+              "y": 100
+            },
+            {
+              "x": 175,
+              "y": 100
+            }
+          ],
+          "removedInterval": {
+            "start": 0.125,
+            "end": 0.875,
+            "wraps": false
+          }
+        },
+        {
+          "sourceHandle": "50",
+          "resultHandles": [
+            "50",
+            "53"
+          ],
+          "targetIndex": 4,
+          "mode": "two-point",
+          "breakPoints": [
+            {
+              "x": 25,
+              "y": 300
+            },
+            {
+              "x": 75,
+              "y": 300
+            }
+          ],
+          "removedInterval": {
+            "start": 0.25,
+            "end": 0.75,
+            "wraps": false
+          }
+        }
+      ],
+      "multiple": true
+    }
+  },
+  "sourceDocument": {
+    "schemaVersion": 1,
+    "documentId": "F-026-readback",
+    "revision": 0,
+    "units": {
+      "linear": "mm",
+      "displayPrecision": 4,
+      "angularPrecision": 6
+    },
+    "currentLayerId": "0",
+    "entities": [
+      {
+        "kind": "line",
+        "handle": "10",
+        "layerId": "0",
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "aci",
+          "aciIndex": 1,
+          "lineweightMm": 0.5
+        },
+        "extensionData": {
+          "rowId": "F-026"
+        },
+        "start": {
+          "x": 0,
+          "y": 0
+        },
+        "end": {
+          "x": 100,
+          "y": 0
+        }
+      },
+      {
+        "kind": "circle",
+        "handle": "20",
+        "layerId": "0",
+        "center": {
+          "x": 200,
+          "y": 0
+        },
+        "radius": 50
+      },
+      {
+        "kind": "ellipse",
+        "handle": "30",
+        "layerId": "0",
+        "center": {
+          "x": 350,
+          "y": 0
+        },
+        "majorAxis": {
+          "x": 50,
+          "y": 0
+        },
+        "ratio": 0.5,
+        "startParameter": 0,
+        "endParameter": 6.283185307179586
+      },
+      {
+        "kind": "polyline",
+        "handle": "40",
+        "layerId": "0",
+        "closed": false,
+        "vertices": [
+          {
+            "x": 0,
+            "y": 100,
+            "startWidth": 2,
+            "endWidth": 4
+          },
+          {
+            "x": 100,
+            "y": 100,
+            "startWidth": 4,
+            "endWidth": 6
+          },
+          {
+            "x": 200,
+            "y": 100
+          }
+        ]
+      },
+      {
+        "kind": "spline",
+        "handle": "50",
+        "layerId": "0",
+        "degree": 3,
+        "controlPoints": [
+          {
+            "x": 0,
+            "y": 300
+          },
+          {
+            "x": 33.333333333333336,
+            "y": 300
+          },
+          {
+            "x": 66.66666666666667,
+            "y": 300
+          },
+          {
+            "x": 100,
+            "y": 300
+          }
+        ],
+        "knots": [
+          0,
+          0,
+          0,
+          0,
+          1,
+          1,
+          1,
+          1
+        ],
+        "weights": [
+          2,
+          2,
+          2,
+          2
+        ],
+        "closed": false,
+        "periodic": false
+      }
+    ],
+    "layers": [
+      {
+        "id": "0",
+        "name": "0",
+        "visible": true,
+        "frozen": false,
+        "locked": false,
+        "plottable": true
+      }
+    ],
+    "linetypes": [],
+    "textStyles": [],
+    "dimensionStyles": [],
+    "blocks": [],
+    "layouts": [
+      {
+        "id": "model",
+        "name": "Model",
+        "kind": "model",
+        "viewports": [],
+        "entities": []
+      }
+    ],
+    "attachments": [],
+    "metadata": {
+      "createdAt": "2026-08-30T06:40:00.000Z",
+      "updatedAt": "2026-08-30T06:40:00.000Z"
+    }
+  },
+  "output": {
+    "schema": [
+      {
+        "handle": "10",
+        "kind": "line",
+        "start": {
+          "x": 0,
+          "y": 0
+        },
+        "end": {
+          "x": 50,
+          "y": 0
+        }
+      },
+      {
+        "handle": "20",
+        "kind": "arc",
+        "center": {
+          "x": 200,
+          "y": 0
+        },
+        "radius": 50,
+        "startAngleRad": 1.570796326795,
+        "endAngleRad": 6.28318530718,
+        "counterClockwise": true
+      },
+      {
+        "handle": "30",
+        "kind": "ellipse",
+        "center": {
+          "x": 350,
+          "y": 0
+        },
+        "majorAxis": {
+          "x": 50,
+          "y": 0
+        },
+        "ratio": 0.5,
+        "startParameter": 1.570796326795,
+        "endParameter": 6.28318530718
+      },
+      {
+        "handle": "40",
+        "kind": "polyline",
+        "closed": false,
+        "vertices": [
+          {
+            "x": 0,
+            "y": 100,
+            "startWidth": 2,
+            "endWidth": 2.5
+          },
+          {
+            "x": 25,
+            "y": 100,
+            "startWidth": 2,
+            "endWidth": 2.5
+          }
+        ]
+      },
+      {
+        "handle": "50",
+        "kind": "spline",
+        "degree": 3,
+        "controlPoints": [
+          {
+            "x": 0,
+            "y": 300
+          },
+          {
+            "x": 8.333333333333,
+            "y": 300
+          },
+          {
+            "x": 16.666666666667,
+            "y": 300
+          },
+          {
+            "x": 25,
+            "y": 300
+          }
+        ],
+        "knots": [
+          0,
+          0,
+          0,
+          0,
+          0.25,
+          0.25,
+          0.25,
+          0.25
+        ],
+        "weights": [
+          2,
+          2,
+          2,
+          2
+        ],
+        "closed": false,
+        "periodic": false
+      },
+      {
+        "handle": "51",
+        "kind": "line",
+        "start": {
+          "x": 50,
+          "y": 0
+        },
+        "end": {
+          "x": 100,
+          "y": 0
+        }
+      },
+      {
+        "handle": "52",
+        "kind": "polyline",
+        "closed": false,
+        "vertices": [
+          {
+            "x": 175,
+            "y": 100,
+            "startWidth": 5.5,
+            "endWidth": 6
+          },
+          {
+            "x": 200,
+            "y": 100,
+            "startWidth": 5.5,
+            "endWidth": 6
+          }
+        ]
+      },
+      {
+        "handle": "53",
+        "kind": "spline",
+        "degree": 3,
+        "controlPoints": [
+          {
+            "x": 75,
+            "y": 300
+          },
+          {
+            "x": 83.333333333334,
+            "y": 300
+          },
+          {
+            "x": 91.666666666667,
+            "y": 300
+          },
+          {
+            "x": 100,
+            "y": 300
+          }
+        ],
+        "knots": [
+          0.75,
+          0.75,
+          0.75,
+          0.75,
+          1,
+          1,
+          1,
+          1
+        ],
+        "weights": [
+          2,
+          2,
+          2,
+          2
+        ],
+        "closed": false,
+        "periodic": false
+      }
+    ],
+    "strictChecks": [
+      {
+        "handle": "10",
+        "expected": {
+          "handle": "10",
+          "kind": "line",
+          "start": {
+            "x": 0,
+            "y": 0
+          },
+          "end": {
+            "x": 50,
+            "y": 0
+          }
+        },
+        "actual": {
+          "handle": "10",
+          "kind": "line",
+          "start": {
+            "x": 0,
+            "y": 0
+          },
+          "end": {
+            "x": 50,
+            "y": 0
+          }
+        },
+        "pass": true
+      },
+      {
+        "handle": "20",
+        "expected": {
+          "handle": "20",
+          "kind": "arc",
+          "center": {
+            "x": 200,
+            "y": 0
+          },
+          "radius": 50,
+          "startAngleRad": 1.570796326795,
+          "endAngleRad": 6.28318530718,
+          "counterClockwise": true
+        },
+        "actual": {
+          "handle": "20",
+          "kind": "arc",
+          "center": {
+            "x": 200,
+            "y": 0
+          },
+          "radius": 50,
+          "startAngleRad": 1.5707963267949996,
+          "endAngleRad": 4.138911435802587e-13,
+          "counterClockwise": true
+        },
+        "pass": true
+      },
+      {
+        "handle": "30",
+        "expected": {
+          "handle": "30",
+          "kind": "ellipse",
+          "center": {
+            "x": 350,
+            "y": 0
+          },
+          "majorAxis": {
+            "x": 50,
+            "y": 0
+          },
+          "ratio": 0.5,
+          "startParameter": 1.570796326795,
+          "endParameter": 6.28318530718
+        },
+        "actual": {
+          "handle": "30",
+          "kind": "ellipse",
+          "center": {
+            "x": 350,
+            "y": 0
+          },
+          "majorAxis": {
+            "x": 50,
+            "y": 0
+          },
+          "ratio": 0.5,
+          "startParameter": 1.570796326795,
+          "endParameter": 6.28318530718
+        },
+        "pass": true
+      },
+      {
+        "handle": "40",
+        "expected": {
+          "handle": "40",
+          "kind": "polyline",
+          "closed": false,
+          "vertices": [
+            {
+              "x": 0,
+              "y": 100,
+              "startWidth": 2,
+              "endWidth": 2.5
+            },
+            {
+              "x": 25,
+              "y": 100,
+              "startWidth": 2,
+              "endWidth": 2.5
+            }
+          ]
+        },
+        "actual": {
+          "handle": "40",
+          "kind": "polyline",
+          "closed": false,
+          "vertices": [
+            {
+              "x": 0,
+              "y": 100,
+              "startWidth": 2,
+              "endWidth": 2.5
+            },
+            {
+              "x": 25,
+              "y": 100,
+              "startWidth": 2,
+              "endWidth": 2.5
+            }
+          ]
+        },
+        "pass": true
+      },
+      {
+        "handle": "50",
+        "expected": {
+          "handle": "50",
+          "kind": "spline",
+          "degree": 3,
+          "controlPoints": [
+            {
+              "x": 0,
+              "y": 300
+            },
+            {
+              "x": 8.333333333333,
+              "y": 300
+            },
+            {
+              "x": 16.666666666667,
+              "y": 300
+            },
+            {
+              "x": 25,
+              "y": 300
+            }
+          ],
+          "knots": [
+            0,
+            0,
+            0,
+            0,
+            0.25,
+            0.25,
+            0.25,
+            0.25
+          ],
+          "weights": [
+            2,
+            2,
+            2,
+            2
+          ],
+          "closed": false,
+          "periodic": false
+        },
+        "actual": {
+          "handle": "50",
+          "kind": "spline",
+          "degree": 3,
+          "controlPoints": [
+            {
+              "x": 0,
+              "y": 300
+            },
+            {
+              "x": 8.333333333333,
+              "y": 300
+            },
+            {
+              "x": 16.666666666667,
+              "y": 300
+            },
+            {
+              "x": 25,
+              "y": 300
+            }
+          ],
+          "knots": [
+            0,
+            0,
+            0,
+            0,
+            0.25,
+            0.25,
+            0.25,
+            0.25
+          ],
+          "weights": [
+            2,
+            2,
+            2,
+            2
+          ],
+          "closed": false,
+          "periodic": false
+        },
+        "pass": true
+      },
+      {
+        "handle": "51",
+        "expected": {
+          "handle": "51",
+          "kind": "line",
+          "start": {
+            "x": 50,
+            "y": 0
+          },
+          "end": {
+            "x": 100,
+            "y": 0
+          }
+        },
+        "actual": {
+          "handle": "51",
+          "kind": "line",
+          "start": {
+            "x": 50,
+            "y": 0
+          },
+          "end": {
+            "x": 100,
+            "y": 0
+          }
+        },
+        "pass": true
+      },
+      {
+        "handle": "52",
+        "expected": {
+          "handle": "52",
+          "kind": "polyline",
+          "closed": false,
+          "vertices": [
+            {
+              "x": 175,
+              "y": 100,
+              "startWidth": 5.5,
+              "endWidth": 6
+            },
+            {
+              "x": 200,
+              "y": 100,
+              "startWidth": 5.5,
+              "endWidth": 6
+            }
+          ]
+        },
+        "actual": {
+          "handle": "52",
+          "kind": "polyline",
+          "closed": false,
+          "vertices": [
+            {
+              "x": 175,
+              "y": 100,
+              "startWidth": 5.5,
+              "endWidth": 6
+            },
+            {
+              "x": 200,
+              "y": 100,
+              "startWidth": 5.5,
+              "endWidth": 6
+            }
+          ]
+        },
+        "pass": true
+      },
+      {
+        "handle": "53",
+        "expected": {
+          "handle": "53",
+          "kind": "spline",
+          "degree": 3,
+          "controlPoints": [
+            {
+              "x": 75,
+              "y": 300
+            },
+            {
+              "x": 83.333333333334,
+              "y": 300
+            },
+            {
+              "x": 91.666666666667,
+              "y": 300
+            },
+            {
+              "x": 100,
+              "y": 300
+            }
+          ],
+          "knots": [
+            0.75,
+            0.75,
+            0.75,
+            0.75,
+            1,
+            1,
+            1,
+            1
+          ],
+          "weights": [
+            2,
+            2,
+            2,
+            2
+          ],
+          "closed": false,
+          "periodic": false
+        },
+        "actual": {
+          "handle": "53",
+          "kind": "spline",
+          "degree": 3,
+          "controlPoints": [
+            {
+              "x": 75,
+              "y": 300
+            },
+            {
+              "x": 83.333333333334,
+              "y": 300
+            },
+            {
+              "x": 91.666666666667,
+              "y": 300
+            },
+            {
+              "x": 100,
+              "y": 300
+            }
+          ],
+          "knots": [
+            0.75,
+            0.75,
+            0.75,
+            0.75,
+            1,
+            1,
+            1,
+            1
+          ],
+          "weights": [
+            2,
+            2,
+            2,
+            2
+          ],
+          "closed": false,
+          "periodic": false
+        },
+        "pass": true
+      }
+    ],
+    "independentTypes": [
+      "10:LINE",
+      "20:ARC",
+      "30:ELLIPSE",
+      "40:LWPOLYLINE",
+      "50:SPLINE",
+      "51:LINE",
+      "52:LWPOLYLINE",
+      "53:SPLINE"
+    ]
+  },
+  "closedAtPoint": {
+    "changes": [],
+    "sourceHandles": [],
+    "resultHandles": [],
+    "createdHandles": [],
+    "rejected": [
+      {
+        "handle": "20",
+        "targetIndex": 0,
+        "reason": "closed-at-point"
+      }
+    ],
+    "steps": [],
+    "multiple": false
+  },
+  "dxf": {
+    "sha256": "c3e8b4e15a5ad9e6e65bd8bc64916e7c5671f12f6e97f6f4ae8dde5b80a90085",
+    "byteLength": 5494,
+    "emittedHandles": [
+      "10",
+      "20",
+      "30",
+      "40",
+      "50",
+      "51",
+      "52",
+      "53"
+    ]
+  },
+  "kdraw": {
+    "sha256": "4d7259927f1815d144d949e49f609aa89b397ba01784ef787201c229d3e456a6",
+    "byteLength": 3181,
+    "documentSha256": "0de81cb23dd338be776fe832928f33a89224d9aa276972f0118a6cd79e7c1bf5",
+    "manifestEntryCount": 1,
+    "attachmentCount": 0
+  },
+  "undoRedo": {
+    "undo": true,
+    "redo": true,
+    "exactSourceRestored": true,
+    "exactCommittedRestored": true
+  }
+}

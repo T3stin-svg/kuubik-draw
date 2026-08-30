@@ -3,6 +3,7 @@ export * from "./commands.js";
 export * from "./document.js";
 export * from "./fillet.js";
 export * from "./chamfer.js";
+export * from "./break.js";
 export * from "./legacy-import.js";
 export * from "./layouts.js";
 export * from "./offset.js";

@@ -1,6 +1,6 @@
 import { createEmptyDocument } from "@kuubik/cad-core";
 import { describe, expect, it } from "vitest";
-import { prepareChamfer, prepareCopy, prepareExtend, prepareFillet, prepareMirror, prepareMove, prepareOffset, prepareRotate, prepareScale, prepareTrim, putEntities } from "./modify-command.js";
+import { prepareBreak, prepareChamfer, prepareCopy, prepareExtend, prepareFillet, prepareMirror, prepareMove, prepareOffset, prepareRotate, prepareScale, prepareTrim, putEntities } from "./modify-command.js";
 
 function modifyDocument() {
   const document = createEmptyDocument({ documentId: "web-workflows", now: "2026-08-29T00:00:00.000Z" });
@@ -141,5 +141,29 @@ describe("web modify command workflows", () => {
       operationArgs: { mode: "polyline", specification: { method: "angle", firstDistance: 5, angleDeg: 45 }, trimMode: "trim", polylineHandles: ["30"] },
       result: { rejected: [], sourceHandles: ["30"], resultHandles: ["30"], createdHandles: [], steps: [{ mode: "polyline" }] },
     });
+  });
+
+  it("normalizes BREAK two-point and at-point targets once for preview and commit", () => {
+    const document = modifyDocument();
+    const prepared = prepareBreak(document, {
+      targetsInput: "10@25,0>75,0; 20@50,0>@",
+    });
+    expect(prepared).toMatchObject({
+      commandId: "BREAK",
+      operationArgs: {
+        multiple: true,
+        targets: [
+          { handle: "10", firstPoint: { x: 25, y: 0 }, secondPoint: { x: 75, y: 0 }, mode: "two-point" },
+          { handle: "20", firstPoint: { x: 50, y: 0 }, mode: "at-point" },
+        ],
+      },
+      result: {
+        sourceHandles: ["10", "20"],
+        createdHandles: ["21", "22"],
+        rejected: [],
+        steps: [{ mode: "two-point" }, { mode: "at-point" }],
+      },
+    });
+    expect(prepareBreak(document, { targetsInput: "10@25,0>75,0; 20@50,0>@" })).toEqual(prepared);
   });
 });
