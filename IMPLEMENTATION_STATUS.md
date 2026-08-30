@@ -43,7 +43,7 @@
 - F-024 FILLET, F-025 CHAMFER and F-026 BREAK are certified with command
   options, typed geometry, atomic Undo/Redo, Chromium, owned AutoCAD Desktop,
   independent DXF/KDRAW1 read-back and zero-open-P0/P1 reviews.
-- F-027 STRETCH is locally certified for physical crossing window/polygon,
+- F-027 STRETCH is publicly certified for physical crossing window/polygon,
   partial and whole-object moves, locked refusal, preview=commit and exact
   Undo/Redo. AutoCAD source/result state and the independently parsed 14-entity
   DXF are checked field-by-field; every nested stage/source receipt is current.
@@ -89,10 +89,9 @@
 
 ## Certified state and explicit remaining limits
 
-- the new application is locally certified through F-027 at **28/133**
+- the new application is publicly certified through F-027 at **28/133**
   (**21.1% raw / 24.7% weighted**) with independent `0 P0 / 0 P1` review;
-- all 22 legacy-certified rows and F-022…F-026 are publicly mirrored; F-027 is
-  locally mirrored and awaits its exact public-commit CI;
+- all 22 legacy-certified rows and F-022…F-027 are publicly mirrored;
 - spline/NURBS rendering is rejected rather than drawn as a misleading control polygon;
 - Unicode PDF text is rejected until a font-embedding path exists;
 - LibreCAD/FreeCAD fixtures pass locally, but the machine has no signed OS
@@ -105,8 +104,9 @@
 The F-027 full local gate passes 70 test files / 443 Vitest tests,
 68 mutation tests, 43 DXF tests, 20 PDF tests and 99 Chromium E2E tests,
 plus production build, license, public-tree and Gitleaks 8.30.1 with zero
-findings across 919 source files. F-027 exact-commit public CI is pending.
-F-026 commit `b3474d3` passed GitHub Actions run `33305223655`. Protected-runner
+findings across 919 source files. F-027 commit `57b1c14` passed GitHub Actions
+run `33308045837`: fast completed in 1m02s and verify in 3m53s. F-026 commit
+`b3474d3` passed GitHub Actions run `33305223655`. Protected-runner
 jobs `required-oracles`, `autocad-2024-certification` and `row-certification`
 were honestly skipped; the checked-in evidence had already passed the local
 mandatory ratchet and independent review. The checked-in licensed AutoCAD evidence is
@@ -122,8 +122,8 @@ Chromium DXF capture and cross-platform content-address verification. F-025
 CHAMFER has its public-green chain. F-026 BREAK now has a complete
 AutoCAD/Chromium/DXF/KDRAW1/oracle chain, content-address ratchet and
 zero-open-P0/P1 review and public-green exact commit. F-027 STRETCH now has the
-same complete chain and zero-open-P0/P1 review; exact-commit public CI is the
-remaining release check. The next highest-impact small Modify row is F-030
+same complete chain, zero-open-P0/P1 review and public-green exact commit. The
+next highest-impact small Modify row is F-030
 MATCHPROP; F-028 LENGTHEN and F-029 ALIGN remain in the same P1 wave. F-108 native
 PC3/CTB/STB remains blocked on a licensed adapter. No production deployment is
 authorized.

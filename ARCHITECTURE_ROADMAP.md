@@ -33,9 +33,10 @@ selles teekaardis teadlikult `Won't have`.
 
 ## Now
 
-1. F-027 on lokaalselt sertifitseeritud seisul **28/133 · 21,1% raw / 24,7% weighted**;
+1. F-027 on avalikult sertifitseeritud seisul **28/133 · 21,1% raw / 24,7% weighted**;
    AutoCAD/Chromium/DXF/KDRAW1/oracle risttõend ja sõltumatu lõppreview
-   `0 P0 / 0 P1` on rohelised. Exact commit'i avalik CI on veel lõpetamisel.
+   `0 P0 / 0 P1` on rohelised. Feature-commit `57b1c14` läbis GitHub Actions
+   exact-commit run'i `33308045837` fast- ja verify-väravad.
 2. STRETCH crossing window/polygon, osaline ja whole-object liikumine, täielik
    14-objektiline native/DXF state, nested SHA-receipt'id ja atomic Undo/Redo
    kasutavad fail-closed ratchet'it. Sõltumatu review on `0 P0 / 0 P1`.

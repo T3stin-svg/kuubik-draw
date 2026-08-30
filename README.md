@@ -11,10 +11,10 @@ efektiivsusvärav on failis [`ARCHITECTURE_ROADMAP.md`](ARCHITECTURE_ROADMAP.md)
 
 - vana Drawi auditi snapshot: **63,9% raw / 68,3% weighted / 60,7% visual**;
 - vana Drawi AutoCADi live-tõendiga read: **22/133**;
-- selle uue eraldatud rakenduse lokaalselt sertifitseeritud seis pärast F-027:
+- selle uue eraldatud rakenduse avalikult sertifitseeritud seis pärast F-027:
   **28/133 · 21,1% raw / 24,7% weighted**;
-- F-027 sõltumatu lõppreview: `0 P0 / 0 P1`; avalik exact-commit CI on veel
-  selle laine viimane värav;
+- F-027 feature-commit `57b1c14`, GitHub Actions run `33308045837` ja
+  sõltumatu lõppreview `0 P0 / 0 P1`: avalik exact-commit CI roheline;
 - F-026 feature-commit `b3474d3`, GitHub Actions run `33305223655`: avalik
   exact-commit CI roheline;
 - F-025 feature-commit `d0d6421`, GitHub Actions run `33293697704`: `fast`
@@ -26,7 +26,7 @@ efektiivsusvärav on failis [`ARCHITECTURE_ROADMAP.md`](ARCHITECTURE_ROADMAP.md)
 - avalikult suletud arhitektuurivärav: lõpp-HEAD `d097b34`, GitHub Actions
   run `33250270350`, sõltumatu review `0 P0 / 0 P1`;
 - native DWG/DWT/XREF ja PC3/CTB/STB pariteet on veel blokeeritud.
-- F-027 `STRETCH` on lokaalselt sertifitseeritud; production deploy'd ei ole
+- F-027 `STRETCH` on avalikult sertifitseeritud; production deploy'd ei ole
   tehtud.
 
 Need arvud on vana Drawi auditi muutmatu snapshot. Uus rakendus ei päri skoori
@@ -79,8 +79,8 @@ locked-layer keeldumise ja ühe atomaarse Undo/Redo sammu. Omatud AutoCAD
 olekut ning sõltumatu DXF-parser võrdleb kõiki handle'e, kihte, omadusi,
 vertices/bulge/width/closed-state'i ja ellipse-parameetreid. Kuus Chromiumi
 töövoogu, DXF/KDRAW1, pinned LibreCAD/FreeCAD sekundaaroracles ja sõltumatu
-review `0 P0 / 0 P1` on rohelised; exact-commit avalik CI on laine viimane
-värav.
+review `0 P0 / 0 P1` on rohelised. Feature-commit `57b1c14` läbis avaliku
+exact-commit GitHub Actions run'i `33308045837` fast- ja verify-väravad.
 F-097 `Layout tabs` lisab revisioneeritud create/copy/reorder/delete töövoo,
 AutoCADi copy-before-source nimekuju, sõltumatud viewport'i ID-d ja paberiruumi
 handle'id, atomaarse Undo/Redo ning IndexedDB/`.kdraw` taastamise.
