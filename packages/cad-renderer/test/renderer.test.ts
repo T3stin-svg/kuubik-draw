@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { CadCanvasRenderer, pannedViewportWorldCenter, viewportScreenToWorld, viewportWorldToScreen, type Canvas2DContext } from "../src/index.js";
+import { CadCanvasRenderer, entityGripPoints, pannedViewportWorldCenter, viewportScreenToWorld, viewportWorldToScreen, type Canvas2DContext } from "../src/index.js";
 
 function fakeContext() {
   const calls: Array<[string, ...number[]]> = [];
@@ -233,6 +233,36 @@ describe("Canvas2D parity invariants", () => {
     );
     expect(stats).toEqual({ totalEntities: 1, visibleCandidates: 1, drawnEntities: 3 });
     expect(renderer.visibleHandles({ minX: 15, minY: 15, maxX: 60, maxY: 60 })).toEqual([]);
+  });
+
+  it("renders selected geometry with an AutoCAD-like highlight and eight screen-sized polyline grips", () => {
+    const rectangle = {
+      kind: "polyline" as const,
+      handle: "10",
+      layerId: "0",
+      vertices: [{ x: 10, y: 10 }, { x: 90, y: 10 }, { x: 90, y: 60 }, { x: 10, y: 60 }],
+      closed: true,
+    };
+    expect(entityGripPoints(rectangle)).toHaveLength(8);
+    const renderer = new CadCanvasRenderer();
+    renderer.setEntities([rectangle]);
+    const { context, calls } = fakeContext();
+    const strokes: Array<{ color: string | object; width: number }> = [];
+    context.stroke = () => {
+      strokes.push({ color: context.strokeStyle, width: context.lineWidth });
+      calls.push(["stroke"]);
+    };
+    renderer.render(
+      context,
+      { world: { minX: 0, minY: 0, maxX: 100, maxY: 100 }, widthPx: 200, heightPx: 200, devicePixelRatio: 2 },
+      [{ id: "0", name: "0", visible: true, frozen: false, locked: false, plottable: true }],
+      null,
+      [],
+      { selectedHandles: ["10"] },
+    );
+    expect(strokes).toContainEqual({ color: "#4ea9f3", width: 0.625 });
+    expect(strokes.filter(({ color }) => color === "#0b2438")).toHaveLength(8);
+    expect(calls.filter(([name]) => name === "fill")).toHaveLength(8);
   });
 
   it("hides replaced source geometry while rendering a MIRROR erase-Yes preview", () => {

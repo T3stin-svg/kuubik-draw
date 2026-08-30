@@ -50,6 +50,108 @@ export interface RenderOptions {
   pixelsPerMillimeter?: number;
   /** MATCHPROP previews resolved destination properties; geometry edits retain the blue highlight. */
   previewAppearance?: "highlight" | "resolved";
+  /** Model-space entities currently selected by the user. Selection is a screen-only overlay. */
+  selectedHandles?: readonly string[];
+}
+
+const SELECTION_COLOR = "#4ea9f3";
+const GRIP_FILL = "#00a8ff";
+const GRIP_STROKE = "#0b2438";
+
+function midpoint(first: CadPoint2, second: CadPoint2): CadPoint2 {
+  return { x: (first.x + second.x) / 2, y: (first.y + second.y) / 2 };
+}
+
+function polarPoint(center: CadPoint2, radius: number, angle: number): CadPoint2 {
+  return { x: center.x + Math.cos(angle) * radius, y: center.y + Math.sin(angle) * radius };
+}
+
+function ellipsePoint(entity: Extract<CadEntity, { kind: "ellipse" }>, parameter: number): CadPoint2 {
+  const minorAxis = { x: -entity.majorAxis.y * entity.ratio, y: entity.majorAxis.x * entity.ratio };
+  return {
+    x: entity.center.x + entity.majorAxis.x * Math.cos(parameter) + minorAxis.x * Math.sin(parameter),
+    y: entity.center.y + entity.majorAxis.y * Math.cos(parameter) + minorAxis.y * Math.sin(parameter),
+  };
+}
+
+function arcMidAngle(entity: Extract<CadEntity, { kind: "arc" }>): number {
+  const full = Math.PI * 2;
+  const forward = ((entity.endAngleRad - entity.startAngleRad) % full + full) % full;
+  const sweep = entity.counterClockwise ? forward : forward - full;
+  return entity.startAngleRad + sweep / 2;
+}
+
+function ellipseMidParameter(entity: Extract<CadEntity, { kind: "ellipse" }>): number {
+  const full = Math.PI * 2;
+  const sweep = ((entity.endParameter - entity.startParameter) % full + full) % full || full;
+  return entity.startParameter + sweep / 2;
+}
+
+function uniquePoints(points: readonly CadPoint2[]): CadPoint2[] {
+  const seen = new Set<string>();
+  return points.filter((point) => {
+    const key = `${point.x.toFixed(9)}:${point.y.toFixed(9)}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
+/** AutoCAD-familiar cold-grip locations. They are display metadata, never document mutations. */
+export function entityGripPoints(entity: CadEntity): CadPoint2[] {
+  switch (entity.kind) {
+    case "line": return [entity.start, midpoint(entity.start, entity.end), entity.end];
+    case "ray": return [entity.basePoint];
+    case "xline": return [entity.basePoint];
+    case "polyline": {
+      const points: CadPoint2[] = [];
+      const segmentCount = entity.closed ? entity.vertices.length : Math.max(0, entity.vertices.length - 1);
+      entity.vertices.forEach((vertex) => points.push(vertex));
+      for (let index = 0; index < segmentCount; index += 1) {
+        points.push(midpoint(entity.vertices[index]!, entity.vertices[(index + 1) % entity.vertices.length]!));
+      }
+      return uniquePoints(points);
+    }
+    case "circle": return [
+      entity.center,
+      polarPoint(entity.center, entity.radius, 0),
+      polarPoint(entity.center, entity.radius, Math.PI / 2),
+      polarPoint(entity.center, entity.radius, Math.PI),
+      polarPoint(entity.center, entity.radius, Math.PI * 1.5),
+    ];
+    case "arc": return [
+      entity.center,
+      polarPoint(entity.center, entity.radius, entity.startAngleRad),
+      polarPoint(entity.center, entity.radius, arcMidAngle(entity)),
+      polarPoint(entity.center, entity.radius, entity.endAngleRad),
+    ];
+    case "ellipse": return uniquePoints([
+      entity.center,
+      ellipsePoint(entity, entity.startParameter),
+      ellipsePoint(entity, ellipseMidParameter(entity)),
+      ellipsePoint(entity, entity.endParameter),
+    ]);
+    case "spline": return uniquePoints(entity.controlPoints);
+    case "text":
+    case "mtext": return [entity.position];
+    case "leader": return uniquePoints(entity.vertices);
+    case "dimension": return uniquePoints(entity.definitionPoints);
+    case "hatch": return uniquePoints(entity.loops.flatMap((loop) => loop.vertices));
+    case "blockRef": return [entity.insertion];
+    case "proxy": return entity.bounds ? [entity.bounds.min, midpoint(entity.bounds.min, entity.bounds.max), entity.bounds.max] : [];
+  }
+}
+
+function drawGrip(context: Canvas2DContext, point: CadPoint2, sizeWorld: number): void {
+  const half = sizeWorld / 2;
+  context.beginPath();
+  context.moveTo(point.x - half, point.y - half);
+  context.lineTo(point.x + half, point.y - half);
+  context.lineTo(point.x + half, point.y + half);
+  context.lineTo(point.x - half, point.y + half);
+  context.lineTo(point.x - half, point.y - half);
+  context.fill();
+  context.stroke();
 }
 
 function lineDashForEntity(
@@ -298,6 +400,7 @@ function drawEntity(
   blocks: ReadonlyMap<string, CadBlockDefinition>,
   clipBounds: Bounds2,
   blockTrail: ReadonlySet<string> = new Set(),
+  fillSolidHatch = true,
 ): boolean {
   context.beginPath();
   switch (entity.kind) {
@@ -334,7 +437,7 @@ function drawEntity(
     case "dimension": drawPolyline(context, entity.definitionPoints); break;
     case "hatch":
       entity.loops.forEach((loop) => drawPolyline(context, loop.vertices, true));
-      if (entity.pattern.trim().toUpperCase() === "SOLID") {
+      if (fillSolidHatch && entity.pattern.trim().toUpperCase() === "SOLID") {
         context.fill("evenodd");
         return true;
       }
@@ -349,7 +452,7 @@ function drawEntity(
       context.scale(entity.scale.x, entity.scale.y);
       context.translate(-block.basePoint.x, -block.basePoint.y);
       const localClipBounds = blockLocalClipBounds(clipBounds, block, entity);
-      const drawn = block.entities.reduce((count, child) => count + (drawEntity(context, child, blocks, localClipBounds, nextTrail) ? 1 : 0), 0);
+      const drawn = block.entities.reduce((count, child) => count + (drawEntity(context, child, blocks, localClipBounds, nextTrail, fillSolidHatch) ? 1 : 0), 0);
       context.restore();
       return drawn > 0;
     }
@@ -472,6 +575,25 @@ export class CadCanvasRenderer {
         context.setLineDash?.([]);
       }
       if (drawEntity(context, previewEntity, this.#blocks, clipBounds)) drawnEntities += 1;
+    }
+    const selectedHandles = new Set(options.selectedHandles ?? []);
+    const selectedEntities = candidateHandles.flatMap((handle) => {
+      const entity = this.#entities.get(handle);
+      return entity && selectedHandles.has(handle) && !hidden.has(entity.layerId) && !hiddenSources.has(handle) ? [entity] : [];
+    });
+    if (selectedEntities.length > 0) {
+      context.globalAlpha = 1;
+      context.strokeStyle = SELECTION_COLOR;
+      context.fillStyle = SELECTION_COLOR;
+      context.lineWidth = 1.25 / scale;
+      context.setLineDash?.([]);
+      selectedEntities.forEach((entity) => { drawEntity(context, entity, this.#blocks, clipBounds, new Set(), false); });
+
+      context.fillStyle = GRIP_FILL;
+      context.strokeStyle = GRIP_STROKE;
+      context.lineWidth = 1 / scale;
+      const gripSizeWorld = 8 / scale;
+      selectedEntities.flatMap(entityGripPoints).forEach((point) => drawGrip(context, point, gripSizeWorld));
     }
     context.restore();
     return { totalEntities: this.#entities.size, visibleCandidates: candidateHandles.length, drawnEntities };

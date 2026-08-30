@@ -4,14 +4,14 @@
   "source": "owned AutoCAD 2024.1.2 Desktop + Chromium physical four-point ALIGN + production DXF/KDRAW1 read-back + secondary LibreCAD/FreeCAD reports",
   "sourceSha256": {
     "nativeDesktop": "c8c12b11a2742082c3cbf6f7826a70361599024d69a95fc6b782bf4401296e1a",
-    "browser": "00cadad706324c9e5d6b1795f3136319498ebaaf58f30fe9febd6616a73e380a",
-    "readback": "0f2231ee106373d010e777ca299b27ba97e8ce9b926fe22103515d288b197a55",
+    "browser": "98d9a9cc31daf317bb6f2130f02fdd390ca26560dd7ca6d13bea010c8a77ab9f",
+    "readback": "cc2c81b37b6aa005583fd58b4db34261da9f94d953caaa287442a2860e35d5ab",
     "productionDxf": "f27532f8b787c2d2cf74372efdc92d3cb43fa9772270fd14c58c0190533641fd",
     "productionKdraw": "1c5f537edfefabaf52e10a67e136ca02f9b42739cfe2a932f266d4ab2447f937",
-    "oracles": "3d41eca7ae8c6aee2e62ac9ec6095af3a19cb4aca00bdcc00f4ac63758d66986"
+    "oracles": "56b99b453c88f431cc20f11e1823874fb1286aedcbcaaecca3388f41b7346a81"
   },
   "implementationSha256": {
-    "apps/web/src/App.tsx": "22ea9cbb5f0ed64ba1620002be3e355a5870eab9a5e35f980a9c850ad793b768",
+    "apps/web/src/App.tsx": "362955c2d125ca844669d2c4352cc3f75293dd23e99024d8ebc1467c1a49fbb4",
     "apps/web/src/style.css": "76b8ab8270fb6e09c6668c5d554b4911c5be1f0192398f1cef665d5823389c53",
     "apps/web/src/workflows/modify-command.ts": "9d1f7d0b1d3e308eac2a5d4055436626e3a497cbaaf116c05957e1fde15616c7",
     "apps/web/src/workflows/modify-command.test.ts": "aac0694d3a93a08ed5c6b98ea5456e62ba7c0f05777780a47d99dcabdf2e12b9",
@@ -44,8 +44,8 @@
   "nestedReceipts": {
     "browserArtifacts": {
       "evidence/artifacts/F-029-browser-matrix.json": {
-        "expected": "92dadb55c7e98a43db867fd7bb1b753c63052ba7579c04b0b80c4a0a9da39af6",
-        "actual": "92dadb55c7e98a43db867fd7bb1b753c63052ba7579c04b0b80c4a0a9da39af6",
+        "expected": "52b471920e0156dfb9339b60dda47e8d9573c9875b319bcce32c0c895d881cb1",
+        "actual": "52b471920e0156dfb9339b60dda47e8d9573c9875b319bcce32c0c895d881cb1",
         "byteLength": 8949
       },
       "evidence/artifacts/F-029-browser.dxf": {
@@ -54,16 +54,16 @@
         "byteLength": 4309
       },
       "evidence/artifacts/F-029-browser.kdraw": {
-        "expected": "266827053a295e4dc6b791a553bb069dfb2330b49fad471cc098b84bf44cab15",
-        "actual": "266827053a295e4dc6b791a553bb069dfb2330b49fad471cc098b84bf44cab15",
+        "expected": "62dd47923070fc53e5d2c7f4ec26ef9d02c79e5592f0809e984b373485446d82",
+        "actual": "62dd47923070fc53e5d2c7f4ec26ef9d02c79e5592f0809e984b373485446d82",
         "byteLength": 1749
       }
     },
     "browserSources": {
       "apps/web/src/App.tsx": {
-        "expected": "22ea9cbb5f0ed64ba1620002be3e355a5870eab9a5e35f980a9c850ad793b768",
-        "actual": "22ea9cbb5f0ed64ba1620002be3e355a5870eab9a5e35f980a9c850ad793b768",
-        "byteLength": 231005
+        "expected": "362955c2d125ca844669d2c4352cc3f75293dd23e99024d8ebc1467c1a49fbb4",
+        "actual": "362955c2d125ca844669d2c4352cc3f75293dd23e99024d8ebc1467c1a49fbb4",
+        "byteLength": 231252
       },
       "apps/web/src/style.css": {
         "expected": "76b8ab8270fb6e09c6668c5d554b4911c5be1f0192398f1cef665d5823389c53",
@@ -222,8 +222,8 @@
         "byteLength": 4710
       },
       "evidence/artifacts/F-029-independent-readback.json": {
-        "expected": "0f2231ee106373d010e777ca299b27ba97e8ce9b926fe22103515d288b197a55",
-        "actual": "0f2231ee106373d010e777ca299b27ba97e8ce9b926fe22103515d288b197a55",
+        "expected": "cc2c81b37b6aa005583fd58b4db34261da9f94d953caaa287442a2860e35d5ab",
+        "actual": "cc2c81b37b6aa005583fd58b4db34261da9f94d953caaa287442a2860e35d5ab",
         "byteLength": 18610
       },
       "tools/oracles/freecad-f029-headless.py": {

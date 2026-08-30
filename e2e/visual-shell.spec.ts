@@ -54,6 +54,19 @@ test("AutoCAD-style shell keeps all eight primary zones visible at 1920x1080", a
   await page.getByRole("button", { name: "RECTANGLE", exact: true }).click();
   await page.getByRole("button", { name: "Vali kõik", exact: true }).click();
   await expect(page.getByRole("complementary", { name: "Properties palette" }).getByText("1 selected")).toBeVisible();
+  await expect(page.getByLabel("Kuubik Draw joonestusala")).toHaveAttribute("data-selected-handles", /.+/);
+  const selectionPixels = await page.getByLabel("Kuubik Draw joonestusala").evaluate((canvas) => {
+    const element = canvas as HTMLCanvasElement;
+    const context = element.getContext("2d", { willReadFrequently: true });
+    if (!context) return 0;
+    const pixels = context.getImageData(0, 0, element.width, element.height).data;
+    let count = 0;
+    for (let index = 0; index < pixels.length; index += 4) {
+      if (pixels[index]! < 110 && pixels[index + 1]! > 120 && pixels[index + 2]! > 180 && pixels[index + 3]! > 220) count += 1;
+    }
+    return count;
+  });
+  expect(selectionPixels).toBeGreaterThan(150);
   if (captureRoot) await writeFile(resolve(captureRoot, "visual-shell-selected-properties.png"), await page.screenshot());
 
   await page.getByRole("button", { name: "Uus kiht", exact: true }).click();
@@ -75,6 +88,7 @@ test("AutoCAD-style shell keeps all eight primary zones visible at 1920x1080", a
         emptyWorkspace: true,
         activeDrawingCommand: true,
         selectedProperties: true,
+        selectionPixels,
         layerManagerRows: await page.getByRole("table", { name: "Kihtide loend" }).getByRole("row").count(),
         layoutPaperSpace: await page.getByTestId("paper-space-sheet").isVisible(),
         commandHistory: await page.getByRole("log", { name: "Käsuajalugu" }).isVisible(),

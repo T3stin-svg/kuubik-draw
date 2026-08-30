@@ -847,14 +847,18 @@ export function App() {
       ], activePaper && activePageSetup?.displayPlotStyles ? {
         plotStyle: activePageSetup.plotStyle ?? { profile: "monochrome", plotLineweights: true, plotTransparency: true },
         pixelsPerMillimeter: widthPx / activePaper.widthMm,
+        ...(activeLayout.kind === "model" ? { selectedHandles } : {}),
         ...(matchPropertiesPreview ? { previewAppearance: "resolved" as const } : {}),
-      } : matchPropertiesPreview ? { previewAppearance: "resolved" as const } : {});
+      } : {
+        ...(activeLayout.kind === "model" ? { selectedHandles } : {}),
+        ...(matchPropertiesPreview ? { previewAppearance: "resolved" as const } : {}),
+      });
     };
     render();
     const observer = new ResizeObserver(render);
     observer.observe(element);
     return () => observer.disconnect();
-  }, [activeLayout, activePageSetup, activePaper, alignPreview, breakPreview, chamferPreview, copyPreview, document, extendPreview, filletPreview, lengthenPreview, matchPropertiesPreview, mirrorPreview, movePreview, offsetPreview, rotatePreview, scalePreview, stretchPreview, trimPreview]);
+  }, [activeLayout, activePageSetup, activePaper, alignPreview, breakPreview, chamferPreview, copyPreview, document, extendPreview, filletPreview, lengthenPreview, matchPropertiesPreview, mirrorPreview, movePreview, offsetPreview, rotatePreview, scalePreview, selectedHandles, stretchPreview, trimPreview]);
 
   async function recoverFromStorageConflict(error: unknown): Promise<void> {
     if (!(error instanceof StorageRevisionConflictError)) throw error;
@@ -3606,6 +3610,7 @@ export function App() {
             <canvas
               ref={canvas}
               aria-label="Kuubik Draw joonestusala"
+              data-selected-handles={selectedHandles.join(",")}
               onPointerDown={selectModifyTargetFromCanvas}
               onPointerMove={updateStretchDrag}
               onPointerUp={finishStretchDrag}

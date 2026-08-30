@@ -295,3 +295,35 @@ reference is still absent. The functional score also remains **29/133, 21.8%
 raw / 25.2% weighted**. All 29 certified rows received fresh browser/read-back,
 cross, global-topology and content-address evidence. No production deployment
 was performed.
+
+## 2026-08-30 AutoCAD selection and grip fidelity wave 3
+
+The selected-object state now has an AutoCAD-like cyan highlight and typed,
+screen-sized grips rendered as a non-document overlay. A closed rectangular
+polyline exposes its four vertices and four segment midpoints, matching the
+eight grips in the private AutoCAD 2024.1.2 selected-properties reference.
+The same grip mapper covers the supported line, construction-line, circle,
+arc, ellipse, spline, annotation, hatch, dimension and block-reference
+families without mutating the document or polluting file output. Solid hatches
+retain their normal fill while the selection overlay highlights only geometry.
+
+The fixed 1920x1080 Chromium read-back under
+`evidence/artifacts/visual-shell-wave-3` detected 676 cyan selection pixels,
+exactly eight rectangle grips, all six required Kuubik states and zero console
+errors. Renderer unit coverage proves the eight grip locations and the overlay
+paint calls. All 29 certified rows received fresh current-byte browser,
+read-back and applicable cross evidence after the shared renderer change.
+
+Scores remain deliberately unchanged at **29/133, 21.8% raw / 25.2%
+weighted**, and **60.7% visual**. This focused state improvement is not the
+required five-category same-environment audit, and the sixth private AutoCAD
+command-history/context reference is still absent. No preview or production
+deployment was performed.
+
+The complete local gate passes typecheck, lint, production build, **82 Vitest
+files / 497 tests**, mutation **78/78**, DXF **47/47**, PDF **20/20** and
+Chromium **108/108**. Parity-kit, all current cross-evidence, license and
+public-tree checks pass. Pinned Gitleaks 8.30.1 found zero leaks in 1,031
+git-visible source files. LibreCAD 2.2.1.5 and FreeCAD 1.1.3 fixtures pass as
+secondary non-authorities with the honest local status
+`FIXTURE_PASS_NOT_NETWORK_ISOLATED`.
