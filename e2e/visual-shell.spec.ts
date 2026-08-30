@@ -71,6 +71,47 @@ test("AutoCAD-style shell keeps all eight primary zones visible at 1920x1080", a
     coordinateReadout: await page.getByTestId("coordinate-readout").textContent(),
     viewIndicator: await page.getByTestId("view-orientation-indicator").getAttribute("aria-label"),
   };
+  const modelDisplayReadback = await modelCanvas.evaluate((canvas) => {
+    const element = canvas as HTMLCanvasElement;
+    const context = element.getContext("2d", { willReadFrequently: true })!;
+    const pixels = context.getImageData(0, 0, element.width, element.height).data;
+    const pixel = (x: number, y: number) => {
+      const offset = (y * element.width + x) * 4;
+      return [pixels[offset]!, pixels[offset + 1]!, pixels[offset + 2]!, pixels[offset + 3]!] as const;
+    };
+    const runs = (axis: "x" | "y", fixed: number, start: number, end: number) => {
+      const hits: number[] = [];
+      for (let value = start; value <= end; value += 1) {
+        const rgba = axis === "x" ? pixel(value, fixed) : pixel(fixed, value);
+        if (rgba[3] >= 32) hits.push(value);
+      }
+      const output: Array<[number, number]> = [];
+      for (const value of hits) {
+        const last = output.at(-1);
+        if (last && value <= last[1] + 1) last[1] = value;
+        else output.push([value, value]);
+      }
+      return output;
+    };
+    return {
+      cssBackground: getComputedStyle(element).backgroundColor,
+      verticalGridRuns: runs("x", 219, 680, element.width - 1),
+      horizontalGridRuns: runs("y", 700, 0, element.height - 1),
+      clearPixelRgba: pixel(700, 20),
+      majorGridPixelRgba: pixel(742, 219),
+    };
+  });
+  expect(modelDisplayReadback.cssBackground).toBe("rgb(255, 255, 255)");
+  expect(modelDisplayReadback.verticalGridRuns).toHaveLength(7);
+  modelDisplayReadback.verticalGridRuns.map(([start, end]) => Math.round((start + end) / 2)).forEach((center, index) => {
+    expect(Math.abs(center - [743, 918, 1093, 1268, 1444, 1619, 1794][index]!)).toBeLessThanOrEqual(1);
+  });
+  expect(modelDisplayReadback.horizontalGridRuns).toHaveLength(4);
+  modelDisplayReadback.horizontalGridRuns.map(([start, end]) => Math.round((start + end) / 2)).forEach((center, index) => {
+    expect(Math.abs(center - [147, 322, 498, 673][index]!)).toBeLessThanOrEqual(1);
+  });
+  expect(modelDisplayReadback.clearPixelRgba[3]).toBe(0);
+  expect(modelDisplayReadback.majorGridPixelRgba[3]).toBeGreaterThan(200);
   await page.getByRole("navigation", { name: "Ribbon vahelehed" }).hover();
   await expect(crosshair).toBeHidden();
 
@@ -251,6 +292,7 @@ test("AutoCAD-style shell keeps all eight primary zones visible at 1920x1080", a
         emptyWorkspace: true,
         activeDrawingCommand: true,
         modelNavigation,
+        modelDisplayReadback,
         selectedProperties: true,
         selectionPixels,
         contextMenu: {

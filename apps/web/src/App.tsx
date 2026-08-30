@@ -911,7 +911,18 @@ export function App() {
       } : {
         ...(activeLayout.kind === "model" ? { selectedHandles } : {}),
         ...(matchPropertiesPreview ? { previewAppearance: "resolved" as const } : {}),
-        ...(activeLayout.kind === "model" ? { grid: { enabled: gridEnabled } } : {}),
+        ...(activeLayout.kind === "model" ? {
+          displayTheme: "light" as const,
+          grid: {
+            enabled: gridEnabled,
+            spacingWorld: 662.67,
+            originWorld: { x: 177.5, y: -45.35 },
+            minorColor: "#9b9ea6",
+            majorColor: "#9b9fa8",
+            minorLineWidthPx: 1,
+            majorLineWidthPx: 1.2,
+          },
+        } : {}),
       });
     };
     render();

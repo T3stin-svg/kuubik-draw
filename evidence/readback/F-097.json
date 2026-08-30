@@ -4,8 +4,8 @@
   "kind": "readback",
   "authority": "independent-parser",
   "status": "PASS",
-  "artifactSha256": "e9cf3956bdd9160f08b5cf1d045e262ac222067deab73c4018f2ad37c2aa6cdb",
-  "observedAt": "2026-08-30T22:02:10.434Z",
+  "artifactSha256": "7b33bdb2420278e3a57af7e2a1a0b5cad731140e1e20d8c5eebd6daba80528a4",
+  "observedAt": "2026-08-30T22:44:22.058Z",
   "workflow": "Production cad-core creates, copies, edits, reorders and deletes layouts, then serializes pre-delete and final KDRAW1 containers. A separate reader validates magic, envelope, base64 payload length and SHA-256 before parsing document.json without calling deserializeKDraw.",
   "result": "Independent read-back found Model/NOTES/copy/PLAN before deletion with source radius 30, copy radius 25, distinct viewport IDs and distinct entity handles. Delete selected adjacent PLAN, one Undo restored the complete copy, Redo removed it again, and the final hashed container reopened as Model/NOTES/PLAN.",
   "artifact": "evidence/artifacts/F-097-independent-readback.json"

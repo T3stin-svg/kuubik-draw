@@ -7,15 +7,15 @@
       "sources": {
         ".github/workflows/ci.yml": "7524ae023f00ede9a6ae5e15d004e9acdc07ebfee12e76f681f07b2e7b7be09e",
         "apps/web/package.json": "eca74960936f1241303d6522a33575834cb07a8bd47dd8987d1052cd00e114af",
-        "apps/web/src/App.tsx": "a1ffbf7ad389751877c1c33ef9f23aad036900451aae64e1d371f40a74a8f34d",
+        "apps/web/src/App.tsx": "9a2f2bc34bad653d1d70c2b99eee7330ef9b7f7a58d9ba7ff36c81348a52128e",
         "apps/web/src/context-menu.ts": "d7004dfba317042b45f344971e29ba8a36a8de4f6b4ed7a2e573d8a84aae9931",
         "apps/web/src/indexed-db.ts": "257405697d79c2319ef1a25cbb48e98568758f21908fd2d69e98c5b63ff84232",
         "apps/web/src/main.tsx": "f0b0790cfa19ffe76fbcedb5705f8b341e3d79e76cb75b5480d95b22d04e3aa4",
-        "apps/web/src/style.css": "c4f351c488d1b0a74f7a2ff02857c9e7bd3ab2a25a253366620e28f0a0d54ecd",
+        "apps/web/src/style.css": "cd7093ccf4a693f79e594221ad4e930358b8f3f389afc4298d80231efed1983e",
         "e2e/f003-rectangle.spec.ts": "efffd70e665800a8527305e8964dcd9386f6e867a80b4ca4e9cdc0bdcc784620",
         "e2e/helpers/layout-tools.ts": "c91e4c574e5e3a74efc3665883fc7ac172968eb6ac834f2c8b7a56d141ac5e47",
         "e2e/local-document.spec.ts": "08b933cfe03eafb1becf407bb56b98e2f5e66316f067936e0092800ecaf5f7a0",
-        "e2e/visual-shell.spec.ts": "8177c965b123bf0c8f3c7adfda81e23f1bfc9dc63769e2cbdbaef1947e3403ed",
+        "e2e/visual-shell.spec.ts": "1313a51369c9a6dda74a9f7e0d6303ff27cfa2634de31050fa894aaa4426dcda",
         "evidence/artifacts/parity-package-v3-to-v4.json": "519a4237eb6d04099c9ff5a6ac97e6e0f8c9faee7276b02da03e37f185b17f97",
         "package-lock.json": "da1dcf889d8fbf35f6a8e4403b29ed34666b13176a2b98307a0c23e25fa06a53",
         "package.json": {
@@ -47,9 +47,9 @@
         "packages/cad-renderer/package.json": "d514c6c9a13d248b4b9df2057ff74efc806d2ce312de6f5fb3aa4fccb2374f7b",
         "packages/cad-renderer/src/bounds.ts": "c2e589c3c8be0642582eaa95ffba295dccf377fa8cfefc835a16e6d2e7c68c06",
         "packages/cad-renderer/src/index.ts": "5563e5e6cdd66b652248e90d4ed237b145fd828da715c64375d2d05169a61888",
-        "packages/cad-renderer/src/renderer.ts": "95391b15cbc8eab61c03f7bb84cb36813727719118997c9350a300b4e537256f",
+        "packages/cad-renderer/src/renderer.ts": "e808a8ad570cfd84c5461f895dd5165691d422f3fd225424f2c1117dfe822f28",
         "packages/cad-renderer/src/rtree.ts": "1ee440db21555f018500dae5c5302c38c27a809a291bcd521702f94aa07068be",
-        "parity/autocad-2024-visual.manifest.mjs": "32344f42b75a5a6bca0525c5054d9d7c1a28520d27f96079dba5bcf968eff8d4",
+        "parity/autocad-2024-visual.manifest.mjs": "62b72c85654da8c9a0fe74fa8b9be578247404dcb8ea96c55642b3e97712072c",
         "parity/check-visual.mjs": "346150045a481afb49df42f084b8930c6103ef59b68f9bf2e30db6c99411fe6e",
         "parity/rows.mjs": "ea2769b0a642ec6b8b89861addc5266422514aaad3151a76d1dc47ab44769d45",
         "playwright.config.ts": "934bf27906ceb40f12c8a629df2865a03b197a6ea7b6d5d27386c9b3c47046c5",
@@ -74,25 +74,25 @@
         },
         "browser": {
           "descriptorPath": "evidence/browser/F-003.json",
-          "descriptorSha256": "b4ddf0c54a107bbaf2b97fc7315075df89191f61d32ae19026aa8a659855b438",
+          "descriptorSha256": "0f63fac6eee238bb0c3906300e08aa2476e33d9a9173b784ead50bd5f856e75e",
           "descriptorContentSha256": "6ad4242aebd1a23487f1f77acf7ccdb8fe65a96de02dcb0a4dbd4c5ece44ca95",
           "artifactPath": "evidence/artifacts/F-003-browser-readback.json",
-          "artifactSha256": "0cff9da3942cb27a8d0e942067eedef863c1605e70649f5284430229a2ed53bb",
+          "artifactSha256": "fd6647865ad133474a93f2a78ce1fc02703ac6da0feac03e020813350b6c3eac",
           "artifactContentSha256": "5bf6c65d24ccbd38473e7d9ed4c377e46eace6cc73c1dffcaa7647a54a3b61b3"
         },
         "readback": {
           "descriptorPath": "evidence/readback/F-003.json",
-          "descriptorSha256": "8de9a93360da48573dde0ff2359cb87a8fac47527008ef60f3943b5e70ff4d61",
+          "descriptorSha256": "b5a3678ca36c328289c9294e832dd645a36cec279eefb46cee4d595538b979a1",
           "descriptorContentSha256": "a06d42776669147b8cfbbabb91c3089cd7f16cb2af331b530b2120887d8335f7",
           "artifactPath": "evidence/artifacts/F-003-independent-readback.json",
-          "artifactSha256": "2b97512f56819eb08ad229b4fa3e988100ef5ad60374768fb9acce011de3cf4b",
+          "artifactSha256": "da5f7e02a88ebe4ed3eec829bc86ec5b2e246e89cd18ad9997585226b6021f5e",
           "artifactContentSha256": "e46c19422f87d55ea019be6593d37af018bb1663b84dbc86560aaee055b8cc85"
         }
       },
       "receipts": {
         "global": {
           "path": "evidence/artifacts/parity-global-topology.json",
-          "sha256": "5ad7e6af3937f0390eb56c00a2af81e461a6163186d2dd07e828adf437ba1cc6",
+          "sha256": "7ac26fa95c8a4a1489968a99e48d798e6bc1623113ae03b07eb51b65b38d150d",
           "contentSha256": "8a1c736ee169ef78b8571a7f97bfd132abaae6837fb099d2c496d2c13ba7eef8"
         }
       }
@@ -102,16 +102,16 @@
       "sources": {
         ".github/workflows/ci.yml": "7524ae023f00ede9a6ae5e15d004e9acdc07ebfee12e76f681f07b2e7b7be09e",
         "apps/web/package.json": "eca74960936f1241303d6522a33575834cb07a8bd47dd8987d1052cd00e114af",
-        "apps/web/src/App.tsx": "a1ffbf7ad389751877c1c33ef9f23aad036900451aae64e1d371f40a74a8f34d",
+        "apps/web/src/App.tsx": "9a2f2bc34bad653d1d70c2b99eee7330ef9b7f7a58d9ba7ff36c81348a52128e",
         "apps/web/src/context-menu.ts": "d7004dfba317042b45f344971e29ba8a36a8de4f6b4ed7a2e573d8a84aae9931",
         "apps/web/src/indexed-db.ts": "257405697d79c2319ef1a25cbb48e98568758f21908fd2d69e98c5b63ff84232",
         "apps/web/src/main.tsx": "f0b0790cfa19ffe76fbcedb5705f8b341e3d79e76cb75b5480d95b22d04e3aa4",
-        "apps/web/src/style.css": "c4f351c488d1b0a74f7a2ff02857c9e7bd3ab2a25a253366620e28f0a0d54ecd",
+        "apps/web/src/style.css": "cd7093ccf4a693f79e594221ad4e930358b8f3f389afc4298d80231efed1983e",
         "apps/web/src/workflows/modify-command.ts": "9d1f7d0b1d3e308eac2a5d4055436626e3a497cbaaf116c05957e1fde15616c7",
         "e2e/f015-erase.spec.ts": "103071b10f40908024400e9b22d4732565dd7de17c7818254ab92ce196608caf",
         "e2e/helpers/layout-tools.ts": "c91e4c574e5e3a74efc3665883fc7ac172968eb6ac834f2c8b7a56d141ac5e47",
         "e2e/local-document.spec.ts": "08b933cfe03eafb1becf407bb56b98e2f5e66316f067936e0092800ecaf5f7a0",
-        "e2e/visual-shell.spec.ts": "8177c965b123bf0c8f3c7adfda81e23f1bfc9dc63769e2cbdbaef1947e3403ed",
+        "e2e/visual-shell.spec.ts": "1313a51369c9a6dda74a9f7e0d6303ff27cfa2634de31050fa894aaa4426dcda",
         "evidence/artifacts/parity-package-v3-to-v4.json": "519a4237eb6d04099c9ff5a6ac97e6e0f8c9faee7276b02da03e37f185b17f97",
         "package-lock.json": "da1dcf889d8fbf35f6a8e4403b29ed34666b13176a2b98307a0c23e25fa06a53",
         "package.json": {
@@ -143,9 +143,9 @@
         "packages/cad-renderer/package.json": "d514c6c9a13d248b4b9df2057ff74efc806d2ce312de6f5fb3aa4fccb2374f7b",
         "packages/cad-renderer/src/bounds.ts": "c2e589c3c8be0642582eaa95ffba295dccf377fa8cfefc835a16e6d2e7c68c06",
         "packages/cad-renderer/src/index.ts": "5563e5e6cdd66b652248e90d4ed237b145fd828da715c64375d2d05169a61888",
-        "packages/cad-renderer/src/renderer.ts": "95391b15cbc8eab61c03f7bb84cb36813727719118997c9350a300b4e537256f",
+        "packages/cad-renderer/src/renderer.ts": "e808a8ad570cfd84c5461f895dd5165691d422f3fd225424f2c1117dfe822f28",
         "packages/cad-renderer/src/rtree.ts": "1ee440db21555f018500dae5c5302c38c27a809a291bcd521702f94aa07068be",
-        "parity/autocad-2024-visual.manifest.mjs": "32344f42b75a5a6bca0525c5054d9d7c1a28520d27f96079dba5bcf968eff8d4",
+        "parity/autocad-2024-visual.manifest.mjs": "62b72c85654da8c9a0fe74fa8b9be578247404dcb8ea96c55642b3e97712072c",
         "parity/check-visual.mjs": "346150045a481afb49df42f084b8930c6103ef59b68f9bf2e30db6c99411fe6e",
         "parity/rows.mjs": "ea2769b0a642ec6b8b89861addc5266422514aaad3151a76d1dc47ab44769d45",
         "playwright.config.ts": "934bf27906ceb40f12c8a629df2865a03b197a6ea7b6d5d27386c9b3c47046c5",
@@ -170,25 +170,25 @@
         },
         "browser": {
           "descriptorPath": "evidence/browser/F-015.json",
-          "descriptorSha256": "acd52ccca73cc8156871057645530b1e5ff3766ab9abd5de4c0b94158b9cefdb",
+          "descriptorSha256": "15683f96b4e457deb6685875cc44ae43ad6437104c21e75af7f271c7d2d11e34",
           "descriptorContentSha256": "efa49907dd4b2784f61e903e4f6eb19ec995db7af3b5befa0d54156cf6c98f2d",
           "artifactPath": "evidence/artifacts/F-015-browser-readback.json",
-          "artifactSha256": "91e8e7ad37b385c2c3acb2a2b050e61257dad38355403e1edb8626d36fcbb67d",
+          "artifactSha256": "54a1b0e44ca180a96254ca9c5bc60cc26b5376e5ca0e91297b001b7408a1b859",
           "artifactContentSha256": "68b14793c1af3536b8586c07fe80d269b227b681f1d48bb6c1d0caefa75bd1c7"
         },
         "readback": {
           "descriptorPath": "evidence/readback/F-015.json",
-          "descriptorSha256": "f9642441b585d242e7597a190a99c18b6b02953e8f1b1d0cff78f3ebea06c4b4",
+          "descriptorSha256": "e0b3664ebafaa201852e3f13bab81c098d65bda99fb795f50b7af45508202206",
           "descriptorContentSha256": "880f3462345e780907453119fde319ce739edd695c5e96db50cffbd3e2958355",
           "artifactPath": "evidence/artifacts/F-015-independent-readback.json",
-          "artifactSha256": "b7c477f20a54760f72af8cdc7235a5ea2faf193a46afb5a036d45395bae470c0",
+          "artifactSha256": "942494a85d2d4c4b0c49193710ec08a648c79682f34a9c54c6487ef138defe15",
           "artifactContentSha256": "a41f9096f80cd847c92ec0accd66a48390e8a1476fbfab2684d2110cfa2a816f"
         }
       },
       "receipts": {
         "global": {
           "path": "evidence/artifacts/parity-global-topology.json",
-          "sha256": "5ad7e6af3937f0390eb56c00a2af81e461a6163186d2dd07e828adf437ba1cc6",
+          "sha256": "7ac26fa95c8a4a1489968a99e48d798e6bc1623113ae03b07eb51b65b38d150d",
           "contentSha256": "8a1c736ee169ef78b8571a7f97bfd132abaae6837fb099d2c496d2c13ba7eef8"
         }
       }
@@ -198,16 +198,16 @@
       "sources": {
         ".github/workflows/ci.yml": "7524ae023f00ede9a6ae5e15d004e9acdc07ebfee12e76f681f07b2e7b7be09e",
         "apps/web/package.json": "eca74960936f1241303d6522a33575834cb07a8bd47dd8987d1052cd00e114af",
-        "apps/web/src/App.tsx": "a1ffbf7ad389751877c1c33ef9f23aad036900451aae64e1d371f40a74a8f34d",
+        "apps/web/src/App.tsx": "9a2f2bc34bad653d1d70c2b99eee7330ef9b7f7a58d9ba7ff36c81348a52128e",
         "apps/web/src/context-menu.ts": "d7004dfba317042b45f344971e29ba8a36a8de4f6b4ed7a2e573d8a84aae9931",
         "apps/web/src/indexed-db.ts": "257405697d79c2319ef1a25cbb48e98568758f21908fd2d69e98c5b63ff84232",
         "apps/web/src/main.tsx": "f0b0790cfa19ffe76fbcedb5705f8b341e3d79e76cb75b5480d95b22d04e3aa4",
-        "apps/web/src/style.css": "c4f351c488d1b0a74f7a2ff02857c9e7bd3ab2a25a253366620e28f0a0d54ecd",
+        "apps/web/src/style.css": "cd7093ccf4a693f79e594221ad4e930358b8f3f389afc4298d80231efed1983e",
         "apps/web/src/workflows/modify-command.ts": "9d1f7d0b1d3e308eac2a5d4055436626e3a497cbaaf116c05957e1fde15616c7",
         "e2e/f016-move.spec.ts": "daa3b7101c22f6cbcd2e7f2a07750d6d48cf7a8465d0fa7cb4db93685ffa35dc",
         "e2e/helpers/layout-tools.ts": "c91e4c574e5e3a74efc3665883fc7ac172968eb6ac834f2c8b7a56d141ac5e47",
         "e2e/local-document.spec.ts": "08b933cfe03eafb1becf407bb56b98e2f5e66316f067936e0092800ecaf5f7a0",
-        "e2e/visual-shell.spec.ts": "8177c965b123bf0c8f3c7adfda81e23f1bfc9dc63769e2cbdbaef1947e3403ed",
+        "e2e/visual-shell.spec.ts": "1313a51369c9a6dda74a9f7e0d6303ff27cfa2634de31050fa894aaa4426dcda",
         "evidence/artifacts/parity-package-v3-to-v4.json": "519a4237eb6d04099c9ff5a6ac97e6e0f8c9faee7276b02da03e37f185b17f97",
         "package-lock.json": "da1dcf889d8fbf35f6a8e4403b29ed34666b13176a2b98307a0c23e25fa06a53",
         "package.json": {
@@ -239,9 +239,9 @@
         "packages/cad-renderer/package.json": "d514c6c9a13d248b4b9df2057ff74efc806d2ce312de6f5fb3aa4fccb2374f7b",
         "packages/cad-renderer/src/bounds.ts": "c2e589c3c8be0642582eaa95ffba295dccf377fa8cfefc835a16e6d2e7c68c06",
         "packages/cad-renderer/src/index.ts": "5563e5e6cdd66b652248e90d4ed237b145fd828da715c64375d2d05169a61888",
-        "packages/cad-renderer/src/renderer.ts": "95391b15cbc8eab61c03f7bb84cb36813727719118997c9350a300b4e537256f",
+        "packages/cad-renderer/src/renderer.ts": "e808a8ad570cfd84c5461f895dd5165691d422f3fd225424f2c1117dfe822f28",
         "packages/cad-renderer/src/rtree.ts": "1ee440db21555f018500dae5c5302c38c27a809a291bcd521702f94aa07068be",
-        "parity/autocad-2024-visual.manifest.mjs": "32344f42b75a5a6bca0525c5054d9d7c1a28520d27f96079dba5bcf968eff8d4",
+        "parity/autocad-2024-visual.manifest.mjs": "62b72c85654da8c9a0fe74fa8b9be578247404dcb8ea96c55642b3e97712072c",
         "parity/check-visual.mjs": "346150045a481afb49df42f084b8930c6103ef59b68f9bf2e30db6c99411fe6e",
         "parity/rows.mjs": "ea2769b0a642ec6b8b89861addc5266422514aaad3151a76d1dc47ab44769d45",
         "playwright.config.ts": "934bf27906ceb40f12c8a629df2865a03b197a6ea7b6d5d27386c9b3c47046c5",
@@ -268,25 +268,25 @@
         },
         "browser": {
           "descriptorPath": "evidence/browser/F-016.json",
-          "descriptorSha256": "6aa9587a05a238c8b3858284cd900d9a6a8a30534855d8cda9ee03551bd06684",
+          "descriptorSha256": "0ca6ded3299297f5c939d8bd2c83b6732fbc4ef502cb1367722b90477e935203",
           "descriptorContentSha256": "6f51ec83d8c1476a9d5409b4906b70e11ddf67b156a45868ee3e34826b2b856c",
           "artifactPath": "evidence/artifacts/F-016-browser-readback.json",
-          "artifactSha256": "943093b560db24f00c9b9a567f4bf1e4ce05cb3552b6e25a2e5ed04fbddf7313",
+          "artifactSha256": "2e681a40deaeb558ebe7b21eab9c4414b89f4b61d22fd266d8a6453dd55c7dbd",
           "artifactContentSha256": "4248dcc2530661dc14d2804be6e8b2be63488d1304336801ae95cc218ef2fe4d"
         },
         "readback": {
           "descriptorPath": "evidence/readback/F-016.json",
-          "descriptorSha256": "38d4d4c690cf1f82297f773cca0c4f195f3b337dbc0b06a8bb60b4cfec5930c1",
+          "descriptorSha256": "57402b422663ae1c4f319da27f20d2d0e25d4b685f4c342ce57a82129943c131",
           "descriptorContentSha256": "d63c3720a94cdea6529d454b1379c79a108a226a83010d91297e6440b1c11c61",
           "artifactPath": "evidence/artifacts/F-016-independent-readback.json",
-          "artifactSha256": "451f055c801a350ab3e801ef490ce168c36dfc12b24669482d2c0beb6ffb77d6",
+          "artifactSha256": "36fb37dfbfcb59eb12b511f0f4b910193ab56f4cf9c3d314f37edadd372dd777",
           "artifactContentSha256": "f42c8ed70e2450f85d07bf4065884a6a8fab7c43ebb702da4a8e20f2404db545"
         }
       },
       "receipts": {
         "global": {
           "path": "evidence/artifacts/parity-global-topology.json",
-          "sha256": "5ad7e6af3937f0390eb56c00a2af81e461a6163186d2dd07e828adf437ba1cc6",
+          "sha256": "7ac26fa95c8a4a1489968a99e48d798e6bc1623113ae03b07eb51b65b38d150d",
           "contentSha256": "8a1c736ee169ef78b8571a7f97bfd132abaae6837fb099d2c496d2c13ba7eef8"
         }
       }
@@ -296,16 +296,16 @@
       "sources": {
         ".github/workflows/ci.yml": "7524ae023f00ede9a6ae5e15d004e9acdc07ebfee12e76f681f07b2e7b7be09e",
         "apps/web/package.json": "eca74960936f1241303d6522a33575834cb07a8bd47dd8987d1052cd00e114af",
-        "apps/web/src/App.tsx": "a1ffbf7ad389751877c1c33ef9f23aad036900451aae64e1d371f40a74a8f34d",
+        "apps/web/src/App.tsx": "9a2f2bc34bad653d1d70c2b99eee7330ef9b7f7a58d9ba7ff36c81348a52128e",
         "apps/web/src/context-menu.ts": "d7004dfba317042b45f344971e29ba8a36a8de4f6b4ed7a2e573d8a84aae9931",
         "apps/web/src/indexed-db.ts": "257405697d79c2319ef1a25cbb48e98568758f21908fd2d69e98c5b63ff84232",
         "apps/web/src/main.tsx": "f0b0790cfa19ffe76fbcedb5705f8b341e3d79e76cb75b5480d95b22d04e3aa4",
-        "apps/web/src/style.css": "c4f351c488d1b0a74f7a2ff02857c9e7bd3ab2a25a253366620e28f0a0d54ecd",
+        "apps/web/src/style.css": "cd7093ccf4a693f79e594221ad4e930358b8f3f389afc4298d80231efed1983e",
         "apps/web/src/workflows/modify-command.ts": "9d1f7d0b1d3e308eac2a5d4055436626e3a497cbaaf116c05957e1fde15616c7",
         "e2e/f017-copy.spec.ts": "e35523a321c6d3100dfdbfc039e715825dc2835e0820a231e97cb1cae6497155",
         "e2e/helpers/layout-tools.ts": "c91e4c574e5e3a74efc3665883fc7ac172968eb6ac834f2c8b7a56d141ac5e47",
         "e2e/local-document.spec.ts": "08b933cfe03eafb1becf407bb56b98e2f5e66316f067936e0092800ecaf5f7a0",
-        "e2e/visual-shell.spec.ts": "8177c965b123bf0c8f3c7adfda81e23f1bfc9dc63769e2cbdbaef1947e3403ed",
+        "e2e/visual-shell.spec.ts": "1313a51369c9a6dda74a9f7e0d6303ff27cfa2634de31050fa894aaa4426dcda",
         "evidence/artifacts/parity-package-v3-to-v4.json": "519a4237eb6d04099c9ff5a6ac97e6e0f8c9faee7276b02da03e37f185b17f97",
         "package-lock.json": "da1dcf889d8fbf35f6a8e4403b29ed34666b13176a2b98307a0c23e25fa06a53",
         "package.json": {
@@ -337,9 +337,9 @@
         "packages/cad-renderer/package.json": "d514c6c9a13d248b4b9df2057ff74efc806d2ce312de6f5fb3aa4fccb2374f7b",
         "packages/cad-renderer/src/bounds.ts": "c2e589c3c8be0642582eaa95ffba295dccf377fa8cfefc835a16e6d2e7c68c06",
         "packages/cad-renderer/src/index.ts": "5563e5e6cdd66b652248e90d4ed237b145fd828da715c64375d2d05169a61888",
-        "packages/cad-renderer/src/renderer.ts": "95391b15cbc8eab61c03f7bb84cb36813727719118997c9350a300b4e537256f",
+        "packages/cad-renderer/src/renderer.ts": "e808a8ad570cfd84c5461f895dd5165691d422f3fd225424f2c1117dfe822f28",
         "packages/cad-renderer/src/rtree.ts": "1ee440db21555f018500dae5c5302c38c27a809a291bcd521702f94aa07068be",
-        "parity/autocad-2024-visual.manifest.mjs": "32344f42b75a5a6bca0525c5054d9d7c1a28520d27f96079dba5bcf968eff8d4",
+        "parity/autocad-2024-visual.manifest.mjs": "62b72c85654da8c9a0fe74fa8b9be578247404dcb8ea96c55642b3e97712072c",
         "parity/check-visual.mjs": "346150045a481afb49df42f084b8930c6103ef59b68f9bf2e30db6c99411fe6e",
         "parity/rows.mjs": "ea2769b0a642ec6b8b89861addc5266422514aaad3151a76d1dc47ab44769d45",
         "playwright.config.ts": "934bf27906ceb40f12c8a629df2865a03b197a6ea7b6d5d27386c9b3c47046c5",
@@ -366,25 +366,25 @@
         },
         "browser": {
           "descriptorPath": "evidence/browser/F-017.json",
-          "descriptorSha256": "e1ea68f592c11c166430aae575b2f3c17b427a3f005cc1dd044adf48461c518a",
+          "descriptorSha256": "0b79201326961b07c8f75af4e4c008ab83dd0fa9427de8179453a4dc0cc5d8a0",
           "descriptorContentSha256": "ae489ec24ac3755e76930fbd55f4af759e37c3bfd9dd172129249c24685540f9",
           "artifactPath": "evidence/artifacts/F-017-browser-readback.json",
-          "artifactSha256": "d54757f11cfdcb9bad9654c24cb7aa906ed5451b0d01d06664eda02e9ff84c54",
+          "artifactSha256": "922b3f1456564178d4cf022d98a479dff2fd03f675f35138934545d96573320a",
           "artifactContentSha256": "c20060d38095884783c942e0e26262b03aba59513abe930c58ede636a3ec43d1"
         },
         "readback": {
           "descriptorPath": "evidence/readback/F-017.json",
-          "descriptorSha256": "629eebeb5036422ecb2d5c7b045564b229a4c6dd4028755fbc635dc59078537d",
+          "descriptorSha256": "4b8fe37b6a5edc9ab4b96207ee0f8c16a6be4bd56bad73b78948c872f6ad011e",
           "descriptorContentSha256": "e8c4573eb640f374684fab45e37f095524d3d044895e5025d8d9d922be77c34e",
           "artifactPath": "evidence/artifacts/F-017-independent-readback.json",
-          "artifactSha256": "6dbfca688abc7c81e1d6854bd0ea2aa3fb37aaf1c33719eb843d5ccf238007c9",
+          "artifactSha256": "9611126417f0c11928627f2783554edef4fef76912a38ee2a52d97438fca31ea",
           "artifactContentSha256": "ae8d2a604a37ca33cb26632d5f8173d4f768292cb1a89fed82765974fe294770"
         }
       },
       "receipts": {
         "global": {
           "path": "evidence/artifacts/parity-global-topology.json",
-          "sha256": "5ad7e6af3937f0390eb56c00a2af81e461a6163186d2dd07e828adf437ba1cc6",
+          "sha256": "7ac26fa95c8a4a1489968a99e48d798e6bc1623113ae03b07eb51b65b38d150d",
           "contentSha256": "8a1c736ee169ef78b8571a7f97bfd132abaae6837fb099d2c496d2c13ba7eef8"
         }
       }
@@ -394,16 +394,16 @@
       "sources": {
         ".github/workflows/ci.yml": "7524ae023f00ede9a6ae5e15d004e9acdc07ebfee12e76f681f07b2e7b7be09e",
         "apps/web/package.json": "eca74960936f1241303d6522a33575834cb07a8bd47dd8987d1052cd00e114af",
-        "apps/web/src/App.tsx": "a1ffbf7ad389751877c1c33ef9f23aad036900451aae64e1d371f40a74a8f34d",
+        "apps/web/src/App.tsx": "9a2f2bc34bad653d1d70c2b99eee7330ef9b7f7a58d9ba7ff36c81348a52128e",
         "apps/web/src/context-menu.ts": "d7004dfba317042b45f344971e29ba8a36a8de4f6b4ed7a2e573d8a84aae9931",
         "apps/web/src/indexed-db.ts": "257405697d79c2319ef1a25cbb48e98568758f21908fd2d69e98c5b63ff84232",
         "apps/web/src/main.tsx": "f0b0790cfa19ffe76fbcedb5705f8b341e3d79e76cb75b5480d95b22d04e3aa4",
-        "apps/web/src/style.css": "c4f351c488d1b0a74f7a2ff02857c9e7bd3ab2a25a253366620e28f0a0d54ecd",
+        "apps/web/src/style.css": "cd7093ccf4a693f79e594221ad4e930358b8f3f389afc4298d80231efed1983e",
         "apps/web/src/workflows/modify-command.ts": "9d1f7d0b1d3e308eac2a5d4055436626e3a497cbaaf116c05957e1fde15616c7",
         "e2e/f018-rotate.spec.ts": "ee78865278a41ef33e76a8dbda5bb29a682869a4a4d8b16862f7ee98dff0c904",
         "e2e/helpers/layout-tools.ts": "c91e4c574e5e3a74efc3665883fc7ac172968eb6ac834f2c8b7a56d141ac5e47",
         "e2e/local-document.spec.ts": "08b933cfe03eafb1becf407bb56b98e2f5e66316f067936e0092800ecaf5f7a0",
-        "e2e/visual-shell.spec.ts": "8177c965b123bf0c8f3c7adfda81e23f1bfc9dc63769e2cbdbaef1947e3403ed",
+        "e2e/visual-shell.spec.ts": "1313a51369c9a6dda74a9f7e0d6303ff27cfa2634de31050fa894aaa4426dcda",
         "evidence/artifacts/parity-package-v3-to-v4.json": "519a4237eb6d04099c9ff5a6ac97e6e0f8c9faee7276b02da03e37f185b17f97",
         "package-lock.json": "da1dcf889d8fbf35f6a8e4403b29ed34666b13176a2b98307a0c23e25fa06a53",
         "package.json": {
@@ -435,9 +435,9 @@
         "packages/cad-renderer/package.json": "d514c6c9a13d248b4b9df2057ff74efc806d2ce312de6f5fb3aa4fccb2374f7b",
         "packages/cad-renderer/src/bounds.ts": "c2e589c3c8be0642582eaa95ffba295dccf377fa8cfefc835a16e6d2e7c68c06",
         "packages/cad-renderer/src/index.ts": "5563e5e6cdd66b652248e90d4ed237b145fd828da715c64375d2d05169a61888",
-        "packages/cad-renderer/src/renderer.ts": "95391b15cbc8eab61c03f7bb84cb36813727719118997c9350a300b4e537256f",
+        "packages/cad-renderer/src/renderer.ts": "e808a8ad570cfd84c5461f895dd5165691d422f3fd225424f2c1117dfe822f28",
         "packages/cad-renderer/src/rtree.ts": "1ee440db21555f018500dae5c5302c38c27a809a291bcd521702f94aa07068be",
-        "parity/autocad-2024-visual.manifest.mjs": "32344f42b75a5a6bca0525c5054d9d7c1a28520d27f96079dba5bcf968eff8d4",
+        "parity/autocad-2024-visual.manifest.mjs": "62b72c85654da8c9a0fe74fa8b9be578247404dcb8ea96c55642b3e97712072c",
         "parity/check-visual.mjs": "346150045a481afb49df42f084b8930c6103ef59b68f9bf2e30db6c99411fe6e",
         "parity/rows.mjs": "ea2769b0a642ec6b8b89861addc5266422514aaad3151a76d1dc47ab44769d45",
         "playwright.config.ts": "934bf27906ceb40f12c8a629df2865a03b197a6ea7b6d5d27386c9b3c47046c5",
@@ -464,25 +464,25 @@
         },
         "browser": {
           "descriptorPath": "evidence/browser/F-018.json",
-          "descriptorSha256": "12f09da3add46fe0f32f152f681927a8fe25311524e753ac116a0b1f16854eb1",
+          "descriptorSha256": "bd1c87a5ee35954cbfddc4a6393a832a0de066c918e5558b5aa66cbe10d4871f",
           "descriptorContentSha256": "98a6799ec6e57c7e54f35de12f621090cfa05e76bac39577b210ba705a6fc035",
           "artifactPath": "evidence/artifacts/F-018-browser-readback.json",
-          "artifactSha256": "5ab283b23f0e72ab82b2ff7878fd777146a6156a3a678582f92ffc973212b3ef",
+          "artifactSha256": "784a2dc97517406dfdc2623eb55caccb3f1144ae49b15ed49abe3a0323bfae58",
           "artifactContentSha256": "3d14784d72d713cc5117b2349374cb38de73bfabe80d2d22c7055b9851675716"
         },
         "readback": {
           "descriptorPath": "evidence/readback/F-018.json",
-          "descriptorSha256": "519db68fb2f08e4bf6d7ee87bac5752ef7732f93086d65a2b1ac462ff7bcf910",
+          "descriptorSha256": "b470dc4428c93dd50d8c455f45854faffb854379abfc1ebb2ca7f60fdbaced64",
           "descriptorContentSha256": "b742601de8e6badeb58dd3a2325a92ec47c30c87facc038ce7478600661997bf",
           "artifactPath": "evidence/artifacts/F-018-independent-readback.json",
-          "artifactSha256": "e0c87043c648b3c0e00539961fa62708432ef41ed66cdf40a1078c5860cf26cf",
+          "artifactSha256": "6b525e65fff816a0c8ddf84a3abffc838afddd6476384ba91d19dca0df98aeb3",
           "artifactContentSha256": "69a4f5ea263dce9c9bd142ebd7da819d37ded7e66771bdfdb29f27ccadda0a6d"
         }
       },
       "receipts": {
         "global": {
           "path": "evidence/artifacts/parity-global-topology.json",
-          "sha256": "5ad7e6af3937f0390eb56c00a2af81e461a6163186d2dd07e828adf437ba1cc6",
+          "sha256": "7ac26fa95c8a4a1489968a99e48d798e6bc1623113ae03b07eb51b65b38d150d",
           "contentSha256": "8a1c736ee169ef78b8571a7f97bfd132abaae6837fb099d2c496d2c13ba7eef8"
         }
       }
@@ -492,16 +492,16 @@
       "sources": {
         ".github/workflows/ci.yml": "7524ae023f00ede9a6ae5e15d004e9acdc07ebfee12e76f681f07b2e7b7be09e",
         "apps/web/package.json": "eca74960936f1241303d6522a33575834cb07a8bd47dd8987d1052cd00e114af",
-        "apps/web/src/App.tsx": "a1ffbf7ad389751877c1c33ef9f23aad036900451aae64e1d371f40a74a8f34d",
+        "apps/web/src/App.tsx": "9a2f2bc34bad653d1d70c2b99eee7330ef9b7f7a58d9ba7ff36c81348a52128e",
         "apps/web/src/context-menu.ts": "d7004dfba317042b45f344971e29ba8a36a8de4f6b4ed7a2e573d8a84aae9931",
         "apps/web/src/indexed-db.ts": "257405697d79c2319ef1a25cbb48e98568758f21908fd2d69e98c5b63ff84232",
         "apps/web/src/main.tsx": "f0b0790cfa19ffe76fbcedb5705f8b341e3d79e76cb75b5480d95b22d04e3aa4",
-        "apps/web/src/style.css": "c4f351c488d1b0a74f7a2ff02857c9e7bd3ab2a25a253366620e28f0a0d54ecd",
+        "apps/web/src/style.css": "cd7093ccf4a693f79e594221ad4e930358b8f3f389afc4298d80231efed1983e",
         "apps/web/src/workflows/modify-command.ts": "9d1f7d0b1d3e308eac2a5d4055436626e3a497cbaaf116c05957e1fde15616c7",
         "e2e/f019-scale.spec.ts": "5b5cde85bada7f98e899e33eca0ea354f33f5f4936a538c88248b8d8e52f2f20",
         "e2e/helpers/layout-tools.ts": "c91e4c574e5e3a74efc3665883fc7ac172968eb6ac834f2c8b7a56d141ac5e47",
         "e2e/local-document.spec.ts": "08b933cfe03eafb1becf407bb56b98e2f5e66316f067936e0092800ecaf5f7a0",
-        "e2e/visual-shell.spec.ts": "8177c965b123bf0c8f3c7adfda81e23f1bfc9dc63769e2cbdbaef1947e3403ed",
+        "e2e/visual-shell.spec.ts": "1313a51369c9a6dda74a9f7e0d6303ff27cfa2634de31050fa894aaa4426dcda",
         "evidence/artifacts/parity-package-v3-to-v4.json": "519a4237eb6d04099c9ff5a6ac97e6e0f8c9faee7276b02da03e37f185b17f97",
         "package-lock.json": "da1dcf889d8fbf35f6a8e4403b29ed34666b13176a2b98307a0c23e25fa06a53",
         "package.json": {
@@ -533,9 +533,9 @@
         "packages/cad-renderer/package.json": "d514c6c9a13d248b4b9df2057ff74efc806d2ce312de6f5fb3aa4fccb2374f7b",
         "packages/cad-renderer/src/bounds.ts": "c2e589c3c8be0642582eaa95ffba295dccf377fa8cfefc835a16e6d2e7c68c06",
         "packages/cad-renderer/src/index.ts": "5563e5e6cdd66b652248e90d4ed237b145fd828da715c64375d2d05169a61888",
-        "packages/cad-renderer/src/renderer.ts": "95391b15cbc8eab61c03f7bb84cb36813727719118997c9350a300b4e537256f",
+        "packages/cad-renderer/src/renderer.ts": "e808a8ad570cfd84c5461f895dd5165691d422f3fd225424f2c1117dfe822f28",
         "packages/cad-renderer/src/rtree.ts": "1ee440db21555f018500dae5c5302c38c27a809a291bcd521702f94aa07068be",
-        "parity/autocad-2024-visual.manifest.mjs": "32344f42b75a5a6bca0525c5054d9d7c1a28520d27f96079dba5bcf968eff8d4",
+        "parity/autocad-2024-visual.manifest.mjs": "62b72c85654da8c9a0fe74fa8b9be578247404dcb8ea96c55642b3e97712072c",
         "parity/check-visual.mjs": "346150045a481afb49df42f084b8930c6103ef59b68f9bf2e30db6c99411fe6e",
         "parity/rows.mjs": "ea2769b0a642ec6b8b89861addc5266422514aaad3151a76d1dc47ab44769d45",
         "playwright.config.ts": "934bf27906ceb40f12c8a629df2865a03b197a6ea7b6d5d27386c9b3c47046c5",
@@ -562,25 +562,25 @@
         },
         "browser": {
           "descriptorPath": "evidence/browser/F-019.json",
-          "descriptorSha256": "f605c4ded8ff9ac0604c825d88e0e7b12e5d49756ffcc398068cec16e887b2c9",
+          "descriptorSha256": "099bccb716640b1ea9414d7dcdd66d13a26f221d803c124444ad67105fd83d50",
           "descriptorContentSha256": "3ee27f21a916e1e1427f5cb7c25ff4d23d90a63c0fd7a3b3e37a7dcf9e2940aa",
           "artifactPath": "evidence/artifacts/F-019-browser-readback.json",
-          "artifactSha256": "1426197d873312d25e3b20e706ac509aa38ba0ae66a9e11f230ed7df421e04a4",
-          "artifactContentSha256": "814a0f865c689a4ccbcbc28010a1d1605ce4301da706cad7011e5a1c9d0417f4"
+          "artifactSha256": "96cffb3b526e7069d0d0f62b48cd51c840e80a0c6627fa49a4756ff4c045d035",
+          "artifactContentSha256": "7d09b46a6cc4cee21bf6761d57fcb61b425d7d093e2f420239cf8e21e77e2627"
         },
         "readback": {
           "descriptorPath": "evidence/readback/F-019.json",
-          "descriptorSha256": "798b6e950c0de51e11937a8f68b498872e1fa356c591b8b36447a92de972d7c9",
+          "descriptorSha256": "b1727e844d99d73c4f597eca42bc40cac1b76b45272fc17962a37ca78ed20201",
           "descriptorContentSha256": "6172ffd916ab6a304c9cf553629694f6cee8ea1c7762dbe29fa880e495393e89",
           "artifactPath": "evidence/artifacts/F-019-independent-readback.json",
-          "artifactSha256": "c65037e9c5e6a726cdadbe1847bdcbb7c522a3f8cb4a68f1982665a1d25768a4",
+          "artifactSha256": "4c94b177beef833a0754fcc83ca38eb9e536a3692174b895a422c64228386300",
           "artifactContentSha256": "9e6b53d184b2d7b63bd05d12eee4c790de345e5e394965a351b09067f64599bc"
         }
       },
       "receipts": {
         "global": {
           "path": "evidence/artifacts/parity-global-topology.json",
-          "sha256": "5ad7e6af3937f0390eb56c00a2af81e461a6163186d2dd07e828adf437ba1cc6",
+          "sha256": "7ac26fa95c8a4a1489968a99e48d798e6bc1623113ae03b07eb51b65b38d150d",
           "contentSha256": "8a1c736ee169ef78b8571a7f97bfd132abaae6837fb099d2c496d2c13ba7eef8"
         }
       }
@@ -590,16 +590,16 @@
       "sources": {
         ".github/workflows/ci.yml": "7524ae023f00ede9a6ae5e15d004e9acdc07ebfee12e76f681f07b2e7b7be09e",
         "apps/web/package.json": "eca74960936f1241303d6522a33575834cb07a8bd47dd8987d1052cd00e114af",
-        "apps/web/src/App.tsx": "a1ffbf7ad389751877c1c33ef9f23aad036900451aae64e1d371f40a74a8f34d",
+        "apps/web/src/App.tsx": "9a2f2bc34bad653d1d70c2b99eee7330ef9b7f7a58d9ba7ff36c81348a52128e",
         "apps/web/src/context-menu.ts": "d7004dfba317042b45f344971e29ba8a36a8de4f6b4ed7a2e573d8a84aae9931",
         "apps/web/src/indexed-db.ts": "257405697d79c2319ef1a25cbb48e98568758f21908fd2d69e98c5b63ff84232",
         "apps/web/src/main.tsx": "f0b0790cfa19ffe76fbcedb5705f8b341e3d79e76cb75b5480d95b22d04e3aa4",
-        "apps/web/src/style.css": "c4f351c488d1b0a74f7a2ff02857c9e7bd3ab2a25a253366620e28f0a0d54ecd",
+        "apps/web/src/style.css": "cd7093ccf4a693f79e594221ad4e930358b8f3f389afc4298d80231efed1983e",
         "apps/web/src/workflows/modify-command.ts": "9d1f7d0b1d3e308eac2a5d4055436626e3a497cbaaf116c05957e1fde15616c7",
         "e2e/f020-mirror.spec.ts": "a8a2924c355b87ea736f7f48c0dcf62b0b9fea98dbac4d2bbab3c8fedb7a6a4a",
         "e2e/helpers/layout-tools.ts": "c91e4c574e5e3a74efc3665883fc7ac172968eb6ac834f2c8b7a56d141ac5e47",
         "e2e/local-document.spec.ts": "08b933cfe03eafb1becf407bb56b98e2f5e66316f067936e0092800ecaf5f7a0",
-        "e2e/visual-shell.spec.ts": "8177c965b123bf0c8f3c7adfda81e23f1bfc9dc63769e2cbdbaef1947e3403ed",
+        "e2e/visual-shell.spec.ts": "1313a51369c9a6dda74a9f7e0d6303ff27cfa2634de31050fa894aaa4426dcda",
         "evidence/artifacts/parity-package-v3-to-v4.json": "519a4237eb6d04099c9ff5a6ac97e6e0f8c9faee7276b02da03e37f185b17f97",
         "package-lock.json": "da1dcf889d8fbf35f6a8e4403b29ed34666b13176a2b98307a0c23e25fa06a53",
         "package.json": {
@@ -631,9 +631,9 @@
         "packages/cad-renderer/package.json": "d514c6c9a13d248b4b9df2057ff74efc806d2ce312de6f5fb3aa4fccb2374f7b",
         "packages/cad-renderer/src/bounds.ts": "c2e589c3c8be0642582eaa95ffba295dccf377fa8cfefc835a16e6d2e7c68c06",
         "packages/cad-renderer/src/index.ts": "5563e5e6cdd66b652248e90d4ed237b145fd828da715c64375d2d05169a61888",
-        "packages/cad-renderer/src/renderer.ts": "95391b15cbc8eab61c03f7bb84cb36813727719118997c9350a300b4e537256f",
+        "packages/cad-renderer/src/renderer.ts": "e808a8ad570cfd84c5461f895dd5165691d422f3fd225424f2c1117dfe822f28",
         "packages/cad-renderer/src/rtree.ts": "1ee440db21555f018500dae5c5302c38c27a809a291bcd521702f94aa07068be",
-        "parity/autocad-2024-visual.manifest.mjs": "32344f42b75a5a6bca0525c5054d9d7c1a28520d27f96079dba5bcf968eff8d4",
+        "parity/autocad-2024-visual.manifest.mjs": "62b72c85654da8c9a0fe74fa8b9be578247404dcb8ea96c55642b3e97712072c",
         "parity/check-visual.mjs": "346150045a481afb49df42f084b8930c6103ef59b68f9bf2e30db6c99411fe6e",
         "parity/rows.mjs": "ea2769b0a642ec6b8b89861addc5266422514aaad3151a76d1dc47ab44769d45",
         "playwright.config.ts": "934bf27906ceb40f12c8a629df2865a03b197a6ea7b6d5d27386c9b3c47046c5",
@@ -661,25 +661,25 @@
         },
         "browser": {
           "descriptorPath": "evidence/browser/F-020.json",
-          "descriptorSha256": "52b6541c84cf64daec70e82310d1087e3a9834f57ce6645bbc218a6f45f6e993",
+          "descriptorSha256": "60e1295d333a42fe0dfb8fc9c8b662c9d5b1bb7bafd84bc61d31c6b0460babde",
           "descriptorContentSha256": "cd3d3a3d6544247f725445982bfc037aaa8cec65a20e01bc02d73a7b60f2257b",
           "artifactPath": "evidence/artifacts/F-020-browser-readback.json",
-          "artifactSha256": "2d1b7e6c358a685e392815cbd0ba9ee4f3e44aefbb1fa9eaa62c2efccc7483de",
-          "artifactContentSha256": "376e2efa1df1cf9c6a14492d6adb053c0ce26d9ff5a26407f77d98d4f4eb9971"
+          "artifactSha256": "9c82cc6d3a3a6bece55601123958b3baadb05c982e6bd11f7277368f3f66c094",
+          "artifactContentSha256": "cc0682275f2ce49b93355c1b7fb6993f4496aba51a0610b0cb5dead60f501cf0"
         },
         "readback": {
           "descriptorPath": "evidence/readback/F-020.json",
-          "descriptorSha256": "99e94a6c94c0786ca43636a619c7fc4776054e47e80e7a9d07e075f2a5f8230b",
+          "descriptorSha256": "f42ebd1e687b4690c01493ccde578cb218ba0896142df3974e27e604d6abe7b2",
           "descriptorContentSha256": "241d4162b00b6d9c9007e249a4ada3162f6a78d14b8c9b20f432adbf0a7e6af9",
           "artifactPath": "evidence/artifacts/F-020-independent-readback.json",
-          "artifactSha256": "07052bb110c3e3bdc2a2ea7f68fa593e4093144877acdb2d603ec3e497b22a03",
+          "artifactSha256": "02c30b5e9a37356dbcbfce0d3f623431e8cbd61afb99192affeb362c942ba476",
           "artifactContentSha256": "ef591791ed7112d865daa7cf9b0a1c25bed6fc8ad2836f282bd85f5e39055998"
         }
       },
       "receipts": {
         "global": {
           "path": "evidence/artifacts/parity-global-topology.json",
-          "sha256": "5ad7e6af3937f0390eb56c00a2af81e461a6163186d2dd07e828adf437ba1cc6",
+          "sha256": "7ac26fa95c8a4a1489968a99e48d798e6bc1623113ae03b07eb51b65b38d150d",
           "contentSha256": "8a1c736ee169ef78b8571a7f97bfd132abaae6837fb099d2c496d2c13ba7eef8"
         }
       }
@@ -689,16 +689,16 @@
       "sources": {
         ".github/workflows/ci.yml": "7524ae023f00ede9a6ae5e15d004e9acdc07ebfee12e76f681f07b2e7b7be09e",
         "apps/web/package.json": "eca74960936f1241303d6522a33575834cb07a8bd47dd8987d1052cd00e114af",
-        "apps/web/src/App.tsx": "a1ffbf7ad389751877c1c33ef9f23aad036900451aae64e1d371f40a74a8f34d",
+        "apps/web/src/App.tsx": "9a2f2bc34bad653d1d70c2b99eee7330ef9b7f7a58d9ba7ff36c81348a52128e",
         "apps/web/src/context-menu.ts": "d7004dfba317042b45f344971e29ba8a36a8de4f6b4ed7a2e573d8a84aae9931",
         "apps/web/src/indexed-db.ts": "257405697d79c2319ef1a25cbb48e98568758f21908fd2d69e98c5b63ff84232",
         "apps/web/src/main.tsx": "f0b0790cfa19ffe76fbcedb5705f8b341e3d79e76cb75b5480d95b22d04e3aa4",
-        "apps/web/src/style.css": "c4f351c488d1b0a74f7a2ff02857c9e7bd3ab2a25a253366620e28f0a0d54ecd",
+        "apps/web/src/style.css": "cd7093ccf4a693f79e594221ad4e930358b8f3f389afc4298d80231efed1983e",
         "apps/web/src/workflows/modify-command.ts": "9d1f7d0b1d3e308eac2a5d4055436626e3a497cbaaf116c05957e1fde15616c7",
         "e2e/f021-offset.spec.ts": "4bb998cbfb92fbc3798c783b7d44cd4e10802f2c456098ce815b52061631760c",
         "e2e/helpers/layout-tools.ts": "c91e4c574e5e3a74efc3665883fc7ac172968eb6ac834f2c8b7a56d141ac5e47",
         "e2e/local-document.spec.ts": "08b933cfe03eafb1becf407bb56b98e2f5e66316f067936e0092800ecaf5f7a0",
-        "e2e/visual-shell.spec.ts": "8177c965b123bf0c8f3c7adfda81e23f1bfc9dc63769e2cbdbaef1947e3403ed",
+        "e2e/visual-shell.spec.ts": "1313a51369c9a6dda74a9f7e0d6303ff27cfa2634de31050fa894aaa4426dcda",
         "evidence/artifacts/parity-package-v3-to-v4.json": "519a4237eb6d04099c9ff5a6ac97e6e0f8c9faee7276b02da03e37f185b17f97",
         "package-lock.json": "da1dcf889d8fbf35f6a8e4403b29ed34666b13176a2b98307a0c23e25fa06a53",
         "package.json": {
@@ -731,9 +731,9 @@
         "packages/cad-renderer/package.json": "d514c6c9a13d248b4b9df2057ff74efc806d2ce312de6f5fb3aa4fccb2374f7b",
         "packages/cad-renderer/src/bounds.ts": "c2e589c3c8be0642582eaa95ffba295dccf377fa8cfefc835a16e6d2e7c68c06",
         "packages/cad-renderer/src/index.ts": "5563e5e6cdd66b652248e90d4ed237b145fd828da715c64375d2d05169a61888",
-        "packages/cad-renderer/src/renderer.ts": "95391b15cbc8eab61c03f7bb84cb36813727719118997c9350a300b4e537256f",
+        "packages/cad-renderer/src/renderer.ts": "e808a8ad570cfd84c5461f895dd5165691d422f3fd225424f2c1117dfe822f28",
         "packages/cad-renderer/src/rtree.ts": "1ee440db21555f018500dae5c5302c38c27a809a291bcd521702f94aa07068be",
-        "parity/autocad-2024-visual.manifest.mjs": "32344f42b75a5a6bca0525c5054d9d7c1a28520d27f96079dba5bcf968eff8d4",
+        "parity/autocad-2024-visual.manifest.mjs": "62b72c85654da8c9a0fe74fa8b9be578247404dcb8ea96c55642b3e97712072c",
         "parity/check-visual.mjs": "346150045a481afb49df42f084b8930c6103ef59b68f9bf2e30db6c99411fe6e",
         "parity/rows.mjs": "ea2769b0a642ec6b8b89861addc5266422514aaad3151a76d1dc47ab44769d45",
         "playwright.config.ts": "934bf27906ceb40f12c8a629df2865a03b197a6ea7b6d5d27386c9b3c47046c5",
@@ -760,25 +760,25 @@
         },
         "browser": {
           "descriptorPath": "evidence/browser/F-021.json",
-          "descriptorSha256": "4ceca5525b0f9114697ad199a0461f930936ad0c5081d127e6fb975f8081c034",
+          "descriptorSha256": "722e70dec492c6cc8ce1001b3c27d46b3b5f61e2af7ccee46b1bd24a2da58364",
           "descriptorContentSha256": "10aa534dc7c595e9026bcd13ab770140af00a47fd772f7481bcd83b4a09ec26f",
           "artifactPath": "evidence/artifacts/F-021-browser-readback.json",
-          "artifactSha256": "93eec6043e33e0a6055974df00920e9541f7988392381d7e4e9bfebafcfab7f0",
-          "artifactContentSha256": "6184e3bdeff6c45b27f72e43132dcaf58c957694395b80403622f7003d283417"
+          "artifactSha256": "19e349ed7cc5b207682e42bbeb3eb91886ca83bbd8f315e90334c0939338fd66",
+          "artifactContentSha256": "2c18c3ffe5854355b563465e7defa6e844d4de11c56f096456e683710d2e2e10"
         },
         "readback": {
           "descriptorPath": "evidence/readback/F-021.json",
-          "descriptorSha256": "91124b28ee0ac771304347f3eacdb370a8400d7d674705cf3e1e611684e74b45",
+          "descriptorSha256": "8b00739d4fc01c59aeda2ed9a9b8187a2ec88580bba69d0b731d1082be1da6cb",
           "descriptorContentSha256": "9039f74c3c856b8b45518a26691a33b35ceff740bafb132e19f1e640b3620dea",
           "artifactPath": "evidence/artifacts/F-021-independent-readback.json",
-          "artifactSha256": "fd884c564714b1935c4a13326354b04deda161eac154400eaa125015e1fb37e1",
+          "artifactSha256": "dd96290218d9e05db1102482981a85be9b328aa2853805a409541c3fa1ad24d6",
           "artifactContentSha256": "8dd6b60f1650631191c10e990dce7b13b8c4bd9b38734b87bc9da18a832e0a39"
         }
       },
       "receipts": {
         "global": {
           "path": "evidence/artifacts/parity-global-topology.json",
-          "sha256": "5ad7e6af3937f0390eb56c00a2af81e461a6163186d2dd07e828adf437ba1cc6",
+          "sha256": "7ac26fa95c8a4a1489968a99e48d798e6bc1623113ae03b07eb51b65b38d150d",
           "contentSha256": "8a1c736ee169ef78b8571a7f97bfd132abaae6837fb099d2c496d2c13ba7eef8"
         }
       }
@@ -788,16 +788,16 @@
       "sources": {
         ".github/workflows/ci.yml": "7524ae023f00ede9a6ae5e15d004e9acdc07ebfee12e76f681f07b2e7b7be09e",
         "apps/web/package.json": "eca74960936f1241303d6522a33575834cb07a8bd47dd8987d1052cd00e114af",
-        "apps/web/src/App.tsx": "a1ffbf7ad389751877c1c33ef9f23aad036900451aae64e1d371f40a74a8f34d",
+        "apps/web/src/App.tsx": "9a2f2bc34bad653d1d70c2b99eee7330ef9b7f7a58d9ba7ff36c81348a52128e",
         "apps/web/src/context-menu.ts": "d7004dfba317042b45f344971e29ba8a36a8de4f6b4ed7a2e573d8a84aae9931",
         "apps/web/src/indexed-db.ts": "257405697d79c2319ef1a25cbb48e98568758f21908fd2d69e98c5b63ff84232",
         "apps/web/src/main.tsx": "f0b0790cfa19ffe76fbcedb5705f8b341e3d79e76cb75b5480d95b22d04e3aa4",
-        "apps/web/src/style.css": "c4f351c488d1b0a74f7a2ff02857c9e7bd3ab2a25a253366620e28f0a0d54ecd",
+        "apps/web/src/style.css": "cd7093ccf4a693f79e594221ad4e930358b8f3f389afc4298d80231efed1983e",
         "apps/web/src/workflows/modify-command.ts": "9d1f7d0b1d3e308eac2a5d4055436626e3a497cbaaf116c05957e1fde15616c7",
         "e2e/f022-trim.spec.ts": "5e66ea71029c584e8a1608a71b496f9db52cd68049b46fa326ad45c8b572065b",
         "e2e/helpers/layout-tools.ts": "c91e4c574e5e3a74efc3665883fc7ac172968eb6ac834f2c8b7a56d141ac5e47",
         "e2e/local-document.spec.ts": "08b933cfe03eafb1becf407bb56b98e2f5e66316f067936e0092800ecaf5f7a0",
-        "e2e/visual-shell.spec.ts": "8177c965b123bf0c8f3c7adfda81e23f1bfc9dc63769e2cbdbaef1947e3403ed",
+        "e2e/visual-shell.spec.ts": "1313a51369c9a6dda74a9f7e0d6303ff27cfa2634de31050fa894aaa4426dcda",
         "evidence/artifacts/parity-package-v3-to-v4.json": "519a4237eb6d04099c9ff5a6ac97e6e0f8c9faee7276b02da03e37f185b17f97",
         "package-lock.json": "da1dcf889d8fbf35f6a8e4403b29ed34666b13176a2b98307a0c23e25fa06a53",
         "package.json": {
@@ -838,10 +838,10 @@
         "packages/cad-renderer/package.json": "d514c6c9a13d248b4b9df2057ff74efc806d2ce312de6f5fb3aa4fccb2374f7b",
         "packages/cad-renderer/src/bounds.ts": "c2e589c3c8be0642582eaa95ffba295dccf377fa8cfefc835a16e6d2e7c68c06",
         "packages/cad-renderer/src/index.ts": "5563e5e6cdd66b652248e90d4ed237b145fd828da715c64375d2d05169a61888",
-        "packages/cad-renderer/src/renderer.ts": "95391b15cbc8eab61c03f7bb84cb36813727719118997c9350a300b4e537256f",
+        "packages/cad-renderer/src/renderer.ts": "e808a8ad570cfd84c5461f895dd5165691d422f3fd225424f2c1117dfe822f28",
         "packages/cad-renderer/src/rtree.ts": "1ee440db21555f018500dae5c5302c38c27a809a291bcd521702f94aa07068be",
         "packages/cad-renderer/src/selection.ts": "7f39e9d073fc4c36aa4507c4eea1ff96e6990532652fdd5b16c5a81c84c9fbc3",
-        "parity/autocad-2024-visual.manifest.mjs": "32344f42b75a5a6bca0525c5054d9d7c1a28520d27f96079dba5bcf968eff8d4",
+        "parity/autocad-2024-visual.manifest.mjs": "62b72c85654da8c9a0fe74fa8b9be578247404dcb8ea96c55642b3e97712072c",
         "parity/check-visual.mjs": "346150045a481afb49df42f084b8930c6103ef59b68f9bf2e30db6c99411fe6e",
         "parity/rows.mjs": "ea2769b0a642ec6b8b89861addc5266422514aaad3151a76d1dc47ab44769d45",
         "playwright.config.ts": "934bf27906ceb40f12c8a629df2865a03b197a6ea7b6d5d27386c9b3c47046c5",
@@ -881,25 +881,25 @@
         },
         "browser": {
           "descriptorPath": "evidence/browser/F-022.json",
-          "descriptorSha256": "caf8c0df6cce5599e825d3d234c5d6bded700b243a1187dbc7fea6bcd61ce81b",
+          "descriptorSha256": "8369a381296056c84e28bc34f5bdd26eefcf581a99af52cce34082f3535fdbed",
           "descriptorContentSha256": "0d225b1e9cc77eab1b9cca02f92aa74f6a1b84cf8124ab4cf016f03f14280d2e",
           "artifactPath": "evidence/artifacts/F-022-browser-readback.json",
-          "artifactSha256": "dd7d9f7b9c51dfcc1f2a84f89774a5f3265f65f911761be8a81965af2243ce01",
-          "artifactContentSha256": "1fbcc34aaa9910c8618e12ba165b2cd45aadcc57d02ff87e6deb9eb712b8c83f"
+          "artifactSha256": "def7361e99ef5a0972433dfea03a4288487a8ed524f9d96954cfe7a1af0cc051",
+          "artifactContentSha256": "7f36ba2803c5f7c2a03c36be6b7d77194acd776e42db2db98430aaf78db1fe6a"
         },
         "readback": {
           "descriptorPath": "evidence/readback/F-022.json",
-          "descriptorSha256": "fb7c8ad57d1b255e23137c0e1a4e21d89d0c049f32a9a9f4e4da72537e4e7e22",
+          "descriptorSha256": "790c1273dabbff58d4735d186793cf22ef9f60273add2d47fc16862d83e4ab35",
           "descriptorContentSha256": "054b19ff371d40d5390e6a113ec07b530aa91ab0c72c53e1e4e8c68e7439ab7c",
           "artifactPath": "evidence/artifacts/F-022-independent-readback.json",
-          "artifactSha256": "16ce58df6ac5bb3dd8e765774a771b1e6e5188a9e2c8a0e62da30ab3d41f99f4",
+          "artifactSha256": "383d359b07d67f852122800ed441793755aaed42b4799b8c7b300aecc05b5788",
           "artifactContentSha256": "08a941ed1505ce3e570c290e229ce33173dd7ebf8819c6587076de7b2a72196e"
         }
       },
       "receipts": {
         "global": {
           "path": "evidence/artifacts/parity-global-topology.json",
-          "sha256": "5ad7e6af3937f0390eb56c00a2af81e461a6163186d2dd07e828adf437ba1cc6",
+          "sha256": "7ac26fa95c8a4a1489968a99e48d798e6bc1623113ae03b07eb51b65b38d150d",
           "contentSha256": "8a1c736ee169ef78b8571a7f97bfd132abaae6837fb099d2c496d2c13ba7eef8"
         },
         "oracle": {
@@ -909,7 +909,7 @@
         },
         "cross": {
           "path": "evidence/artifacts/F-022-cross-evidence.json",
-          "sha256": "2d7067ff49325226fefbee3b45a17b6aa4211762f0d6d78ab2100a9aabb5a43a",
+          "sha256": "a8017dcf0dc8192ffcce2cb17f21207d8035f001cb89b4213581e14f471e6ecf",
           "contentSha256": "b93e88cd71e440d2898c65fa27fddce9ca609ac8dcc020a534936727eef639a3"
         }
       }
@@ -919,16 +919,16 @@
       "sources": {
         ".github/workflows/ci.yml": "7524ae023f00ede9a6ae5e15d004e9acdc07ebfee12e76f681f07b2e7b7be09e",
         "apps/web/package.json": "eca74960936f1241303d6522a33575834cb07a8bd47dd8987d1052cd00e114af",
-        "apps/web/src/App.tsx": "a1ffbf7ad389751877c1c33ef9f23aad036900451aae64e1d371f40a74a8f34d",
+        "apps/web/src/App.tsx": "9a2f2bc34bad653d1d70c2b99eee7330ef9b7f7a58d9ba7ff36c81348a52128e",
         "apps/web/src/context-menu.ts": "d7004dfba317042b45f344971e29ba8a36a8de4f6b4ed7a2e573d8a84aae9931",
         "apps/web/src/indexed-db.ts": "257405697d79c2319ef1a25cbb48e98568758f21908fd2d69e98c5b63ff84232",
         "apps/web/src/main.tsx": "f0b0790cfa19ffe76fbcedb5705f8b341e3d79e76cb75b5480d95b22d04e3aa4",
-        "apps/web/src/style.css": "c4f351c488d1b0a74f7a2ff02857c9e7bd3ab2a25a253366620e28f0a0d54ecd",
+        "apps/web/src/style.css": "cd7093ccf4a693f79e594221ad4e930358b8f3f389afc4298d80231efed1983e",
         "apps/web/src/workflows/modify-command.ts": "9d1f7d0b1d3e308eac2a5d4055436626e3a497cbaaf116c05957e1fde15616c7",
         "e2e/f023-extend.spec.ts": "2ad2f85f8a65a3c3d533684eb93c7cc73c57068fb0cfa362f546df6fda6196bb",
         "e2e/helpers/layout-tools.ts": "c91e4c574e5e3a74efc3665883fc7ac172968eb6ac834f2c8b7a56d141ac5e47",
         "e2e/local-document.spec.ts": "08b933cfe03eafb1becf407bb56b98e2f5e66316f067936e0092800ecaf5f7a0",
-        "e2e/visual-shell.spec.ts": "8177c965b123bf0c8f3c7adfda81e23f1bfc9dc63769e2cbdbaef1947e3403ed",
+        "e2e/visual-shell.spec.ts": "1313a51369c9a6dda74a9f7e0d6303ff27cfa2634de31050fa894aaa4426dcda",
         "evidence/artifacts/parity-package-v3-to-v4.json": "519a4237eb6d04099c9ff5a6ac97e6e0f8c9faee7276b02da03e37f185b17f97",
         "package-lock.json": "da1dcf889d8fbf35f6a8e4403b29ed34666b13176a2b98307a0c23e25fa06a53",
         "package.json": {
@@ -969,10 +969,10 @@
         "packages/cad-renderer/package.json": "d514c6c9a13d248b4b9df2057ff74efc806d2ce312de6f5fb3aa4fccb2374f7b",
         "packages/cad-renderer/src/bounds.ts": "c2e589c3c8be0642582eaa95ffba295dccf377fa8cfefc835a16e6d2e7c68c06",
         "packages/cad-renderer/src/index.ts": "5563e5e6cdd66b652248e90d4ed237b145fd828da715c64375d2d05169a61888",
-        "packages/cad-renderer/src/renderer.ts": "95391b15cbc8eab61c03f7bb84cb36813727719118997c9350a300b4e537256f",
+        "packages/cad-renderer/src/renderer.ts": "e808a8ad570cfd84c5461f895dd5165691d422f3fd225424f2c1117dfe822f28",
         "packages/cad-renderer/src/rtree.ts": "1ee440db21555f018500dae5c5302c38c27a809a291bcd521702f94aa07068be",
         "packages/cad-renderer/src/selection.ts": "7f39e9d073fc4c36aa4507c4eea1ff96e6990532652fdd5b16c5a81c84c9fbc3",
-        "parity/autocad-2024-visual.manifest.mjs": "32344f42b75a5a6bca0525c5054d9d7c1a28520d27f96079dba5bcf968eff8d4",
+        "parity/autocad-2024-visual.manifest.mjs": "62b72c85654da8c9a0fe74fa8b9be578247404dcb8ea96c55642b3e97712072c",
         "parity/check-visual.mjs": "346150045a481afb49df42f084b8930c6103ef59b68f9bf2e30db6c99411fe6e",
         "parity/rows.mjs": "ea2769b0a642ec6b8b89861addc5266422514aaad3151a76d1dc47ab44769d45",
         "playwright.config.ts": "934bf27906ceb40f12c8a629df2865a03b197a6ea7b6d5d27386c9b3c47046c5",
@@ -1013,25 +1013,25 @@
         },
         "browser": {
           "descriptorPath": "evidence/browser/F-023.json",
-          "descriptorSha256": "fd4511fb3074b5093457df84c804030853989e9e2143877da13abd74cceff0d4",
+          "descriptorSha256": "a18db8c3ad56c45d8b16acab62231a549083dae3bdd78dd096d99e51874f6467",
           "descriptorContentSha256": "368fe76b0d3c2fac222647046cbb58bcde8f25110e254fa9775bcf347ed37a19",
           "artifactPath": "evidence/artifacts/F-023-browser-readback.json",
-          "artifactSha256": "3742d3af1d7adbc79fe38a5f35e5bd5c01ac3917517e7818ae7e5bff92f33130",
-          "artifactContentSha256": "6a737342ffbb59aba51941f79c24b8ab07965d7e27da524003d0350b9039851b"
+          "artifactSha256": "cd1fd82cd8607e669abc48d49e7b3c470c9280a299f2f79c6b03c868932b15a2",
+          "artifactContentSha256": "e139fba504ae85b7f428b5ee2ccab776b96152f73f478d55564658670630cc9d"
         },
         "readback": {
           "descriptorPath": "evidence/readback/F-023.json",
-          "descriptorSha256": "b9d7eb31814cd76eb79cc6f618831a2ab978b23a09f1fda112dfce4618f5d8b3",
+          "descriptorSha256": "0586ac3539011c324f4846d7d2db38da61b2be6aeaa3427105e684b212bec473",
           "descriptorContentSha256": "557323287d794af4aef08e009ec389904c4ec08477bf8c3cfae32ea30ea9548c",
           "artifactPath": "evidence/artifacts/F-023-independent-readback.json",
-          "artifactSha256": "f4165e10ebdbed31638a4c7563003454ebec7fdb6160dc7bda1db3217354f791",
+          "artifactSha256": "17804514ba37bd279089de3e385d4d16bd44f7d8fdae68458add01c56bc28617",
           "artifactContentSha256": "47616966d6a039236f0fc5991f1ea9177381f1d5b9b64c830885ba2c60c14361"
         }
       },
       "receipts": {
         "global": {
           "path": "evidence/artifacts/parity-global-topology.json",
-          "sha256": "5ad7e6af3937f0390eb56c00a2af81e461a6163186d2dd07e828adf437ba1cc6",
+          "sha256": "7ac26fa95c8a4a1489968a99e48d798e6bc1623113ae03b07eb51b65b38d150d",
           "contentSha256": "8a1c736ee169ef78b8571a7f97bfd132abaae6837fb099d2c496d2c13ba7eef8"
         },
         "oracle": {
@@ -1041,7 +1041,7 @@
         },
         "cross": {
           "path": "evidence/artifacts/F-023-cross-evidence.json",
-          "sha256": "08dfe9bd78df7236e288248313ebd208329b5f97f710ac3147e9dc87042046cc",
+          "sha256": "0be19aab72b99a4b26de56ef9ad3c43c83c0fa272c2b503e14f2c5117a17f97c",
           "contentSha256": "5def08443b1d9c101ee10558b44462dd623029544a747124407e888e2c092e40"
         }
       }
@@ -1051,17 +1051,17 @@
       "sources": {
         ".github/workflows/ci.yml": "7524ae023f00ede9a6ae5e15d004e9acdc07ebfee12e76f681f07b2e7b7be09e",
         "apps/web/package.json": "eca74960936f1241303d6522a33575834cb07a8bd47dd8987d1052cd00e114af",
-        "apps/web/src/App.tsx": "a1ffbf7ad389751877c1c33ef9f23aad036900451aae64e1d371f40a74a8f34d",
+        "apps/web/src/App.tsx": "9a2f2bc34bad653d1d70c2b99eee7330ef9b7f7a58d9ba7ff36c81348a52128e",
         "apps/web/src/context-menu.ts": "d7004dfba317042b45f344971e29ba8a36a8de4f6b4ed7a2e573d8a84aae9931",
         "apps/web/src/indexed-db.ts": "257405697d79c2319ef1a25cbb48e98568758f21908fd2d69e98c5b63ff84232",
         "apps/web/src/main.tsx": "f0b0790cfa19ffe76fbcedb5705f8b341e3d79e76cb75b5480d95b22d04e3aa4",
-        "apps/web/src/style.css": "c4f351c488d1b0a74f7a2ff02857c9e7bd3ab2a25a253366620e28f0a0d54ecd",
+        "apps/web/src/style.css": "cd7093ccf4a693f79e594221ad4e930358b8f3f389afc4298d80231efed1983e",
         "apps/web/src/workflows/modify-command.test.ts": "aac0694d3a93a08ed5c6b98ea5456e62ba7c0f05777780a47d99dcabdf2e12b9",
         "apps/web/src/workflows/modify-command.ts": "9d1f7d0b1d3e308eac2a5d4055436626e3a497cbaaf116c05957e1fde15616c7",
         "e2e/f024-fillet.spec.ts": "c81f30fd35c7f1ffc452129b71c6930b745ddd67172047986a8ef13a904ed386",
         "e2e/helpers/layout-tools.ts": "c91e4c574e5e3a74efc3665883fc7ac172968eb6ac834f2c8b7a56d141ac5e47",
         "e2e/local-document.spec.ts": "08b933cfe03eafb1becf407bb56b98e2f5e66316f067936e0092800ecaf5f7a0",
-        "e2e/visual-shell.spec.ts": "8177c965b123bf0c8f3c7adfda81e23f1bfc9dc63769e2cbdbaef1947e3403ed",
+        "e2e/visual-shell.spec.ts": "1313a51369c9a6dda74a9f7e0d6303ff27cfa2634de31050fa894aaa4426dcda",
         "evidence/artifacts/parity-package-v3-to-v4.json": "519a4237eb6d04099c9ff5a6ac97e6e0f8c9faee7276b02da03e37f185b17f97",
         "package-lock.json": "da1dcf889d8fbf35f6a8e4403b29ed34666b13176a2b98307a0c23e25fa06a53",
         "package.json": {
@@ -1107,12 +1107,12 @@
         "packages/cad-renderer/package.json": "d514c6c9a13d248b4b9df2057ff74efc806d2ce312de6f5fb3aa4fccb2374f7b",
         "packages/cad-renderer/src/bounds.ts": "c2e589c3c8be0642582eaa95ffba295dccf377fa8cfefc835a16e6d2e7c68c06",
         "packages/cad-renderer/src/index.ts": "5563e5e6cdd66b652248e90d4ed237b145fd828da715c64375d2d05169a61888",
-        "packages/cad-renderer/src/renderer.ts": "95391b15cbc8eab61c03f7bb84cb36813727719118997c9350a300b4e537256f",
+        "packages/cad-renderer/src/renderer.ts": "e808a8ad570cfd84c5461f895dd5165691d422f3fd225424f2c1117dfe822f28",
         "packages/cad-renderer/src/rtree.ts": "1ee440db21555f018500dae5c5302c38c27a809a291bcd521702f94aa07068be",
         "packages/cad-renderer/src/selection.ts": "7f39e9d073fc4c36aa4507c4eea1ff96e6990532652fdd5b16c5a81c84c9fbc3",
-        "packages/cad-renderer/test/renderer.test.ts": "dede34b6c0af20feaa4b4ba8daa781d88aeda28e89c0dfc6c332a106599efecf",
+        "packages/cad-renderer/test/renderer.test.ts": "7d370cea03c5b787419115f065fdec29bc6b07bf483bf8549bc7715c51583ee1",
         "packages/cad-renderer/test/selection.test.ts": "d907d9c125eb225cb273b2d5bd58446e3aa5fbe8cae03eda6baa639c63900050",
-        "parity/autocad-2024-visual.manifest.mjs": "32344f42b75a5a6bca0525c5054d9d7c1a28520d27f96079dba5bcf968eff8d4",
+        "parity/autocad-2024-visual.manifest.mjs": "62b72c85654da8c9a0fe74fa8b9be578247404dcb8ea96c55642b3e97712072c",
         "parity/check-visual.mjs": "346150045a481afb49df42f084b8930c6103ef59b68f9bf2e30db6c99411fe6e",
         "parity/rows.mjs": "ea2769b0a642ec6b8b89861addc5266422514aaad3151a76d1dc47ab44769d45",
         "playwright.config.ts": "934bf27906ceb40f12c8a629df2865a03b197a6ea7b6d5d27386c9b3c47046c5",
@@ -1148,25 +1148,25 @@
         },
         "browser": {
           "descriptorPath": "evidence/browser/F-024.json",
-          "descriptorSha256": "a8a1167adea9e16ccfee912d60857a70468e19692a2ad207b9a1f5a3f396647f",
+          "descriptorSha256": "7fe41cccf5f8460edda9dceff40bf62773e954f43c68909a37d1755085ceb6d2",
           "descriptorContentSha256": "81f86210834bdef88152727a307069de652aa8aa408b6ee0748b97fd36b1351d",
           "artifactPath": "evidence/artifacts/F-024-browser-readback.json",
-          "artifactSha256": "22bcb90bf6c456668ad261ca99b29f5b251446f041f8f1bd1e0ddf1e872bf716",
-          "artifactContentSha256": "e7f48b2e1cb3d8d6e0ba3712a7ea0481125dcc89f4c6267f46813d8ef1247eaf"
+          "artifactSha256": "f1f8a2f23513fdda0db234f10d284a28ec55fded8a1c50bdbf346b5342b29567",
+          "artifactContentSha256": "dbca62961949e30af5ba9f9a504483f5eede8461a41881d968a02d2ffe823882"
         },
         "readback": {
           "descriptorPath": "evidence/readback/F-024.json",
-          "descriptorSha256": "08a2d21a95754d28c1a1720a61ffac28b898929787e4737781932bbdb94b4d7e",
+          "descriptorSha256": "7a17341aed7ff83dfdc3c5b41aafdcd6143de61623962a058612ec80554cd92a",
           "descriptorContentSha256": "de806f135dfd1ca209e6f5617da37f9536e115ce5abe073d4ea4fb6abff499cd",
           "artifactPath": "evidence/artifacts/F-024-independent-readback.json",
-          "artifactSha256": "1499514ff0c63775c62d5b06ce5bac03293d681f73bdc2e87f0f673686d16e60",
+          "artifactSha256": "2dd20fc0c162c64eb43ebfe9d759b549370da7f789f2962c6831b0f848eabb22",
           "artifactContentSha256": "b349f76251edc1db3f7c1e90f01d6a6554df4811c5bb576e5c4b1fabb9addd04"
         }
       },
       "receipts": {
         "global": {
           "path": "evidence/artifacts/parity-global-topology.json",
-          "sha256": "5ad7e6af3937f0390eb56c00a2af81e461a6163186d2dd07e828adf437ba1cc6",
+          "sha256": "7ac26fa95c8a4a1489968a99e48d798e6bc1623113ae03b07eb51b65b38d150d",
           "contentSha256": "8a1c736ee169ef78b8571a7f97bfd132abaae6837fb099d2c496d2c13ba7eef8"
         },
         "oracle": {
@@ -1176,7 +1176,7 @@
         },
         "cross": {
           "path": "evidence/artifacts/F-024-cross-evidence.json",
-          "sha256": "34ef121c9faacfd410e9480e5f844dca43c02755160a6cc7594f39350a14e0bd",
+          "sha256": "2890f4d45104aeade063df11b821032b4186a578115aaeb93031f737c0c95252",
           "contentSha256": "7cf1ea493a5d40b7beae9674d0066a4597a8d7b294927a357baca9b568a2ec5f"
         }
       }
@@ -1186,17 +1186,17 @@
       "sources": {
         ".github/workflows/ci.yml": "7524ae023f00ede9a6ae5e15d004e9acdc07ebfee12e76f681f07b2e7b7be09e",
         "apps/web/package.json": "eca74960936f1241303d6522a33575834cb07a8bd47dd8987d1052cd00e114af",
-        "apps/web/src/App.tsx": "a1ffbf7ad389751877c1c33ef9f23aad036900451aae64e1d371f40a74a8f34d",
+        "apps/web/src/App.tsx": "9a2f2bc34bad653d1d70c2b99eee7330ef9b7f7a58d9ba7ff36c81348a52128e",
         "apps/web/src/context-menu.ts": "d7004dfba317042b45f344971e29ba8a36a8de4f6b4ed7a2e573d8a84aae9931",
         "apps/web/src/indexed-db.ts": "257405697d79c2319ef1a25cbb48e98568758f21908fd2d69e98c5b63ff84232",
         "apps/web/src/main.tsx": "f0b0790cfa19ffe76fbcedb5705f8b341e3d79e76cb75b5480d95b22d04e3aa4",
-        "apps/web/src/style.css": "c4f351c488d1b0a74f7a2ff02857c9e7bd3ab2a25a253366620e28f0a0d54ecd",
+        "apps/web/src/style.css": "cd7093ccf4a693f79e594221ad4e930358b8f3f389afc4298d80231efed1983e",
         "apps/web/src/workflows/modify-command.test.ts": "aac0694d3a93a08ed5c6b98ea5456e62ba7c0f05777780a47d99dcabdf2e12b9",
         "apps/web/src/workflows/modify-command.ts": "9d1f7d0b1d3e308eac2a5d4055436626e3a497cbaaf116c05957e1fde15616c7",
         "e2e/f025-chamfer.spec.ts": "2339a5fc1e4a83db5a445a762ac508645756fd7713ffb6545c4b35f049373165",
         "e2e/helpers/layout-tools.ts": "c91e4c574e5e3a74efc3665883fc7ac172968eb6ac834f2c8b7a56d141ac5e47",
         "e2e/local-document.spec.ts": "08b933cfe03eafb1becf407bb56b98e2f5e66316f067936e0092800ecaf5f7a0",
-        "e2e/visual-shell.spec.ts": "8177c965b123bf0c8f3c7adfda81e23f1bfc9dc63769e2cbdbaef1947e3403ed",
+        "e2e/visual-shell.spec.ts": "1313a51369c9a6dda74a9f7e0d6303ff27cfa2634de31050fa894aaa4426dcda",
         "evidence/artifacts/parity-package-v3-to-v4.json": "519a4237eb6d04099c9ff5a6ac97e6e0f8c9faee7276b02da03e37f185b17f97",
         "package-lock.json": "da1dcf889d8fbf35f6a8e4403b29ed34666b13176a2b98307a0c23e25fa06a53",
         "package.json": {
@@ -1242,9 +1242,9 @@
         "packages/cad-renderer/package.json": "d514c6c9a13d248b4b9df2057ff74efc806d2ce312de6f5fb3aa4fccb2374f7b",
         "packages/cad-renderer/src/bounds.ts": "c2e589c3c8be0642582eaa95ffba295dccf377fa8cfefc835a16e6d2e7c68c06",
         "packages/cad-renderer/src/index.ts": "5563e5e6cdd66b652248e90d4ed237b145fd828da715c64375d2d05169a61888",
-        "packages/cad-renderer/src/renderer.ts": "95391b15cbc8eab61c03f7bb84cb36813727719118997c9350a300b4e537256f",
+        "packages/cad-renderer/src/renderer.ts": "e808a8ad570cfd84c5461f895dd5165691d422f3fd225424f2c1117dfe822f28",
         "packages/cad-renderer/src/rtree.ts": "1ee440db21555f018500dae5c5302c38c27a809a291bcd521702f94aa07068be",
-        "parity/autocad-2024-visual.manifest.mjs": "32344f42b75a5a6bca0525c5054d9d7c1a28520d27f96079dba5bcf968eff8d4",
+        "parity/autocad-2024-visual.manifest.mjs": "62b72c85654da8c9a0fe74fa8b9be578247404dcb8ea96c55642b3e97712072c",
         "parity/check-visual.mjs": "346150045a481afb49df42f084b8930c6103ef59b68f9bf2e30db6c99411fe6e",
         "parity/rows.mjs": "ea2769b0a642ec6b8b89861addc5266422514aaad3151a76d1dc47ab44769d45",
         "playwright.config.ts": "934bf27906ceb40f12c8a629df2865a03b197a6ea7b6d5d27386c9b3c47046c5",
@@ -1280,25 +1280,25 @@
         },
         "browser": {
           "descriptorPath": "evidence/browser/F-025.json",
-          "descriptorSha256": "4e4e9e1b33a1d39794642bce0baf2865329ae3534a114689220d0bdccb7c5745",
+          "descriptorSha256": "24423e66217b66656ff00d0c876dfec133114a02bf720110c35fd96e8f89a82d",
           "descriptorContentSha256": "5323b66b103461bf220125e77fd2eb6d7ed7014014b65284d904348e34cbfdae",
           "artifactPath": "evidence/artifacts/F-025-browser-readback.json",
-          "artifactSha256": "9843242f0e5578770acb2f4c0432d1f8f1946b98f0eb4c4c6398bd173e15df72",
-          "artifactContentSha256": "b0aee04a440fbf41c9afa2a693d739e5bfbc129bd8d74c9f36c4060810d2c874"
+          "artifactSha256": "fe35a336292e2b40c643a11deaab6c6b660241e263a4b6114483c944aede3545",
+          "artifactContentSha256": "c0c757fc21f36b5e710a1f93595015b2829f12c4cf47c828ef221ebb97de21c4"
         },
         "readback": {
           "descriptorPath": "evidence/readback/F-025.json",
-          "descriptorSha256": "af8cb346dccb7f05af845d135a67b44e93576bb9015d0fd0f6675ab7afdb1588",
+          "descriptorSha256": "5bf2b9c49186319120700321625d7279ea7a9a83721918be771dddbe575a7102",
           "descriptorContentSha256": "278355a54dcadc7526537f33e2082d6496fac11fcba67ecbde2291dd996ada30",
           "artifactPath": "evidence/artifacts/F-025-independent-readback.json",
-          "artifactSha256": "4740c57c9e27e3ecf40f53d1bd792f45351e0af35abfb665ed042c9c2bf40b15",
+          "artifactSha256": "9d2bb8f360f90741326ce009002449cd76451d4919d34dc85cb38496c25dddf5",
           "artifactContentSha256": "bde93fc2b7264ce432d8905f2a750966f2bc7404b31f517a195e87a0db31a61f"
         }
       },
       "receipts": {
         "global": {
           "path": "evidence/artifacts/parity-global-topology.json",
-          "sha256": "5ad7e6af3937f0390eb56c00a2af81e461a6163186d2dd07e828adf437ba1cc6",
+          "sha256": "7ac26fa95c8a4a1489968a99e48d798e6bc1623113ae03b07eb51b65b38d150d",
           "contentSha256": "8a1c736ee169ef78b8571a7f97bfd132abaae6837fb099d2c496d2c13ba7eef8"
         },
         "oracle": {
@@ -1308,7 +1308,7 @@
         },
         "cross": {
           "path": "evidence/artifacts/F-025-cross-evidence.json",
-          "sha256": "7def72887817b349c0fbc238ca0d8ce33914fdc0ea859cd02c4d9dd5dee6662c",
+          "sha256": "fbb57ea5afd0199a8d037096a830aa36f1de3d2cc544c05616b54f6854c606e3",
           "contentSha256": "19a057dd336ed098b800b46e38dcc915779c6fcf028d8f03338b5fac2ca0cd44"
         }
       }
@@ -1318,17 +1318,17 @@
       "sources": {
         ".github/workflows/ci.yml": "7524ae023f00ede9a6ae5e15d004e9acdc07ebfee12e76f681f07b2e7b7be09e",
         "apps/web/package.json": "eca74960936f1241303d6522a33575834cb07a8bd47dd8987d1052cd00e114af",
-        "apps/web/src/App.tsx": "a1ffbf7ad389751877c1c33ef9f23aad036900451aae64e1d371f40a74a8f34d",
+        "apps/web/src/App.tsx": "9a2f2bc34bad653d1d70c2b99eee7330ef9b7f7a58d9ba7ff36c81348a52128e",
         "apps/web/src/context-menu.ts": "d7004dfba317042b45f344971e29ba8a36a8de4f6b4ed7a2e573d8a84aae9931",
         "apps/web/src/indexed-db.ts": "257405697d79c2319ef1a25cbb48e98568758f21908fd2d69e98c5b63ff84232",
         "apps/web/src/main.tsx": "f0b0790cfa19ffe76fbcedb5705f8b341e3d79e76cb75b5480d95b22d04e3aa4",
-        "apps/web/src/style.css": "c4f351c488d1b0a74f7a2ff02857c9e7bd3ab2a25a253366620e28f0a0d54ecd",
+        "apps/web/src/style.css": "cd7093ccf4a693f79e594221ad4e930358b8f3f389afc4298d80231efed1983e",
         "apps/web/src/workflows/modify-command.test.ts": "aac0694d3a93a08ed5c6b98ea5456e62ba7c0f05777780a47d99dcabdf2e12b9",
         "apps/web/src/workflows/modify-command.ts": "9d1f7d0b1d3e308eac2a5d4055436626e3a497cbaaf116c05957e1fde15616c7",
         "e2e/f026-break.spec.ts": "35662f535b32c3cb0fa4d2eb866bf5a040fd3f2cdedab0bc6ba0b001f348126f",
         "e2e/helpers/layout-tools.ts": "c91e4c574e5e3a74efc3665883fc7ac172968eb6ac834f2c8b7a56d141ac5e47",
         "e2e/local-document.spec.ts": "08b933cfe03eafb1becf407bb56b98e2f5e66316f067936e0092800ecaf5f7a0",
-        "e2e/visual-shell.spec.ts": "8177c965b123bf0c8f3c7adfda81e23f1bfc9dc63769e2cbdbaef1947e3403ed",
+        "e2e/visual-shell.spec.ts": "1313a51369c9a6dda74a9f7e0d6303ff27cfa2634de31050fa894aaa4426dcda",
         "evidence/artifacts/parity-package-v3-to-v4.json": "519a4237eb6d04099c9ff5a6ac97e6e0f8c9faee7276b02da03e37f185b17f97",
         "package-lock.json": "da1dcf889d8fbf35f6a8e4403b29ed34666b13176a2b98307a0c23e25fa06a53",
         "package.json": {
@@ -1375,11 +1375,11 @@
         "packages/cad-renderer/package.json": "d514c6c9a13d248b4b9df2057ff74efc806d2ce312de6f5fb3aa4fccb2374f7b",
         "packages/cad-renderer/src/bounds.ts": "c2e589c3c8be0642582eaa95ffba295dccf377fa8cfefc835a16e6d2e7c68c06",
         "packages/cad-renderer/src/index.ts": "5563e5e6cdd66b652248e90d4ed237b145fd828da715c64375d2d05169a61888",
-        "packages/cad-renderer/src/renderer.ts": "95391b15cbc8eab61c03f7bb84cb36813727719118997c9350a300b4e537256f",
+        "packages/cad-renderer/src/renderer.ts": "e808a8ad570cfd84c5461f895dd5165691d422f3fd225424f2c1117dfe822f28",
         "packages/cad-renderer/src/rtree.ts": "1ee440db21555f018500dae5c5302c38c27a809a291bcd521702f94aa07068be",
         "packages/cad-renderer/src/selection.ts": "7f39e9d073fc4c36aa4507c4eea1ff96e6990532652fdd5b16c5a81c84c9fbc3",
         "parity/F-026-scope.md": "480d8817d06100f1935e41067dc7b9e2392c6d1470e3340b1a0f974b6b92db0a",
-        "parity/autocad-2024-visual.manifest.mjs": "32344f42b75a5a6bca0525c5054d9d7c1a28520d27f96079dba5bcf968eff8d4",
+        "parity/autocad-2024-visual.manifest.mjs": "62b72c85654da8c9a0fe74fa8b9be578247404dcb8ea96c55642b3e97712072c",
         "parity/autocad/F-026-core.scr": "07f08a2f2b56fc959550d16a5522ffcf5035f9308b7161342d7f5a983d86c8e9",
         "parity/check-visual.mjs": "346150045a481afb49df42f084b8930c6103ef59b68f9bf2e30db6c99411fe6e",
         "parity/rows.mjs": "ea2769b0a642ec6b8b89861addc5266422514aaad3151a76d1dc47ab44769d45",
@@ -1416,36 +1416,36 @@
         },
         "browser": {
           "descriptorPath": "evidence/browser/F-026.json",
-          "descriptorSha256": "fe735afe7a7c9f24f9901934fd8f9511a78678ab126548467848ab58072df7f9",
+          "descriptorSha256": "7fc9c3dd7175ca38eaf0a2993837b48a6a74674aecdb1bc164fb7438eacdde0f",
           "descriptorContentSha256": "4014d88b7327b81d067a8fa9d8a9bb528542990ece120cb5652c6ad4aa4ec9a6",
           "artifactPath": "evidence/artifacts/F-026-browser-readback.json",
-          "artifactSha256": "c01d70e9b040307742d08e340999c6f30f7b0dce38373c9c91121189b717fbd4",
-          "artifactContentSha256": "f89ad0c8af36d14f94e639917a513354e3aa6c16dd40034e587207b0450fbaf7"
+          "artifactSha256": "92f628e9a45dc1410b34f31177073d419831e2bda3a5751c8f2131eaf15ca0d8",
+          "artifactContentSha256": "a520ee3efc32e0ffcf322c42a89baf8032e5f021743cae1d36ffd670c5b66447"
         },
         "readback": {
           "descriptorPath": "evidence/readback/F-026.json",
-          "descriptorSha256": "357fa9159fcb7c52b5d246d48d186da8d0c6f44f58b8d881a227ad2595853c7c",
+          "descriptorSha256": "21cb7f157dfca2c65341cfb8bfcbda688f85ea16ae0691e532d1423c3e988ddf",
           "descriptorContentSha256": "c923e50eeb4783227ca790755b969640671b4bcb072d99a7d64a3f4580625bbd",
           "artifactPath": "evidence/artifacts/F-026-independent-readback.json",
-          "artifactSha256": "bb04ec1392468f400036b5ae50d8848837d623ac80259edfb0c04ef2bd3a76f3",
+          "artifactSha256": "d46dd8a3d8b1cf50013cc8b3a2bf2e453e6e2363bf6c7aae4ed058c482fb291e",
           "artifactContentSha256": "e6d771e2c8861b522051a73db4dd0d437ade03d976ed045e64cfe490b29e0709"
         }
       },
       "receipts": {
         "global": {
           "path": "evidence/artifacts/parity-global-topology.json",
-          "sha256": "5ad7e6af3937f0390eb56c00a2af81e461a6163186d2dd07e828adf437ba1cc6",
+          "sha256": "7ac26fa95c8a4a1489968a99e48d798e6bc1623113ae03b07eb51b65b38d150d",
           "contentSha256": "8a1c736ee169ef78b8571a7f97bfd132abaae6837fb099d2c496d2c13ba7eef8"
         },
         "oracle": {
           "path": "evidence/artifacts/F-026-oracles.json",
-          "sha256": "40935c9f9bb4959b684145f95cab3642264c443a0ea340d269a8506537ec645a",
-          "contentSha256": "801dbe7b46531d11bf506e4cba3dd1b398449059cb29bbd79b129f5e4c3a7289"
+          "sha256": "5f1a79cb6e738d4b1db54a4a8f769bce2f3be1d609e26f28bf3c531dba872f2c",
+          "contentSha256": "926e5699ce41889a9fe306bf3596c66e8ebff17c4e228fc695566a89f7cdd2db"
         },
         "cross": {
           "path": "evidence/artifacts/F-026-cross-evidence.json",
-          "sha256": "80bc004a7fb904f46836c6cb6db6a947a43de6a9ea3181ff5029decf46fb6678",
-          "contentSha256": "5f5c1377656096880f9755490aba0f8faddc0647aaf9bb4eec4ac72b676d948f"
+          "sha256": "18fe98925a434ea347ee379580ae56719522896edd4c35b96cd71d277a0ea2a0",
+          "contentSha256": "3e4cdf7307057657b51f25fba5c8627b8454cd013be6bdd64432e94535b0f8cf"
         }
       }
     },
@@ -1454,17 +1454,17 @@
       "sources": {
         ".github/workflows/ci.yml": "7524ae023f00ede9a6ae5e15d004e9acdc07ebfee12e76f681f07b2e7b7be09e",
         "apps/web/package.json": "eca74960936f1241303d6522a33575834cb07a8bd47dd8987d1052cd00e114af",
-        "apps/web/src/App.tsx": "a1ffbf7ad389751877c1c33ef9f23aad036900451aae64e1d371f40a74a8f34d",
+        "apps/web/src/App.tsx": "9a2f2bc34bad653d1d70c2b99eee7330ef9b7f7a58d9ba7ff36c81348a52128e",
         "apps/web/src/context-menu.ts": "d7004dfba317042b45f344971e29ba8a36a8de4f6b4ed7a2e573d8a84aae9931",
         "apps/web/src/indexed-db.ts": "257405697d79c2319ef1a25cbb48e98568758f21908fd2d69e98c5b63ff84232",
         "apps/web/src/main.tsx": "f0b0790cfa19ffe76fbcedb5705f8b341e3d79e76cb75b5480d95b22d04e3aa4",
-        "apps/web/src/style.css": "c4f351c488d1b0a74f7a2ff02857c9e7bd3ab2a25a253366620e28f0a0d54ecd",
+        "apps/web/src/style.css": "cd7093ccf4a693f79e594221ad4e930358b8f3f389afc4298d80231efed1983e",
         "apps/web/src/workflows/modify-command.test.ts": "aac0694d3a93a08ed5c6b98ea5456e62ba7c0f05777780a47d99dcabdf2e12b9",
         "apps/web/src/workflows/modify-command.ts": "9d1f7d0b1d3e308eac2a5d4055436626e3a497cbaaf116c05957e1fde15616c7",
         "e2e/f027-stretch.spec.ts": "c778850d06d25227d8e782acc3f584e9dc37d6a76cbcc3a2e2a1e860a9c27011",
         "e2e/helpers/layout-tools.ts": "c91e4c574e5e3a74efc3665883fc7ac172968eb6ac834f2c8b7a56d141ac5e47",
         "e2e/local-document.spec.ts": "08b933cfe03eafb1becf407bb56b98e2f5e66316f067936e0092800ecaf5f7a0",
-        "e2e/visual-shell.spec.ts": "8177c965b123bf0c8f3c7adfda81e23f1bfc9dc63769e2cbdbaef1947e3403ed",
+        "e2e/visual-shell.spec.ts": "1313a51369c9a6dda74a9f7e0d6303ff27cfa2634de31050fa894aaa4426dcda",
         "evidence/artifacts/parity-package-v3-to-v4.json": "519a4237eb6d04099c9ff5a6ac97e6e0f8c9faee7276b02da03e37f185b17f97",
         "package-lock.json": "da1dcf889d8fbf35f6a8e4403b29ed34666b13176a2b98307a0c23e25fa06a53",
         "package.json": {
@@ -1511,11 +1511,11 @@
         "packages/cad-renderer/package.json": "d514c6c9a13d248b4b9df2057ff74efc806d2ce312de6f5fb3aa4fccb2374f7b",
         "packages/cad-renderer/src/bounds.ts": "c2e589c3c8be0642582eaa95ffba295dccf377fa8cfefc835a16e6d2e7c68c06",
         "packages/cad-renderer/src/index.ts": "5563e5e6cdd66b652248e90d4ed237b145fd828da715c64375d2d05169a61888",
-        "packages/cad-renderer/src/renderer.ts": "95391b15cbc8eab61c03f7bb84cb36813727719118997c9350a300b4e537256f",
+        "packages/cad-renderer/src/renderer.ts": "e808a8ad570cfd84c5461f895dd5165691d422f3fd225424f2c1117dfe822f28",
         "packages/cad-renderer/src/rtree.ts": "1ee440db21555f018500dae5c5302c38c27a809a291bcd521702f94aa07068be",
         "packages/cad-renderer/src/selection.ts": "7f39e9d073fc4c36aa4507c4eea1ff96e6990532652fdd5b16c5a81c84c9fbc3",
         "parity/F-027-scope.md": "55a784b5755b047d4d07284379eb6975549c26445eed917d20e6bf846599b8c1",
-        "parity/autocad-2024-visual.manifest.mjs": "32344f42b75a5a6bca0525c5054d9d7c1a28520d27f96079dba5bcf968eff8d4",
+        "parity/autocad-2024-visual.manifest.mjs": "62b72c85654da8c9a0fe74fa8b9be578247404dcb8ea96c55642b3e97712072c",
         "parity/autocad/F-027-core-measure.scr": "626a43097d8e98c78031f01be1294521dc3638801bf8dade54eda0f8dd395509",
         "parity/check-visual.mjs": "346150045a481afb49df42f084b8930c6103ef59b68f9bf2e30db6c99411fe6e",
         "parity/expected/F-027.json": "ea68d1ccc200c54960b78f1983ab7f1658a06f27c18186aa336ffbc0e0fc4994",
@@ -1554,36 +1554,36 @@
         },
         "browser": {
           "descriptorPath": "evidence/browser/F-027.json",
-          "descriptorSha256": "32f4cdf09d324becd4c47431ef1b3fe5fa0496109628211bd55121feebd1d111",
+          "descriptorSha256": "677c05826b3a464c39b37f3295ed25ccd9cc3e31fe669c931b0fbe58d0aa5d09",
           "descriptorContentSha256": "f39e50b6b22aa80e9b8ef60a120b8c41a89e4f8b18b0754f558c26e84eda27bd",
           "artifactPath": "evidence/artifacts/F-027-browser-readback.json",
-          "artifactSha256": "d4110ca594a0e9040d436d37e0c6d95455aa10f54c39b127ebdff7e35ecad454",
-          "artifactContentSha256": "fb138269d0b29735c19602e7a38f4df03b8437c661a5340c391aa9561a7e4a98"
+          "artifactSha256": "5103ae8a75da8a91f84a4fd4fef0c0e4e760b96bc78607033c274b8d6e5410c1",
+          "artifactContentSha256": "2881ad3715e99c0aa3465f55a1b5ff251e006af87f0e2a09464a8c44c2da3d45"
         },
         "readback": {
           "descriptorPath": "evidence/readback/F-027.json",
-          "descriptorSha256": "3a4804873d0d5dfa0bc1de301865d1bbdc5eca98a15a019c258cc88c08a8ebe4",
+          "descriptorSha256": "024c4650e034f92a5dcc8d0bf3fd23fcd9afe299326e6a76abd0e149e4e1be1c",
           "descriptorContentSha256": "562bc79d0878d931728e691796caecc93aacf64c71e6506038852e8baacde7d9",
           "artifactPath": "evidence/artifacts/F-027-independent-readback.json",
-          "artifactSha256": "943e9640f27ae5d2ea8c6194a4d996ab26014459124957a0007c29648f49d2e9",
+          "artifactSha256": "29418dd22aaa0036bc27551a7411ece9326d82aa669aeb1dd21c95b0582fbbeb",
           "artifactContentSha256": "1309add4f0d7f0db93c4c993a104aa3fdf7c0f5858f9061ab8e8e2aec531468f"
         }
       },
       "receipts": {
         "global": {
           "path": "evidence/artifacts/parity-global-topology.json",
-          "sha256": "5ad7e6af3937f0390eb56c00a2af81e461a6163186d2dd07e828adf437ba1cc6",
+          "sha256": "7ac26fa95c8a4a1489968a99e48d798e6bc1623113ae03b07eb51b65b38d150d",
           "contentSha256": "8a1c736ee169ef78b8571a7f97bfd132abaae6837fb099d2c496d2c13ba7eef8"
         },
         "oracle": {
           "path": "evidence/artifacts/F-027-oracles.json",
-          "sha256": "c754085c554f61c0ee0b0ccf508b951e281bd59c19e1790d8bb98e5485fc18f7",
-          "contentSha256": "4556fce8450cb86c370cf655dea9583c6fed16b6cf1b4e598e364290b703233b"
+          "sha256": "b4635304dd029f6d577ce3d122786b20c00af484a99837cf28af44d369aa4c14",
+          "contentSha256": "bc8c7be733529e11c9e063d02976bf6bb8c092004f3d6c2370a170bc4791c9ab"
         },
         "cross": {
           "path": "evidence/artifacts/F-027-cross-evidence.json",
-          "sha256": "bd5b954d4daa3097fb9324825e62e9f9861cda721b86be949a297ccaea0f413d",
-          "contentSha256": "cecc794c5266d6dcb05d8c6752aeb820b44ca109897b4e82f3707344557a275a"
+          "sha256": "6e0b5bad771e76dd80126648a4be60be525816dc7a3a84802d36522e6e37b87d",
+          "contentSha256": "1f270825cb07d861ec41911c9c6463071f68193a77cca6dd1e19b7a797ce190c"
         }
       }
     },
@@ -1592,17 +1592,17 @@
       "sources": {
         ".github/workflows/ci.yml": "7524ae023f00ede9a6ae5e15d004e9acdc07ebfee12e76f681f07b2e7b7be09e",
         "apps/web/package.json": "eca74960936f1241303d6522a33575834cb07a8bd47dd8987d1052cd00e114af",
-        "apps/web/src/App.tsx": "a1ffbf7ad389751877c1c33ef9f23aad036900451aae64e1d371f40a74a8f34d",
+        "apps/web/src/App.tsx": "9a2f2bc34bad653d1d70c2b99eee7330ef9b7f7a58d9ba7ff36c81348a52128e",
         "apps/web/src/context-menu.ts": "d7004dfba317042b45f344971e29ba8a36a8de4f6b4ed7a2e573d8a84aae9931",
         "apps/web/src/indexed-db.ts": "257405697d79c2319ef1a25cbb48e98568758f21908fd2d69e98c5b63ff84232",
         "apps/web/src/main.tsx": "f0b0790cfa19ffe76fbcedb5705f8b341e3d79e76cb75b5480d95b22d04e3aa4",
-        "apps/web/src/style.css": "c4f351c488d1b0a74f7a2ff02857c9e7bd3ab2a25a253366620e28f0a0d54ecd",
+        "apps/web/src/style.css": "cd7093ccf4a693f79e594221ad4e930358b8f3f389afc4298d80231efed1983e",
         "apps/web/src/workflows/modify-command.test.ts": "aac0694d3a93a08ed5c6b98ea5456e62ba7c0f05777780a47d99dcabdf2e12b9",
         "apps/web/src/workflows/modify-command.ts": "9d1f7d0b1d3e308eac2a5d4055436626e3a497cbaaf116c05957e1fde15616c7",
         "e2e/f029-align.spec.ts": "bf8416214567ffb44ec6e1711c4456de0c516b74afb0c927cbcd9e7436b9e042",
         "e2e/helpers/layout-tools.ts": "c91e4c574e5e3a74efc3665883fc7ac172968eb6ac834f2c8b7a56d141ac5e47",
         "e2e/local-document.spec.ts": "08b933cfe03eafb1becf407bb56b98e2f5e66316f067936e0092800ecaf5f7a0",
-        "e2e/visual-shell.spec.ts": "8177c965b123bf0c8f3c7adfda81e23f1bfc9dc63769e2cbdbaef1947e3403ed",
+        "e2e/visual-shell.spec.ts": "1313a51369c9a6dda74a9f7e0d6303ff27cfa2634de31050fa894aaa4426dcda",
         "evidence/artifacts/parity-package-v3-to-v4.json": "519a4237eb6d04099c9ff5a6ac97e6e0f8c9faee7276b02da03e37f185b17f97",
         "package-lock.json": "da1dcf889d8fbf35f6a8e4403b29ed34666b13176a2b98307a0c23e25fa06a53",
         "package.json": {
@@ -1648,11 +1648,11 @@
         "packages/cad-renderer/package.json": "d514c6c9a13d248b4b9df2057ff74efc806d2ce312de6f5fb3aa4fccb2374f7b",
         "packages/cad-renderer/src/bounds.ts": "c2e589c3c8be0642582eaa95ffba295dccf377fa8cfefc835a16e6d2e7c68c06",
         "packages/cad-renderer/src/index.ts": "5563e5e6cdd66b652248e90d4ed237b145fd828da715c64375d2d05169a61888",
-        "packages/cad-renderer/src/renderer.ts": "95391b15cbc8eab61c03f7bb84cb36813727719118997c9350a300b4e537256f",
+        "packages/cad-renderer/src/renderer.ts": "e808a8ad570cfd84c5461f895dd5165691d422f3fd225424f2c1117dfe822f28",
         "packages/cad-renderer/src/rtree.ts": "1ee440db21555f018500dae5c5302c38c27a809a291bcd521702f94aa07068be",
         "packages/cad-renderer/src/selection.ts": "7f39e9d073fc4c36aa4507c4eea1ff96e6990532652fdd5b16c5a81c84c9fbc3",
         "parity/F-029-scope.md": "fcd75089c51ef918f4bdcfaabb9fdde86d2ddebb02d1c02213d719802985e170",
-        "parity/autocad-2024-visual.manifest.mjs": "32344f42b75a5a6bca0525c5054d9d7c1a28520d27f96079dba5bcf968eff8d4",
+        "parity/autocad-2024-visual.manifest.mjs": "62b72c85654da8c9a0fe74fa8b9be578247404dcb8ea96c55642b3e97712072c",
         "parity/check-visual.mjs": "346150045a481afb49df42f084b8930c6103ef59b68f9bf2e30db6c99411fe6e",
         "parity/expected/F-029.json": "b01d585694ae1a6e87ee7c9b5a7290e1d489db4f3ed8a499465ad4fa505fd0a2",
         "parity/rows.mjs": "ea2769b0a642ec6b8b89861addc5266422514aaad3151a76d1dc47ab44769d45",
@@ -1688,36 +1688,36 @@
         },
         "browser": {
           "descriptorPath": "evidence/browser/F-029.json",
-          "descriptorSha256": "86e6e370a983cb05f9d44f17f26bb33bc5f8522485c9673eb8bc312f7c9c2093",
+          "descriptorSha256": "035ffe0220d76d1b0bab06f83478ae35fc090b2acf3cc7d3e486315460179e29",
           "descriptorContentSha256": "ae696b723c12ab7fb3f6623b3de34398a44aa990d97cbf8b11a5790eadcc4792",
           "artifactPath": "evidence/artifacts/F-029-browser-readback.json",
-          "artifactSha256": "2e7254d54503b35fd6564246002e57bc79cb5c2db2ce4f36fa6067e7134da9bb",
-          "artifactContentSha256": "d9c10864daac7ea6935be4ad333b30d64c40c91d32eaa6e9201a9954e0411bfb"
+          "artifactSha256": "d4a989782a26929049c621598a4704bcc32c33c3d4b564692341d81002597023",
+          "artifactContentSha256": "c9e6904204f4a5ff0a43d02e2350ee10913fb0afa8c823cf8323627a9756dd17"
         },
         "readback": {
           "descriptorPath": "evidence/readback/F-029.json",
-          "descriptorSha256": "efdda3c5eadc8c93d0098971911384dbdc552c7227c98710815ca604c5dd7723",
+          "descriptorSha256": "185c120885d872802acf46344b32b04cac784bdfcdf94878edb5f964dbf5544c",
           "descriptorContentSha256": "3245b9b09ccbb1246fa5b7bbaedb1363711e34cfb574216e10792e62b2ff7eab",
           "artifactPath": "evidence/artifacts/F-029-independent-readback.json",
-          "artifactSha256": "8b3a805328392b3cf0370b6a6e2d35c9ccd6d68145677b3e1bc1023625761142",
+          "artifactSha256": "b08befa6b0bbd08a9e0f4c46af32802bddf5d7351ad7606ce5904fa830aba70f",
           "artifactContentSha256": "e6eb5e68fd0bc9797ec2673a7245d0363eed9c85932df662b2bf50d42aa7eb60"
         }
       },
       "receipts": {
         "global": {
           "path": "evidence/artifacts/parity-global-topology.json",
-          "sha256": "5ad7e6af3937f0390eb56c00a2af81e461a6163186d2dd07e828adf437ba1cc6",
+          "sha256": "7ac26fa95c8a4a1489968a99e48d798e6bc1623113ae03b07eb51b65b38d150d",
           "contentSha256": "8a1c736ee169ef78b8571a7f97bfd132abaae6837fb099d2c496d2c13ba7eef8"
         },
         "oracle": {
           "path": "evidence/artifacts/F-029-oracles.json",
-          "sha256": "21f71023b74429eb6a17c0fd29e27f3558c1e73619320e042d5db9987b556ced",
-          "contentSha256": "918d6a098574bfae1aba55eee64dc36c6d8e0273db618f4cb5c030dc8f2f4396"
+          "sha256": "aca8ba17ebd96605e36024c5850302e29ff9c5ccb48e6ca2c59e951f577f4d09",
+          "contentSha256": "8a27f69401338315ca222f3a433df794289a1c5426aa418b385706c8181afc46"
         },
         "cross": {
           "path": "evidence/artifacts/F-029-cross-evidence.json",
-          "sha256": "eb9436339737bab823badc1515b47044b16cab43be629e4ecc33428b33b629d0",
-          "contentSha256": "8901a8fbb52719ccd56d1865efc5fc691b184d8389979402a423b4153f4efb11"
+          "sha256": "ca7f65746fa93c78b82da39b82c892b8da6e3a23f9e5ce7bf011a26e238e2a5f",
+          "contentSha256": "cd61636de19c0cb6bd0b3124aa98d6ba6955be8622b889c8f2696d8baea90a1b"
         }
       }
     },
@@ -1726,15 +1726,15 @@
       "sources": {
         ".github/workflows/ci.yml": "7524ae023f00ede9a6ae5e15d004e9acdc07ebfee12e76f681f07b2e7b7be09e",
         "apps/web/package.json": "eca74960936f1241303d6522a33575834cb07a8bd47dd8987d1052cd00e114af",
-        "apps/web/src/App.tsx": "a1ffbf7ad389751877c1c33ef9f23aad036900451aae64e1d371f40a74a8f34d",
+        "apps/web/src/App.tsx": "9a2f2bc34bad653d1d70c2b99eee7330ef9b7f7a58d9ba7ff36c81348a52128e",
         "apps/web/src/context-menu.ts": "d7004dfba317042b45f344971e29ba8a36a8de4f6b4ed7a2e573d8a84aae9931",
         "apps/web/src/indexed-db.ts": "257405697d79c2319ef1a25cbb48e98568758f21908fd2d69e98c5b63ff84232",
         "apps/web/src/main.tsx": "f0b0790cfa19ffe76fbcedb5705f8b341e3d79e76cb75b5480d95b22d04e3aa4",
-        "apps/web/src/style.css": "c4f351c488d1b0a74f7a2ff02857c9e7bd3ab2a25a253366620e28f0a0d54ecd",
+        "apps/web/src/style.css": "cd7093ccf4a693f79e594221ad4e930358b8f3f389afc4298d80231efed1983e",
         "e2e/f097-layout-tabs.spec.ts": "9616ca98a17c14d889bf2eeaca9c5de832d492a97c1d0de67022561d7ddb34f0",
         "e2e/helpers/layout-tools.ts": "c91e4c574e5e3a74efc3665883fc7ac172968eb6ac834f2c8b7a56d141ac5e47",
         "e2e/local-document.spec.ts": "08b933cfe03eafb1becf407bb56b98e2f5e66316f067936e0092800ecaf5f7a0",
-        "e2e/visual-shell.spec.ts": "8177c965b123bf0c8f3c7adfda81e23f1bfc9dc63769e2cbdbaef1947e3403ed",
+        "e2e/visual-shell.spec.ts": "1313a51369c9a6dda74a9f7e0d6303ff27cfa2634de31050fa894aaa4426dcda",
         "evidence/artifacts/parity-package-v3-to-v4.json": "519a4237eb6d04099c9ff5a6ac97e6e0f8c9faee7276b02da03e37f185b17f97",
         "package-lock.json": "da1dcf889d8fbf35f6a8e4403b29ed34666b13176a2b98307a0c23e25fa06a53",
         "package.json": {
@@ -1766,9 +1766,9 @@
         "packages/cad-renderer/package.json": "d514c6c9a13d248b4b9df2057ff74efc806d2ce312de6f5fb3aa4fccb2374f7b",
         "packages/cad-renderer/src/bounds.ts": "c2e589c3c8be0642582eaa95ffba295dccf377fa8cfefc835a16e6d2e7c68c06",
         "packages/cad-renderer/src/index.ts": "5563e5e6cdd66b652248e90d4ed237b145fd828da715c64375d2d05169a61888",
-        "packages/cad-renderer/src/renderer.ts": "95391b15cbc8eab61c03f7bb84cb36813727719118997c9350a300b4e537256f",
+        "packages/cad-renderer/src/renderer.ts": "e808a8ad570cfd84c5461f895dd5165691d422f3fd225424f2c1117dfe822f28",
         "packages/cad-renderer/src/rtree.ts": "1ee440db21555f018500dae5c5302c38c27a809a291bcd521702f94aa07068be",
-        "parity/autocad-2024-visual.manifest.mjs": "32344f42b75a5a6bca0525c5054d9d7c1a28520d27f96079dba5bcf968eff8d4",
+        "parity/autocad-2024-visual.manifest.mjs": "62b72c85654da8c9a0fe74fa8b9be578247404dcb8ea96c55642b3e97712072c",
         "parity/check-visual.mjs": "346150045a481afb49df42f084b8930c6103ef59b68f9bf2e30db6c99411fe6e",
         "parity/rows.mjs": "ea2769b0a642ec6b8b89861addc5266422514aaad3151a76d1dc47ab44769d45",
         "playwright.config.ts": "934bf27906ceb40f12c8a629df2865a03b197a6ea7b6d5d27386c9b3c47046c5",
@@ -1794,25 +1794,25 @@
         },
         "browser": {
           "descriptorPath": "evidence/browser/F-097.json",
-          "descriptorSha256": "226bd0db3c27b303b90961d5594ed564d7558f7feaa94129c31c0889ff4a4201",
+          "descriptorSha256": "ada8d6257d8faffef6aa120484a39439393d535b06b588bff1a3d7f2d7d738bf",
           "descriptorContentSha256": "79a9727245bf2c059f374257f4885114e324e35b33cdced686ff158c6372e295",
           "artifactPath": "evidence/artifacts/F-097-browser-readback.json",
-          "artifactSha256": "5859475ed070b886958b7891d26f34fb9e63fc1306c3a7d86d19c46c15f1b9b6",
-          "artifactContentSha256": "f5b4c40516d20770a35ad16ce43cdc9f03a1b8691c5e8fbebb0d2ddeb043c962"
+          "artifactSha256": "b96dcd10d054b7f7283d540343f47a1e943d679b784f7cf16c891d83cff22a80",
+          "artifactContentSha256": "a1d8b7a98d14eb08d359348394ab574fff5d382d417560934fc18d785a2d81a6"
         },
         "readback": {
           "descriptorPath": "evidence/readback/F-097.json",
-          "descriptorSha256": "fc0604aa165c469db4be2a8769d4b82a99c7cad51817000adee8a7eefa271e32",
+          "descriptorSha256": "d1d3c3b4a83c8f55ef81172f14d9bbd8bab71ff5eee68a5510b8fb0b5cd2213c",
           "descriptorContentSha256": "2f9a847ab831b1138c878783682444284a95ac9c7140f28a010ce32379dd8426",
           "artifactPath": "evidence/artifacts/F-097-independent-readback.json",
-          "artifactSha256": "e9cf3956bdd9160f08b5cf1d045e262ac222067deab73c4018f2ad37c2aa6cdb",
+          "artifactSha256": "7b33bdb2420278e3a57af7e2a1a0b5cad731140e1e20d8c5eebd6daba80528a4",
           "artifactContentSha256": "81033ef3fa96275036da7c39abdc9b03db3dcf05fcffcf7220fdd4987a1ade0c"
         }
       },
       "receipts": {
         "global": {
           "path": "evidence/artifacts/parity-global-topology.json",
-          "sha256": "5ad7e6af3937f0390eb56c00a2af81e461a6163186d2dd07e828adf437ba1cc6",
+          "sha256": "7ac26fa95c8a4a1489968a99e48d798e6bc1623113ae03b07eb51b65b38d150d",
           "contentSha256": "8a1c736ee169ef78b8571a7f97bfd132abaae6837fb099d2c496d2c13ba7eef8"
         }
       }
@@ -1822,15 +1822,15 @@
       "sources": {
         ".github/workflows/ci.yml": "7524ae023f00ede9a6ae5e15d004e9acdc07ebfee12e76f681f07b2e7b7be09e",
         "apps/web/package.json": "eca74960936f1241303d6522a33575834cb07a8bd47dd8987d1052cd00e114af",
-        "apps/web/src/App.tsx": "a1ffbf7ad389751877c1c33ef9f23aad036900451aae64e1d371f40a74a8f34d",
+        "apps/web/src/App.tsx": "9a2f2bc34bad653d1d70c2b99eee7330ef9b7f7a58d9ba7ff36c81348a52128e",
         "apps/web/src/context-menu.ts": "d7004dfba317042b45f344971e29ba8a36a8de4f6b4ed7a2e573d8a84aae9931",
         "apps/web/src/indexed-db.ts": "257405697d79c2319ef1a25cbb48e98568758f21908fd2d69e98c5b63ff84232",
         "apps/web/src/main.tsx": "f0b0790cfa19ffe76fbcedb5705f8b341e3d79e76cb75b5480d95b22d04e3aa4",
-        "apps/web/src/style.css": "c4f351c488d1b0a74f7a2ff02857c9e7bd3ab2a25a253366620e28f0a0d54ecd",
+        "apps/web/src/style.css": "cd7093ccf4a693f79e594221ad4e930358b8f3f389afc4298d80231efed1983e",
         "e2e/f098-paper-space.spec.ts": "d4ea5e20d25f37a5f99e044bb3909cb5d9afb4c953dbf07ba6155dcf79f6748d",
         "e2e/helpers/layout-tools.ts": "c91e4c574e5e3a74efc3665883fc7ac172968eb6ac834f2c8b7a56d141ac5e47",
         "e2e/local-document.spec.ts": "08b933cfe03eafb1becf407bb56b98e2f5e66316f067936e0092800ecaf5f7a0",
-        "e2e/visual-shell.spec.ts": "8177c965b123bf0c8f3c7adfda81e23f1bfc9dc63769e2cbdbaef1947e3403ed",
+        "e2e/visual-shell.spec.ts": "1313a51369c9a6dda74a9f7e0d6303ff27cfa2634de31050fa894aaa4426dcda",
         "evidence/artifacts/parity-package-v3-to-v4.json": "519a4237eb6d04099c9ff5a6ac97e6e0f8c9faee7276b02da03e37f185b17f97",
         "package-lock.json": "da1dcf889d8fbf35f6a8e4403b29ed34666b13176a2b98307a0c23e25fa06a53",
         "package.json": {
@@ -1862,9 +1862,9 @@
         "packages/cad-renderer/package.json": "d514c6c9a13d248b4b9df2057ff74efc806d2ce312de6f5fb3aa4fccb2374f7b",
         "packages/cad-renderer/src/bounds.ts": "c2e589c3c8be0642582eaa95ffba295dccf377fa8cfefc835a16e6d2e7c68c06",
         "packages/cad-renderer/src/index.ts": "5563e5e6cdd66b652248e90d4ed237b145fd828da715c64375d2d05169a61888",
-        "packages/cad-renderer/src/renderer.ts": "95391b15cbc8eab61c03f7bb84cb36813727719118997c9350a300b4e537256f",
+        "packages/cad-renderer/src/renderer.ts": "e808a8ad570cfd84c5461f895dd5165691d422f3fd225424f2c1117dfe822f28",
         "packages/cad-renderer/src/rtree.ts": "1ee440db21555f018500dae5c5302c38c27a809a291bcd521702f94aa07068be",
-        "parity/autocad-2024-visual.manifest.mjs": "32344f42b75a5a6bca0525c5054d9d7c1a28520d27f96079dba5bcf968eff8d4",
+        "parity/autocad-2024-visual.manifest.mjs": "62b72c85654da8c9a0fe74fa8b9be578247404dcb8ea96c55642b3e97712072c",
         "parity/check-visual.mjs": "346150045a481afb49df42f084b8930c6103ef59b68f9bf2e30db6c99411fe6e",
         "parity/rows.mjs": "ea2769b0a642ec6b8b89861addc5266422514aaad3151a76d1dc47ab44769d45",
         "playwright.config.ts": "934bf27906ceb40f12c8a629df2865a03b197a6ea7b6d5d27386c9b3c47046c5",
@@ -1891,25 +1891,25 @@
         },
         "browser": {
           "descriptorPath": "evidence/browser/F-098.json",
-          "descriptorSha256": "67b6a8ccd39b8abe3cbc7d3f5cb136fdb04d23b7c4689ee0f2755c3d57fdc1a9",
+          "descriptorSha256": "65a0183d48b65a459b4752d539a512c2e4f1b061e349a6dc8ccf99887a597b18",
           "descriptorContentSha256": "263e327df0d27a1d90b9d17a42ae410ba7d79e350eb1456ceebf16cbb773f684",
           "artifactPath": "evidence/artifacts/F-098-browser-readback.json",
-          "artifactSha256": "1437bf093363363bfcc4570615afd7ecd1e9989b1fdea3269ad1a36f4c7c4a6b",
+          "artifactSha256": "4fe5a31e8b57b6ecd74afa52608d35453ff49511eaca30c85cd4b675159231cd",
           "artifactContentSha256": "b61483a2b29fb30ea16013cd029ba1fd91da897e77afe2f67159e9edad269278"
         },
         "readback": {
           "descriptorPath": "evidence/readback/F-098.json",
-          "descriptorSha256": "79bdf47e779b976011a0d841c298c7a01f49c6d70e16ad6ea9905cabd715f103",
+          "descriptorSha256": "e2d99b80b01500e836d0f57fd887a6fab0d2bd24696f674b5fc0a2ba547138b7",
           "descriptorContentSha256": "17281815be6d7c64b608d70035519988f3f6572604266f3a7d923437e44dbeaa",
           "artifactPath": "evidence/artifacts/F-098-independent-readback.json",
-          "artifactSha256": "7fbd00060d17e018ed8fe5178357865061b4c33766f35cf10ea8fb741acd590f",
+          "artifactSha256": "7c550a39ad76ff4d7c9f9bd1acb89956de9c4cc01569a607a2b78f07b8dfc2eb",
           "artifactContentSha256": "b13c38fe0410ba683a15223a7cf374c58eb99941fa2c6ed715777eebabeb4a9a"
         }
       },
       "receipts": {
         "global": {
           "path": "evidence/artifacts/parity-global-topology.json",
-          "sha256": "5ad7e6af3937f0390eb56c00a2af81e461a6163186d2dd07e828adf437ba1cc6",
+          "sha256": "7ac26fa95c8a4a1489968a99e48d798e6bc1623113ae03b07eb51b65b38d150d",
           "contentSha256": "8a1c736ee169ef78b8571a7f97bfd132abaae6837fb099d2c496d2c13ba7eef8"
         }
       }
@@ -1919,15 +1919,15 @@
       "sources": {
         ".github/workflows/ci.yml": "7524ae023f00ede9a6ae5e15d004e9acdc07ebfee12e76f681f07b2e7b7be09e",
         "apps/web/package.json": "eca74960936f1241303d6522a33575834cb07a8bd47dd8987d1052cd00e114af",
-        "apps/web/src/App.tsx": "a1ffbf7ad389751877c1c33ef9f23aad036900451aae64e1d371f40a74a8f34d",
+        "apps/web/src/App.tsx": "9a2f2bc34bad653d1d70c2b99eee7330ef9b7f7a58d9ba7ff36c81348a52128e",
         "apps/web/src/context-menu.ts": "d7004dfba317042b45f344971e29ba8a36a8de4f6b4ed7a2e573d8a84aae9931",
         "apps/web/src/indexed-db.ts": "257405697d79c2319ef1a25cbb48e98568758f21908fd2d69e98c5b63ff84232",
         "apps/web/src/main.tsx": "f0b0790cfa19ffe76fbcedb5705f8b341e3d79e76cb75b5480d95b22d04e3aa4",
-        "apps/web/src/style.css": "c4f351c488d1b0a74f7a2ff02857c9e7bd3ab2a25a253366620e28f0a0d54ecd",
+        "apps/web/src/style.css": "cd7093ccf4a693f79e594221ad4e930358b8f3f389afc4298d80231efed1983e",
         "e2e/f099-multiple-viewports.spec.ts": "59c7901082987779107b56a6d7cd4f89ae299531b88a5c95904eaf15aa693ace",
         "e2e/helpers/layout-tools.ts": "c91e4c574e5e3a74efc3665883fc7ac172968eb6ac834f2c8b7a56d141ac5e47",
         "e2e/local-document.spec.ts": "08b933cfe03eafb1becf407bb56b98e2f5e66316f067936e0092800ecaf5f7a0",
-        "e2e/visual-shell.spec.ts": "8177c965b123bf0c8f3c7adfda81e23f1bfc9dc63769e2cbdbaef1947e3403ed",
+        "e2e/visual-shell.spec.ts": "1313a51369c9a6dda74a9f7e0d6303ff27cfa2634de31050fa894aaa4426dcda",
         "evidence/artifacts/parity-package-v3-to-v4.json": "519a4237eb6d04099c9ff5a6ac97e6e0f8c9faee7276b02da03e37f185b17f97",
         "package-lock.json": "da1dcf889d8fbf35f6a8e4403b29ed34666b13176a2b98307a0c23e25fa06a53",
         "package.json": {
@@ -1959,9 +1959,9 @@
         "packages/cad-renderer/package.json": "d514c6c9a13d248b4b9df2057ff74efc806d2ce312de6f5fb3aa4fccb2374f7b",
         "packages/cad-renderer/src/bounds.ts": "c2e589c3c8be0642582eaa95ffba295dccf377fa8cfefc835a16e6d2e7c68c06",
         "packages/cad-renderer/src/index.ts": "5563e5e6cdd66b652248e90d4ed237b145fd828da715c64375d2d05169a61888",
-        "packages/cad-renderer/src/renderer.ts": "95391b15cbc8eab61c03f7bb84cb36813727719118997c9350a300b4e537256f",
+        "packages/cad-renderer/src/renderer.ts": "e808a8ad570cfd84c5461f895dd5165691d422f3fd225424f2c1117dfe822f28",
         "packages/cad-renderer/src/rtree.ts": "1ee440db21555f018500dae5c5302c38c27a809a291bcd521702f94aa07068be",
-        "parity/autocad-2024-visual.manifest.mjs": "32344f42b75a5a6bca0525c5054d9d7c1a28520d27f96079dba5bcf968eff8d4",
+        "parity/autocad-2024-visual.manifest.mjs": "62b72c85654da8c9a0fe74fa8b9be578247404dcb8ea96c55642b3e97712072c",
         "parity/check-visual.mjs": "346150045a481afb49df42f084b8930c6103ef59b68f9bf2e30db6c99411fe6e",
         "parity/rows.mjs": "ea2769b0a642ec6b8b89861addc5266422514aaad3151a76d1dc47ab44769d45",
         "playwright.config.ts": "934bf27906ceb40f12c8a629df2865a03b197a6ea7b6d5d27386c9b3c47046c5",
@@ -1988,25 +1988,25 @@
         },
         "browser": {
           "descriptorPath": "evidence/browser/F-099.json",
-          "descriptorSha256": "e3a9254ed4a98c016e315014dd3a65854f354eca6fe803837f9d64ee1e867c04",
+          "descriptorSha256": "06c68911d18c8efd1ebfa1290747b90e1133da1447405a36896492addbcba1c1",
           "descriptorContentSha256": "b203515b33ad276738a8336f916875de06291d72bdf691402e68e8ebec6c61dc",
           "artifactPath": "evidence/artifacts/F-099-browser-readback.json",
-          "artifactSha256": "728166879d9c45e1497b775f02f364d5b94c6d06b68ff5d7edeb5a18b8f84b19",
-          "artifactContentSha256": "74a910a8a9559ea7dc2f4b312a75cfb813902b643658647ced2f32d0c62b8b0b"
+          "artifactSha256": "621787b79a44a539497e8c95116396e582cbec12d3416875bae6f0f870d87d5d",
+          "artifactContentSha256": "6e8c11e059396b15f8c10f0c9394b0ca8e46d67d13472e18cc894ebaaacaebb4"
         },
         "readback": {
           "descriptorPath": "evidence/readback/F-099.json",
-          "descriptorSha256": "59457bb1e52ed6cae991188be8ed9ab5dfd55ce01d3b3207782abbbaaff92c6b",
+          "descriptorSha256": "2e700520008ff98578550e97da4e9e8a20964745fa9a4f3131ce0c8cfe484764",
           "descriptorContentSha256": "91a67e0d546d0e53cb4e0ebac9b2a6eb78f7ca4dc2682d9a4dface7866899684",
           "artifactPath": "evidence/artifacts/F-099-independent-readback.json",
-          "artifactSha256": "b7bfab4c3ae18f5527a1d0c63bc6980738fef72f2808530d962f2498b4664bc6",
+          "artifactSha256": "480d00364b697732a36c42d429347dd3206aa5d12384c043e584e4a245fb498a",
           "artifactContentSha256": "412227cac673e334b92e34486e88411224cef843327b0f590feac8a9b9565d74"
         }
       },
       "receipts": {
         "global": {
           "path": "evidence/artifacts/parity-global-topology.json",
-          "sha256": "5ad7e6af3937f0390eb56c00a2af81e461a6163186d2dd07e828adf437ba1cc6",
+          "sha256": "7ac26fa95c8a4a1489968a99e48d798e6bc1623113ae03b07eb51b65b38d150d",
           "contentSha256": "8a1c736ee169ef78b8571a7f97bfd132abaae6837fb099d2c496d2c13ba7eef8"
         }
       }
@@ -2016,15 +2016,15 @@
       "sources": {
         ".github/workflows/ci.yml": "7524ae023f00ede9a6ae5e15d004e9acdc07ebfee12e76f681f07b2e7b7be09e",
         "apps/web/package.json": "eca74960936f1241303d6522a33575834cb07a8bd47dd8987d1052cd00e114af",
-        "apps/web/src/App.tsx": "a1ffbf7ad389751877c1c33ef9f23aad036900451aae64e1d371f40a74a8f34d",
+        "apps/web/src/App.tsx": "9a2f2bc34bad653d1d70c2b99eee7330ef9b7f7a58d9ba7ff36c81348a52128e",
         "apps/web/src/context-menu.ts": "d7004dfba317042b45f344971e29ba8a36a8de4f6b4ed7a2e573d8a84aae9931",
         "apps/web/src/indexed-db.ts": "257405697d79c2319ef1a25cbb48e98568758f21908fd2d69e98c5b63ff84232",
         "apps/web/src/main.tsx": "f0b0790cfa19ffe76fbcedb5705f8b341e3d79e76cb75b5480d95b22d04e3aa4",
-        "apps/web/src/style.css": "c4f351c488d1b0a74f7a2ff02857c9e7bd3ab2a25a253366620e28f0a0d54ecd",
+        "apps/web/src/style.css": "cd7093ccf4a693f79e594221ad4e930358b8f3f389afc4298d80231efed1983e",
         "e2e/f100-viewport-view.spec.ts": "b264634524c17a43c6636175dca0bd2f2fe3a09638707752bb6258da4b2e2d71",
         "e2e/helpers/layout-tools.ts": "c91e4c574e5e3a74efc3665883fc7ac172968eb6ac834f2c8b7a56d141ac5e47",
         "e2e/local-document.spec.ts": "08b933cfe03eafb1becf407bb56b98e2f5e66316f067936e0092800ecaf5f7a0",
-        "e2e/visual-shell.spec.ts": "8177c965b123bf0c8f3c7adfda81e23f1bfc9dc63769e2cbdbaef1947e3403ed",
+        "e2e/visual-shell.spec.ts": "1313a51369c9a6dda74a9f7e0d6303ff27cfa2634de31050fa894aaa4426dcda",
         "evidence/artifacts/parity-package-v3-to-v4.json": "519a4237eb6d04099c9ff5a6ac97e6e0f8c9faee7276b02da03e37f185b17f97",
         "package-lock.json": "da1dcf889d8fbf35f6a8e4403b29ed34666b13176a2b98307a0c23e25fa06a53",
         "package.json": {
@@ -2059,9 +2059,9 @@
         "packages/cad-renderer/package.json": "d514c6c9a13d248b4b9df2057ff74efc806d2ce312de6f5fb3aa4fccb2374f7b",
         "packages/cad-renderer/src/bounds.ts": "c2e589c3c8be0642582eaa95ffba295dccf377fa8cfefc835a16e6d2e7c68c06",
         "packages/cad-renderer/src/index.ts": "5563e5e6cdd66b652248e90d4ed237b145fd828da715c64375d2d05169a61888",
-        "packages/cad-renderer/src/renderer.ts": "95391b15cbc8eab61c03f7bb84cb36813727719118997c9350a300b4e537256f",
+        "packages/cad-renderer/src/renderer.ts": "e808a8ad570cfd84c5461f895dd5165691d422f3fd225424f2c1117dfe822f28",
         "packages/cad-renderer/src/rtree.ts": "1ee440db21555f018500dae5c5302c38c27a809a291bcd521702f94aa07068be",
-        "parity/autocad-2024-visual.manifest.mjs": "32344f42b75a5a6bca0525c5054d9d7c1a28520d27f96079dba5bcf968eff8d4",
+        "parity/autocad-2024-visual.manifest.mjs": "62b72c85654da8c9a0fe74fa8b9be578247404dcb8ea96c55642b3e97712072c",
         "parity/check-visual.mjs": "346150045a481afb49df42f084b8930c6103ef59b68f9bf2e30db6c99411fe6e",
         "parity/rows.mjs": "ea2769b0a642ec6b8b89861addc5266422514aaad3151a76d1dc47ab44769d45",
         "playwright.config.ts": "934bf27906ceb40f12c8a629df2865a03b197a6ea7b6d5d27386c9b3c47046c5",
@@ -2089,25 +2089,25 @@
         },
         "browser": {
           "descriptorPath": "evidence/browser/F-100.json",
-          "descriptorSha256": "5879b1cdeead497b8f5188f66d6f3a7e0da091316f01cf902ebb7b9511413e93",
+          "descriptorSha256": "b9e5a8508ea70d6c682f1d57b2ea709d13a058d57b70681acabfcd1c000d40ce",
           "descriptorContentSha256": "47b473efd608a0171a10e330adc86b8256bd898501d5d00720590f87b0ee1c13",
           "artifactPath": "evidence/artifacts/F-100-browser-readback.json",
-          "artifactSha256": "76fe68778978514e34ba153dd9961ff9ca90016ea11de41fc651ec976837b580",
-          "artifactContentSha256": "2370523f2a23d5b809315187fa31dd18465c4d93e04009d1dbe2627fd7eb0fe7"
+          "artifactSha256": "af4e300deaa736879fce23bceb98d9e440ce6446176056e1e74f6a419b338b18",
+          "artifactContentSha256": "cb3238b91b1a7c8c4fc96f91d74da8c5341e26a94cad17006ad9448a16b4aa69"
         },
         "readback": {
           "descriptorPath": "evidence/readback/F-100.json",
-          "descriptorSha256": "ed4cf41d0a754f2eccae50ad0565d2d7f9ee7b72380241ee0b109f99744081d2",
+          "descriptorSha256": "113e604235446b0372f85a6b51d749dd5d32142ada76e5412fad6afc3cbddb34",
           "descriptorContentSha256": "32c8fb1ad34616d64ef836ebd91a81a780e5d0e71a32dd2d4b73d4e4d9d086be",
           "artifactPath": "evidence/artifacts/F-100-independent-readback.json",
-          "artifactSha256": "6f2c414b460c3daff3775ed627bd0a60bbf44f7eea5816a89c2f497a4d6340f3",
+          "artifactSha256": "b469d82c159aa15aa9c5f91790a5abeb9ac04e1fa7e1c28b52eebb3da4f63cab",
           "artifactContentSha256": "bfc082cdf6741f0cc3c4c6cfd9b0d12e87c3fb288108bca87819463eada73ddf"
         }
       },
       "receipts": {
         "global": {
           "path": "evidence/artifacts/parity-global-topology.json",
-          "sha256": "5ad7e6af3937f0390eb56c00a2af81e461a6163186d2dd07e828adf437ba1cc6",
+          "sha256": "7ac26fa95c8a4a1489968a99e48d798e6bc1623113ae03b07eb51b65b38d150d",
           "contentSha256": "8a1c736ee169ef78b8571a7f97bfd132abaae6837fb099d2c496d2c13ba7eef8"
         }
       }
@@ -2117,15 +2117,15 @@
       "sources": {
         ".github/workflows/ci.yml": "7524ae023f00ede9a6ae5e15d004e9acdc07ebfee12e76f681f07b2e7b7be09e",
         "apps/web/package.json": "eca74960936f1241303d6522a33575834cb07a8bd47dd8987d1052cd00e114af",
-        "apps/web/src/App.tsx": "a1ffbf7ad389751877c1c33ef9f23aad036900451aae64e1d371f40a74a8f34d",
+        "apps/web/src/App.tsx": "9a2f2bc34bad653d1d70c2b99eee7330ef9b7f7a58d9ba7ff36c81348a52128e",
         "apps/web/src/context-menu.ts": "d7004dfba317042b45f344971e29ba8a36a8de4f6b4ed7a2e573d8a84aae9931",
         "apps/web/src/indexed-db.ts": "257405697d79c2319ef1a25cbb48e98568758f21908fd2d69e98c5b63ff84232",
         "apps/web/src/main.tsx": "f0b0790cfa19ffe76fbcedb5705f8b341e3d79e76cb75b5480d95b22d04e3aa4",
-        "apps/web/src/style.css": "c4f351c488d1b0a74f7a2ff02857c9e7bd3ab2a25a253366620e28f0a0d54ecd",
+        "apps/web/src/style.css": "cd7093ccf4a693f79e594221ad4e930358b8f3f389afc4298d80231efed1983e",
         "e2e/f101-viewport-lock.spec.ts": "b713d3dd01eb5aee71512f0853e1a46fa641415ccc84e4ad06a145acbc105ee2",
         "e2e/helpers/layout-tools.ts": "c91e4c574e5e3a74efc3665883fc7ac172968eb6ac834f2c8b7a56d141ac5e47",
         "e2e/local-document.spec.ts": "08b933cfe03eafb1becf407bb56b98e2f5e66316f067936e0092800ecaf5f7a0",
-        "e2e/visual-shell.spec.ts": "8177c965b123bf0c8f3c7adfda81e23f1bfc9dc63769e2cbdbaef1947e3403ed",
+        "e2e/visual-shell.spec.ts": "1313a51369c9a6dda74a9f7e0d6303ff27cfa2634de31050fa894aaa4426dcda",
         "evidence/artifacts/parity-package-v3-to-v4.json": "519a4237eb6d04099c9ff5a6ac97e6e0f8c9faee7276b02da03e37f185b17f97",
         "package-lock.json": "da1dcf889d8fbf35f6a8e4403b29ed34666b13176a2b98307a0c23e25fa06a53",
         "package.json": {
@@ -2160,9 +2160,9 @@
         "packages/cad-renderer/package.json": "d514c6c9a13d248b4b9df2057ff74efc806d2ce312de6f5fb3aa4fccb2374f7b",
         "packages/cad-renderer/src/bounds.ts": "c2e589c3c8be0642582eaa95ffba295dccf377fa8cfefc835a16e6d2e7c68c06",
         "packages/cad-renderer/src/index.ts": "5563e5e6cdd66b652248e90d4ed237b145fd828da715c64375d2d05169a61888",
-        "packages/cad-renderer/src/renderer.ts": "95391b15cbc8eab61c03f7bb84cb36813727719118997c9350a300b4e537256f",
+        "packages/cad-renderer/src/renderer.ts": "e808a8ad570cfd84c5461f895dd5165691d422f3fd225424f2c1117dfe822f28",
         "packages/cad-renderer/src/rtree.ts": "1ee440db21555f018500dae5c5302c38c27a809a291bcd521702f94aa07068be",
-        "parity/autocad-2024-visual.manifest.mjs": "32344f42b75a5a6bca0525c5054d9d7c1a28520d27f96079dba5bcf968eff8d4",
+        "parity/autocad-2024-visual.manifest.mjs": "62b72c85654da8c9a0fe74fa8b9be578247404dcb8ea96c55642b3e97712072c",
         "parity/check-visual.mjs": "346150045a481afb49df42f084b8930c6103ef59b68f9bf2e30db6c99411fe6e",
         "parity/rows.mjs": "ea2769b0a642ec6b8b89861addc5266422514aaad3151a76d1dc47ab44769d45",
         "playwright.config.ts": "934bf27906ceb40f12c8a629df2865a03b197a6ea7b6d5d27386c9b3c47046c5",
@@ -2190,25 +2190,25 @@
         },
         "browser": {
           "descriptorPath": "evidence/browser/F-101.json",
-          "descriptorSha256": "1f962467620c59ab7c2453def4d3b7157b86db2ee5babd3f07a9d6669aadefef",
+          "descriptorSha256": "abe90b786580bd5cb6590874c5ec454be2c20e1120f99082df61b64d39aedba0",
           "descriptorContentSha256": "42a49ed0dd5be732aaa4a050ca8fb9e3eea2a3c1b443155afed7118e29b19aa0",
           "artifactPath": "evidence/artifacts/F-101-browser-readback.json",
-          "artifactSha256": "503e54e84f08445d8da49bfd8fe23630bc9e60ea8c2b4478f52d5b65a0ac968b",
-          "artifactContentSha256": "041ab80932945bc5faffabd46c25817420aa11864d1e31d2b217fb2c57251b8f"
+          "artifactSha256": "0d21ba2daecff264a1e82bd0e803e87fcc3d9251a295df2def27fbe7fda480ea",
+          "artifactContentSha256": "ba19807e027f0188c5947c230bceb610aba10eb88147318c7a61d8882e74c139"
         },
         "readback": {
           "descriptorPath": "evidence/readback/F-101.json",
-          "descriptorSha256": "b28c2a5d2dadf502ca7965a12e845a45d0148beb625667aeb06e2475c00c4dad",
+          "descriptorSha256": "76a85e7cef4beae25ca1c8f707c2c7fbff33794c5798930e2a1f34c18f581164",
           "descriptorContentSha256": "7b4d01db3ef01304792cb8678d6f99f6c2bb4b8bb61475b5a9affa2872591b66",
           "artifactPath": "evidence/artifacts/F-101-independent-readback.json",
-          "artifactSha256": "1222cb2a6c8b27e2494db826e4448ba24c7fd4f5e2fa80b88731679f1be259d7",
+          "artifactSha256": "a7d0a43538fedc2deffbf835178c1c8334d16e158619541c191e810a7aee8d2a",
           "artifactContentSha256": "c1c015e902718fb6fdab7d6fbe6c9e0d850dd742df54b08f8c3947fa48a3f2ec"
         }
       },
       "receipts": {
         "global": {
           "path": "evidence/artifacts/parity-global-topology.json",
-          "sha256": "5ad7e6af3937f0390eb56c00a2af81e461a6163186d2dd07e828adf437ba1cc6",
+          "sha256": "7ac26fa95c8a4a1489968a99e48d798e6bc1623113ae03b07eb51b65b38d150d",
           "contentSha256": "8a1c736ee169ef78b8571a7f97bfd132abaae6837fb099d2c496d2c13ba7eef8"
         }
       }
@@ -2218,15 +2218,15 @@
       "sources": {
         ".github/workflows/ci.yml": "7524ae023f00ede9a6ae5e15d004e9acdc07ebfee12e76f681f07b2e7b7be09e",
         "apps/web/package.json": "eca74960936f1241303d6522a33575834cb07a8bd47dd8987d1052cd00e114af",
-        "apps/web/src/App.tsx": "a1ffbf7ad389751877c1c33ef9f23aad036900451aae64e1d371f40a74a8f34d",
+        "apps/web/src/App.tsx": "9a2f2bc34bad653d1d70c2b99eee7330ef9b7f7a58d9ba7ff36c81348a52128e",
         "apps/web/src/context-menu.ts": "d7004dfba317042b45f344971e29ba8a36a8de4f6b4ed7a2e573d8a84aae9931",
         "apps/web/src/indexed-db.ts": "257405697d79c2319ef1a25cbb48e98568758f21908fd2d69e98c5b63ff84232",
         "apps/web/src/main.tsx": "f0b0790cfa19ffe76fbcedb5705f8b341e3d79e76cb75b5480d95b22d04e3aa4",
-        "apps/web/src/style.css": "c4f351c488d1b0a74f7a2ff02857c9e7bd3ab2a25a253366620e28f0a0d54ecd",
+        "apps/web/src/style.css": "cd7093ccf4a693f79e594221ad4e930358b8f3f389afc4298d80231efed1983e",
         "e2e/f102-page-setup.spec.ts": "1dd32ca2e9e7b6bec13f99ed110de846608638ad9b180d54b67ab740a0d14de3",
         "e2e/helpers/layout-tools.ts": "c91e4c574e5e3a74efc3665883fc7ac172968eb6ac834f2c8b7a56d141ac5e47",
         "e2e/local-document.spec.ts": "08b933cfe03eafb1becf407bb56b98e2f5e66316f067936e0092800ecaf5f7a0",
-        "e2e/visual-shell.spec.ts": "8177c965b123bf0c8f3c7adfda81e23f1bfc9dc63769e2cbdbaef1947e3403ed",
+        "e2e/visual-shell.spec.ts": "1313a51369c9a6dda74a9f7e0d6303ff27cfa2634de31050fa894aaa4426dcda",
         "evidence/artifacts/parity-package-v3-to-v4.json": "519a4237eb6d04099c9ff5a6ac97e6e0f8c9faee7276b02da03e37f185b17f97",
         "package-lock.json": "da1dcf889d8fbf35f6a8e4403b29ed34666b13176a2b98307a0c23e25fa06a53",
         "package.json": {
@@ -2263,9 +2263,9 @@
         "packages/cad-renderer/package.json": "d514c6c9a13d248b4b9df2057ff74efc806d2ce312de6f5fb3aa4fccb2374f7b",
         "packages/cad-renderer/src/bounds.ts": "c2e589c3c8be0642582eaa95ffba295dccf377fa8cfefc835a16e6d2e7c68c06",
         "packages/cad-renderer/src/index.ts": "5563e5e6cdd66b652248e90d4ed237b145fd828da715c64375d2d05169a61888",
-        "packages/cad-renderer/src/renderer.ts": "95391b15cbc8eab61c03f7bb84cb36813727719118997c9350a300b4e537256f",
+        "packages/cad-renderer/src/renderer.ts": "e808a8ad570cfd84c5461f895dd5165691d422f3fd225424f2c1117dfe822f28",
         "packages/cad-renderer/src/rtree.ts": "1ee440db21555f018500dae5c5302c38c27a809a291bcd521702f94aa07068be",
-        "parity/autocad-2024-visual.manifest.mjs": "32344f42b75a5a6bca0525c5054d9d7c1a28520d27f96079dba5bcf968eff8d4",
+        "parity/autocad-2024-visual.manifest.mjs": "62b72c85654da8c9a0fe74fa8b9be578247404dcb8ea96c55642b3e97712072c",
         "parity/check-visual.mjs": "346150045a481afb49df42f084b8930c6103ef59b68f9bf2e30db6c99411fe6e",
         "parity/rows.mjs": "ea2769b0a642ec6b8b89861addc5266422514aaad3151a76d1dc47ab44769d45",
         "playwright.config.ts": "934bf27906ceb40f12c8a629df2865a03b197a6ea7b6d5d27386c9b3c47046c5",
@@ -2294,30 +2294,30 @@
         },
         "browser": {
           "descriptorPath": "evidence/browser/F-102.json",
-          "descriptorSha256": "0e90a5570fbe8c37ea3c302472186db76ae5657746d34c30704f3726db43dafc",
+          "descriptorSha256": "29b30c2fece037d9847f04c7710fea88c077ccaf1353b93690909060475c1c18",
           "descriptorContentSha256": "3c175a91a561526e578e79a6a97dc597dcbbf8ef48ce00262965a37cc1bad306",
           "artifactPath": "evidence/artifacts/F-102-browser-readback.json",
-          "artifactSha256": "982d2f0e6c4f082a6e72483b992d0f2fddcd90e83f9185f29dc9535901a04504",
-          "artifactContentSha256": "643143ec2fe6bd0bd9b0b6ed1982d7c2694d0e3529910aeacdccba071d375fa2"
+          "artifactSha256": "b23814351057f49583b68dbf1754d634dba3f4dd5a1ac7aad5fb773d7548580c",
+          "artifactContentSha256": "29330f73ec6d8c5fa564286ac22ae0755783ce2fda701fc32c0c7ddaa6b5ca77"
         },
         "readback": {
           "descriptorPath": "evidence/readback/F-102.json",
-          "descriptorSha256": "5634fb4e37ab6a052c6bb1ef21b9593475ab7a25b4b0f9c06846bd91f4c9ef14",
+          "descriptorSha256": "c95ea76e79fa1f804c2ccf5722f24d06b0b2a01fb48afc6752fb74a5cd119c53",
           "descriptorContentSha256": "953e45fc7b88f7ea99cc30f5108bb199c7a53dd8575cae74ea88cedc18d43b24",
           "artifactPath": "evidence/artifacts/F-102-readback.json",
-          "artifactSha256": "386965264d140e889625e029575b84daac7cbb35a054f737e7f3ff0a7e035fa5",
+          "artifactSha256": "845f49096afbe7d6b5f2d74f854ed64f786df961d3df8b6d06056393c72638f1",
           "artifactContentSha256": "2cd123352fe9dfc86959ee55c15aab6c1230e84338ca05721407e32559ea59c6"
         }
       },
       "receipts": {
         "global": {
           "path": "evidence/artifacts/parity-global-topology.json",
-          "sha256": "5ad7e6af3937f0390eb56c00a2af81e461a6163186d2dd07e828adf437ba1cc6",
+          "sha256": "7ac26fa95c8a4a1489968a99e48d798e6bc1623113ae03b07eb51b65b38d150d",
           "contentSha256": "8a1c736ee169ef78b8571a7f97bfd132abaae6837fb099d2c496d2c13ba7eef8"
         },
         "cross": {
           "path": "evidence/artifacts/F-102-cross-evidence.json",
-          "sha256": "408a5adf31562076653358b8d6003ffbd6400427d0de457f17fa08c85fdcd8e4",
+          "sha256": "7cb8ba15bdc6a3f62a801ba1952eb3e592942d260d287c0187c16cc18fbc00e7",
           "contentSha256": "4f710967a5633d9164c032f604567f8ed4e5b2fa12dad8c6d4f10b69e766e95c"
         }
       }
@@ -2327,15 +2327,15 @@
       "sources": {
         ".github/workflows/ci.yml": "7524ae023f00ede9a6ae5e15d004e9acdc07ebfee12e76f681f07b2e7b7be09e",
         "apps/web/package.json": "eca74960936f1241303d6522a33575834cb07a8bd47dd8987d1052cd00e114af",
-        "apps/web/src/App.tsx": "a1ffbf7ad389751877c1c33ef9f23aad036900451aae64e1d371f40a74a8f34d",
+        "apps/web/src/App.tsx": "9a2f2bc34bad653d1d70c2b99eee7330ef9b7f7a58d9ba7ff36c81348a52128e",
         "apps/web/src/context-menu.ts": "d7004dfba317042b45f344971e29ba8a36a8de4f6b4ed7a2e573d8a84aae9931",
         "apps/web/src/indexed-db.ts": "257405697d79c2319ef1a25cbb48e98568758f21908fd2d69e98c5b63ff84232",
         "apps/web/src/main.tsx": "f0b0790cfa19ffe76fbcedb5705f8b341e3d79e76cb75b5480d95b22d04e3aa4",
-        "apps/web/src/style.css": "c4f351c488d1b0a74f7a2ff02857c9e7bd3ab2a25a253366620e28f0a0d54ecd",
+        "apps/web/src/style.css": "cd7093ccf4a693f79e594221ad4e930358b8f3f389afc4298d80231efed1983e",
         "e2e/f103-plot-style.spec.ts": "e3d0dee69391ba17be26540d72ee1468d7586e99f3ebfdb0c13e0501e5d9eff5",
         "e2e/helpers/layout-tools.ts": "c91e4c574e5e3a74efc3665883fc7ac172968eb6ac834f2c8b7a56d141ac5e47",
         "e2e/local-document.spec.ts": "08b933cfe03eafb1becf407bb56b98e2f5e66316f067936e0092800ecaf5f7a0",
-        "e2e/visual-shell.spec.ts": "8177c965b123bf0c8f3c7adfda81e23f1bfc9dc63769e2cbdbaef1947e3403ed",
+        "e2e/visual-shell.spec.ts": "1313a51369c9a6dda74a9f7e0d6303ff27cfa2634de31050fa894aaa4426dcda",
         "evidence/artifacts/parity-package-v3-to-v4.json": "519a4237eb6d04099c9ff5a6ac97e6e0f8c9faee7276b02da03e37f185b17f97",
         "package-lock.json": "da1dcf889d8fbf35f6a8e4403b29ed34666b13176a2b98307a0c23e25fa06a53",
         "package.json": {
@@ -2374,9 +2374,9 @@
         "packages/cad-renderer/package.json": "d514c6c9a13d248b4b9df2057ff74efc806d2ce312de6f5fb3aa4fccb2374f7b",
         "packages/cad-renderer/src/bounds.ts": "c2e589c3c8be0642582eaa95ffba295dccf377fa8cfefc835a16e6d2e7c68c06",
         "packages/cad-renderer/src/index.ts": "5563e5e6cdd66b652248e90d4ed237b145fd828da715c64375d2d05169a61888",
-        "packages/cad-renderer/src/renderer.ts": "95391b15cbc8eab61c03f7bb84cb36813727719118997c9350a300b4e537256f",
+        "packages/cad-renderer/src/renderer.ts": "e808a8ad570cfd84c5461f895dd5165691d422f3fd225424f2c1117dfe822f28",
         "packages/cad-renderer/src/rtree.ts": "1ee440db21555f018500dae5c5302c38c27a809a291bcd521702f94aa07068be",
-        "parity/autocad-2024-visual.manifest.mjs": "32344f42b75a5a6bca0525c5054d9d7c1a28520d27f96079dba5bcf968eff8d4",
+        "parity/autocad-2024-visual.manifest.mjs": "62b72c85654da8c9a0fe74fa8b9be578247404dcb8ea96c55642b3e97712072c",
         "parity/check-visual.mjs": "346150045a481afb49df42f084b8930c6103ef59b68f9bf2e30db6c99411fe6e",
         "parity/rows.mjs": "ea2769b0a642ec6b8b89861addc5266422514aaad3151a76d1dc47ab44769d45",
         "playwright.config.ts": "934bf27906ceb40f12c8a629df2865a03b197a6ea7b6d5d27386c9b3c47046c5",
@@ -2406,30 +2406,30 @@
         },
         "browser": {
           "descriptorPath": "evidence/browser/F-103.json",
-          "descriptorSha256": "dee55d663f5db37ac21cde8835fdadbdab070542f58f6176704516688584218e",
+          "descriptorSha256": "daf3ea2b655d74b699ae2f36879f9eebd8604e5b66b17637a51507be58202e0a",
           "descriptorContentSha256": "10a92bbdd26d9278204e7b58added28c2e7bd8cf1c085a8b0178e805782039fb",
           "artifactPath": "evidence/artifacts/F-103-browser-readback.json",
-          "artifactSha256": "b66e5975f93a217650a352ee26fda37896b30166c900256cdbf585aa65e0ad11",
-          "artifactContentSha256": "9cc9c705e4f2af050dce81331df89087f0b73039bd716447a96ba73fad4c1eb3"
+          "artifactSha256": "531e0b73f548688c418d61c8798b0fed815b64343e0172e666109e12de9312de",
+          "artifactContentSha256": "0b7f513f3cbe71589e48d1d37d71739c83b0bee0f84eafddfd4a21716efa2899"
         },
         "readback": {
           "descriptorPath": "evidence/readback/F-103.json",
-          "descriptorSha256": "411bff9b18e09b2b931be6eb10c58da779454590b0428c5286af07018ffed54f",
+          "descriptorSha256": "063d46e0846da1b678b14cde67674d1387b8e88266095f2e650ab779f2af5839",
           "descriptorContentSha256": "80a7284c5c1ab30462a77585a676bfdc06e82eed155b53314aa828e631dfdab8",
           "artifactPath": "evidence/artifacts/F-103-readback.json",
-          "artifactSha256": "cf9b0119fc277edb56140a549f80388cd2801c028e69b7803f320fbee402d830",
+          "artifactSha256": "254c414349ca7c08fd0e2116f8579d7539e6a0be8a539eb8dbf8119fe866e48c",
           "artifactContentSha256": "3081bf69760668a405d13a292820f0b52e86fe0b4d038c0f1d82b1aadb3f4735"
         }
       },
       "receipts": {
         "global": {
           "path": "evidence/artifacts/parity-global-topology.json",
-          "sha256": "5ad7e6af3937f0390eb56c00a2af81e461a6163186d2dd07e828adf437ba1cc6",
+          "sha256": "7ac26fa95c8a4a1489968a99e48d798e6bc1623113ae03b07eb51b65b38d150d",
           "contentSha256": "8a1c736ee169ef78b8571a7f97bfd132abaae6837fb099d2c496d2c13ba7eef8"
         },
         "cross": {
           "path": "evidence/artifacts/F-103-cross-evidence.json",
-          "sha256": "e3beca0d8751008f885de029aab1ec2e9fa7be7607890e195c22fa5284bc0d44",
+          "sha256": "d409b0611b7cfe14e252e9ff8e713de3f11c8934cf0948c7ad7bdb69d6015014",
           "contentSha256": "35f99af77cef710bc05611b9259a4c3db51187d51f1b7da56c5902ca4ae73d82"
         }
       }
@@ -2439,15 +2439,15 @@
       "sources": {
         ".github/workflows/ci.yml": "7524ae023f00ede9a6ae5e15d004e9acdc07ebfee12e76f681f07b2e7b7be09e",
         "apps/web/package.json": "eca74960936f1241303d6522a33575834cb07a8bd47dd8987d1052cd00e114af",
-        "apps/web/src/App.tsx": "a1ffbf7ad389751877c1c33ef9f23aad036900451aae64e1d371f40a74a8f34d",
+        "apps/web/src/App.tsx": "9a2f2bc34bad653d1d70c2b99eee7330ef9b7f7a58d9ba7ff36c81348a52128e",
         "apps/web/src/context-menu.ts": "d7004dfba317042b45f344971e29ba8a36a8de4f6b4ed7a2e573d8a84aae9931",
         "apps/web/src/indexed-db.ts": "257405697d79c2319ef1a25cbb48e98568758f21908fd2d69e98c5b63ff84232",
         "apps/web/src/main.tsx": "f0b0790cfa19ffe76fbcedb5705f8b341e3d79e76cb75b5480d95b22d04e3aa4",
-        "apps/web/src/style.css": "c4f351c488d1b0a74f7a2ff02857c9e7bd3ab2a25a253366620e28f0a0d54ecd",
+        "apps/web/src/style.css": "cd7093ccf4a693f79e594221ad4e930358b8f3f389afc4298d80231efed1983e",
         "e2e/f104-vector-output.spec.ts": "fb32ec6c846d447874039d1e113edf58bc5159d43ddf17e4955dac67182048db",
         "e2e/helpers/layout-tools.ts": "c91e4c574e5e3a74efc3665883fc7ac172968eb6ac834f2c8b7a56d141ac5e47",
         "e2e/local-document.spec.ts": "08b933cfe03eafb1becf407bb56b98e2f5e66316f067936e0092800ecaf5f7a0",
-        "e2e/visual-shell.spec.ts": "8177c965b123bf0c8f3c7adfda81e23f1bfc9dc63769e2cbdbaef1947e3403ed",
+        "e2e/visual-shell.spec.ts": "1313a51369c9a6dda74a9f7e0d6303ff27cfa2634de31050fa894aaa4426dcda",
         "evidence/artifacts/parity-package-v3-to-v4.json": "519a4237eb6d04099c9ff5a6ac97e6e0f8c9faee7276b02da03e37f185b17f97",
         "package-lock.json": "da1dcf889d8fbf35f6a8e4403b29ed34666b13176a2b98307a0c23e25fa06a53",
         "package.json": {
@@ -2483,9 +2483,9 @@
         "packages/cad-renderer/package.json": "d514c6c9a13d248b4b9df2057ff74efc806d2ce312de6f5fb3aa4fccb2374f7b",
         "packages/cad-renderer/src/bounds.ts": "c2e589c3c8be0642582eaa95ffba295dccf377fa8cfefc835a16e6d2e7c68c06",
         "packages/cad-renderer/src/index.ts": "5563e5e6cdd66b652248e90d4ed237b145fd828da715c64375d2d05169a61888",
-        "packages/cad-renderer/src/renderer.ts": "95391b15cbc8eab61c03f7bb84cb36813727719118997c9350a300b4e537256f",
+        "packages/cad-renderer/src/renderer.ts": "e808a8ad570cfd84c5461f895dd5165691d422f3fd225424f2c1117dfe822f28",
         "packages/cad-renderer/src/rtree.ts": "1ee440db21555f018500dae5c5302c38c27a809a291bcd521702f94aa07068be",
-        "parity/autocad-2024-visual.manifest.mjs": "32344f42b75a5a6bca0525c5054d9d7c1a28520d27f96079dba5bcf968eff8d4",
+        "parity/autocad-2024-visual.manifest.mjs": "62b72c85654da8c9a0fe74fa8b9be578247404dcb8ea96c55642b3e97712072c",
         "parity/check-visual.mjs": "346150045a481afb49df42f084b8930c6103ef59b68f9bf2e30db6c99411fe6e",
         "parity/rows.mjs": "ea2769b0a642ec6b8b89861addc5266422514aaad3151a76d1dc47ab44769d45",
         "playwright.config.ts": "934bf27906ceb40f12c8a629df2865a03b197a6ea7b6d5d27386c9b3c47046c5",
@@ -2517,30 +2517,30 @@
         },
         "browser": {
           "descriptorPath": "evidence/browser/F-104.json",
-          "descriptorSha256": "1374ddfac2626c2c6a03ff3ee2d5bd18b4c087be34ecc00e6427834cf2c4d8a9",
+          "descriptorSha256": "e951f62be4593f38e825d3e480c53ba16511e0d0c8e622bfb432b8b1cd3e8bf0",
           "descriptorContentSha256": "54025076340277a838bed96695830f35f5b6a73020a81896164bec5727882821",
           "artifactPath": "evidence/artifacts/F-104-browser-readback.json",
-          "artifactSha256": "2970061e9f58dc90f275571a7bde034a6b2494bc0ebfb4ad47261924b08ccea3",
+          "artifactSha256": "1d81071e6b103a2c59cf3d85a8c6fe05d23a1ffdd45ada15b4c1e4636064bce9",
           "artifactContentSha256": "7c21fdf5253a1dbf157f769906023c4b583c72e322fc5fc1334f72ad05a2e609"
         },
         "readback": {
           "descriptorPath": "evidence/readback/F-104.json",
-          "descriptorSha256": "891b29865ff11f5aa21560ad64693463e923ff5c74b3cf4c999ea4971316fbb5",
+          "descriptorSha256": "1330868c6668b8dbdc1174fc093d502ad0f8d7835988d0e89d76139feff2a3a7",
           "descriptorContentSha256": "1245fb4326f04bc1a2615c8ed785fe8a8f784e240a6b9671726dbb645697986f",
           "artifactPath": "evidence/artifacts/F-104-independent-readback.json",
-          "artifactSha256": "2b2ff381cf46b90623bf18c74ecae1f0297c2cb37b0f0ebf05970486489ce633",
+          "artifactSha256": "04f23c05b9cb778472478ff481fcfff734b46a2a0f29c2900e9867d9f0fd3ce6",
           "artifactContentSha256": "15b570fc7895060f7980975c6291ac66a671f7904bdfaeafe9a393760d6f2c5e"
         }
       },
       "receipts": {
         "global": {
           "path": "evidence/artifacts/parity-global-topology.json",
-          "sha256": "5ad7e6af3937f0390eb56c00a2af81e461a6163186d2dd07e828adf437ba1cc6",
+          "sha256": "7ac26fa95c8a4a1489968a99e48d798e6bc1623113ae03b07eb51b65b38d150d",
           "contentSha256": "8a1c736ee169ef78b8571a7f97bfd132abaae6837fb099d2c496d2c13ba7eef8"
         },
         "cross": {
           "path": "evidence/artifacts/F-104-cross-evidence.json",
-          "sha256": "e1a58e08179f780c5f27d9201c92c673f20f97e576f2f3ace70f0f5ffd992889",
+          "sha256": "dda4fb4d863239d1ee915e0cd87ff97a15b160335b7efd39661e886993cde7b8",
           "contentSha256": "66690c4d07dcb05f896c953e0dcb5ba7449046c2de3d055c0991ebc509725329"
         }
       }
@@ -2550,15 +2550,15 @@
       "sources": {
         ".github/workflows/ci.yml": "7524ae023f00ede9a6ae5e15d004e9acdc07ebfee12e76f681f07b2e7b7be09e",
         "apps/web/package.json": "eca74960936f1241303d6522a33575834cb07a8bd47dd8987d1052cd00e114af",
-        "apps/web/src/App.tsx": "a1ffbf7ad389751877c1c33ef9f23aad036900451aae64e1d371f40a74a8f34d",
+        "apps/web/src/App.tsx": "9a2f2bc34bad653d1d70c2b99eee7330ef9b7f7a58d9ba7ff36c81348a52128e",
         "apps/web/src/context-menu.ts": "d7004dfba317042b45f344971e29ba8a36a8de4f6b4ed7a2e573d8a84aae9931",
         "apps/web/src/indexed-db.ts": "257405697d79c2319ef1a25cbb48e98568758f21908fd2d69e98c5b63ff84232",
         "apps/web/src/main.tsx": "f0b0790cfa19ffe76fbcedb5705f8b341e3d79e76cb75b5480d95b22d04e3aa4",
-        "apps/web/src/style.css": "c4f351c488d1b0a74f7a2ff02857c9e7bd3ab2a25a253366620e28f0a0d54ecd",
+        "apps/web/src/style.css": "cd7093ccf4a693f79e594221ad4e930358b8f3f389afc4298d80231efed1983e",
         "e2e/f105-batch-publish.spec.ts": "1e7609ad1f03d608e0963e219dde483eee4379047a0783c196c6b8838114faf0",
         "e2e/helpers/layout-tools.ts": "c91e4c574e5e3a74efc3665883fc7ac172968eb6ac834f2c8b7a56d141ac5e47",
         "e2e/local-document.spec.ts": "08b933cfe03eafb1becf407bb56b98e2f5e66316f067936e0092800ecaf5f7a0",
-        "e2e/visual-shell.spec.ts": "8177c965b123bf0c8f3c7adfda81e23f1bfc9dc63769e2cbdbaef1947e3403ed",
+        "e2e/visual-shell.spec.ts": "1313a51369c9a6dda74a9f7e0d6303ff27cfa2634de31050fa894aaa4426dcda",
         "evidence/artifacts/parity-package-v3-to-v4.json": "519a4237eb6d04099c9ff5a6ac97e6e0f8c9faee7276b02da03e37f185b17f97",
         "package-lock.json": "da1dcf889d8fbf35f6a8e4403b29ed34666b13176a2b98307a0c23e25fa06a53",
         "package.json": {
@@ -2595,9 +2595,9 @@
         "packages/cad-renderer/package.json": "d514c6c9a13d248b4b9df2057ff74efc806d2ce312de6f5fb3aa4fccb2374f7b",
         "packages/cad-renderer/src/bounds.ts": "c2e589c3c8be0642582eaa95ffba295dccf377fa8cfefc835a16e6d2e7c68c06",
         "packages/cad-renderer/src/index.ts": "5563e5e6cdd66b652248e90d4ed237b145fd828da715c64375d2d05169a61888",
-        "packages/cad-renderer/src/renderer.ts": "95391b15cbc8eab61c03f7bb84cb36813727719118997c9350a300b4e537256f",
+        "packages/cad-renderer/src/renderer.ts": "e808a8ad570cfd84c5461f895dd5165691d422f3fd225424f2c1117dfe822f28",
         "packages/cad-renderer/src/rtree.ts": "1ee440db21555f018500dae5c5302c38c27a809a291bcd521702f94aa07068be",
-        "parity/autocad-2024-visual.manifest.mjs": "32344f42b75a5a6bca0525c5054d9d7c1a28520d27f96079dba5bcf968eff8d4",
+        "parity/autocad-2024-visual.manifest.mjs": "62b72c85654da8c9a0fe74fa8b9be578247404dcb8ea96c55642b3e97712072c",
         "parity/check-visual.mjs": "346150045a481afb49df42f084b8930c6103ef59b68f9bf2e30db6c99411fe6e",
         "parity/rows.mjs": "ea2769b0a642ec6b8b89861addc5266422514aaad3151a76d1dc47ab44769d45",
         "playwright.config.ts": "934bf27906ceb40f12c8a629df2865a03b197a6ea7b6d5d27386c9b3c47046c5",
@@ -2627,30 +2627,30 @@
         },
         "browser": {
           "descriptorPath": "evidence/browser/F-105.json",
-          "descriptorSha256": "7b4da44976567ce35eea6b2503b716ccec9122ab2aa109a1646894eb5d2ad97a",
+          "descriptorSha256": "b9cd4be1cb6cec8a12f66cea06fe94698d5ff48e1d4629a5f7b2f5aab1640cfd",
           "descriptorContentSha256": "564aef249abdf338877fd89b78729cb26f0c64be6f601ba7f9ffd903292f0a73",
           "artifactPath": "evidence/artifacts/F-105-browser-readback.json",
-          "artifactSha256": "c1892e0b1ae2a054f43fdd174b7ccbf0f291478eba6cb4e4166af7998b8eea0f",
+          "artifactSha256": "0bd52225a1cd2b1207867aab7f9c69c7b8d9b4bfa75eee54f756180ffb7bda0a",
           "artifactContentSha256": "6f63c3a4c696486d6a8c97debdc5f7049a766d1092d364ce752b11b35a9f31d9"
         },
         "readback": {
           "descriptorPath": "evidence/readback/F-105.json",
-          "descriptorSha256": "d01268954904a93758874b4c7ae2d22cc0aae6d179352be752a838ca69f92161",
+          "descriptorSha256": "b75c0905b1134d4c17089df29ec5d4d26423f774fcb4d1537e951637e0804309",
           "descriptorContentSha256": "f5ce76e6c5f649069018cfcbb62da5ffd39b4839804867ff223a214d26295eee",
           "artifactPath": "evidence/artifacts/F-105-independent-readback.json",
-          "artifactSha256": "8b2633d8f79b742255bb42eba71ecc28bfc4ceba84ccde3f610a47badb38064d",
+          "artifactSha256": "1a6cddabc611e0a5793893f523a6671f718c33e85d02ba44f7f3c9d0ff62d672",
           "artifactContentSha256": "e8427011abaefbce27c81133ca44247f1ae0206687005076aa19bfa47f675ead"
         }
       },
       "receipts": {
         "global": {
           "path": "evidence/artifacts/parity-global-topology.json",
-          "sha256": "5ad7e6af3937f0390eb56c00a2af81e461a6163186d2dd07e828adf437ba1cc6",
+          "sha256": "7ac26fa95c8a4a1489968a99e48d798e6bc1623113ae03b07eb51b65b38d150d",
           "contentSha256": "8a1c736ee169ef78b8571a7f97bfd132abaae6837fb099d2c496d2c13ba7eef8"
         },
         "cross": {
           "path": "evidence/artifacts/F-105-cross-evidence.json",
-          "sha256": "5e28f9b9ef2cebe465b2001bc7a93f05465ebe26f5f9cc77886ab86695d840a2",
+          "sha256": "ce948609047389301d54edace86f135af3522692d789c79477e83890b51b2291",
           "contentSha256": "91e05bd08d186bc0176fdc50f43c89b8d63e7c5ca0d9b41d06fd3a0f1ab1369d"
         }
       }
@@ -2660,15 +2660,15 @@
       "sources": {
         ".github/workflows/ci.yml": "7524ae023f00ede9a6ae5e15d004e9acdc07ebfee12e76f681f07b2e7b7be09e",
         "apps/web/package.json": "eca74960936f1241303d6522a33575834cb07a8bd47dd8987d1052cd00e114af",
-        "apps/web/src/App.tsx": "a1ffbf7ad389751877c1c33ef9f23aad036900451aae64e1d371f40a74a8f34d",
+        "apps/web/src/App.tsx": "9a2f2bc34bad653d1d70c2b99eee7330ef9b7f7a58d9ba7ff36c81348a52128e",
         "apps/web/src/context-menu.ts": "d7004dfba317042b45f344971e29ba8a36a8de4f6b4ed7a2e573d8a84aae9931",
         "apps/web/src/indexed-db.ts": "257405697d79c2319ef1a25cbb48e98568758f21908fd2d69e98c5b63ff84232",
         "apps/web/src/main.tsx": "f0b0790cfa19ffe76fbcedb5705f8b341e3d79e76cb75b5480d95b22d04e3aa4",
-        "apps/web/src/style.css": "c4f351c488d1b0a74f7a2ff02857c9e7bd3ab2a25a253366620e28f0a0d54ecd",
+        "apps/web/src/style.css": "cd7093ccf4a693f79e594221ad4e930358b8f3f389afc4298d80231efed1983e",
         "e2e/f106-model-print.spec.ts": "309a6e716d088afe0c97537137b0703d2c604ff584b94c246dd7b9bd039dbbf0",
         "e2e/helpers/layout-tools.ts": "c91e4c574e5e3a74efc3665883fc7ac172968eb6ac834f2c8b7a56d141ac5e47",
         "e2e/local-document.spec.ts": "08b933cfe03eafb1becf407bb56b98e2f5e66316f067936e0092800ecaf5f7a0",
-        "e2e/visual-shell.spec.ts": "8177c965b123bf0c8f3c7adfda81e23f1bfc9dc63769e2cbdbaef1947e3403ed",
+        "e2e/visual-shell.spec.ts": "1313a51369c9a6dda74a9f7e0d6303ff27cfa2634de31050fa894aaa4426dcda",
         "evidence/artifacts/parity-package-v3-to-v4.json": "519a4237eb6d04099c9ff5a6ac97e6e0f8c9faee7276b02da03e37f185b17f97",
         "package-lock.json": "da1dcf889d8fbf35f6a8e4403b29ed34666b13176a2b98307a0c23e25fa06a53",
         "package.json": {
@@ -2705,9 +2705,9 @@
         "packages/cad-renderer/package.json": "d514c6c9a13d248b4b9df2057ff74efc806d2ce312de6f5fb3aa4fccb2374f7b",
         "packages/cad-renderer/src/bounds.ts": "c2e589c3c8be0642582eaa95ffba295dccf377fa8cfefc835a16e6d2e7c68c06",
         "packages/cad-renderer/src/index.ts": "5563e5e6cdd66b652248e90d4ed237b145fd828da715c64375d2d05169a61888",
-        "packages/cad-renderer/src/renderer.ts": "95391b15cbc8eab61c03f7bb84cb36813727719118997c9350a300b4e537256f",
+        "packages/cad-renderer/src/renderer.ts": "e808a8ad570cfd84c5461f895dd5165691d422f3fd225424f2c1117dfe822f28",
         "packages/cad-renderer/src/rtree.ts": "1ee440db21555f018500dae5c5302c38c27a809a291bcd521702f94aa07068be",
-        "parity/autocad-2024-visual.manifest.mjs": "32344f42b75a5a6bca0525c5054d9d7c1a28520d27f96079dba5bcf968eff8d4",
+        "parity/autocad-2024-visual.manifest.mjs": "62b72c85654da8c9a0fe74fa8b9be578247404dcb8ea96c55642b3e97712072c",
         "parity/check-visual.mjs": "346150045a481afb49df42f084b8930c6103ef59b68f9bf2e30db6c99411fe6e",
         "parity/rows.mjs": "ea2769b0a642ec6b8b89861addc5266422514aaad3151a76d1dc47ab44769d45",
         "playwright.config.ts": "934bf27906ceb40f12c8a629df2865a03b197a6ea7b6d5d27386c9b3c47046c5",
@@ -2736,30 +2736,30 @@
         },
         "browser": {
           "descriptorPath": "evidence/browser/F-106.json",
-          "descriptorSha256": "d1ed9eeb0e3f564c193168a07a8239498af589d1004c8b958cc82bc0fb0f99ba",
+          "descriptorSha256": "306bbe08b26999a23cf3cae35e0f1a016730e76d7e7d1a87737f9c5279fba555",
           "descriptorContentSha256": "d00836cf3687bf6581234621dbcaddf2654a23f8dab410ba4096447f1aea904f",
           "artifactPath": "evidence/artifacts/F-106-browser-readback.json",
-          "artifactSha256": "50499fd73535397965068d8958c5bd2f918ef23923dfc22b317d340b4804403b",
+          "artifactSha256": "e3f993351fc2bb263917c5ac6575075dc7a63cd33e0370d2b91347bb2ac9a3e4",
           "artifactContentSha256": "d60ec20a5e94c91d8dcb035e4808373ccdac485878389aa31e245fe0bbd27b81"
         },
         "readback": {
           "descriptorPath": "evidence/readback/F-106.json",
-          "descriptorSha256": "1114104fbd9df39829c82f8473678facb74b6e9b8a03f61a194e04dff6ce90b7",
+          "descriptorSha256": "699d2a86dcb9d196a3cc189a01688faba6406b95b88c32d7ae3a60dc9ab0e136",
           "descriptorContentSha256": "174580a28c2a5795ec6209b733366d7a72f944cb7bc76d7054fa23c9173236f7",
           "artifactPath": "evidence/artifacts/F-106-independent-readback.json",
-          "artifactSha256": "34426537b111f98eb5f40cee9b9c37f988f66386ea947228be9efc4470feb498",
+          "artifactSha256": "1564a76b913def415a946022b8e6e6120c5a2842302bb0d08c36dcc995c04527",
           "artifactContentSha256": "8294cf747919eca59aa79e5dd975cff04b5f640fa0036680e11c510a044a0f6e"
         }
       },
       "receipts": {
         "global": {
           "path": "evidence/artifacts/parity-global-topology.json",
-          "sha256": "5ad7e6af3937f0390eb56c00a2af81e461a6163186d2dd07e828adf437ba1cc6",
+          "sha256": "7ac26fa95c8a4a1489968a99e48d798e6bc1623113ae03b07eb51b65b38d150d",
           "contentSha256": "8a1c736ee169ef78b8571a7f97bfd132abaae6837fb099d2c496d2c13ba7eef8"
         },
         "cross": {
           "path": "evidence/artifacts/F-106-cross-evidence.json",
-          "sha256": "4373f07115d6080ba585a27814808c058fcb0bc0fe93aea34136483ab97c801b",
+          "sha256": "a380bd8c59f5a8532514168562e6989b21fa2cbdf43892c890a99a8f270f9bb9",
           "contentSha256": "a501955b0018acb2d825e56ce5f2bc043c88bc0639b6542c79e626d20eaf6e97"
         }
       }
@@ -2769,15 +2769,15 @@
       "sources": {
         ".github/workflows/ci.yml": "7524ae023f00ede9a6ae5e15d004e9acdc07ebfee12e76f681f07b2e7b7be09e",
         "apps/web/package.json": "eca74960936f1241303d6522a33575834cb07a8bd47dd8987d1052cd00e114af",
-        "apps/web/src/App.tsx": "a1ffbf7ad389751877c1c33ef9f23aad036900451aae64e1d371f40a74a8f34d",
+        "apps/web/src/App.tsx": "9a2f2bc34bad653d1d70c2b99eee7330ef9b7f7a58d9ba7ff36c81348a52128e",
         "apps/web/src/context-menu.ts": "d7004dfba317042b45f344971e29ba8a36a8de4f6b4ed7a2e573d8a84aae9931",
         "apps/web/src/indexed-db.ts": "257405697d79c2319ef1a25cbb48e98568758f21908fd2d69e98c5b63ff84232",
         "apps/web/src/main.tsx": "f0b0790cfa19ffe76fbcedb5705f8b341e3d79e76cb75b5480d95b22d04e3aa4",
-        "apps/web/src/style.css": "c4f351c488d1b0a74f7a2ff02857c9e7bd3ab2a25a253366620e28f0a0d54ecd",
+        "apps/web/src/style.css": "cd7093ccf4a693f79e594221ad4e930358b8f3f389afc4298d80231efed1983e",
         "e2e/f107-named-page-setups.spec.ts": "54c0156d2c316db0f3ba96056810f82cf5a16484f6283e200c9e7b01f1dea472",
         "e2e/helpers/layout-tools.ts": "c91e4c574e5e3a74efc3665883fc7ac172968eb6ac834f2c8b7a56d141ac5e47",
         "e2e/local-document.spec.ts": "08b933cfe03eafb1becf407bb56b98e2f5e66316f067936e0092800ecaf5f7a0",
-        "e2e/visual-shell.spec.ts": "8177c965b123bf0c8f3c7adfda81e23f1bfc9dc63769e2cbdbaef1947e3403ed",
+        "e2e/visual-shell.spec.ts": "1313a51369c9a6dda74a9f7e0d6303ff27cfa2634de31050fa894aaa4426dcda",
         "evidence/artifacts/parity-package-v3-to-v4.json": "519a4237eb6d04099c9ff5a6ac97e6e0f8c9faee7276b02da03e37f185b17f97",
         "package-lock.json": "da1dcf889d8fbf35f6a8e4403b29ed34666b13176a2b98307a0c23e25fa06a53",
         "package.json": {
@@ -2814,9 +2814,9 @@
         "packages/cad-renderer/package.json": "d514c6c9a13d248b4b9df2057ff74efc806d2ce312de6f5fb3aa4fccb2374f7b",
         "packages/cad-renderer/src/bounds.ts": "c2e589c3c8be0642582eaa95ffba295dccf377fa8cfefc835a16e6d2e7c68c06",
         "packages/cad-renderer/src/index.ts": "5563e5e6cdd66b652248e90d4ed237b145fd828da715c64375d2d05169a61888",
-        "packages/cad-renderer/src/renderer.ts": "95391b15cbc8eab61c03f7bb84cb36813727719118997c9350a300b4e537256f",
+        "packages/cad-renderer/src/renderer.ts": "e808a8ad570cfd84c5461f895dd5165691d422f3fd225424f2c1117dfe822f28",
         "packages/cad-renderer/src/rtree.ts": "1ee440db21555f018500dae5c5302c38c27a809a291bcd521702f94aa07068be",
-        "parity/autocad-2024-visual.manifest.mjs": "32344f42b75a5a6bca0525c5054d9d7c1a28520d27f96079dba5bcf968eff8d4",
+        "parity/autocad-2024-visual.manifest.mjs": "62b72c85654da8c9a0fe74fa8b9be578247404dcb8ea96c55642b3e97712072c",
         "parity/check-visual.mjs": "346150045a481afb49df42f084b8930c6103ef59b68f9bf2e30db6c99411fe6e",
         "parity/rows.mjs": "ea2769b0a642ec6b8b89861addc5266422514aaad3151a76d1dc47ab44769d45",
         "playwright.config.ts": "934bf27906ceb40f12c8a629df2865a03b197a6ea7b6d5d27386c9b3c47046c5",
@@ -2843,30 +2843,30 @@
         },
         "browser": {
           "descriptorPath": "evidence/browser/F-107.json",
-          "descriptorSha256": "fca70d96ac4bab00f783e38e81c2333c287f10dd1992876913d8a9453a170d06",
+          "descriptorSha256": "e175aca9489bb106ffdee91e0f1af83e5116b21461f2dc3b6c092d3cfe1b305f",
           "descriptorContentSha256": "9687ce0230db4f229edb34f2727e221d4080b5db8b5c4afabd34e16669df0e8b",
           "artifactPath": "evidence/artifacts/F-107-browser-readback.json",
-          "artifactSha256": "4ac1e8ae3cdba2e6776dd478daf5754c33145ec2049f1e591bcd9d4020b06736",
+          "artifactSha256": "7d3d7f56856255bce6ca2da84c6d90f9b2f40995f655b2815f6d32f585438450",
           "artifactContentSha256": "8a9513efdfbccdbc6d38c6d8f5c42aee23c1343a932776c6c4b5aeee8595d643"
         },
         "readback": {
           "descriptorPath": "evidence/readback/F-107.json",
-          "descriptorSha256": "437f7cb119f9333621a60e9d2a5028e6fffd56f2c0c97f9909efb5db35b7ad62",
+          "descriptorSha256": "0683ad748923e29267eb40569cf4a48de534e3f0a9cc199e57c151459e1e9d8a",
           "descriptorContentSha256": "f3bc025f97761a79cd1bdf3e058c3f0b3e85f76e8ee5673a6f9c818d25d6f848",
           "artifactPath": "evidence/artifacts/F-107-independent-readback.json",
-          "artifactSha256": "d8ae52f044428db98219ea626554c00b840250cbc0c4a65b5536baccbabc0757",
+          "artifactSha256": "50757f442314f9b75a13ab87e58d8dab56c6dd0ee9c91a673bf8d4099c9d2281",
           "artifactContentSha256": "a0067e162fc1b236b8fa21d63a167c227656b3069f59de5efaba61435d8ec4da"
         }
       },
       "receipts": {
         "global": {
           "path": "evidence/artifacts/parity-global-topology.json",
-          "sha256": "5ad7e6af3937f0390eb56c00a2af81e461a6163186d2dd07e828adf437ba1cc6",
+          "sha256": "7ac26fa95c8a4a1489968a99e48d798e6bc1623113ae03b07eb51b65b38d150d",
           "contentSha256": "8a1c736ee169ef78b8571a7f97bfd132abaae6837fb099d2c496d2c13ba7eef8"
         },
         "cross": {
           "path": "evidence/artifacts/F-107-cross-evidence.json",
-          "sha256": "88845b17a8b1a08046bfa9599654fe06f6761ae13d9fb1013c0580961a171bff",
+          "sha256": "7d7491d437feb7454641b8bd3a283c45ffee9b49c43c3f12e3c5412d66ccd9be",
           "contentSha256": "e7ec7797e3b0e294ff924c60498102414dc97c15151b23943dfc44be53504431"
         }
       }
@@ -2876,15 +2876,15 @@
       "sources": {
         ".github/workflows/ci.yml": "7524ae023f00ede9a6ae5e15d004e9acdc07ebfee12e76f681f07b2e7b7be09e",
         "apps/web/package.json": "eca74960936f1241303d6522a33575834cb07a8bd47dd8987d1052cd00e114af",
-        "apps/web/src/App.tsx": "a1ffbf7ad389751877c1c33ef9f23aad036900451aae64e1d371f40a74a8f34d",
+        "apps/web/src/App.tsx": "9a2f2bc34bad653d1d70c2b99eee7330ef9b7f7a58d9ba7ff36c81348a52128e",
         "apps/web/src/context-menu.ts": "d7004dfba317042b45f344971e29ba8a36a8de4f6b4ed7a2e573d8a84aae9931",
         "apps/web/src/indexed-db.ts": "257405697d79c2319ef1a25cbb48e98568758f21908fd2d69e98c5b63ff84232",
         "apps/web/src/main.tsx": "f0b0790cfa19ffe76fbcedb5705f8b341e3d79e76cb75b5480d95b22d04e3aa4",
-        "apps/web/src/style.css": "c4f351c488d1b0a74f7a2ff02857c9e7bd3ab2a25a253366620e28f0a0d54ecd",
+        "apps/web/src/style.css": "cd7093ccf4a693f79e594221ad4e930358b8f3f389afc4298d80231efed1983e",
         "e2e/f109-dxf-export.spec.ts": "9030f51b4647687a8208c673c6a163010902444626e9443c340f3f65f6ce0acf",
         "e2e/helpers/layout-tools.ts": "c91e4c574e5e3a74efc3665883fc7ac172968eb6ac834f2c8b7a56d141ac5e47",
         "e2e/local-document.spec.ts": "08b933cfe03eafb1becf407bb56b98e2f5e66316f067936e0092800ecaf5f7a0",
-        "e2e/visual-shell.spec.ts": "8177c965b123bf0c8f3c7adfda81e23f1bfc9dc63769e2cbdbaef1947e3403ed",
+        "e2e/visual-shell.spec.ts": "1313a51369c9a6dda74a9f7e0d6303ff27cfa2634de31050fa894aaa4426dcda",
         "evidence/artifacts/parity-package-v3-to-v4.json": "519a4237eb6d04099c9ff5a6ac97e6e0f8c9faee7276b02da03e37f185b17f97",
         "package-lock.json": "da1dcf889d8fbf35f6a8e4403b29ed34666b13176a2b98307a0c23e25fa06a53",
         "package.json": {
@@ -2921,9 +2921,9 @@
         "packages/cad-renderer/package.json": "d514c6c9a13d248b4b9df2057ff74efc806d2ce312de6f5fb3aa4fccb2374f7b",
         "packages/cad-renderer/src/bounds.ts": "c2e589c3c8be0642582eaa95ffba295dccf377fa8cfefc835a16e6d2e7c68c06",
         "packages/cad-renderer/src/index.ts": "5563e5e6cdd66b652248e90d4ed237b145fd828da715c64375d2d05169a61888",
-        "packages/cad-renderer/src/renderer.ts": "95391b15cbc8eab61c03f7bb84cb36813727719118997c9350a300b4e537256f",
+        "packages/cad-renderer/src/renderer.ts": "e808a8ad570cfd84c5461f895dd5165691d422f3fd225424f2c1117dfe822f28",
         "packages/cad-renderer/src/rtree.ts": "1ee440db21555f018500dae5c5302c38c27a809a291bcd521702f94aa07068be",
-        "parity/autocad-2024-visual.manifest.mjs": "32344f42b75a5a6bca0525c5054d9d7c1a28520d27f96079dba5bcf968eff8d4",
+        "parity/autocad-2024-visual.manifest.mjs": "62b72c85654da8c9a0fe74fa8b9be578247404dcb8ea96c55642b3e97712072c",
         "parity/check-visual.mjs": "346150045a481afb49df42f084b8930c6103ef59b68f9bf2e30db6c99411fe6e",
         "parity/expected/F-109.json": "ff253dff947093ef57a579e229305f641e047d53c7247e759f36a8ff95cc9118",
         "parity/rows.mjs": "ea2769b0a642ec6b8b89861addc5266422514aaad3151a76d1dc47ab44769d45",
@@ -2960,30 +2960,30 @@
         },
         "browser": {
           "descriptorPath": "evidence/browser/F-109.json",
-          "descriptorSha256": "146108c38628ebe333fa37a9c2c098819986c67f1aff89f7cf02b5f3ae36e9d2",
+          "descriptorSha256": "35c0d16d5a263f51a8c03606b7aaa84e50a831848582260ec8556338bde90621",
           "descriptorContentSha256": "441470f503ae289b031e53e50aa3567444ca81eb44952111c315737819c7f2c2",
           "artifactPath": "evidence/artifacts/F-109-browser-readback.json",
-          "artifactSha256": "215117a8a526f3b0f6834b3fe4f45988e050a10a322b82f8d506472daae289f9",
-          "artifactContentSha256": "f9442a1fe3eec99c8a4b0e8cb49f284b90515e3a881d562e5e36c92927351422"
+          "artifactSha256": "41824a90106386b2d7497eafee9f57f08dae1da69d0b250f38c944240e7b80ea",
+          "artifactContentSha256": "78e24f1195fcd86131b2ab5d2fa72f8a8e0ef5fc72673ef4629889cc1d120250"
         },
         "readback": {
           "descriptorPath": "evidence/readback/F-109.json",
-          "descriptorSha256": "359576bda3e0c262b7ffe1f3e3f4409e509cb30200f0aa2c484f10225251147b",
+          "descriptorSha256": "3ef25c5ba65120882b334343de374a440d38c810450f1acfc5004deefcc57e71",
           "descriptorContentSha256": "a6a2381e39a286981f32851b18551e63c9861cbf8fab57a1a753ed570b458691",
           "artifactPath": "evidence/artifacts/F-109-readback.json",
-          "artifactSha256": "46d851c18b68f122641d0beeb14328b0af4e6e7a7dd9e149fc5f99b8f9da6380",
+          "artifactSha256": "5f6daf88f7c0115745c05e94f2214cafc5046cefb95fc67b782071143c0b08e8",
           "artifactContentSha256": "27b52b38d570ffcd64b9c88d25b21d43c8066812c2f1c33ab548ef2309e45369"
         }
       },
       "receipts": {
         "global": {
           "path": "evidence/artifacts/parity-global-topology.json",
-          "sha256": "5ad7e6af3937f0390eb56c00a2af81e461a6163186d2dd07e828adf437ba1cc6",
+          "sha256": "7ac26fa95c8a4a1489968a99e48d798e6bc1623113ae03b07eb51b65b38d150d",
           "contentSha256": "8a1c736ee169ef78b8571a7f97bfd132abaae6837fb099d2c496d2c13ba7eef8"
         },
         "cross": {
           "path": "evidence/artifacts/F-109-cross-evidence.json",
-          "sha256": "152e2cd020cf8782df1862f438856190b0ab69ba59efb10b0d289cf5bd29015a",
+          "sha256": "fe6487b3a06aabc2350c85809e2e7a664c62ff75b0437f320eb275840e0794e6",
           "contentSha256": "55d649e415c59b57db578293f48447896f99c7c4b694aefb878f8eccab0748d7"
         }
       }
@@ -2993,15 +2993,15 @@
       "sources": {
         ".github/workflows/ci.yml": "7524ae023f00ede9a6ae5e15d004e9acdc07ebfee12e76f681f07b2e7b7be09e",
         "apps/web/package.json": "eca74960936f1241303d6522a33575834cb07a8bd47dd8987d1052cd00e114af",
-        "apps/web/src/App.tsx": "a1ffbf7ad389751877c1c33ef9f23aad036900451aae64e1d371f40a74a8f34d",
+        "apps/web/src/App.tsx": "9a2f2bc34bad653d1d70c2b99eee7330ef9b7f7a58d9ba7ff36c81348a52128e",
         "apps/web/src/context-menu.ts": "d7004dfba317042b45f344971e29ba8a36a8de4f6b4ed7a2e573d8a84aae9931",
         "apps/web/src/indexed-db.ts": "257405697d79c2319ef1a25cbb48e98568758f21908fd2d69e98c5b63ff84232",
         "apps/web/src/main.tsx": "f0b0790cfa19ffe76fbcedb5705f8b341e3d79e76cb75b5480d95b22d04e3aa4",
-        "apps/web/src/style.css": "c4f351c488d1b0a74f7a2ff02857c9e7bd3ab2a25a253366620e28f0a0d54ecd",
+        "apps/web/src/style.css": "cd7093ccf4a693f79e594221ad4e930358b8f3f389afc4298d80231efed1983e",
         "e2e/f111-dxf-roundtrip.spec.ts": "e0e594fb1548e5c6e80e528897ea05619b3a742caf973b813b155192d752f792",
         "e2e/helpers/layout-tools.ts": "c91e4c574e5e3a74efc3665883fc7ac172968eb6ac834f2c8b7a56d141ac5e47",
         "e2e/local-document.spec.ts": "08b933cfe03eafb1becf407bb56b98e2f5e66316f067936e0092800ecaf5f7a0",
-        "e2e/visual-shell.spec.ts": "8177c965b123bf0c8f3c7adfda81e23f1bfc9dc63769e2cbdbaef1947e3403ed",
+        "e2e/visual-shell.spec.ts": "1313a51369c9a6dda74a9f7e0d6303ff27cfa2634de31050fa894aaa4426dcda",
         "evidence/artifacts/parity-package-v3-to-v4.json": "519a4237eb6d04099c9ff5a6ac97e6e0f8c9faee7276b02da03e37f185b17f97",
         "package-lock.json": "da1dcf889d8fbf35f6a8e4403b29ed34666b13176a2b98307a0c23e25fa06a53",
         "package.json": {
@@ -3039,9 +3039,9 @@
         "packages/cad-renderer/package.json": "d514c6c9a13d248b4b9df2057ff74efc806d2ce312de6f5fb3aa4fccb2374f7b",
         "packages/cad-renderer/src/bounds.ts": "c2e589c3c8be0642582eaa95ffba295dccf377fa8cfefc835a16e6d2e7c68c06",
         "packages/cad-renderer/src/index.ts": "5563e5e6cdd66b652248e90d4ed237b145fd828da715c64375d2d05169a61888",
-        "packages/cad-renderer/src/renderer.ts": "95391b15cbc8eab61c03f7bb84cb36813727719118997c9350a300b4e537256f",
+        "packages/cad-renderer/src/renderer.ts": "e808a8ad570cfd84c5461f895dd5165691d422f3fd225424f2c1117dfe822f28",
         "packages/cad-renderer/src/rtree.ts": "1ee440db21555f018500dae5c5302c38c27a809a291bcd521702f94aa07068be",
-        "parity/autocad-2024-visual.manifest.mjs": "32344f42b75a5a6bca0525c5054d9d7c1a28520d27f96079dba5bcf968eff8d4",
+        "parity/autocad-2024-visual.manifest.mjs": "62b72c85654da8c9a0fe74fa8b9be578247404dcb8ea96c55642b3e97712072c",
         "parity/check-visual.mjs": "346150045a481afb49df42f084b8930c6103ef59b68f9bf2e30db6c99411fe6e",
         "parity/expected/F-109.json": "ff253dff947093ef57a579e229305f641e047d53c7247e759f36a8ff95cc9118",
         "parity/rows.mjs": "ea2769b0a642ec6b8b89861addc5266422514aaad3151a76d1dc47ab44769d45",
@@ -3072,30 +3072,30 @@
         },
         "browser": {
           "descriptorPath": "evidence/browser/F-111.json",
-          "descriptorSha256": "819a636acd7a077211a3613c7923bb9b456ff8fe374fde1361ea29ecf4e10fc3",
+          "descriptorSha256": "4727ce34c01d2f658fdb43e7d6e52f984b77b8baee4122a47e8152132017727d",
           "descriptorContentSha256": "73b7f7edf8d847a2705877a8e70059271eeb13161a72dedf94cfc4f3f22e0587",
           "artifactPath": "evidence/artifacts/F-111-browser-readback.json",
-          "artifactSha256": "47ff4c8f8dda21bd2719ca390bf87b6040318a2a93023fd73e07511aac9a5bc3",
+          "artifactSha256": "9d3c1bb8bf06864cae4fe0ba71af167b9eee7ac3182639b912dd316d4b476810",
           "artifactContentSha256": "9a0a25c07c1ec8e5625869cebcfd4d0656d38753c1243a5e14026dca6706f3c4"
         },
         "readback": {
           "descriptorPath": "evidence/readback/F-111.json",
-          "descriptorSha256": "2552e212bb88e4eb3e2e57f7e95c74b7c93b5f6d0380cf1c465180f84d366dcd",
+          "descriptorSha256": "d65d107cdf08a1e523181de263a2db14ab5a48ccaafb3401b237e0a895636f3f",
           "descriptorContentSha256": "3aea5a05729ff4326dbee22300c7fda18cbdf4687f274c6e23bb755c302e1c71",
           "artifactPath": "evidence/artifacts/F-111-readback.json",
-          "artifactSha256": "3784d026a62197b114de0a081ab16f1244e203cbe3cc62c9f66a89064c7becc9",
+          "artifactSha256": "a5563474bf85119624acc1fb6ed54b12acd7c8492279da1d6c364b1913c4ec32",
           "artifactContentSha256": "5d10b175ccbb0395cdcd2ce106379b3b6a2c6699a603bb9f7fca42214196fc31"
         }
       },
       "receipts": {
         "global": {
           "path": "evidence/artifacts/parity-global-topology.json",
-          "sha256": "5ad7e6af3937f0390eb56c00a2af81e461a6163186d2dd07e828adf437ba1cc6",
+          "sha256": "7ac26fa95c8a4a1489968a99e48d798e6bc1623113ae03b07eb51b65b38d150d",
           "contentSha256": "8a1c736ee169ef78b8571a7f97bfd132abaae6837fb099d2c496d2c13ba7eef8"
         },
         "cross": {
           "path": "evidence/artifacts/F-111-cross-evidence.json",
-          "sha256": "5a3ef86f7d4af82e698574c0848901be98102063570e1d25f93e098b0aa04a9c",
+          "sha256": "d36b7966dfed9595f34b54d13262a10f50a321b8eb930ee01d29db99e92d3201",
           "contentSha256": "225042bbb48428acb2d0efb16d13b1ae398e04f7b235f97e2ad7ee2bdaf31b57"
         }
       }
@@ -3105,15 +3105,15 @@
       "sources": {
         ".github/workflows/ci.yml": "7524ae023f00ede9a6ae5e15d004e9acdc07ebfee12e76f681f07b2e7b7be09e",
         "apps/web/package.json": "eca74960936f1241303d6522a33575834cb07a8bd47dd8987d1052cd00e114af",
-        "apps/web/src/App.tsx": "a1ffbf7ad389751877c1c33ef9f23aad036900451aae64e1d371f40a74a8f34d",
+        "apps/web/src/App.tsx": "9a2f2bc34bad653d1d70c2b99eee7330ef9b7f7a58d9ba7ff36c81348a52128e",
         "apps/web/src/context-menu.ts": "d7004dfba317042b45f344971e29ba8a36a8de4f6b4ed7a2e573d8a84aae9931",
         "apps/web/src/indexed-db.ts": "257405697d79c2319ef1a25cbb48e98568758f21908fd2d69e98c5b63ff84232",
         "apps/web/src/main.tsx": "f0b0790cfa19ffe76fbcedb5705f8b341e3d79e76cb75b5480d95b22d04e3aa4",
-        "apps/web/src/style.css": "c4f351c488d1b0a74f7a2ff02857c9e7bd3ab2a25a253366620e28f0a0d54ecd",
+        "apps/web/src/style.css": "cd7093ccf4a693f79e594221ad4e930358b8f3f389afc4298d80231efed1983e",
         "e2e/f114-vector-pdf.spec.ts": "f7cf8938caa04d91b4454984e5c5c8ed117300fa77bd01a3506bfc0ef68789e6",
         "e2e/helpers/layout-tools.ts": "c91e4c574e5e3a74efc3665883fc7ac172968eb6ac834f2c8b7a56d141ac5e47",
         "e2e/local-document.spec.ts": "08b933cfe03eafb1becf407bb56b98e2f5e66316f067936e0092800ecaf5f7a0",
-        "e2e/visual-shell.spec.ts": "8177c965b123bf0c8f3c7adfda81e23f1bfc9dc63769e2cbdbaef1947e3403ed",
+        "e2e/visual-shell.spec.ts": "1313a51369c9a6dda74a9f7e0d6303ff27cfa2634de31050fa894aaa4426dcda",
         "evidence/artifacts/parity-package-v3-to-v4.json": "519a4237eb6d04099c9ff5a6ac97e6e0f8c9faee7276b02da03e37f185b17f97",
         "package-lock.json": "da1dcf889d8fbf35f6a8e4403b29ed34666b13176a2b98307a0c23e25fa06a53",
         "package.json": {
@@ -3150,9 +3150,9 @@
         "packages/cad-renderer/package.json": "d514c6c9a13d248b4b9df2057ff74efc806d2ce312de6f5fb3aa4fccb2374f7b",
         "packages/cad-renderer/src/bounds.ts": "c2e589c3c8be0642582eaa95ffba295dccf377fa8cfefc835a16e6d2e7c68c06",
         "packages/cad-renderer/src/index.ts": "5563e5e6cdd66b652248e90d4ed237b145fd828da715c64375d2d05169a61888",
-        "packages/cad-renderer/src/renderer.ts": "95391b15cbc8eab61c03f7bb84cb36813727719118997c9350a300b4e537256f",
+        "packages/cad-renderer/src/renderer.ts": "e808a8ad570cfd84c5461f895dd5165691d422f3fd225424f2c1117dfe822f28",
         "packages/cad-renderer/src/rtree.ts": "1ee440db21555f018500dae5c5302c38c27a809a291bcd521702f94aa07068be",
-        "parity/autocad-2024-visual.manifest.mjs": "32344f42b75a5a6bca0525c5054d9d7c1a28520d27f96079dba5bcf968eff8d4",
+        "parity/autocad-2024-visual.manifest.mjs": "62b72c85654da8c9a0fe74fa8b9be578247404dcb8ea96c55642b3e97712072c",
         "parity/check-visual.mjs": "346150045a481afb49df42f084b8930c6103ef59b68f9bf2e30db6c99411fe6e",
         "parity/rows.mjs": "ea2769b0a642ec6b8b89861addc5266422514aaad3151a76d1dc47ab44769d45",
         "playwright.config.ts": "934bf27906ceb40f12c8a629df2865a03b197a6ea7b6d5d27386c9b3c47046c5",
@@ -3182,30 +3182,30 @@
         },
         "browser": {
           "descriptorPath": "evidence/browser/F-114.json",
-          "descriptorSha256": "fd2c2c15aa09f6d98f8a353102d5e16e04fd949b816517dab12167c675cdb6f7",
+          "descriptorSha256": "6124ec309434bb34bc6b5da0b398a6b50d8e87a0e26b3697c1aaeedf63451518",
           "descriptorContentSha256": "6c360204dd3e924eda83937b7527eecf8e40cde5069d3b55a4e1390a365f4893",
           "artifactPath": "evidence/artifacts/F-114-browser-readback.json",
-          "artifactSha256": "39b91c69708818c5fca98787017cc2b3ece50a91522559393e185a4a8ffc3f6f",
+          "artifactSha256": "b08eb3fcd1e5793c7774ceca11f88ec48094e5a53c9735e8ab3531746c00b71e",
           "artifactContentSha256": "9d3ab01caa140da20aa32426d9ddabec4286abb3f1520a68763bd3967b282d47"
         },
         "readback": {
           "descriptorPath": "evidence/readback/F-114.json",
-          "descriptorSha256": "c0cc1aeab2a8f2c6853ae8e04be2b102ee2150fc044801775b4a197af2502d66",
+          "descriptorSha256": "93f8c6b3c3d23c9ff27831cad464b0fa7e9ff494d7fe98559e57abaa62101b69",
           "descriptorContentSha256": "9c89c14a1675e303546091200a47e853b8e200334a41a5bf45799807aba9d7f3",
           "artifactPath": "evidence/artifacts/F-114-independent-readback.json",
-          "artifactSha256": "d0844c451f42ea25404d0040bd0fec3e4e6dbbb738e25f72fbe687dd08e2e443",
+          "artifactSha256": "1f40a552982b7926f096a4ef264541447f025a2d86e40b43070a0694f8182da4",
           "artifactContentSha256": "17ae0d6765d0797328dd3b7d357e2e7310dfeb35fa8b593f2a314ea38c03776c"
         }
       },
       "receipts": {
         "global": {
           "path": "evidence/artifacts/parity-global-topology.json",
-          "sha256": "5ad7e6af3937f0390eb56c00a2af81e461a6163186d2dd07e828adf437ba1cc6",
+          "sha256": "7ac26fa95c8a4a1489968a99e48d798e6bc1623113ae03b07eb51b65b38d150d",
           "contentSha256": "8a1c736ee169ef78b8571a7f97bfd132abaae6837fb099d2c496d2c13ba7eef8"
         },
         "cross": {
           "path": "evidence/artifacts/F-114-cross-evidence.json",
-          "sha256": "b62bb89fa6374f82b0481e258f850c7940798a295b4af962eb8cca3524e16e41",
+          "sha256": "0f8cdcdd8ab1bd4ceedb8beabbd74f8470cd9441c728b494928af2d163c8c97f",
           "contentSha256": "cf0db52ce7e6af1ee2f11f6236ef3308776df5910cfd0f62cecf8bac33ff7da5"
         }
       }

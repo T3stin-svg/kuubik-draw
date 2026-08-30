@@ -4,8 +4,8 @@
   "kind": "readback",
   "authority": "independent-parser",
   "status": "PASS",
-  "artifactSha256": "f4165e10ebdbed31638a4c7563003454ebec7fdb6160dc7bda1db3217354f791",
-  "observedAt": "2026-08-30T21:59:26.578Z",
+  "artifactSha256": "17804514ba37bd279089de3e385d4d16bd44f7d8fdae68458add01c56bc28617",
+  "observedAt": "2026-08-30T22:43:53.230Z",
   "workflow": "Production cad-core EXTEND output for line, open polyline, arc, ellipse and rational cubic SPLINE is committed atomically, exported through cad-dxf and KDRAW1, then read through strict Kuubik import, independent dxf-parser semantics and independent KDRAW1 checksum decoding.",
   "result": "All five target handles and result kinds matched. Strict and independent geometry, layer, appearance, width, parameter and spline fields had no mismatch; output byte hashes matched and global Undo restored the source revision.",
   "artifact": "evidence/artifacts/F-023-independent-readback.json"

@@ -35,4 +35,16 @@ describe("AutoCAD visual-reference runner ratchet", () => {
     expect(source).toContain("Private AutoCAD reference pixels and process reports must not be written into the public repository.");
     expect(source).toContain("processSetRestored");
   });
+
+  it("keeps the light-model comparison content-addressed and pixel-private", async () => {
+    const source = await readFile(new URL("compare-light-model-surface.ps1", import.meta.url), "utf8");
+    const evidence = JSON.parse(await readFile(new URL("../../evidence/artifacts/visual-shell-wave-8/autocad-light-model-readback.json", import.meta.url), "utf8"));
+    expect(source).toContain("Private AutoCAD reference SHA-256 mismatch");
+    expect(source).toContain("redistributablePixelsIncluded = $false");
+    expect(source).toContain("fixed +/-1 px tolerance");
+    expect(evidence.reference.sha256).toBe("0e014882f8fa7231800f02702c30f4a8697d7fd49ef860b487d0768dbda48640");
+    expect(evidence.reference.redistributablePixelsIncluded).toBe(false);
+    expect(evidence.sampledBackground).toEqual({ autoCad: "#ffffff", kuubik: "#ffffff" });
+    expect(evidence.status).toBe("PASS");
+  });
 });

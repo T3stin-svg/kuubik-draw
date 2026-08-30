@@ -54,13 +54,21 @@ export interface RenderOptions {
   selectedHandles?: readonly string[];
   /** AutoCAD-familiar world-aligned model grid. It is display-only and never enters the document. */
   grid?: ViewportGridOptions;
+  /** Display surface used for AutoCAD ACI 7's adaptive black/white foreground. */
+  displayTheme?: "dark" | "light";
 }
 
 export interface ViewportGridOptions {
   enabled: boolean;
   minorColor?: string;
   majorColor?: string;
+  minorLineWidthPx?: number;
+  majorLineWidthPx?: number;
   targetSpacingPx?: number;
+  /** Exact model-unit spacing when matching a configured AutoCAD GRIDUNIT. */
+  spacingWorld?: number;
+  /** World-space SNAPBASE-compatible origin for exact grid alignment. */
+  originWorld?: CadPoint2;
   majorEvery?: number;
 }
 
@@ -79,6 +87,15 @@ export function viewportGridSpacing(viewport: Viewport2D, targetSpacingPx = 20):
   return step * decade;
 }
 
+/** AutoCAD ACI 7 is white on dark model space and black on a light one. */
+export function displayColor(
+  appearance: Pick<ReturnType<typeof resolveCadAppearance>, "color" | "colorMethod" | "aciIndex">,
+  theme: NonNullable<RenderOptions["displayTheme"]>,
+): string {
+  if (appearance.colorMethod === "aci" && appearance.aciIndex === 7) return theme === "light" ? "#000000" : "#ffffff";
+  return appearance.color;
+}
+
 function drawViewportGrid(
   context: Canvas2DContext,
   viewport: Viewport2D,
@@ -86,7 +103,10 @@ function drawViewportGrid(
   options: ViewportGridOptions,
 ): void {
   if (!options.enabled) return;
-  const spacing = viewportGridSpacing(viewport, options.targetSpacingPx ?? 20);
+  const spacing = options.spacingWorld ?? viewportGridSpacing(viewport, options.targetSpacingPx ?? 20);
+  if (!Number.isFinite(spacing) || spacing <= 0) throw new TypeError("Grid spacing must be positive.");
+  const origin = options.originWorld ?? { x: 0, y: 0 };
+  if (!Number.isFinite(origin.x) || !Number.isFinite(origin.y)) throw new TypeError("Grid origin must be finite.");
   const majorEvery = Math.max(2, Math.round(options.majorEvery ?? 5));
   const scale = 1 / transform.worldUnitsPerPixel;
   const visibleCorners = [
@@ -101,26 +121,28 @@ function drawViewportGrid(
     maxX: Math.max(...visibleCorners.map(({ x }) => x)),
     maxY: Math.max(...visibleCorners.map(({ y }) => y)),
   };
-  const firstX = Math.floor(visibleBounds.minX / spacing);
-  const lastX = Math.ceil(visibleBounds.maxX / spacing);
-  const firstY = Math.floor(visibleBounds.minY / spacing);
-  const lastY = Math.ceil(visibleBounds.maxY / spacing);
+  const firstX = Math.floor((visibleBounds.minX - origin.x) / spacing);
+  const lastX = Math.ceil((visibleBounds.maxX - origin.x) / spacing);
+  const firstY = Math.floor((visibleBounds.minY - origin.y) / spacing);
+  const lastY = Math.ceil((visibleBounds.maxY - origin.y) / spacing);
   const drawPass = (major: boolean) => {
     context.beginPath();
     for (let index = firstX; index <= lastX; index += 1) {
       if ((index % majorEvery === 0) !== major) continue;
-      const x = index * spacing;
+      const x = origin.x + index * spacing;
       context.moveTo(x, visibleBounds.minY);
       context.lineTo(x, visibleBounds.maxY);
     }
     for (let index = firstY; index <= lastY; index += 1) {
       if ((index % majorEvery === 0) !== major) continue;
-      const y = index * spacing;
+      const y = origin.y + index * spacing;
       context.moveTo(visibleBounds.minX, y);
       context.lineTo(visibleBounds.maxX, y);
     }
     context.strokeStyle = major ? (options.majorColor ?? "#3d4850") : (options.minorColor ?? "#303940");
-    context.lineWidth = (major ? 0.7 : 0.45) / scale;
+    const lineWidthPx = major ? (options.majorLineWidthPx ?? 0.7) : (options.minorLineWidthPx ?? 0.45);
+    if (!Number.isFinite(lineWidthPx) || lineWidthPx <= 0) throw new TypeError("Grid line width must be positive.");
+    context.lineWidth = lineWidthPx / scale;
     context.globalAlpha = major ? 0.9 : 0.72;
     context.setLineDash?.([]);
     context.stroke();
@@ -610,9 +632,7 @@ export class CadCanvasRenderer {
         ? resolveEntityPlotAppearance(entity, layers, options.plotStyle)
         : {
             ...sourceAppearance,
-            color: entity.appearance?.color || layers.find((layer) => layer.id === entity.layerId)?.appearance?.color
-              ? sourceAppearance.color
-              : "#e8e8e8",
+            color: displayColor(sourceAppearance, options.displayTheme ?? "dark"),
             opacity: 1 - sourceAppearance.transparencyPercent / 100,
           };
       const previewScale = options.plotStyle ? options.pixelsPerMillimeter ?? Number.NaN : 1;
@@ -635,8 +655,8 @@ export class CadCanvasRenderer {
       if (options.previewAppearance === "resolved") {
         const appearance = resolveCadAppearance(previewEntity, layers);
         context.globalAlpha = 1 - appearance.transparencyPercent / 100;
-        context.strokeStyle = appearance.color;
-        context.fillStyle = appearance.color;
+        context.strokeStyle = displayColor(appearance, options.displayTheme ?? "dark");
+        context.fillStyle = displayColor(appearance, options.displayTheme ?? "dark");
         context.lineWidth = appearance.lineweightMm / scale;
         context.setLineDash?.(lineDashForEntity(previewEntity, layers, this.#linetypes));
       } else {

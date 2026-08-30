@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { CadCanvasRenderer, entityGripPoints, pannedViewportWorldCenter, viewportGridSpacing, viewportScreenToWorld, viewportWorldToScreen, type Canvas2DContext } from "../src/index.js";
+import { CadCanvasRenderer, displayColor, entityGripPoints, pannedViewportWorldCenter, viewportGridSpacing, viewportScreenToWorld, viewportWorldToScreen, type Canvas2DContext } from "../src/index.js";
 
 function fakeContext() {
   const calls: Array<[string, ...number[]]> = [];
@@ -37,6 +37,13 @@ describe("Canvas2D parity invariants", () => {
     expect(() => viewportGridSpacing(viewport, 0)).toThrow("positive");
   });
 
+  it("maps only indexed ACI 7 to the active model-space foreground", () => {
+    expect(displayColor({ color: "#ffffff", colorMethod: "aci", aciIndex: 7 }, "light")).toBe("#000000");
+    expect(displayColor({ color: "#ffffff", colorMethod: "aci", aciIndex: 7 }, "dark")).toBe("#ffffff");
+    expect(displayColor({ color: "#ffffff", colorMethod: "trueColor" }, "light")).toBe("#ffffff");
+    expect(displayColor({ color: "#ff0000", colorMethod: "aci", aciIndex: 1 }, "light")).toBe("#ff0000");
+  });
+
   it("draws the model grid as two display-only minor/major passes", () => {
     const renderer = new CadCanvasRenderer();
     renderer.setEntities([]);
@@ -48,6 +55,44 @@ describe("Canvas2D parity invariants", () => {
     expect(calls.some(([call]) => call === "move")).toBe(true);
     expect(calls.some(([call, x]) => call === "move" && x <= -100)).toBe(true);
     expect(viewport).toEqual(before);
+  });
+
+  it("honours exact GRIDUNIT spacing and SNAPBASE-compatible origin", () => {
+    const renderer = new CadCanvasRenderer();
+    renderer.setEntities([]);
+    const { context, calls } = fakeContext();
+    renderer.render(
+      context,
+      { world: { minX: 0, minY: 0, maxX: 100, maxY: 100 }, widthPx: 100, heightPx: 100, devicePixelRatio: 1 },
+      [],
+      null,
+      [],
+      { grid: { enabled: true, spacingWorld: 20, originWorld: { x: 5, y: 7 } } },
+    );
+    expect(calls).toContainEqual(["move", 5, 0]);
+    expect(calls).toContainEqual(["move", 0, 7]);
+    expect(calls).toContainEqual(["move", -15, 0]);
+    expect(calls).toContainEqual(["move", 0, -13]);
+  });
+
+  it("uses light-model ACI 7 without changing TrueColor white", () => {
+    const renderer = new CadCanvasRenderer();
+    renderer.setEntities([
+      { kind: "line", handle: "aci", layerId: "0", start: { x: 0, y: 0 }, end: { x: 10, y: 0 } },
+      { kind: "line", handle: "true", layerId: "0", start: { x: 0, y: 1 }, end: { x: 10, y: 1 }, appearance: { color: "#ffffff", colorMethod: "trueColor" } },
+    ]);
+    const { context } = fakeContext();
+    const strokes: string[] = [];
+    context.stroke = () => { strokes.push(String(context.strokeStyle)); };
+    renderer.render(
+      context,
+      { world: { minX: 0, minY: -1, maxX: 20, maxY: 20 }, widthPx: 200, heightPx: 200, devicePixelRatio: 1 },
+      [{ id: "0", name: "0", visible: true, frozen: false, locked: false, plottable: true }],
+      null,
+      [],
+      { displayTheme: "light" },
+    );
+    expect(strokes).toEqual(["#000000", "#ffffff"]);
   });
 
   it("uses the shared F-103 plot resolver for ByLayer ink, physical width and solid-hatch alpha", () => {

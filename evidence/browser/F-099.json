@@ -4,7 +4,7 @@
   "kind": "browser",
   "authority": "kuubik-draw-browser",
   "status": "PASS",
-  "artifactSha256": "728166879d9c45e1497b775f02f364d5b94c6d06b68ff5d7edeb5a18b8f84b19",
+  "artifactSha256": "621787b79a44a539497e8c95116396e582cbec12d3416875bae6f0f870d87d5d",
   "observedAt": "2026-08-29T10:43:50.363Z",
   "workflow": "Chromium at 1920 x 1080 opens /d/local, selects a seeded A3 paper layout, creates a rectangular and six-point polygon-clipped viewport, measures both independent canvas frames and pixels, enters the clipped viewport MODEL context, deletes it back to PAPER, performs undo/redo/undo, downloads production KDRAW1, reloads IndexedDB and measures both restored viewports again.",
   "result": "The two stable viewport IDs rendered non-overlapping painted canvases with independent model centers 0 and 2000; only the second had a real CSS polygon clip; MODEL-context deletion retained viewport-1 and returned PAPER; atomic undo/redo restored exact state; revision 6, operations, clip points and both viewport records matched the independently decoded KDRAW1 after reload with zero console or page errors.",
