@@ -32,7 +32,7 @@ if (VISUAL_BASELINE.claimedScore > VISUAL_BASELINE.baselineScore && !allStatesPa
 }
 
 for (const state of VISUAL_STATES) {
-  for (const evidencePath of [state.kuubikEvidence, state.supplementalKuubikEvidence, state.measuredReadback, state.comparisonReadback]) {
+  for (const evidencePath of [state.kuubikEvidence, state.supplementalKuubikEvidence, state.measuredReadback, state.supplementalMeasuredReadback, state.comparisonReadback, state.supplementalComparisonReadback]) {
     if (evidencePath) await access(resolve(evidencePath));
   }
 }
@@ -43,6 +43,29 @@ if (shellMetrics.viewport[0] !== VISUAL_BASELINE.viewport.width || shellMetrics.
   throw new Error(`Visual shell viewport mismatch: ${shellMetrics.viewport.join("x")}`);
 }
 if (shellMetrics.consoleErrors.length !== 0) throw new Error("Visual shell capture contains console errors");
+
+if (shellState.supplementalComparisonReadback && shellState.supplementalMeasuredReadback) {
+  const browserReadback = JSON.parse(await readFile(resolve(shellState.supplementalMeasuredReadback), "utf8"));
+  const ribbonComparison = JSON.parse(await readFile(resolve(shellState.supplementalComparisonReadback), "utf8"));
+  const ribbon = browserReadback.states.ribbon;
+  const panelNames = Object.keys(ribbon.panels);
+  const boundaryMatch = ribbonComparison.panels.length === 10
+    && ribbonComparison.panels.every(({ rightDeltaPx }) => Math.abs(rightDeltaPx) <= VISUAL_ACCEPTANCE.zoneTolerancePx);
+  const surfaceMatch = ribbonComparison.surface.autoCad === "#3b4453"
+    && ribbonComparison.surface.kuubik === "rgb(59, 68, 83)"
+    && panelNames.length === 10
+    && panelNames.every((name) => ribbon.panels[name].backgroundColor === "rgb(59, 68, 83)");
+  const commandExtensionBounded = ribbon.commandPanel.x === 1673
+    && ribbon.commandPanel.right === VISUAL_BASELINE.viewport.width
+    && ribbon.commandPanel.height === 92;
+  const interactionStatesDistinct = ribbon.disabled.color === "rgb(126, 135, 142)"
+    && ribbon.hover.backgroundColor === "rgb(72, 81, 90)"
+    && ribbon.active.backgroundColor === "rgb(23, 111, 159)"
+    && ribbon.hover.backgroundColor !== ribbon.active.backgroundColor;
+  if (!boundaryMatch || !surfaceMatch || !commandExtensionBounded || !interactionStatesDistinct || ribbonComparison.status !== "PASS") {
+    throw new Error("Home ribbon supplement is outside the measured AutoCAD reference tolerance");
+  }
+}
 
 const commandHistoryState = VISUAL_STATES.find(({ id }) => id === "command-history-context");
 if (commandHistoryState.status === "PASS") {

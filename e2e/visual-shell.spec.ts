@@ -36,6 +36,46 @@ test("AutoCAD-style shell keeps all eight primary zones visible at 1920x1080", a
   await expect(palette.getByText("Transparency")).toBeVisible();
   const ribbonPrimary = await page.getByLabel("Home ribbon").evaluate((element) => ({ clientWidth: element.clientWidth, scrollWidth: element.scrollWidth }));
   expect(ribbonPrimary.scrollWidth).toBeLessThanOrEqual(ribbonPrimary.clientWidth);
+  const ribbonPanels = await page.locator("[data-ribbon-panel]").evaluateAll((elements) => Object.fromEntries(elements.map((element) => {
+    const rect = element.getBoundingClientRect();
+    return [element.getAttribute("data-ribbon-panel"), {
+      x: rect.x,
+      width: rect.width,
+      right: rect.right,
+      height: rect.height,
+      backgroundColor: getComputedStyle(element).backgroundColor,
+    }];
+  })));
+  expect(ribbonPanels).toEqual({
+    draw: { x: 0, width: 225, right: 225, height: 92, backgroundColor: "rgb(59, 68, 83)" },
+    modify: { x: 225, width: 250, right: 475, height: 92, backgroundColor: "rgb(59, 68, 83)" },
+    annotation: { x: 475, width: 189, right: 664, height: 92, backgroundColor: "rgb(59, 68, 83)" },
+    layers: { x: 664, width: 273, right: 937, height: 92, backgroundColor: "rgb(59, 68, 83)" },
+    block: { x: 937, width: 161, right: 1098, height: 92, backgroundColor: "rgb(59, 68, 83)" },
+    properties: { x: 1098, width: 262, right: 1360, height: 92, backgroundColor: "rgb(59, 68, 83)" },
+    groups: { x: 1360, width: 72, right: 1432, height: 92, backgroundColor: "rgb(59, 68, 83)" },
+    utilities: { x: 1432, width: 97, right: 1529, height: 92, backgroundColor: "rgb(59, 68, 83)" },
+    clipboard: { x: 1529, width: 91, right: 1620, height: 92, backgroundColor: "rgb(59, 68, 83)" },
+    view: { x: 1620, width: 53, right: 1673, height: 92, backgroundColor: "rgb(59, 68, 83)" },
+  });
+  const commandPanel = await page.getByLabel("Käsu parameetrid").evaluate((element) => {
+    const rect = element.getBoundingClientRect();
+    return { x: rect.x, width: rect.width, right: rect.right, height: rect.height, backgroundColor: getComputedStyle(element).backgroundColor };
+  });
+  expect(commandPanel).toEqual({ x: 1673, width: 247, right: 1920, height: 92, backgroundColor: "rgb(59, 68, 83)" });
+  const disabledRibbonTool = page.getByRole("button", { name: "Ribbon Polyline unavailable" });
+  await expect(disabledRibbonTool).toBeDisabled();
+  const disabledRibbonState = await disabledRibbonTool.evaluate((element) => ({
+    color: getComputedStyle(element).color,
+    backgroundColor: getComputedStyle(element).backgroundColor,
+  }));
+  const lineRibbonTool = page.getByRole("button", { name: "Ribbon Line command" });
+  await lineRibbonTool.hover();
+  const hoverRibbonState = await lineRibbonTool.evaluate((element) => ({
+    color: getComputedStyle(element).color,
+    backgroundColor: getComputedStyle(element).backgroundColor,
+    borderColor: getComputedStyle(element).borderColor,
+  }));
   const modelCanvas = page.getByLabel("Kuubik Draw joonestusala");
   const gridToggle = page.getByRole("button", { name: "Grid display" });
   await expect(gridToggle).toHaveAttribute("aria-pressed", "true");
@@ -121,8 +161,13 @@ test("AutoCAD-style shell keeps all eight primary zones visible at 1920x1080", a
     await writeFile(resolve(captureRoot, "visual-shell-zones.json"), `${JSON.stringify({ viewport: [1920, 1080], zones, consoleErrors }, null, 2)}\n`, "utf8");
   }
 
-  await page.getByRole("button", { name: "Ribbon Line command" }).click();
-  await expect(page.getByRole("button", { name: "Ribbon Line command" })).toHaveAttribute("aria-pressed", "true");
+  await lineRibbonTool.click();
+  await expect(lineRibbonTool).toHaveAttribute("aria-pressed", "true");
+  const activeRibbonState = await lineRibbonTool.evaluate((element) => ({
+    color: getComputedStyle(element).color,
+    backgroundColor: getComputedStyle(element).backgroundColor,
+    borderColor: getComputedStyle(element).borderColor,
+  }));
   await expect(page.getByText("LINE Specify first point")).toBeVisible();
   if (captureRoot) await writeFile(resolve(captureRoot, "visual-shell-active-command.png"), await page.screenshot());
 
@@ -291,6 +336,13 @@ test("AutoCAD-style shell keeps all eight primary zones visible at 1920x1080", a
       states: {
         emptyWorkspace: true,
         activeDrawingCommand: true,
+        ribbon: {
+          panels: ribbonPanels,
+          commandPanel,
+          disabled: disabledRibbonState,
+          hover: hoverRibbonState,
+          active: activeRibbonState,
+        },
         modelNavigation,
         modelDisplayReadback,
         selectedProperties: true,

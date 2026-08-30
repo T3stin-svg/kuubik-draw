@@ -3033,46 +3033,104 @@ export function App() {
       </nav>
       <section className="ribbon" aria-label="Joonestustööriistad" data-visual-zone="ribbon">
         <div className="ribbon-primary" aria-label="Home ribbon">
-          <section className="ribbon-panel" aria-label="Draw panel">
+          <section className="ribbon-panel ribbon-panel-draw" aria-label="Draw panel" data-ribbon-panel="draw">
             <div className="ribbon-panel-tools">
               <button type="button" className="ribbon-tool ribbon-tool-large" aria-label="Ribbon Line command" aria-pressed={activeCommandPrompt === "LINE"} onClick={() => { setActiveCommandPrompt("LINE"); setStatus("LINE Specify first point"); }} disabled={!modelSpaceEditing || activeLayer.locked}><span className="ribbon-glyph">╱</span><span>Line</span></button>
-              <button type="button" className="ribbon-tool" aria-label="Ribbon Rectangle command" aria-pressed={activeCommandPrompt === "RECTANGLE"} onClick={() => { setActiveCommandPrompt("RECTANGLE"); setStatus("RECTANGLE Specify first corner point"); }} disabled={!modelSpaceEditing || activeLayer.locked}><span className="ribbon-glyph">□</span><span>Rectangle</span></button>
+              <div className="ribbon-tool-grid ribbon-tool-grid-dense">
+                <button type="button" className="ribbon-tool" aria-label="Ribbon Rectangle command" aria-pressed={activeCommandPrompt === "RECTANGLE"} onClick={() => { setActiveCommandPrompt("RECTANGLE"); setStatus("RECTANGLE Specify first corner point"); }} disabled={!modelSpaceEditing || activeLayer.locked}><span className="ribbon-glyph">□</span><span>Rectangle</span></button>
+                <button type="button" className="ribbon-tool" aria-label="Ribbon Polyline unavailable" disabled><span className="ribbon-glyph">⌁</span><span>Polyline</span></button>
+                <button type="button" className="ribbon-tool" aria-label="Ribbon Circle unavailable" disabled><span className="ribbon-glyph">○</span><span>Circle</span></button>
+                <button type="button" className="ribbon-tool" aria-label="Ribbon Arc unavailable" disabled><span className="ribbon-glyph">◜</span><span>Arc</span></button>
+                <button type="button" className="ribbon-tool" aria-label="Ribbon Hatch unavailable" disabled><span className="ribbon-glyph">▧</span><span>Hatch</span></button>
+                <button type="button" className="ribbon-tool" aria-label="Ribbon Ellipse unavailable" disabled><span className="ribbon-glyph">⬭</span><span>Ellipse</span></button>
+              </div>
             </div>
             <strong>Draw</strong>
           </section>
-          <section className="ribbon-panel" aria-label="Modify panel">
-            <div className="ribbon-panel-tools ribbon-tool-grid">
+          <section className="ribbon-panel ribbon-panel-modify" aria-label="Modify panel" data-ribbon-panel="modify">
+            <div className="ribbon-panel-tools ribbon-tool-grid ribbon-tool-grid-dense">
               <button type="button" className="ribbon-tool" aria-label="Ribbon Move command" aria-pressed={activeCommandPrompt === "MOVE"} onClick={() => { setActiveCommandPrompt("MOVE"); setPreviewCommand("MOVE"); setStatus("MOVE Select objects"); }} disabled={!modelSpaceEditing}><span className="ribbon-glyph">✥</span><span>Move</span></button>
               <button type="button" className="ribbon-tool" aria-label="Ribbon Copy command" aria-pressed={activeCommandPrompt === "COPY"} onClick={() => { setActiveCommandPrompt("COPY"); setPreviewCommand("COPY"); setStatus("COPY Select objects"); }} disabled={!modelSpaceEditing}><span className="ribbon-glyph">▣</span><span>Copy</span></button>
               <button type="button" className="ribbon-tool" aria-label="Ribbon Rotate command" aria-pressed={activeCommandPrompt === "ROTATE"} onClick={() => { setActiveCommandPrompt("ROTATE"); setPreviewCommand("ROTATE"); setStatus("ROTATE Select objects"); }} disabled={!modelSpaceEditing}><span className="ribbon-glyph">↻</span><span>Rotate</span></button>
               <button type="button" className="ribbon-tool" aria-label="Ribbon Mirror command" aria-pressed={activeCommandPrompt === "MIRROR"} onClick={() => { setActiveCommandPrompt("MIRROR"); setPreviewCommand("MIRROR"); setStatus("MIRROR Select objects"); }} disabled={!modelSpaceEditing}><span className="ribbon-glyph">◫</span><span>Mirror</span></button>
               <button type="button" className="ribbon-tool" aria-label="Ribbon Trim command" aria-pressed={activeCommandPrompt === "TRIM"} onClick={() => { setActiveCommandPrompt("TRIM"); setPreviewCommand("TRIM"); setStatus("TRIM Select cutting edges or objects to trim"); }} disabled={!modelSpaceEditing}><span className="ribbon-glyph">⌁</span><span>Trim</span></button>
               <button type="button" className="ribbon-tool" aria-label="Ribbon Offset command" aria-pressed={activeCommandPrompt === "OFFSET"} onClick={() => { setActiveCommandPrompt("OFFSET"); setPreviewCommand("OFFSET"); setStatus("OFFSET Specify offset distance or Through"); }} disabled={!modelSpaceEditing}><span className="ribbon-glyph">≋</span><span>Offset</span></button>
+              <button type="button" className="ribbon-tool" aria-label="Ribbon Stretch unavailable" disabled><span className="ribbon-glyph">↗</span><span>Stretch</span></button>
+              <button type="button" className="ribbon-tool" aria-label="Ribbon Scale unavailable" disabled><span className="ribbon-glyph">⌗</span><span>Scale</span></button>
+              <button type="button" className="ribbon-tool" aria-label="Ribbon Fillet unavailable" disabled><span className="ribbon-glyph">◝</span><span>Fillet</span></button>
             </div>
             <strong>Modify</strong>
           </section>
-          <section className="ribbon-panel" aria-label="Layers panel">
+          <section className="ribbon-panel ribbon-panel-annotation" aria-label="Annotation panel" data-ribbon-panel="annotation">
+            <div className="ribbon-panel-tools">
+              <button type="button" className="ribbon-tool ribbon-tool-large" aria-label="Ribbon Text unavailable" disabled><span className="ribbon-glyph ribbon-letter">A</span><span>Text</span></button>
+              <div className="ribbon-tool-grid ribbon-tool-grid-dense">
+                <button type="button" className="ribbon-tool" aria-label="Ribbon Dimension unavailable" disabled><span className="ribbon-glyph">↔</span><span>Dimension</span></button>
+                <button type="button" className="ribbon-tool" aria-label="Ribbon Leader unavailable" disabled><span className="ribbon-glyph">⌁</span><span>Leader</span></button>
+                <button type="button" className="ribbon-tool" aria-label="Ribbon Table unavailable" disabled><span className="ribbon-glyph">▦</span><span>Table</span></button>
+              </div>
+            </div>
+            <strong>Annotation</strong>
+          </section>
+          <section className="ribbon-panel ribbon-panel-layers" aria-label="Layers panel" data-ribbon-panel="layers">
             <div className="ribbon-layer-tools">
               <span className="ribbon-layer-current"><span aria-hidden="true">●</span>{activeLayer.name}</span>
-              <button type="button" className="ribbon-tool" aria-label="Ribbon New layer command" onClick={() => void createLayer()}><span className="ribbon-glyph">▤</span><span>New Layer</span></button>
-              <button type="button" className="ribbon-tool" aria-label="Ribbon Layer lock command" onClick={() => void toggleActiveLayerLock()}><span className="ribbon-glyph">{activeLayer.locked ? "🔒" : "🔓"}</span><span>{activeLayer.locked ? "Unlock" : "Lock"}</span></button>
+              <div className="ribbon-layer-actions">
+                <button type="button" className="ribbon-tool" aria-label="Ribbon New layer command" onClick={() => void createLayer()}><span className="ribbon-glyph">▤</span><span>New Layer</span></button>
+                <button type="button" className="ribbon-tool" aria-label="Ribbon Layer lock command" onClick={() => void toggleActiveLayerLock()}><span className="ribbon-glyph">{activeLayer.locked ? "▣" : "□"}</span><span>{activeLayer.locked ? "Unlock" : "Lock"}</span></button>
+                <button type="button" className="ribbon-tool" aria-label="Ribbon Make current unavailable" disabled><span className="ribbon-glyph">✓</span><span>Make Current</span></button>
+                <button type="button" className="ribbon-tool" aria-label="Ribbon Match layer unavailable" disabled><span className="ribbon-glyph">≡</span><span>Match Layer</span></button>
+              </div>
             </div>
             <strong>Layers</strong>
           </section>
-          <section className="ribbon-panel" aria-label="Properties panel">
-            <div className="ribbon-property-stack">
-              <span><i className="property-swatch" />ByLayer</span>
-              <span>— ByLayer</span>
-              <span>▔ ByLayer</span>
+          <section className="ribbon-panel ribbon-panel-block" aria-label="Block panel" data-ribbon-panel="block">
+            <div className="ribbon-panel-tools">
+              <button type="button" className="ribbon-tool ribbon-tool-large" aria-label="Ribbon Insert block unavailable" disabled><span className="ribbon-glyph">◇</span><span>Insert</span></button>
+              <div className="ribbon-tool-grid ribbon-tool-grid-dense">
+                <button type="button" className="ribbon-tool" aria-label="Ribbon Create block unavailable" disabled><span className="ribbon-glyph">＋</span><span>Create</span></button>
+                <button type="button" className="ribbon-tool" aria-label="Ribbon Edit block unavailable" disabled><span className="ribbon-glyph">✎</span><span>Edit</span></button>
+                <button type="button" className="ribbon-tool" aria-label="Ribbon Edit attributes unavailable" disabled><span className="ribbon-glyph">#</span><span>Attributes</span></button>
+              </div>
+            </div>
+            <strong>Block</strong>
+          </section>
+          <section className="ribbon-panel ribbon-panel-properties" aria-label="Properties panel" data-ribbon-panel="properties">
+            <div className="ribbon-panel-tools">
+              <button type="button" className="ribbon-tool ribbon-tool-large" aria-label="Ribbon Match properties unavailable" disabled><span className="ribbon-glyph">✎</span><span>Match</span></button>
+              <div className="ribbon-property-stack">
+                <span><i className="property-swatch" />ByLayer</span>
+                <span>— ByLayer</span>
+                <span>▔ ByLayer</span>
+              </div>
             </div>
             <strong>Properties</strong>
           </section>
-          <section className="ribbon-panel ribbon-panel-spacer" aria-label="Annotation panel">
-            <div className="ribbon-panel-tools">
-              <button type="button" className="ribbon-tool ribbon-tool-large" aria-label="Ribbon Text unavailable" disabled><span className="ribbon-glyph ribbon-letter">A</span><span>Text</span></button>
-              <button type="button" className="ribbon-tool" aria-label="Ribbon Dimension unavailable" disabled><span className="ribbon-glyph">↔</span><span>Dimension</span></button>
+          <section className="ribbon-panel ribbon-panel-groups" aria-label="Groups panel" data-ribbon-panel="groups">
+            <div className="ribbon-panel-tools ribbon-tool-grid ribbon-tool-grid-dense">
+              <button type="button" className="ribbon-tool" aria-label="Ribbon Group unavailable" disabled><span className="ribbon-glyph">◈</span><span>Group</span></button>
+              <button type="button" className="ribbon-tool" aria-label="Ribbon Ungroup unavailable" disabled><span className="ribbon-glyph">◇</span><span>Ungroup</span></button>
             </div>
-            <strong>Annotation</strong>
+            <strong>Groups</strong>
+          </section>
+          <section className="ribbon-panel ribbon-panel-utilities" aria-label="Utilities panel" data-ribbon-panel="utilities">
+            <div className="ribbon-panel-tools ribbon-tool-grid ribbon-tool-grid-dense">
+              <button type="button" className="ribbon-tool" aria-label="Ribbon Measure unavailable" disabled><span className="ribbon-glyph">⌁</span><span>Measure</span></button>
+              <button type="button" className="ribbon-tool" aria-label="Ribbon Count unavailable" disabled><span className="ribbon-glyph">#</span><span>Count</span></button>
+            </div>
+            <strong>Utilities</strong>
+          </section>
+          <section className="ribbon-panel ribbon-panel-clipboard" aria-label="Clipboard panel" data-ribbon-panel="clipboard">
+            <div className="ribbon-panel-tools">
+              <button type="button" className="ribbon-tool ribbon-tool-large" aria-label="Ribbon Paste unavailable" disabled><span className="ribbon-glyph">▣</span><span>Paste</span></button>
+            </div>
+            <strong>Clipboard</strong>
+          </section>
+          <section className="ribbon-panel ribbon-panel-view" aria-label="View panel" data-ribbon-panel="view">
+            <div className="ribbon-panel-tools">
+              <button type="button" className="ribbon-tool ribbon-tool-large" aria-label="Ribbon Base view unavailable" disabled><span className="ribbon-glyph">◩</span><span>Base</span></button>
+            </div>
+            <strong>View</strong>
           </section>
         </div>
         <div className="ribbon-parameters" aria-label="Käsu parameetrid">

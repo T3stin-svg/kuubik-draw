@@ -4,8 +4,8 @@
   "kind": "readback",
   "authority": "independent-parser",
   "status": "PASS",
-  "artifactSha256": "dd96290218d9e05db1102482981a85be9b328aa2853805a409541c3fa1ad24d6",
-  "observedAt": "2026-08-30T22:43:43.044Z",
+  "artifactSha256": "989c9506e58f2e351a3829ae9df71961bca1e7453308d71a09f647ef1b42dc3b",
+  "observedAt": "2026-08-30T23:20:10.771Z",
   "workflow": "Production cad-core OFFSET and cad-dxf output are parsed with dxf-parser@1.1.2. Separate production .kdraw containers persist the five-family outputs, the closed/bulged/two-SPLINE edge matrix and an unchanged concave-refusal document; each document.json is independently base64-decoded and hash-checked. Supported edge polylines are separately exported to DXF and parsed.",
   "result": "Independent DXF parsing found the exact progressive LINEs plus closed and bulged LWPOLYLINE outputs. KDRAW1 decoding matched all ordinary and edge outputs, including both inward ELLIPSE SPLINE entities. The concave command emitted no changes and its decoded persisted document stayed at revision 0 with the exact source; Through, Erase and atomic Undo also matched.",
   "artifact": "evidence/artifacts/F-021-independent-readback.json"

@@ -4,15 +4,15 @@
   "source": "owned AutoCAD 2024.1.2 Desktop + Chromium physical four-point ALIGN + production DXF/KDRAW1 read-back + secondary LibreCAD/FreeCAD reports",
   "sourceSha256": {
     "nativeDesktop": "c8c12b11a2742082c3cbf6f7826a70361599024d69a95fc6b782bf4401296e1a",
-    "browser": "d4a989782a26929049c621598a4704bcc32c33c3d4b564692341d81002597023",
-    "readback": "b08befa6b0bbd08a9e0f4c46af32802bddf5d7351ad7606ce5904fa830aba70f",
+    "browser": "d96447507fc31e66562b2a9192148b2e1cbe116ed01c9d990be9c5415f81db1d",
+    "readback": "c2be4819d454bc9d625301d40259327374ef59fb978f357c8b5513b6221f4e52",
     "productionDxf": "f27532f8b787c2d2cf74372efdc92d3cb43fa9772270fd14c58c0190533641fd",
     "productionKdraw": "1c5f537edfefabaf52e10a67e136ca02f9b42739cfe2a932f266d4ab2447f937",
-    "oracles": "aca8ba17ebd96605e36024c5850302e29ff9c5ccb48e6ca2c59e951f577f4d09"
+    "oracles": "9a27a35fcaf404d9954919c62127ff4eec1bae435f12f81b1f7211471b431ff7"
   },
   "implementationSha256": {
-    "apps/web/src/App.tsx": "9a2f2bc34bad653d1d70c2b99eee7330ef9b7f7a58d9ba7ff36c81348a52128e",
-    "apps/web/src/style.css": "cd7093ccf4a693f79e594221ad4e930358b8f3f389afc4298d80231efed1983e",
+    "apps/web/src/App.tsx": "4a644af235f85cc452c33c038b9f43b86fe89fc71b4299e3939062a4b2899db3",
+    "apps/web/src/style.css": "7aa2ceca4fe7a454a192be2f874fc6384e219092b1cbd51f873e41b5717197cf",
     "apps/web/src/workflows/modify-command.ts": "9d1f7d0b1d3e308eac2a5d4055436626e3a497cbaaf116c05957e1fde15616c7",
     "apps/web/src/workflows/modify-command.test.ts": "aac0694d3a93a08ed5c6b98ea5456e62ba7c0f05777780a47d99dcabdf2e12b9",
     "packages/cad-core/src/commands.ts": "540e6f79dafb8d71f0e3ba5d43a1dcd39bd9f5809c03ea383c070de3636609fc",
@@ -44,8 +44,8 @@
   "nestedReceipts": {
     "browserArtifacts": {
       "evidence/artifacts/F-029-browser-matrix.json": {
-        "expected": "73379f09a1782c789ec3b444f337c1ccc74bc6e1ae6dd56b79c9db55c09415dd",
-        "actual": "73379f09a1782c789ec3b444f337c1ccc74bc6e1ae6dd56b79c9db55c09415dd",
+        "expected": "08492d272fa4fc9eef2638fd3d8f01e177a337b729926600232d44bdc50f21e3",
+        "actual": "08492d272fa4fc9eef2638fd3d8f01e177a337b729926600232d44bdc50f21e3",
         "byteLength": 8949
       },
       "evidence/artifacts/F-029-browser.dxf": {
@@ -54,21 +54,21 @@
         "byteLength": 4309
       },
       "evidence/artifacts/F-029-browser.kdraw": {
-        "expected": "227b02b8f5d459d5845b9ab720b682fcbdef84e2f8c238294a5d81b496e34037",
-        "actual": "227b02b8f5d459d5845b9ab720b682fcbdef84e2f8c238294a5d81b496e34037",
+        "expected": "a2437e2fd30be6e5d73820fa06aa1bdd28176f565de07d8b2dc5b2e7b5fd05d7",
+        "actual": "a2437e2fd30be6e5d73820fa06aa1bdd28176f565de07d8b2dc5b2e7b5fd05d7",
         "byteLength": 1749
       }
     },
     "browserSources": {
       "apps/web/src/App.tsx": {
-        "expected": "9a2f2bc34bad653d1d70c2b99eee7330ef9b7f7a58d9ba7ff36c81348a52128e",
-        "actual": "9a2f2bc34bad653d1d70c2b99eee7330ef9b7f7a58d9ba7ff36c81348a52128e",
-        "byteLength": 242909
+        "expected": "4a644af235f85cc452c33c038b9f43b86fe89fc71b4299e3939062a4b2899db3",
+        "actual": "4a644af235f85cc452c33c038b9f43b86fe89fc71b4299e3939062a4b2899db3",
+        "byteLength": 249142
       },
       "apps/web/src/style.css": {
-        "expected": "cd7093ccf4a693f79e594221ad4e930358b8f3f389afc4298d80231efed1983e",
-        "actual": "cd7093ccf4a693f79e594221ad4e930358b8f3f389afc4298d80231efed1983e",
-        "byteLength": 26917
+        "expected": "7aa2ceca4fe7a454a192be2f874fc6384e219092b1cbd51f873e41b5717197cf",
+        "actual": "7aa2ceca4fe7a454a192be2f874fc6384e219092b1cbd51f873e41b5717197cf",
+        "byteLength": 28213
       },
       "apps/web/src/workflows/modify-command.ts": {
         "expected": "9d1f7d0b1d3e308eac2a5d4055436626e3a497cbaaf116c05957e1fde15616c7",
@@ -222,8 +222,8 @@
         "byteLength": 4710
       },
       "evidence/artifacts/F-029-independent-readback.json": {
-        "expected": "b08befa6b0bbd08a9e0f4c46af32802bddf5d7351ad7606ce5904fa830aba70f",
-        "actual": "b08befa6b0bbd08a9e0f4c46af32802bddf5d7351ad7606ce5904fa830aba70f",
+        "expected": "c2be4819d454bc9d625301d40259327374ef59fb978f357c8b5513b6221f4e52",
+        "actual": "c2be4819d454bc9d625301d40259327374ef59fb978f357c8b5513b6221f4e52",
         "byteLength": 18610
       },
       "tools/oracles/freecad-f029-headless.py": {

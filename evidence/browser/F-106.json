@@ -4,7 +4,7 @@
   "kind": "browser",
   "authority": "kuubik-draw-browser",
   "status": "PASS",
-  "artifactSha256": "e3f993351fc2bb263917c5ac6575075dc7a63cd33e0370d2b91347bb2ac9a3e4",
+  "artifactSha256": "97b6056de0e51e26529d524635248d9d19414c2e4c0d53b07342e7a89c1ed034",
   "observedAt": "2026-08-29T10:44:35.485Z",
   "workflow": "Chromium at 1920x1080 restores the Model page setup, downloads A4 Extents 1:50 PDF/SVG, applies A3 Window Fit with offset, exercises atomic Undo/Redo, captures the exact live Display at A4 1:100, and reloads revision 4 from IndexedDB.",
   "result": "All three physical outputs used the requested media, source clip, scale and placement with zero console/page errors. The final Display setup survived reload; downloaded bytes passed pypdf, pdfplumber and Poppler with zero raster images.",
