@@ -33,11 +33,10 @@ selles teekaardis teadlikult `Won't have`.
 
 ## Now
 
-1. F-029 on lokaalselt sertifitseeritud seisul **29/133 · 21,8% raw / 25,2% weighted**;
+1. F-029 on avalikult sertifitseeritud seisul **29/133 · 21,8% raw / 25,2% weighted**;
    AutoCAD/Chromium/DXF/KDRAW1/oracle risttõend ja sõltumatu lõppreview
-   `0 P0 / 0 P1` on rohelised. Exact-commit avalik GitHub Actions kontroll on
-   veel ootel; viimane avalikult suletud rida on F-027 commitil `57b1c14`,
-   run `33308045837`.
+   `0 P0 / 0 P1` on rohelised. Feature-commit `5b63ccb` läbis exact-commit
+   GitHub Actions run'i `33323461138` fast- ja verify-väravad.
 2. STRETCH crossing window/polygon, osaline ja whole-object liikumine, täielik
    14-objektiline native/DXF state, nested SHA-receipt'id ja atomic Undo/Redo
    kasutavad fail-closed ratchet'it. Sõltumatu review on `0 P0 / 0 P1`.
@@ -156,12 +155,13 @@ AutoCADi akent ei avata iga väikese koodimuudatuse järel: F-028/F-029/F-030
 native kontrollid koondatakse ühe valmis maatriksiga tõendusväravasse.
 
 Checkpoint: F-029 production/browser/oracle/owned-runner/cross-evidence leping
-on täidetud ja rida lokaalselt skooril `1,00`. Owned AutoCAD 2024.1.2 Desktop,
+on täidetud ja rida avalikult skooril `1,00`. Owned AutoCAD 2024.1.2 Desktop,
 Chromium, sõltumatu DXF/KDRAW1 read-back, LibreCAD/FreeCAD secondary oracle'id,
 täielik current-byte ratchet ja sõltumatu `0 P0 / 0 P1` review on rohelised.
-Exact-commit avalik CI on veel ootel. F-028 jääb `0,75` peale F-012 fit-point
-SPLINE sõltuvuse tõttu; F-030 jääb `0,75` peale F-060/F-069/F-071/F-108/F-128
-sõltuvuste tõttu. Järgmine geomeetriat avav laine on F-012 SPLINE → F-028.
+Exact-commit `5b63ccb` avalik run `33323461138` on roheline. F-028 jääb `0,75`
+peale F-012 fit-point SPLINE sõltuvuse tõttu; F-030 jääb `0,75` peale
+F-060/F-069/F-071/F-108/F-128 sõltuvuste tõttu. Järgmine geomeetriat avav
+laine on F-012 SPLINE → F-028.
 
 ## Later
 

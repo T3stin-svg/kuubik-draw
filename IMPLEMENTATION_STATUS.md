@@ -89,10 +89,10 @@
 
 ## Certified state and explicit remaining limits
 
-- the new application is locally certified through F-029 at **29/133**
+- the new application is publicly certified through F-029 at **29/133**
   (**21.8% raw / 25.2% weighted**) with independent `0 P0 / 0 P1` review;
-- all 22 legacy-certified rows and F-022…F-027 are publicly mirrored; F-029
-  has passed the full local gate and is awaiting exact-commit public CI;
+- all 22 legacy-certified rows, F-022…F-027 and F-029 are publicly mirrored;
+  feature-commit `5b63ccb` passed exact-commit CI run `33323461138`;
 - spline/NURBS rendering is rejected rather than drawn as a misleading control polygon;
 - Unicode PDF text is rejected until a font-embedding path exists;
 - LibreCAD/FreeCAD fixtures pass locally, but the machine has no signed OS
@@ -242,7 +242,7 @@ but full certification remains blocked by F-060, F-069, F-071, F-108 and
 F-128 plus an independent final review. No preview or production deployment
 was performed.
 
-## 2026-08-30 F-029 ALIGN local certification
+## 2026-08-30 F-029 ALIGN public certification
 
 F-029 is now in `certifiedIds` and `local-certifications.json` at score `1.00`.
 The owned AutoCAD 2024.1.2 matrix proves one-pair move, two-pair rotation with
@@ -257,6 +257,9 @@ production build, parity-kit, parity, license and dependency audit. Pinned
 LibreCAD 2.2.1.5 and FreeCAD 1.1.3 reports pass as
 `certificationAuthority:false`; their local status remains
 `FIXTURE_PASS_NOT_NETWORK_ISOLATED`, so they are secondary evidence only.
-Independent final review found **0 P0 / 0 P1**. The resulting local score is
+Independent final review found **0 P0 / 0 P1**. Feature-commit `5b63ccb` passed
+GitHub Actions run `33323461138`: fast in 1m17s and verify in 4m37s; protected
+AutoCAD/oracle jobs were honestly skipped while their checked-in local evidence
+remained mandatory in the fail-closed ratchet. The resulting public score is
 **29/133, 21.8% raw / 25.2% weighted**, while visual similarity remains
-**60.7%**. Exact-commit public CI is still pending.
+**60.7%**.
