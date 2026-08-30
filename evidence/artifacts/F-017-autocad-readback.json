@@ -4,6 +4,13 @@
   "benchmark": "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
   "engine": "Autodesk AutoCAD 2024 desktop COM",
   "engineVersion": "24.3s (LMS Tech)",
+  "automationProcessId": 34264,
+  "automationProcessOwned": true,
+  "automationProcessIdentity": {
+    "processId": 34264,
+    "executablePath": "C:\\Program Files\\Autodesk\\AutoCAD 2024\\acad.exe",
+    "startTimeUtc": "2026-08-30T00:27:56.9067490Z"
+  },
   "workflow": "12 native entity families; repeated COPY from base 100,200 to +500,+750 and -300,+100; one U; mixed locked layer",
   "vectors": [
     [
@@ -1481,7 +1488,8 @@
   },
   "cmdNamesAfter": "",
   "status": "PASS",
+  "processSetRestored": true,
   "scriptSha256": "2d3310b6e02e2d1b6154203e3f10be3f223e9ae1557d6abec91a4b1a8fcf3a03",
-  "matrixScriptSha256": "dbe6fa3535dfdbfb6bc1cfcb39d4567a61f961a8a7ffd1b14534a346e183e2e0",
-  "observedAt": "2026-08-29T03:53:07.015Z"
+  "matrixScriptSha256": "c115bace0668ea227c3dd33a00cc93cbb5a5be9818b6011321b6c66665b1a9ce",
+  "observedAt": "2026-08-30T00:28:16.509Z"
 }

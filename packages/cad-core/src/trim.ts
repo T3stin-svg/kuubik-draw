@@ -803,6 +803,15 @@ export interface TrimClosestPoint {
 
 export function trimClosestPoint(entity: CadEntity, point: CadPoint2): TrimClosestPoint | null {
   if (!finitePoint(point)) return null;
+  if (entity.kind === "ray" || entity.kind === "xline") {
+    const magnitude = Math.hypot(entity.direction.x, entity.direction.y);
+    if (!(magnitude > TRIM_EPSILON)) return null;
+    const direction = { x: entity.direction.x / magnitude, y: entity.direction.y / magnitude };
+    const projected = dot(subtract(point, entity.basePoint), direction);
+    const parameter = entity.kind === "ray" ? Math.max(0, projected) : projected;
+    const closestPoint = cleanPoint(add(entity.basePoint, scaled(direction, parameter)));
+    return { segment: 0, parameter, point: closestPoint, distance: distance(closestPoint, point) };
+  }
   const curves = trimCurvesOfEntity(entity);
   let closest: TrimClosestPoint | null = null;
   curves.forEach((curve, segment) => {
@@ -933,7 +942,8 @@ function joinSplineIntervals(first: CadSpline, second: CadSpline): CadSpline | n
   return validSpline(result) ? result : null;
 }
 
-function curvePiece(entity: CadEntity, curve: TrimCurve, from: number, to: number): CadEntity | null {
+/** Returns an exact same-type sub-curve while preserving the entity base data. */
+export function trimCurvePiece(entity: CadEntity, curve: TrimCurve, from: number, to: number): CadEntity | null {
   if (!(to - from > TRIM_EPSILON)) return null;
   if (curve.kind === "spline" && entity.kind === "spline") {
     if (to <= 1 + TRIM_EPSILON) return splineInterval(entity, Math.max(0, from), Math.min(1, to));
@@ -1020,14 +1030,14 @@ function trimSimple(entity: CadEntity, curve: TrimCurve, pick: number, boundarie
       if (probe >= current - TRIM_EPSILON && probe <= next + TRIM_EPSILON) { lower = current; upper = next; break; }
     }
     const keptStart = upper % 1; const keptLength = 1 - (upper - lower);
-    const piece = curvePiece(entity, curve, keptStart, keptStart + keptLength);
+    const piece = trimCurvePiece(entity, curve, keptStart, keptStart + keptLength);
     return piece ? { entities: [piece], intersectionPoints: points, removedInterval: { start: lower, end: upper % 1, wraps: upper > 1 }, reason: null } : { entities: [], intersectionPoints: points, removedInterval: null, reason: "degenerate-geometry" };
   }
   if (parameters.length === 0) return { entities: [], intersectionPoints: points, removedInterval: null, reason: "no-intersection" };
   const cuts = [0, ...parameters, 1]; let removeIndex = -1;
   for (let index = 0; index < cuts.length - 1; index += 1) if (pick >= cuts[index]! - TRIM_EPSILON && pick <= cuts[index + 1]! + TRIM_EPSILON) { removeIndex = index; break; }
   if (removeIndex < 0) return { entities: [], intersectionPoints: points, removedInterval: null, reason: "no-intersection" };
-  const pieces = [curvePiece(entity, curve, 0, cuts[removeIndex]!), curvePiece(entity, curve, cuts[removeIndex + 1]!, 1)].filter((piece): piece is CadEntity => piece !== null);
+  const pieces = [trimCurvePiece(entity, curve, 0, cuts[removeIndex]!), trimCurvePiece(entity, curve, cuts[removeIndex + 1]!, 1)].filter((piece): piece is CadEntity => piece !== null);
   return { entities: pieces, intersectionPoints: points, removedInterval: { start: cuts[removeIndex]!, end: cuts[removeIndex + 1]!, wraps: false }, reason: pieces.length ? null : "degenerate-geometry" };
 }
 

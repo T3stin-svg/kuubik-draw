@@ -18,29 +18,76 @@ const temporaryPaths = {
   pid: `${temporaryStem}.pid`,
 };
 
-async function resolveOwnedProcessId() {
+function acadProcessIdentities() {
+  const script = "@(Get-Process acad -ErrorAction SilentlyContinue | ForEach-Object { [ordered]@{ processId=[int]$_.Id; executablePath=[IO.Path]::GetFullPath([string]$_.Path); startTimeUtc=$_.StartTime.ToUniversalTime().ToString('o') } }) | ConvertTo-Json -Compress";
+  const output = execFileSync("powershell.exe", ["-NoProfile", "-Command", script], { windowsHide: true, encoding: "utf8" }).trim();
+  if (!output) return [];
+  const parsed = JSON.parse(output);
+  return (Array.isArray(parsed) ? parsed : [parsed]).toSorted((left, right) => left.processId - right.processId);
+}
+
+const preExistingProcesses = acadProcessIdentities();
+const preExistingProcessIds = new Set(preExistingProcesses.map(({ processId }) => processId));
+
+function identityMatches(expected, current) {
+  return current?.processId === expected?.processId
+    && current.executablePath?.toLowerCase() === expected.executablePath?.toLowerCase()
+    && current.startTimeUtc === expected.startTimeUtc;
+}
+
+function processIdentity(processId) {
+  return acadProcessIdentities().find((identity) => identity.processId === processId) ?? null;
+}
+
+async function resolveOwnedProcess() {
   try {
     const sidecar = JSON.parse(await readFile(temporaryPaths.pid, "utf8"));
     if (
       sidecar.schemaVersion === 1 && sidecar.owned === true && sidecar.token === ownershipToken &&
-      Number.isInteger(sidecar.processId) && sidecar.processId > 0
-    ) return sidecar.processId;
+      Number.isInteger(sidecar.processId) && sidecar.processId > 0 && !preExistingProcessIds.has(sidecar.processId) &&
+      typeof sidecar.executablePath === "string" && sidecar.executablePath.toLowerCase().endsWith("\\acad.exe") &&
+      typeof sidecar.startTimeUtc === "string"
+    ) return sidecar;
     throw new Error("F-098 PID sidecar did not authenticate an owned AutoCAD process.");
   } catch (error) {
-    if (error?.code === "ENOENT") return 0;
+    if (error?.code === "ENOENT") return null;
     throw error;
   }
 }
 
-async function terminateOwnedProcess(processId) {
-  if (processId <= 0) return false;
-  try { process.kill(processId); } catch (error) {
+function newAutomationSidecars() {
+  const script = "Get-CimInstance Win32_Process -Filter \"Name='acad.exe'\" | Select-Object ProcessId,CommandLine | ConvertTo-Json -Compress";
+  const output = execFileSync("powershell.exe", ["-NoProfile", "-Command", script], { windowsHide: true, encoding: "utf8" }).trim();
+  if (!output) return [];
+  const records = JSON.parse(output);
+  return (Array.isArray(records) ? records : [records])
+    .filter((record) => !preExistingProcessIds.has(Number(record.ProcessId)) && /\/Automation\s+-Embedding/iu.test(String(record.CommandLine ?? "")))
+    .map((record) => processIdentity(Number(record.ProcessId)))
+    .filter(Boolean);
+}
+
+async function terminateOwnedProcess(ownership) {
+  if (!ownership) return false;
+  let current = acadProcessIdentities().find(({ processId }) => processId === ownership.processId);
+  if (!current) return true;
+  if (!identityMatches(ownership, current)) throw new Error(`F-098 refuses to terminate PID ${ownership.processId}: process identity changed.`);
+  try { process.kill(ownership.processId); } catch (error) {
     if (error?.code === "ESRCH") return true;
-    throw new Error(`Could not terminate owned AutoCAD process ${processId}: ${error.message}`);
+    throw new Error(`Could not terminate owned AutoCAD process ${ownership.processId}: ${error.message}`);
   }
-  for (let attempt = 0; attempt < 40; attempt += 1) {
+  for (let attempt = 0; attempt < 100; attempt += 1) {
     await new Promise((resolveDelay) => setTimeout(resolveDelay, 100));
-    try { process.kill(processId, 0); } catch { return true; }
+    current = acadProcessIdentities().find(({ processId }) => processId === ownership.processId);
+    if (!current) return true;
+    if (!identityMatches(ownership, current)) throw new Error(`F-098 PID ${ownership.processId} was reused during cleanup.`);
+  }
+  return false;
+}
+
+async function restoredProcessSet() {
+  for (let attempt = 0; attempt < 100; attempt += 1) {
+    if (JSON.stringify(acadProcessIdentities()) === JSON.stringify(preExistingProcesses)) return true;
+    await new Promise((done) => setTimeout(done, 100));
   }
   return false;
 }
@@ -51,7 +98,8 @@ async function removeTemporaryFiles() {
 
 async function runMatrix() {
   await removeTemporaryFiles();
-  let ownedProcessId = 0;
+  let ownership = null;
+  let primaryError = null;
   try {
     const childResult = await new Promise((resolveRun, reject) => {
       const child = spawn("powershell.exe", [
@@ -64,18 +112,14 @@ async function runMatrix() {
       const stdout = []; const stderr = []; let timedOut = false;
       child.stdout.on("data", (chunk) => stdout.push(chunk));
       child.stderr.on("data", (chunk) => stderr.push(chunk));
-      let forceTimeout;
       const timeout = setTimeout(() => {
         timedOut = true;
-        child.kill();
-        forceTimeout = setTimeout(() => {
-          try { execFileSync("taskkill.exe", ["/PID", String(child.pid), "/T", "/F"], { windowsHide: true, stdio: "ignore" }); } catch {}
-        }, 5_000);
+        try { execFileSync("taskkill.exe", ["/PID", String(child.pid), "/T", "/F"], { windowsHide: true, stdio: "ignore" }); }
+        catch { child.kill(); }
       }, 180_000);
-      child.on("error", (error) => { clearTimeout(timeout); clearTimeout(forceTimeout); reject(error); });
+      child.on("error", (error) => { clearTimeout(timeout); reject(error); });
       child.on("close", (code) => {
         clearTimeout(timeout);
-        clearTimeout(forceTimeout);
         resolveRun({
           code,
           timedOut,
@@ -84,26 +128,41 @@ async function runMatrix() {
         });
       });
     });
-    ownedProcessId = await resolveOwnedProcessId();
-    const automationProcessTerminated = await terminateOwnedProcess(ownedProcessId);
-    if (ownedProcessId > 0 && !automationProcessTerminated) throw new Error(`Owned AutoCAD process ${ownedProcessId} remained after F-098.`);
+    ownership = await resolveOwnedProcess();
+    const automationProcessTerminated = await terminateOwnedProcess(ownership);
+    const processSetRestored = await restoredProcessSet();
+    if (!ownership || !automationProcessTerminated || !processSetRestored) throw new Error(`F-098 did not restore its owned AutoCAD process: ${JSON.stringify({ processId: ownership?.processId ?? 0, automationProcessTerminated, processSetRestored })}`);
     if (childResult.timedOut) {
-      const cleanup = ownedProcessId > 0 ? "the authenticated owned process was cleaned" : "no unauthenticated native process was terminated";
+      const cleanup = ownership ? "the authenticated owned process was cleaned" : "no unauthenticated native process was terminated";
       throw new Error(`AutoCAD F-098 matrix exceeded the 180 second timeout; ${cleanup}.`);
     }
     if (childResult.code !== 0) throw new Error(`AutoCAD F-098 matrix exited ${childResult.code}: ${childResult.errorText || childResult.output}`);
     const start = childResult.output.indexOf("{"); const end = childResult.output.lastIndexOf("}");
     if (start < 0 || end < start) throw new Error("PowerShell output did not contain JSON.");
     const matrix = JSON.parse(childResult.output.slice(start, end + 1));
-    if (matrix.automationProcessId !== ownedProcessId) throw new Error("AutoCAD PID sidecar and COM read-back disagreed.");
-    return { ...matrix, automationProcessTerminated };
+    if (matrix.automationProcessId !== ownership.processId || !identityMatches(ownership, matrix.automationProcessIdentity)) throw new Error("AutoCAD sidecar identity and COM read-back disagreed.");
+    return { ...matrix, automationProcessTerminated, processSetRestored, preExistingProcessIds: preExistingProcesses.map(({ processId }) => processId) };
+  } catch (error) {
+    primaryError = error;
+    throw error;
   } finally {
-    try {
-      if (ownedProcessId <= 0) ownedProcessId = await resolveOwnedProcessId();
-      if (ownedProcessId > 0) await terminateOwnedProcess(ownedProcessId);
-    } finally {
-      await removeTemporaryFiles();
+    const cleanupErrors = [];
+    if (!ownership) {
+      try { ownership = await resolveOwnedProcess(); } catch (error) { cleanupErrors.push(error); }
     }
+    if (!ownership) {
+      try {
+        const orphanCandidates = newAutomationSidecars();
+        if (orphanCandidates.length === 1) ownership = orphanCandidates[0];
+        else if (orphanCandidates.length > 1) cleanupErrors.push(new Error(`F-098 found multiple unauthenticated AutoCAD automation processes: ${orphanCandidates.map(({ processId }) => processId).join(", ")}`));
+      } catch (error) { cleanupErrors.push(error); }
+    }
+    try { if (ownership && !await terminateOwnedProcess(ownership)) cleanupErrors.push(new Error(`Owned AutoCAD process ${ownership.processId} remained after F-098 cleanup.`)); }
+    catch (error) { cleanupErrors.push(error); }
+    try { if (!await restoredProcessSet()) cleanupErrors.push(new Error("F-098 AutoCAD process set was not restored during cleanup.")); }
+    catch (error) { cleanupErrors.push(error); }
+    try { await removeTemporaryFiles(); } catch (error) { cleanupErrors.push(error); }
+    if (cleanupErrors.length > 0) throw new AggregateError(primaryError ? [primaryError, ...cleanupErrors] : cleanupErrors, "F-098 cleanup verification failed.");
   }
 }
 
@@ -111,6 +170,7 @@ const matrix = await runMatrix();
 if (
   matrix.schemaVersion !== 1 || matrix.rowId !== "F-098" || !matrix.engineVersion?.startsWith("24.3") ||
   !matrix.automationProcessOwned || !matrix.automationProcessTerminated || !Number.isInteger(matrix.automationProcessId) ||
+  !matrix.processSetRestored || matrix.preExistingProcessIds.includes(matrix.automationProcessId) ||
   Object.values(matrix.checks ?? {}).some((value) => value !== true) ||
   matrix.visual?.retained !== false || !/^[a-f0-9]{64}$/.test(matrix.visual?.pngSha256 ?? "") ||
   matrix.dwg?.bytes <= 0 || !/^[a-f0-9]{64}$/.test(matrix.dwg?.sha256 ?? "") || matrix.dwg?.retained !== false ||

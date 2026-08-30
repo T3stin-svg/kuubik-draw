@@ -1,0 +1,409 @@
+{
+  "rowId": "F-024",
+  "source": {
+    "schemaVersion": 1,
+    "documentId": "local",
+    "revision": 0,
+    "units": {
+      "linear": "mm",
+      "displayPrecision": 4,
+      "angularPrecision": 6
+    },
+    "currentLayerId": "c",
+    "entities": [
+      {
+        "kind": "line",
+        "handle": "10",
+        "layerId": "a",
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "aci",
+          "aciIndex": 1,
+          "lineweightMm": 0.5
+        },
+        "start": {
+          "x": -100,
+          "y": 0
+        },
+        "end": {
+          "x": 100,
+          "y": 0
+        }
+      },
+      {
+        "kind": "circle",
+        "handle": "20",
+        "layerId": "b",
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "aci",
+          "aciIndex": 1,
+          "lineweightMm": 0.5
+        },
+        "center": {
+          "x": 0,
+          "y": 30
+        },
+        "radius": 10
+      },
+      {
+        "kind": "line",
+        "handle": "30",
+        "layerId": "a",
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "aci",
+          "aciIndex": 1,
+          "lineweightMm": 0.5
+        },
+        "start": {
+          "x": 200,
+          "y": 0
+        },
+        "end": {
+          "x": 400,
+          "y": 0
+        }
+      },
+      {
+        "kind": "arc",
+        "handle": "40",
+        "layerId": "a",
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "aci",
+          "aciIndex": 1,
+          "lineweightMm": 0.5
+        },
+        "center": {
+          "x": 300,
+          "y": 30
+        },
+        "radius": 10,
+        "startAngleRad": 3.141592653589793,
+        "endAngleRad": 6.283185307179586,
+        "counterClockwise": true
+      }
+    ],
+    "layers": [
+      {
+        "id": "0",
+        "name": "0",
+        "visible": true,
+        "frozen": false,
+        "locked": false,
+        "plottable": true
+      },
+      {
+        "id": "a",
+        "name": "A",
+        "visible": true,
+        "frozen": false,
+        "locked": false,
+        "plottable": true
+      },
+      {
+        "id": "b",
+        "name": "B",
+        "visible": true,
+        "frozen": false,
+        "locked": false,
+        "plottable": true
+      },
+      {
+        "id": "c",
+        "name": "C",
+        "visible": true,
+        "frozen": false,
+        "locked": false,
+        "plottable": true
+      }
+    ],
+    "linetypes": [],
+    "textStyles": [],
+    "dimensionStyles": [],
+    "blocks": [],
+    "layouts": [
+      {
+        "id": "model",
+        "name": "Model",
+        "kind": "model",
+        "viewports": [],
+        "entities": []
+      }
+    ],
+    "attachments": [],
+    "metadata": {
+      "createdAt": "2026-08-29T17:20:00.000Z",
+      "updatedAt": "2026-08-29T17:20:00.000Z"
+    }
+  },
+  "committed": {
+    "schemaVersion": 1,
+    "documentId": "local",
+    "revision": 1,
+    "units": {
+      "linear": "mm",
+      "displayPrecision": 4,
+      "angularPrecision": 6
+    },
+    "currentLayerId": "c",
+    "entities": [
+      {
+        "kind": "line",
+        "handle": "10",
+        "layerId": "a",
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "aci",
+          "aciIndex": 1,
+          "lineweightMm": 0.5
+        },
+        "start": {
+          "x": -100,
+          "y": 0
+        },
+        "end": {
+          "x": 100,
+          "y": 0
+        }
+      },
+      {
+        "kind": "circle",
+        "handle": "20",
+        "layerId": "b",
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "aci",
+          "aciIndex": 1,
+          "lineweightMm": 0.5
+        },
+        "center": {
+          "x": 0,
+          "y": 30
+        },
+        "radius": 10
+      },
+      {
+        "kind": "line",
+        "handle": "30",
+        "layerId": "a",
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "aci",
+          "aciIndex": 1,
+          "lineweightMm": 0.5
+        },
+        "start": {
+          "x": 200,
+          "y": 0
+        },
+        "end": {
+          "x": 400,
+          "y": 0
+        }
+      },
+      {
+        "kind": "arc",
+        "handle": "40",
+        "layerId": "a",
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "aci",
+          "aciIndex": 1,
+          "lineweightMm": 0.5
+        },
+        "center": {
+          "x": 300,
+          "y": 30
+        },
+        "radius": 10,
+        "startAngleRad": 3.141592653589793,
+        "endAngleRad": 6.283185307179586,
+        "counterClockwise": true
+      },
+      {
+        "kind": "arc",
+        "center": {
+          "x": 0,
+          "y": 10
+        },
+        "radius": 10,
+        "startAngleRad": -1.570796326795,
+        "endAngleRad": 1.570796326795,
+        "counterClockwise": true,
+        "handle": "41",
+        "layerId": "c",
+        "appearance": {
+          "lineweightMm": 0.5
+        }
+      },
+      {
+        "kind": "arc",
+        "center": {
+          "x": 300,
+          "y": 10
+        },
+        "radius": 10,
+        "startAngleRad": -1.570796326795,
+        "endAngleRad": 1.570796326795,
+        "counterClockwise": true,
+        "handle": "42",
+        "layerId": "a",
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "aci",
+          "aciIndex": 1,
+          "lineweightMm": 0.5
+        }
+      }
+    ],
+    "layers": [
+      {
+        "id": "0",
+        "name": "0",
+        "visible": true,
+        "frozen": false,
+        "locked": false,
+        "plottable": true
+      },
+      {
+        "id": "a",
+        "name": "A",
+        "visible": true,
+        "frozen": false,
+        "locked": false,
+        "plottable": true
+      },
+      {
+        "id": "b",
+        "name": "B",
+        "visible": true,
+        "frozen": false,
+        "locked": false,
+        "plottable": true
+      },
+      {
+        "id": "c",
+        "name": "C",
+        "visible": true,
+        "frozen": false,
+        "locked": false,
+        "plottable": true
+      }
+    ],
+    "linetypes": [],
+    "textStyles": [],
+    "dimensionStyles": [],
+    "blocks": [],
+    "layouts": [
+      {
+        "id": "model",
+        "name": "Model",
+        "kind": "model",
+        "viewports": [],
+        "entities": []
+      }
+    ],
+    "attachments": [],
+    "metadata": {
+      "createdAt": "2026-08-29T17:20:00.000Z",
+      "updatedAt": "2026-08-29T21:59:46.005Z"
+    }
+  },
+  "operation": {
+    "opId": "94cfdff2-cfd0-4caa-80e7-f3cc19c8ab12",
+    "baseRevision": 0,
+    "commandId": "FILLET",
+    "args": {
+      "mode": "pairs",
+      "radius": 10,
+      "trimMode": "no-trim",
+      "pairs": [
+        {
+          "firstHandle": "10",
+          "firstPickPoint": {
+            "x": -30,
+            "y": 0
+          },
+          "secondHandle": "20",
+          "secondPickPoint": {
+            "x": -10,
+            "y": 30
+          }
+        },
+        {
+          "firstHandle": "30",
+          "firstPickPoint": {
+            "x": 270,
+            "y": 0
+          },
+          "secondHandle": "40",
+          "secondPickPoint": {
+            "x": 290,
+            "y": 30
+          }
+        }
+      ],
+      "steps": [
+        {
+          "mode": "pair",
+          "sourceHandles": [
+            "10",
+            "20"
+          ],
+          "resultHandles": [
+            "41"
+          ],
+          "effectiveRadius": 10,
+          "tangentPoints": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": 0,
+              "y": 20
+            }
+          ],
+          "skippedVertices": []
+        },
+        {
+          "mode": "pair",
+          "sourceHandles": [
+            "30",
+            "40"
+          ],
+          "resultHandles": [
+            "42"
+          ],
+          "effectiveRadius": 10,
+          "tangentPoints": [
+            {
+              "x": 300,
+              "y": 0
+            },
+            {
+              "x": 300,
+              "y": 20
+            }
+          ],
+          "skippedVertices": []
+        }
+      ],
+      "multiple": true
+    },
+    "targetHandles": [
+      "10",
+      "20",
+      "30",
+      "40"
+    ],
+    "resultHandles": [
+      "41",
+      "42"
+    ]
+  },
+  "consoleErrors": [],
+  "status": "PASS"
+}

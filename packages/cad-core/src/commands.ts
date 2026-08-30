@@ -1,14 +1,17 @@
-import type { CadBlockDefinition, CadEntity, CadPoint2, CadPolyline, CadSpline, KDrawDocumentV1 } from "@kuubik/cad-schema";
+import type { CadAppearance, CadBlockDefinition, CadEntity, CadPoint2, CadPolyline, CadSpline, KDrawDocumentV1 } from "@kuubik/cad-schema";
 import type { EntityChange } from "./transaction.js";
 import {
   filletCadEntityPair,
   filletCadPolyline,
+  filletCadPolylineSegmentPair,
+  filletCadPolylineSegmentWithEntity,
   type FilletGeometryRejectReason,
   type FilletTrimMode,
 } from "./fillet.js";
 import { offsetCadEntity, type OffsetGeometryMode, type OffsetGeometryRejectReason } from "./offset.js";
 import {
   extendCadEntity,
+  trimClosestPoint,
   trimCurvesOfEntity,
   trimCadEntity,
   type TrimEdgeMode,
@@ -317,8 +320,10 @@ export interface ExtendCommandDefinition {
 
 export interface FilletPairPick {
   firstHandle: string;
+  firstSegment?: number;
   firstPickPoint: CadPoint2;
   secondHandle: string;
+  secondSegment?: number;
   secondPickPoint: CadPoint2;
   /** One-shot radius used by the AutoCAD Shift+second-object gesture. */
   radiusOverride?: number;
@@ -334,13 +339,15 @@ export type FilletCommandArgs =
   | {
       mode: "polyline";
       radius: number;
+      trimMode?: FilletTrimMode;
+      filletPolylineArc?: 0 | 1;
       polylineHandles: readonly string[];
     };
 
 export interface FilletRejectedTarget {
   sourceIndex: number;
   handles: string[];
-  reason: "missing" | "locked-layer" | "hidden-layer" | FilletGeometryRejectReason;
+  reason: "missing" | "locked-layer" | FilletGeometryRejectReason;
 }
 
 export interface FilletCommandStep {
@@ -441,12 +448,20 @@ export function parseExtendTargetPicks(input: string, action: ExtendTargetAction
   return parseTargetPicks(input, action, "EXTEND");
 }
 
-function parseFilletObjectPick(token: string): { handle: string; pickPoint: CadPoint2 } {
+function parseFilletObjectPick(token: string): { handle: string; segment?: number; pickPoint: CadPoint2 } {
   const separator = token.indexOf("@");
   if (separator <= 0 || separator === token.length - 1) throw new CadCommandInputError("FILLET object picks must use handle@x,y format.");
-  const handle = token.slice(0, separator).trim();
+  const objectToken = token.slice(0, separator).trim();
+  const segmentSeparator = objectToken.lastIndexOf("#");
+  const handle = (segmentSeparator >= 0 ? objectToken.slice(0, segmentSeparator) : objectToken).trim();
   if (!handle || /\s/u.test(handle)) throw new CadCommandInputError("FILLET object handle is invalid.");
-  return { handle, pickPoint: parseCartesianPoint(token.slice(separator + 1)) };
+  let segment: number | undefined;
+  if (segmentSeparator >= 0) {
+    const segmentToken = objectToken.slice(segmentSeparator + 1);
+    segment = Number(segmentToken);
+    if (!/^\d+$/u.test(segmentToken) || !Number.isSafeInteger(segment)) throw new CadCommandInputError("FILLET polyline segment must be a zero-based integer after #.");
+  }
+  return { handle, ...(segment === undefined ? {} : { segment }), pickPoint: parseCartesianPoint(token.slice(separator + 1)) };
 }
 
 export function parseFilletPairPicks(input: string): FilletPairPick[] {
@@ -461,8 +476,10 @@ export function parseFilletPairPicks(input: string): FilletPairPick[] {
     const first = parseFilletObjectPick(sides[0]); const second = parseFilletObjectPick(sides[1]);
     return {
       firstHandle: first.handle,
+      ...(first.segment === undefined ? {} : { firstSegment: first.segment }),
       firstPickPoint: first.pickPoint,
       secondHandle: second.handle,
+      ...(second.segment === undefined ? {} : { secondSegment: second.segment }),
       secondPickPoint: second.pickPoint,
       ...(radiusOverride === undefined ? {} : { radiusOverride }),
     };
@@ -624,6 +641,8 @@ export function translateCadEntity(entity: CadEntity, delta: CadPoint2): CadEnti
   assertFinitePoint("delta", delta);
   switch (entity.kind) {
     case "line": return { ...entity, start: movedPoint(entity.start, delta), end: movedPoint(entity.end, delta) };
+    case "ray":
+    case "xline": return { ...entity, basePoint: movedPoint(entity.basePoint, delta) };
     case "polyline": return { ...entity, vertices: entity.vertices.map((vertex) => ({ ...vertex, ...movedPoint(vertex, delta) })) };
     case "circle":
     case "arc":
@@ -767,6 +786,8 @@ export function rotateCadEntity(entity: CadEntity, basePoint: CadPoint2, angleRa
   if (!Number.isFinite(angleRad)) throw new CadCommandInputError("Rotation angle must be finite.");
   switch (entity.kind) {
     case "line": return { ...entity, start: rotateCadPoint(entity.start, basePoint, angleRad), end: rotateCadPoint(entity.end, basePoint, angleRad) };
+    case "ray":
+    case "xline": return { ...entity, basePoint: rotateCadPoint(entity.basePoint, basePoint, angleRad), direction: rotateCadVector(entity.direction, angleRad) };
     case "polyline": return { ...entity, vertices: entity.vertices.map((vertex) => ({ ...vertex, ...rotateCadPoint(vertex, basePoint, angleRad) })) };
     case "circle": return { ...entity, center: rotateCadPoint(entity.center, basePoint, angleRad) };
     case "arc": return {
@@ -881,6 +902,8 @@ export function scaleCadEntity(entity: CadEntity, basePoint: CadPoint2, factor: 
   if (!Number.isFinite(factor) || factor <= 0) throw new CadCommandInputError("Scale factor must be greater than zero.");
   switch (entity.kind) {
     case "line": return { ...entity, start: scaleCadPoint(entity.start, basePoint, factor), end: scaleCadPoint(entity.end, basePoint, factor) };
+    case "ray":
+    case "xline": return { ...entity, basePoint: scaleCadPoint(entity.basePoint, basePoint, factor) };
     case "polyline": return { ...entity, vertices: entity.vertices.map((vertex) => scaledPolylineVertex(vertex, basePoint, factor)) };
     case "circle": return { ...entity, center: scaleCadPoint(entity.center, basePoint, factor), radius: scaleFiniteScalar(entity.radius, factor, "circle radius") };
     case "arc": return { ...entity, center: scaleCadPoint(entity.center, basePoint, factor), radius: scaleFiniteScalar(entity.radius, factor, "arc radius") };
@@ -1039,6 +1062,8 @@ export function mirrorCadEntity(entity: CadEntity, axisStart: CadPoint2, axisEnd
   const point = (candidate: CadPoint2) => mirrorCadPoint(candidate, axisStart, axisEnd);
   switch (entity.kind) {
     case "line": return { ...entity, start: point(entity.start), end: point(entity.end) };
+    case "ray":
+    case "xline": return { ...entity, basePoint: point(entity.basePoint), direction: mirrorCadVector(entity.direction, axisStart, axisEnd) };
     case "polyline": return {
       ...entity,
       vertices: entity.vertices.map((vertex) => ({
@@ -1340,6 +1365,7 @@ function positiveSweep(start: number, end: number): number {
 function transformedTrimBoundaries(entity: CadEntity, matrix: TrimAffine2): CadEntity[] {
   const base = { handle: entity.handle, layerId: entity.layerId };
   if (entity.kind === "line") return [{ ...structuredClone(entity), start: trimAffinePoint(matrix, entity.start), end: trimAffinePoint(matrix, entity.end) }];
+  if (entity.kind === "ray" || entity.kind === "xline") return [{ ...structuredClone(entity), basePoint: trimAffinePoint(matrix, entity.basePoint), direction: trimAffinePoint(matrix, entity.direction, true) }];
   if (entity.kind === "polyline") {
     const hasBulge = entity.vertices.some((vertex) => Math.abs(vertex.bulge ?? 0) > 1e-12);
     const scale = conformalTrimScale(matrix);
@@ -1633,7 +1659,10 @@ export function executeFillet(document: KDrawDocumentV1, args: FilletCommandArgs
   const layers = new Map(document.layers.map((layer) => [layer.id, layer]));
   const original = new Map(document.entities.map((entity) => [entity.handle, entity]));
   const working = new Map(document.entities.map((entity) => [entity.handle, structuredClone(entity)]));
-  const allocated = allocateEntityHandles(document, args.mode === "pairs" ? args.pairs.length : 0);
+  const maximumCreated = args.mode === "pairs"
+    ? args.pairs.length
+    : document.entities.reduce((sum, entity) => sum + (entity.kind === "polyline" && args.polylineHandles.includes(entity.handle) ? entity.vertices.length : 0), 0);
+  const allocated = allocateEntityHandles(document, maximumCreated);
   let allocatedIndex = 0;
   const touched = new Set<string>();
   const sourceHandles = new Set<string>();
@@ -1641,11 +1670,26 @@ export function executeFillet(document: KDrawDocumentV1, args: FilletCommandArgs
   const createdHandles: string[] = [];
   const rejected: FilletRejectedTarget[] = [];
   const steps: FilletCommandStep[] = [];
+  const trimMode: FilletTrimMode = args.trimMode ?? "trim";
 
-  const layerReason = (entity: CadEntity): "locked-layer" | "hidden-layer" | null => {
+  const createdArcAppearance = (first: CadEntity, second: CadEntity): CadAppearance | undefined => {
+    const source = first.appearance;
+    if (!source) return undefined;
+    const parametricFamily = ["ellipse", "spline", "ray", "xline"].includes(first.kind) || ["ellipse", "spline", "ray", "xline"].includes(second.kind);
+    if (first.layerId === second.layerId && !parametricFamily) return structuredClone(source);
+    const appearance: CadAppearance = {};
+    if (first.layerId === second.layerId) {
+      if (source.color !== undefined) appearance.color = source.color;
+      if (source.colorMethod !== undefined) appearance.colorMethod = source.colorMethod;
+      if (source.aciIndex !== undefined) appearance.aciIndex = source.aciIndex;
+    }
+    if (!parametricFamily && source.lineweightMm !== undefined) appearance.lineweightMm = source.lineweightMm;
+    return Object.keys(appearance).length ? appearance : undefined;
+  };
+
+  const layerReason = (entity: CadEntity): "locked-layer" | null => {
     const layer = layers.get(entity.layerId);
     if (layer?.locked) return "locked-layer";
-    if (layer && (!layer.visible || layer.frozen)) return "hidden-layer";
     return null;
   };
 
@@ -1668,25 +1712,58 @@ export function executeFillet(document: KDrawDocumentV1, args: FilletCommandArgs
         return;
       }
       const pairRadius = pair.radiusOverride ?? args.radius;
-      const geometry = filletCadEntityPair(first, pair.firstPickPoint, second, pair.secondPickPoint, pairRadius, args.trimMode);
-      if (geometry.reason || !geometry.firstEntity || !geometry.secondEntity) {
+      const samePolyline = first.handle === second.handle && first.kind === "polyline" && second.kind === "polyline";
+      const firstSegment = pair.firstSegment ?? (first.kind === "polyline" ? trimClosestPoint(first, pair.firstPickPoint)?.segment : undefined);
+      const secondSegment = pair.secondSegment ?? (second.kind === "polyline" ? trimClosestPoint(second, pair.secondPickPoint)?.segment : undefined);
+      const geometry = samePolyline && firstSegment !== undefined && secondSegment !== undefined
+        ? filletCadPolylineSegmentPair(first, firstSegment, pair.firstPickPoint, secondSegment, pair.secondPickPoint, pairRadius, trimMode)
+        : first.kind === "polyline" && firstSegment !== undefined && second.kind !== "polyline"
+          ? filletCadPolylineSegmentWithEntity(first, firstSegment, pair.firstPickPoint, second, pair.secondPickPoint, pairRadius, trimMode, true)
+          : second.kind === "polyline" && secondSegment !== undefined && first.kind !== "polyline"
+            ? filletCadPolylineSegmentWithEntity(second, secondSegment, pair.secondPickPoint, first, pair.firstPickPoint, pairRadius, trimMode, false)
+            : first.kind === "polyline" || second.kind === "polyline"
+              ? { firstEntity: null, secondEntity: null, arc: null, center: null, tangentPoints: null, effectiveRadius: null, reason: "unsupported-target" as const }
+          : filletCadEntityPair(first, pair.firstPickPoint, second, pair.secondPickPoint, pairRadius, trimMode);
+      if (geometry.reason || (!geometry.firstEntity && !geometry.secondEntity && !geometry.arc)) {
         rejected.push({ sourceIndex, handles, reason: geometry.reason ?? "no-solution" });
         return;
       }
       sourceHandles.add(first.handle); sourceHandles.add(second.handle);
       const pairResults: string[] = [];
-      if (args.trimMode === "trim") {
-        const firstOutput = { ...geometry.firstEntity, handle: first.handle } as CadEntity;
-        const secondOutput = { ...geometry.secondEntity, handle: second.handle } as CadEntity;
-        working.set(first.handle, firstOutput); working.set(second.handle, secondOutput);
-        touched.add(first.handle); touched.add(second.handle);
-        pairResults.push(first.handle, second.handle);
-        resultHandles.push(first.handle, second.handle);
+      if (trimMode === "trim") {
+        if (geometry.joinedPolyline) {
+          const survivor = geometry.joinedPolyline.handle;
+          const absorbed = survivor === first.handle ? second.handle : first.handle;
+          working.set(survivor, structuredClone(geometry.joinedPolyline));
+          working.delete(absorbed);
+          touched.add(survivor); touched.add(absorbed);
+          pairResults.push(survivor); resultHandles.push(survivor);
+        } else {
+          if (geometry.firstEntity) {
+            const firstOutput = { ...geometry.firstEntity, handle: first.handle } as CadEntity;
+            working.set(first.handle, firstOutput);
+            pairResults.push(first.handle); resultHandles.push(first.handle);
+          } else {
+            working.delete(first.handle);
+          }
+          touched.add(first.handle);
+          if (!samePolyline) {
+            if (geometry.secondEntity) {
+              const secondOutput = { ...geometry.secondEntity, handle: second.handle } as CadEntity;
+              working.set(second.handle, secondOutput);
+              pairResults.push(second.handle); resultHandles.push(second.handle);
+            } else {
+              working.delete(second.handle);
+            }
+            touched.add(second.handle);
+          }
+        }
       }
-      if (geometry.arc) {
+      if (geometry.arc && !geometry.joinedPolyline) {
         const handle = allocated[allocatedIndex++]!;
         const layerId = first.layerId === second.layerId ? first.layerId : document.currentLayerId;
-        const arc = { ...geometry.arc, handle, layerId } as CadEntity;
+        const appearance = createdArcAppearance(first, second);
+        const arc = { ...geometry.arc, handle, layerId, ...(appearance ? { appearance } : {}) } as CadEntity;
         working.set(handle, arc); touched.add(handle);
         createdHandles.push(handle); resultHandles.push(handle); pairResults.push(handle);
       }
@@ -1715,18 +1792,26 @@ export function executeFillet(document: KDrawDocumentV1, args: FilletCommandArgs
         rejected.push({ sourceIndex, handles: [handle], reason: "unsupported-target" });
         return;
       }
-      const geometry = filletCadPolyline(entity, args.radius);
+      const geometry = filletCadPolyline(entity, args.radius, { trimMode, filletPolylineArc: args.filletPolylineArc ?? 1 });
       if (geometry.reason || !geometry.entity) {
         rejected.push({ sourceIndex, handles: [handle], reason: geometry.reason ?? "no-solution" });
         return;
       }
       sourceHandles.add(handle);
-      const output = { ...geometry.entity, handle } as CadEntity;
-      working.set(handle, output); touched.add(handle); resultHandles.push(handle);
+      const polylineResults: string[] = [];
+      if (trimMode === "trim") {
+        const output = { ...geometry.entity, handle } as CadEntity;
+        working.set(handle, output); touched.add(handle); resultHandles.push(handle); polylineResults.push(handle);
+      }
+      for (const arcGeometry of geometry.arcs) {
+        const arcHandle = allocated[allocatedIndex++]!;
+        const arc = { ...arcGeometry, handle: arcHandle, layerId: entity.layerId, ...(entity.appearance ? { appearance: structuredClone(entity.appearance) } : {}) } as CadEntity;
+        working.set(arcHandle, arc); touched.add(arcHandle); createdHandles.push(arcHandle); resultHandles.push(arcHandle); polylineResults.push(arcHandle);
+      }
       steps.push({
         mode: "polyline",
         sourceHandles: [handle],
-        resultHandles: [handle],
+        resultHandles: polylineResults,
         effectiveRadius: args.radius,
         tangentPoints: null,
         skippedVertices: geometry.skippedVertices,
@@ -1738,6 +1823,7 @@ export function executeFillet(document: KDrawDocumentV1, args: FilletCommandArgs
   for (const handle of touched) {
     const before = original.get(handle); const after = working.get(handle);
     if (after && (!before || JSON.stringify(before) !== JSON.stringify(after))) changes.push({ type: "put", entity: structuredClone(after) });
+    else if (before && !after) changes.push({ type: "delete", handle });
   }
   return {
     changes,
@@ -1748,7 +1834,7 @@ export function executeFillet(document: KDrawDocumentV1, args: FilletCommandArgs
     steps,
     mode: args.mode,
     radius: args.radius,
-    trimMode: args.mode === "pairs" ? args.trimMode : "trim",
+    trimMode,
     multiple: args.mode === "pairs" ? args.pairs.length > 1 : args.polylineHandles.length > 1,
   };
 }

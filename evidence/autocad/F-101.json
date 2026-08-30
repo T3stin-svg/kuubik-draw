@@ -4,8 +4,8 @@
   "kind": "autocad",
   "authority": "autocad-2024.1.2-live",
   "status": "PASS",
-  "artifactSha256": "16c767acc2bc52407b510090578b6959531bf9fe80bbad4d5f9c25928371ca61",
-  "observedAt": "2026-08-28T17:21:07.759Z",
+  "artifactSha256": "ff188179ce30d4c81ecaa061bd44efa339b83c2aab8c61bf781a0ab7a412d4c6",
+  "observedAt": "2026-08-30T00:30:21.474Z",
   "workflow": "An owned isolated AutoCAD 24.3 process creates a native paper PViewport and model LINE, reads DisplayLocked plus VIEWCTR/VIEWSIZE/target/scale, locks the viewport, runs native ZOOM and -PAN and then MOVE in MODEL context, unlocks and repeats view navigation, relocks, saves and reopens an anonymous DWG.",
   "result": "DisplayLocked changed false to true without changing the camera; locked ZOOM and -PAN left view center 128.5,97.5, view height 1000 and scale 0.1 unchanged while MOVE changed the model LINE by exactly +100,+50. Unlocked ZOOM/PAN reached view center 400,200 and view height 500; relock and DWG reopen preserved the lock and camera. The owned PID terminated, zero acad.exe processes remained and no DWG, BAK or PID sidecar was retained.",
   "artifact": "evidence/artifacts/F-101-autocad-readback.json"

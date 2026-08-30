@@ -4,8 +4,8 @@
   "kind": "autocad",
   "authority": "autocad-2024.1.2-live",
   "status": "PASS",
-  "artifactSha256": "0cef99d4e19b7d5c4aa9ee8f339de69ef0d21e652fd0cca7e703a8f2c8aaae94",
-  "observedAt": "2026-08-29T13:57:33.353Z",
+  "artifactSha256": "e169bb721fe4c8e7193cce3ae3784383c47a45e3259604be9e36598d196afa51",
+  "observedAt": "2026-08-29T23:07:33.799Z",
   "workflow": "A freshly owned AutoCAD 2024 process creates the fixed native A3 layout, plots through DWG To PDF.pc3, saves and reopens the scratch DWG, then plots a second time before restoring the original process set.",
   "result": "Both native A3 PDFs contained vector and text operators with zero image XObjects and rendered sharply in Poppler. The known duplicate /PageMode catalog defect is explicitly recorded by strict pypdf; tolerant pypdf, pdfplumber and Poppler all reopened the files.",
   "artifact": "evidence/artifacts/F-114-autocad-readback.json"

@@ -4,8 +4,8 @@
   "kind": "autocad",
   "authority": "autocad-2024.1.2-live",
   "status": "PASS",
-  "artifactSha256": "1dea370f2acf3479c0c24759cdc1d6312e52e6cf58c356bdf9bc736bd9be2062",
-  "observedAt": "2026-08-29T14:23:19.022Z",
+  "artifactSha256": "ac9b38fffb6a57868935b47983514d58e4f0a25abb1de1902b141a9f2021cbac",
+  "observedAt": "2026-08-29T23:08:53.383Z",
   "workflow": "AutoCAD 2024 Core Console and a separately owned visible AutoCAD 2024 desktop process open the exact Chromium second-generation DXF read-only and independently read native entities, tables, stable handles and regenerated extents.",
   "result": "Both AutoCAD 24.3 readers accepted the roundtripped DXF and found all 40 native LINE/LWPOLYLINE/TEXT/HATCH/CIRCLE/aligned-DIMENSION objects with exact handles, units, layers, styles, overrides, HATCH topology and extents. The owned desktop process closed without saving and restored the complete pre-existing AutoCAD process set.",
   "artifact": "evidence/artifacts/F-111-autocad-readback.json"

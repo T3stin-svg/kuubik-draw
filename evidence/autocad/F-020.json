@@ -4,8 +4,8 @@
   "kind": "autocad",
   "authority": "autocad-2024.1.2-live",
   "status": "PASS",
-  "artifactSha256": "f23a1bc46f352df1ea0aabe144204a5c24a651722e585aabdf9d1577b3485de0",
-  "observedAt": "2026-08-29T04:22:00.145Z",
+  "artifactSha256": "6c7b5d09e9757a9ff68193c9127e375332beea44d3b8d3b2fb22bf22e5381348",
+  "observedAt": "2026-08-29T23:37:24.528Z",
   "workflow": "An owned isolated AutoCAD 24.3 desktop process sets MIRRTEXT=0, creates twelve native entity families, drives MIRROR across the two-point vertical axis with default No/U and erase Yes/U, verifies semantic curve and annotation fields, then mirrors LINE/TEXT/BLOCK across a 45-degree axis and checks a mixed editable/locked pickset plus a coincident-axis refusal.",
   "result": "Default No retained all twelve sources under fresh handles and erase Yes replaced them under stable handles. Coordinates, radii, angles, ellipse axes, spline fit points, bulge, text/MTEXT attachment behavior, dimension measurement, hatch area, styles and block insertion/rotation/negative-X scale/bounds matched; the 45-degree probes, one-command Undo, locked object and refused coincident target all passed, and the owned acad.exe process was terminated.",
   "artifact": "evidence/artifacts/F-020-autocad-readback.json"

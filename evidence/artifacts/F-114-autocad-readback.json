@@ -4,8 +4,8 @@
   "benchmark": "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
   "authority": "autocad-2024.1.2-live",
   "sourceRowId": "F-104",
-  "sourceArtifactSha256": "1ba58c161d7fa6212da8d31d6610b4fe8bcf7531f8462e81f7fa8d3981fb16de",
-  "sourceObservedAt": "2026-08-29T13:57:33.343Z",
+  "sourceArtifactSha256": "f245f482f4310a9c1370054b51ccaeab86de89559d0f8fa1efa7ea98659a7e14",
+  "sourceObservedAt": "2026-08-29T23:07:23.875Z",
   "workflow": "Fresh owned AutoCAD 2024 A3 layout plot through DWG To PDF.pc3, native DWG save/reopen and second plot; both PDFs reopened by pypdf/pdfplumber and rendered by Poppler.",
   "engineVersion": "24.3s (LMS Tech)",
   "automationProcessOwned": true,
@@ -13,7 +13,7 @@
   "processSetRestored": true,
   "nativePdf": {
     "label": "native",
-    "path": "KuubikDraw-F104-d79f70f0-79a6-4e36-9d7c-d691227c0ffd.pdf",
+    "path": "KuubikDraw-F104-9bef3462-1eea-4316-9f33-ab864660ecf8.pdf",
     "pypdf": {
       "pages": 1,
       "mediaBox": [
@@ -111,7 +111,7 @@
   },
   "reopenPdf": {
     "label": "reopen",
-    "path": "KuubikDraw-F104-d79f70f0-79a6-4e36-9d7c-d691227c0ffd.reopen.pdf",
+    "path": "KuubikDraw-F104-9bef3462-1eea-4316-9f33-ab864660ecf8.reopen.pdf",
     "pypdf": {
       "pages": 1,
       "mediaBox": [
@@ -270,8 +270,8 @@
   "sourceSha256": {
     "marker": "a23e0d810a100f1e67088cb010590840febaaed1547c2bd8e97b01d87f0b9b8c",
     "runner": "501998d1512694aa9192e77163b58d5a758509c6180a70f34f3f3798727a7e37",
-    "f104Runner": "db7915b0a295c7d4a068c582f93a9c855413d360b23ca8ebc22235392012f3c2",
-    "f104Matrix": "22f673938c607ab830aa303849ef84cfbf72331f8dca1f78d9acbe786ffb2c77",
+    "f104Runner": "0c8a1125136a2371b0f750e39ae9728456ee206a0a8246c984f226a8ad932b44",
+    "f104Matrix": "2d30ec72d204130a42bb5fd4de1e36b5f2be08ba86f481ba2aa540a3fe63e814",
     "pdfReader": "d29a89cb4a35425198436619356b3497c1a5d107adee669414ae258ec6382025",
     "pixelReader": "952e09b669d31675204170186a821e85889f748c640f6d439ffa04d71c3314dc"
   },
@@ -283,6 +283,6 @@
     "popplerSharpAndStable": true,
     "nativeReopenStable": true
   },
-  "observedAt": "2026-08-29T13:57:33.353Z",
+  "observedAt": "2026-08-29T23:07:33.799Z",
   "status": "PASS"
 }

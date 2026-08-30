@@ -35,6 +35,24 @@ function Get-ComRequiredString {
   })
 }
 
+function Get-EntityByHandle {
+  param($Document, [string]$Handle, [int]$TimeoutSeconds = 20)
+  $deadline = [DateTime]::UtcNow.AddSeconds($TimeoutSeconds)
+  do {
+    try {
+      $entity = $Document.HandleToObject($Handle)
+      if ($entity -and [string]$entity.Handle -eq $Handle) { return $entity }
+    } catch {}
+    try {
+      foreach ($candidate in $Document.ModelSpace) {
+        if ([string]$candidate.Handle -eq $Handle) { return $candidate }
+      }
+    } catch {}
+    if ([DateTime]::UtcNow -ge $deadline) { throw "AutoCAD could not resolve model-space handle $Handle." }
+    Start-Sleep -Milliseconds 150
+  } while ($true)
+}
+
 function Wait-AcadIdle {
   param([Parameter(Mandatory = $true)]$Document, [int]$TimeoutSeconds = 30)
   $deadline = [DateTime]::UtcNow.AddSeconds($TimeoutSeconds)
@@ -97,10 +115,21 @@ function Set-CommonPropertiesAndVerify {
 }
 
 function Get-Bounds {
-  param([Parameter(Mandatory = $true)]$Entity)
-  $minimum = $null; $maximum = $null
-  Invoke-ComRetry { $Entity.GetBoundingBox([ref]$minimum, [ref]$maximum) } | Out-Null
-  return [ordered]@{ min = @([double]$minimum[0], [double]$minimum[1]); max = @([double]$maximum[0], [double]$maximum[1]) }
+  param([Parameter(Mandatory = $true)]$Entity, [int]$TimeoutSeconds = 20)
+  $deadline = [DateTime]::UtcNow.AddSeconds($TimeoutSeconds)
+  do {
+    $minimum = $null; $maximum = $null
+    try {
+      $Entity.GetBoundingBox([ref]$minimum, [ref]$maximum)
+      if ($null -ne $minimum -and $null -ne $maximum -and $minimum.Count -ge 2 -and $maximum.Count -ge 2) {
+        return [ordered]@{ min = @([double]$minimum[0], [double]$minimum[1]); max = @([double]$maximum[0], [double]$maximum[1]) }
+      }
+    } catch {
+      if ([DateTime]::UtcNow -ge $deadline) { throw }
+    }
+    if ([DateTime]::UtcNow -ge $deadline) { throw 'AutoCAD returned an incomplete bounding box.' }
+    Start-Sleep -Milliseconds 150
+  } while ($true)
 }
 
 function Convert-FlatPoints {
@@ -377,10 +406,12 @@ try {
   $boundaryHandle = [string](Invoke-ComRetry { $hatchBoundary.Handle })
   $hatchLisp = "(progn (vl-load-com) (setq f020:ms (vla-get-ModelSpace (vla-get-ActiveDocument (vlax-get-acad-object)))) (setq f020:h (vla-AddHatch f020:ms 0 `"SOLID`" :vlax-false 0)) (setq f020:loop (vlax-make-safearray vlax-vbObject '(0 . 0))) (vlax-safearray-put-element f020:loop 0 (vlax-ename->vla-object (handent `"$boundaryHandle`"))) (vla-AppendOuterLoop f020:h f020:loop) (vla-Evaluate f020:h) (vla-put-Layer f020:h `"F020_MATRIX`") (setvar `"USERS1`" (vla-get-Handle f020:h)) (princ))`n"
   Invoke-ComRetry { $scratch.SendCommand($hatchLisp) } | Out-Null; Wait-AcadIdle $scratch
-  $entities.hatch = Invoke-ComRetry { $scratch.HandleToObject([string](Invoke-ComRetry { $scratch.GetVariable('USERS1') })) }
+  $hatchHandle = Get-ComRequiredString { $scratch.GetVariable('USERS1') } 'F020 hatch handle'
+  $entities.hatch = Get-EntityByHandle $scratch $hatchHandle
   $blockLisp = "(progn (vl-load-com) (setq f020:doc (vla-get-ActiveDocument (vlax-get-acad-object))) (setq f020:block (vla-Add (vla-get-Blocks f020:doc) (vlax-3d-point '(0.0 0.0 0.0)) `"F020_BLOCK`")) (vla-AddLine f020:block (vlax-3d-point '(0.0 0.0 0.0)) (vlax-3d-point '(100.0 0.0 0.0))) (setq f020:insert (vla-InsertBlock (vla-get-ModelSpace f020:doc) (vlax-3d-point '(1900.0 0.0 0.0)) `"F020_BLOCK`" 1.5 0.5 1.0 0.25)) (vla-put-Layer f020:insert `"F020_MATRIX`") (setvar `"USERS2`" (vla-get-Handle f020:insert)) (princ))`n"
   Invoke-ComRetry { $scratch.SendCommand($blockLisp) } | Out-Null; Wait-AcadIdle $scratch
-  $entities.blockRef = Invoke-ComRetry { $scratch.HandleToObject([string](Invoke-ComRetry { $scratch.GetVariable('USERS2') })) }
+  $blockHandle = Get-ComRequiredString { $scratch.GetVariable('USERS2') } 'F020 block handle'
+  $entities.blockRef = Get-EntityByHandle $scratch $blockHandle
   foreach ($family in @($entities.Keys)) {
     $entities[$family] = Set-CommonPropertiesAndVerify $scratch $entities[$family] 'F020_MATRIX'
   }

@@ -112,11 +112,11 @@ function Same-Camera {
 }
 
 $preExistingProcessIds = @(Get-Process -Name 'acad' -ErrorAction SilentlyContinue | ForEach-Object { [int]$_.Id })
-$acad = $null; $scratch = $null; $reopened = $null; $result = $null; $automationProcessId = 0; $owned = $false
+$acad = $null; $scratch = $null; $reopened = $null; $result = $null; $automationProcessId = 0; $owned = $false; $automationProcessIdentity = $null
 $tempDwg = [IO.Path]::GetFullPath($TempDwgPath)
 $pidFile = [IO.Path]::GetFullPath($PidPath)
 try {
-  $acad = Invoke-ComRetry { New-Object -ComObject AutoCAD.Application.24.3 } -TimeoutSeconds 30
+  $acad = New-Object -ComObject AutoCAD.Application.24.3
   Invoke-ComRetry { $acad.Visible = $true; $acad.WindowState = 3 } | Out-Null
   [uint32]$resolvedProcessId = 0
   [void][F101WindowProcess]::GetWindowThreadProcessId([IntPtr][int64](Invoke-ComRetry { $acad.HWND }), [ref]$resolvedProcessId)
@@ -125,7 +125,15 @@ try {
   $engineVersion = [string](Invoke-ComRetry { $acad.Version })
   Write-Host "[F-101] automation-process pid=$automationProcessId owned=$owned"
   if (-not $owned) { throw 'F-101 refuses to use a pre-existing AutoCAD process.' }
-  [ordered]@{ schemaVersion = 1; processId = $automationProcessId; owned = $true; token = $OwnershipToken } |
+  $automationProcess = Get-Process -Id $automationProcessId -ErrorAction Stop
+  $automationExecutablePath = [IO.Path]::GetFullPath([string]$automationProcess.Path)
+  if ([IO.Path]::GetFileName($automationExecutablePath) -ine 'acad.exe') { throw "F-101 PID $automationProcessId is not acad.exe." }
+  $automationProcessIdentity = [ordered]@{
+    processId = $automationProcessId
+    executablePath = $automationExecutablePath
+    startTimeUtc = $automationProcess.StartTime.ToUniversalTime().ToString('o')
+  }
+  [ordered]@{ schemaVersion = 1; processId = $automationProcessId; executablePath = $automationProcessIdentity.executablePath; startTimeUtc = $automationProcessIdentity.startTimeUtc; owned = $true; token = $OwnershipToken } |
     ConvertTo-Json -Compress | Set-Content -LiteralPath $pidFile -Encoding ascii
 
   $scratch = if ([int](Invoke-ComRetry { $acad.Documents.Count }) -gt 0) { Invoke-ComRetry { $acad.ActiveDocument } } else { Invoke-ComRetry { $acad.Documents.Add() } }
@@ -228,7 +236,7 @@ try {
   $result = [ordered]@{
     schemaVersion = 1; rowId = 'F-101'; benchmark = 'AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation'
     engine = 'Autodesk AutoCAD 2024 desktop COM/native PViewport commands'; engineVersion = $engineVersion
-    automationProcessId = $automationProcessId; automationProcessOwned = $owned
+    automationProcessId = $automationProcessId; automationProcessOwned = $owned; automationProcessIdentity = $automationProcessIdentity
     handles = [ordered]@{ viewport = $viewportHandle; modelLine = $lineHandle }
     initial = $initial; locked = $locked; afterLockedZoom = $afterLockedZoom; afterLockedPan = $afterLockedPan
     afterLockedEdit = [ordered]@{ line = $afterLockedEdit; viewport = $afterLockedEditViewport }
@@ -244,6 +252,7 @@ try {
   if ($reopened) { try { Invoke-ComRetry { $reopened.Close($false) } -TimeoutSeconds 10 | Out-Null } catch {} }
   if ($scratch) { try { Invoke-ComRetry { $scratch.Close($false) } -TimeoutSeconds 10 | Out-Null } catch {} }
   if (Test-Path -LiteralPath $tempDwg) { Remove-Item -LiteralPath $tempDwg -Force }
+  if ($owned -and $acad) { try { Invoke-ComRetry { $acad.Quit() } -TimeoutSeconds 10 | Out-Null } catch {} }
 }
 
 if (-not $result) { throw 'F-101 AutoCAD matrix produced no result.' }

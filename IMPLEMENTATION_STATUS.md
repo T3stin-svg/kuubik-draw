@@ -84,8 +84,11 @@
 - the new application has **24/133** publicly certified parity rows
   (**18.0% raw / 21.7% weighted**); F-023 feature commit `1f4a96c` and CI
   portability fix `7e252de` passed GitHub Actions run `33260160549`;
-- all 22 legacy-certified rows and the first two new rows F-022/F-023 are
-  locally mirrored;
+- the F-024 local release candidate has **25/133** rows
+  (**18.8% raw / 22.6% weighted**) with a complete local gate and independent
+  `0 P0 / 0 P1` review; public GitHub Actions is still pending;
+- all 22 legacy-certified rows and the first three new rows F-022/F-023/F-024
+  are locally mirrored;
 - spline/NURBS rendering is rejected rather than drawn as a misleading control polygon;
 - Unicode PDF text is rejected until a font-embedding path exists;
 - LibreCAD/FreeCAD fixtures pass locally, but the machine has no signed OS
@@ -95,8 +98,8 @@
 - native DWG/DWT/XREF and PC3/CTB/STB remain deferred;
 - no preview or production deployment has been made.
 
-The F-023 final local full gate passed 38 test files / 277 Vitest tests,
-39 mutation tests, 32 DXF tests, 19 PDF tests and 66 Chromium E2E tests.
+The F-024 final local full gate passed 56 test files / 351 Vitest tests,
+50 mutation tests, 36 DXF tests, 20 PDF tests and 79 Chromium E2E tests.
 GitHub Actions run `33260160549` passed both `fast` and full `verify` jobs on
 the exact public commit `7e252de`; the preceding shallow-checkout failure is
 ratcheted by requiring every checkout step to fetch the pinned schema-v3
@@ -109,5 +112,6 @@ public Ubuntu CI and an independent `0 P0 / 0 P1` review. Its App-shell refactor
 was followed by all 22 browser captures, 23 independent read-backs, a fresh
 F-102 native AutoCAD live run, schema-v3 exact stage receipts, real F-003
 Chromium DXF capture and cross-platform content-address verification. The next
-functional row is F-024 FILLET. F-108 native PC3/CTB/STB remains blocked on a
-licensed adapter. No production deployment is authorized.
+functional row after the local F-024 candidate is F-025 CHAMFER. F-108 native
+PC3/CTB/STB remains blocked on a licensed adapter. No production deployment is
+authorized.

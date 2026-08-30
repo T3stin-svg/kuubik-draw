@@ -4,19 +4,19 @@
   "benchmark": "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
   "engine": "Autodesk AutoCAD 2024 desktop COM",
   "engineVersion": "24.3s (LMS Tech)",
-  "automationProcessId": 33232,
+  "automationProcessId": 36232,
   "automationProcessOwned": true,
   "installedUpdateIdentity": {
     "displayName": "Autodesk AutoCAD 2024.1.2 Update",
     "displayVersion": "24.3.152.0"
   },
   "automationProcessIdentity": {
-    "processId": 33232,
+    "processId": 36232,
     "executableName": "acad.exe",
     "executableSha256": "0570749def2fa8dcfb62df1a6671f44245a9ef740dd61d9d0f9110794a76e70e",
     "fileVersion": "R24.3.152.0.0",
     "productVersion": "R24.3.152.0.0",
-    "startTimeSha256": "3f865e75d1037928e458394422b98c6c2a591c2485fa06f7252768403308bba6"
+    "startTimeSha256": "246aace399603b9b3f43b97b74ffb1df8a0adadcc6e6276e995a5ab1235a2bf8"
   },
   "options": {
     "standard": true,
@@ -50,6 +50,111 @@
     "spline": true
   },
   "observations": {
+    "standardBefore": {
+      "objectName": "AcDbLine",
+      "handle": "29D",
+      "layer": "F022_STANDARD",
+      "color": 1,
+      "linetype": "ByLayer",
+      "lineweight": 50,
+      "bounds": {
+        "min": [
+          0,
+          0
+        ],
+        "max": [
+          1000,
+          0
+        ]
+      },
+      "details": {
+        "start": [
+          0,
+          0
+        ],
+        "end": [
+          1000,
+          0
+        ]
+      }
+    },
+    "standardBeforeReadback": {
+      "stable": true,
+      "propertyReference": {
+        "layer": "F022_STANDARD",
+        "color": 1,
+        "linetype": "ByLayer",
+        "lineweight": 50
+      },
+      "states": [
+        {
+          "objectName": "AcDbLine",
+          "handle": "29D",
+          "layer": "F022_STANDARD",
+          "color": 1,
+          "linetype": "ByLayer",
+          "lineweight": 50,
+          "bounds": {
+            "min": [
+              0,
+              0
+            ],
+            "max": [
+              1000,
+              0
+            ]
+          },
+          "details": {
+            "start": [
+              0,
+              0
+            ],
+            "end": [
+              1000,
+              0
+            ]
+          }
+        }
+      ],
+      "passes": [
+        {
+          "pass": 1,
+          "entityCount": 1,
+          "geometryExact": true,
+          "propertiesExact": true,
+          "consecutiveExactReads": 1,
+          "handles": [
+            "29D"
+          ],
+          "properties": [
+            {
+              "layer": "F022_STANDARD",
+              "color": 1,
+              "linetype": "ByLayer",
+              "lineweight": 50
+            }
+          ]
+        },
+        {
+          "pass": 2,
+          "entityCount": 1,
+          "geometryExact": true,
+          "propertiesExact": true,
+          "consecutiveExactReads": 2,
+          "handles": [
+            "29D"
+          ],
+          "properties": [
+            {
+              "layer": "F022_STANDARD",
+              "color": 1,
+              "linetype": "ByLayer",
+              "lineweight": 50
+            }
+          ]
+        }
+      ]
+    },
     "standard": [
       {
         "objectName": "AcDbLine",
@@ -108,6 +213,125 @@
         }
       }
     ],
+    "standardReadback": {
+      "stable": true,
+      "propertyReference": {
+        "layer": "F022_STANDARD",
+        "color": 1,
+        "linetype": "ByLayer",
+        "lineweight": 50
+      },
+      "states": [
+        {
+          "objectName": "AcDbLine",
+          "handle": "29D",
+          "layer": "F022_STANDARD",
+          "color": 1,
+          "linetype": "ByLayer",
+          "lineweight": 50,
+          "bounds": {
+            "min": [
+              0,
+              0
+            ],
+            "max": [
+              250,
+              0
+            ]
+          },
+          "details": {
+            "start": [
+              0,
+              0
+            ],
+            "end": [
+              250,
+              0
+            ]
+          }
+        },
+        {
+          "objectName": "AcDbLine",
+          "handle": "2A0",
+          "layer": "F022_STANDARD",
+          "color": 1,
+          "linetype": "ByLayer",
+          "lineweight": 50,
+          "bounds": {
+            "min": [
+              750,
+              0
+            ],
+            "max": [
+              1000,
+              0
+            ]
+          },
+          "details": {
+            "start": [
+              750,
+              0
+            ],
+            "end": [
+              1000,
+              0
+            ]
+          }
+        }
+      ],
+      "passes": [
+        {
+          "pass": 1,
+          "entityCount": 2,
+          "geometryExact": true,
+          "propertiesExact": true,
+          "consecutiveExactReads": 1,
+          "handles": [
+            "29D",
+            "2A0"
+          ],
+          "properties": [
+            {
+              "layer": "F022_STANDARD",
+              "color": 1,
+              "linetype": "ByLayer",
+              "lineweight": 50
+            },
+            {
+              "layer": "F022_STANDARD",
+              "color": 1,
+              "linetype": "ByLayer",
+              "lineweight": 50
+            }
+          ]
+        },
+        {
+          "pass": 2,
+          "entityCount": 2,
+          "geometryExact": true,
+          "propertiesExact": true,
+          "consecutiveExactReads": 2,
+          "handles": [
+            "29D",
+            "2A0"
+          ],
+          "properties": [
+            {
+              "layer": "F022_STANDARD",
+              "color": 1,
+              "linetype": "ByLayer",
+              "lineweight": 50
+            },
+            {
+              "layer": "F022_STANDARD",
+              "color": 1,
+              "linetype": "ByLayer",
+              "lineweight": 50
+            }
+          ]
+        }
+      ]
+    },
     "quick": [],
     "quickTrim": [
       {
@@ -1203,7 +1427,7 @@
           }
         }
       ],
-      "outputSha256": "466b65c76eab805d1b9769d2d29e17c11ac2413a9ba5af021944bc1d4ab60fa2"
+      "outputSha256": "5cb5b7c0c19bf814869b5df5ade7b5b4e6187bf27f6f838468b3f4f0a0bb94d9"
     },
     "fence": [
       {
@@ -1451,7 +1675,7 @@
   ],
   "rationalSplineDxfReadback": {
     "sourceSha256": "68d9129c1ffd827b64bd5cd2acb8948d768375c9faa183e5a7d7e39f1fa79224",
-    "outputSha256": "466b65c76eab805d1b9769d2d29e17c11ac2413a9ba5af021944bc1d4ab60fa2",
+    "outputSha256": "5cb5b7c0c19bf814869b5df5ade7b5b4e6187bf27f6f838468b3f4f0a0bb94d9",
     "splines": [
       {
         "handle": "10",
@@ -1534,13 +1758,14 @@
     ]
   },
   "implementationSha256": {
-    "tools/autocad/f022-standard-matrix.ps1": "f717cfab51eb878ba4602d06325eae18ed396d4b8eb7677a45ba19c5bca13345",
-    "tools/autocad/f022-shift-click.ps1": "bb5a60547a9e527ab90ca9f4dd479b5f8680b839f5979830c5bbdec9196bef37",
-    "tools/autocad/run-f022.mjs": "09dabb65acce43bbfb1bee5e5d2d2be2760c79883c6372bf286c556e8cc91a32",
-    "tools/autocad/process-ownership.test.mjs": "703375745c55b8fccfc64c3e88990cb43639a1f7986b1f07b7cbbbc5220c8636"
+    "tools/autocad/f022-standard-matrix.ps1": "97940c4f11fb0309655700aba25bdffd22c735a653804ae1d2b4bc326900b413",
+    "tools/autocad/f022-shift-click.ps1": "dc1592f2bbed183f0f13863e64cf45f66b97ace8fbd942193df48ec4d82d6057",
+    "tools/autocad/f022-runner.test.mjs": "0c151d47fea914633ec669e63b8a6028fe0e923b34f16f531c782200981bbbea",
+    "tools/autocad/run-f022.mjs": "24df4b726eecf2876d2f091829d393f7fdf20c7e1136fd59ce9daa3a4991365a",
+    "tools/autocad/process-ownership.test.mjs": "967311b5caa954585c7fce1494afb5322ead5ce99df83c2f2bad14fd178e3050"
   },
-  "matrixScriptSha256": "f717cfab51eb878ba4602d06325eae18ed396d4b8eb7677a45ba19c5bca13345",
-  "shiftHelperSha256": "bb5a60547a9e527ab90ca9f4dd479b5f8680b839f5979830c5bbdec9196bef37",
-  "runnerScriptSha256": "09dabb65acce43bbfb1bee5e5d2d2be2760c79883c6372bf286c556e8cc91a32",
-  "observedAt": "2026-08-29T14:28:26.080Z"
+  "matrixScriptSha256": "97940c4f11fb0309655700aba25bdffd22c735a653804ae1d2b4bc326900b413",
+  "shiftHelperSha256": "dc1592f2bbed183f0f13863e64cf45f66b97ace8fbd942193df48ec4d82d6057",
+  "runnerScriptSha256": "24df4b726eecf2876d2f091829d393f7fdf20c7e1136fd59ce9daa3a4991365a",
+  "observedAt": "2026-08-29T23:56:21.295Z"
 }

@@ -4,8 +4,13 @@
   "benchmark": "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
   "engine": "Autodesk AutoCAD 2024 desktop COM/native PViewport commands",
   "engineVersion": "24.3s (LMS Tech)",
-  "automationProcessId": 21296,
+  "automationProcessId": 24216,
   "automationProcessOwned": true,
+  "automationProcessIdentity": {
+    "processId": 24216,
+    "executablePath": "C:\\Program Files\\Autodesk\\AutoCAD 2024\\acad.exe",
+    "startTimeUtc": "2026-08-30T00:29:57.1499117Z"
+  },
   "handles": {
     "viewport": "289",
     "modelLine": "288"
@@ -246,7 +251,7 @@
   },
   "dwg": {
     "bytes": 32565,
-    "sha256": "1996a73a96e5a84a1554d795ba7b02a55ff78f67c48f723241dac55e84c2d8b6",
+    "sha256": "cc0210b0328cd18ad107a0ab1fd2a55b6885d1c5ca85f5dc766753997062ffe7",
     "saveAsType": 64,
     "retained": false
   },
@@ -256,8 +261,11 @@
     "blankRestored": true
   },
   "automationProcessTerminated": true,
-  "noResidualAcadProcesses": true,
+  "processSetRestored": true,
+  "preExistingProcessIds": [
+    11276
+  ],
   "scriptSha256": "d415a3174e582671ead5e76a4234fca1ff2e1aebc4f74d27b794c347725dc1ae",
-  "matrixScriptSha256": "19fb15ab194ef1e28d34c36d8a02b9aa935019da3c8c710a8691073a4c92b538",
-  "observedAt": "2026-08-28T17:21:07.759Z"
+  "matrixScriptSha256": "498419dc0c576639b4a3c2b734e589d7bb80e6229981411d56b3fb5c6d723497",
+  "observedAt": "2026-08-30T00:30:21.474Z"
 }

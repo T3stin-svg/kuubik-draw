@@ -4,8 +4,8 @@
   "kind": "autocad",
   "authority": "autocad-2024.1.2-live",
   "status": "PASS",
-  "artifactSha256": "68b41be50904d2e1612485b975c4770ac846bb547f13f07e14dad8d92d9eb300",
-  "observedAt": "2026-08-28T16:20:17.144Z",
+  "artifactSha256": "38806ef6f28a5b0ea514bee5eb4bdfbd1af3ff1deaad7b2587ec12b11d0c83c4",
+  "observedAt": "2026-08-29T23:44:46.954Z",
   "workflow": "An owned isolated AutoCAD 24.3 process configures an ISO A3 paper layout, preserves its system viewport, creates two native MVIEW objects with separate frames, targets and scales, applies VPCLIP to the second using a closed six-point polyline, saves and reopens an anonymous native DWG, enters the clipped viewport MODEL context, returns to PAPER, deletes it, saves/reopens again and measures the survivor.",
   "result": "AutoCAD preserved two unique native viewport handles, exact non-overlapping 197.5 x 277 mm frames, targets 0 and 2000, scales 0.16 and 0.08, rectangular versus clipped state and the clip boundary after DWG reopen; CVPORT 3 activated the clipped handle in MODEL; deletion returned CVPORT 1/PAPER and left the first viewport unchanged; the owned PID terminated and no DWG, BAK or sidecar from the final run was retained.",
   "artifact": "evidence/artifacts/F-099-autocad-readback.json"

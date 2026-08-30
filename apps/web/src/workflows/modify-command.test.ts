@@ -90,13 +90,22 @@ describe("web modify command workflows", () => {
       vertices: [{ x: 0, y: 0 }, { x: 100, y: 0 }, { x: 100, y: 100 }, { x: 0, y: 100 }],
     });
     const polyline = prepareFillet(document, {
-      mode: "polyline", radiusInput: "5", trimMode: "trim",
+      mode: "polyline", radiusInput: "5", trimMode: "no-trim", filletPolylineArc: 0,
       pairsInput: "", polylineHandlesInput: "30",
     });
     expect(polyline).toMatchObject({
       commandId: "FILLET",
-      operationArgs: { mode: "polyline", radius: 5, polylineHandles: ["30"] },
-      result: { rejected: [], resultHandles: ["30"], steps: [{ mode: "polyline" }] },
+      operationArgs: { mode: "polyline", radius: 5, trimMode: "no-trim", filletPolylineArc: 0, polylineHandles: ["30"] },
+      result: { rejected: [], resultHandles: ["31", "32", "33", "34"], createdHandles: ["31", "32", "33", "34"], steps: [{ mode: "polyline" }] },
+    });
+
+    const segmentPair = prepareFillet(document, {
+      mode: "pairs", radiusInput: "5", trimMode: "trim",
+      pairsInput: "30#0@80,0>30#1@100,20", polylineHandlesInput: "",
+    });
+    expect(segmentPair).toMatchObject({
+      operationArgs: { mode: "pairs", pairs: [{ firstHandle: "30", firstSegment: 0, secondHandle: "30", secondSegment: 1 }] },
+      result: { rejected: [], sourceHandles: ["30"], resultHandles: ["30"], createdHandles: [] },
     });
   });
 });

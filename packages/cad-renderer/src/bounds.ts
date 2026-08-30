@@ -49,6 +49,8 @@ export function entityBounds(
 ): Bounds2 | null {
   switch (entity.kind) {
     case "line": return boundsFromPoints([entity.start, entity.end]);
+    case "ray":
+    case "xline": return null;
     case "polyline": return boundsFromPoints(entity.vertices);
     case "circle":
     case "arc":
@@ -96,4 +98,18 @@ export function entityBounds(
       ? { minX: entity.bounds.min.x, minY: entity.bounds.min.y, maxX: entity.bounds.max.x, maxY: entity.bounds.max.y }
       : null;
   }
+}
+
+/** True when an entity contains geometry that cannot be represented by a finite R-tree box. */
+export function entityHasUnboundedGeometry(
+  entity: CadEntity,
+  blocks: ReadonlyMap<string, CadBlockDefinition> = new Map(),
+  blockTrail: ReadonlySet<string> = new Set(),
+): boolean {
+  if (entity.kind === "ray" || entity.kind === "xline") return true;
+  if (entity.kind !== "blockRef") return false;
+  const block = blocks.get(entity.blockId);
+  if (!block || blockTrail.has(block.id)) return false;
+  const nextTrail = new Set(blockTrail).add(block.id);
+  return block.entities.some((child) => entityHasUnboundedGeometry(child, blocks, nextTrail));
 }

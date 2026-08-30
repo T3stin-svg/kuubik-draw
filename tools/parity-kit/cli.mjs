@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { spawnSync } from "node:child_process";
 import { readFile, writeFile } from "node:fs/promises";
-import { resolve } from "node:path";
+import { dirname, resolve } from "node:path";
 import { PARITY_ROWS } from "../../parity/rows.mjs";
 import { GLOBAL_TOPOLOGY_RECEIPT_PATH, PACKAGE_SEMANTIC_MIGRATION_BASE_MANIFEST_SHA256, PACKAGE_SEMANTIC_MIGRATION_PATH, PACKAGE_WORKSPACE_MANIFEST_PATHS, REPO_ROOT, affectedRows, buildContentAddressManifest, buildGlobalTopologyReceipt, buildPackageSemanticMigrationReceipt, changedFiles, exactContentAddress, executableStages, sourceToRows, staleEvidenceBindings, validateParityKit, verifyGlobalTopologyReceipt, verifyPackageSemanticMigrationReceipt } from "./core.mjs";
 
@@ -17,7 +17,9 @@ function npmRun(script, forwardedArgs = []) {
   const npmExecPath = process.env.npm_execpath;
   const result = npmExecPath
     ? spawnSync(process.execPath, [npmExecPath, ...npmArgs], { cwd: REPO_ROOT, stdio: "inherit" })
-    : spawnSync("npm", npmArgs, { cwd: REPO_ROOT, stdio: "inherit" });
+    : process.platform === "win32"
+      ? spawnSync(process.execPath, [resolve(dirname(process.execPath), "node_modules/npm/bin/npm-cli.js"), ...npmArgs], { cwd: REPO_ROOT, stdio: "inherit" })
+      : spawnSync("npm", npmArgs, { cwd: REPO_ROOT, stdio: "inherit" });
   if (result.error) throw result.error;
   if (result.status !== 0) fail(`Parity stage failed: npm run ${script}`);
 }
@@ -68,8 +70,8 @@ if (command === "validate") {
     const stale = staleEvidenceBindings(previous, manifest, {
       allowV3ToV4: previous.schemaVersion === 3,
       ignoredSourcePaths: previous.schemaVersion === 3
-        ? ["package.json", ...PACKAGE_WORKSPACE_MANIFEST_PATHS]
-        : trackingWorkspacePackages ? PACKAGE_WORKSPACE_MANIFEST_PATHS : [],
+        ? ["package.json", "package-lock.json", ...PACKAGE_WORKSPACE_MANIFEST_PATHS]
+        : trackingWorkspacePackages ? ["package.json", "package-lock.json", ...PACKAGE_WORKSPACE_MANIFEST_PATHS] : [],
     });
     if (stale.length) fail(stale.join("\n"));
     await writeFile(outputPath, `${JSON.stringify(manifest, null, 2)}\n`, "utf8");
@@ -102,15 +104,18 @@ if (command === "validate") {
   const row = PARITY_ROWS.find((candidate) => candidate.id === rowId);
   if (!row) fail(`Unknown or uncertified row: ${rowId ?? "missing"}.`);
   const portable = args.includes("--portable");
+  const deferRatchet = args.includes("--defer-ratchet");
   const executed = [];
   for (const { stage, script } of executableStages(row, { portable })) {
     npmRun(script);
     executed.push(stage);
   }
   npmRun("parity:evidence:refresh", [row.id]);
-  npmRun("parity:content-addresses:update");
-  npmRun("parity:check");
-  console.log(`${row.id} row pipeline PASS (${executed.join(" -> ") || "ratchet-only"}${portable ? ", portable" : ""}).`);
+  if (!deferRatchet) {
+    npmRun("parity:content-addresses:update");
+    npmRun("parity:check");
+  }
+  console.log(`${row.id} row pipeline PASS (${executed.join(" -> ") || "ratchet-only"}${portable ? ", portable" : ""}${deferRatchet ? ", ratchet deferred" : ""}).`);
 } else {
   fail(`Unknown parity-kit command: ${command}.`);
 }

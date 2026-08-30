@@ -24,6 +24,20 @@ describe("exact CAD selection predicates", () => {
     expect(() => pickCadEntity(entities[0]!, { x: 0, y: 0 }, -1)).toThrow(TypeError);
   });
 
+  it("picks normalized RAY/XLINE supports and clamps a ray behind its base point", () => {
+    const ray: CadEntity = { kind: "ray", handle: "ray", layerId: "0", basePoint: { x: 10, y: 20 }, direction: { x: 4, y: 0 } };
+    const xline: CadEntity = { kind: "xline", handle: "xline", layerId: "0", basePoint: { x: 10, y: 20 }, direction: { x: 0, y: 5 } };
+    expect(pickCadEntity(ray, { x: 80, y: 20.25 }, 0.5)).toEqual({
+      handle: "ray", point: { x: 80, y: 20 }, distance: 0.25, segment: 0, parameter: 70,
+    });
+    expect(pickCadEntity(ray, { x: 0, y: 20 }, 11)).toEqual({
+      handle: "ray", point: { x: 10, y: 20 }, distance: 10, segment: 0, parameter: 0,
+    });
+    expect(pickCadEntity(xline, { x: 9.75, y: -30 }, 0.5)).toEqual({
+      handle: "xline", point: { x: 10, y: -30 }, distance: 0.25, segment: 0, parameter: -50,
+    });
+  });
+
   it("uses finite analytical fence intersections for line, circle, ellipse and bulge arc", () => {
     expect(selectCadEntitiesByFence(entities, [{ x: 0, y: -10 }, { x: 0, y: 10 }])).toEqual(["line"]);
     expect(selectCadEntityHitsByFence(entities, [{ x: 0, y: -10 }, { x: 0, y: 10 }])).toEqual([{ handle: "line", pickPoint: { x: 0, y: 0 } }]);

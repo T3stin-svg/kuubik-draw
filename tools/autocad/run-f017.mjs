@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { createHash } from "node:crypto";
-import { spawn } from "node:child_process";
+import { execFileSync, spawn } from "node:child_process";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 
@@ -9,6 +9,75 @@ const scriptPath = resolve(root, "parity/autocad/F-017.scr");
 const matrixScriptPath = resolve(root, "tools/autocad/f017-standard-matrix.ps1");
 const outputPath = resolve(root, process.argv[2] ?? "evidence/artifacts/F-017-autocad-readback.json");
 const sha256 = (bytes) => createHash("sha256").update(bytes).digest("hex");
+
+function acadProcessIdentities() {
+  const script = "@(Get-Process acad -ErrorAction SilentlyContinue | ForEach-Object { [ordered]@{ processId=[int]$_.Id; executablePath=[IO.Path]::GetFullPath([string]$_.Path); startTimeUtc=$_.StartTime.ToUniversalTime().ToString('o') } }) | ConvertTo-Json -Compress";
+  const output = execFileSync("powershell.exe", ["-NoProfile", "-Command", script], { windowsHide: true, encoding: "utf8" }).trim();
+  if (!output) return [];
+  const parsed = JSON.parse(output);
+  return (Array.isArray(parsed) ? parsed : [parsed]).toSorted((left, right) => left.processId - right.processId);
+}
+
+function identityMatches(expected, current) {
+  return current?.processId === expected?.processId
+    && current.executablePath?.toLowerCase() === expected.executablePath?.toLowerCase()
+    && current.startTimeUtc === expected.startTimeUtc;
+}
+
+function processIdentity(processId) {
+  return acadProcessIdentities().find((identity) => identity.processId === processId) ?? null;
+}
+
+function newAutomationSidecars(preExisting) {
+  const existing = new Set(preExisting.map(({ processId }) => processId));
+  const script = "Get-CimInstance Win32_Process -Filter \"Name='acad.exe'\" | Select-Object ProcessId,CommandLine | ConvertTo-Json -Compress";
+  const output = execFileSync("powershell.exe", ["-NoProfile", "-Command", script], { windowsHide: true, encoding: "utf8" }).trim();
+  if (!output) return [];
+  const records = JSON.parse(output);
+  return (Array.isArray(records) ? records : [records])
+    .filter((record) => !existing.has(Number(record.ProcessId)) && /\/Automation\s+-Embedding/iu.test(String(record.CommandLine ?? "")))
+    .map((record) => processIdentity(Number(record.ProcessId)))
+    .filter(Boolean);
+}
+
+async function terminateIdentity(identity) {
+  if (!identity) return false;
+  let current = acadProcessIdentities().find(({ processId }) => processId === identity.processId);
+  if (!current) return true;
+  if (!identityMatches(identity, current)) throw new Error(`F-017 refuses to terminate PID ${identity.processId}: process identity changed.`);
+  try { process.kill(identity.processId); } catch (error) { if (error?.code === "ESRCH") return true; throw error; }
+  for (let attempt = 0; attempt < 100; attempt += 1) {
+    await new Promise((done) => setTimeout(done, 100));
+    current = acadProcessIdentities().find(({ processId }) => processId === identity.processId);
+    if (!current) return true;
+    if (!identityMatches(identity, current)) throw new Error(`F-017 PID ${identity.processId} was reused during cleanup.`);
+  }
+  return false;
+}
+
+async function restoreProcessSet(preExisting, reportedIdentity) {
+  const preExistingIds = new Set(preExisting.map(({ processId }) => processId));
+  let current = acadProcessIdentities();
+  if (reportedIdentity) {
+    if (preExistingIds.has(reportedIdentity.processId)) throw new Error("F-017 matrix reported a pre-existing AutoCAD PID as owned.");
+    const candidate = current.find(({ processId }) => processId === reportedIdentity.processId);
+    if (candidate && !identityMatches(reportedIdentity, candidate)) throw new Error("F-017 reported AutoCAD identity does not match the live process.");
+    if (candidate && !(await terminateIdentity(reportedIdentity))) throw new Error("F-017 owned AutoCAD process did not terminate.");
+  } else {
+    const orphanCandidates = newAutomationSidecars(preExisting);
+    if (orphanCandidates.length === 1) {
+      if (!(await terminateIdentity(orphanCandidates[0]))) throw new Error("F-017 orphan AutoCAD automation process did not terminate.");
+    } else if (orphanCandidates.length > 1) {
+      throw new Error(`F-017 refuses ambiguous orphan cleanup: ${orphanCandidates.map(({ processId }) => processId).join(",")}.`);
+    }
+  }
+  for (let attempt = 0; attempt < 100; attempt += 1) {
+    current = acadProcessIdentities();
+    if (JSON.stringify(current) === JSON.stringify(preExisting)) return true;
+    await new Promise((done) => setTimeout(done, 100));
+  }
+  return false;
+}
 
 function runStandardMatrix() {
   return new Promise((resolveRun, reject) => {
@@ -19,7 +88,11 @@ function runStandardMatrix() {
     const stderr = [];
     child.stdout.on("data", (chunk) => stdout.push(chunk));
     child.stderr.on("data", (chunk) => stderr.push(chunk));
-    const timeout = setTimeout(() => { child.kill(); reject(new Error("AutoCAD F-017 matrix exceeded the 120 second timeout.")); }, 120_000);
+    const timeout = setTimeout(() => {
+      try { execFileSync("taskkill.exe", ["/PID", String(child.pid), "/T", "/F"], { windowsHide: true, stdio: "ignore" }); }
+      catch { child.kill(); }
+      reject(new Error("AutoCAD F-017 matrix exceeded the 120 second timeout."));
+    }, 120_000);
     child.on("error", (error) => { clearTimeout(timeout); reject(error); });
     child.on("close", (code) => {
       clearTimeout(timeout);
@@ -38,11 +111,30 @@ function runStandardMatrix() {
   });
 }
 
-const matrix = await runStandardMatrix();
+const preExistingProcesses = acadProcessIdentities();
+let matrix;
+let processSetRestored = false;
+let primaryError = null;
+try {
+  matrix = await runStandardMatrix();
+} catch (error) {
+  primaryError = error;
+  throw error;
+} finally {
+  const cleanupErrors = [];
+  try {
+    processSetRestored = await restoreProcessSet(preExistingProcesses, matrix?.automationProcessIdentity ?? null);
+    if (!processSetRestored) cleanupErrors.push(new Error("F-017 AutoCAD process set was not restored during cleanup."));
+  } catch (error) { cleanupErrors.push(error); }
+  if (cleanupErrors.length > 0) throw new AggregateError(primaryError ? [primaryError, ...cleanupErrors] : cleanupErrors, "F-017 cleanup verification failed.");
+}
 const expectedFamilies = ["line", "polyline", "circle", "arc", "ellipse", "spline", "text", "mtext", "leader", "dimension", "hatch", "blockRef"];
 const expectedObjectNames = ["AcDbLine", "AcDbPolyline", "AcDbCircle", "AcDbArc", "AcDbEllipse", "AcDbSpline", "AcDbText", "AcDbMText", "AcDbLeader", "AcDbAlignedDimension", "AcDbHatch", "AcDbBlockReference"];
 if (
   matrix.schemaVersion !== 1 || matrix.rowId !== "F-017" || !matrix.engineVersion?.startsWith("24.3") ||
+  matrix.automationProcessOwned !== true || !Number.isInteger(matrix.automationProcessId) ||
+  matrix.automationProcessId !== matrix.automationProcessIdentity?.processId || !processSetRestored ||
+  preExistingProcesses.some(({ processId }) => processId === matrix.automationProcessId) ||
   JSON.stringify(matrix.vectors) !== JSON.stringify([[500, 750], [-300, 100]]) ||
   JSON.stringify(matrix.before?.map(({ family }) => family)) !== JSON.stringify(expectedFamilies) ||
   JSON.stringify(matrix.before?.map(({ objectName }) => objectName)) !== JSON.stringify(expectedObjectNames) ||
@@ -56,6 +148,7 @@ if (
 
 const result = {
   ...matrix,
+  processSetRestored,
   scriptSha256: sha256(await readFile(scriptPath)),
   matrixScriptSha256: sha256(await readFile(matrixScriptPath)),
   observedAt: new Date().toISOString(),

@@ -4,7 +4,7 @@
   "benchmark": "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
   "engine": "Autodesk AutoCAD 2024 desktop COM/native VPCLIP",
   "engineVersion": "24.3s (LMS Tech)",
-  "automationProcessId": 8284,
+  "automationProcessId": 34916,
   "automationProcessOwned": true,
   "handles": {
     "systemViewport": "281",
@@ -150,6 +150,222 @@
     "boundaryCount": 0,
     "boundaryHandles": []
   },
+  "viewportReadback": {
+    "beforeSave": {
+      "stable": true,
+      "snapshot": {
+        "layoutName": "F099 VIEWPORTS",
+        "tileMode": 0,
+        "cvport": 1,
+        "mSpace": false,
+        "viewportCount": 2,
+        "viewportHandles": [
+          "28A",
+          "28C"
+        ],
+        "viewports": [
+          {
+            "handle": "28A",
+            "center": {
+              "x": 108.75,
+              "y": 148.5
+            },
+            "width": 197.5,
+            "height": 277,
+            "target": {
+              "x": 0,
+              "y": 0
+            },
+            "customScale": 0.16,
+            "twistAngle": 0,
+            "clipped": false,
+            "viewportOn": true
+          },
+          {
+            "handle": "28C",
+            "center": {
+              "x": 311.25,
+              "y": 148.5
+            },
+            "width": 197.5,
+            "height": 277,
+            "target": {
+              "x": 2000,
+              "y": 0
+            },
+            "customScale": 0.08,
+            "twistAngle": 0,
+            "clipped": true,
+            "viewportOn": true
+          }
+        ],
+        "boundaryCount": 1,
+        "boundaryHandles": [
+          "28E"
+        ]
+      },
+      "passes": [
+        {
+          "pass": 1,
+          "exact": true,
+          "consecutiveExactReads": 1,
+          "viewportHandles": [
+            "28A",
+            "28C"
+          ],
+          "boundaryHandles": [
+            "28E"
+          ]
+        },
+        {
+          "pass": 2,
+          "exact": true,
+          "consecutiveExactReads": 2,
+          "viewportHandles": [
+            "28A",
+            "28C"
+          ],
+          "boundaryHandles": [
+            "28E"
+          ]
+        }
+      ]
+    },
+    "afterReopen": {
+      "stable": true,
+      "snapshot": {
+        "layoutName": "F099 VIEWPORTS",
+        "tileMode": 0,
+        "cvport": 1,
+        "mSpace": false,
+        "viewportCount": 2,
+        "viewportHandles": [
+          "28A",
+          "28C"
+        ],
+        "viewports": [
+          {
+            "handle": "28A",
+            "center": {
+              "x": 108.75,
+              "y": 148.5
+            },
+            "width": 197.5,
+            "height": 277,
+            "target": {
+              "x": 0,
+              "y": 0
+            },
+            "customScale": 0.16,
+            "twistAngle": 0,
+            "clipped": false,
+            "viewportOn": true
+          },
+          {
+            "handle": "28C",
+            "center": {
+              "x": 311.25,
+              "y": 148.5
+            },
+            "width": 197.5,
+            "height": 277,
+            "target": {
+              "x": 2000,
+              "y": 0
+            },
+            "customScale": 0.08,
+            "twistAngle": 0,
+            "clipped": true,
+            "viewportOn": true
+          }
+        ],
+        "boundaryCount": 1,
+        "boundaryHandles": [
+          "28E"
+        ]
+      },
+      "passes": [
+        {
+          "pass": 1,
+          "exact": true,
+          "consecutiveExactReads": 1,
+          "viewportHandles": [
+            "28A",
+            "28C"
+          ],
+          "boundaryHandles": [
+            "28E"
+          ]
+        },
+        {
+          "pass": 2,
+          "exact": true,
+          "consecutiveExactReads": 2,
+          "viewportHandles": [
+            "28A",
+            "28C"
+          ],
+          "boundaryHandles": [
+            "28E"
+          ]
+        }
+      ]
+    },
+    "afterDelete": {
+      "stable": true,
+      "snapshot": {
+        "layoutName": "F099 VIEWPORTS",
+        "tileMode": 0,
+        "cvport": 1,
+        "mSpace": false,
+        "viewportCount": 1,
+        "viewportHandles": [
+          "28A"
+        ],
+        "viewports": [
+          {
+            "handle": "28A",
+            "center": {
+              "x": 108.75,
+              "y": 148.5
+            },
+            "width": 197.5,
+            "height": 277,
+            "target": {
+              "x": 0,
+              "y": 0
+            },
+            "customScale": 0.16,
+            "twistAngle": 0,
+            "clipped": false,
+            "viewportOn": true
+          }
+        ],
+        "boundaryCount": 0,
+        "boundaryHandles": []
+      },
+      "passes": [
+        {
+          "pass": 1,
+          "exact": true,
+          "consecutiveExactReads": 1,
+          "viewportHandles": [
+            "28A"
+          ],
+          "boundaryHandles": []
+        },
+        {
+          "pass": 2,
+          "exact": true,
+          "consecutiveExactReads": 2,
+          "viewportHandles": [
+            "28A"
+          ],
+          "boundaryHandles": []
+        }
+      ]
+    }
+  },
   "checks": {
     "nativePaperContext": true,
     "twoNativeViewports": true,
@@ -165,7 +381,7 @@
   },
   "dwg": {
     "bytes": 32852,
-    "sha256": "eb990b09f1226d0b5f1afaa070614be52725d9be7fbd674f0e075e4beedc4d59",
+    "sha256": "60dbdba3685028b0bd9187bf650b96664673c8786324cda6fee0ff984da6f09b",
     "saveAsType": 64,
     "retained": false
   },
@@ -176,6 +392,6 @@
   },
   "automationProcessTerminated": true,
   "scriptSha256": "1392731ffd773f7a5d5051b5c5160ee8323cc1f4273f731b1f3eaa8326729163",
-  "matrixScriptSha256": "7b6e729029fbfe62ad1107b90f3f7e910b91f864052cf2910260e860b5b7a195",
-  "observedAt": "2026-08-28T16:20:17.144Z"
+  "matrixScriptSha256": "1e526ee5b2e3c1c98c1a5f8cdaa6f13eea0a3aea467cc17ae6b96030604827c1",
+  "observedAt": "2026-08-29T23:44:46.954Z"
 }

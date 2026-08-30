@@ -49,10 +49,21 @@ function Wait-AcadIdle {
 }
 
 function Get-Bounds {
-  param([Parameter(Mandatory = $true)]$Entity)
-  $minimum = $null; $maximum = $null
-  Invoke-ComRetry { $Entity.GetBoundingBox([ref]$minimum, [ref]$maximum) } | Out-Null
-  return [ordered]@{ min = @([double]$minimum[0], [double]$minimum[1]); max = @([double]$maximum[0], [double]$maximum[1]) }
+  param([Parameter(Mandatory = $true)]$Entity, [int]$TimeoutSeconds = 20)
+  $deadline = [DateTime]::UtcNow.AddSeconds($TimeoutSeconds)
+  do {
+    $minimum = $null; $maximum = $null
+    try {
+      $Entity.GetBoundingBox([ref]$minimum, [ref]$maximum)
+      if ($null -ne $minimum -and $null -ne $maximum -and $minimum.Count -ge 2 -and $maximum.Count -ge 2) {
+        return [ordered]@{ min = @([double]$minimum[0], [double]$minimum[1]); max = @([double]$maximum[0], [double]$maximum[1]) }
+      }
+    } catch {
+      if ([DateTime]::UtcNow -ge $deadline) { throw }
+    }
+    if ([DateTime]::UtcNow -ge $deadline) { throw 'AutoCAD returned an incomplete bounding box.' }
+    Start-Sleep -Milliseconds 150
+  } while ($true)
 }
 
 function Get-EntityState {

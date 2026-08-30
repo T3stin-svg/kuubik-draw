@@ -179,6 +179,28 @@ describe("Canvas2D parity invariants", () => {
     expect(stats.visibleCandidates).toBe(1);
   });
 
+  it("keeps RAY/XLINE out of finite extents while clipping both across the active viewport", () => {
+    const renderer = new CadCanvasRenderer();
+    renderer.setEntities([
+      { kind: "ray", handle: "10", layerId: "0", basePoint: { x: 0, y: 50 }, direction: { x: 10, y: 0 } },
+      { kind: "xline", handle: "20", layerId: "0", basePoint: { x: 50, y: 50 }, direction: { x: 0, y: 2 } },
+      { kind: "line", handle: "30", layerId: "0", start: { x: 500, y: 500 }, end: { x: 510, y: 500 } },
+    ]);
+    expect(renderer.visibleHandles({ minX: 0, minY: 0, maxX: 100, maxY: 100 })).toEqual(["10", "20"]);
+
+    const { context, calls } = fakeContext();
+    const stats = renderer.render(
+      context,
+      { world: { minX: 0, minY: 0, maxX: 100, maxY: 100 }, widthPx: 100, heightPx: 100, devicePixelRatio: 1 },
+      [{ id: "0", name: "0", visible: true, frozen: false, locked: false, plottable: true }],
+    );
+    expect(stats).toEqual({ totalEntities: 3, visibleCandidates: 2, drawnEntities: 2 });
+    expect(calls).toContainEqual(["move", 0, 50]);
+    expect(calls.some(([name, x, y]) => name === "line" && x > 100 && y === 50)).toBe(true);
+    expect(calls.some(([name, x, y]) => name === "move" && x === 50 && y < 0)).toBe(true);
+    expect(calls.some(([name, x, y]) => name === "line" && x === 50 && y > 100)).toBe(true);
+  });
+
   it("indexes transformed block geometry even when its insertion point is outside the viewport", () => {
     const renderer = new CadCanvasRenderer();
     renderer.setBlocks([{

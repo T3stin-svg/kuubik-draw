@@ -225,6 +225,55 @@ function Test-LineSet {
   return $true
 }
 
+function Test-EntityProperties {
+  param($States, $Reference)
+  return @($States | Where-Object {
+    $_.layer -ne $Reference.layer -or $_.color -ne $Reference.color -or
+    $_.linetype -ne $Reference.linetype -or $_.lineweight -ne $Reference.lineweight
+  }).Count -eq 0
+}
+
+function Get-StableExactLineSet {
+  param(
+    $Document,
+    [string]$Layer,
+    $Expected,
+    $PropertyReference,
+    [int]$MaximumPasses = 12
+  )
+  $passes = New-Object System.Collections.Generic.List[object]
+  $lastStates = @()
+  $previousExactFingerprint = $null
+  $consecutiveExactReads = 0
+  for ($pass = 1; $pass -le $MaximumPasses; $pass += 1) {
+    Wait-AcadIdle $Document
+    Invoke-ComRetry { $Document.Regen(1) } | Out-Null
+    Wait-AcadIdle $Document
+    $lastStates = @(Get-LayerStates $Document $Layer)
+    $geometryExact = Test-LineSet $lastStates $Expected
+    $propertiesExact = Test-EntityProperties $lastStates $PropertyReference
+    $fingerprint = if ($geometryExact -and $propertiesExact) { $lastStates | ConvertTo-Json -Depth 8 -Compress } else { $null }
+    if ($fingerprint -and $fingerprint -eq $previousExactFingerprint) { $consecutiveExactReads += 1 }
+    elseif ($fingerprint) { $consecutiveExactReads = 1 }
+    else { $consecutiveExactReads = 0 }
+    $passes.Add([ordered]@{
+      pass = $pass
+      entityCount = $lastStates.Count
+      geometryExact = $geometryExact
+      propertiesExact = $propertiesExact
+      consecutiveExactReads = $consecutiveExactReads
+      handles = @($lastStates | ForEach-Object { $_.handle })
+      properties = @($lastStates | ForEach-Object { [ordered]@{ layer=$_.layer; color=$_.color; linetype=$_.linetype; lineweight=$_.lineweight } })
+    })
+    if ($consecutiveExactReads -ge 2) {
+      return [ordered]@{ stable = $true; propertyReference = $PropertyReference; states = @($lastStates); passes = [object[]]$passes.ToArray() }
+    }
+    $previousExactFingerprint = $fingerprint
+    Start-Sleep -Milliseconds 100
+  }
+  return [ordered]@{ stable = $false; propertyReference = $PropertyReference; states = @($lastStates); passes = [object[]]$passes.ToArray() }
+}
+
 function Test-PolylineState {
   param($State, $ExpectedVertices, $ExpectedBulges, $ExpectedWidths)
   if ($State.objectName -ne 'AcDbPolyline' -or $State.details.closed -or $State.details.vertices.Count -ne $ExpectedVertices.Count) { return $false }
@@ -378,10 +427,14 @@ try {
   foreach ($name in $layerNames) { $null = Invoke-ComRetry { $scratch.Layers.Add($name) } }
   [double[]]$lower = @(-1000, -1000, 0); [double[]]$upper = @(10000, 8000, 0); Invoke-ComRetry { $acad.ZoomWindow($lower, $upper) } | Out-Null
 
-  $standardBefore = Get-EntityState (New-Line $scratch 'F022_STANDARD' 0 0 1000 0)
+  $standardExpectedProperties = [ordered]@{ layer='F022_STANDARD'; color=1; linetype='ByLayer'; lineweight=50 }
+  $null = New-Line $scratch 'F022_STANDARD' 0 0 1000 0
+  $standardBeforeReadback = Get-StableExactLineSet $scratch 'F022_STANDARD' (,@(@(0,0),@(1000,0))) $standardExpectedProperties
+  $standardBefore = @($standardBeforeReadback.states)[0]
   $null = Add-CuttingLine $scratch 250 -100 100; $null = Add-CuttingLine $scratch 750 -100 100
   Invoke-Trim $scratch 0 @('250,50','750,50') "500,0`n`n"
-  $standard = @(Get-LayerStates $scratch 'F022_STANDARD')
+  $standardReadback = Get-StableExactLineSet $scratch 'F022_STANDARD' @(@(@(0,0),@(250,0)),@(@(750,0),@(1000,0))) $standardExpectedProperties
+  $standard = @($standardReadback.states)
 
   $null = New-Line $scratch 'F022_QUICK' 0 1000 1000 1000
   Invoke-Trim $scratch 1 @() "500,1000`n`n"
@@ -545,7 +598,7 @@ try {
   Invoke-ComRetry { $scratch.Activate() } | Out-Null
   Write-Host '[F-022] rational-spline-fixture-end'
 
-  $standardPassed = (Test-LineSet $standard @(@(@(0,0),@(250,0)),@(@(750,0),@(1000,0)))) -and @($standard | Where-Object { $_.layer -ne $standardBefore.layer -or $_.color -ne $standardBefore.color -or $_.linetype -ne $standardBefore.linetype -or $_.lineweight -ne $standardBefore.lineweight }).Count -eq 0
+  $standardPassed = $standardBeforeReadback.stable -and $standardReadback.stable -and (Test-LineSet $standard @(@(@(0,0),@(250,0)),@(@(750,0),@(1000,0)))) -and (Test-EntityProperties $standard $standardBefore)
   $quickPassed = $quick.Count -eq 0
   $quickTrimPassed = Test-LineSet $quickTrim @(@(@(0,1300),@(250,1300)),@(@(750,1300),@(1000,1300)))
   $edgeExtendPassed = Test-LineSet $edgeExtend (,@(@(500,2000),@(1000,2000)))
@@ -583,7 +636,7 @@ try {
       fileVersion=$ownedIdentity.fileVersion; productVersion=$ownedIdentity.productVersion; startTimeSha256=$ownedIdentity.startTimeSha256
     }
     options=[ordered]@{ standard=$standardPassed; quickNoIntersectionErase=$quickPassed; quickAllObjectBoundary=$quickTrimPassed; edgeExtend=$edgeExtendPassed; edgeNoExtend=$edgeNoPassed; erase=$erasePassed; commandUndo=$undoPassed; fence=$fencePassed; crossing=$crossingPassed; shiftSelectExtend=$shiftSelectExtendPassed; closedBulgeWidthPolyline=$familyPassed.polyline; hatchBoundaryIgnored=$hatchPassed; nestedBlockBoundary=$nestedBlockPassed; nestedBlockChildLayerVisibility=$nestedBlockChildLayerPassed; rationalSplineSameFixture=$rationalSplinePassed; hiddenLayerRefusal=$hiddenPassed; project=$projectPassed }
-    familyChecks=$familyPassed; observations=[ordered]@{ standard=$standard; quick=$quick; quickTrim=$quickTrim; edgeExtend=$edgeExtend; edgeNoExtend=$edgeNo; erase=$erase; undo=$undo; projects=$projectStates; familyBefore=$familyBefore; familyAfter=$familyAfter; hatchTarget=$hatchTarget; nestedBlockTarget=$blockTarget; nestedBlockChildLayerTargets=$layeredBlockTargets; rationalSpline=[ordered]@{ before=$rationalSplineBefore; after=$rationalSplineAfter; outputSha256=$rationalSplineOutputSha256 }; fence=$fence; crossing=$crossing; shiftExtend=$shiftExtend; shiftPhysicalInput=$shiftScreenPoint; locked=$locked; hidden=$hidden }
+    familyChecks=$familyPassed; observations=[ordered]@{ standardBefore=$standardBefore; standardBeforeReadback=$standardBeforeReadback; standard=$standard; standardReadback=$standardReadback; quick=$quick; quickTrim=$quickTrim; edgeExtend=$edgeExtend; edgeNoExtend=$edgeNo; erase=$erase; undo=$undo; projects=$projectStates; familyBefore=$familyBefore; familyAfter=$familyAfter; hatchTarget=$hatchTarget; nestedBlockTarget=$blockTarget; nestedBlockChildLayerTargets=$layeredBlockTargets; rationalSpline=[ordered]@{ before=$rationalSplineBefore; after=$rationalSplineAfter; outputSha256=$rationalSplineOutputSha256 }; fence=$fence; crossing=$crossing; shiftExtend=$shiftExtend; shiftPhysicalInput=$shiftScreenPoint; locked=$locked; hidden=$hidden }
     lockedLayer=[ordered]@{ behavior=if($lockedPassed){'refused'}else{'unexpected'}; passed=$lockedPassed }
     hiddenLayer=[ordered]@{ behavior=if($hiddenPassed){'refused'}else{'unexpected'}; passed=$hiddenPassed }
     status=if($allPassed){'PASS'}else{'FAIL'}

@@ -38,6 +38,7 @@ const sourcePaths = [
   "e2e/f022-trim.spec.ts",
   "tools/autocad/f022-standard-matrix.ps1",
   "tools/autocad/f022-shift-click.ps1",
+  "tools/autocad/f022-runner.test.mjs",
   "tools/autocad/run-f022.mjs",
   "tools/autocad/process-ownership.test.mjs",
   "tools/parity/capture-f022-browser.mjs",

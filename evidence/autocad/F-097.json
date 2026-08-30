@@ -4,8 +4,8 @@
   "kind": "autocad",
   "authority": "autocad-2024.1.2-live",
   "status": "PASS",
-  "artifactSha256": "20f859479846b8a8d8c097a0f30f0449c7ad448a3b71a899ad1766dc712d074e",
-  "observedAt": "2026-08-28T15:21:53.781Z",
+  "artifactSha256": "b684b6137698a1c7b30d17e11d9f193f44f6da807222d1dd4e4a3deb87b7d613",
+  "observedAt": "2026-08-29T23:38:26.390Z",
   "workflow": "An owned isolated AutoCAD 24.3 desktop process runs native -LAYOUT New, Copy and Delete, reorders by TabOrder, checks copied viewport and paper-entity identity, saves an anonymous temporary native DWG, reopens it, then proves final-paper and 255-paper limits before the owned process is terminated.",
   "result": "AutoCAD created and removed F097 CREATED, inserted F097 PLAN (2) before its source, copied a paper-space circle, viewport and plot rotation with fresh native handles, kept the copy independent after source editing, activated adjacent PLAN after delete, rejected duplicate-case, invalid-character and 256-character names, preserved the last paper layout as a no-op, rejected paper layout 256, and preserved the final tabs after DWG reopen.",
   "artifact": "evidence/artifacts/F-097-autocad-readback.json"

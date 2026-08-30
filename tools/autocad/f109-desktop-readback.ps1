@@ -1,5 +1,6 @@
 param(
   [Parameter(Mandatory = $true)][string]$DxfPath,
+  [Parameter(Mandatory = $true)][string]$ExpectedPath,
   [Parameter(Mandatory = $true)][string]$PidPath,
   [Parameter(Mandatory = $true)][string]$OwnershipToken
 )
@@ -112,8 +113,11 @@ function Get-OptionalComValue {
 function Get-ExpectedLayerSnapshot {
   param([Parameter(Mandatory = $true)]$Document)
   $snapshot = [ordered]@{}
+  # AutoCAD can replace the transient DXF layer-table COM wrapper after a
+  # completed regen. Reacquire the collection while polling instead of
+  # repeatedly reading a stale wrapper that remains at the template count.
+  $layerCount = Wait-ComCount { (Invoke-ComRetry { $Document.Layers }).Count } 4 'Layer count'
   $layerCollection = Invoke-ComRetry { $Document.Layers }
-  $layerCount = Wait-ComCount { $layerCollection.Count } 4 'Layer count'
   for ($index = 0; $index -lt $layerCount; $index++) {
     $layer = Invoke-ComRetry { $layerCollection.Item($index) }
     $name = Invoke-NonEmptyCom { $layer.Name } "Layer $index Name"
@@ -135,13 +139,47 @@ function Test-ExpectedLayerSnapshot {
   return $Layers.JOONED.color -eq 7 -and $Layers.JOONED.lineweight -eq 25 -and $Layers.JOONED.linetype -eq 'Continuous' -and $Layers.TELJED.color -eq 4 -and $Layers.TELJED.lineweight -eq 13 -and $Layers.TELJED.linetype -eq 'DASHDOT' -and $Layers.SEINAD.color -eq 6 -and $Layers.SEINAD.lineweight -eq 50 -and $Layers.SEINAD.linetype -eq 'DASHED' -and $Layers.VIIRUTUS.color -eq 9 -and $Layers.VIIRUTUS.lineweight -eq 13 -and $Layers.VIIRUTUS.linetype -eq 'Continuous'
 }
 
+function Get-PolylineClosureSnapshot {
+  param(
+    [Parameter(Mandatory = $true)]$Document,
+    [Parameter(Mandatory = $true)]$Handles,
+    [Parameter(Mandatory = $true)]$NativeRecords
+  )
+  $snapshot = [ordered]@{}
+  foreach ($handle in @($Handles)) {
+    if ($NativeRecords[$handle].type -eq 'AcDbPolyline') {
+      # HandleToObject must be reacquired on every pass. Reusing the first COM
+      # wrapper can retain the transient Closed value across a completed regen.
+      $entity = Invoke-ComRetry { $Document.HandleToObject($handle) }
+      $snapshot[$handle] = [bool](Invoke-ComRetry { $entity.Closed })
+    }
+  }
+  return $snapshot
+}
+
+function Test-ExactPolylineClosureSnapshot {
+  param(
+    [Parameter(Mandatory = $true)]$Actual,
+    [Parameter(Mandatory = $true)]$Expected
+  )
+  if ($Actual.Count -ne $Expected.Count) { return $false }
+  foreach ($handle in @($Expected.Keys)) {
+    if (-not $Actual.Contains($handle) -or [bool]$Actual[$handle] -ne [bool]$Expected[$handle]) { return $false }
+  }
+  return $true
+}
+
 function Set-OwnedPidSidecar {
   param([Parameter(Mandatory = $true)]$Application)
   [uint32]$resolvedProcessId = 0
   [void][F109WindowProcess]::GetWindowThreadProcessId([IntPtr][int64](Invoke-ComRetry { $Application.HWND }), [ref]$resolvedProcessId)
   $candidate = [int]$resolvedProcessId
   if ($candidate -gt 0 -and $preExistingProcessIds -notcontains $candidate) {
-    [ordered]@{ schemaVersion = 1; processId = $candidate; owned = $true; token = $OwnershipToken } | ConvertTo-Json -Compress | Set-Content -LiteralPath $PidPath -Encoding ascii
+    $process = Get-Process -Id $candidate -ErrorAction Stop
+    $executablePath = [IO.Path]::GetFullPath([string]$process.Path)
+    if ([IO.Path]::GetFileName($executablePath) -ine 'acad.exe') { throw "F-109 PID $candidate is not acad.exe." }
+    $startTimeUtc = $process.StartTime.ToUniversalTime().ToString('o')
+    [ordered]@{ schemaVersion = 1; processId = $candidate; executablePath = $executablePath; startTimeUtc = $startTimeUtc; owned = $true; token = $OwnershipToken } | ConvertTo-Json -Compress | Set-Content -LiteralPath $PidPath -Encoding ascii
     return $candidate
   }
   return 0
@@ -149,6 +187,14 @@ function Set-OwnedPidSidecar {
 
 $source = [IO.Path]::GetFullPath($DxfPath)
 if (-not (Test-Path -LiteralPath $source)) { throw "F-109 DXF does not exist: $source" }
+$expectedSource = [IO.Path]::GetFullPath($ExpectedPath)
+if (-not (Test-Path -LiteralPath $expectedSource)) { throw "F-109 expected manifest does not exist: $expectedSource" }
+$expectedManifest = Get-Content -Raw -LiteralPath $expectedSource | ConvertFrom-Json
+$expectedPolylineClosures = [ordered]@{}
+foreach ($property in @($expectedManifest.nativePolylineClosedByHandle.PSObject.Properties)) {
+  $expectedPolylineClosures[$property.Name] = [bool]$property.Value
+}
+if ($expectedPolylineClosures.Count -ne 9) { throw 'F-109 expected manifest must define exactly nine native polyline closure values.' }
 $preExistingProcessIds = @(Get-Process -Name 'acad' -ErrorAction SilentlyContinue | ForEach-Object { [int]$_.Id })
 $acad = $null; $document = $null; $owned = $false; $automationProcessId = 0; $result = $null
 $closedWithoutSaving = $false; $quitRequested = $false; $cleanupError = $null
@@ -242,14 +288,35 @@ try {
     }
     $nativeRecords[$handle.ToUpperInvariant()] = $record
   }
-  Invoke-ComRetry { $document.Regen(1) } | Out-Null
-  Wait-AcadReady $acad $document
+  # A completed regen is not sufficient by itself: AutoCAD COM can expose a
+  # transient Closed flag for one pass. Require two consecutive snapshots that
+  # both match the checked-in semantic golden. Two identical wrong snapshots
+  # must never pass this certification gate.
+  $polylineClosurePasses = New-Object System.Collections.Generic.List[object]
+  $previousExpectedSnapshot = $null
+  $polylineClosuresAfterFirstRegen = [ordered]@{}
   $polylineClosuresAfterRegen = [ordered]@{}
-  foreach ($handle in @($handles)) {
-    if ($nativeRecords[$handle].type -eq 'AcDbPolyline') {
-      $entity = Invoke-ComRetry { $document.HandleToObject($handle) }
-      $polylineClosuresAfterRegen[$handle] = [bool](Invoke-ComRetry { $entity.Closed })
+  $polylineClosureStable = $false
+  for ($closurePass = 0; $closurePass -lt 8; $closurePass += 1) {
+    Invoke-ComRetry { $document.Regen(1) } | Out-Null
+    Wait-AcadReady $acad $document
+    $currentSnapshot = Get-PolylineClosureSnapshot $document $handles $nativeRecords
+    $currentMatchesExpected = Test-ExactPolylineClosureSnapshot $currentSnapshot $expectedPolylineClosures
+    $polylineClosurePasses.Add([ordered]@{ pass = $closurePass + 1; matchesExpected = $currentMatchesExpected; values = $currentSnapshot })
+    if ($currentMatchesExpected -and $null -ne $previousExpectedSnapshot) {
+      $polylineClosuresAfterFirstRegen = $previousExpectedSnapshot
+      $polylineClosuresAfterRegen = $currentSnapshot
+      $polylineClosureStable = $true
+      break
     }
+    # A wrong pass breaks consecutiveness; it cannot be hidden between two
+    # expected snapshots.
+    $previousExpectedSnapshot = if ($currentMatchesExpected) { $currentSnapshot } else { $null }
+    $polylineClosuresAfterFirstRegen = $currentSnapshot
+    $polylineClosuresAfterRegen = $currentSnapshot
+  }
+  foreach ($handle in @($polylineClosuresAfterRegen.Keys)) {
+    $nativeRecords[$handle].closed = [bool]$polylineClosuresAfterRegen[$handle]
   }
   $layers = [ordered]@{}
   for ($layerPass = 0; $layerPass -lt 6; $layerPass += 1) {
@@ -261,8 +328,8 @@ try {
     Wait-AcadReady $acad $document
   }
   $styles = New-Object System.Collections.Generic.List[string]
+  $styleCount = Wait-ComCount { (Invoke-ComRetry { $document.TextStyles }).Count } 2 'Text style count'
   $styleCollection = Invoke-ComRetry { $document.TextStyles }
-  $styleCount = Wait-ComCount { $styleCollection.Count } 2 'Text style count'
   for ($index = 0; $index -lt $styleCount; $index++) {
     $style = Invoke-ComRetry { $styleCollection.Item($index) }
     $styles.Add((Invoke-NonEmptyCom { $style.Name } "Text style $index Name"))
@@ -275,7 +342,7 @@ try {
     layers = Test-ExpectedLayerSnapshot $layers
     styles = $styles -contains 'NORMAL' -and $styles -contains 'Standard'
     readOnly = $openedReadOnly
-    polylineClosureStable = @($polylineClosuresAfterRegen.Keys | Where-Object { [bool]$nativeRecords[$_].closed -ne [bool]$polylineClosuresAfterRegen[$_] }).Count -eq 0
+    polylineClosureStable = $polylineClosureStable -and (Test-ExactPolylineClosureSnapshot $polylineClosuresAfterFirstRegen $expectedPolylineClosures) -and (Test-ExactPolylineClosureSnapshot $polylineClosuresAfterRegen $expectedPolylineClosures)
   }
   $result = [ordered]@{
     schemaVersion = 1; rowId = 'F-109'; benchmark = 'AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation'
@@ -284,7 +351,7 @@ try {
     sourcePath = [IO.Path]::GetFileName($source); documentName = [string](Invoke-ComRetry { $document.Name })
     units = [int](Invoke-ComRetry { $document.GetVariable('INSUNITS') })
     totalEntities = $modelCount
-    entities = $counts; handles = @($handles); nativeRecords = $nativeRecords; polylineClosuresAfterRegen = $polylineClosuresAfterRegen; layers = $layers; styles = $styles; extents = $extents
+    entities = $counts; handles = @($handles); nativeRecords = $nativeRecords; expectedPolylineClosures = $expectedPolylineClosures; polylineClosurePasses = [object[]]$polylineClosurePasses.ToArray(); polylineClosuresAfterFirstRegen = $polylineClosuresAfterFirstRegen; polylineClosuresAfterRegen = $polylineClosuresAfterRegen; layers = $layers; styles = $styles; extents = $extents
     openedReadOnly = $openedReadOnly
     checks = $checks; status = if (@($checks.Values | Where-Object { $_ -ne $true }).Count -eq 0) { 'PASS' } else { 'FAIL' }
   }

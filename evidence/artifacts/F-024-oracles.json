@@ -1,0 +1,308 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-024",
+  "certificationAuthority": false,
+  "generatedAt": "2026-08-29T22:03:00.768Z",
+  "sourceArtifact": "evidence/artifacts/F-024-browser.dxf",
+  "sourceArtifactSha256": "541f9ea964f2f635c60ffefa91e4f15a013033ace26d009a383961b646e57b21",
+  "sourceArcs": [
+    {
+      "id": "10#1",
+      "center": {
+        "x": 89.99999999999838,
+        "y": 10.000000000001624
+      },
+      "radius": 10.000000000001624,
+      "sweep": 1.5707963267945722,
+      "start": {
+        "x": 90,
+        "y": 0
+      },
+      "mid": {
+        "x": 97.071067811865,
+        "y": 2.928932188134999
+      },
+      "end": {
+        "x": 100,
+        "y": 10
+      }
+    },
+    {
+      "id": "50#1",
+      "center": {
+        "x": 700,
+        "y": 1460
+      },
+      "radius": 60,
+      "sweep": 1.5707963267948963,
+      "start": {
+        "x": 700,
+        "y": 1400
+      },
+      "mid": {
+        "x": 742.4264068711929,
+        "y": 1417.5735931288073
+      },
+      "end": {
+        "x": 760,
+        "y": 1460
+      }
+    },
+    {
+      "id": "51",
+      "center": {
+        "x": 750,
+        "y": 1410
+      },
+      "radius": 10,
+      "sweep": 1.5707963267950014,
+      "start": {
+        "x": 749.999999999999,
+        "y": 1400
+      },
+      "mid": {
+        "x": 757.0710678118651,
+        "y": 1402.9289321881342
+      },
+      "end": {
+        "x": 760,
+        "y": 1410
+      }
+    },
+    {
+      "id": "52",
+      "center": {
+        "x": 750,
+        "y": 1530
+      },
+      "radius": 10,
+      "sweep": 1.5707963267949996,
+      "start": {
+        "x": 760,
+        "y": 1530
+      },
+      "mid": {
+        "x": 757.0710678118651,
+        "y": 1537.0710678118658
+      },
+      "end": {
+        "x": 749.999999999999,
+        "y": 1540
+      }
+    }
+  ],
+  "implementationSha256": {
+    "tools/oracles/freecad-f024-headless.py": "906a1c5e3311e5fb46d6e5b1e0e20ded5b91cda02e1cda71525d7e81929234a2",
+    "tools/oracles/network-isolation.mjs": "3fb18e9ad145b76e53ed241a0a529bb2ccd4eabe784b04e915d77cdd9203d415",
+    "tools/oracles/probe-tools.mjs": "86b118cdf03da095214901d4f5f3b4460d9994b1280ae991904aedb0b992883e",
+    "tools/oracles/run-fixtures.mjs": "0a97574ac92ef761f092b2c2d2990f5401a652b8f261b243c9724f49f4fa2800",
+    "tools/oracles/run-f024-oracles.mjs": "6511f1f097f19190a8629d1c146000a9188302ea39660288fc49809f4ab553e7"
+  },
+  "runnerSha256": "6511f1f097f19190a8629d1c146000a9188302ea39660288fc49809f4ab553e7",
+  "freeCadScriptSha256": "906a1c5e3311e5fb46d6e5b1e0e20ded5b91cda02e1cda71525d7e81929234a2",
+  "networkIsolation": {
+    "proven": false,
+    "reason": "A protected signed network-isolation attestation was not configured."
+  },
+  "reports": [
+    {
+      "oracle": "librecad",
+      "expected": "2.2.1.5",
+      "status": "FIXTURE_PASS_NOT_NETWORK_ISOLATED",
+      "versionMatchesPin": true,
+      "executableSha256MatchesPin": true,
+      "certificationAuthority": false,
+      "executableSha256": "9b5ec58c40c9e88b2fc110678f03c5b071191cd8dd79b3c68d6620b269c03773",
+      "expectedExecutableSha256": "9b5ec58c40c9e88b2fc110678f03c5b071191cd8dd79b3c68d6620b269c03773",
+      "versionOutput": "LibreCAD v2.2.1.5",
+      "sandbox": {
+        "disposableDirectory": true,
+        "inputPolicy": "synthetic-generated-F-024-output-only",
+        "networkIsolationProven": false,
+        "networkPolicy": "not isolated; dead-proxy variables are defense in depth only",
+        "timeoutMs": 30000,
+        "oneProcessPerFixture": true
+      },
+      "fixtureReport": {
+        "fixture": "F-024 browser FILLET DXF rendered by LibreCAD 2.2.1.5",
+        "inputSha256": "541f9ea964f2f635c60ffefa91e4f15a013033ace26d009a383961b646e57b21",
+        "output": {
+          "bytes": 1855,
+          "sha256": "5ed37d18decf2d4bb17a7e4f6232ca8c2e0884bc59089d8ee3e0a90dc018f148",
+          "hasPdfHeader": true,
+          "hasEof": true,
+          "pages": 1,
+          "imageXObjects": 0,
+          "mediaBox": [
+            0,
+            0,
+            595,
+            842
+          ],
+          "vectorOperators": {
+            "decodedStreams": 1,
+            "moveToOperators": 10,
+            "lineToOperators": 12,
+            "cubicCurveOperators": 31,
+            "paintedPathOperators": 9,
+            "geometry": null
+          }
+        },
+        "checks": {
+          "exitCodeZero": true,
+          "exactBrowserDxfInput": true,
+          "validSinglePageVectorPdf": true,
+          "vectorPolylineAndArcsPresent": true
+        }
+      }
+    },
+    {
+      "oracle": "freecad",
+      "expected": "1.1.3",
+      "status": "FIXTURE_PASS_NOT_NETWORK_ISOLATED",
+      "versionMatchesPin": true,
+      "executableSha256MatchesPin": true,
+      "certificationAuthority": false,
+      "executableSha256": "b5551d26050ed64981c5767729bb35900fd4975fa7fd31714c17dd714b6fd44c",
+      "expectedExecutableSha256": "b5551d26050ed64981c5767729bb35900fd4975fa7fd31714c17dd714b6fd44c",
+      "versionOutput": "FreeCAD 1.1.3 Revision: 20260725 (Git shallow)",
+      "sandbox": {
+        "disposableDirectory": true,
+        "inputPolicy": "synthetic-generated-F-024-output-only",
+        "networkIsolationProven": false,
+        "networkPolicy": "not isolated; dead-proxy variables are defense in depth only",
+        "timeoutMs": 30000,
+        "oneProcessPerFixture": true
+      },
+      "fixtureReport": {
+        "fixture": "F-024 bulge and standalone fillet arcs independently rebuilt by FreeCAD/OCCT",
+        "inputSha256": "dd77902576d0a9f6cd532dfb09916aa044b4e647a959cd8f48f15dfb5e4a07f3",
+        "output": {
+          "certificationAuthority": false,
+          "freecadVersion": [
+            "1",
+            "1",
+            "3",
+            "20260725 (Git shallow)",
+            "Unknown",
+            "2026/07/25 04:52:02",
+            "grafted,grafted",
+            "145529fe741292ff0b3977a01195bf0247425794"
+          ],
+          "result": [
+            {
+              "center": {
+                "x": 89.9999999999984,
+                "y": 10.000000000001613
+              },
+              "end": {
+                "x": 100,
+                "y": 10
+              },
+              "endTangent": {
+                "x": 1.61221206594571e-13,
+                "y": 1
+              },
+              "id": "10#1",
+              "length": 15.707963267948276,
+              "radius": 10.00000000000161,
+              "start": {
+                "x": 90,
+                "y": 3.552713678800501e-15
+              },
+              "startTangent": {
+                "x": 1,
+                "y": 1.6058265828175675e-13
+              }
+            },
+            {
+              "center": {
+                "x": 699.9999999999998,
+                "y": 1460.0000000000002
+              },
+              "end": {
+                "x": 760,
+                "y": 1460
+              },
+              "endTangent": {
+                "x": 3.821187650021246e-15,
+                "y": 1
+              },
+              "id": "50#1",
+              "length": 94.2477796076937,
+              "radius": 60.00000000000023,
+              "start": {
+                "x": 700,
+                "y": 1400
+              },
+              "startTangent": {
+                "x": 1,
+                "y": 3.789561257387187e-15
+              }
+            },
+            {
+              "center": {
+                "x": 749.9999999999998,
+                "y": 1410.0000000000002
+              },
+              "end": {
+                "x": 760,
+                "y": 1410
+              },
+              "endTangent": {
+                "x": 2.2798599884278764e-14,
+                "y": 1
+              },
+              "id": "51",
+              "length": 15.7079632679499,
+              "radius": 10.000000000000233,
+              "start": {
+                "x": 749.999999999999,
+                "y": 1400
+              },
+              "startTangent": {
+                "x": 1,
+                "y": -7.958078640512941e-14
+              }
+            },
+            {
+              "center": {
+                "x": 749.9999999999998,
+                "y": 1529.9999999999998
+              },
+              "end": {
+                "x": 749.999999999999,
+                "y": 1540
+              },
+              "endTangent": {
+                "x": -1,
+                "y": -7.951955406517334e-14
+              },
+              "id": "52",
+              "length": 15.7079632679499,
+              "radius": 10.000000000000233,
+              "start": {
+                "x": 760,
+                "y": 1530
+              },
+              "startTangent": {
+                "x": -2.2737367544322693e-14,
+                "y": 1
+              }
+            }
+          ],
+          "status": "PASS"
+        },
+        "checks": {
+          "exitCodeZero": true,
+          "statusPass": true,
+          "notCertificationAuthority": true,
+          "exactPinnedVersion": true,
+          "exactPinnedCommit": true,
+          "everyArcReconstructed": true
+        }
+      }
+    }
+  ],
+  "status": "SECONDARY_ORACLE_REPORT_COMPLETE"
+}

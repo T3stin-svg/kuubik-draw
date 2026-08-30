@@ -1,0 +1,794 @@
+{
+  "rowId": "F-024",
+  "source": {
+    "schemaVersion": 1,
+    "documentId": "local",
+    "revision": 0,
+    "units": {
+      "linear": "mm",
+      "displayPrecision": 4,
+      "angularPrecision": 6
+    },
+    "currentLayerId": "0",
+    "entities": [
+      {
+        "kind": "ray",
+        "handle": "10",
+        "layerId": "0",
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "aci",
+          "aciIndex": 1,
+          "lineweightMm": 0.5
+        },
+        "basePoint": {
+          "x": 0,
+          "y": 4600
+        },
+        "direction": {
+          "x": 4,
+          "y": 0
+        }
+      },
+      {
+        "kind": "line",
+        "handle": "11",
+        "layerId": "0",
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "aci",
+          "aciIndex": 1,
+          "lineweightMm": 0.5
+        },
+        "start": {
+          "x": 100,
+          "y": 4600
+        },
+        "end": {
+          "x": 100,
+          "y": 4700
+        }
+      },
+      {
+        "kind": "xline",
+        "handle": "20",
+        "layerId": "0",
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "aci",
+          "aciIndex": 1,
+          "lineweightMm": 0.5
+        },
+        "basePoint": {
+          "x": 0,
+          "y": 4800
+        },
+        "direction": {
+          "x": 4,
+          "y": 0
+        }
+      },
+      {
+        "kind": "line",
+        "handle": "21",
+        "layerId": "0",
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "aci",
+          "aciIndex": 1,
+          "lineweightMm": 0.5
+        },
+        "start": {
+          "x": 100,
+          "y": 4800
+        },
+        "end": {
+          "x": 100,
+          "y": 4900
+        }
+      },
+      {
+        "kind": "ray",
+        "handle": "30",
+        "layerId": "0",
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "aci",
+          "aciIndex": 1,
+          "lineweightMm": 0.5
+        },
+        "basePoint": {
+          "x": 0,
+          "y": 5000
+        },
+        "direction": {
+          "x": 4,
+          "y": 0
+        }
+      },
+      {
+        "kind": "line",
+        "handle": "31",
+        "layerId": "0",
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "aci",
+          "aciIndex": 1,
+          "lineweightMm": 0.5
+        },
+        "start": {
+          "x": 100,
+          "y": 5000
+        },
+        "end": {
+          "x": 100,
+          "y": 5100
+        }
+      },
+      {
+        "kind": "xline",
+        "handle": "40",
+        "layerId": "0",
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "aci",
+          "aciIndex": 1,
+          "lineweightMm": 0.5
+        },
+        "basePoint": {
+          "x": 0,
+          "y": 5200
+        },
+        "direction": {
+          "x": 4,
+          "y": 0
+        }
+      },
+      {
+        "kind": "line",
+        "handle": "41",
+        "layerId": "0",
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "aci",
+          "aciIndex": 1,
+          "lineweightMm": 0.5
+        },
+        "start": {
+          "x": 100,
+          "y": 5200
+        },
+        "end": {
+          "x": 100,
+          "y": 5300
+        }
+      },
+      {
+        "kind": "ray",
+        "handle": "50",
+        "layerId": "0",
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "aci",
+          "aciIndex": 1,
+          "lineweightMm": 0.5
+        },
+        "basePoint": {
+          "x": 0,
+          "y": 5400
+        },
+        "direction": {
+          "x": 4,
+          "y": 0
+        }
+      },
+      {
+        "kind": "xline",
+        "handle": "51",
+        "layerId": "0",
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "aci",
+          "aciIndex": 1,
+          "lineweightMm": 0.5
+        },
+        "basePoint": {
+          "x": 100,
+          "y": 5400
+        },
+        "direction": {
+          "x": 0,
+          "y": 3
+        }
+      }
+    ],
+    "layers": [
+      {
+        "id": "0",
+        "name": "0",
+        "visible": true,
+        "frozen": false,
+        "locked": false,
+        "plottable": true
+      }
+    ],
+    "linetypes": [],
+    "textStyles": [],
+    "dimensionStyles": [],
+    "blocks": [],
+    "layouts": [
+      {
+        "id": "model",
+        "name": "Model",
+        "kind": "model",
+        "viewports": [],
+        "entities": []
+      }
+    ],
+    "attachments": [],
+    "metadata": {
+      "createdAt": "2026-08-29T22:00:00.000Z",
+      "updatedAt": "2026-08-29T22:00:00.000Z"
+    }
+  },
+  "committed": {
+    "schemaVersion": 1,
+    "documentId": "local",
+    "revision": 2,
+    "units": {
+      "linear": "mm",
+      "displayPrecision": 4,
+      "angularPrecision": 6
+    },
+    "currentLayerId": "0",
+    "entities": [
+      {
+        "handle": "10",
+        "layerId": "0",
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "aci",
+          "aciIndex": 1,
+          "lineweightMm": 0.5
+        },
+        "kind": "line",
+        "start": {
+          "x": 0,
+          "y": 4600
+        },
+        "end": {
+          "x": 90,
+          "y": 4600
+        }
+      },
+      {
+        "kind": "line",
+        "handle": "11",
+        "layerId": "0",
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "aci",
+          "aciIndex": 1,
+          "lineweightMm": 0.5
+        },
+        "start": {
+          "x": 100,
+          "y": 4610
+        },
+        "end": {
+          "x": 100,
+          "y": 4700
+        }
+      },
+      {
+        "handle": "20",
+        "layerId": "0",
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "aci",
+          "aciIndex": 1,
+          "lineweightMm": 0.5
+        },
+        "kind": "ray",
+        "basePoint": {
+          "x": 90,
+          "y": 4800
+        },
+        "direction": {
+          "x": -1,
+          "y": 0
+        }
+      },
+      {
+        "kind": "line",
+        "handle": "21",
+        "layerId": "0",
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "aci",
+          "aciIndex": 1,
+          "lineweightMm": 0.5
+        },
+        "start": {
+          "x": 100,
+          "y": 4810
+        },
+        "end": {
+          "x": 100,
+          "y": 4900
+        }
+      },
+      {
+        "kind": "ray",
+        "handle": "30",
+        "layerId": "0",
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "aci",
+          "aciIndex": 1,
+          "lineweightMm": 0.5
+        },
+        "basePoint": {
+          "x": 0,
+          "y": 5000
+        },
+        "direction": {
+          "x": 4,
+          "y": 0
+        }
+      },
+      {
+        "kind": "line",
+        "handle": "31",
+        "layerId": "0",
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "aci",
+          "aciIndex": 1,
+          "lineweightMm": 0.5
+        },
+        "start": {
+          "x": 100,
+          "y": 5000
+        },
+        "end": {
+          "x": 100,
+          "y": 5100
+        }
+      },
+      {
+        "kind": "xline",
+        "handle": "40",
+        "layerId": "0",
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "aci",
+          "aciIndex": 1,
+          "lineweightMm": 0.5
+        },
+        "basePoint": {
+          "x": 0,
+          "y": 5200
+        },
+        "direction": {
+          "x": 4,
+          "y": 0
+        }
+      },
+      {
+        "kind": "line",
+        "handle": "41",
+        "layerId": "0",
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "aci",
+          "aciIndex": 1,
+          "lineweightMm": 0.5
+        },
+        "start": {
+          "x": 100,
+          "y": 5200
+        },
+        "end": {
+          "x": 100,
+          "y": 5300
+        }
+      },
+      {
+        "handle": "50",
+        "layerId": "0",
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "aci",
+          "aciIndex": 1,
+          "lineweightMm": 0.5
+        },
+        "kind": "line",
+        "start": {
+          "x": 0,
+          "y": 5400
+        },
+        "end": {
+          "x": 90,
+          "y": 5400
+        }
+      },
+      {
+        "handle": "51",
+        "layerId": "0",
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "aci",
+          "aciIndex": 1,
+          "lineweightMm": 0.5
+        },
+        "kind": "ray",
+        "basePoint": {
+          "x": 100,
+          "y": 5410
+        },
+        "direction": {
+          "x": 0,
+          "y": 1
+        }
+      },
+      {
+        "kind": "arc",
+        "center": {
+          "x": 90,
+          "y": 4610
+        },
+        "radius": 10,
+        "startAngleRad": -1.570796326795,
+        "endAngleRad": 0,
+        "counterClockwise": true,
+        "handle": "52",
+        "layerId": "0",
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "aci",
+          "aciIndex": 1
+        }
+      },
+      {
+        "kind": "arc",
+        "center": {
+          "x": 90,
+          "y": 4810
+        },
+        "radius": 10,
+        "startAngleRad": -1.570796326795,
+        "endAngleRad": 0,
+        "counterClockwise": true,
+        "handle": "53",
+        "layerId": "0",
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "aci",
+          "aciIndex": 1
+        }
+      },
+      {
+        "kind": "arc",
+        "center": {
+          "x": 90,
+          "y": 5410
+        },
+        "radius": 10,
+        "startAngleRad": -1.570796326795,
+        "endAngleRad": 0,
+        "counterClockwise": true,
+        "handle": "54",
+        "layerId": "0",
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "aci",
+          "aciIndex": 1
+        }
+      },
+      {
+        "kind": "arc",
+        "center": {
+          "x": 90,
+          "y": 5010
+        },
+        "radius": 10,
+        "startAngleRad": -1.570796326795,
+        "endAngleRad": 0,
+        "counterClockwise": true,
+        "handle": "55",
+        "layerId": "0",
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "aci",
+          "aciIndex": 1
+        }
+      },
+      {
+        "kind": "arc",
+        "center": {
+          "x": 90,
+          "y": 5210
+        },
+        "radius": 10,
+        "startAngleRad": -1.570796326795,
+        "endAngleRad": 0,
+        "counterClockwise": true,
+        "handle": "56",
+        "layerId": "0",
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "aci",
+          "aciIndex": 1
+        }
+      }
+    ],
+    "layers": [
+      {
+        "id": "0",
+        "name": "0",
+        "visible": true,
+        "frozen": false,
+        "locked": false,
+        "plottable": true
+      }
+    ],
+    "linetypes": [],
+    "textStyles": [],
+    "dimensionStyles": [],
+    "blocks": [],
+    "layouts": [
+      {
+        "id": "model",
+        "name": "Model",
+        "kind": "model",
+        "viewports": [],
+        "entities": []
+      }
+    ],
+    "attachments": [],
+    "metadata": {
+      "createdAt": "2026-08-29T22:00:00.000Z",
+      "updatedAt": "2026-08-29T21:59:48.304Z"
+    }
+  },
+  "operations": [
+    {
+      "opId": "f4636dad-3bac-48a1-83d3-45b7c2500ea0",
+      "baseRevision": 0,
+      "commandId": "FILLET",
+      "args": {
+        "mode": "pairs",
+        "radius": 10,
+        "trimMode": "trim",
+        "pairs": [
+          {
+            "firstHandle": "10",
+            "firstPickPoint": {
+              "x": 80,
+              "y": 4600
+            },
+            "secondHandle": "11",
+            "secondPickPoint": {
+              "x": 100,
+              "y": 4650
+            }
+          },
+          {
+            "firstHandle": "20",
+            "firstPickPoint": {
+              "x": 80,
+              "y": 4800
+            },
+            "secondHandle": "21",
+            "secondPickPoint": {
+              "x": 100,
+              "y": 4850
+            }
+          },
+          {
+            "firstHandle": "50",
+            "firstPickPoint": {
+              "x": 80,
+              "y": 5400
+            },
+            "secondHandle": "51",
+            "secondPickPoint": {
+              "x": 100,
+              "y": 5450
+            }
+          }
+        ],
+        "steps": [
+          {
+            "mode": "pair",
+            "sourceHandles": [
+              "10",
+              "11"
+            ],
+            "resultHandles": [
+              "10",
+              "11",
+              "52"
+            ],
+            "effectiveRadius": 10,
+            "tangentPoints": [
+              {
+                "x": 90,
+                "y": 4600
+              },
+              {
+                "x": 100,
+                "y": 4610
+              }
+            ],
+            "skippedVertices": []
+          },
+          {
+            "mode": "pair",
+            "sourceHandles": [
+              "20",
+              "21"
+            ],
+            "resultHandles": [
+              "20",
+              "21",
+              "53"
+            ],
+            "effectiveRadius": 10,
+            "tangentPoints": [
+              {
+                "x": 90,
+                "y": 4800
+              },
+              {
+                "x": 100,
+                "y": 4810
+              }
+            ],
+            "skippedVertices": []
+          },
+          {
+            "mode": "pair",
+            "sourceHandles": [
+              "50",
+              "51"
+            ],
+            "resultHandles": [
+              "50",
+              "51",
+              "54"
+            ],
+            "effectiveRadius": 10,
+            "tangentPoints": [
+              {
+                "x": 90,
+                "y": 5400
+              },
+              {
+                "x": 100,
+                "y": 5410
+              }
+            ],
+            "skippedVertices": []
+          }
+        ],
+        "multiple": true
+      },
+      "targetHandles": [
+        "10",
+        "11",
+        "20",
+        "21",
+        "50",
+        "51"
+      ],
+      "resultHandles": [
+        "10",
+        "11",
+        "52",
+        "20",
+        "21",
+        "53",
+        "50",
+        "51",
+        "54"
+      ]
+    },
+    {
+      "opId": "9245e73f-eac4-4833-8d67-fa42941694e5",
+      "baseRevision": 1,
+      "commandId": "FILLET",
+      "args": {
+        "mode": "pairs",
+        "radius": 10,
+        "trimMode": "no-trim",
+        "pairs": [
+          {
+            "firstHandle": "30",
+            "firstPickPoint": {
+              "x": 80,
+              "y": 5000
+            },
+            "secondHandle": "31",
+            "secondPickPoint": {
+              "x": 100,
+              "y": 5050
+            }
+          },
+          {
+            "firstHandle": "40",
+            "firstPickPoint": {
+              "x": 80,
+              "y": 5200
+            },
+            "secondHandle": "41",
+            "secondPickPoint": {
+              "x": 100,
+              "y": 5250
+            }
+          }
+        ],
+        "steps": [
+          {
+            "mode": "pair",
+            "sourceHandles": [
+              "30",
+              "31"
+            ],
+            "resultHandles": [
+              "55"
+            ],
+            "effectiveRadius": 10,
+            "tangentPoints": [
+              {
+                "x": 90,
+                "y": 5000
+              },
+              {
+                "x": 100,
+                "y": 5010
+              }
+            ],
+            "skippedVertices": []
+          },
+          {
+            "mode": "pair",
+            "sourceHandles": [
+              "40",
+              "41"
+            ],
+            "resultHandles": [
+              "56"
+            ],
+            "effectiveRadius": 10,
+            "tangentPoints": [
+              {
+                "x": 90,
+                "y": 5200
+              },
+              {
+                "x": 100,
+                "y": 5210
+              }
+            ],
+            "skippedVertices": []
+          }
+        ],
+        "multiple": true
+      },
+      "targetHandles": [
+        "30",
+        "31",
+        "40",
+        "41"
+      ],
+      "resultHandles": [
+        "55",
+        "56"
+      ]
+    }
+  ],
+  "consoleErrors": [],
+  "status": "PASS"
+}

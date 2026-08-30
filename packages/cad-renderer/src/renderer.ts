@@ -1,7 +1,7 @@
 import type { CadBlockDefinition, CadEntity, CadLayer, CadPoint2, CadSpline } from "@kuubik/cad-schema";
 import type { CadPlotStyle } from "@kuubik/cad-schema";
 import { resolveCadAppearance, resolveEntityPlotAppearance } from "@kuubik/cad-core";
-import { entityBounds, type Bounds2 } from "./bounds.js";
+import { entityBounds, entityHasUnboundedGeometry, type Bounds2 } from "./bounds.js";
 import { RTreeIndex } from "./rtree.js";
 
 export interface Canvas2DContext {
@@ -229,10 +229,58 @@ function drawSpline(context: Canvas2DContext, entity: CadSpline): boolean {
   return true;
 }
 
+function drawConstructionLine(
+  context: Canvas2DContext,
+  entity: Extract<CadEntity, { kind: "ray" | "xline" }>,
+  clipBounds: Bounds2,
+): boolean {
+  const magnitude = Math.hypot(entity.direction.x, entity.direction.y);
+  if (!(magnitude > 1e-12)) return false;
+  const direction = { x: entity.direction.x / magnitude, y: entity.direction.y / magnitude };
+  const clipCenter = { x: (clipBounds.minX + clipBounds.maxX) / 2, y: (clipBounds.minY + clipBounds.maxY) / 2 };
+  const clipDiagonal = Math.hypot(clipBounds.maxX - clipBounds.minX, clipBounds.maxY - clipBounds.minY);
+  const reach = Math.hypot(entity.basePoint.x - clipCenter.x, entity.basePoint.y - clipCenter.y) + clipDiagonal * 2 + 1;
+  const start = entity.kind === "ray"
+    ? entity.basePoint
+    : { x: entity.basePoint.x - direction.x * reach, y: entity.basePoint.y - direction.y * reach };
+  const end = { x: entity.basePoint.x + direction.x * reach, y: entity.basePoint.y + direction.y * reach };
+  context.moveTo(start.x, start.y);
+  context.lineTo(end.x, end.y);
+  return true;
+}
+
+function blockLocalClipBounds(
+  clipBounds: Bounds2,
+  block: CadBlockDefinition,
+  reference: Extract<CadEntity, { kind: "blockRef" }>,
+): Bounds2 {
+  if (Math.abs(reference.scale.x) <= 1e-12 || Math.abs(reference.scale.y) <= 1e-12) return clipBounds;
+  const cosine = Math.cos(-reference.rotationRad);
+  const sine = Math.sin(-reference.rotationRad);
+  const points = [
+    { x: clipBounds.minX, y: clipBounds.minY }, { x: clipBounds.maxX, y: clipBounds.minY },
+    { x: clipBounds.maxX, y: clipBounds.maxY }, { x: clipBounds.minX, y: clipBounds.maxY },
+  ].map((point) => {
+    const x = point.x - reference.insertion.x;
+    const y = point.y - reference.insertion.y;
+    return {
+      x: block.basePoint.x + (x * cosine - y * sine) / reference.scale.x,
+      y: block.basePoint.y + (x * sine + y * cosine) / reference.scale.y,
+    };
+  });
+  return {
+    minX: Math.min(...points.map((point) => point.x)),
+    minY: Math.min(...points.map((point) => point.y)),
+    maxX: Math.max(...points.map((point) => point.x)),
+    maxY: Math.max(...points.map((point) => point.y)),
+  };
+}
+
 function drawEntity(
   context: Canvas2DContext,
   entity: CadEntity,
   blocks: ReadonlyMap<string, CadBlockDefinition>,
+  clipBounds: Bounds2,
   blockTrail: ReadonlySet<string> = new Set(),
 ): boolean {
   context.beginPath();
@@ -240,6 +288,10 @@ function drawEntity(
     case "line":
       context.moveTo(entity.start.x, entity.start.y);
       context.lineTo(entity.end.x, entity.end.y);
+      break;
+    case "ray":
+    case "xline":
+      if (!drawConstructionLine(context, entity, clipBounds)) return false;
       break;
     case "polyline": drawCadPolyline(context, entity.vertices, entity.closed); break;
     case "circle": context.arc(entity.center.x, entity.center.y, entity.radius, 0, Math.PI * 2); break;
@@ -280,7 +332,8 @@ function drawEntity(
       context.rotate(entity.rotationRad);
       context.scale(entity.scale.x, entity.scale.y);
       context.translate(-block.basePoint.x, -block.basePoint.y);
-      const drawn = block.entities.reduce((count, child) => count + (drawEntity(context, child, blocks, nextTrail) ? 1 : 0), 0);
+      const localClipBounds = blockLocalClipBounds(clipBounds, block, entity);
+      const drawn = block.entities.reduce((count, child) => count + (drawEntity(context, child, blocks, localClipBounds, nextTrail) ? 1 : 0), 0);
       context.restore();
       return drawn > 0;
     }
@@ -294,6 +347,7 @@ export class CadCanvasRenderer {
   readonly #index = new RTreeIndex();
   #entities = new Map<string, CadEntity>();
   #blocks = new Map<string, CadBlockDefinition>();
+  #unboundedHandles = new Set<string>();
 
   setEntities(entities: readonly CadEntity[]): void {
     this.#entities = new Map(entities.map((entity) => [entity.handle, entity]));
@@ -301,8 +355,14 @@ export class CadCanvasRenderer {
   }
 
   #rebuildIndex(): void {
+    this.#unboundedHandles = new Set(
+      [...this.#entities.values()]
+        .filter((entity) => entityHasUnboundedGeometry(entity, this.#blocks))
+        .map((entity) => entity.handle),
+    );
     this.#index.load(
       [...this.#entities.values()].flatMap((entity) => {
+        if (this.#unboundedHandles.has(entity.handle)) return [];
         const bounds = entityBounds(entity, this.#blocks);
         return bounds ? [{ ...bounds, handle: entity.handle }] : [];
       }),
@@ -315,7 +375,10 @@ export class CadCanvasRenderer {
   }
 
   visibleHandles(world: Bounds2): string[] {
-    return this.#index.search(world).map((item) => item.handle);
+    return [...new Set([
+      ...this.#index.search(world).map((item) => item.handle),
+      ...this.#unboundedHandles,
+    ])];
   }
 
   render(
@@ -330,7 +393,11 @@ export class CadCanvasRenderer {
     const rotationRad = transform.rotationRad;
     const hidden = new Set(layers.filter((layer) => !layer.visible || layer.frozen).map((layer) => layer.id));
     const hiddenSources = new Set(hiddenSourceHandles);
-    const candidates = this.#index.search(rotatedWorldBounds(viewport.world, -rotationRad));
+    const clipBounds = rotatedWorldBounds(viewport.world, -rotationRad);
+    const candidateHandles = [...new Set([
+      ...this.#index.search(clipBounds).map((candidate) => candidate.handle),
+      ...this.#unboundedHandles,
+    ])];
     context.clearRect(0, 0, viewport.widthPx * viewport.devicePixelRatio, viewport.heightPx * viewport.devicePixelRatio);
     context.save();
     const scale = 1 / transform.worldUnitsPerPixel;
@@ -339,8 +406,8 @@ export class CadCanvasRenderer {
     context.rotate(rotationRad);
     context.translate(-transform.worldCenter.x, -transform.worldCenter.y);
     let drawnEntities = 0;
-    for (const candidate of candidates) {
-      const entity = this.#entities.get(candidate.handle);
+    for (const handle of candidateHandles) {
+      const entity = this.#entities.get(handle);
       if (!entity || hidden.has(entity.layerId) || hiddenSources.has(entity.handle)) continue;
       const sourceAppearance = resolveCadAppearance(entity, layers);
       const appearance = options.plotStyle
@@ -363,7 +430,7 @@ export class CadCanvasRenderer {
         ? 1 / viewport.devicePixelRatio
         : appearance.lineweightMm * previewScale;
       context.lineWidth = previewWidthPx / scale;
-      if (drawEntity(context, entity, this.#blocks)) drawnEntities += 1;
+      if (drawEntity(context, entity, this.#blocks, clipBounds)) drawnEntities += 1;
     }
     const previews = preview ? (Array.isArray(preview) ? preview : [preview]) : [];
     for (const previewEntity of previews) {
@@ -372,9 +439,9 @@ export class CadCanvasRenderer {
       context.strokeStyle = "#56a8ff";
       context.fillStyle = "#56a8ff";
       context.lineWidth = (previewEntity.appearance?.lineweightMm ?? 0.25) / scale;
-      if (drawEntity(context, previewEntity, this.#blocks)) drawnEntities += 1;
+      if (drawEntity(context, previewEntity, this.#blocks, clipBounds)) drawnEntities += 1;
     }
     context.restore();
-    return { totalEntities: this.#entities.size, visibleCandidates: candidates.length, drawnEntities };
+    return { totalEntities: this.#entities.size, visibleCandidates: candidateHandles.length, drawnEntities };
   }
 }

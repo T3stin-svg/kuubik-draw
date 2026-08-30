@@ -1,34 +1,34 @@
 {
   "schemaVersion": 1,
   "kind": "content-address-v3-to-v4-package-semantics",
-  "observedAt": "2026-08-29T15:07:01.590Z",
+  "observedAt": "2026-08-30T00:31:23.996Z",
   "baseCommit": "46d827801a7aebc7070143ff36435f355df6252b",
   "sourceSha256": {
     "previousPackage": "31bd8d42fc6173361cab146eb19e96fe8e8623d3309d44ee401792a2ad10d97b",
-    "currentPackage": "85af1f998befcfaabb71f2a1c902882982508d21675b20f3aa774ae9d07568e2",
+    "currentPackage": "b061334a11ec8748d1c65e0b7520df01d38ed42325a31d49a01f373778436edd",
     "previousPackageLock": "9756bf28708c3933c83c0ace8e9dbd9fe4cad9b9d6cec58670758c545f02e584",
-    "currentPackageLock": "9756bf28708c3933c83c0ace8e9dbd9fe4cad9b9d6cec58670758c545f02e584",
+    "currentPackageLock": "c47743da8743230f2212f3c3ed34153295ef1bcd3865a07b4d743fd1ec544a7a",
     "baseContentAddressManifest": "7f69dcae5325e072849411c5aed4034bb18d4ce0525dd3c4e3d8bc9fe3f185ef",
     "workspacePackages": {
       "apps/web/package.json": {
         "previous": "e164660645a33349e303ac371042bcc3dc51525037060f203940f29f24d4b748",
-        "current": "e164660645a33349e303ac371042bcc3dc51525037060f203940f29f24d4b748"
+        "current": "909bc418bb8fdc0a541cda6a96fd40ee3089c90b866d073dff2229edfb8ed79e"
       },
       "packages/cad-core/package.json": {
         "previous": "76ce465c3726d5996b6ab5fe6130c795591ae6817cb31ac8f39809b9a247398e",
-        "current": "76ce465c3726d5996b6ab5fe6130c795591ae6817cb31ac8f39809b9a247398e"
+        "current": "de01a0868ec22e30b2ff38fceec29695883ef940639edfcac8dabe2ab4cf29d7"
       },
       "packages/cad-renderer/package.json": {
         "previous": "a07eeadcd06985a2701c0282f09a00e15f4aacdf0c33189d7fef8733db429960",
-        "current": "a07eeadcd06985a2701c0282f09a00e15f4aacdf0c33189d7fef8733db429960"
+        "current": "ab72f3b9295c3377c4349c55c6353481f403cddd06b9a54e07d8bbc99b2409d9"
       },
       "packages/cad-dxf/package.json": {
         "previous": "3f6f1422f036e26b7b35a2f902308be9c84f051326348fa4dd3d32eaf109406a",
-        "current": "3f6f1422f036e26b7b35a2f902308be9c84f051326348fa4dd3d32eaf109406a"
+        "current": "d4fb40b250d1146e0134ac586e3a8a136a3a0acda25360a175db62773f7545e0"
       },
       "packages/cad-print/package.json": {
         "previous": "f38343f8e48712a39ac30b46141d50b071b327b679769bb0d0b45b256a84ee57",
-        "current": "f38343f8e48712a39ac30b46141d50b071b327b679769bb0d0b45b256a84ee57"
+        "current": "889433647fa396e8255f3d999838fec2b2a427d26e553c30d21dfc054a599f73"
       }
     }
   },
@@ -40,6 +40,11 @@
     "parity:f023:cross-evidence",
     "parity:f023:oracles",
     "parity:f023:readback",
+    "parity:f024:autocad",
+    "parity:f024:browser-artifact",
+    "parity:f024:cross-evidence",
+    "parity:f024:oracles",
+    "parity:f024:readback",
     "test:mutation"
   ],
   "stageChanges": [
@@ -68,17 +73,6 @@
     },
     {
       "rowId": "F-023",
-      "stage": "autocad",
-      "rootScript": "parity:f023:autocad",
-      "before": {
-        "parity:f023:autocad": null
-      },
-      "after": {
-        "parity:f023:autocad": "node tools/autocad/run-f023.mjs"
-      }
-    },
-    {
-      "rowId": "F-023",
       "stage": "oracle",
       "rootScript": "parity:f023:oracles",
       "before": {
@@ -92,6 +86,17 @@
     },
     {
       "rowId": "F-023",
+      "stage": "autocad",
+      "rootScript": "parity:f023:autocad",
+      "before": {
+        "parity:f023:autocad": null
+      },
+      "after": {
+        "parity:f023:autocad": "node tools/autocad/run-f023.mjs"
+      }
+    },
+    {
+      "rowId": "F-023",
       "stage": "cross",
       "rootScript": "parity:f023:cross-evidence",
       "before": {
@@ -99,6 +104,64 @@
       },
       "after": {
         "parity:f023:cross-evidence": "node tools/parity/check-f023-cross-evidence.mjs"
+      }
+    },
+    {
+      "rowId": "F-024",
+      "stage": "browser",
+      "rootScript": "parity:f024:browser-artifact",
+      "before": {
+        "parity:f024:browser-artifact": null
+      },
+      "after": {
+        "parity:f024:browser-artifact": "node tools/parity/capture-f024-browser.mjs"
+      }
+    },
+    {
+      "rowId": "F-024",
+      "stage": "readback",
+      "rootScript": "parity:f024:readback",
+      "before": {
+        "parity:f024:readback": null
+      },
+      "after": {
+        "build": "npm run build -w @kuubik/cad-core && npm run build -w @kuubik/cad-renderer && npm run build -w @kuubik/cad-dxf && npm run build -w @kuubik/cad-print && npm run build -w @kuubik/draw-web",
+        "parity:f024:readback": "npm run build -w @kuubik/cad-core && npm run build -w @kuubik/cad-dxf && npx vite-node tools/parity/run-f024-readback.mjs"
+      }
+    },
+    {
+      "rowId": "F-024",
+      "stage": "oracle",
+      "rootScript": "parity:f024:oracles",
+      "before": {
+        "parity:f024:oracles": null
+      },
+      "after": {
+        "build": "npm run build -w @kuubik/cad-core && npm run build -w @kuubik/cad-renderer && npm run build -w @kuubik/cad-dxf && npm run build -w @kuubik/cad-print && npm run build -w @kuubik/draw-web",
+        "parity:f024:oracles": "npm run parity:f024:readback && node tools/oracles/run-f024-oracles.mjs",
+        "parity:f024:readback": "npm run build -w @kuubik/cad-core && npm run build -w @kuubik/cad-dxf && npx vite-node tools/parity/run-f024-readback.mjs"
+      }
+    },
+    {
+      "rowId": "F-024",
+      "stage": "autocad",
+      "rootScript": "parity:f024:autocad",
+      "before": {
+        "parity:f024:autocad": null
+      },
+      "after": {
+        "parity:f024:autocad": "node tools/autocad/run-f024.mjs"
+      }
+    },
+    {
+      "rowId": "F-024",
+      "stage": "cross",
+      "rootScript": "parity:f024:cross-evidence",
+      "before": {
+        "parity:f024:cross-evidence": null
+      },
+      "after": {
+        "parity:f024:cross-evidence": "node tools/parity/check-f024-cross-evidence.mjs"
       }
     }
   ],
@@ -108,12 +171,12 @@
   ],
   "nonPackageCompatibilityErrors": [],
   "checks": {
-    "packageLockUnchanged": true,
-    "packageSurfaceUnchanged": true,
-    "workspacePackageManifestsUnchanged": true,
+    "packageLockOnlySchemaPinAndYamlParserMigration": true,
+    "packageSurfaceOnlyYamlParserAdded": true,
+    "workspacePackageManifestsOnlySchemaPinMigration": true,
     "baseContentAddressManifestPinned": true,
     "nonPackageEvidenceBindingsCurrent": true,
-    "onlyF023StageCommandsAdded": true,
+    "onlyF023AndF024StageCommandsAdded": true,
     "onlyKnownGlobalGateScriptsChanged": true
   },
   "status": "PASS"

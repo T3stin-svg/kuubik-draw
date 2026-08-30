@@ -261,13 +261,14 @@ export function prepareFillet(document: KDrawDocumentV1, input: {
   pairsInput: string;
   polylineHandlesInput: string;
   trimMode: FilletTrimMode;
+  filletPolylineArc?: 0 | 1;
 }): PreparedModifyCommand<FilletCommandResult> {
   const command = resolveCadCommand("FILLET");
   if (!command || command.id !== "FILLET") throw new Error("FILLET command is missing from the registry.");
   const radius = parseFilletRadius(input.radiusInput);
   const args = input.mode === "pairs"
     ? { mode: "pairs" as const, radius, trimMode: input.trimMode, pairs: parseFilletPairPicks(input.pairsInput) }
-    : { mode: "polyline" as const, radius, polylineHandles: parseCadHandleList(input.polylineHandlesInput) };
+    : { mode: "polyline" as const, radius, trimMode: input.trimMode, filletPolylineArc: input.filletPolylineArc ?? 1, polylineHandles: parseCadHandleList(input.polylineHandlesInput) };
   const result = command.execute(document, args);
   return {
     commandId: command.id,

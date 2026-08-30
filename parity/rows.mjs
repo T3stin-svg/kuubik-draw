@@ -34,6 +34,34 @@ export const SOURCE_GROUPS = Object.freeze({
     "packages/cad-core/src/trim.ts",
     "packages/cad-renderer/src/selection.ts",
   ]),
+  "cad-fillet": Object.freeze([
+    "packages/cad-core/src/fillet.ts",
+  ]),
+  "physical-shift-input": Object.freeze([
+    "tools/autocad/f022-shift-click.ps1",
+  ]),
+  "f024-shared-tests": Object.freeze([
+    "apps/web/src/workflows/modify-command.test.ts",
+    "packages/cad-renderer/test/renderer.test.ts",
+    "packages/cad-renderer/test/selection.test.ts",
+    "packages/cad-print/test/vector-output.test.ts",
+  ]),
+  "oracle-lab-f024": Object.freeze([
+    "tools/oracles/freecad-f024-headless.py",
+    "tools/oracles/network-isolation.mjs",
+    "tools/oracles/pins.json",
+    "tools/oracles/probe-tools.mjs",
+    "tools/oracles/run-fixtures.mjs",
+    "tools/oracles/run-f024-oracles.mjs",
+  ]),
+  "autocad-owned-process-failure-cleanup": Object.freeze([
+    "tools/autocad/owned-process-failure-cleanup.test.mjs",
+  ]),
+  "autocad-f109-f111-closure-readback": Object.freeze([
+    "tools/autocad/f109-desktop-readback.ps1",
+    "tools/autocad/f109-runner.test.mjs",
+    "parity/expected/F-109.json",
+  ]),
   "cad-layout": Object.freeze([
     "packages/cad-core/src/layouts.ts",
   ]),
@@ -108,12 +136,10 @@ export const SOURCE_GROUPS = Object.freeze({
  * mappings separate prevents source coverage from being confused with a 1.00
  * score in parity/local-certifications.json.
  */
-export const UNCERTIFIED_SOURCE_ROWS = Object.freeze({
-  "packages/cad-core/src/fillet.ts": Object.freeze(["F-024"]),
-});
+export const UNCERTIFIED_SOURCE_ROWS = Object.freeze({});
 
 const certifiedIds = Object.freeze([
-  "F-003", "F-015", "F-016", "F-017", "F-018", "F-019", "F-020", "F-021", "F-022", "F-023",
+  "F-003", "F-015", "F-016", "F-017", "F-018", "F-019", "F-020", "F-021", "F-022", "F-023", "F-024",
   "F-097", "F-098", "F-099", "F-100", "F-101", "F-102", "F-103", "F-104", "F-105",
   "F-106", "F-107", "F-109", "F-111", "F-114",
 ]);
@@ -127,8 +153,9 @@ const groupsByRow = Object.freeze({
   "F-019": ["web-modify-workflow", "cad-modify", "dxf"],
   "F-020": ["web-modify-workflow", "cad-modify", "dxf"],
   "F-021": ["web-modify-workflow", "cad-modify", "cad-offset", "dxf"],
-  "F-022": ["web-modify-workflow", "cad-modify", "cad-trim", "dxf"],
-  "F-023": ["web-modify-workflow", "cad-modify", "cad-trim", "dxf"],
+  "F-022": ["web-modify-workflow", "cad-modify", "cad-trim", "physical-shift-input", "dxf"],
+  "F-023": ["web-modify-workflow", "cad-modify", "cad-trim", "physical-shift-input", "dxf"],
+  "F-024": ["web-modify-workflow", "cad-container", "cad-modify", "cad-trim", "cad-fillet", "physical-shift-input", "dxf", "dxf-import", "print", "f024-shared-tests", "oracle-lab-f024"],
   "F-097": ["cad-layout", "cad-container"],
   "F-098": ["cad-layout", "cad-container", "renderer"],
   "F-099": ["cad-layout", "cad-container", "renderer"],
@@ -136,12 +163,12 @@ const groupsByRow = Object.freeze({
   "F-101": ["cad-layout", "renderer"],
   "F-102": ["cad-layout", "cad-page-setup", "print"],
   "F-103": ["cad-layout", "cad-page-setup", "cad-plot-style", "renderer", "print"],
-  "F-104": ["cad-layout", "renderer", "print"],
+  "F-104": ["cad-layout", "renderer", "print", "autocad-owned-process-failure-cleanup"],
   "F-105": ["cad-layout", "cad-publish", "print"],
   "F-106": ["cad-layout", "cad-page-setup", "print"],
   "F-107": ["cad-layout", "cad-page-setup", "cad-container"],
-  "F-109": ["cad-plot-style", "dxf"],
-  "F-111": ["cad-container", "cad-legacy-import", "dxf", "dxf-import"],
+  "F-109": ["cad-plot-style", "dxf", "autocad-owned-process-failure-cleanup", "autocad-f109-f111-closure-readback"],
+  "F-111": ["cad-container", "cad-legacy-import", "dxf", "dxf-import", "autocad-owned-process-failure-cleanup", "autocad-f109-f111-closure-readback"],
   "F-114": ["cad-layout", "cad-publish", "print"],
 });
 
@@ -156,6 +183,7 @@ const stageOverrides = Object.freeze({
   "F-021": { browser: "parity:f021:browser-artifact", readback: "parity:f021:readback", autocad: "parity:f021:autocad" },
   "F-022": { browser: "parity:f022:browser-artifact", readback: "parity:f022:readback", autocad: "parity:f022:autocad", oracle: "parity:f022:oracles", cross: "parity:f022:cross-evidence" },
   "F-023": { browser: "parity:f023:browser-artifact", readback: "parity:f023:readback", autocad: "parity:f023:autocad", oracle: "parity:f023:oracles", cross: "parity:f023:cross-evidence" },
+  "F-024": { browser: "parity:f024:browser-artifact", readback: "parity:f024:readback", autocad: "parity:f024:autocad", oracle: "parity:f024:oracles", cross: "parity:f024:cross-evidence" },
   "F-097": { browser: "parity:f097:browser-artifact", readback: "parity:f097:readback", autocad: "parity:f097:autocad" },
   "F-098": { browser: "parity:f098:browser-artifact", readback: "parity:f098:readback", autocad: "parity:f098:autocad" },
   "F-099": { browser: "parity:f099:browser-artifact", readback: "parity:f099:readback", autocad: "parity:f099:autocad" },
@@ -186,7 +214,7 @@ export const PARITY_ROWS = Object.freeze(certifiedIds.map((id) => Object.freeze(
   }),
   receipts: Object.freeze([
     { kind: "global", path: "evidence/artifacts/parity-global-topology.json" },
-    ...(["F-022", "F-023"].includes(id) ? [{ kind: "oracle", path: `evidence/artifacts/${id}-oracles.json` }] : []),
+    ...(["F-022", "F-023", "F-024"].includes(id) ? [{ kind: "oracle", path: `evidence/artifacts/${id}-oracles.json` }] : []),
     ...(stageOverrides[id]?.cross && !["F-100", "F-101"].includes(id)
       ? [{ kind: "cross", path: `evidence/artifacts/${id}-cross-evidence.json` }]
       : []),

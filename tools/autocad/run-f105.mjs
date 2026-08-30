@@ -12,46 +12,88 @@ const runnerPath = resolve(root, "tools/autocad/run-f105.mjs"); const outputPath
 const sha256 = (value) => createHash("sha256").update(value).digest("hex"); const ownershipToken = randomUUID();
 const tempRoot = await mkdtemp(resolve(tmpdir(), "KuubikDraw-F105-"));
 const paths = { dwg: resolve(tempRoot, "F105.dwg"), pid: resolve(tempRoot, "F105.pid"), output: resolve(tempRoot, "pdf") };
-const preExistingProcessIds = acadProcessIds();
+const preExistingProcesses = acadProcessIdentities();
+const preExistingProcessIds = new Set(preExistingProcesses.map(({ processId }) => processId));
 
-function acadProcessIds() {
-  const output = execFileSync("powershell.exe", ["-NoProfile", "-Command", "@(Get-Process acad -ErrorAction SilentlyContinue | ForEach-Object { $_.Id }) -join [Environment]::NewLine"], { windowsHide: true, encoding: "utf8" }).trim();
-  return output ? output.split(/\r?\n/u).map(Number).filter((value) => Number.isInteger(value) && value > 0).toSorted((a, b) => a - b) : [];
+function acadProcessIdentities() {
+  const script = "@(Get-Process acad -ErrorAction SilentlyContinue | ForEach-Object { [ordered]@{ processId=[int]$_.Id; executablePath=[IO.Path]::GetFullPath([string]$_.Path); startTimeUtc=$_.StartTime.ToUniversalTime().ToString('o') } }) | ConvertTo-Json -Compress";
+  const output = execFileSync("powershell.exe", ["-NoProfile", "-Command", script], { windowsHide: true, encoding: "utf8" }).trim();
+  if (!output) return [];
+  const parsed = JSON.parse(output);
+  return (Array.isArray(parsed) ? parsed : [parsed]).toSorted((a, b) => a.processId - b.processId);
 }
-async function ownedPid() {
-  try { const sidecar = JSON.parse(await readFile(paths.pid, "utf8")); return sidecar.token === ownershipToken && sidecar.owned === true ? sidecar.processId : 0; }
-  catch (error) { if (error?.code === "ENOENT") return 0; throw error; }
+function identityMatches(expected, current) {
+  return current?.processId === expected?.processId
+    && current.executablePath?.toLowerCase() === expected.executablePath?.toLowerCase()
+    && current.startTimeUtc === expected.startTimeUtc;
 }
-async function terminate(processId) {
-  if (!(processId > 0)) return false;
-  try { process.kill(processId); } catch (error) { if (error?.code === "ESRCH") return true; throw error; }
-  for (let attempt = 0; attempt < 80; attempt += 1) { await new Promise((done) => setTimeout(done, 100)); try { process.kill(processId, 0); } catch { return true; } }
+function processIdentity(processId) {
+  return acadProcessIdentities().find((identity) => identity.processId === processId) ?? null;
+}
+async function ownedSidecar() {
+  try {
+    const sidecar = JSON.parse(await readFile(paths.pid, "utf8"));
+    if (
+      sidecar.token === ownershipToken && sidecar.owned === true && Number.isInteger(sidecar.processId) && sidecar.processId > 0 &&
+      !preExistingProcessIds.has(sidecar.processId) && typeof sidecar.executablePath === "string" &&
+      sidecar.executablePath.toLowerCase().endsWith("\\acad.exe") && typeof sidecar.startTimeUtc === "string"
+    ) return sidecar;
+    throw new Error("F-105 PID sidecar did not authenticate an owned AutoCAD process.");
+  } catch (error) { if (error?.code === "ENOENT") return null; throw error; }
+}
+function newAutomationSidecars() {
+  const script = "Get-CimInstance Win32_Process -Filter \"Name='acad.exe'\" | Select-Object ProcessId,CommandLine | ConvertTo-Json -Compress";
+  const output = execFileSync("powershell.exe", ["-NoProfile", "-Command", script], { windowsHide: true, encoding: "utf8" }).trim();
+  if (!output) return [];
+  const records = JSON.parse(output);
+  return (Array.isArray(records) ? records : [records])
+    .filter((record) => !preExistingProcessIds.has(Number(record.ProcessId)) && /\/Automation\s+-Embedding/iu.test(String(record.CommandLine ?? "")))
+    .map((record) => processIdentity(Number(record.ProcessId)))
+    .filter(Boolean);
+}
+async function terminate(ownership) {
+  if (!ownership) return false;
+  let current = acadProcessIdentities().find(({ processId }) => processId === ownership.processId);
+  if (!current) return true;
+  if (!identityMatches(ownership, current)) throw new Error(`F-105 refuses to terminate PID ${ownership.processId}: process identity changed.`);
+  try { process.kill(ownership.processId); } catch (error) { if (error?.code === "ESRCH") return true; throw error; }
+  for (let attempt = 0; attempt < 100; attempt += 1) {
+    await new Promise((done) => setTimeout(done, 100));
+    current = acadProcessIdentities().find(({ processId }) => processId === ownership.processId);
+    if (!current) return true;
+    if (!identityMatches(ownership, current)) throw new Error(`F-105 PID ${ownership.processId} was reused during cleanup.`);
+  }
   return false;
 }
 async function restoredProcessSet() {
-  const expected = preExistingProcessIds.join("|");
-  for (let attempt = 0; attempt < 80; attempt += 1) { if (acadProcessIds().join("|") === expected) return true; await new Promise((done) => setTimeout(done, 100)); }
+  for (let attempt = 0; attempt < 100; attempt += 1) { if (JSON.stringify(acadProcessIdentities()) === JSON.stringify(preExistingProcesses)) return true; await new Promise((done) => setTimeout(done, 100)); }
   return false;
 }
 
-let processId = 0;
+let ownership = null;
+let primaryError = null;
 try {
   const child = await new Promise((resolveRun, reject) => {
     const running = spawn("powershell.exe", ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", matrixPath,
       "-TempDwgPath", paths.dwg, "-OutputDirectory", paths.output, "-PidPath", paths.pid, "-OwnershipToken", ownershipToken,
     ], { cwd: root, windowsHide: true, stdio: ["ignore", "pipe", "pipe"] });
-    const stdout = []; const stderr = []; let timedOut = false; let force;
-    const timeout = setTimeout(() => { timedOut = true; running.kill(); force = setTimeout(() => { try { execFileSync("taskkill.exe", ["/PID", String(running.pid), "/T", "/F"], { windowsHide: true, stdio: "ignore" }); } catch {} }, 5000); }, 180_000);
-    running.stdout.on("data", (chunk) => stdout.push(chunk)); running.stderr.on("data", (chunk) => stderr.push(chunk)); running.on("error", reject);
-    running.on("close", (code) => { clearTimeout(timeout); clearTimeout(force); resolveRun({ code, timedOut, stdout: Buffer.concat(stdout).toString("utf8"), stderr: Buffer.concat(stderr).toString("utf8") }); });
+    const stdout = []; const stderr = []; let timedOut = false;
+    const timeout = setTimeout(() => {
+      timedOut = true;
+      try { execFileSync("taskkill.exe", ["/PID", String(running.pid), "/T", "/F"], { windowsHide: true, stdio: "ignore" }); }
+      catch { running.kill(); }
+    }, 180_000);
+    running.stdout.on("data", (chunk) => stdout.push(chunk)); running.stderr.on("data", (chunk) => stderr.push(chunk));
+    running.on("error", (error) => { clearTimeout(timeout); reject(error); });
+    running.on("close", (code) => { clearTimeout(timeout); resolveRun({ code, timedOut, stdout: Buffer.concat(stdout).toString("utf8"), stderr: Buffer.concat(stderr).toString("utf8") }); });
   });
-  processId = await ownedPid();
-  if (child.timedOut) throw new Error(`AutoCAD F-105 matrix timed out; authenticated PID=${processId || "missing"}.`);
+  ownership = await ownedSidecar();
+  if (child.timedOut) throw new Error(`AutoCAD F-105 matrix timed out; authenticated PID=${ownership?.processId ?? "missing"}.`);
   if (child.code !== 0) throw new Error(`AutoCAD F-105 matrix exited ${child.code}: ${child.stderr || child.stdout}`);
   const start = child.stdout.indexOf("{"); const end = child.stdout.lastIndexOf("}");
   if (start < 0 || end < start) throw new Error("F-105 PowerShell output did not contain JSON.");
   const matrix = JSON.parse(child.stdout.slice(start, end + 1));
-  if (matrix.automationProcessId !== processId) throw new Error("F-105 PID sidecar and COM read-back disagreed.");
+  if (!ownership || matrix.automationProcessId !== ownership.processId || !identityMatches(ownership, matrix.automationProcessIdentity)) throw new Error("F-105 PID sidecar and COM read-back disagreed.");
   const batchPaths = matrix.batchOutputs.map((entry) => resolve(entry.fullName));
   const excludedPaths = matrix.excludedOutputs.map((entry) => resolve(entry.fullName));
   const bundledPython = "C:\\Users\\Olav\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe";
@@ -66,7 +108,7 @@ try {
     const prefix = resolve(artifactRoot, `F-105-autocad-batch-${index + 1}`); execFileSync(pdftoppm, ["-f", "1", "-singlefile", "-r", "144", "-png", path, prefix], { windowsHide: true, stdio: "pipe" }); rendered.push(`batch${index + 1}=${prefix}.png`);
   }
   const pixels = JSON.parse(execFileSync(python, [resolve(root, "tools/parity/read-f105-rendered-png.py"), ...rendered], { windowsHide: true, encoding: "utf8" }));
-  const automationProcessTerminated = await terminate(processId); const processSetRestored = await restoredProcessSet();
+  const automationProcessTerminated = await terminate(ownership); const processSetRestored = await restoredProcessSet();
   const documents = pdfReadback.documents; const documentValues = Object.values(documents); const allPages = documentValues.flatMap((document) => document.pageDetails);
   const batchTitles = [documents.batch1?.pageDetails?.[0]?.text ?? "", documents.batch2?.pageDetails?.[0]?.text ?? ""];
   const observedGenerationOrder = batchTitles.map((text) => text.includes("F-105 SHEET 20 PLAN")
@@ -81,13 +123,31 @@ try {
     !documents.excluded1?.pageDetails?.[0]?.text?.includes("F-105 SHEET 20 PLAN") || matrix.dwg?.bytes <= 0
   ) throw new Error(`F-105 AutoCAD result mismatch: ${JSON.stringify({ matrix, pdfReadback, pixels, automationProcessTerminated, processSetRestored })}`);
   const result = {
-    ...matrix, observedGenerationOrder, automationProcessTerminated, processSetRestored, preExistingProcessIds, independentPdfReadback: pdfReadback, renderedPixels: pixels,
+    ...matrix, observedGenerationOrder, automationProcessTerminated, processSetRestored, preExistingProcessIds: preExistingProcesses.map(({ processId }) => processId), independentPdfReadback: pdfReadback, renderedPixels: pixels,
     scriptSha256: sha256(await readFile(markerPath)), matrixScriptSha256: sha256(await readFile(matrixPath)), runnerScriptSha256: sha256(await readFile(runnerPath)),
     pdfReaderSha256: sha256(await readFile(resolve(root, "tools/parity/read-f105-pdf.py"))), pixelReaderSha256: sha256(await readFile(resolve(root, "tools/parity/read-f105-rendered-png.py"))), observedAt: new Date().toISOString(),
   };
   await mkdir(dirname(outputPath), { recursive: true }); await writeFile(outputPath, `${JSON.stringify(result, null, 2)}\n`, "utf8");
   console.log(`F-105 AutoCAD live PASS (${result.engineVersion}, ordered batch + excluded layout, native PDFs/DWG, pypdf/pdfplumber/Poppler).`);
+} catch (error) {
+  primaryError = error;
+  throw error;
 } finally {
-  try { if (!(processId > 0)) processId = await ownedPid(); if (processId > 0) await terminate(processId); }
-  finally { await rm(tempRoot, { recursive: true, force: true }); }
+  const cleanupErrors = [];
+  if (!ownership) {
+    try { ownership = await ownedSidecar(); } catch (error) { cleanupErrors.push(error); }
+  }
+  if (!ownership) {
+    try {
+      const orphanCandidates = newAutomationSidecars();
+      if (orphanCandidates.length === 1) ownership = orphanCandidates[0];
+      else if (orphanCandidates.length > 1) cleanupErrors.push(new Error(`F-105 found multiple unauthenticated AutoCAD automation processes: ${orphanCandidates.map(({ processId }) => processId).join(", ")}`));
+    } catch (error) { cleanupErrors.push(error); }
+  }
+  try { if (ownership && !await terminate(ownership)) cleanupErrors.push(new Error(`Owned AutoCAD process ${ownership.processId} remained after F-105 cleanup.`)); }
+  catch (error) { cleanupErrors.push(error); }
+  try { if (!await restoredProcessSet()) cleanupErrors.push(new Error("F-105 AutoCAD process set was not restored during cleanup.")); }
+  catch (error) { cleanupErrors.push(error); }
+  try { await rm(tempRoot, { recursive: true, force: true }); } catch (error) { cleanupErrors.push(error); }
+  if (cleanupErrors.length > 0) throw new AggregateError(primaryError ? [primaryError, ...cleanupErrors] : cleanupErrors, "F-105 cleanup verification failed.");
 }

@@ -4,7 +4,7 @@
   "benchmark": "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
   "engine": "Autodesk AutoCAD 2024 desktop COM",
   "engineVersion": "24.3s (LMS Tech)",
-  "automationProcessId": 11416,
+  "automationProcessId": 24340,
   "automationProcessOwned": true,
   "sourcePath": "F-111-browser-roundtrip.dxf",
   "documentName": "F-111-browser-roundtrip.dxf",
@@ -837,6 +837,60 @@
       ]
     }
   },
+  "expectedPolylineClosures": {
+    "1100": true,
+    "1101": true,
+    "1102": true,
+    "1103": true,
+    "1104": true,
+    "1105": true,
+    "1106": true,
+    "1107": true,
+    "1108": false
+  },
+  "polylineClosurePasses": [
+    {
+      "pass": 1,
+      "matchesExpected": true,
+      "values": {
+        "1100": true,
+        "1101": true,
+        "1102": true,
+        "1103": true,
+        "1104": true,
+        "1105": true,
+        "1106": true,
+        "1107": true,
+        "1108": false
+      }
+    },
+    {
+      "pass": 2,
+      "matchesExpected": true,
+      "values": {
+        "1100": true,
+        "1101": true,
+        "1102": true,
+        "1103": true,
+        "1104": true,
+        "1105": true,
+        "1106": true,
+        "1107": true,
+        "1108": false
+      }
+    }
+  ],
+  "polylineClosuresAfterFirstRegen": {
+    "1100": true,
+    "1101": true,
+    "1102": true,
+    "1103": true,
+    "1104": true,
+    "1105": true,
+    "1106": true,
+    "1107": true,
+    "1108": false
+  },
   "polylineClosuresAfterRegen": {
     "1100": true,
     "1101": true,
@@ -907,17 +961,17 @@
   "closedWithoutSaving": true,
   "quitRequested": true,
   "sourceSha256": "28de58b3aa9e7a2c44bcf4d17b297b1cc64b08fbbbea448a33720b0d14c601ac",
-  "matrixScriptSha256": "5d9d7bdcab3cf921649bc2046d79041f8dbcddabaa2c92d8097a313cf592876b",
-  "runnerScriptSha256": "be557cfaceda083c75a17b9386fdab94f39c6c034115fa519274eabf74297eb6",
+  "matrixScriptSha256": "489ce0a4b5416bf71b4097bd22d9c3f6a3912facab5779b33aa1e5c398525362",
+  "runnerScriptSha256": "4af9e3ed996b2431b6e199b3d05279e59786fbf36ecf0290aefa58bdedecbbac",
   "implementationSha256": {
-    "autocadDesktopMatrix": "5d9d7bdcab3cf921649bc2046d79041f8dbcddabaa2c92d8097a313cf592876b",
-    "autocadDesktop": "be557cfaceda083c75a17b9386fdab94f39c6c034115fa519274eabf74297eb6",
-    "expected": "f13b358680c9aafe68b2ace52570a7d9a34d408bd93110d9b0a91c960f0a2852"
+    "autocadDesktopMatrix": "489ce0a4b5416bf71b4097bd22d9c3f6a3912facab5779b33aa1e5c398525362",
+    "autocadDesktop": "4af9e3ed996b2431b6e199b3d05279e59786fbf36ecf0290aefa58bdedecbbac",
+    "expected": "ff253dff947093ef57a579e229305f641e047d53c7247e759f36a8ff95cc9118"
   },
   "automationProcessTerminated": true,
   "processSetRestored": true,
   "preExistingProcessIds": [
     11276
   ],
-  "observedAt": "2026-08-29T14:23:18.119Z"
+  "observedAt": "2026-08-29T23:08:52.140Z"
 }

@@ -1,0 +1,440 @@
+{
+  "rowId": "F-024",
+  "source": {
+    "schemaVersion": 1,
+    "documentId": "local",
+    "revision": 0,
+    "units": {
+      "linear": "mm",
+      "displayPrecision": 4,
+      "angularPrecision": 6
+    },
+    "currentLayerId": "0",
+    "entities": [
+      {
+        "kind": "line",
+        "handle": "10",
+        "layerId": "0",
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "aci",
+          "aciIndex": 1,
+          "lineweightMm": 0.5
+        },
+        "start": {
+          "x": -200,
+          "y": 0
+        },
+        "end": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      {
+        "kind": "ellipse",
+        "handle": "20",
+        "layerId": "0",
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "aci",
+          "aciIndex": 1,
+          "lineweightMm": 0.5
+        },
+        "center": {
+          "x": 100,
+          "y": 0
+        },
+        "majorAxis": {
+          "x": 100,
+          "y": 0
+        },
+        "ratio": 0.5,
+        "startParameter": 0,
+        "endParameter": 6.283185307179586
+      },
+      {
+        "kind": "line",
+        "handle": "30",
+        "layerId": "0",
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "aci",
+          "aciIndex": 1,
+          "lineweightMm": 0.5
+        },
+        "start": {
+          "x": 100,
+          "y": 200
+        },
+        "end": {
+          "x": 300,
+          "y": 200
+        }
+      },
+      {
+        "kind": "spline",
+        "handle": "40",
+        "layerId": "0",
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "aci",
+          "aciIndex": 1,
+          "lineweightMm": 0.5
+        },
+        "degree": 3,
+        "controlPoints": [
+          {
+            "x": 300,
+            "y": 200
+          },
+          {
+            "x": 300,
+            "y": 240
+          },
+          {
+            "x": 360,
+            "y": 260
+          },
+          {
+            "x": 400,
+            "y": 300
+          }
+        ],
+        "knots": [
+          0,
+          0,
+          0,
+          0,
+          1,
+          1,
+          1,
+          1
+        ],
+        "weights": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "closed": false,
+        "periodic": false
+      }
+    ],
+    "layers": [
+      {
+        "id": "0",
+        "name": "0",
+        "visible": true,
+        "frozen": false,
+        "locked": false,
+        "plottable": true
+      }
+    ],
+    "linetypes": [],
+    "textStyles": [],
+    "dimensionStyles": [],
+    "blocks": [],
+    "layouts": [
+      {
+        "id": "model",
+        "name": "Model",
+        "kind": "model",
+        "viewports": [],
+        "entities": []
+      }
+    ],
+    "attachments": [],
+    "metadata": {
+      "createdAt": "2026-08-29T17:25:00.000Z",
+      "updatedAt": "2026-08-29T17:25:00.000Z"
+    }
+  },
+  "committed": {
+    "schemaVersion": 1,
+    "documentId": "local",
+    "revision": 1,
+    "units": {
+      "linear": "mm",
+      "displayPrecision": 4,
+      "angularPrecision": 6
+    },
+    "currentLayerId": "0",
+    "entities": [
+      {
+        "handle": "10",
+        "layerId": "0",
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "aci",
+          "aciIndex": 1,
+          "lineweightMm": 0.5
+        },
+        "kind": "line",
+        "start": {
+          "x": -200,
+          "y": 0
+        },
+        "end": {
+          "x": -8.557770070555,
+          "y": 0
+        }
+      },
+      {
+        "kind": "ellipse",
+        "handle": "20",
+        "layerId": "0",
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "aci",
+          "aciIndex": 1,
+          "lineweightMm": 0.5
+        },
+        "center": {
+          "x": 100,
+          "y": 0
+        },
+        "majorAxis": {
+          "x": 100,
+          "y": 0
+        },
+        "ratio": 0.5,
+        "startParameter": 0,
+        "endParameter": 6.283185307179586
+      },
+      {
+        "handle": "30",
+        "layerId": "0",
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "aci",
+          "aciIndex": 1,
+          "lineweightMm": 0.5
+        },
+        "kind": "line",
+        "start": {
+          "x": 100,
+          "y": 200
+        },
+        "end": {
+          "x": 290.843943859683,
+          "y": 200
+        }
+      },
+      {
+        "kind": "spline",
+        "handle": "40",
+        "layerId": "0",
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "aci",
+          "aciIndex": 1,
+          "lineweightMm": 0.5
+        },
+        "degree": 3,
+        "controlPoints": [
+          {
+            "x": 300.695133809593,
+            "y": 208.281263088522
+          },
+          {
+            "x": 306.627520424038,
+            "y": 242.283597454257
+          },
+          {
+            "x": 362.00443483552,
+            "y": 262.00443483552
+          },
+          {
+            "x": 400,
+            "y": 300
+          }
+        ],
+        "knots": [
+          0.038059957570955,
+          0.038059957570955,
+          0.038059957570955,
+          0.038059957570955,
+          1,
+          1,
+          1,
+          1
+        ],
+        "weights": [
+          1.114179872713,
+          2.076119915142,
+          3.038059957571,
+          4
+        ],
+        "closed": false,
+        "periodic": false
+      },
+      {
+        "kind": "arc",
+        "center": {
+          "x": -8.557770070476,
+          "y": 10.000000000267
+        },
+        "radius": 10,
+        "startAngleRad": -1.570796326803,
+        "endAngleRad": -0.283366472395,
+        "counterClockwise": true,
+        "handle": "41",
+        "layerId": "0",
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "aci",
+          "aciIndex": 1
+        }
+      },
+      {
+        "kind": "arc",
+        "center": {
+          "x": 290.843943859646,
+          "y": 209.999999999777
+        },
+        "radius": 10,
+        "startAngleRad": -1.570796326791,
+        "endAngleRad": -0.172731349518,
+        "counterClockwise": true,
+        "handle": "42",
+        "layerId": "0",
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "aci",
+          "aciIndex": 1
+        }
+      }
+    ],
+    "layers": [
+      {
+        "id": "0",
+        "name": "0",
+        "visible": true,
+        "frozen": false,
+        "locked": false,
+        "plottable": true
+      }
+    ],
+    "linetypes": [],
+    "textStyles": [],
+    "dimensionStyles": [],
+    "blocks": [],
+    "layouts": [
+      {
+        "id": "model",
+        "name": "Model",
+        "kind": "model",
+        "viewports": [],
+        "entities": []
+      }
+    ],
+    "attachments": [],
+    "metadata": {
+      "createdAt": "2026-08-29T17:25:00.000Z",
+      "updatedAt": "2026-08-29T21:59:47.028Z"
+    }
+  },
+  "operation": {
+    "opId": "41e62aed-627e-4d7b-aeec-7b4fdca416f8",
+    "baseRevision": 0,
+    "commandId": "FILLET",
+    "args": {
+      "mode": "pairs",
+      "radius": 10,
+      "trimMode": "trim",
+      "pairs": [
+        {
+          "firstHandle": "10",
+          "firstPickPoint": {
+            "x": -20,
+            "y": 0
+          },
+          "secondHandle": "20",
+          "secondPickPoint": {
+            "x": 2,
+            "y": 10
+          }
+        },
+        {
+          "firstHandle": "30",
+          "firstPickPoint": {
+            "x": 280,
+            "y": 200
+          },
+          "secondHandle": "40",
+          "secondPickPoint": {
+            "x": 302,
+            "y": 210
+          }
+        }
+      ],
+      "steps": [
+        {
+          "mode": "pair",
+          "sourceHandles": [
+            "10",
+            "20"
+          ],
+          "resultHandles": [
+            "10",
+            "20",
+            "41"
+          ],
+          "effectiveRadius": 10,
+          "tangentPoints": [
+            {
+              "x": -8.557770070555,
+              "y": 0
+            },
+            {
+              "x": 1.043426434775,
+              "y": 7.204105569575
+            }
+          ],
+          "skippedVertices": []
+        },
+        {
+          "mode": "pair",
+          "sourceHandles": [
+            "30",
+            "40"
+          ],
+          "resultHandles": [
+            "30",
+            "40",
+            "42"
+          ],
+          "effectiveRadius": 10,
+          "tangentPoints": [
+            {
+              "x": 290.843943859683,
+              "y": 200
+            },
+            {
+              "x": 300.695133809593,
+              "y": 208.281263088522
+            }
+          ],
+          "skippedVertices": []
+        }
+      ],
+      "multiple": true
+    },
+    "targetHandles": [
+      "10",
+      "20",
+      "30",
+      "40"
+    ],
+    "resultHandles": [
+      "10",
+      "20",
+      "41",
+      "30",
+      "40",
+      "42"
+    ]
+  },
+  "consoleErrors": [],
+  "status": "PASS"
+}

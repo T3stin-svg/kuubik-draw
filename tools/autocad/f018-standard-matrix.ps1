@@ -128,6 +128,46 @@ function Test-Properties {
     $Before.linetype -eq $After.linetype -and $Before.lineweight -eq $After.lineweight
 }
 
+function Get-StableMatrixStates {
+  param($Document, $FamilyHandles, [bool]$Regenerate = $false, [int]$MaximumPasses = 12)
+  $passes = New-Object System.Collections.Generic.List[object]
+  $lastStates = @()
+  $previousFingerprint = $null
+  $consecutiveExactReads = 0
+  for ($pass = 1; $pass -le $MaximumPasses; $pass += 1) {
+    Wait-AcadIdle $Document
+    if ($Regenerate) {
+      Invoke-ComRetry { $Document.Regen(1) } | Out-Null
+      Wait-AcadIdle $Document
+    }
+    $lastStates = @($FamilyHandles.GetEnumerator() | ForEach-Object {
+      Get-EntityState (Get-EntityByHandle $Document ([string]$_.Value)) ([string]$_.Key)
+    })
+    $propertiesExact = $lastStates.Count -eq $FamilyHandles.Count -and @($lastStates | Where-Object {
+      $_.layer -ne 'F018_MATRIX' -or $_.color -ne 1 -or $_.linetype -ne 'Continuous' -or $_.lineweight -ne 50
+    }).Count -eq 0
+    $fingerprint = if ($propertiesExact) { $lastStates | ConvertTo-Json -Depth 8 -Compress } else { $null }
+    if ($fingerprint -and $fingerprint -eq $previousFingerprint) { $consecutiveExactReads += 1 }
+    elseif ($fingerprint) { $consecutiveExactReads = 1 }
+    else { $consecutiveExactReads = 0 }
+    $passes.Add([ordered]@{
+      pass = $pass
+      entityCount = $lastStates.Count
+      propertiesExact = $propertiesExact
+      consecutiveExactReads = $consecutiveExactReads
+      propertyMismatches = @($lastStates | Where-Object {
+        $_.layer -ne 'F018_MATRIX' -or $_.color -ne 1 -or $_.linetype -ne 'Continuous' -or $_.lineweight -ne 50
+      } | ForEach-Object { [ordered]@{ family=$_.family; handle=$_.handle; layer=$_.layer; color=$_.color; linetype=$_.linetype; lineweight=$_.lineweight } })
+    })
+    if ($consecutiveExactReads -ge 2) {
+      return [ordered]@{ stable=$true; states=@($lastStates); passes=[object[]]$passes.ToArray() }
+    }
+    $previousFingerprint = $fingerprint
+    Start-Sleep -Milliseconds 100
+  }
+  return [ordered]@{ stable=$false; states=@($lastStates); passes=[object[]]$passes.ToArray() }
+}
+
 function Get-LayerEntities {
   param($Document, [string]$Layer)
   $items = @()
@@ -158,9 +198,9 @@ function Invoke-RotateHandle {
 
 $preExistingAcadProcessIds = @(Get-Process -Name 'acad' -ErrorAction SilentlyContinue | ForEach-Object { [int]$_.Id })
 $acad = $null; $scratch = $null; $reusedBlank = $false; $result = $null
-$automationProcessId = 0; $automationProcessOwned = $false
+$automationProcessId = 0; $automationProcessOwned = $false; $automationProcessIdentity = $null
 try {
-  $acad = Invoke-ComRetry { New-Object -ComObject AutoCAD.Application.24.3 } -TimeoutSeconds 30
+  $acad = New-Object -ComObject AutoCAD.Application.24.3
   Invoke-ComRetry { $acad.Visible = $true } | Out-Null
   [uint32]$resolvedAutomationProcessId = 0
   [void][F018WindowProcess]::GetWindowThreadProcessId([IntPtr][int64](Invoke-ComRetry { $acad.HWND }), [ref]$resolvedAutomationProcessId)
@@ -168,6 +208,14 @@ try {
   $automationProcessOwned = $automationProcessId -gt 0 -and $preExistingAcadProcessIds -notcontains $automationProcessId
   Write-Host "[F-018] automation-process pid=$automationProcessId owned=$automationProcessOwned"
   if (-not $automationProcessOwned) { throw 'F-018 refuses to use a pre-existing AutoCAD process.' }
+  $automationProcess = Get-Process -Id $automationProcessId -ErrorAction Stop
+  $automationExecutablePath = [IO.Path]::GetFullPath([string]$automationProcess.Path)
+  if ([IO.Path]::GetFileName($automationExecutablePath) -ine 'acad.exe') { throw "F-018 PID $automationProcessId is not acad.exe." }
+  $automationProcessIdentity = [ordered]@{
+    processId = $automationProcessId
+    executablePath = $automationExecutablePath
+    startTimeUtc = $automationProcess.StartTime.ToUniversalTime().ToString('o')
+  }
   $initialCount = [int](Invoke-ComRetry { $acad.Documents.Count })
   if ($initialCount -gt 0) {
     $candidate = Invoke-ComRetry { $acad.ActiveDocument }
@@ -239,20 +287,20 @@ try {
     Invoke-ComRetry { $entity.Linetype = 'Continuous' } | Out-Null
     Invoke-ComRetry { $entity.Lineweight = 50 } | Out-Null
   }
-  Invoke-ComRetry { $scratch.Regen(1) } | Out-Null
-  Wait-AcadIdle $scratch
-  $before = @($entities.GetEnumerator() | ForEach-Object { Get-EntityState $_.Value $_.Key })
+  $familyHandles = [ordered]@{}
+  foreach ($entry in $entities.GetEnumerator()) { $familyHandles[$entry.Key] = Invoke-NonEmptyCom { $entry.Value.Handle } "$($entry.Key) handle" }
+  $beforeReadback = Get-StableMatrixStates $scratch $familyHandles $true
+  $before = @($beforeReadback.states)
 
   $rotate = "(setq f018:ss (ssget `"_X`" '((8 . `"F018_MATRIX`"))))`n_.ROTATE`n!f018:ss`n`n100,200`n_Reference`n100,200`n1100,1200`n135`n"
   Invoke-ComRetry { $scratch.SendCommand($rotate) } | Out-Null
   Wait-AcadIdle $scratch
-  $after = @()
+  $afterReadback = Get-StableMatrixStates $scratch $familyHandles $false
+  $after = @($afterReadback.states)
   $checks = @()
   foreach ($prior in $before) {
-    $entity = Get-EntityByHandle $scratch $prior.handle
-    $state = Get-EntityState $entity $prior.family
+    $state = @($after | Where-Object { $_.family -eq $prior.family })[0]
     $expected = Get-RotatedBounds $prior.bounds 100 200 90
-    $after += $state
     $checks += [ordered]@{
       family = $prior.family
       sameHandle = $state.handle -eq $prior.handle
@@ -263,10 +311,10 @@ try {
 
   Invoke-ComRetry { $scratch.SendCommand("_.U`n") } | Out-Null
   Wait-AcadIdle $scratch
-  $afterUndo = @()
+  $afterUndoReadback = Get-StableMatrixStates $scratch $familyHandles $false
+  $afterUndo = @($afterUndoReadback.states)
   foreach ($prior in $before) {
-    $state = Get-EntityState (Get-EntityByHandle $scratch $prior.handle) $prior.family
-    $afterUndo += $state
+    $state = @($afterUndo | Where-Object { $_.family -eq $prior.family })[0]
     $check = @($checks | Where-Object { $_.family -eq $prior.family })[0]
     $check.undoRestored = (Test-Bounds $state.bounds $prior.bounds) -and (Test-Properties $prior $state)
   }
@@ -310,7 +358,7 @@ try {
     (Test-Bounds $lockedAfter.bounds $lockedBefore.bounds) -and (Test-Properties $lockedBefore $lockedAfter)
 
   $failed = @($checks | Where-Object { -not $_.sameHandle -or -not $_.rotatedBounds -or -not $_.propertiesPreserved -or -not $_.undoRestored })
-  $matrixPassed = $checks.Count -eq 12 -and $failed.Count -eq 0
+  $matrixPassed = $beforeReadback.stable -and $afterReadback.stable -and $afterUndoReadback.stable -and $checks.Count -eq 12 -and $failed.Count -eq 0
   $inputModesPassed = $standardPassed -and $pointPassed -and $referencePassed -and $negativePassed
   $result = [ordered]@{
     schemaVersion = 1
@@ -325,6 +373,7 @@ try {
     before = $before
     after = $after
     afterUndo = $afterUndo
+    readback = [ordered]@{ before=$beforeReadback; after=$afterReadback; afterUndo=$afterUndoReadback }
     checks = $checks
     inputModes = [ordered]@{
       standardNumeric = [ordered]@{ before = $standardBefore; after = $standardAfter; passed = $standardPassed }
@@ -371,6 +420,7 @@ $result.userDocument = [ordered]@{
   reusedBlank = $reusedBlank
   isolatedOwnedProcess = $automationProcessOwned
   automationProcessId = $automationProcessId
+  automationProcessIdentity = $automationProcessIdentity
   openDocumentsAfter = $openDocumentsAfter
   activeNameAfter = $activeNameAfter
   activeFullNameAfter = $activeFullNameAfter
@@ -380,5 +430,7 @@ $result.userDocument = [ordered]@{
   blankRestored = $blankRestored
 }
 if (-not $blankRestored) { $result.status = 'FAIL' }
+$status = $result.status
 $result | ConvertTo-Json -Depth 12
-if ($result.status -ne 'PASS') { exit 1 }
+if ($automationProcessOwned -and $acad) { try { Invoke-ComRetry { $acad.Quit() } -TimeoutSeconds 10 | Out-Null } catch {} }
+if ($status -ne 'PASS') { exit 1 }

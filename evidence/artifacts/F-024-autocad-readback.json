@@ -1,0 +1,3667 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-024",
+  "benchmark": "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
+  "engine": "Autodesk AutoCAD 2024 desktop COM",
+  "engineVersion": "24.3s (LMS Tech)",
+  "automationProcessId": 8576,
+  "automationProcessOwned": true,
+  "installedUpdateIdentity": {
+    "displayName": "Autodesk AutoCAD 2024.1.2 Update",
+    "displayVersion": "24.3.152.0"
+  },
+  "automationProcessIdentity": {
+    "processId": 8576,
+    "executableName": "acad.exe",
+    "executableSha256": "0570749def2fa8dcfb62df1a6671f44245a9ef740dd61d9d0f9110794a76e70e",
+    "fileVersion": "R24.3.152.0.0",
+    "productVersion": "R24.3.152.0.0",
+    "startTimeSha256": "8661021895a33e27469ff28b1e1bdf59b839386728c946a69311f7f2481d43d3"
+  },
+  "checks": {
+    "pairTrim": true,
+    "pairNoTrim": true,
+    "mixedPolylineLine": true,
+    "adjacentPolylineSegments": true,
+    "separatedArcRadiusZero": true,
+    "openPolylineClose": true,
+    "filletPolyArc0": true,
+    "filletPolyArc1": true,
+    "filletPolyArc0NoTrim": true,
+    "polylineNoTrim": true,
+    "multiple": true,
+    "commandUndo": true,
+    "globalUndoRedo": true,
+    "sameSourceLayerOutput": true,
+    "crossLayerCurrentOutput": true,
+    "physicalShiftRadiusZero": true,
+    "lineCircle": true,
+    "lineArc": true,
+    "lineCircleTrim": true,
+    "lineEllipse": true,
+    "lineSpline": true,
+    "rayLineTrim": true,
+    "xlineLineTrim": true,
+    "rayLineNoTrim": true,
+    "xlineLineNoTrim": true,
+    "rayXlineTrim": true,
+    "lockedLayerRejected": true,
+    "offLayerExplicitHandleEdited": true,
+    "frozenLayerExplicitHandleEdited": true,
+    "sameParametricSource": true
+  },
+  "observations": {
+    "pair": [
+      {
+        "objectName": "AcDbLine",
+        "handle": "29F",
+        "layer": "F024_PAIR",
+        "color": 1,
+        "lineweight": 50,
+        "details": {
+          "start": [
+            0,
+            0
+          ],
+          "end": [
+            90,
+            0
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbLine",
+        "handle": "2A0",
+        "layer": "F024_PAIR",
+        "color": 1,
+        "lineweight": 50,
+        "details": {
+          "start": [
+            100,
+            10
+          ],
+          "end": [
+            100,
+            100
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbArc",
+        "handle": "2A1",
+        "layer": "F024_PAIR",
+        "color": 1,
+        "lineweight": 50,
+        "details": {
+          "center": [
+            90,
+            10
+          ],
+          "radius": 10,
+          "startAngle": 4.71238898038469,
+          "endAngle": 0
+        }
+      }
+    ],
+    "noTrim": [
+      {
+        "objectName": "AcDbLine",
+        "handle": "2A3",
+        "layer": "F024_NO_TRIM",
+        "color": 1,
+        "lineweight": 50,
+        "details": {
+          "start": [
+            0,
+            200
+          ],
+          "end": [
+            100,
+            200
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbLine",
+        "handle": "2A4",
+        "layer": "F024_NO_TRIM",
+        "color": 1,
+        "lineweight": 50,
+        "details": {
+          "start": [
+            100,
+            200
+          ],
+          "end": [
+            100,
+            300
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbArc",
+        "handle": "2A5",
+        "layer": "F024_NO_TRIM",
+        "color": 1,
+        "lineweight": 50,
+        "details": {
+          "center": [
+            90,
+            210
+          ],
+          "radius": 10,
+          "startAngle": 4.71238898038469,
+          "endAngle": 0
+        }
+      }
+    ],
+    "mixed": [
+      {
+        "objectName": "AcDbPolyline",
+        "handle": "2A6",
+        "layer": "F024_MIXED",
+        "color": 1,
+        "lineweight": 50,
+        "details": {
+          "vertices": [
+            [
+              0,
+              400
+            ],
+            [
+              90,
+              400
+            ],
+            [
+              100,
+              410
+            ],
+            [
+              100,
+              500
+            ]
+          ],
+          "closed": false,
+          "bulges": [
+            0,
+            0.41421356237309503,
+            0,
+            0
+          ],
+          "widths": [
+            [
+              2,
+              3.8
+            ],
+            [
+              3.8,
+              3.8
+            ],
+            [
+              3.8,
+              3.8
+            ],
+            [
+              3.8,
+              3.8
+            ]
+          ]
+        }
+      }
+    ],
+    "adjacent": [
+      {
+        "objectName": "AcDbPolyline",
+        "handle": "2A8",
+        "layer": "F024_ADJACENT",
+        "color": 1,
+        "lineweight": 50,
+        "details": {
+          "vertices": [
+            [
+              0,
+              600
+            ],
+            [
+              90,
+              600
+            ],
+            [
+              100,
+              610
+            ],
+            [
+              100,
+              700
+            ],
+            [
+              0,
+              700
+            ]
+          ],
+          "closed": true,
+          "bulges": [
+            0,
+            0.41421356237309503,
+            0,
+            0,
+            0
+          ],
+          "widths": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              0
+            ]
+          ]
+        }
+      }
+    ],
+    "arcZero": [
+      {
+        "objectName": "AcDbPolyline",
+        "handle": "2A9",
+        "layer": "F024_ARC_ZERO",
+        "color": 1,
+        "lineweight": 50,
+        "details": {
+          "vertices": [
+            [
+              0,
+              800
+            ],
+            [
+              150,
+              800
+            ],
+            [
+              150,
+              950
+            ],
+            [
+              0,
+              950
+            ]
+          ],
+          "closed": true,
+          "bulges": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "widths": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              0
+            ]
+          ]
+        }
+      }
+    ],
+    "openClose": [
+      {
+        "objectName": "AcDbPolyline",
+        "handle": "2AA",
+        "layer": "F024_OPEN_CLOSE",
+        "color": 1,
+        "lineweight": 50,
+        "details": {
+          "vertices": [
+            [
+              0,
+              1196.4921894064178
+            ],
+            [
+              0,
+              1100
+            ],
+            [
+              100,
+              1100
+            ],
+            [
+              17.808688094430366,
+              1202.739139881962
+            ]
+          ],
+          "closed": true,
+          "bulges": [
+            0,
+            0,
+            0,
+            0.708958225373872
+          ],
+          "widths": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              0
+            ]
+          ]
+        }
+      }
+    ],
+    "filletPolyArc0": [
+      {
+        "objectName": "AcDbPolyline",
+        "handle": "2AB",
+        "layer": "F024_FPA0",
+        "color": 1,
+        "lineweight": 50,
+        "details": {
+          "vertices": [
+            [
+              0,
+              1400
+            ],
+            [
+              150,
+              1400
+            ],
+            [
+              160,
+              1410
+            ],
+            [
+              160,
+              1540
+            ]
+          ],
+          "closed": false,
+          "bulges": [
+            0,
+            0.4142135623730951,
+            0,
+            0
+          ],
+          "widths": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              0
+            ]
+          ]
+        }
+      }
+    ],
+    "filletPolyArc1": [
+      {
+        "objectName": "AcDbPolyline",
+        "handle": "2AC",
+        "layer": "F024_FPA1",
+        "color": 1,
+        "lineweight": 50,
+        "details": {
+          "vertices": [
+            [
+              300,
+              1400
+            ],
+            [
+              397.9728263037279,
+              1400.0000000000227
+            ],
+            [
+              401.9578089716613,
+              1400.8283091452133
+            ],
+            [
+              459.17169085478764,
+              1458.0421910283399
+            ],
+            [
+              459.99999999997704,
+              1462.02717369627
+            ],
+            [
+              460,
+              1540
+            ]
+          ],
+          "closed": false,
+          "bulges": [
+            0,
+            0.10282988470057042,
+            0.1899975987610248,
+            0.1028298847004823,
+            0,
+            0
+          ],
+          "widths": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              0
+            ]
+          ]
+        }
+      }
+    ],
+    "filletPolyArc0NoTrim": [
+      {
+        "objectName": "AcDbPolyline",
+        "handle": "2AD",
+        "layer": "F024_FPA0_NO_TRIM",
+        "color": 1,
+        "lineweight": 50,
+        "details": {
+          "vertices": [
+            [
+              600,
+              1400
+            ],
+            [
+              700,
+              1400
+            ],
+            [
+              760,
+              1460
+            ],
+            [
+              760,
+              1540
+            ],
+            [
+              660,
+              1540
+            ]
+          ],
+          "closed": false,
+          "bulges": [
+            0,
+            0.41421356237309503,
+            0,
+            0,
+            0
+          ],
+          "widths": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              0
+            ]
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbArc",
+        "handle": "2AE",
+        "layer": "F024_FPA0_NO_TRIM",
+        "color": 1,
+        "lineweight": 50,
+        "details": {
+          "center": [
+            750,
+            1530
+          ],
+          "radius": 10,
+          "startAngle": 0,
+          "endAngle": 1.5707963267948966
+        }
+      },
+      {
+        "objectName": "AcDbArc",
+        "handle": "2AF",
+        "layer": "F024_FPA0_NO_TRIM",
+        "color": 1,
+        "lineweight": 50,
+        "details": {
+          "center": [
+            750,
+            1410
+          ],
+          "radius": 10,
+          "startAngle": 4.71238898038469,
+          "endAngle": 0
+        }
+      }
+    ],
+    "polylineNoTrim": [
+      {
+        "objectName": "AcDbPolyline",
+        "handle": "2B0",
+        "layer": "F024_POLY_NO_TRIM",
+        "color": 1,
+        "lineweight": 50,
+        "details": {
+          "vertices": [
+            [
+              300,
+              600
+            ],
+            [
+              400,
+              600
+            ],
+            [
+              400,
+              700
+            ],
+            [
+              300,
+              700
+            ]
+          ],
+          "closed": true,
+          "bulges": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "widths": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              0
+            ]
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbArc",
+        "handle": "2B1",
+        "layer": "F024_POLY_NO_TRIM",
+        "color": 1,
+        "lineweight": 50,
+        "details": {
+          "center": [
+            310,
+            610
+          ],
+          "radius": 10,
+          "startAngle": 3.141592653589793,
+          "endAngle": 4.71238898038469
+        }
+      },
+      {
+        "objectName": "AcDbArc",
+        "handle": "2B2",
+        "layer": "F024_POLY_NO_TRIM",
+        "color": 1,
+        "lineweight": 50,
+        "details": {
+          "center": [
+            310,
+            690
+          ],
+          "radius": 10,
+          "startAngle": 1.5707963267948966,
+          "endAngle": 3.141592653589793
+        }
+      },
+      {
+        "objectName": "AcDbArc",
+        "handle": "2B3",
+        "layer": "F024_POLY_NO_TRIM",
+        "color": 1,
+        "lineweight": 50,
+        "details": {
+          "center": [
+            390,
+            690
+          ],
+          "radius": 10,
+          "startAngle": 0,
+          "endAngle": 1.5707963267948966
+        }
+      },
+      {
+        "objectName": "AcDbArc",
+        "handle": "2B4",
+        "layer": "F024_POLY_NO_TRIM",
+        "color": 1,
+        "lineweight": 50,
+        "details": {
+          "center": [
+            390,
+            610
+          ],
+          "radius": 10,
+          "startAngle": 4.71238898038469,
+          "endAngle": 0
+        }
+      }
+    ],
+    "multiple": [
+      {
+        "objectName": "AcDbLine",
+        "handle": "2B5",
+        "layer": "F024_MULTIPLE",
+        "color": 1,
+        "lineweight": 50,
+        "details": {
+          "start": [
+            0,
+            1800
+          ],
+          "end": [
+            90,
+            1800
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbLine",
+        "handle": "2B6",
+        "layer": "F024_MULTIPLE",
+        "color": 1,
+        "lineweight": 50,
+        "details": {
+          "start": [
+            100,
+            1810
+          ],
+          "end": [
+            100,
+            1900
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbLine",
+        "handle": "2B7",
+        "layer": "F024_MULTIPLE",
+        "color": 1,
+        "lineweight": 50,
+        "details": {
+          "start": [
+            200,
+            1800
+          ],
+          "end": [
+            290,
+            1800
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbLine",
+        "handle": "2B8",
+        "layer": "F024_MULTIPLE",
+        "color": 1,
+        "lineweight": 50,
+        "details": {
+          "start": [
+            300,
+            1810
+          ],
+          "end": [
+            300,
+            1900
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbArc",
+        "handle": "2B9",
+        "layer": "F024_MULTIPLE",
+        "color": 1,
+        "lineweight": 50,
+        "details": {
+          "center": [
+            90,
+            1810
+          ],
+          "radius": 10,
+          "startAngle": 4.71238898038469,
+          "endAngle": 0
+        }
+      },
+      {
+        "objectName": "AcDbArc",
+        "handle": "2BA",
+        "layer": "F024_MULTIPLE",
+        "color": 1,
+        "lineweight": 50,
+        "details": {
+          "center": [
+            290,
+            1810
+          ],
+          "radius": 10,
+          "startAngle": 4.71238898038469,
+          "endAngle": 0
+        }
+      }
+    ],
+    "commandUndo": [
+      {
+        "objectName": "AcDbLine",
+        "handle": "2BB",
+        "layer": "F024_COMMAND_UNDO",
+        "color": 1,
+        "lineweight": 50,
+        "details": {
+          "start": [
+            0,
+            2000
+          ],
+          "end": [
+            90,
+            2000
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbLine",
+        "handle": "2BC",
+        "layer": "F024_COMMAND_UNDO",
+        "color": 1,
+        "lineweight": 50,
+        "details": {
+          "start": [
+            100,
+            2010
+          ],
+          "end": [
+            100,
+            2100
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbLine",
+        "handle": "2BD",
+        "layer": "F024_COMMAND_UNDO",
+        "color": 1,
+        "lineweight": 50,
+        "details": {
+          "start": [
+            200,
+            2000
+          ],
+          "end": [
+            300,
+            2000
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbLine",
+        "handle": "2BE",
+        "layer": "F024_COMMAND_UNDO",
+        "color": 1,
+        "lineweight": 50,
+        "details": {
+          "start": [
+            300,
+            2000
+          ],
+          "end": [
+            300,
+            2100
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbArc",
+        "handle": "2BF",
+        "layer": "F024_COMMAND_UNDO",
+        "color": 1,
+        "lineweight": 50,
+        "details": {
+          "center": [
+            90,
+            2010
+          ],
+          "radius": 10,
+          "startAngle": 4.71238898038469,
+          "endAngle": 0
+        }
+      }
+    ],
+    "globalUndoRedo": {
+      "committed": [
+        {
+          "objectName": "AcDbLine",
+          "handle": "2C1",
+          "layer": "F024_GLOBAL_UNDO_REDO",
+          "color": 1,
+          "lineweight": 50,
+          "details": {
+            "start": [
+              0,
+              2200
+            ],
+            "end": [
+              90,
+              2200
+            ]
+          }
+        },
+        {
+          "objectName": "AcDbLine",
+          "handle": "2C2",
+          "layer": "F024_GLOBAL_UNDO_REDO",
+          "color": 1,
+          "lineweight": 50,
+          "details": {
+            "start": [
+              100,
+              2210
+            ],
+            "end": [
+              100,
+              2300
+            ]
+          }
+        },
+        {
+          "objectName": "AcDbLine",
+          "handle": "2C3",
+          "layer": "F024_GLOBAL_UNDO_REDO",
+          "color": 1,
+          "lineweight": 50,
+          "details": {
+            "start": [
+              200,
+              2200
+            ],
+            "end": [
+              290,
+              2200
+            ]
+          }
+        },
+        {
+          "objectName": "AcDbLine",
+          "handle": "2C4",
+          "layer": "F024_GLOBAL_UNDO_REDO",
+          "color": 1,
+          "lineweight": 50,
+          "details": {
+            "start": [
+              300,
+              2210
+            ],
+            "end": [
+              300,
+              2300
+            ]
+          }
+        },
+        {
+          "objectName": "AcDbArc",
+          "handle": "2C5",
+          "layer": "F024_GLOBAL_UNDO_REDO",
+          "color": 1,
+          "lineweight": 50,
+          "details": {
+            "center": [
+              90,
+              2210
+            ],
+            "radius": 10,
+            "startAngle": 4.71238898038469,
+            "endAngle": 0
+          }
+        },
+        {
+          "objectName": "AcDbArc",
+          "handle": "2C6",
+          "layer": "F024_GLOBAL_UNDO_REDO",
+          "color": 1,
+          "lineweight": 50,
+          "details": {
+            "center": [
+              290,
+              2210
+            ],
+            "radius": 10,
+            "startAngle": 4.71238898038469,
+            "endAngle": 0
+          }
+        }
+      ],
+      "undone": [
+        {
+          "objectName": "AcDbLine",
+          "handle": "2C1",
+          "layer": "F024_GLOBAL_UNDO_REDO",
+          "color": 1,
+          "lineweight": 50,
+          "details": {
+            "start": [
+              0,
+              2200
+            ],
+            "end": [
+              100,
+              2200
+            ]
+          }
+        },
+        {
+          "objectName": "AcDbLine",
+          "handle": "2C2",
+          "layer": "F024_GLOBAL_UNDO_REDO",
+          "color": 1,
+          "lineweight": 50,
+          "details": {
+            "start": [
+              100,
+              2200
+            ],
+            "end": [
+              100,
+              2300
+            ]
+          }
+        },
+        {
+          "objectName": "AcDbLine",
+          "handle": "2C3",
+          "layer": "F024_GLOBAL_UNDO_REDO",
+          "color": 1,
+          "lineweight": 50,
+          "details": {
+            "start": [
+              200,
+              2200
+            ],
+            "end": [
+              300,
+              2200
+            ]
+          }
+        },
+        {
+          "objectName": "AcDbLine",
+          "handle": "2C4",
+          "layer": "F024_GLOBAL_UNDO_REDO",
+          "color": 1,
+          "lineweight": 50,
+          "details": {
+            "start": [
+              300,
+              2200
+            ],
+            "end": [
+              300,
+              2300
+            ]
+          }
+        }
+      ],
+      "redone": [
+        {
+          "objectName": "AcDbLine",
+          "handle": "2C1",
+          "layer": "F024_GLOBAL_UNDO_REDO",
+          "color": 1,
+          "lineweight": 50,
+          "details": {
+            "start": [
+              0,
+              2200
+            ],
+            "end": [
+              90,
+              2200
+            ]
+          }
+        },
+        {
+          "objectName": "AcDbLine",
+          "handle": "2C2",
+          "layer": "F024_GLOBAL_UNDO_REDO",
+          "color": 1,
+          "lineweight": 50,
+          "details": {
+            "start": [
+              100,
+              2210
+            ],
+            "end": [
+              100,
+              2300
+            ]
+          }
+        },
+        {
+          "objectName": "AcDbLine",
+          "handle": "2C3",
+          "layer": "F024_GLOBAL_UNDO_REDO",
+          "color": 1,
+          "lineweight": 50,
+          "details": {
+            "start": [
+              200,
+              2200
+            ],
+            "end": [
+              290,
+              2200
+            ]
+          }
+        },
+        {
+          "objectName": "AcDbLine",
+          "handle": "2C4",
+          "layer": "F024_GLOBAL_UNDO_REDO",
+          "color": 1,
+          "lineweight": 50,
+          "details": {
+            "start": [
+              300,
+              2210
+            ],
+            "end": [
+              300,
+              2300
+            ]
+          }
+        },
+        {
+          "objectName": "AcDbArc",
+          "handle": "2C5",
+          "layer": "F024_GLOBAL_UNDO_REDO",
+          "color": 1,
+          "lineweight": 50,
+          "details": {
+            "center": [
+              90,
+              2210
+            ],
+            "radius": 10,
+            "startAngle": 4.71238898038469,
+            "endAngle": 0
+          }
+        },
+        {
+          "objectName": "AcDbArc",
+          "handle": "2C6",
+          "layer": "F024_GLOBAL_UNDO_REDO",
+          "color": 1,
+          "lineweight": 50,
+          "details": {
+            "center": [
+              290,
+              2210
+            ],
+            "radius": 10,
+            "startAngle": 4.71238898038469,
+            "endAngle": 0
+          }
+        }
+      ]
+    },
+    "sameSourceLayer": {
+      "source": [
+        {
+          "objectName": "AcDbLine",
+          "handle": "2C7",
+          "layer": "F024_CURRENT_SRC",
+          "color": 1,
+          "lineweight": 50,
+          "details": {
+            "start": [
+              0,
+              2400
+            ],
+            "end": [
+              100,
+              2400
+            ]
+          }
+        },
+        {
+          "objectName": "AcDbLine",
+          "handle": "2C8",
+          "layer": "F024_CURRENT_SRC",
+          "color": 1,
+          "lineweight": 50,
+          "details": {
+            "start": [
+              100,
+              2400
+            ],
+            "end": [
+              100,
+              2500
+            ]
+          }
+        },
+        {
+          "objectName": "AcDbArc",
+          "handle": "2C9",
+          "layer": "F024_CURRENT_SRC",
+          "color": 1,
+          "lineweight": 50,
+          "details": {
+            "center": [
+              90,
+              2410
+            ],
+            "radius": 10,
+            "startAngle": 4.71238898038469,
+            "endAngle": 0
+          }
+        }
+      ],
+      "current": []
+    },
+    "crossLayer": {
+      "first": [
+        {
+          "objectName": "AcDbLine",
+          "handle": "2CA",
+          "layer": "F024_CROSS_A",
+          "color": 1,
+          "lineweight": 50,
+          "details": {
+            "start": [
+              0,
+              2600
+            ],
+            "end": [
+              100,
+              2600
+            ]
+          }
+        }
+      ],
+      "second": [
+        {
+          "objectName": "AcDbLine",
+          "handle": "2CB",
+          "layer": "F024_CROSS_B",
+          "color": 1,
+          "lineweight": 50,
+          "details": {
+            "start": [
+              100,
+              2600
+            ],
+            "end": [
+              100,
+              2700
+            ]
+          }
+        }
+      ],
+      "current": [
+        {
+          "objectName": "AcDbArc",
+          "handle": "2CC",
+          "layer": "F024_CROSS_ARC",
+          "color": 256,
+          "lineweight": 50,
+          "details": {
+            "center": [
+              90,
+              2610
+            ],
+            "radius": 10,
+            "startAngle": 4.71238898038469,
+            "endAngle": 0
+          }
+        }
+      ]
+    },
+    "physicalShift": {
+      "entities": [
+        {
+          "objectName": "AcDbLine",
+          "handle": "2CD",
+          "layer": "F024_SHIFT",
+          "color": 1,
+          "lineweight": 50,
+          "details": {
+            "start": [
+              0,
+              3000
+            ],
+            "end": [
+              100,
+              3000
+            ]
+          }
+        },
+        {
+          "objectName": "AcDbLine",
+          "handle": "2CE",
+          "layer": "F024_SHIFT",
+          "color": 1,
+          "lineweight": 50,
+          "details": {
+            "start": [
+              100,
+              3000
+            ],
+            "end": [
+              100,
+              3100
+            ]
+          }
+        }
+      ],
+      "input": {
+        "x": 2594,
+        "y": 814,
+        "world": [
+          100,
+          3040
+        ],
+        "viewport": [
+          1360,
+          186,
+          3436,
+          1363
+        ],
+        "screenSize": [
+          2076,
+          1177
+        ],
+        "viewCenter": [
+          50,
+          3050
+        ],
+        "viewHeight": 300
+      },
+      "filletRadiusAfter": 10
+    },
+    "lineCircle": [
+      {
+        "objectName": "AcDbLine",
+        "handle": "2CF",
+        "layer": "F024_LINE_CIRCLE",
+        "color": 1,
+        "lineweight": 50,
+        "details": {
+          "start": [
+            -100,
+            3400
+          ],
+          "end": [
+            100,
+            3400
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbCircle",
+        "handle": "2D0",
+        "layer": "F024_LINE_CIRCLE",
+        "color": 1,
+        "lineweight": 50,
+        "details": {
+          "center": [
+            0,
+            3430
+          ],
+          "radius": 10
+        }
+      },
+      {
+        "objectName": "AcDbArc",
+        "handle": "2D1",
+        "layer": "F024_LINE_CIRCLE",
+        "color": 1,
+        "lineweight": 50,
+        "details": {
+          "center": [
+            0,
+            3410
+          ],
+          "radius": 10,
+          "startAngle": 1.570796326794897,
+          "endAngle": 4.71238898038469
+        }
+      }
+    ],
+    "lineArc": [
+      {
+        "objectName": "AcDbLine",
+        "handle": "2D2",
+        "layer": "F024_LINE_ARC",
+        "color": 1,
+        "lineweight": 50,
+        "details": {
+          "start": [
+            200,
+            3600
+          ],
+          "end": [
+            400,
+            3600
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbArc",
+        "handle": "2D3",
+        "layer": "F024_LINE_ARC",
+        "color": 1,
+        "lineweight": 50,
+        "details": {
+          "center": [
+            300,
+            3630
+          ],
+          "radius": 10,
+          "startAngle": 3.141592653589793,
+          "endAngle": 0
+        }
+      },
+      {
+        "objectName": "AcDbArc",
+        "handle": "2D4",
+        "layer": "F024_LINE_ARC",
+        "color": 1,
+        "lineweight": 50,
+        "details": {
+          "center": [
+            300,
+            3610
+          ],
+          "radius": 10,
+          "startAngle": 4.71238898038469,
+          "endAngle": 1.5707963267948966
+        }
+      }
+    ],
+    "lineCircleTrim": [
+      {
+        "objectName": "AcDbLine",
+        "handle": "2D5",
+        "layer": "F024_LINE_CIRCLE_TRIM",
+        "color": 1,
+        "lineweight": 50,
+        "details": {
+          "start": [
+            -200,
+            3800
+          ],
+          "end": [
+            -9.544511501033227,
+            3800
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbCircle",
+        "handle": "2D6",
+        "layer": "F024_LINE_CIRCLE_TRIM",
+        "color": 1,
+        "lineweight": 50,
+        "details": {
+          "center": [
+            100,
+            3800
+          ],
+          "radius": 100
+        }
+      },
+      {
+        "objectName": "AcDbArc",
+        "handle": "2D7",
+        "layer": "F024_LINE_CIRCLE_TRIM",
+        "color": 1,
+        "lineweight": 50,
+        "details": {
+          "center": [
+            -9.544511501033227,
+            3810
+          ],
+          "radius": 10,
+          "startAngle": 4.71238898038469,
+          "endAngle": 6.192150529142163
+        }
+      }
+    ],
+    "lineEllipse": [
+      {
+        "objectName": "AcDbLine",
+        "handle": "2D8",
+        "layer": "F024_LINE_ELLIPSE",
+        "color": 1,
+        "lineweight": 50,
+        "details": {
+          "start": [
+            -200,
+            4000
+          ],
+          "end": [
+            -8.557770070554682,
+            4000
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbEllipse",
+        "handle": "2D9",
+        "layer": "F024_LINE_ELLIPSE",
+        "color": 1,
+        "lineweight": 50,
+        "details": {
+          "center": [
+            100,
+            4000
+          ],
+          "majorAxis": [
+            100,
+            0
+          ],
+          "radiusRatio": 0.5,
+          "startParameter": 0,
+          "endParameter": 6.283185307179585
+        }
+      },
+      {
+        "objectName": "AcDbArc",
+        "handle": "2DA",
+        "layer": "F024_LINE_ELLIPSE",
+        "color": 1,
+        "lineweight": -1,
+        "details": {
+          "center": [
+            -8.557770070552301,
+            4009.999999999998
+          ],
+          "radius": 10,
+          "startAngle": 4.712388980384446,
+          "endAngle": 5.999818834820287
+        }
+      }
+    ],
+    "lineSpline": [
+      {
+        "objectName": "AcDbLine",
+        "handle": "2DB",
+        "layer": "F024_LINE_SPLINE",
+        "color": 1,
+        "lineweight": 50,
+        "details": {
+          "start": [
+            100,
+            4200
+          ],
+          "end": [
+            291.57921680073053,
+            4200
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbSpline",
+        "handle": "2DC",
+        "layer": "F024_LINE_SPLINE",
+        "color": 1,
+        "lineweight": 50,
+        "details": {
+          "degree": 3,
+          "closed": false,
+          "controlPoints": [
+            [
+              301.0864722797955,
+              4206.89966239648
+            ],
+            [
+              305.7999242205857,
+              4221.353569525349
+            ],
+            [
+              357.8793043007138,
+              4244.472138071974
+            ],
+            [
+              380,
+              4280
+            ],
+            [
+              400,
+              4300
+            ]
+          ],
+          "fitPoints": [
+            [
+              301.0864722797955,
+              4206.89966239648
+            ],
+            [
+              340.00000000000006,
+              4240
+            ],
+            [
+              400.00000000000006,
+              4300.000000000001
+            ]
+          ],
+          "knots": [
+            7.349693949914977,
+            7.349693949914977,
+            7.349693949914977,
+            7.349693949914977,
+            56.568542494923804,
+            141.4213562373095,
+            141.4213562373095,
+            141.4213562373095,
+            141.4213562373095
+          ],
+          "weights": null
+        }
+      },
+      {
+        "objectName": "AcDbArc",
+        "handle": "2DD",
+        "layer": "F024_LINE_SPLINE",
+        "color": 1,
+        "lineweight": -1,
+        "details": {
+          "center": [
+            291.57921680073025,
+            4210.000000000001
+          ],
+          "radius": 10,
+          "startAngle": 4.71238898038473,
+          "endAngle": 5.967956764852173
+        }
+      }
+    ],
+    "rayLine": [
+      {
+        "objectName": "AcDbLine",
+        "handle": "2DF",
+        "layer": "F024_RAY_LINE",
+        "color": 1,
+        "lineweight": 50,
+        "details": {
+          "start": [
+            100,
+            4610
+          ],
+          "end": [
+            100,
+            4700
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbArc",
+        "handle": "2E0",
+        "layer": "F024_RAY_LINE",
+        "color": 1,
+        "lineweight": -1,
+        "details": {
+          "center": [
+            90.00000000000038,
+            4610
+          ],
+          "radius": 10,
+          "startAngle": 4.7123889803846515,
+          "endAngle": 0
+        }
+      }
+    ],
+    "xlineLine": [
+      {
+        "objectName": "AcDbLine",
+        "handle": "2E2",
+        "layer": "F024_XLINE_LINE",
+        "color": 1,
+        "lineweight": 50,
+        "details": {
+          "start": [
+            100,
+            4810
+          ],
+          "end": [
+            100,
+            4900
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbArc",
+        "handle": "2E3",
+        "layer": "F024_XLINE_LINE",
+        "color": 1,
+        "lineweight": -1,
+        "details": {
+          "center": [
+            90.00000000000003,
+            4809.999999999999
+          ],
+          "radius": 10,
+          "startAngle": 4.712388980384687,
+          "endAngle": 9.094947017729308e-14
+        }
+      }
+    ],
+    "rayLineNoTrim": [
+      {
+        "objectName": "AcDbRay",
+        "handle": "2E4",
+        "layer": "F024_RAY_LINE_NO_TRIM",
+        "color": 1,
+        "lineweight": 50,
+        "details": {
+          "basePoint": [
+            0,
+            5000
+          ],
+          "secondPoint": [
+            1,
+            5000
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbLine",
+        "handle": "2E5",
+        "layer": "F024_RAY_LINE_NO_TRIM",
+        "color": 1,
+        "lineweight": 50,
+        "details": {
+          "start": [
+            100,
+            5000
+          ],
+          "end": [
+            100,
+            5100
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbArc",
+        "handle": "2E6",
+        "layer": "F024_RAY_LINE_NO_TRIM",
+        "color": 1,
+        "lineweight": -1,
+        "details": {
+          "center": [
+            90.00000000000038,
+            5009.999999999999
+          ],
+          "radius": 10,
+          "startAngle": 4.7123889803846515,
+          "endAngle": 9.094947017729631e-14
+        }
+      }
+    ],
+    "xlineLineNoTrim": [
+      {
+        "objectName": "AcDbXline",
+        "handle": "2E7",
+        "layer": "F024_XLINE_LINE_NO_TRIM",
+        "color": 1,
+        "lineweight": 50,
+        "details": {
+          "basePoint": [
+            0,
+            5200
+          ],
+          "secondPoint": [
+            1,
+            5200
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbLine",
+        "handle": "2E8",
+        "layer": "F024_XLINE_LINE_NO_TRIM",
+        "color": 1,
+        "lineweight": 50,
+        "details": {
+          "start": [
+            100,
+            5200
+          ],
+          "end": [
+            100,
+            5300
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbArc",
+        "handle": "2E9",
+        "layer": "F024_XLINE_LINE_NO_TRIM",
+        "color": 1,
+        "lineweight": -1,
+        "details": {
+          "center": [
+            90.00000000000038,
+            5210
+          ],
+          "radius": 10,
+          "startAngle": 4.7123889803846515,
+          "endAngle": 0
+        }
+      }
+    ],
+    "rayXline": [
+      {
+        "objectName": "AcDbArc",
+        "handle": "2EC",
+        "layer": "F024_RAY_XLINE",
+        "color": 1,
+        "lineweight": -1,
+        "details": {
+          "center": [
+            90.00000000000038,
+            5409.999999999999
+          ],
+          "radius": 10,
+          "startAngle": 4.7123889803846515,
+          "endAngle": 9.094947017729631e-14
+        }
+      }
+    ],
+    "lockedLayer": [
+      {
+        "objectName": "AcDbLine",
+        "handle": "2ED",
+        "layer": "F024_LOCKED",
+        "color": 1,
+        "lineweight": 50,
+        "details": {
+          "start": [
+            0,
+            4400
+          ],
+          "end": [
+            100,
+            4400
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbLine",
+        "handle": "2EE",
+        "layer": "F024_LOCKED",
+        "color": 1,
+        "lineweight": 50,
+        "details": {
+          "start": [
+            100,
+            4400
+          ],
+          "end": [
+            100,
+            4500
+          ]
+        }
+      }
+    ],
+    "offLayer": [
+      {
+        "objectName": "AcDbLine",
+        "handle": "2EF",
+        "layer": "F024_OFF",
+        "color": 1,
+        "lineweight": 50,
+        "details": {
+          "start": [
+            200,
+            4400
+          ],
+          "end": [
+            290,
+            4400
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbLine",
+        "handle": "2F0",
+        "layer": "F024_OFF",
+        "color": 1,
+        "lineweight": 50,
+        "details": {
+          "start": [
+            300,
+            4410
+          ],
+          "end": [
+            300,
+            4500
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbArc",
+        "handle": "2F1",
+        "layer": "F024_OFF",
+        "color": 1,
+        "lineweight": 50,
+        "details": {
+          "center": [
+            290,
+            4410
+          ],
+          "radius": 10,
+          "startAngle": 4.71238898038469,
+          "endAngle": 0
+        }
+      }
+    ],
+    "frozenLayer": [
+      {
+        "objectName": "AcDbLine",
+        "handle": "2F2",
+        "layer": "F024_FROZEN",
+        "color": 1,
+        "lineweight": 50,
+        "details": {
+          "start": [
+            400,
+            4400
+          ],
+          "end": [
+            490,
+            4400
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbLine",
+        "handle": "2F3",
+        "layer": "F024_FROZEN",
+        "color": 1,
+        "lineweight": 50,
+        "details": {
+          "start": [
+            500,
+            4410
+          ],
+          "end": [
+            500,
+            4500
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbArc",
+        "handle": "2F4",
+        "layer": "F024_FROZEN",
+        "color": 1,
+        "lineweight": 50,
+        "details": {
+          "center": [
+            490,
+            4410
+          ],
+          "radius": 10,
+          "startAngle": 4.71238898038469,
+          "endAngle": 0
+        }
+      }
+    ],
+    "sameParametricSource": [
+      {
+        "objectName": "AcDbLine",
+        "handle": "10",
+        "layer": "0",
+        "color": 1,
+        "lineweight": 50,
+        "details": {
+          "start": [
+            -200,
+            0
+          ],
+          "end": [
+            -8.557770070554682,
+            0
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbEllipse",
+        "handle": "20",
+        "layer": "0",
+        "color": 1,
+        "lineweight": 50,
+        "details": {
+          "center": [
+            100,
+            0
+          ],
+          "majorAxis": [
+            100,
+            0
+          ],
+          "radiusRatio": 0.5,
+          "startParameter": 0,
+          "endParameter": 6.283185307179585
+        }
+      },
+      {
+        "objectName": "AcDbLine",
+        "handle": "30",
+        "layer": "0",
+        "color": 1,
+        "lineweight": 50,
+        "details": {
+          "start": [
+            100,
+            200
+          ],
+          "end": [
+            290.8439438596826,
+            200
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbSpline",
+        "handle": "40",
+        "layer": "0",
+        "color": 1,
+        "lineweight": 50,
+        "details": {
+          "degree": 3,
+          "closed": false,
+          "controlPoints": [
+            [
+              300.6951338085991,
+              208.2812630828239
+            ],
+            [
+              306.6275204191803,
+              242.2835974525272
+            ],
+            [
+              362.0044348340202,
+              262.0044348340202
+            ],
+            [
+              400,
+              300
+            ]
+          ],
+          "fitPoints": null,
+          "knots": [
+            0.0380599575421208,
+            0.0380599575421208,
+            0.0380599575421208,
+            0.0380599575421208,
+            1,
+            1,
+            1,
+            1
+          ],
+          "weights": [
+            1.114179872626362,
+            2.076119915084241,
+            3.0380599575421203,
+            4
+          ]
+        }
+      },
+      {
+        "objectName": "AcDbArc",
+        "handle": "F5C",
+        "layer": "0",
+        "color": 1,
+        "lineweight": -1,
+        "details": {
+          "center": [
+            -8.557770070553568,
+            9.9999999999997
+          ],
+          "radius": 10,
+          "startAngle": 4.712388980384573,
+          "endAngle": 5.999818834820145
+        }
+      },
+      {
+        "objectName": "AcDbArc",
+        "handle": "F5D",
+        "layer": "0",
+        "color": 1,
+        "lineweight": -1,
+        "details": {
+          "center": [
+            290.8439438596848,
+            209.99999999999758
+          ],
+          "radius": 10,
+          "startAngle": 4.712388980384474,
+          "endAngle": 6.110453957060589
+        }
+      }
+    ]
+  },
+  "dxfOutputSha256": "fd055be57ce8effdb68bbad824de996250edf56158644b0ab88fbb69abb6cd11",
+  "parametricDxfOutputSha256": "bb579ea3e0f31ba41b62377b37598d10b81d8e99803d999970bb3dc1e43b369d",
+  "cmdNamesAfter": "",
+  "status": "PASS",
+  "userDocument": {
+    "isolatedOwnedProcess": true,
+    "blankRestored": true
+  },
+  "automationProcessTerminated": true,
+  "processSetRestored": true,
+  "preExistingProcessIds": [
+    11276
+  ],
+  "dxfReadback": {
+    "sha256": "fd055be57ce8effdb68bbad824de996250edf56158644b0ab88fbb69abb6cd11",
+    "layerTypes": {
+      "F024_PAIR": {
+        "LINE": 2,
+        "ARC": 1
+      },
+      "F024_NO_TRIM": {
+        "LINE": 2,
+        "ARC": 1
+      },
+      "F024_MIXED": {
+        "LWPOLYLINE": 1
+      },
+      "F024_ADJACENT": {
+        "LWPOLYLINE": 1
+      },
+      "F024_ARC_ZERO": {
+        "LWPOLYLINE": 1
+      },
+      "F024_OPEN_CLOSE": {
+        "LWPOLYLINE": 1
+      },
+      "F024_FPA0": {
+        "LWPOLYLINE": 1
+      },
+      "F024_FPA1": {
+        "LWPOLYLINE": 1
+      },
+      "F024_FPA0_NO_TRIM": {
+        "LWPOLYLINE": 1,
+        "ARC": 2
+      },
+      "F024_POLY_NO_TRIM": {
+        "LWPOLYLINE": 1,
+        "ARC": 4
+      },
+      "F024_MULTIPLE": {
+        "LINE": 4,
+        "ARC": 2
+      },
+      "F024_COMMAND_UNDO": {
+        "LINE": 4,
+        "ARC": 1
+      },
+      "F024_GLOBAL_UNDO_REDO": {
+        "LINE": 4,
+        "ARC": 2
+      },
+      "F024_CURRENT_SRC": {
+        "LINE": 2,
+        "ARC": 1
+      },
+      "F024_CROSS_A": {
+        "LINE": 1
+      },
+      "F024_CROSS_B": {
+        "LINE": 1
+      },
+      "F024_CROSS_ARC": {
+        "ARC": 1
+      },
+      "F024_SHIFT": {
+        "LINE": 2
+      },
+      "F024_LINE_CIRCLE": {
+        "LINE": 1,
+        "CIRCLE": 1,
+        "ARC": 1
+      },
+      "F024_LINE_ARC": {
+        "LINE": 1,
+        "ARC": 2
+      },
+      "F024_LINE_CIRCLE_TRIM": {
+        "LINE": 1,
+        "CIRCLE": 1,
+        "ARC": 1
+      },
+      "F024_LINE_ELLIPSE": {
+        "LINE": 1,
+        "ELLIPSE": 1,
+        "ARC": 1
+      },
+      "F024_LINE_SPLINE": {
+        "LINE": 1,
+        "SPLINE": 1,
+        "ARC": 1
+      },
+      "F024_RAY_LINE": {
+        "LINE": 2,
+        "ARC": 1
+      },
+      "F024_XLINE_LINE": {
+        "LINE": 1,
+        "ARC": 1
+      },
+      "F024_RAY_LINE_NO_TRIM": {
+        "LINE": 1,
+        "ARC": 1
+      },
+      "F024_XLINE_LINE_NO_TRIM": {
+        "LINE": 1,
+        "ARC": 1
+      },
+      "F024_RAY_XLINE": {
+        "LINE": 1,
+        "ARC": 1
+      },
+      "F024_LOCKED": {
+        "LINE": 2
+      },
+      "F024_OFF": {
+        "LINE": 2,
+        "ARC": 1
+      },
+      "F024_FROZEN": {
+        "LINE": 2,
+        "ARC": 1
+      }
+    },
+    "selectedLayerEntities": {
+      "F024_MIXED": [
+        {
+          "handle": "2A6",
+          "type": "LWPOLYLINE",
+          "layer": "F024_MIXED",
+          "vertices": [
+            {
+              "x": 0,
+              "y": 400,
+              "bulge": 0,
+              "startWidth": 2,
+              "endWidth": 3.799999999999999
+            },
+            {
+              "x": 90,
+              "y": 400,
+              "bulge": 0.4142135623730951,
+              "startWidth": 3.799999999999999,
+              "endWidth": 3.799999999999999
+            },
+            {
+              "x": 100,
+              "y": 410,
+              "bulge": 0,
+              "startWidth": 3.799999999999999,
+              "endWidth": 3.799999999999999
+            },
+            {
+              "x": 100,
+              "y": 500,
+              "bulge": 0,
+              "startWidth": 3.799999999999999,
+              "endWidth": 3.799999999999999
+            }
+          ],
+          "closed": false,
+          "colorNumber": 1,
+          "lineweight": 50
+        }
+      ],
+      "F024_ADJACENT": [
+        {
+          "handle": "2A8",
+          "type": "LWPOLYLINE",
+          "layer": "F024_ADJACENT",
+          "vertices": [
+            {
+              "x": 0,
+              "y": 600,
+              "bulge": 0,
+              "startWidth": 0,
+              "endWidth": 0
+            },
+            {
+              "x": 90,
+              "y": 600,
+              "bulge": 0.4142135623730951,
+              "startWidth": 0,
+              "endWidth": 0
+            },
+            {
+              "x": 100,
+              "y": 610,
+              "bulge": 0,
+              "startWidth": 0,
+              "endWidth": 0
+            },
+            {
+              "x": 100,
+              "y": 700,
+              "bulge": 0,
+              "startWidth": 0,
+              "endWidth": 0
+            },
+            {
+              "x": 0,
+              "y": 700,
+              "bulge": 0,
+              "startWidth": 0,
+              "endWidth": 0
+            }
+          ],
+          "closed": true,
+          "colorNumber": 1,
+          "lineweight": 50
+        }
+      ],
+      "F024_ARC_ZERO": [
+        {
+          "handle": "2A9",
+          "type": "LWPOLYLINE",
+          "layer": "F024_ARC_ZERO",
+          "vertices": [
+            {
+              "x": 0,
+              "y": 800,
+              "bulge": 0,
+              "startWidth": 0,
+              "endWidth": 0
+            },
+            {
+              "x": 150,
+              "y": 800,
+              "bulge": 0,
+              "startWidth": 0,
+              "endWidth": 0
+            },
+            {
+              "x": 150,
+              "y": 950,
+              "bulge": 0,
+              "startWidth": 0,
+              "endWidth": 0
+            },
+            {
+              "x": 0,
+              "y": 950,
+              "bulge": 0,
+              "startWidth": 0,
+              "endWidth": 0
+            }
+          ],
+          "closed": true,
+          "colorNumber": 1,
+          "lineweight": 50
+        }
+      ],
+      "F024_OPEN_CLOSE": [
+        {
+          "handle": "2AA",
+          "type": "LWPOLYLINE",
+          "layer": "F024_OPEN_CLOSE",
+          "vertices": [
+            {
+              "x": 0,
+              "y": 1196.492189406417,
+              "bulge": 0,
+              "startWidth": 0,
+              "endWidth": 0
+            },
+            {
+              "x": 0,
+              "y": 1100,
+              "bulge": 0,
+              "startWidth": 0,
+              "endWidth": 0
+            },
+            {
+              "x": 100,
+              "y": 1100,
+              "bulge": 0,
+              "startWidth": 0,
+              "endWidth": 0
+            },
+            {
+              "x": 17.80868809443036,
+              "y": 1202.739139881962,
+              "bulge": 0.708958225373872,
+              "startWidth": 0,
+              "endWidth": 0
+            }
+          ],
+          "closed": true,
+          "colorNumber": 1,
+          "lineweight": 50
+        }
+      ],
+      "F024_FPA0": [
+        {
+          "handle": "2AB",
+          "type": "LWPOLYLINE",
+          "layer": "F024_FPA0",
+          "vertices": [
+            {
+              "x": 0,
+              "y": 1400,
+              "bulge": 0,
+              "startWidth": 0,
+              "endWidth": 0
+            },
+            {
+              "x": 150,
+              "y": 1400,
+              "bulge": 0.4142135623730951,
+              "startWidth": 0,
+              "endWidth": 0
+            },
+            {
+              "x": 160,
+              "y": 1410,
+              "bulge": 0,
+              "startWidth": 0,
+              "endWidth": 0
+            },
+            {
+              "x": 160,
+              "y": 1540,
+              "bulge": 0,
+              "startWidth": 0,
+              "endWidth": 0
+            }
+          ],
+          "closed": false,
+          "colorNumber": 1,
+          "lineweight": 50
+        }
+      ],
+      "F024_FPA1": [
+        {
+          "handle": "2AC",
+          "type": "LWPOLYLINE",
+          "layer": "F024_FPA1",
+          "vertices": [
+            {
+              "x": 300,
+              "y": 1400,
+              "bulge": 0,
+              "startWidth": 0,
+              "endWidth": 0
+            },
+            {
+              "x": 397.9728263037279,
+              "y": 1400.000000000023,
+              "bulge": 0.1028298847005704,
+              "startWidth": 0,
+              "endWidth": 0
+            },
+            {
+              "x": 401.9578089716612,
+              "y": 1400.828309145213,
+              "bulge": 0.1899975987610248,
+              "startWidth": 0,
+              "endWidth": 0
+            },
+            {
+              "x": 459.1716908547876,
+              "y": 1458.04219102834,
+              "bulge": 0.1028298847004823,
+              "startWidth": 0,
+              "endWidth": 0
+            },
+            {
+              "x": 459.999999999977,
+              "y": 1462.02717369627,
+              "bulge": 0,
+              "startWidth": 0,
+              "endWidth": 0
+            },
+            {
+              "x": 460,
+              "y": 1540,
+              "bulge": 0,
+              "startWidth": 0,
+              "endWidth": 0
+            }
+          ],
+          "closed": false,
+          "colorNumber": 1,
+          "lineweight": 50
+        }
+      ],
+      "F024_FPA0_NO_TRIM": [
+        {
+          "handle": "2AD",
+          "type": "LWPOLYLINE",
+          "layer": "F024_FPA0_NO_TRIM",
+          "vertices": [
+            {
+              "x": 600,
+              "y": 1400,
+              "bulge": 0,
+              "startWidth": 0,
+              "endWidth": 0
+            },
+            {
+              "x": 700,
+              "y": 1400,
+              "bulge": 0.4142135623730951,
+              "startWidth": 0,
+              "endWidth": 0
+            },
+            {
+              "x": 760,
+              "y": 1460,
+              "bulge": 0,
+              "startWidth": 0,
+              "endWidth": 0
+            },
+            {
+              "x": 760,
+              "y": 1540,
+              "bulge": 0,
+              "startWidth": 0,
+              "endWidth": 0
+            },
+            {
+              "x": 660,
+              "y": 1540,
+              "bulge": 0,
+              "startWidth": 0,
+              "endWidth": 0
+            }
+          ],
+          "closed": false,
+          "colorNumber": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "2AE",
+          "type": "ARC",
+          "layer": "F024_FPA0_NO_TRIM",
+          "closed": false,
+          "center": {
+            "x": 750,
+            "y": 1530
+          },
+          "radius": 10,
+          "startAngle": 0,
+          "endAngle": 1.5707963267948966,
+          "colorNumber": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "2AF",
+          "type": "ARC",
+          "layer": "F024_FPA0_NO_TRIM",
+          "closed": false,
+          "center": {
+            "x": 750,
+            "y": 1410
+          },
+          "radius": 10,
+          "startAngle": 4.71238898038469,
+          "endAngle": 0,
+          "colorNumber": 1,
+          "lineweight": 50
+        }
+      ],
+      "F024_POLY_NO_TRIM": [
+        {
+          "handle": "2B0",
+          "type": "LWPOLYLINE",
+          "layer": "F024_POLY_NO_TRIM",
+          "vertices": [
+            {
+              "x": 300,
+              "y": 600,
+              "bulge": 0,
+              "startWidth": 0,
+              "endWidth": 0
+            },
+            {
+              "x": 400,
+              "y": 600,
+              "bulge": 0,
+              "startWidth": 0,
+              "endWidth": 0
+            },
+            {
+              "x": 400,
+              "y": 700,
+              "bulge": 0,
+              "startWidth": 0,
+              "endWidth": 0
+            },
+            {
+              "x": 300,
+              "y": 700,
+              "bulge": 0,
+              "startWidth": 0,
+              "endWidth": 0
+            }
+          ],
+          "closed": true,
+          "colorNumber": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "2B1",
+          "type": "ARC",
+          "layer": "F024_POLY_NO_TRIM",
+          "closed": false,
+          "center": {
+            "x": 310,
+            "y": 610
+          },
+          "radius": 10,
+          "startAngle": 3.141592653589793,
+          "endAngle": 4.71238898038469,
+          "colorNumber": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "2B2",
+          "type": "ARC",
+          "layer": "F024_POLY_NO_TRIM",
+          "closed": false,
+          "center": {
+            "x": 310,
+            "y": 690
+          },
+          "radius": 10,
+          "startAngle": 1.5707963267948966,
+          "endAngle": 3.141592653589793,
+          "colorNumber": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "2B3",
+          "type": "ARC",
+          "layer": "F024_POLY_NO_TRIM",
+          "closed": false,
+          "center": {
+            "x": 390,
+            "y": 690
+          },
+          "radius": 10,
+          "startAngle": 0,
+          "endAngle": 1.5707963267948966,
+          "colorNumber": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "2B4",
+          "type": "ARC",
+          "layer": "F024_POLY_NO_TRIM",
+          "closed": false,
+          "center": {
+            "x": 390,
+            "y": 610
+          },
+          "radius": 10,
+          "startAngle": 4.71238898038469,
+          "endAngle": 0,
+          "colorNumber": 1,
+          "lineweight": 50
+        }
+      ],
+      "F024_PAIR": [
+        {
+          "handle": "29F",
+          "type": "LINE",
+          "layer": "F024_PAIR",
+          "vertices": [
+            {
+              "x": 0,
+              "y": 0,
+              "bulge": 0,
+              "startWidth": 0,
+              "endWidth": 0
+            },
+            {
+              "x": 90,
+              "y": 0,
+              "bulge": 0,
+              "startWidth": 0,
+              "endWidth": 0
+            }
+          ],
+          "closed": false,
+          "colorNumber": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "2A0",
+          "type": "LINE",
+          "layer": "F024_PAIR",
+          "vertices": [
+            {
+              "x": 100,
+              "y": 10,
+              "bulge": 0,
+              "startWidth": 0,
+              "endWidth": 0
+            },
+            {
+              "x": 100,
+              "y": 100,
+              "bulge": 0,
+              "startWidth": 0,
+              "endWidth": 0
+            }
+          ],
+          "closed": false,
+          "colorNumber": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "2A1",
+          "type": "ARC",
+          "layer": "F024_PAIR",
+          "closed": false,
+          "center": {
+            "x": 90,
+            "y": 10
+          },
+          "radius": 10,
+          "startAngle": 4.71238898038469,
+          "endAngle": 0,
+          "colorNumber": 1,
+          "lineweight": 50
+        }
+      ],
+      "F024_NO_TRIM": [
+        {
+          "handle": "2A3",
+          "type": "LINE",
+          "layer": "F024_NO_TRIM",
+          "vertices": [
+            {
+              "x": 0,
+              "y": 200,
+              "bulge": 0,
+              "startWidth": 0,
+              "endWidth": 0
+            },
+            {
+              "x": 100,
+              "y": 200,
+              "bulge": 0,
+              "startWidth": 0,
+              "endWidth": 0
+            }
+          ],
+          "closed": false,
+          "colorNumber": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "2A4",
+          "type": "LINE",
+          "layer": "F024_NO_TRIM",
+          "vertices": [
+            {
+              "x": 100,
+              "y": 200,
+              "bulge": 0,
+              "startWidth": 0,
+              "endWidth": 0
+            },
+            {
+              "x": 100,
+              "y": 300,
+              "bulge": 0,
+              "startWidth": 0,
+              "endWidth": 0
+            }
+          ],
+          "closed": false,
+          "colorNumber": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "2A5",
+          "type": "ARC",
+          "layer": "F024_NO_TRIM",
+          "closed": false,
+          "center": {
+            "x": 90,
+            "y": 210
+          },
+          "radius": 10,
+          "startAngle": 4.71238898038469,
+          "endAngle": 0,
+          "colorNumber": 1,
+          "lineweight": 50
+        }
+      ],
+      "F024_LINE_CIRCLE": [
+        {
+          "handle": "2CF",
+          "type": "LINE",
+          "layer": "F024_LINE_CIRCLE",
+          "vertices": [
+            {
+              "x": -100,
+              "y": 3400,
+              "bulge": 0,
+              "startWidth": 0,
+              "endWidth": 0
+            },
+            {
+              "x": 100,
+              "y": 3400,
+              "bulge": 0,
+              "startWidth": 0,
+              "endWidth": 0
+            }
+          ],
+          "closed": false,
+          "colorNumber": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "2D0",
+          "type": "CIRCLE",
+          "layer": "F024_LINE_CIRCLE",
+          "closed": false,
+          "center": {
+            "x": 0,
+            "y": 3430
+          },
+          "radius": 10,
+          "colorNumber": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "2D1",
+          "type": "ARC",
+          "layer": "F024_LINE_CIRCLE",
+          "closed": false,
+          "center": {
+            "x": 0,
+            "y": 3410
+          },
+          "radius": 10,
+          "startAngle": 1.570796326794897,
+          "endAngle": 4.71238898038469,
+          "colorNumber": 1,
+          "lineweight": 50
+        }
+      ],
+      "F024_LINE_ARC": [
+        {
+          "handle": "2D2",
+          "type": "LINE",
+          "layer": "F024_LINE_ARC",
+          "vertices": [
+            {
+              "x": 200,
+              "y": 3600,
+              "bulge": 0,
+              "startWidth": 0,
+              "endWidth": 0
+            },
+            {
+              "x": 400,
+              "y": 3600,
+              "bulge": 0,
+              "startWidth": 0,
+              "endWidth": 0
+            }
+          ],
+          "closed": false,
+          "colorNumber": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "2D3",
+          "type": "ARC",
+          "layer": "F024_LINE_ARC",
+          "closed": false,
+          "center": {
+            "x": 300,
+            "y": 3630
+          },
+          "radius": 10,
+          "startAngle": 3.141592653589793,
+          "endAngle": 0,
+          "colorNumber": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "2D4",
+          "type": "ARC",
+          "layer": "F024_LINE_ARC",
+          "closed": false,
+          "center": {
+            "x": 300,
+            "y": 3610
+          },
+          "radius": 10,
+          "startAngle": 4.71238898038469,
+          "endAngle": 1.5707963267948966,
+          "colorNumber": 1,
+          "lineweight": 50
+        }
+      ],
+      "F024_LINE_CIRCLE_TRIM": [
+        {
+          "handle": "2D5",
+          "type": "LINE",
+          "layer": "F024_LINE_CIRCLE_TRIM",
+          "vertices": [
+            {
+              "x": -200,
+              "y": 3800,
+              "bulge": 0,
+              "startWidth": 0,
+              "endWidth": 0
+            },
+            {
+              "x": -9.544511501033227,
+              "y": 3800,
+              "bulge": 0,
+              "startWidth": 0,
+              "endWidth": 0
+            }
+          ],
+          "closed": false,
+          "colorNumber": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "2D6",
+          "type": "CIRCLE",
+          "layer": "F024_LINE_CIRCLE_TRIM",
+          "closed": false,
+          "center": {
+            "x": 100,
+            "y": 3800
+          },
+          "radius": 100,
+          "colorNumber": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "2D7",
+          "type": "ARC",
+          "layer": "F024_LINE_CIRCLE_TRIM",
+          "closed": false,
+          "center": {
+            "x": -9.544511501033227,
+            "y": 3810
+          },
+          "radius": 10,
+          "startAngle": 4.71238898038469,
+          "endAngle": 6.192150529142163,
+          "colorNumber": 1,
+          "lineweight": 50
+        }
+      ],
+      "F024_LINE_ELLIPSE": [
+        {
+          "handle": "2D8",
+          "type": "LINE",
+          "layer": "F024_LINE_ELLIPSE",
+          "vertices": [
+            {
+              "x": -200,
+              "y": 4000,
+              "bulge": 0,
+              "startWidth": 0,
+              "endWidth": 0
+            },
+            {
+              "x": -8.557770070554682,
+              "y": 4000,
+              "bulge": 0,
+              "startWidth": 0,
+              "endWidth": 0
+            }
+          ],
+          "closed": false,
+          "colorNumber": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "2D9",
+          "type": "ELLIPSE",
+          "layer": "F024_LINE_ELLIPSE",
+          "closed": false,
+          "center": {
+            "x": 100,
+            "y": 4000
+          },
+          "startAngle": 0,
+          "endAngle": 6.283185307179585,
+          "majorAxis": {
+            "x": 100,
+            "y": 0
+          },
+          "ratio": 0.5,
+          "colorNumber": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "2DA",
+          "type": "ARC",
+          "layer": "F024_LINE_ELLIPSE",
+          "closed": false,
+          "center": {
+            "x": -8.557770070552301,
+            "y": 4009.999999999998
+          },
+          "radius": 10,
+          "startAngle": 4.712388980384446,
+          "endAngle": 5.999818834820286,
+          "colorNumber": 1
+        }
+      ],
+      "F024_LINE_SPLINE": [
+        {
+          "handle": "2DB",
+          "type": "LINE",
+          "layer": "F024_LINE_SPLINE",
+          "vertices": [
+            {
+              "x": 100,
+              "y": 4200,
+              "bulge": 0,
+              "startWidth": 0,
+              "endWidth": 0
+            },
+            {
+              "x": 291.5792168007305,
+              "y": 4200,
+              "bulge": 0,
+              "startWidth": 0,
+              "endWidth": 0
+            }
+          ],
+          "closed": false,
+          "colorNumber": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "2DC",
+          "type": "SPLINE",
+          "layer": "F024_LINE_SPLINE",
+          "closed": false,
+          "degree": 3,
+          "controlPoints": [
+            {
+              "x": 301.0864722797955,
+              "y": 4206.89966239648
+            },
+            {
+              "x": 305.7999242205857,
+              "y": 4221.353569525348
+            },
+            {
+              "x": 357.8793043007138,
+              "y": 4244.472138071974
+            },
+            {
+              "x": 380,
+              "y": 4280
+            },
+            {
+              "x": 400,
+              "y": 4300
+            }
+          ],
+          "knots": [
+            7.349693949914977,
+            7.349693949914977,
+            7.349693949914977,
+            7.349693949914977,
+            56.5685424949238,
+            141.4213562373095,
+            141.4213562373095,
+            141.4213562373095,
+            141.4213562373095
+          ],
+          "weights": [],
+          "colorNumber": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "2DD",
+          "type": "ARC",
+          "layer": "F024_LINE_SPLINE",
+          "closed": false,
+          "center": {
+            "x": 291.5792168007302,
+            "y": 4210
+          },
+          "radius": 10,
+          "startAngle": 4.71238898038473,
+          "endAngle": 5.967956764852174,
+          "colorNumber": 1
+        }
+      ],
+      "F024_RAY_LINE": [
+        {
+          "handle": "2DE",
+          "type": "LINE",
+          "layer": "F024_RAY_LINE",
+          "vertices": [
+            {
+              "x": 0,
+              "y": 4600,
+              "bulge": 0,
+              "startWidth": 0,
+              "endWidth": 0
+            },
+            {
+              "x": 90,
+              "y": 4600,
+              "bulge": 0,
+              "startWidth": 0,
+              "endWidth": 0
+            }
+          ],
+          "closed": false,
+          "colorNumber": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "2DF",
+          "type": "LINE",
+          "layer": "F024_RAY_LINE",
+          "vertices": [
+            {
+              "x": 100,
+              "y": 4610,
+              "bulge": 0,
+              "startWidth": 0,
+              "endWidth": 0
+            },
+            {
+              "x": 100,
+              "y": 4700,
+              "bulge": 0,
+              "startWidth": 0,
+              "endWidth": 0
+            }
+          ],
+          "closed": false,
+          "colorNumber": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "2E0",
+          "type": "ARC",
+          "layer": "F024_RAY_LINE",
+          "closed": false,
+          "center": {
+            "x": 90.00000000000038,
+            "y": 4610
+          },
+          "radius": 10,
+          "startAngle": 4.7123889803846515,
+          "endAngle": 0,
+          "colorNumber": 1
+        }
+      ],
+      "F024_XLINE_LINE": [
+        {
+          "handle": "2E2",
+          "type": "LINE",
+          "layer": "F024_XLINE_LINE",
+          "vertices": [
+            {
+              "x": 100,
+              "y": 4810,
+              "bulge": 0,
+              "startWidth": 0,
+              "endWidth": 0
+            },
+            {
+              "x": 100,
+              "y": 4900,
+              "bulge": 0,
+              "startWidth": 0,
+              "endWidth": 0
+            }
+          ],
+          "closed": false,
+          "colorNumber": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "2E3",
+          "type": "ARC",
+          "layer": "F024_XLINE_LINE",
+          "closed": false,
+          "center": {
+            "x": 90.00000000000003,
+            "y": 4809.999999999999
+          },
+          "radius": 10,
+          "startAngle": 4.712388980384686,
+          "endAngle": 9.094910732142452e-14,
+          "colorNumber": 1
+        }
+      ],
+      "F024_RAY_LINE_NO_TRIM": [
+        {
+          "handle": "2E5",
+          "type": "LINE",
+          "layer": "F024_RAY_LINE_NO_TRIM",
+          "vertices": [
+            {
+              "x": 100,
+              "y": 5000,
+              "bulge": 0,
+              "startWidth": 0,
+              "endWidth": 0
+            },
+            {
+              "x": 100,
+              "y": 5100,
+              "bulge": 0,
+              "startWidth": 0,
+              "endWidth": 0
+            }
+          ],
+          "closed": false,
+          "colorNumber": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "2E6",
+          "type": "ARC",
+          "layer": "F024_RAY_LINE_NO_TRIM",
+          "closed": false,
+          "center": {
+            "x": 90.00000000000038,
+            "y": 5009.999999999999
+          },
+          "radius": 10,
+          "startAngle": 4.7123889803846515,
+          "endAngle": 9.094910732142452e-14,
+          "colorNumber": 1
+        }
+      ],
+      "F024_XLINE_LINE_NO_TRIM": [
+        {
+          "handle": "2E8",
+          "type": "LINE",
+          "layer": "F024_XLINE_LINE_NO_TRIM",
+          "vertices": [
+            {
+              "x": 100,
+              "y": 5200,
+              "bulge": 0,
+              "startWidth": 0,
+              "endWidth": 0
+            },
+            {
+              "x": 100,
+              "y": 5300,
+              "bulge": 0,
+              "startWidth": 0,
+              "endWidth": 0
+            }
+          ],
+          "closed": false,
+          "colorNumber": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "2E9",
+          "type": "ARC",
+          "layer": "F024_XLINE_LINE_NO_TRIM",
+          "closed": false,
+          "center": {
+            "x": 90.00000000000038,
+            "y": 5210
+          },
+          "radius": 10,
+          "startAngle": 4.7123889803846515,
+          "endAngle": 0,
+          "colorNumber": 1
+        }
+      ],
+      "F024_RAY_XLINE": [
+        {
+          "handle": "2EA",
+          "type": "LINE",
+          "layer": "F024_RAY_XLINE",
+          "vertices": [
+            {
+              "x": 0,
+              "y": 5400,
+              "bulge": 0,
+              "startWidth": 0,
+              "endWidth": 0
+            },
+            {
+              "x": 90,
+              "y": 5400,
+              "bulge": 0,
+              "startWidth": 0,
+              "endWidth": 0
+            }
+          ],
+          "closed": false,
+          "colorNumber": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "2EC",
+          "type": "ARC",
+          "layer": "F024_RAY_XLINE",
+          "closed": false,
+          "center": {
+            "x": 90.00000000000038,
+            "y": 5410
+          },
+          "radius": 10,
+          "startAngle": 4.7123889803846515,
+          "endAngle": 9.094910732142452e-14,
+          "colorNumber": 1
+        }
+      ]
+    },
+    "selectedRawConstructionRecords": {
+      "F024_RAY_LINE": [],
+      "F024_XLINE_LINE": [
+        {
+          "handle": "2E1",
+          "type": "RAY",
+          "groups": {
+            "5": "2E1",
+            "8": "F024_XLINE_LINE",
+            "10": "90.0",
+            "11": "-1.0",
+            "20": "4800.0",
+            "21": "0.0",
+            "30": "0.0",
+            "31": "0.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbRay"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        }
+      ],
+      "F024_RAY_LINE_NO_TRIM": [
+        {
+          "handle": "2E4",
+          "type": "RAY",
+          "groups": {
+            "5": "2E4",
+            "8": "F024_RAY_LINE_NO_TRIM",
+            "10": "0.0",
+            "11": "1.0",
+            "20": "5000.0",
+            "21": "0.0",
+            "30": "0.0",
+            "31": "0.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbRay"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        }
+      ],
+      "F024_XLINE_LINE_NO_TRIM": [
+        {
+          "handle": "2E7",
+          "type": "XLINE",
+          "groups": {
+            "5": "2E7",
+            "8": "F024_XLINE_LINE_NO_TRIM",
+            "10": "0.0",
+            "11": "1.0",
+            "20": "5200.0",
+            "21": "0.0",
+            "30": "0.0",
+            "31": "0.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbXline"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        }
+      ],
+      "F024_RAY_XLINE": [
+        {
+          "handle": "2EB",
+          "type": "RAY",
+          "groups": {
+            "5": "2EB",
+            "8": "F024_RAY_XLINE",
+            "10": "100.0",
+            "11": "0.0",
+            "20": "5410.0",
+            "21": "1.0",
+            "30": "0.0",
+            "31": "0.0",
+            "62": "1",
+            "100": [
+              "AcDbEntity",
+              "AcDbRay"
+            ],
+            "330": "1F",
+            "370": "50"
+          }
+        }
+      ]
+    }
+  },
+  "parametricDxfReadback": {
+    "sha256": "bb579ea3e0f31ba41b62377b37598d10b81d8e99803d999970bb3dc1e43b369d",
+    "layerTypes": {
+      "0": {
+        "LINE": 2,
+        "ELLIPSE": 1,
+        "SPLINE": 1,
+        "ARC": 2
+      }
+    },
+    "selectedLayerEntities": {
+      "0": [
+        {
+          "handle": "10",
+          "type": "LINE",
+          "layer": "0",
+          "vertices": [
+            {
+              "x": -200,
+              "y": 0,
+              "bulge": 0,
+              "startWidth": 0,
+              "endWidth": 0
+            },
+            {
+              "x": -8.557770070554682,
+              "y": 0,
+              "bulge": 0,
+              "startWidth": 0,
+              "endWidth": 0
+            }
+          ],
+          "closed": false,
+          "colorNumber": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "20",
+          "type": "ELLIPSE",
+          "layer": "0",
+          "closed": false,
+          "center": {
+            "x": 100,
+            "y": 0
+          },
+          "startAngle": 0,
+          "endAngle": 6.283185307179586,
+          "majorAxis": {
+            "x": 100,
+            "y": 0
+          },
+          "ratio": 0.5,
+          "colorNumber": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "30",
+          "type": "LINE",
+          "layer": "0",
+          "vertices": [
+            {
+              "x": 100,
+              "y": 200,
+              "bulge": 0,
+              "startWidth": 0,
+              "endWidth": 0
+            },
+            {
+              "x": 290.8439438596826,
+              "y": 200,
+              "bulge": 0,
+              "startWidth": 0,
+              "endWidth": 0
+            }
+          ],
+          "closed": false,
+          "colorNumber": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "40",
+          "type": "SPLINE",
+          "layer": "0",
+          "closed": false,
+          "degree": 3,
+          "controlPoints": [
+            {
+              "x": 300.6951338085991,
+              "y": 208.2812630828239
+            },
+            {
+              "x": 306.6275204191803,
+              "y": 242.2835974525272
+            },
+            {
+              "x": 362.0044348340202,
+              "y": 262.0044348340202
+            },
+            {
+              "x": 400,
+              "y": 300
+            }
+          ],
+          "knots": [
+            0.0380599575421208,
+            0.0380599575421208,
+            0.0380599575421208,
+            0.0380599575421208,
+            1,
+            1,
+            1,
+            1
+          ],
+          "weights": [
+            1.114179872626362,
+            2.076119915084241,
+            3.03805995754212,
+            4
+          ],
+          "colorNumber": 1,
+          "lineweight": 50
+        },
+        {
+          "handle": "F5C",
+          "type": "ARC",
+          "layer": "0",
+          "closed": false,
+          "center": {
+            "x": -8.557770070553566,
+            "y": 9.999999999999702
+          },
+          "radius": 10,
+          "startAngle": 4.712388980384572,
+          "endAngle": 5.999818834820145,
+          "colorNumber": 1
+        },
+        {
+          "handle": "F5D",
+          "type": "ARC",
+          "layer": "0",
+          "closed": false,
+          "center": {
+            "x": 290.8439438596848,
+            "y": 209.9999999999976
+          },
+          "radius": 10,
+          "startAngle": 4.712388980384474,
+          "endAngle": 6.110453957060589,
+          "colorNumber": 1
+        }
+      ]
+    }
+  },
+  "parametricSourceDxfReadback": {
+    "sha256": "d5631f54ab864a5d08487f09e436dd5471355178da5085ac7e3f7c897f7602a5",
+    "spline": {
+      "handle": "40",
+      "type": "SPLINE",
+      "layer": "0",
+      "closed": false,
+      "degree": 3,
+      "controlPoints": [
+        {
+          "x": 300,
+          "y": 200
+        },
+        {
+          "x": 300,
+          "y": 240
+        },
+        {
+          "x": 360,
+          "y": 260
+        },
+        {
+          "x": 400,
+          "y": 300
+        }
+      ],
+      "knots": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1
+      ],
+      "weights": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "colorNumber": 1,
+      "lineweight": 50
+    }
+  },
+  "implementationSha256": {
+    "tools/autocad/f024-standard-matrix.ps1": "44136e39408aa89a8e5ae69df620f88f29fcd8ea2b3525b9595941d7dc1794eb",
+    "tools/autocad/f022-shift-click.ps1": "dc1592f2bbed183f0f13863e64cf45f66b97ace8fbd942193df48ec4d82d6057",
+    "tools/autocad/run-f024.mjs": "6eb484b4664661fbe81a6e4635b7985179106883b3b43f17bc22f58110f890b0",
+    "tools/autocad/f024-runner.test.mjs": "32b2746eecc3b39cc4a5c62879df158aad61d8a2d7ef37303e79a0ac85871311",
+    "tools/autocad/f024-dxf-verifier.mjs": "ed79dd10a982a296561a2afacd58b3219665ab49e344d20a8518c6b3af4f6a38",
+    "parity/expected/F-024.json": "7bc2bb43880bade362a6e284e357f0b8a4cf35aa6d7baa8842fe341b23c3f2b2",
+    "evidence/artifacts/F-024-browser-parametric-source.dxf": "d5631f54ab864a5d08487f09e436dd5471355178da5085ac7e3f7c897f7602a5"
+  },
+  "matrixScriptSha256": "44136e39408aa89a8e5ae69df620f88f29fcd8ea2b3525b9595941d7dc1794eb",
+  "runnerSha256": "6eb484b4664661fbe81a6e4635b7985179106883b3b43f17bc22f58110f890b0",
+  "observedAt": "2026-08-30T00:02:43.810Z"
+}

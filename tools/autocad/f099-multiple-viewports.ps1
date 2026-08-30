@@ -62,6 +62,17 @@ function Get-Point2 {
   return [ordered]@{ x = [double]$Value[0]; y = [double]$Value[1] }
 }
 
+function Get-LayoutBlockEntities {
+  param([Parameter(Mandatory = $true)]$Layout)
+  $block = Invoke-ComRetry { $Layout.Block }
+  $count = [int](Invoke-ComRetry { $block.Count })
+  $entities = New-Object System.Collections.Generic.List[object]
+  for ($index = 0; $index -lt $count; $index += 1) {
+    $entities.Add((Invoke-ComRetry { $block.Item($index) }))
+  }
+  return [object[]]$entities.ToArray()
+}
+
 function Get-ViewportSnapshot {
   param(
     [Parameter(Mandatory = $true)]$Document,
@@ -69,8 +80,8 @@ function Get-ViewportSnapshot {
     [Parameter(Mandatory = $true)][string]$SystemViewportHandle
   )
   $layout = Invoke-ComRetry { $Document.Layouts.Item($LayoutName) }
-  $viewports = @(Invoke-ComRetry {
-    @($layout.Block | Where-Object {
+  $blockEntities = @(Get-LayoutBlockEntities $layout)
+  $viewports = @($blockEntities | Where-Object {
       if ([string]$_.ObjectName -ne 'AcDbViewport') { return $false }
       if ([string]$_.Handle -eq $SystemViewportHandle) { return $false }
       try {
@@ -78,8 +89,7 @@ function Get-ViewportSnapshot {
           [double]$_.Width -lt 1000 -and [double]$_.Height -lt 1000
       } catch { return $false }
     } | Sort-Object { [string]$_.Handle })
-  } -TimeoutSeconds 30)
-  $polylines = @(Invoke-ComRetry { @($layout.Block | Where-Object { [string]$_.ObjectName -eq 'AcDbPolyline' } | Sort-Object { [string]$_.Handle }) } -TimeoutSeconds 30)
+  $polylines = @($blockEntities | Where-Object { [string]$_.ObjectName -eq 'AcDbPolyline' } | Sort-Object { [string]$_.Handle })
   $layoutNameValue = [string](Invoke-ComRetry {
     $value = [string]$layout.Name
     if ([string]::IsNullOrWhiteSpace($value)) { throw 'Layout name is temporarily unavailable.' }
@@ -110,12 +120,44 @@ function Get-ViewportSnapshot {
   }
 }
 
+function Get-StableViewportSnapshot {
+  param($Document, [string]$LayoutName, [string]$SystemViewportHandle, [string[]]$ExpectedViewportHandles, [string[]]$ExpectedBoundaryHandles, [int]$MaximumPasses = 12)
+  $passes = New-Object System.Collections.Generic.List[object]
+  $lastSnapshot = $null
+  $previousFingerprint = $null
+  $consecutiveExactReads = 0
+  for ($pass = 1; $pass -le $MaximumPasses; $pass += 1) {
+    Wait-AcadIdle $Document
+    $lastSnapshot = Get-ViewportSnapshot $Document $LayoutName $SystemViewportHandle
+    $handlesExact = $lastSnapshot.viewportCount -eq $ExpectedViewportHandles.Count -and @($ExpectedViewportHandles | Where-Object { $lastSnapshot.viewportHandles -notcontains $_ }).Count -eq 0
+    $boundariesExact = $lastSnapshot.boundaryCount -eq $ExpectedBoundaryHandles.Count -and @($ExpectedBoundaryHandles | Where-Object { $lastSnapshot.boundaryHandles -notcontains $_ }).Count -eq 0
+    $statesExact = $handlesExact -and @($lastSnapshot.viewports | Where-Object { -not $_.viewportOn }).Count -eq 0
+    if ($ExpectedViewportHandles.Count -eq 2 -and $statesExact) {
+      $firstState = @($lastSnapshot.viewports | Where-Object { $_.handle -eq $ExpectedViewportHandles[0] })[0]
+      $secondState = @($lastSnapshot.viewports | Where-Object { $_.handle -eq $ExpectedViewportHandles[1] })[0]
+      $statesExact = $null -ne $firstState -and $null -ne $secondState -and -not $firstState.clipped -and $secondState.clipped -and
+        [Math]::Abs($firstState.target.x) -lt 0.001 -and [Math]::Abs($secondState.target.x - 2000) -lt 0.001 -and
+        [Math]::Abs($firstState.customScale - 0.16) -lt 0.000001 -and [Math]::Abs($secondState.customScale - 0.08) -lt 0.000001
+    }
+    $exact = $handlesExact -and $boundariesExact -and $statesExact
+    $fingerprint = if ($exact) { $lastSnapshot | ConvertTo-Json -Depth 8 -Compress } else { $null }
+    if ($fingerprint -and $fingerprint -eq $previousFingerprint) { $consecutiveExactReads += 1 }
+    elseif ($fingerprint) { $consecutiveExactReads = 1 }
+    else { $consecutiveExactReads = 0 }
+    $passes.Add([ordered]@{ pass=$pass; exact=$exact; consecutiveExactReads=$consecutiveExactReads; viewportHandles=$lastSnapshot.viewportHandles; boundaryHandles=$lastSnapshot.boundaryHandles })
+    if ($consecutiveExactReads -ge 2) { return [ordered]@{ stable=$true; snapshot=$lastSnapshot; passes=[object[]]$passes.ToArray() } }
+    $previousFingerprint = $fingerprint
+    Start-Sleep -Milliseconds 150
+  }
+  return [ordered]@{ stable=$false; snapshot=$lastSnapshot; passes=[object[]]$passes.ToArray() }
+}
+
 $preExistingProcessIds = @(Get-Process -Name 'acad' -ErrorAction SilentlyContinue | ForEach-Object { [int]$_.Id })
 $acad = $null; $scratch = $null; $reopened = $null; $result = $null; $automationProcessId = 0; $owned = $false; $engineVersion = ''
 $tempDwg = [IO.Path]::GetFullPath($TempDwgPath)
 $pidFile = [IO.Path]::GetFullPath($PidPath)
 try {
-  $acad = Invoke-ComRetry { New-Object -ComObject AutoCAD.Application.24.3 } -TimeoutSeconds 30
+  $acad = New-Object -ComObject AutoCAD.Application.24.3
   Invoke-ComRetry { $acad.Visible = $true; $acad.WindowState = 3 } | Out-Null
   [uint32]$resolvedProcessId = 0
   [void][F099WindowProcess]::GetWindowThreadProcessId([IntPtr][int64](Invoke-ComRetry { $acad.HWND }), [ref]$resolvedProcessId)
@@ -172,8 +214,8 @@ try {
   $boundaryHandle = [string](Invoke-ComRetry { $boundary.Handle })
   Send-AcadCommand $scratch "_.VPCLIP`n(handent `"$secondHandle`")`n(handent `"$boundaryHandle`")`n"
   Invoke-ComRetry { $scratch.MSpace = $false; $scratch.Regen(1) } | Out-Null
-  Start-Sleep -Milliseconds 500
-  $beforeSave = Get-ViewportSnapshot $scratch 'F099 VIEWPORTS' $systemViewportHandle
+  $beforeSaveReadback = Get-StableViewportSnapshot $scratch 'F099 VIEWPORTS' $systemViewportHandle @($firstHandle,$secondHandle) @($boundaryHandle)
+  $beforeSave = $beforeSaveReadback.snapshot
 
   Invoke-ComRetry { $scratch.SaveAs($tempDwg, 64) } | Out-Null
   Invoke-ComRetry { $scratch.Close($false) } | Out-Null
@@ -186,7 +228,8 @@ try {
   Wait-AcadIdle $reopened
   $reopenedPaper = Invoke-ComRetry { $reopened.Layouts.Item('F099 VIEWPORTS') }
   Invoke-ComRetry { $reopened.ActiveLayout = $reopenedPaper; $reopened.ActiveSpace = 0; $reopened.MSpace = $false } | Out-Null
-  $afterReopen = Get-ViewportSnapshot $reopened 'F099 VIEWPORTS' $systemViewportHandle
+  $afterReopenReadback = Get-StableViewportSnapshot $reopened 'F099 VIEWPORTS' $systemViewportHandle @($firstHandle,$secondHandle) @($boundaryHandle)
+  $afterReopen = $afterReopenReadback.snapshot
   $reopenedSecond = Invoke-ComRetry { $reopened.HandleToObject($secondHandle) }
   Invoke-ComRetry { $reopenedSecond.Display($true) } | Out-Null
   Send-AcadCommand $reopened "_.MSPACE`n"
@@ -207,7 +250,8 @@ try {
   Wait-AcadIdle $reopened
   $reopenedPaper = Invoke-ComRetry { $reopened.Layouts.Item('F099 VIEWPORTS') }
   Invoke-ComRetry { $reopened.ActiveLayout = $reopenedPaper; $reopened.ActiveSpace = 0; $reopened.MSpace = $false } | Out-Null
-  $afterDelete = Get-ViewportSnapshot $reopened 'F099 VIEWPORTS' $systemViewportHandle
+  $afterDeleteReadback = Get-StableViewportSnapshot $reopened 'F099 VIEWPORTS' $systemViewportHandle @($firstHandle) @()
+  $afterDelete = $afterDeleteReadback.snapshot
 
   $beforeFirst = @($beforeSave.viewports | Where-Object { $_.handle -eq $firstHandle })[0]
   $beforeSecond = @($beforeSave.viewports | Where-Object { $_.handle -eq $secondHandle })[0]
@@ -215,7 +259,7 @@ try {
   $reopenSecond = @($afterReopen.viewports | Where-Object { $_.handle -eq $secondHandle })[0]
   $deleteFirst = @($afterDelete.viewports | Where-Object { $_.handle -eq $firstHandle })[0]
   $checks = [ordered]@{
-    nativePaperContext = $beforeSave.layoutName -eq 'F099 VIEWPORTS' -and $beforeSave.tileMode -eq 0 -and $beforeSave.cvport -eq 1 -and -not $beforeSave.mSpace
+    nativePaperContext = $beforeSaveReadback.stable -and $afterReopenReadback.stable -and $afterDeleteReadback.stable -and $beforeSave.layoutName -eq 'F099 VIEWPORTS' -and $beforeSave.tileMode -eq 0 -and $beforeSave.cvport -eq 1 -and -not $beforeSave.mSpace
     twoNativeViewports = $beforeSave.viewportCount -eq 2 -and $beforeSave.viewportHandles -contains $firstHandle -and $beforeSave.viewportHandles -contains $secondHandle
     independentFrames = [Math]::Abs($reopenFirst.center.x - 108.75) -lt 0.001 -and [Math]::Abs($reopenSecond.center.x - 311.25) -lt 0.001 -and [Math]::Abs($reopenFirst.width - 197.5) -lt 0.001 -and [Math]::Abs($reopenSecond.width - 197.5) -lt 0.001 -and ($reopenFirst.center.x + $reopenFirst.width / 2) -lt ($reopenSecond.center.x - $reopenSecond.width / 2)
     independentViewStates = [Math]::Abs($reopenFirst.target.x - 0) -lt 0.001 -and [Math]::Abs($reopenSecond.target.x - 2000) -lt 0.001 -and [Math]::Abs($reopenFirst.customScale - 0.16) -lt 0.000001 -and [Math]::Abs($reopenSecond.customScale - 0.08) -lt 0.000001
@@ -234,6 +278,7 @@ try {
     automationProcessId = $automationProcessId; automationProcessOwned = $owned
     handles = [ordered]@{ systemViewport = $systemViewportHandle; firstViewport = $firstHandle; secondViewport = $secondHandle; polygonBoundary = $boundaryHandle }
     beforeSave = $beforeSave; afterReopen = $afterReopen; modelContextBeforeDelete = $modelContextBeforeDelete; afterDelete = $afterDelete
+    viewportReadback = [ordered]@{ beforeSave=$beforeSaveReadback; afterReopen=$afterReopenReadback; afterDelete=$afterDeleteReadback }
     checks = $checks
     dwg = [ordered]@{ bytes = $dwgBytes; sha256 = $dwgSha256; saveAsType = 64; retained = $false }
     status = $status

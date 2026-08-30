@@ -1,0 +1,828 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-024",
+  "source": "production FILLET registry -> immutable atomic commits -> production DXF/KDRAW1 -> strict importer + dxf-parser -> three-step Undo/Redo",
+  "observedAt": "2026-08-29T22:02:59.012Z",
+  "implementationSha256": {
+    "packages/cad-core/src/commands.ts": "04a710df132f77cab823cf2ef5dbe540b5a150a052612dae466d7d0e8703e996",
+    "packages/cad-core/src/fillet.ts": "96c5f6f3d8a54c085d46e84aa06047552c7187b3364ba6985efa2e7cb195c022",
+    "packages/cad-core/src/transaction.ts": "e250aa2906e63905202a4b9591367632830745acbf731884f8e711d165750599",
+    "packages/cad-dxf/src/import.ts": "ffdef7a01488d09f32b8bab171b0632092317a5687cd6eca2231629a4fc51f20",
+    "packages/cad-dxf/src/index.ts": "82ca8f21ac22b29cd0f36be39f51b379ffd9307ec96c69c45d93da713cc9b2bd",
+    "packages/cad-core/test/fillet.test.ts": "1a3c2cd771b6b8ce86c8197bb2e5962dec03ba6ceda1b3b11d06deec0e8a57e2",
+    "packages/cad-core/test/f024-mutation-proven.test.ts": "f979c8ae43f7da990d9a64ae73e94c2738e1b4428bb8aae49fb55a2219e54143",
+    "packages/cad-dxf/test/f024-fillet-roundtrip.test.ts": "f3355685963e1fbdf321fe3d3e27f87bc2e7abeeea71cc2abd6d905f6816ae53",
+    "tools/parity/run-f024-readback.mjs": "3c28cd4014db3f6dbc10a26bd3811c889125923c683081a13082853041d71b9f"
+  },
+  "commands": {
+    "pairs": {
+      "changes": [
+        {
+          "type": "put",
+          "entity": {
+            "kind": "polyline",
+            "handle": "10",
+            "layerId": "0",
+            "appearance": {
+              "color": "#ff0000",
+              "lineweightMm": 0.5
+            },
+            "extensionData": {
+              "rowId": "F-024"
+            },
+            "closed": false,
+            "vertices": [
+              {
+                "x": 0,
+                "y": 0,
+                "startWidth": 2,
+                "endWidth": 3.8
+              },
+              {
+                "x": 90,
+                "y": 0,
+                "bulge": 0.414213562373,
+                "startWidth": 3.8,
+                "endWidth": 3.8
+              },
+              {
+                "x": 100,
+                "y": 10,
+                "startWidth": 3.8,
+                "endWidth": 3.8
+              },
+              {
+                "x": 100,
+                "y": 100,
+                "startWidth": 3.8,
+                "endWidth": 3.8
+              }
+            ]
+          }
+        },
+        {
+          "type": "delete",
+          "handle": "20"
+        },
+        {
+          "type": "put",
+          "entity": {
+            "kind": "polyline",
+            "handle": "30",
+            "layerId": "0",
+            "closed": true,
+            "vertices": [
+              {
+                "x": 0,
+                "y": 200
+              },
+              {
+                "x": 90,
+                "y": 200,
+                "bulge": 0.414213562373
+              },
+              {
+                "x": 100,
+                "y": 210
+              },
+              {
+                "x": 100,
+                "y": 300
+              },
+              {
+                "x": 0,
+                "y": 300
+              }
+            ]
+          }
+        }
+      ],
+      "sourceHandles": [
+        "10",
+        "20",
+        "30"
+      ],
+      "resultHandles": [
+        "10",
+        "30"
+      ],
+      "createdHandles": [],
+      "rejected": [],
+      "steps": [
+        {
+          "mode": "pair",
+          "sourceHandles": [
+            "10",
+            "20"
+          ],
+          "resultHandles": [
+            "10"
+          ],
+          "effectiveRadius": 10,
+          "tangentPoints": [
+            {
+              "x": 90,
+              "y": 0
+            },
+            {
+              "x": 100,
+              "y": 10
+            }
+          ],
+          "skippedVertices": []
+        },
+        {
+          "mode": "pair",
+          "sourceHandles": [
+            "30",
+            "30"
+          ],
+          "resultHandles": [
+            "30"
+          ],
+          "effectiveRadius": 10,
+          "tangentPoints": [
+            {
+              "x": 90,
+              "y": 200
+            },
+            {
+              "x": 100,
+              "y": 210
+            }
+          ],
+          "skippedVertices": []
+        }
+      ],
+      "mode": "pairs",
+      "radius": 10,
+      "trimMode": "trim",
+      "multiple": true
+    },
+    "filletPolyArc1": {
+      "changes": [
+        {
+          "type": "put",
+          "entity": {
+            "kind": "polyline",
+            "handle": "40",
+            "layerId": "0",
+            "closed": false,
+            "vertices": [
+              {
+                "x": 0,
+                "y": 400
+              },
+              {
+                "x": 97.972826303601,
+                "y": 400,
+                "bulge": 0.102829884701
+              },
+              {
+                "x": 101.957808971514,
+                "y": 400.828309145177,
+                "bulge": 0.189997598762
+              },
+              {
+                "x": 159.171690854814,
+                "y": 458.042191028466,
+                "bulge": 0.102829884701
+              },
+              {
+                "x": 160,
+                "y": 462.027173696399
+              },
+              {
+                "x": 160,
+                "y": 540
+              }
+            ]
+          }
+        }
+      ],
+      "sourceHandles": [
+        "40"
+      ],
+      "resultHandles": [
+        "40"
+      ],
+      "createdHandles": [],
+      "rejected": [],
+      "steps": [
+        {
+          "mode": "polyline",
+          "sourceHandles": [
+            "40"
+          ],
+          "resultHandles": [
+            "40"
+          ],
+          "effectiveRadius": 10,
+          "tangentPoints": null,
+          "skippedVertices": []
+        }
+      ],
+      "mode": "polyline",
+      "radius": 10,
+      "trimMode": "trim",
+      "multiple": false
+    },
+    "filletPolyArc0NoTrim": {
+      "changes": [
+        {
+          "type": "put",
+          "entity": {
+            "kind": "arc",
+            "center": {
+              "x": 440,
+              "y": 410
+            },
+            "radius": 10,
+            "startAngleRad": -1.570796326795,
+            "endAngleRad": 0,
+            "counterClockwise": true,
+            "handle": "51",
+            "layerId": "0"
+          }
+        },
+        {
+          "type": "put",
+          "entity": {
+            "kind": "arc",
+            "center": {
+              "x": 440,
+              "y": 540
+            },
+            "radius": 10,
+            "startAngleRad": 0,
+            "endAngleRad": 1.570796326795,
+            "counterClockwise": true,
+            "handle": "52",
+            "layerId": "0"
+          }
+        }
+      ],
+      "sourceHandles": [
+        "50"
+      ],
+      "resultHandles": [
+        "51",
+        "52"
+      ],
+      "createdHandles": [
+        "51",
+        "52"
+      ],
+      "rejected": [],
+      "steps": [
+        {
+          "mode": "polyline",
+          "sourceHandles": [
+            "50"
+          ],
+          "resultHandles": [
+            "51",
+            "52"
+          ],
+          "effectiveRadius": 10,
+          "tangentPoints": null,
+          "skippedVertices": []
+        }
+      ],
+      "mode": "polyline",
+      "radius": 10,
+      "trimMode": "no-trim",
+      "multiple": false
+    }
+  },
+  "output": {
+    "expectedSemantics": [
+      {
+        "handle": "10",
+        "kind": "polyline",
+        "layer": "0",
+        "appearance": {
+          "color": "#ff0000",
+          "lineweightMm": 0.5
+        },
+        "closed": false,
+        "vertices": [
+          {
+            "x": 0,
+            "y": 0,
+            "startWidth": 2,
+            "endWidth": 3.8
+          },
+          {
+            "x": 90,
+            "y": 0,
+            "bulge": 0.414213562373,
+            "startWidth": 3.8,
+            "endWidth": 3.8
+          },
+          {
+            "x": 100,
+            "y": 10,
+            "startWidth": 3.8,
+            "endWidth": 3.8
+          },
+          {
+            "x": 100,
+            "y": 100,
+            "startWidth": 3.8,
+            "endWidth": 3.8
+          }
+        ]
+      },
+      {
+        "handle": "30",
+        "kind": "polyline",
+        "layer": "0",
+        "closed": true,
+        "vertices": [
+          {
+            "x": 0,
+            "y": 200
+          },
+          {
+            "x": 90,
+            "y": 200,
+            "bulge": 0.414213562373
+          },
+          {
+            "x": 100,
+            "y": 210
+          },
+          {
+            "x": 100,
+            "y": 300
+          },
+          {
+            "x": 0,
+            "y": 300
+          }
+        ]
+      },
+      {
+        "handle": "40",
+        "kind": "polyline",
+        "layer": "0",
+        "closed": false,
+        "vertices": [
+          {
+            "x": 0,
+            "y": 400
+          },
+          {
+            "x": 97.972826303601,
+            "y": 400,
+            "bulge": 0.102829884701
+          },
+          {
+            "x": 101.957808971514,
+            "y": 400.828309145177,
+            "bulge": 0.189997598762
+          },
+          {
+            "x": 159.171690854814,
+            "y": 458.042191028466,
+            "bulge": 0.102829884701
+          },
+          {
+            "x": 160,
+            "y": 462.027173696399
+          },
+          {
+            "x": 160,
+            "y": 540
+          }
+        ]
+      },
+      {
+        "handle": "50",
+        "kind": "polyline",
+        "layer": "0",
+        "closed": false,
+        "vertices": [
+          {
+            "x": 300,
+            "y": 400
+          },
+          {
+            "x": 400,
+            "y": 400,
+            "bulge": 0.41421356237309503
+          },
+          {
+            "x": 450,
+            "y": 450
+          },
+          {
+            "x": 450,
+            "y": 550
+          },
+          {
+            "x": 350,
+            "y": 550
+          }
+        ]
+      },
+      {
+        "handle": "51",
+        "kind": "arc",
+        "layer": "0",
+        "center": {
+          "x": 440,
+          "y": 410
+        },
+        "radius": 10,
+        "startAngleRad": 4.712388980384587,
+        "endAngleRad": 0,
+        "counterClockwise": true
+      },
+      {
+        "handle": "52",
+        "kind": "arc",
+        "layer": "0",
+        "center": {
+          "x": 440,
+          "y": 540
+        },
+        "radius": 10,
+        "startAngleRad": 0,
+        "endAngleRad": 1.5707963267949996,
+        "counterClockwise": true
+      }
+    ],
+    "strictSemantics": [
+      {
+        "handle": "10",
+        "kind": "polyline",
+        "layer": "0",
+        "appearance": {
+          "color": "#ff0000",
+          "lineweightMm": 0.5
+        },
+        "closed": false,
+        "vertices": [
+          {
+            "x": 0,
+            "y": 0,
+            "startWidth": 2,
+            "endWidth": 3.8
+          },
+          {
+            "x": 90,
+            "y": 0,
+            "startWidth": 3.8,
+            "endWidth": 3.8,
+            "bulge": 0.414213562373
+          },
+          {
+            "x": 100,
+            "y": 10,
+            "startWidth": 3.8,
+            "endWidth": 3.8
+          },
+          {
+            "x": 100,
+            "y": 100,
+            "startWidth": 3.8,
+            "endWidth": 3.8
+          }
+        ]
+      },
+      {
+        "handle": "30",
+        "kind": "polyline",
+        "layer": "0",
+        "closed": true,
+        "vertices": [
+          {
+            "x": 0,
+            "y": 200
+          },
+          {
+            "x": 90,
+            "y": 200,
+            "bulge": 0.414213562373
+          },
+          {
+            "x": 100,
+            "y": 210
+          },
+          {
+            "x": 100,
+            "y": 300
+          },
+          {
+            "x": 0,
+            "y": 300
+          }
+        ]
+      },
+      {
+        "handle": "40",
+        "kind": "polyline",
+        "layer": "0",
+        "closed": false,
+        "vertices": [
+          {
+            "x": 0,
+            "y": 400
+          },
+          {
+            "x": 97.972826303601,
+            "y": 400,
+            "bulge": 0.102829884701
+          },
+          {
+            "x": 101.957808971514,
+            "y": 400.828309145177,
+            "bulge": 0.189997598762
+          },
+          {
+            "x": 159.171690854814,
+            "y": 458.042191028466,
+            "bulge": 0.102829884701
+          },
+          {
+            "x": 160,
+            "y": 462.027173696399
+          },
+          {
+            "x": 160,
+            "y": 540
+          }
+        ]
+      },
+      {
+        "handle": "50",
+        "kind": "polyline",
+        "layer": "0",
+        "closed": false,
+        "vertices": [
+          {
+            "x": 300,
+            "y": 400
+          },
+          {
+            "x": 400,
+            "y": 400,
+            "bulge": 0.414213562373095
+          },
+          {
+            "x": 450,
+            "y": 450
+          },
+          {
+            "x": 450,
+            "y": 550
+          },
+          {
+            "x": 350,
+            "y": 550
+          }
+        ]
+      },
+      {
+        "handle": "51",
+        "kind": "arc",
+        "layer": "0",
+        "center": {
+          "x": 440,
+          "y": 410
+        },
+        "radius": 10,
+        "startAngleRad": 4.712388980384585,
+        "endAngleRad": 0,
+        "counterClockwise": true
+      },
+      {
+        "handle": "52",
+        "kind": "arc",
+        "layer": "0",
+        "center": {
+          "x": 440,
+          "y": 540
+        },
+        "radius": 10,
+        "startAngleRad": 0,
+        "endAngleRad": 1.5707963267949996,
+        "counterClockwise": true
+      }
+    ],
+    "independentSemantics": [
+      {
+        "handle": "10",
+        "kind": "polyline",
+        "layer": "0",
+        "closed": false,
+        "vertices": [
+          {
+            "x": 0,
+            "y": 0,
+            "startWidth": 2,
+            "endWidth": 3.8
+          },
+          {
+            "x": 90,
+            "y": 0,
+            "bulge": 0.414213562373,
+            "startWidth": 3.8,
+            "endWidth": 3.8
+          },
+          {
+            "x": 100,
+            "y": 10,
+            "startWidth": 3.8,
+            "endWidth": 3.8
+          },
+          {
+            "x": 100,
+            "y": 100,
+            "startWidth": 3.8,
+            "endWidth": 3.8
+          }
+        ]
+      },
+      {
+        "handle": "30",
+        "kind": "polyline",
+        "layer": "0",
+        "closed": true,
+        "vertices": [
+          {
+            "x": 0,
+            "y": 200
+          },
+          {
+            "x": 90,
+            "y": 200,
+            "bulge": 0.414213562373
+          },
+          {
+            "x": 100,
+            "y": 210
+          },
+          {
+            "x": 100,
+            "y": 300
+          },
+          {
+            "x": 0,
+            "y": 300
+          }
+        ]
+      },
+      {
+        "handle": "40",
+        "kind": "polyline",
+        "layer": "0",
+        "closed": false,
+        "vertices": [
+          {
+            "x": 0,
+            "y": 400
+          },
+          {
+            "x": 97.972826303601,
+            "y": 400,
+            "bulge": 0.102829884701
+          },
+          {
+            "x": 101.957808971514,
+            "y": 400.828309145177,
+            "bulge": 0.189997598762
+          },
+          {
+            "x": 159.171690854814,
+            "y": 458.042191028466,
+            "bulge": 0.102829884701
+          },
+          {
+            "x": 160,
+            "y": 462.027173696399
+          },
+          {
+            "x": 160,
+            "y": 540
+          }
+        ]
+      },
+      {
+        "handle": "50",
+        "kind": "polyline",
+        "layer": "0",
+        "closed": false,
+        "vertices": [
+          {
+            "x": 300,
+            "y": 400
+          },
+          {
+            "x": 400,
+            "y": 400,
+            "bulge": 0.414213562373095
+          },
+          {
+            "x": 450,
+            "y": 450
+          },
+          {
+            "x": 450,
+            "y": 550
+          },
+          {
+            "x": 350,
+            "y": 550
+          }
+        ]
+      },
+      {
+        "handle": "51",
+        "kind": "arc",
+        "layer": "0",
+        "center": {
+          "x": 440,
+          "y": 410
+        },
+        "radius": 10,
+        "startAngleRad": 4.712388980384585,
+        "endAngleRad": 0,
+        "counterClockwise": true
+      },
+      {
+        "handle": "52",
+        "kind": "arc",
+        "layer": "0",
+        "center": {
+          "x": 440,
+          "y": 540
+        },
+        "radius": 10,
+        "startAngleRad": 0,
+        "endAngleRad": 1.5707963267949996,
+        "counterClockwise": true
+      }
+    ],
+    "strictMismatch": null,
+    "independentMismatch": null
+  },
+  "dxf": {
+    "sha256": "7e2fbacc6ad6881a90a7780d2194f74264b0731fc1fd7e258cf58c1bd1b56815",
+    "byteLength": 5081,
+    "emittedHandles": [
+      "10",
+      "30",
+      "40",
+      "50",
+      "51",
+      "52"
+    ]
+  },
+  "kdraw": {
+    "sha256": "f8726df5410d87bb30d7bebf4f4e041112809d1bca337e6ed933ccec44da1e16",
+    "byteLength": 2889,
+    "documentSha256": "d35a12b3a2b824c29b863e94d6aa41c08c02cc36af8fd802e63ab8638e02e51a",
+    "productionDeserializer": true,
+    "manifestEntryCount": 1,
+    "attachmentCount": 0,
+    "exactDocument": true
+  },
+  "undo": {
+    "states": [
+      {
+        "present": true,
+        "revision": 4
+      },
+      {
+        "present": true,
+        "revision": 5
+      },
+      {
+        "present": true,
+        "revision": 6
+      }
+    ],
+    "fullyRestored": true
+  },
+  "redo": {
+    "states": [
+      {
+        "present": true,
+        "revision": 7
+      },
+      {
+        "present": true,
+        "revision": 8
+      },
+      {
+        "present": true,
+        "revision": 9
+      }
+    ],
+    "fullyRedone": true
+  },
+  "status": "PASS"
+}

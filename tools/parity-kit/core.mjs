@@ -3,6 +3,7 @@ import { createHash } from "node:crypto";
 import { access, readFile, readdir } from "node:fs/promises";
 import { relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { parse as parseYaml } from "yaml";
 import { parityManifest } from "../../parity/autocad-2024-2d.manifest.mjs";
 import { CERTIFICATION_SOURCE_ROOTS, PARITY_ROWS, RUNTIME_SOURCE_ROOTS, SOURCE_GROUPS, UNCERTIFIED_SOURCE_ROWS } from "../../parity/rows.mjs";
 
@@ -31,6 +32,36 @@ export const GLOBAL_TOPOLOGY_SOURCE_PATHS = Object.freeze([
 ]);
 
 const PACKAGE_MIGRATION_GLOBAL_SCRIPT_CHANGES = Object.freeze(["parity:check", "test:mutation"]);
+const PACKAGE_MIGRATION_ROW_SPECS = Object.freeze([
+  Object.freeze({ id: "F-023", stages: Object.freeze({
+    browser: "parity:f023:browser-artifact",
+    readback: "parity:f023:readback",
+    oracle: "parity:f023:oracles",
+    autocad: "parity:f023:autocad",
+    cross: "parity:f023:cross-evidence",
+  }) }),
+  Object.freeze({ id: "F-024", stages: Object.freeze({
+    browser: "parity:f024:browser-artifact",
+    readback: "parity:f024:readback",
+    oracle: "parity:f024:oracles",
+    autocad: "parity:f024:autocad",
+    cross: "parity:f024:cross-evidence",
+  }) }),
+]);
+const PREVIOUS_SCHEMA_PIN = "https://github.com/T3stin-svg/kuubik-cad-schema/archive/5eab9934aec937b679f0614382b8f947d3f21e8e.tar.gz";
+const CURRENT_SCHEMA_PIN = "https://github.com/T3stin-svg/kuubik-cad-schema/archive/b9964e0991884151784d1b262ded8c5c14706d9c.tar.gz";
+const CURRENT_SCHEMA_INTEGRITY = "sha512-tRBLFC3Bh5+Hul4c5mfVgng4cFEWy02xTveQf6VJ4m0Xkir8AVrMlGlXqzazQeB9EnYgvWXFc3uxCEEALdmwzQ==";
+const YAML_PARSER_VERSION = "2.9.0";
+const YAML_PARSER_LOCK_ENTRY = Object.freeze({
+  version: YAML_PARSER_VERSION,
+  resolved: "https://registry.npmjs.org/yaml/-/yaml-2.9.0.tgz",
+  integrity: "sha512-2AvhNX3mb8zd6Zy7INTtSpl1F15HW6Wnqj0srWlkKLcpYl/gMIMJiyuGq2KeI2YFxUPjdlB+3Lc10seMLtL4cA==",
+  dev: true,
+  license: "ISC",
+  bin: { yaml: "bin.mjs" },
+  engines: { node: ">= 14.6" },
+  funding: { url: "https://github.com/sponsors/eemeli" },
+});
 
 export function normalizeRepoPath(path) {
   return path.replaceAll("\\", "/").replace(/^\.\//u, "");
@@ -93,6 +124,73 @@ export function checkoutStepsUseFullHistory(ciText) {
     }
     return false;
   });
+}
+
+export function workflowJobContainsOrderedRuns(ciText, jobId, commands) {
+  let workflow;
+  try { workflow = parseYaml(ciText, { maxAliasCount: 0, merge: false, uniqueKeys: true }); }
+  catch { return false; }
+  const steps = workflow?.jobs?.[jobId]?.steps;
+  if (!Array.isArray(steps)) return false;
+  const jobRuns = steps.map((step) => step?.run).filter((command) => typeof command === "string");
+  let cursor = -1;
+  return commands.every((command) => {
+    cursor = jobRuns.indexOf(command, cursor + 1);
+    return cursor >= 0;
+  });
+}
+
+function countExactString(value, expected) {
+  if (value === expected) return 1;
+  if (Array.isArray(value)) return value.reduce((count, item) => count + countExactString(item, expected), 0);
+  if (value && typeof value === "object") return Object.values(value).reduce((count, item) => count + countExactString(item, expected), 0);
+  return 0;
+}
+
+function replaceExactString(value, from, to) {
+  if (value === from) return to;
+  if (Array.isArray(value)) return value.map((item) => replaceExactString(item, from, to));
+  if (value && typeof value === "object") return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, replaceExactString(item, from, to)]));
+  return value;
+}
+
+export function exactSchemaPinMigration(previous, current, { lockfile = false } = {}) {
+  const previousCount = countExactString(previous, PREVIOUS_SCHEMA_PIN);
+  const currentCount = countExactString(current, CURRENT_SCHEMA_PIN);
+  if (previousCount === 0 || currentCount !== previousCount || countExactString(current, PREVIOUS_SCHEMA_PIN) !== 0) return false;
+  const normalized = replaceExactString(current, CURRENT_SCHEMA_PIN, PREVIOUS_SCHEMA_PIN);
+  if (lockfile) {
+    const previousSchemaPackage = previous?.packages?.["node_modules/@kuubik/cad-schema"];
+    const currentSchemaPackage = current?.packages?.["node_modules/@kuubik/cad-schema"];
+    if (previousSchemaPackage?.integrity !== undefined || currentSchemaPackage?.integrity !== CURRENT_SCHEMA_INTEGRITY) return false;
+    delete normalized.packages["node_modules/@kuubik/cad-schema"].integrity;
+  }
+  return canonicalJson(normalized) === canonicalJson(previous);
+}
+
+export function exactYamlParserAddition(previous, current, { lockfile = false } = {}) {
+  const previousRoot = lockfile ? previous?.packages?.[""] : previous;
+  const currentRoot = lockfile ? current?.packages?.[""] : current;
+  if (previousRoot?.devDependencies?.yaml !== undefined || currentRoot?.devDependencies?.yaml !== YAML_PARSER_VERSION) return false;
+  if (lockfile) {
+    if (previous?.packages?.["node_modules/yaml"] !== undefined) return false;
+    if (canonicalJson(current?.packages?.["node_modules/yaml"]) !== canonicalJson(YAML_PARSER_LOCK_ENTRY)) return false;
+  }
+  const normalized = structuredClone(current);
+  const normalizedRoot = lockfile ? normalized.packages[""] : normalized;
+  delete normalizedRoot.devDependencies.yaml;
+  if (lockfile) delete normalized.packages["node_modules/yaml"];
+  return canonicalJson(normalized) === canonicalJson(previous);
+}
+
+export function exactSchemaAndYamlParserMigration(previous, current) {
+  if (previous?.packages?.["node_modules/yaml"] !== undefined || current?.packages?.["node_modules/yaml"] === undefined) return false;
+  const withoutYaml = structuredClone(current);
+  if (withoutYaml.packages?.[""]?.devDependencies?.yaml !== YAML_PARSER_VERSION) return false;
+  if (canonicalJson(withoutYaml.packages["node_modules/yaml"]) !== canonicalJson(YAML_PARSER_LOCK_ENTRY)) return false;
+  delete withoutYaml.packages[""].devDependencies.yaml;
+  delete withoutYaml.packages["node_modules/yaml"];
+  return exactSchemaPinMigration(previous, withoutYaml, { lockfile: true });
 }
 
 function packageSurface(packageJson) {
@@ -388,7 +486,7 @@ export async function buildPackageSemanticMigrationReceipt(observedAt = new Date
   ])].sort(compareCodePoints);
   const changedScripts = allScriptNames.filter((name) => previousPackage.scripts?.[name] !== currentPackage.scripts?.[name]);
   const stageChanges = [];
-  for (const row of PARITY_ROWS) {
+  for (const row of PACKAGE_MIGRATION_ROW_SPECS) {
     for (const [stage, rootScript] of Object.entries(row.stages ?? {})) {
       const before = packageScriptClosure(previousPackage, rootScript);
       const after = packageScriptClosure(currentPackage, rootScript);
@@ -417,16 +515,22 @@ export async function buildPackageSemanticMigrationReceipt(observedAt = new Date
   const currentManifest = await buildContentAddressManifest();
   const nonPackageCompatibilityErrors = staleEvidenceBindings(baseManifest, currentManifest, {
     allowV3ToV4: true,
-    ignoredSourcePaths: ["package.json", ...PACKAGE_WORKSPACE_MANIFEST_PATHS],
+    ignoredSourcePaths: ["package.json", "package-lock.json", ...PACKAGE_WORKSPACE_MANIFEST_PATHS],
   });
+  const previousLock = JSON.parse(previousLockBytes.toString("utf8"));
+  const currentLock = JSON.parse(currentLockBytes.toString("utf8"));
   const checks = {
-    packageLockUnchanged: sourceContentAddress(previousLockBytes) === sourceContentAddress(currentLockBytes),
-    packageSurfaceUnchanged: canonicalJson(packageSurface(previousPackage)) === canonicalJson(packageSurface(currentPackage)),
-    workspacePackageManifestsUnchanged: Object.values(workspacePackageSha256).every(({ previous, current }) => previous === current),
+    packageLockOnlySchemaPinAndYamlParserMigration: exactSchemaAndYamlParserMigration(previousLock, currentLock),
+    packageSurfaceOnlyYamlParserAdded: exactYamlParserAddition(packageSurface(previousPackage), packageSurface(currentPackage)),
+    workspacePackageManifestsOnlySchemaPinMigration: PACKAGE_WORKSPACE_MANIFEST_PATHS.every((path) => {
+      const previous = previousWorkspacePackages.find(([candidate]) => candidate === path)?.[1];
+      const current = currentWorkspacePackages.find(([candidate]) => candidate === path)?.[1];
+      return exactSchemaPinMigration(JSON.parse(previous.toString("utf8")), JSON.parse(current.toString("utf8")));
+    }),
     baseContentAddressManifestPinned: sha256(baseManifestBytes) === PACKAGE_SEMANTIC_MIGRATION_BASE_MANIFEST_SHA256
       && baseManifest.schemaVersion === 3 && baseManifest.rows?.length === 23,
     nonPackageEvidenceBindingsCurrent: nonPackageCompatibilityErrors.length === 0,
-    onlyF023StageCommandsAdded: JSON.stringify(changedStageRows) === JSON.stringify(["F-023"]) &&
+    onlyF023AndF024StageCommandsAdded: JSON.stringify(changedStageRows) === JSON.stringify(["F-023", "F-024"]) &&
       stageChanges.every((change) => Object.values(change.before).every((command) => command === null)),
     onlyKnownGlobalGateScriptsChanged: JSON.stringify(globalOnlyScriptChanges) === JSON.stringify(PACKAGE_MIGRATION_GLOBAL_SCRIPT_CHANGES),
   };
@@ -486,6 +590,17 @@ export async function buildGlobalTopologyReceipt(observedAt = new Date().toISOSt
     packageMigrationHistoryAvailable: checkoutStepsUseFullHistory(ciBytes.toString("utf8")),
     licensedAutoCadJobPresent: ciBytes.includes(Buffer.from("autocad-2024-certification")),
     requiredOracleJobPresent: ciBytes.includes(Buffer.from("required-oracles")),
+    protectedF024AutoCadChainPresent: workflowJobContainsOrderedRuns(ciBytes.toString("utf8"), "autocad-2024-certification", [
+      "npm run parity:f024:browser-artifact",
+      "npm run parity:f024:readback",
+      "npm run parity:f024:autocad",
+      "npm run parity:f024:oracles",
+      "npm run parity:f024:cross-evidence",
+    ]),
+    requiredF024OracleChainPresent: workflowJobContainsOrderedRuns(ciBytes.toString("utf8"), "required-oracles", [
+      "npm run parity:f024:oracles",
+      "npm run parity:f024:cross-evidence",
+    ]),
   };
   if (Object.values(checks).some((value) => value !== true)) throw new Error(`Global topology receipt failed: ${JSON.stringify(checks)}`);
   const sourceSha256 = Object.fromEntries(await Promise.all(GLOBAL_TOPOLOGY_SOURCE_PATHS.map(async (path) => [

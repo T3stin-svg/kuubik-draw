@@ -365,6 +365,17 @@ function emitHatch(context: Context, entity: Extract<CadEntity, { kind: "hatch" 
 function emitEntity(context: Context, entity: CadEntity): { text: string | null; points: CadPoint2[] } {
   switch (entity.kind) {
     case "line": return { text: header(context, "LINE", entity) + pair(100, "AcDbLine") + point(10, 20, entity.start) + point(11, 21, entity.end), points: [entity.start, entity.end] };
+    case "ray":
+    case "xline": {
+      if (!(Math.hypot(entity.direction.x, entity.direction.y) > 0)) throw new TypeError(`DXF ${entity.kind.toUpperCase()} ${entity.handle} direction must be non-zero.`);
+      const type = entity.kind.toUpperCase();
+      const subclass = entity.kind === "ray" ? "AcDbRay" : "AcDbXline";
+      return {
+        text: header(context, type, entity) + pair(100, subclass) + point(10, 20, entity.basePoint) + point(11, 21, entity.direction),
+        // Construction lines are intentionally excluded from finite drawing extents.
+        points: [],
+      };
+    }
     case "circle": return entity.radius > 0 ? {
       text: header(context, "CIRCLE", entity) + pair(100, "AcDbCircle") + point(10, 20, entity.center) + pair(40, num(entity.radius)),
       points: [{ x: entity.center.x - entity.radius, y: entity.center.y - entity.radius }, { x: entity.center.x + entity.radius, y: entity.center.y + entity.radius }],

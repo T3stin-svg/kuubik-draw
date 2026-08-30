@@ -1,5 +1,14 @@
 $ErrorActionPreference = 'Stop'
 
+Add-Type @'
+using System;
+using System.Runtime.InteropServices;
+public static class F016WindowProcess {
+  [DllImport("user32.dll")]
+  public static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint processId);
+}
+'@
+
 function Invoke-ComRetry {
   param([Parameter(Mandatory = $true)][scriptblock]$Action, [int]$TimeoutSeconds = 20)
   $deadline = [DateTime]::UtcNow.AddSeconds($TimeoutSeconds)
@@ -62,8 +71,25 @@ $acad = $null
 $scratch = $null
 $reusedBlank = $false
 $result = $null
+$automationProcessId = 0
+$automationProcessOwned = $false
+$automationProcessIdentity = $null
+$preExistingProcessIds = @(Get-Process -Name 'acad' -ErrorAction SilentlyContinue | ForEach-Object { [int]$_.Id })
 try {
   $acad = New-Object -ComObject AutoCAD.Application.24.3
+  [uint32]$resolvedProcessId = 0
+  [void][F016WindowProcess]::GetWindowThreadProcessId([IntPtr][int64](Invoke-ComRetry { $acad.HWND }), [ref]$resolvedProcessId)
+  $automationProcessId = [int]$resolvedProcessId
+  $automationProcessOwned = $automationProcessId -gt 0 -and $preExistingProcessIds -notcontains $automationProcessId
+  if (-not $automationProcessOwned) { throw 'F-016 refuses to use a pre-existing AutoCAD process.' }
+  $automationProcess = Get-Process -Id $automationProcessId -ErrorAction Stop
+  $automationExecutablePath = [IO.Path]::GetFullPath([string]$automationProcess.Path)
+  if ([IO.Path]::GetFileName($automationExecutablePath) -ine 'acad.exe') { throw "F-016 PID $automationProcessId is not acad.exe." }
+  $automationProcessIdentity = [ordered]@{
+    processId = $automationProcessId
+    executablePath = $automationExecutablePath
+    startTimeUtc = $automationProcess.StartTime.ToUniversalTime().ToString('o')
+  }
   Invoke-ComRetry { $acad.Visible = $true } | Out-Null
   $initialCount = [int](Invoke-ComRetry { $acad.Documents.Count })
   if ($initialCount -gt 0) {
@@ -166,6 +192,9 @@ try {
     benchmark = 'AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation'
     engine = 'Autodesk AutoCAD 2024 desktop COM'
     engineVersion = [string](Invoke-ComRetry { $acad.Version })
+    automationProcessId = $automationProcessId
+    automationProcessOwned = $automationProcessOwned
+    automationProcessIdentity = $automationProcessIdentity
     workflow = '12 standard native entity families selected by layer; MOVE base 100,200 to destination 600,950; one-command UNDO'
     vector = @(500, 750)
     before = $before
@@ -177,7 +206,7 @@ try {
   }
 } finally {
   if ($scratch) { try { Invoke-ComRetry { $scratch.Close($false) } -TimeoutSeconds 10 | Out-Null } catch {} }
-  if ($reusedBlank -and $acad) { try { Invoke-ComRetry { $acad.Documents.Add() } -TimeoutSeconds 10 | Out-Null } catch {} }
+  if ($automationProcessOwned -and $acad) { try { Invoke-ComRetry { $acad.Quit() } -TimeoutSeconds 10 | Out-Null } catch {} }
 }
 
 if (-not $result) { throw 'F-016 standard AutoCAD matrix produced no result.' }

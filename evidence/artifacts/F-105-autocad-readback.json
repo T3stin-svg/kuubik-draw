@@ -4,8 +4,13 @@
   "benchmark": "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
   "engine": "Autodesk AutoCAD 2024 desktop COM SetLayoutsToPlot/PlotToFile",
   "engineVersion": "24.3s (LMS Tech)",
-  "automationProcessId": 29544,
+  "automationProcessId": 14548,
   "automationProcessOwned": true,
+  "automationProcessIdentity": {
+    "processId": 14548,
+    "executablePath": "C:\\Program Files\\Autodesk\\AutoCAD 2024\\acad.exe",
+    "startTimeUtc": "2026-08-30T00:30:27.6391689Z"
+  },
   "backgroundPlot": 0,
   "requestedOrder": [
     "F-105 SHEET 20 PLAN",
@@ -49,13 +54,15 @@
       "name": "F-105 SHEET 10 SECTION",
       "tabOrder": 1,
       "configName": "DWG To PDF.pc3",
-      "canonicalMediaName": "",
+      "canonicalMediaName": "ISO_expand_A4_(210.00_x_297.00_MM)",
       "paper": {
         "widthMm": 210,
         "heightMm": 297,
         "rotation": 0
       },
-      "paperText": []
+      "paperText": [
+        "F-105 SHEET 10 SECTION"
+      ]
     },
     {
       "name": "F-105 SHEET 20 PLAN",
@@ -75,29 +82,29 @@
   "batchOutputs": [
     {
       "name": "F105-F-105 SHEET 20 PLAN.pdf",
-      "fullName": "C:\\temp\\KuubikDraw-F105-YptppX\\pdf\\batch\\F105-F-105 SHEET 20 PLAN.pdf",
+      "fullName": "C:\\temp\\KuubikDraw-F105-YVXkMU\\pdf\\batch\\F105-F-105 SHEET 20 PLAN.pdf",
       "bytes": 79632,
-      "sha256": "c7f816be582492b5cfefb818fac27e079aaae3d0937a843bacdc15afdba0af2c",
-      "creationTimeUtc": "2026-08-29T13:55:23.0487333Z",
-      "lastWriteTimeUtc": "2026-08-29T13:55:23.2628690Z"
+      "sha256": "da340678e26ed1b83a4822726f00f78ea18601b2e4b6cd97b2c81a341c37a606",
+      "creationTimeUtc": "2026-08-30T00:30:41.9486361Z",
+      "lastWriteTimeUtc": "2026-08-30T00:30:42.0069549Z"
     },
     {
       "name": "F105-F-105 SHEET 10 SECTION.pdf",
-      "fullName": "C:\\temp\\KuubikDraw-F105-YptppX\\pdf\\batch\\F105-F-105 SHEET 10 SECTION.pdf",
+      "fullName": "C:\\temp\\KuubikDraw-F105-YVXkMU\\pdf\\batch\\F105-F-105 SHEET 10 SECTION.pdf",
       "bytes": 78633,
-      "sha256": "a92943dd5f71d03fc67d16f6fe377ba56a2111090e9593e955ccfb1715088eb8",
-      "creationTimeUtc": "2026-08-29T13:55:26.0677290Z",
-      "lastWriteTimeUtc": "2026-08-29T13:55:26.1131231Z"
+      "sha256": "09cdb30f4b9743ffd0d549722cb52cd653bf9332b67adfe821fa0ede8bda63b7",
+      "creationTimeUtc": "2026-08-30T00:30:45.0951177Z",
+      "lastWriteTimeUtc": "2026-08-30T00:30:45.1960753Z"
     }
   ],
   "excludedOutputs": [
     {
       "name": "F105-F-105 SHEET 20 PLAN.pdf",
-      "fullName": "C:\\temp\\KuubikDraw-F105-YptppX\\pdf\\excluded\\F105-F-105 SHEET 20 PLAN.pdf",
+      "fullName": "C:\\temp\\KuubikDraw-F105-YVXkMU\\pdf\\excluded\\F105-F-105 SHEET 20 PLAN.pdf",
       "bytes": 79632,
-      "sha256": "0152f8e9af541dea1c0e9f0ce3b16e5452dc8130d0dbc3151407f4a3f9954294",
-      "creationTimeUtc": "2026-08-29T13:55:29.1117272Z",
-      "lastWriteTimeUtc": "2026-08-29T13:55:29.3848068Z"
+      "sha256": "dfd32bcf60e0bb11f8efd63f25b87636dd3cd25e15dde33f42c6be7b0d5cbe23",
+      "creationTimeUtc": "2026-08-30T00:30:48.3841284Z",
+      "lastWriteTimeUtc": "2026-08-30T00:30:48.5038948Z"
     }
   ],
   "checks": {
@@ -107,11 +114,12 @@
     "requestedOrderIsNotAlphabetic": true,
     "twoBatchOutputs": true,
     "exclusionOutput": true,
+    "exactSingleTextPerLayout": true,
     "dwgReopenStable": true
   },
   "dwg": {
     "bytes": 32405,
-    "sha256": "33baf5f15b966ec2e9ed03806dc272d7e7b4df656861db3d23ce8d632ec7c249",
+    "sha256": "b7a3c755786b1e933d59da2fc1e061c1daccc6467297490cf52e8f8e7359c891",
     "saveAsType": 64,
     "retained": false
   },
@@ -400,9 +408,9 @@
     }
   },
   "scriptSha256": "8952f52c50604c0396bf73aca47e520a807acf9ca78ccb4b24fb50a227329c4a",
-  "matrixScriptSha256": "43a895d658abc3dc5eb8091bd060fc3c4d60fb6b7b1379eb5beaac5cd2e79925",
-  "runnerScriptSha256": "965db3e8d6cb4b98cd258e552823a13348eaefea4fc85bb86c7e61e20cfea557",
+  "matrixScriptSha256": "d38057fbc7b9fbd59c70b4f62434715c0e0153dc4dd37eb9c3d83b65a4c39f33",
+  "runnerScriptSha256": "4b1e0f89a464e713bb106ac3803d0f9c56be5b12b6417117f501f1eb45bdc273",
   "pdfReaderSha256": "e16e6eab403dc659ddadc2be05672007f8a9dd3672f3565f20a91073d467c0ae",
   "pixelReaderSha256": "8da5100785701e5b2ada88f7992660d80c840e693eb28af1a978963d0015da5f",
-  "observedAt": "2026-08-29T13:55:37.304Z"
+  "observedAt": "2026-08-30T00:30:59.490Z"
 }

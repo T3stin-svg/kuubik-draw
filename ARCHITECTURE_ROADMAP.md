@@ -33,7 +33,9 @@ selles teekaardis teadlikult `Won't have`.
 
 ## Now
 
-1. F-023 on avalikult sertifitseeritud: **24/133 · 18,0% raw / 21,7% weighted**.
+1. F-023 on avalikult sertifitseeritud: **24/133 · 18,0% raw / 21,7% weighted**;
+   F-024 lokaalne release-kandidaat on **25/133 · 18,8% raw / 22,6% weighted**
+   ning ootab avalikku GitHub Actionsi väravat.
 2. Quick/Standard TRIM ja EXTEND, closed bulge/width polyline, hidden/locked target,
    ignored HATCH loop, nested block layer-semantika ja rational SPLINE läbivad
    AutoCAD 2024.1.2, Chromiumi ning sõltumatu DXF/KDRAW1 read-back'i.
@@ -96,18 +98,19 @@ parity/content-address-, litsentsi- ja turvaväravad. Sõltumatu lõppreview oli
 `0 P0 / 0 P1`. Tingimuslikud self-hosted AutoCAD/oracle job'id jäid selle push'i
 jaoks ausalt `skipped`; checked-in native tõendeid kontrolliti üldises ratchet'is.
 
-## Next — F-024 FILLET
+## Next — F-025 CHAMFER
 
-Rakendada täis-FILLET sama eraldatud workflow/transaction arhitektuuriga:
-radius, Polyline, Trim/No trim ja Multiple käsuvalikud; line/arc/polyline
-objektipaarid, nullraadius, paralleelsete ja pikendatavate segmentide juhud,
+Rakendada täis-CHAMFER sama eraldatud workflow/transaction arhitektuuriga:
+Distance, Angle, Method, Trim/No trim, Multiple ja Polyline käsuvalikud;
+line/polyline objektipaarid, nullkaugus, paralleelsed ja pikendatavad segmendid,
 layer-refusal, preview=commit, käsusisene Undo, atomic global Undo/Redo,
 DXF/KDRAW1 read-back ning sama AutoCAD 2024.1.2 live-maatriks. Skoor muutub
 ainult pärast kõigi tõendite ja sõltumatu P0/P1 review läbimist.
 
 ## Later
 
-1. Rakendada F-024 `FILLET`, siis jätkata mõjupõhises P0 → P1 → P2 järjekorras
+1. Sulgeda F-024 avaliku CI-ga, rakendada F-025 `CHAMFER` ning jätkata
+   mõjupõhises P0 → P1 → P2 järjekorras
    kuni 133/133.
 2. Native DWG/DWT/XREF ja PC3/CTB/STB ainult litsentsitud ODA/RealDWG teega.
 3. Pärast funktsionaalset 133/133 väravat viia kõik viis visuaalkategooriat

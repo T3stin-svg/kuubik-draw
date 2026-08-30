@@ -207,6 +207,26 @@ describe("vector print output", () => {
     });
   });
 
+  it("clips RAY and XLINE to the physical SVG/PDF plot window without skipping them", () => {
+    const document = createEmptyDocument({ documentId: "F-024-construction-print" });
+    document.entities = [
+      { kind: "ray", handle: "20", layerId: "0", basePoint: { x: 50, y: 50 }, direction: { x: 4, y: 0 } },
+      { kind: "xline", handle: "30", layerId: "0", basePoint: { x: 100, y: 100 }, direction: { x: 0, y: -5 } },
+    ];
+    const svg = exportSvg(document, page);
+    expect(svg.skippedHandles).toEqual([]);
+    expect(svg.text).toContain('data-handle="20" data-source-color="#ffffff"');
+    expect(svg.text).toContain('data-construction-kind="ray" x1="50" y1="50" x2="297" y2="50"');
+    expect(svg.text).toContain('data-construction-kind="xline" x1="100" y1="210" x2="100" y2="0"');
+
+    const pdf = exportVectorPdf(document, page);
+    expect(pdf.skippedHandles).toEqual([]);
+    expect(readPdfSummary(pdf.bytes)).toMatchObject({ pages: 1, vectorStrokeCommands: 2, hasXref: true, xrefOffsetsValid: true });
+    const text = new TextDecoder("latin1").decode(pdf.bytes);
+    expect(text).toContain("50 50 m 297 50 l S");
+    expect(text).toContain("100 210 m 100 0 l S");
+  });
+
   it("omits non-plottable layers and keeps SVG text upright", () => {
     const document = createEmptyDocument({ documentId: "layers" });
     document.layers.push({ id: "construction", name: "Construction", visible: true, frozen: false, locked: false, plottable: false });

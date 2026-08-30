@@ -14,7 +14,7 @@
     "typecheck": "npm run typecheck -w @kuubik/cad-core && npm run typecheck -w @kuubik/cad-renderer && npm run typecheck -w @kuubik/cad-dxf && npm run typecheck -w @kuubik/cad-print && npm run typecheck -w @kuubik/draw-web",
     "lint": "npm run lint -w @kuubik/cad-core && npm run lint -w @kuubik/cad-renderer && npm run lint -w @kuubik/cad-dxf && npm run lint -w @kuubik/cad-print && npm run lint -w @kuubik/draw-web",
     "test": "vitest run",
-    "test:mutation": "vitest run packages/cad-core/test/mutation-proven.test.ts packages/cad-core/test/f022-mutation-proven.test.ts packages/cad-core/test/f023-mutation-proven.test.ts packages/cad-core/test/f107-mutation-proven.test.ts packages/cad-dxf/test/f109-mutation-proven.test.ts packages/cad-dxf/test/f111-mutation-proven.test.ts packages/cad-print/test/f104-mutation-proven.test.ts packages/cad-print/test/f105-mutation-proven.test.ts packages/cad-print/test/f106-mutation-proven.test.ts packages/cad-print/test/f114-mutation-proven.test.ts",
+    "test:mutation": "vitest run packages/cad-core/test/mutation-proven.test.ts packages/cad-core/test/f022-mutation-proven.test.ts packages/cad-core/test/f023-mutation-proven.test.ts packages/cad-core/test/f024-mutation-proven.test.ts packages/cad-core/test/f107-mutation-proven.test.ts packages/cad-dxf/test/f109-mutation-proven.test.ts packages/cad-dxf/test/f111-mutation-proven.test.ts packages/cad-print/test/f104-mutation-proven.test.ts packages/cad-print/test/f105-mutation-proven.test.ts packages/cad-print/test/f106-mutation-proven.test.ts packages/cad-print/test/f114-mutation-proven.test.ts",
     "test:e2e": "playwright test",
     "test:oracles": "node tools/oracles/run-oracles.mjs",
     "gate:dxf": "vitest run packages/cad-dxf",
@@ -54,6 +54,11 @@
     "parity:f023:browser-artifact": "node tools/parity/capture-f023-browser.mjs",
     "parity:f023:oracles": "npm run parity:f023:readback && node tools/oracles/run-f023-oracles.mjs",
     "parity:f023:cross-evidence": "node tools/parity/check-f023-cross-evidence.mjs",
+    "parity:f024:readback": "npm run build -w @kuubik/cad-core && npm run build -w @kuubik/cad-dxf && npx vite-node tools/parity/run-f024-readback.mjs",
+    "parity:f024:autocad": "node tools/autocad/run-f024.mjs",
+    "parity:f024:browser-artifact": "node tools/parity/capture-f024-browser.mjs",
+    "parity:f024:oracles": "npm run parity:f024:readback && node tools/oracles/run-f024-oracles.mjs",
+    "parity:f024:cross-evidence": "node tools/parity/check-f024-cross-evidence.mjs",
     "parity:f020-f021:runner-evidence": "node tools/parity/check-f020-f021-runner-evidence.mjs",
     "parity:f097:readback": "npm run build -w @kuubik/cad-core && node tools/parity/run-f097-readback.mjs",
     "parity:f097:autocad": "node tools/autocad/run-f097.mjs",
@@ -115,7 +120,7 @@
     "parity:content-addresses": "node tools/parity-kit/cli.mjs content-addresses",
     "parity:content-addresses:update": "node tools/parity-kit/cli.mjs content-addresses --write",
     "parity:evidence:refresh": "node tools/parity/refresh-local-certification-evidence.mjs",
-    "parity:check": "node parity/check-parity.mjs && node tools/parity/check-f020-f021-runner-evidence.mjs && node tools/parity/check-f022-cross-evidence.mjs && node tools/parity/check-f023-cross-evidence.mjs && node tools/parity/check-f100-cross-evidence.mjs && node tools/parity/check-f101-cross-evidence.mjs && node tools/parity/check-f102-cross-evidence.mjs && node tools/parity/check-f103-cross-evidence.mjs && node tools/parity/check-f104-cross-evidence.mjs && node tools/parity/check-f105-cross-evidence.mjs && node tools/parity/check-f106-cross-evidence.mjs && node tools/parity/check-f107-cross-evidence.mjs && node tools/parity/check-f109-cross-evidence.mjs && node tools/parity/check-f111-cross-evidence.mjs && node tools/parity/check-f114-cross-evidence.mjs",
+    "parity:check": "node parity/check-parity.mjs && node tools/parity/check-f020-f021-runner-evidence.mjs && node tools/parity/check-f022-cross-evidence.mjs && node tools/parity/check-f023-cross-evidence.mjs && node tools/parity/check-f024-cross-evidence.mjs && node tools/parity/check-f100-cross-evidence.mjs && node tools/parity/check-f101-cross-evidence.mjs && node tools/parity/check-f102-cross-evidence.mjs && node tools/parity/check-f103-cross-evidence.mjs && node tools/parity/check-f104-cross-evidence.mjs && node tools/parity/check-f105-cross-evidence.mjs && node tools/parity/check-f106-cross-evidence.mjs && node tools/parity/check-f107-cross-evidence.mjs && node tools/parity/check-f109-cross-evidence.mjs && node tools/parity/check-f111-cross-evidence.mjs && node tools/parity/check-f114-cross-evidence.mjs",
     "license:check": "node tools/provenance/check-licenses.mjs",
     "security:evidence:manifest": "node tools/provenance/gitleaks-evidence.mjs --write",
     "security:evidence:scan": "node tools/provenance/gitleaks-evidence.mjs --scan",
@@ -133,6 +138,7 @@
     "@types/node": "^24.3.0",
     "dxf-parser": "1.1.2",
     "typescript": "^6.0.0",
-    "vitest": "^3.2.4"
+    "vitest": "^3.2.4",
+    "yaml": "2.9.0"
   }
 }

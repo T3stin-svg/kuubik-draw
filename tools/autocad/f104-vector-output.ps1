@@ -89,6 +89,17 @@ function Set-IsoA3Landscape {
   return [string]$media[0]
 }
 
+function Get-LayoutBlockEntities {
+  param([Parameter(Mandatory = $true)]$Layout)
+  $block = Invoke-ComRetry { $Layout.Block }
+  $count = [int](Invoke-ComRetry { $block.Count })
+  $entities = New-Object System.Collections.Generic.List[object]
+  for ($index = 0; $index -lt $count; $index += 1) {
+    $entities.Add((Invoke-ComRetry { $block.Item($index) }))
+  }
+  return [object[]]$entities.ToArray()
+}
+
 function Get-LayoutSnapshot {
   param(
     [Parameter(Mandatory = $true)]$Document,
@@ -103,11 +114,11 @@ function Get-LayoutSnapshot {
   $rotation = [int](Invoke-ComRetry { $Layout.PlotRotation })
   $paperWidth = if ($rotation -eq 1 -or $rotation -eq 3) { $rawHeight } else { $rawWidth }
   $paperHeight = if ($rotation -eq 1 -or $rotation -eq 3) { $rawWidth } else { $rawHeight }
-  $viewports = @(Invoke-ComRetry {
-    @($Layout.Block | Where-Object {
-      [string]$_.ObjectName -eq 'AcDbViewport' -and [string]$_.Handle -ne $SystemViewportHandle
-    } | Sort-Object { [string]$_.Handle })
-  } -TimeoutSeconds 30)
+  $blockEntities = @(Get-LayoutBlockEntities $Layout)
+  $viewports = @($blockEntities | Where-Object {
+    $entity = $_
+    [string](Invoke-ComRetry { $entity.ObjectName }) -eq 'AcDbViewport' -and [string](Invoke-ComRetry { $entity.Handle }) -ne $SystemViewportHandle
+  } | Sort-Object { $entity = $_; [string](Invoke-ComRetry { $entity.Handle }) })
   return [ordered]@{
     layoutName = Invoke-NonEmptyCom { $Layout.Name } 'Layout name'
     configName = Invoke-NonEmptyCom { $Layout.ConfigName } 'Plot configuration name'
@@ -131,22 +142,66 @@ function Get-LayoutSnapshot {
       }
     })
     expectedHandles = [ordered]@{ first = $FirstHandle; second = $SecondHandle; polygonBoundary = $BoundaryHandle }
-    boundaryPresent = @($Layout.Block | Where-Object { [string]$_.Handle -eq $BoundaryHandle }).Count -eq 1
-    paperText = @($Layout.Block | Where-Object { [string]$_.ObjectName -match 'AcDb(Text|MText)' } | ForEach-Object { [string]$_.TextString })
+    boundaryPresent = @($blockEntities | Where-Object { $entity = $_; [string](Invoke-ComRetry { $entity.Handle }) -eq $BoundaryHandle }).Count -eq 1
+    paperText = @($blockEntities | Where-Object { $entity = $_; [string](Invoke-ComRetry { $entity.ObjectName }) -match 'AcDb(Text|MText)' } | ForEach-Object { $entity = $_; Invoke-NonEmptyCom { $entity.TextString } 'Paper text' })
   }
+}
+
+function Get-StableF104LayoutSnapshot {
+  param(
+    [Parameter(Mandatory = $true)]$Document,
+    [Parameter(Mandatory = $true)]$Layout,
+    [Parameter(Mandatory = $true)][string]$SystemViewportHandle,
+    [Parameter(Mandatory = $true)][string]$FirstHandle,
+    [Parameter(Mandatory = $true)][string]$SecondHandle,
+    [Parameter(Mandatory = $true)][string]$BoundaryHandle,
+    [int]$TimeoutSeconds = 30
+  )
+  $deadline = [DateTime]::UtcNow.AddSeconds($TimeoutSeconds)
+  $snapshot = $null
+  do {
+    $snapshot = Get-LayoutSnapshot $Document $Layout $SystemViewportHandle $FirstHandle $SecondHandle $BoundaryHandle
+    $firstSnapshot = @($snapshot.viewports | Where-Object { $_.handle -eq $FirstHandle })[0]
+    $secondSnapshot = @($snapshot.viewports | Where-Object { $_.handle -eq $SecondHandle })[0]
+    $stable = $null -ne $firstSnapshot -and $null -ne $secondSnapshot `
+      -and [Math]::Abs([double]$firstSnapshot.customScale - 0.02) -le 0.000001 `
+      -and [Math]::Abs([double]$secondSnapshot.customScale - 0.01) -le 0.000001 `
+      -and [Math]::Abs([double]$firstSnapshot.target.x) -le 0.001 `
+      -and [Math]::Abs([double]$secondSnapshot.target.x - 20000) -le 0.001 `
+      -and $firstSnapshot.displayLocked -and $secondSnapshot.displayLocked `
+      -and $firstSnapshot.viewportOn -and $secondSnapshot.viewportOn `
+      -and -not $firstSnapshot.clipped -and $secondSnapshot.clipped `
+      -and $snapshot.paperText -contains 'KUUBIK F-104 VECTOR LAYOUT' `
+      -and $snapshot.paperText -contains 'A3 420x297 | 1:50 + 1:100'
+    if ($stable) { return $snapshot }
+    Invoke-ComRetry {
+      $firstViewport = $Document.HandleToObject($FirstHandle); $secondViewport = $Document.HandleToObject($SecondHandle)
+      $firstViewport.Display($true); $firstViewport.Target = [double[]]@(0, 0, 0); $firstViewport.CustomScale = 0.02; $firstViewport.DisplayLocked = $true
+      $secondViewport.Display($true); $secondViewport.Target = [double[]]@(20000, 0, 0); $secondViewport.CustomScale = 0.01; $secondViewport.DisplayLocked = $true
+      $Document.Regen(1)
+    } | Out-Null
+    Start-Sleep -Milliseconds 250
+  } while ([DateTime]::UtcNow -lt $deadline)
+  throw "F-104 layout did not stabilize before evidence capture: $($snapshot | ConvertTo-Json -Depth 8 -Compress)"
 }
 
 $preExistingProcessIds = @(Get-Process -Name 'acad' -ErrorAction SilentlyContinue | ForEach-Object { [int]$_.Id })
 $acad = $null; $scratch = $null; $reopened = $null; $result = $null; $automationProcessId = 0; $owned = $false
 $tempDwg = [IO.Path]::GetFullPath($TempDwgPath); $tempPdf = [IO.Path]::GetFullPath($TempPdfPath); $tempReopenPdf = [IO.Path]::GetFullPath($TempReopenPdfPath); $pidFile = [IO.Path]::GetFullPath($PidPath)
 try {
-  $acad = Invoke-ComRetry { New-Object -ComObject AutoCAD.Application.24.3 } -TimeoutSeconds 30
+  # COM activation is single-shot: retrying New-Object can launch multiple
+  # unauthenticated acad.exe processes when registration is slow.
+  $acad = New-Object -ComObject AutoCAD.Application.24.3
   Invoke-ComRetry { $acad.Visible = $true; $acad.WindowState = 3 } | Out-Null
   [uint32]$resolvedProcessId = 0
   [void][F104WindowProcess]::GetWindowThreadProcessId([IntPtr][int64](Invoke-ComRetry { $acad.HWND }), [ref]$resolvedProcessId)
   $automationProcessId = [int]$resolvedProcessId; $owned = $automationProcessId -gt 0 -and $preExistingProcessIds -notcontains $automationProcessId
   if (-not $owned) { throw 'F-104 refuses to use a pre-existing AutoCAD process.' }
-  [ordered]@{ schemaVersion = 1; processId = $automationProcessId; owned = $true; token = $OwnershipToken } | ConvertTo-Json -Compress | Set-Content -LiteralPath $pidFile -Encoding ascii
+  $automationProcess = Get-Process -Id $automationProcessId -ErrorAction Stop
+  $automationExecutablePath = [IO.Path]::GetFullPath([string]$automationProcess.Path)
+  if ([IO.Path]::GetFileName($automationExecutablePath) -ine 'acad.exe') { throw "F-104 PID $automationProcessId is not acad.exe." }
+  $automationStartTimeUtc = $automationProcess.StartTime.ToUniversalTime().ToString('o')
+  [ordered]@{ schemaVersion = 1; processId = $automationProcessId; executablePath = $automationExecutablePath; startTimeUtc = $automationStartTimeUtc; owned = $true; token = $OwnershipToken } | ConvertTo-Json -Compress | Set-Content -LiteralPath $pidFile -Encoding ascii
   $engineVersion = [string](Invoke-ComRetry { $acad.Version })
 
   $scratch = if ([int](Invoke-ComRetry { $acad.Documents.Count }) -gt 0) { Invoke-ComRetry { $acad.ActiveDocument } } else { Invoke-ComRetry { $acad.Documents.Add() } }
@@ -189,8 +244,8 @@ try {
   $first = Invoke-ComRetry { $scratch.PaperSpace.AddPViewport([double[]]@(108.75, 148.5, 0), 185, 247) }
   $second = Invoke-ComRetry { $scratch.PaperSpace.AddPViewport([double[]]@(311.25, 148.5, 0), 185, 247) }
   Invoke-ComRetry {
-    $first.Layer = 'F104 VIEWPORTS'; $first.Target = [double[]]@(0, 0, 0); $first.CustomScale = 0.02; $first.Display($true); $first.DisplayLocked = $true
-    $second.Layer = 'F104 VIEWPORTS'; $second.Target = [double[]]@(20000, 0, 0); $second.CustomScale = 0.01; $second.Display($true); $second.DisplayLocked = $true
+    $first.Layer = 'F104 VIEWPORTS'; $first.Display($true); $first.Target = [double[]]@(0, 0, 0); $first.CustomScale = 0.02; $first.DisplayLocked = $true
+    $second.Layer = 'F104 VIEWPORTS'; $second.Display($true); $second.Target = [double[]]@(20000, 0, 0); $second.CustomScale = 0.01; $second.DisplayLocked = $true
   } | Out-Null
   $firstHandle = Invoke-NonEmptyCom { $first.Handle } 'First viewport handle'; $secondHandle = Invoke-NonEmptyCom { $second.Handle } 'Second viewport handle'
   $boundary = Invoke-ComRetry { $scratch.PaperSpace.AddLightWeightPolyline([double[]]@(218.75, 25, 403.75, 25, 382, 272, 240.5, 272)) }
@@ -205,12 +260,11 @@ try {
   $second = Invoke-ComRetry { $scratch.HandleToObject($secondHandle) }
   Invoke-ComRetry {
     $scratch.ActiveLayout = $paper; $scratch.MSpace = $false
-    $first.Display($true); $first.DisplayLocked = $true
-    $second.Display($true); $second.DisplayLocked = $true
+    $first.Display($true); $first.Target = [double[]]@(0, 0, 0); $first.CustomScale = 0.02; $first.DisplayLocked = $true
+    $second.Display($true); $second.Target = [double[]]@(20000, 0, 0); $second.CustomScale = 0.01; $second.DisplayLocked = $true
     $paper.PlotType = 5; $scratch.Regen(1)
   } | Out-Null
-  Start-Sleep -Milliseconds 500
-  $beforeSave = Invoke-ComRetry { Get-LayoutSnapshot $scratch $paper $systemViewportHandle $firstHandle $secondHandle $boundaryHandle } -TimeoutSeconds 30
+  $beforeSave = Get-StableF104LayoutSnapshot $scratch $paper $systemViewportHandle $firstHandle $secondHandle $boundaryHandle
   $plotSucceeded = [bool](Invoke-ComRetry { $scratch.Plot.PlotToFile($tempPdf) } -TimeoutSeconds 60)
   if (-not $plotSucceeded -or -not (Test-Path -LiteralPath $tempPdf)) { throw 'AutoCAD PlotToFile did not create the F-104 PDF.' }
   $pdfInfo = Get-Item -LiteralPath $tempPdf; $pdfSha256 = Get-Sha256 $tempPdf

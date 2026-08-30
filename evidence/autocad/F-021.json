@@ -4,8 +4,8 @@
   "kind": "autocad",
   "authority": "autocad-2024.1.2-live",
   "status": "PASS",
-  "artifactSha256": "a2d2121d6eeca6ce44e288c9fa1c7fccb9c96f8358ba45dbdbbd41af057b8a96",
-  "observedAt": "2026-08-29T04:24:43.343Z",
+  "artifactSha256": "f6cc79b59d1b1c991a4e2d2305877b9032120a5d95ed2c82ad269f4efb00cd72",
+  "observedAt": "2026-08-29T23:37:49.463Z",
   "workflow": "An owned isolated AutoCAD 24.3 desktop process runs OFFSET Distance, Through beyond a LINE endpoint, progressive Multiple, Erase Yes, Layer Current and command-local Undo; separate LINE, open/closed/bulged POLYLINE, CIRCLE, ARC and ELLIPSE workflows; a concave self-intersection refusal, inward ELLIPSE collapse and locked-layer source probe.",
   "result": "All six option workflows matched exact coordinates. Native LINE/POLYLINE/CIRCLE/ARC bounds and style rules matched, the ordinary ELLIPSE became one cubic SPLINE, and the 60-unit inward ELLIPSE offset split into two open cubic SPLINE entities with measured AutoCAD bounds. The concave invalid offset and locked-layer source were refused, and the owned acad.exe process terminated.",
   "artifact": "evidence/artifacts/F-021-autocad-readback.json"

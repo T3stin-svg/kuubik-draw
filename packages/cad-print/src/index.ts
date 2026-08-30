@@ -20,13 +20,52 @@ function svgHatchPath(entity: Extract<CadEntity, { kind: "hatch" }>): string | n
   }).join(" ");
 }
 
-function svgEntity(entity: CadEntity, document: KDrawDocumentV1, plotStyle?: CadPlotStyle): string | null {
+function constructionSegment(
+  entity: Extract<CadEntity, { kind: "ray" | "xline" }>,
+  clip: CadPaperRect,
+): readonly [{ x: number; y: number }, { x: number; y: number }] | null {
+  const limits = [
+    { base: entity.basePoint.x, direction: entity.direction.x, min: clip.x, max: clip.x + clip.width },
+    { base: entity.basePoint.y, direction: entity.direction.y, min: clip.y, max: clip.y + clip.height },
+  ];
+  if (limits.some(({ base, direction, min, max }) => !Number.isFinite(base) || !Number.isFinite(direction) || !Number.isFinite(min) || !Number.isFinite(max))) return null;
+  if (!(Math.hypot(entity.direction.x, entity.direction.y) > 1e-12) || clip.width <= 0 || clip.height <= 0) return null;
+  let minimum = entity.kind === "ray" ? 0 : Number.NEGATIVE_INFINITY;
+  let maximum = Number.POSITIVE_INFINITY;
+  for (const { base, direction, min, max } of limits) {
+    if (Math.abs(direction) <= 1e-12) {
+      if (base < min || base > max) return null;
+      continue;
+    }
+    const first = (min - base) / direction;
+    const second = (max - base) / direction;
+    minimum = Math.max(minimum, Math.min(first, second));
+    maximum = Math.min(maximum, Math.max(first, second));
+    if (minimum > maximum) return null;
+  }
+  if (!Number.isFinite(minimum) || !Number.isFinite(maximum)) return null;
+  const points = [minimum, maximum].map((parameter) => ({
+    x: entity.basePoint.x + entity.direction.x * parameter,
+    y: entity.basePoint.y + entity.direction.y * parameter,
+  }));
+  return [points[0]!, points[1]!];
+}
+
+function svgEntity(entity: CadEntity, document: KDrawDocumentV1, plotStyle?: CadPlotStyle, clip?: CadPaperRect): string | null {
   const style = resolveEntityPlotAppearance(entity, document.layers, plotStyle);
   const svgStrokeWidth = style.lineweightMm === 0 ? 0.001 : style.lineweightMm;
   const ink = `data-handle="${xml(entity.handle)}" data-source-color="${style.sourceColor}" data-plot-color="${style.color}" data-lineweight-mm="${style.lineweightMm}" data-opacity="${style.opacity}" vector-effect="non-scaling-stroke" stroke="${style.color}" stroke-width="${svgStrokeWidth}" stroke-opacity="${style.opacity}"`;
   const common = `${ink} fill="none"`;
   switch (entity.kind) {
     case "line": return `<line ${common} x1="${entity.start.x}" y1="${entity.start.y}" x2="${entity.end.x}" y2="${entity.end.y}"/>`;
+    case "ray":
+    case "xline": {
+      if (!clip) return null;
+      const segment = constructionSegment(entity, clip);
+      return segment
+        ? `<line ${common} data-construction-kind="${entity.kind}" x1="${segment[0].x}" y1="${segment[0].y}" x2="${segment[1].x}" y2="${segment[1].y}"/>`
+        : `<g data-handle="${xml(entity.handle)}" data-construction-kind="${entity.kind}"/>`;
+    }
     case "circle": return `<circle ${common} cx="${entity.center.x}" cy="${entity.center.y}" r="${entity.radius}"/>`;
     case "polyline":
       if (entity.vertices.some((vertex) => Math.abs(vertex.bulge ?? 0) > 1e-12)) return null;
@@ -71,16 +110,17 @@ export function exportSvg(document: KDrawDocumentV1, page: PrintPage): { text: s
   // unsupported output. Only printable entities that cannot be represented by
   // this writer belong in skippedHandles and may stop a user-facing export.
   const skippedHandles: string[] = [];
+  const unitToMm = UNIT_TO_MM[document.units.linear];
+  const viewWidth = (page.widthMm * page.scaleDenominator) / unitToMm;
+  const viewHeight = (page.heightMm * page.scaleDenominator) / unitToMm;
+  const clip = { x: page.origin.x, y: page.origin.y, width: viewWidth, height: viewHeight };
   const body = printable.entities
     .map((entity) => {
-      const result = svgEntity(entity, document);
+      const result = svgEntity(entity, document, undefined, clip);
       if (!result) skippedHandles.push(entity.handle);
       return result ?? "";
     })
     .join("");
-  const unitToMm = UNIT_TO_MM[document.units.linear];
-  const viewWidth = (page.widthMm * page.scaleDenominator) / unitToMm;
-  const viewHeight = (page.heightMm * page.scaleDenominator) / unitToMm;
   return {
     text: `<svg xmlns="http://www.w3.org/2000/svg" width="${page.widthMm}mm" height="${page.heightMm}mm" viewBox="${page.origin.x} ${page.origin.y} ${viewWidth} ${viewHeight}"><g transform="translate(0 ${page.origin.y * 2 + viewHeight}) scale(1 -1)">${body}</g></svg>`,
     skippedHandles,
@@ -110,12 +150,18 @@ function pdfAlphaName(opacity: number): string {
   return `GS${pdfNumber(opacity * 100).replace(".", "_")}`;
 }
 
-function pdfEntity(entity: CadEntity, document: KDrawDocumentV1, plotStyle: CadPlotStyle | undefined, lineweightUnits: number): string | null {
+function pdfEntity(entity: CadEntity, document: KDrawDocumentV1, plotStyle: CadPlotStyle | undefined, lineweightUnits: number, clip?: CadPaperRect): string | null {
   const style = resolveEntityPlotAppearance(entity, document.layers, plotStyle);
   const prefix = `q ${pdfColor(style.color)} ${pdfNumber(lineweightUnits)} w /${pdfAlphaName(style.opacity)} gs`;
   const suffix = "Q";
   switch (entity.kind) {
     case "line": return `${prefix} ${pdfNumber(entity.start.x)} ${pdfNumber(entity.start.y)} m ${pdfNumber(entity.end.x)} ${pdfNumber(entity.end.y)} l S ${suffix}`;
+    case "ray":
+    case "xline": {
+      if (!clip) return null;
+      const segment = constructionSegment(entity, clip);
+      return segment ? `${prefix} ${pdfNumber(segment[0].x)} ${pdfNumber(segment[0].y)} m ${pdfNumber(segment[1].x)} ${pdfNumber(segment[1].y)} l S ${suffix}` : `${prefix} ${suffix}`;
+    }
     case "polyline": {
       if (entity.vertices.some((vertex) => Math.abs(vertex.bulge ?? 0) > 1e-12)) return null;
       const first = entity.vertices[0];
@@ -155,9 +201,16 @@ function pdfEntity(entity: CadEntity, document: KDrawDocumentV1, plotStyle: CadP
 export function exportVectorPdf(document: KDrawDocumentV1, page: PrintPage): { bytes: Uint8Array; skippedHandles: string[] } {
   const printable = printableEntities(document);
   const skippedHandles: string[] = [];
+  const unitToMm = UNIT_TO_MM[document.units.linear];
+  const clip = {
+    x: page.origin.x,
+    y: page.origin.y,
+    width: (page.widthMm * page.scaleDenominator) / unitToMm,
+    height: (page.heightMm * page.scaleDenominator) / unitToMm,
+  };
   const commands = printable.entities.flatMap((entity) => {
     const style = resolveEntityPlotAppearance(entity, document.layers);
-    const output = pdfEntity(entity, document, undefined, (style.lineweightMm * page.scaleDenominator) / UNIT_TO_MM[document.units.linear]);
+    const output = pdfEntity(entity, document, undefined, (style.lineweightMm * page.scaleDenominator) / unitToMm, clip);
     if (!output) {
       skippedHandles.push(entity.handle);
       return [];
@@ -325,7 +378,7 @@ export function exportModelSvg(document: KDrawDocumentV1, options: ModelPlotOpti
   const skippedHandles: string[] = [];
   const plotStyle = resolvePlotStyle(placement.setup.plotStyle);
   const body = printable.entities.map((entity) => {
-    const output = svgEntity(entity, document, plotStyle);
+    const output = svgEntity(entity, document, plotStyle, placement.source);
     if (!output) skippedHandles.push(entity.handle);
     return output ?? "";
   }).join("");
@@ -347,7 +400,7 @@ export function exportModelVectorPdf(document: KDrawDocumentV1, options: ModelPl
   const plotStyle = resolvePlotStyle(placement.setup.plotStyle);
   const commands = printable.entities.flatMap((entity) => {
     const style = resolveEntityPlotAppearance(entity, document.layers, plotStyle);
-    const output = pdfEntity(entity, document, plotStyle, style.lineweightMm / placement.scaleFactor);
+    const output = pdfEntity(entity, document, plotStyle, style.lineweightMm / placement.scaleFactor, placement.source);
     if (!output) { skippedHandles.push(entity.handle); return []; }
     return [output];
   });
@@ -410,13 +463,25 @@ function viewportClip(viewport: CadViewport, id: string): { definition: string; 
   return { definition: `<clipPath id="${id}"><rect x="${x}" y="${y}" width="${viewport.width}" height="${viewport.height}"/></clipPath>`, reference: `url(#${id})` };
 }
 
+function viewportModelRect(viewport: CadViewport): CadPaperRect {
+  const width = viewport.viewHeight * (viewport.width / viewport.height);
+  const diagonal = Math.hypot(width, viewport.viewHeight);
+  return {
+    x: viewport.viewCenter.x - diagonal / 2,
+    y: viewport.viewCenter.y - diagonal / 2,
+    width: diagonal,
+    height: diagonal,
+  };
+}
+
 function svgViewport(document: KDrawDocumentV1, viewport: CadViewport, index: number, skippedHandles: string[], plotStyle?: CadPlotStyle): { definition: string; body: string } {
   const id = `viewport-clip-${index}`;
   const clip = viewportClip(viewport, id);
   const frozen = new Set(Object.entries(viewport.layerOverrides ?? {}).filter(([, value]) => value.frozen).map(([layerId]) => layerId));
   const printable = printableEntities(document).entities.filter((entity) => !frozen.has(entity.layerId));
+  const constructionClip = viewportModelRect(viewport);
   const body = printable.map((entity) => {
-    const output = svgEntity(entity, document, plotStyle); if (!output) skippedHandles.push(entity.handle); return output ?? "";
+    const output = svgEntity(entity, document, plotStyle, constructionClip); if (!output) skippedHandles.push(entity.handle); return output ?? "";
   }).join("");
   const scale = viewport.height / viewport.viewHeight;
   const angle = viewport.twistAngleRad * 180 / Math.PI;
@@ -435,7 +500,7 @@ export function exportLayoutSvg(document: KDrawDocumentV1, layoutId: string, opt
   const plotStyle = resolvePlotStyle(placement.setup.plotStyle);
   const viewports = layout.viewports.map((viewport, index) => svgViewport(document, viewport, index, skippedHandles, plotStyle));
   const paperBody = paperPrintable.entities.map((entity) => {
-    const output = svgEntity(entity, document, plotStyle); if (!output) skippedHandles.push(entity.handle); return output ?? "";
+    const output = svgEntity(entity, document, plotStyle, placement.source); if (!output) skippedHandles.push(entity.handle); return output ?? "";
   }).join("");
   const { paper, source, destination, scaleFactor, setup } = placement;
   const transform = `translate(${destination.x} ${paper.heightMm - destination.y}) scale(${scaleFactor} ${-scaleFactor}) translate(${-source.x} ${-source.y})`;
@@ -499,14 +564,15 @@ function layoutPdfPage(document: KDrawDocumentV1, layoutId: string, options: Lay
   const plotStyle = resolvePlotStyle(placement.setup.plotStyle);
   const paperCommands = paperPrintable.entities.flatMap((entity) => {
     const style = resolveEntityPlotAppearance(entity, document.layers, plotStyle);
-    const output = pdfEntity(entity, document, plotStyle, style.lineweightMm / placement.scaleFactor); if (!output) { skippedHandles.push(entity.handle); return []; } return [output];
+    const output = pdfEntity(entity, document, plotStyle, style.lineweightMm / placement.scaleFactor, placement.source); if (!output) { skippedHandles.push(entity.handle); return []; } return [output];
   });
   const viewportCommands = layout.viewports.map((viewport) => {
     const frozen = new Set(Object.entries(viewport.layerOverrides ?? {}).filter(([, value]) => value.frozen).map(([layerId]) => layerId));
     const viewportScale = viewport.height / viewport.viewHeight;
+    const constructionClip = viewportModelRect(viewport);
     const commands = printableEntities(document).entities.filter((entity) => !frozen.has(entity.layerId)).flatMap((entity) => {
       const style = resolveEntityPlotAppearance(entity, document.layers, plotStyle);
-      const output = pdfEntity(entity, document, plotStyle, style.lineweightMm / (placement.scaleFactor * viewportScale)); if (!output) { skippedHandles.push(entity.handle); return []; } return [output];
+      const output = pdfEntity(entity, document, plotStyle, style.lineweightMm / (placement.scaleFactor * viewportScale), constructionClip); if (!output) { skippedHandles.push(entity.handle); return []; } return [output];
     });
     const scale = viewport.height / viewport.viewHeight; const cosine = Math.cos(viewport.twistAngleRad); const sine = Math.sin(viewport.twistAngleRad);
     const a = scale * cosine; const b = scale * sine; const c = -scale * sine; const d = scale * cosine;

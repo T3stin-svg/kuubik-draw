@@ -693,6 +693,22 @@ function parseEntity(
   switch (record.type) {
     case "LINE":
       return { kind: "line", ...base, start: pointValue(record.pairs, 10, 20, `LINE ${base.handle} start`), end: pointValue(record.pairs, 11, 21, `LINE ${base.handle} end`) };
+    case "RAY":
+    case "XLINE": {
+      const label = `${record.type} ${base.handle}`;
+      auditedPlanarConic(record.pairs, label, [
+        { x: 10, y: 20, z: 30, name: "base point" },
+        { x: 11, y: 21, z: 31, name: "direction" },
+      ]);
+      const direction = pointValue(record.pairs, 11, 21, `${label} direction`);
+      if (!(Math.hypot(direction.x, direction.y) > 0)) throw new DxfImportError(`${label} direction must be non-zero.`);
+      return {
+        kind: record.type === "RAY" ? "ray" : "xline",
+        ...base,
+        basePoint: pointValue(record.pairs, 10, 20, `${label} base point`),
+        direction,
+      };
+    }
     case "CIRCLE": {
       const label = `CIRCLE ${base.handle}`;
       auditedPlanarConic(record.pairs, label, [{ x: 10, y: 20, z: 30, name: "center" }]);
@@ -828,7 +844,7 @@ export function importDxf(input: string | Uint8Array, options: DxfImportOptions)
   for (const record of records(entitySection)) {
     if (["ENDSEC", "EOF"].includes(record.type)) continue;
     const rawHandle = textValue(record.pairs, 5, `${record.type} handle`, false) ?? null;
-    if (!["LINE", "CIRCLE", "ARC", "ELLIPSE", "LWPOLYLINE", "SPLINE", "TEXT", "HATCH", "DIMENSION"].includes(record.type)) {
+    if (!["LINE", "RAY", "XLINE", "CIRCLE", "ARC", "ELLIPSE", "LWPOLYLINE", "SPLINE", "TEXT", "HATCH", "DIMENSION"].includes(record.type)) {
       if (rawHandle) registerHandle(rawHandle, usedHandles, record.type);
       report.skipped.push({ type: record.type, handle: rawHandle, reason: "DXF entity type is outside the F-111 audited import subset." });
       continue;

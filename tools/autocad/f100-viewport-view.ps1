@@ -87,11 +87,11 @@ function Get-ViewportState {
 }
 
 $preExistingProcessIds = @(Get-Process -Name 'acad' -ErrorAction SilentlyContinue | ForEach-Object { [int]$_.Id })
-$acad = $null; $scratch = $null; $reopened = $null; $result = $null; $automationProcessId = 0; $owned = $false
+$acad = $null; $scratch = $null; $reopened = $null; $result = $null; $automationProcessId = 0; $owned = $false; $automationProcessIdentity = $null
 $tempDwg = [IO.Path]::GetFullPath($TempDwgPath)
 $pidFile = [IO.Path]::GetFullPath($PidPath)
 try {
-  $acad = Invoke-ComRetry { New-Object -ComObject AutoCAD.Application.24.3 } -TimeoutSeconds 30
+  $acad = New-Object -ComObject AutoCAD.Application.24.3
   Invoke-ComRetry { $acad.Visible = $true; $acad.WindowState = 3 } | Out-Null
   [uint32]$resolvedProcessId = 0
   [void][F100WindowProcess]::GetWindowThreadProcessId([IntPtr][int64](Invoke-ComRetry { $acad.HWND }), [ref]$resolvedProcessId)
@@ -100,7 +100,15 @@ try {
   $engineVersion = [string](Invoke-ComRetry { $acad.Version })
   Write-Host "[F-100] automation-process pid=$automationProcessId owned=$owned"
   if (-not $owned) { throw 'F-100 refuses to use a pre-existing AutoCAD process.' }
-  [ordered]@{ schemaVersion = 1; processId = $automationProcessId; owned = $true; token = $OwnershipToken } |
+  $automationProcess = Get-Process -Id $automationProcessId -ErrorAction Stop
+  $automationExecutablePath = [IO.Path]::GetFullPath([string]$automationProcess.Path)
+  if ([IO.Path]::GetFileName($automationExecutablePath) -ine 'acad.exe') { throw "F-100 PID $automationProcessId is not acad.exe." }
+  $automationProcessIdentity = [ordered]@{
+    processId = $automationProcessId
+    executablePath = $automationExecutablePath
+    startTimeUtc = $automationProcess.StartTime.ToUniversalTime().ToString('o')
+  }
+  [ordered]@{ schemaVersion = 1; processId = $automationProcessId; executablePath = $automationProcessIdentity.executablePath; startTimeUtc = $automationProcessIdentity.startTimeUtc; owned = $true; token = $OwnershipToken } |
     ConvertTo-Json -Compress | Set-Content -LiteralPath $pidFile -Encoding ascii
 
   $scratch = if ([int](Invoke-ComRetry { $acad.Documents.Count }) -gt 0) { Invoke-ComRetry { $acad.ActiveDocument } } else { Invoke-ComRetry { $acad.Documents.Add() } }
@@ -268,7 +276,7 @@ try {
   $result = [ordered]@{
     schemaVersion = 1; rowId = 'F-100'; benchmark = 'AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation'
     engine = 'Autodesk AutoCAD 2024 desktop COM/native PViewport'; engineVersion = $engineVersion
-    automationProcessId = $automationProcessId; automationProcessOwned = $owned; viewportHandle = $viewportHandle
+    automationProcessId = $automationProcessId; automationProcessOwned = $owned; automationProcessIdentity = $automationProcessIdentity; viewportHandle = $viewportHandle
     oneToTwentyStandardScaleEnum = $oneToTwentyStandardScale
     preset = $preset; nativeTransform = $nativeTransform; customPanned = $customPanned; afterReopen = $afterReopen; checks = $checks
     dwg = [ordered]@{ bytes = $dwgBytes; sha256 = $dwgSha256; saveAsType = 64; retained = $false }

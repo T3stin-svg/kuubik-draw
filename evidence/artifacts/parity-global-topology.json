@@ -1,20 +1,20 @@
 {
   "schemaVersion": 1,
   "kind": "global-topology",
-  "observedAt": "2026-08-29T16:27:10.770Z",
+  "observedAt": "2026-08-30T00:31:24.565Z",
   "sourceSha256": {
-    ".github/workflows/ci.yml": "6b3d897f78d593305d76f80cfa193d4a9187ea1e6bd12de0d116c79b5fd6885a",
-    "package.json": "85af1f998befcfaabb71f2a1c902882982508d21675b20f3aa774ae9d07568e2",
-    "package-lock.json": "9756bf28708c3933c83c0ace8e9dbd9fe4cad9b9d6cec58670758c545f02e584",
-    "apps/web/package.json": "e164660645a33349e303ac371042bcc3dc51525037060f203940f29f24d4b748",
-    "packages/cad-core/package.json": "76ce465c3726d5996b6ab5fe6130c795591ae6817cb31ac8f39809b9a247398e",
-    "packages/cad-renderer/package.json": "a07eeadcd06985a2701c0282f09a00e15f4aacdf0c33189d7fef8733db429960",
-    "packages/cad-dxf/package.json": "3f6f1422f036e26b7b35a2f902308be9c84f051326348fa4dd3d32eaf109406a",
-    "packages/cad-print/package.json": "f38343f8e48712a39ac30b46141d50b071b327b679769bb0d0b45b256a84ee57",
-    "evidence/artifacts/parity-package-v3-to-v4.json": "a4198589243e7ba26b3463a05407ad0397aa269d604dee2d2e0c888f815dceae",
-    "parity/rows.mjs": "cf6f615131b2257a701f19a4b3ff584bad6f6464bd34ff004180a3b815e9d517",
-    "tools/parity-kit/core.mjs": "e5b21e55c57886e6cca801fff9f0b942a5068a3407d492cad5028d81e9acdb54",
-    "tools/parity-kit/cli.mjs": "6ae170a77ad618905dfe0075ff86ca9f830e61ab1fc39303deb563b15eb68d5c"
+    ".github/workflows/ci.yml": "95c4e5fd75881f3236bde03af305dd115f05e1b96d9e96ae1465b17dcd2634f5",
+    "package.json": "b061334a11ec8748d1c65e0b7520df01d38ed42325a31d49a01f373778436edd",
+    "package-lock.json": "c47743da8743230f2212f3c3ed34153295ef1bcd3865a07b4d743fd1ec544a7a",
+    "apps/web/package.json": "909bc418bb8fdc0a541cda6a96fd40ee3089c90b866d073dff2229edfb8ed79e",
+    "packages/cad-core/package.json": "de01a0868ec22e30b2ff38fceec29695883ef940639edfcac8dabe2ab4cf29d7",
+    "packages/cad-renderer/package.json": "ab72f3b9295c3377c4349c55c6353481f403cddd06b9a54e07d8bbc99b2409d9",
+    "packages/cad-dxf/package.json": "d4fb40b250d1146e0134ac586e3a8a136a3a0acda25360a175db62773f7545e0",
+    "packages/cad-print/package.json": "889433647fa396e8255f3d999838fec2b2a427d26e553c30d21dfc054a599f73",
+    "evidence/artifacts/parity-package-v3-to-v4.json": "519a4237eb6d04099c9ff5a6ac97e6e0f8c9faee7276b02da03e37f185b17f97",
+    "parity/rows.mjs": "fc4156ce10f2d5343b26e40c3e47fdd6fc09caf7e71726602f9fd8c94df60d63",
+    "tools/parity-kit/core.mjs": "198ae3203639c3a0740bc71e42fae93a3d23b45aa4e80658b4f74a6c04bd4f00",
+    "tools/parity-kit/cli.mjs": "92f30f67ad0d2f419bf705cca94934c34e1dad57fab50777adfffb889d2c4ab2"
   },
   "certifiedRowIds": [
     "F-003",
@@ -27,6 +27,7 @@
     "F-021",
     "F-022",
     "F-023",
+    "F-024",
     "F-097",
     "F-098",
     "F-099",
@@ -197,6 +198,28 @@
       "cross": {
         "script": "parity:f023:cross-evidence",
         "command": "node tools/parity/check-f023-cross-evidence.mjs"
+      }
+    },
+    "F-024": {
+      "browser": {
+        "script": "parity:f024:browser-artifact",
+        "command": "node tools/parity/capture-f024-browser.mjs"
+      },
+      "readback": {
+        "script": "parity:f024:readback",
+        "command": "npm run build -w @kuubik/cad-core && npm run build -w @kuubik/cad-dxf && npx vite-node tools/parity/run-f024-readback.mjs"
+      },
+      "autocad": {
+        "script": "parity:f024:autocad",
+        "command": "node tools/autocad/run-f024.mjs"
+      },
+      "oracle": {
+        "script": "parity:f024:oracles",
+        "command": "npm run parity:f024:readback && node tools/oracles/run-f024-oracles.mjs"
+      },
+      "cross": {
+        "script": "parity:f024:cross-evidence",
+        "command": "node tools/parity/check-f024-cross-evidence.mjs"
       }
     },
     "F-097": {
@@ -448,7 +471,9 @@
     "fullCiGatePresent": true,
     "packageMigrationHistoryAvailable": true,
     "licensedAutoCadJobPresent": true,
-    "requiredOracleJobPresent": true
+    "requiredOracleJobPresent": true,
+    "protectedF024AutoCadChainPresent": true,
+    "requiredF024OracleChainPresent": true
   },
   "status": "PASS"
 }

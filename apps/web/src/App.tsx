@@ -292,9 +292,10 @@ export function App() {
   const [filletMode, setFilletMode] = useState<"pairs" | "polyline">("pairs");
   const [filletRadiusInput, setFilletRadiusInput] = useState("100");
   const [filletTrimMode, setFilletTrimMode] = useState<FilletTrimMode>("trim");
+  const [filletPolylineArc, setFilletPolylineArc] = useState<0 | 1>(1);
   const [filletPairsInput, setFilletPairsInput] = useState("10@400,0>20@500,100");
   const [filletPolylineHandlesInput, setFilletPolylineHandlesInput] = useState("10");
-  const [filletFirstCanvasPick, setFilletFirstCanvasPick] = useState<{ handle: string; point: { x: number; y: number } } | null>(null);
+  const [filletFirstCanvasPick, setFilletFirstCanvasPick] = useState<{ handle: string; segment?: number; point: { x: number; y: number } } | null>(null);
   const [filletCanvasSessionActive, setFilletCanvasSessionActive] = useState(false);
   const [lastFilletRejected, setLastFilletRejected] = useState<FilletRejectedTarget[]>([]);
   const [previewCommand, setPreviewCommand] = useState<"MOVE" | "COPY" | "ROTATE" | "SCALE" | "MIRROR" | "OFFSET" | "TRIM" | "EXTEND" | "FILLET">("MOVE");
@@ -469,17 +470,22 @@ export function App() {
         pairsInput: filletPairsInput,
         polylineHandlesInput: filletPolylineHandlesInput,
         trimMode: filletTrimMode,
+        filletPolylineArc,
       });
+      const successfulSourceHandles = new Set(result.sourceHandles);
       return {
         entities: putEntities(result.changes),
-        sourceHandles: result.changes.flatMap((change) => change.type === "put" && result.sourceHandles.includes(change.entity.handle) ? [change.entity.handle] : []),
+        sourceHandles: result.changes.flatMap((change) => {
+          const handle = change.type === "put" ? change.entity.handle : change.handle;
+          return successfulSourceHandles.has(handle) ? [handle] : [];
+        }),
         steps: result.steps.length,
         trimMode: result.trimMode,
       };
     } catch {
       return null;
     }
-  }, [document, filletMode, filletPairsInput, filletPolylineHandlesInput, filletRadiusInput, filletTrimMode, previewCommand]);
+  }, [document, filletMode, filletPairsInput, filletPolylineArc, filletPolylineHandlesInput, filletRadiusInput, filletTrimMode, previewCommand]);
 
   useEffect(() => {
     let active = true;
@@ -1078,11 +1084,17 @@ export function App() {
       if (!filletFirstCanvasPick) {
         if (!filletCanvasSessionActive) setFilletPairsInput("");
         setFilletCanvasSessionActive(true);
-        setFilletFirstCanvasPick({ handle: hit.handle, point: pickPoint });
-        setStatus(`FILLET esimene objekt: ${hit.handle}; vali teine objekt${event.shiftKey ? " (Shift rakendub teisele valikule)" : ""}`);
+        const entity = document.entities.find((candidate) => candidate.handle === hit.handle);
+        const segment = entity?.kind === "polyline" ? hit.segment : undefined;
+        setFilletFirstCanvasPick({ handle: hit.handle, ...(segment === undefined ? {} : { segment }), point: pickPoint });
+        setStatus(`FILLET esimene objekt: ${hit.handle}${segment === undefined ? "" : ` segment ${segment}`}; vali teine objekt${event.shiftKey ? " (Shift rakendub teisele valikule)" : ""}`);
         return;
       }
-      const pair = `${filletFirstCanvasPick.handle}@${filletFirstCanvasPick.point.x},${filletFirstCanvasPick.point.y}>${hit.handle}@${pickPoint.x},${pickPoint.y}${event.shiftKey ? "~0" : ""}`;
+      const secondEntity = document.entities.find((candidate) => candidate.handle === hit.handle);
+      const secondSegment = secondEntity?.kind === "polyline" ? hit.segment : undefined;
+      const firstToken = `${filletFirstCanvasPick.handle}${filletFirstCanvasPick.segment === undefined ? "" : `#${filletFirstCanvasPick.segment}`}`;
+      const secondToken = `${hit.handle}${secondSegment === undefined ? "" : `#${secondSegment}`}`;
+      const pair = `${firstToken}@${filletFirstCanvasPick.point.x},${filletFirstCanvasPick.point.y}>${secondToken}@${pickPoint.x},${pickPoint.y}${event.shiftKey ? "~0" : ""}`;
       setFilletPairsInput((current) => current.trim() ? `${current.trim()}; ${pair}` : pair);
       setFilletFirstCanvasPick(null);
       setStatus(event.shiftKey
@@ -1251,6 +1263,7 @@ export function App() {
         pairsInput: filletPairsInput,
         polylineHandlesInput: filletPolylineHandlesInput,
         trimMode: filletTrimMode,
+        filletPolylineArc,
       });
       const { result } = prepared;
       setLastFilletRejected(result.rejected);
@@ -2344,25 +2357,32 @@ export function App() {
           <input aria-label="FILLET radius" value={filletRadiusInput} onFocus={() => setPreviewCommand("FILLET")} onChange={(event) => { setPreviewCommand("FILLET"); setFilletRadiusInput(event.target.value); }} placeholder="0 või suurem" />
         </label>
         {filletMode === "pairs" ? (
+          <label className="coordinate-input">
+            <span>FILLET objektipaarid</span>
+            <input aria-label="FILLET paarid" value={filletPairsInput} onFocus={() => setPreviewCommand("FILLET")} onChange={(event) => { setPreviewCommand("FILLET"); setFilletPairsInput(event.target.value); setFilletFirstCanvasPick(null); setFilletCanvasSessionActive(false); }} placeholder="10#0@x,y&gt;10#1@x,y; ..." />
+          </label>
+        ) : (
           <>
             <label className="coordinate-input">
-              <span>FILLET objektipaarid</span>
-              <input aria-label="FILLET paarid" value={filletPairsInput} onFocus={() => setPreviewCommand("FILLET")} onChange={(event) => { setPreviewCommand("FILLET"); setFilletPairsInput(event.target.value); setFilletFirstCanvasPick(null); setFilletCanvasSessionActive(false); }} placeholder="10@x,y&gt;20@x,y; ..." />
+              <span>FILLET Polyline handle’id</span>
+              <input aria-label="FILLET Polyline handle'id" value={filletPolylineHandlesInput} onFocus={() => setPreviewCommand("FILLET")} onChange={(event) => { setPreviewCommand("FILLET"); setFilletPolylineHandlesInput(event.target.value); }} placeholder="10,20" />
             </label>
             <label className="coordinate-input">
-              <span>FILLET Trim</span>
-              <select aria-label="FILLET Trim" value={filletTrimMode} onFocus={() => setPreviewCommand("FILLET")} onChange={(event) => { setPreviewCommand("FILLET"); setFilletTrimMode(event.target.value as FilletTrimMode); }}>
-                <option value="trim">Trim</option>
-                <option value="no-trim">No Trim</option>
+              <span>FILLETPOLYARC</span>
+              <select aria-label="FILLETPOLYARC" value={filletPolylineArc} onFocus={() => setPreviewCommand("FILLET")} onChange={(event) => { setPreviewCommand("FILLET"); setFilletPolylineArc(Number(event.target.value) as 0 | 1); }}>
+                <option value={1}>1 · kaaresegmendid</option>
+                <option value={0}>0 · legacy sirgsegmendid</option>
               </select>
             </label>
           </>
-        ) : (
-          <label className="coordinate-input">
-            <span>FILLET Polyline handle’id</span>
-            <input aria-label="FILLET Polyline handle'id" value={filletPolylineHandlesInput} onFocus={() => setPreviewCommand("FILLET")} onChange={(event) => { setPreviewCommand("FILLET"); setFilletPolylineHandlesInput(event.target.value); }} placeholder="10,20" />
-          </label>
         )}
+        <label className="coordinate-input">
+          <span>FILLET Trim</span>
+          <select aria-label="FILLET Trim" value={filletTrimMode} onFocus={() => setPreviewCommand("FILLET")} onChange={(event) => { setPreviewCommand("FILLET"); setFilletTrimMode(event.target.value as FilletTrimMode); }}>
+            <option value="trim">Trim</option>
+            <option value="no-trim">No Trim</option>
+          </select>
+        </label>
         <button type="button" onClick={() => void filletTargets()} disabled={!modelSpaceEditing}>FILLET</button>
         <button type="button" onClick={undoFilletSource} disabled={!modelSpaceEditing}>FILLET Undo</button>
         <button type="button" onClick={() => void eraseSelected()} disabled={!modelSpaceEditing || selectedHandles.length === 0}>ERASE</button>

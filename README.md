@@ -13,6 +13,9 @@ efektiivsusvärav on failis [`ARCHITECTURE_ROADMAP.md`](ARCHITECTURE_ROADMAP.md)
 - vana Drawi AutoCADi live-tõendiga read: **22/133**;
 - selle uue eraldatud rakenduse värske avalik sertifikaat:
   **24/133 · 18,0% raw / 21,7% weighted**;
+- F-024 lokaalne release-kandidaat: **25/133 · 18,8% raw / 22,6% weighted**;
+  täielik lokaalne värav ja sõltumatu `0 P0 / 0 P1` review on rohelised,
+  avaliku GitHub Actionsi värav on veel tegemata;
 - F-023 feature-commit `1f4a96c`, CI portability fix `7e252de`, GitHub Actions
   run `33260160549` ja sõltumatu review `0 P0 / 0 P1`;
 - avalikult suletud arhitektuurivärav: lõpp-HEAD `d097b34`, GitHub Actions
@@ -41,7 +44,13 @@ semantika, käsusisese Undo, füüsilise Shift-TRIM-i ning ühe atomaarse
 globaalse Undo/Redo sammu. Line/polyline/arc/circle/ellipse/rational-SPLINE
 maatriks läbib Chromiumi, tootmis-DXF/KDRAW1 sõltumatu tagasilugemise,
 LibreCADi/FreeCADi sekundaarse oracle-kontrolli ja omatud AutoCAD 2024 desktopi
-live-jooksu. Järgmine funktsioonirida on F-024 `FILLET`.
+live-jooksu.
+F-024 `FILLET` lokaalne kandidaat lisab Radius/Trim/No Trim/Multiple/Polyline,
+Shift-raadius-null, `FILLETPOLYARC=0/1`, line/arc/circle/ellipse/polyline/
+rational-SPLINE paarid, RAY/XLINE konstruktsioonijooned, täpse segmendivaliku,
+layer-safe mixed tulemuse, ühe atomaarse Undo/Redo ning DXF/KDRAW1 read-back'i.
+AutoCAD 2024, Chromium, LibreCAD ja FreeCAD kontrollid on rohelised; oracle'id
+ei ole sertifitseerimisautoriteet. Järgmine funktsioonirida on F-025 `CHAMFER`.
 F-097 `Layout tabs` lisab revisioneeritud create/copy/reorder/delete töövoo,
 AutoCADi copy-before-source nimekuju, sõltumatud viewport'i ID-d ja paberiruumi
 handle'id, atomaarse Undo/Redo ning IndexedDB/`.kdraw` taastamise.

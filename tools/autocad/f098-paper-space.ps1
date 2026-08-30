@@ -83,8 +83,9 @@ function Get-PaperSnapshot {
     cvport = [int](Invoke-ComRetry { $Document.GetVariable('CVPORT') })
     mSpace = [bool](Invoke-ComRetry { $Document.MSpace })
     activeSpace = [int](Invoke-ComRetry { $Document.ActiveSpace })
-    paperUnits = [int]$layout.PaperUnits
-    canonicalMediaName = [string]$layout.CanonicalMediaName
+    configName = [string](Invoke-ComRetry { $layout.ConfigName })
+    paperUnits = [int](Invoke-ComRetry { $layout.PaperUnits })
+    canonicalMediaName = [string](Invoke-ComRetry { $layout.CanonicalMediaName })
     plotRotation = $plotRotation
     rawPaperWidth = $paperWidth
     rawPaperHeight = $paperHeight
@@ -93,6 +94,68 @@ function Get-PaperSnapshot {
     circleCount = [int]$circles.Count
     circleHandles = @($circles | ForEach-Object { [string]$_.Handle })
   }
+}
+
+function Set-A3LandscapePlotConfiguration {
+  param([Parameter(Mandatory = $true)]$Document)
+  $layout = Invoke-ComRetry {
+    $candidate = $Document.ActiveLayout
+    if (-not $candidate -or [bool]$candidate.ModelType) { throw 'F-098 active paper layout is temporarily unavailable.' }
+    $candidate
+  }
+  Invoke-ComRetry {
+    $layout.ConfigName = 'DWG To PDF.pc3'
+    $layout.RefreshPlotDeviceInfo()
+    $layout.PaperUnits = 1
+    $a3Media = @($layout.GetCanonicalMediaNames() | Where-Object {
+      [string]$_ -match '(?i)A3' -and [string]$_ -match '420' -and [string]$_ -match '297'
+    } | Sort-Object { [string]$_ -match '(?i)full.?bleed' } | Select-Object -First 1)
+    if ($a3Media.Count -ne 1) { throw 'DWG To PDF.pc3 did not expose a canonical ISO A3 medium.' }
+    $layout.CanonicalMediaName = [string]$a3Media[0]
+    $layout.PlotRotation = 0
+  } | Out-Null
+  [double]$configuredWidth = 0; [double]$configuredHeight = 0
+  Invoke-ComRetry { $layout.GetPaperSize([ref]$configuredWidth, [ref]$configuredHeight) } | Out-Null
+  if ($configuredWidth -lt $configuredHeight) { Invoke-ComRetry { $layout.PlotRotation = 1 } | Out-Null }
+}
+
+function Test-A3PaperSnapshot {
+  param($Snapshot)
+  return $Snapshot.layoutName -eq 'F098 PAPER' -and $Snapshot.layoutKind -eq 'paper' -and
+    $Snapshot.tileMode -eq 0 -and $Snapshot.cvport -eq 1 -and -not $Snapshot.mSpace -and $Snapshot.activeSpace -eq 0 -and
+    $Snapshot.configName -eq 'DWG To PDF.pc3' -and $Snapshot.paperUnits -eq 1 -and
+    [string]$Snapshot.canonicalMediaName -match '(?i)A3' -and
+    [Math]::Abs($Snapshot.paperWidth - 420) -lt 0.01 -and [Math]::Abs($Snapshot.paperHeight - 297) -lt 0.01 -and
+    $Snapshot.circleCount -eq 1 -and $Snapshot.circleHandles.Count -eq 1
+}
+
+function Get-StableA3PaperSnapshot {
+  param($Document, [bool]$RepairConfiguration, [int]$MaximumPasses = 12)
+  $passes = New-Object System.Collections.Generic.List[object]
+  $lastSnapshot = $null
+  $previousFingerprint = $null
+  $consecutiveExactReads = 0
+  for ($pass = 1; $pass -le $MaximumPasses; $pass += 1) {
+    if ($RepairConfiguration -and $consecutiveExactReads -eq 0) { Set-A3LandscapePlotConfiguration $Document }
+    Wait-AcadIdle $Document
+    $lastSnapshot = Get-PaperSnapshot $Document
+    $exact = Test-A3PaperSnapshot $lastSnapshot
+    $fingerprint = if ($exact) { $lastSnapshot | ConvertTo-Json -Depth 6 -Compress } else { $null }
+    if ($fingerprint -and $fingerprint -eq $previousFingerprint) { $consecutiveExactReads += 1 }
+    elseif ($fingerprint) { $consecutiveExactReads = 1 }
+    else { $consecutiveExactReads = 0 }
+    $passes.Add([ordered]@{
+      pass=$pass; exact=$exact; consecutiveExactReads=$consecutiveExactReads
+      configName=$lastSnapshot.configName; paperUnits=$lastSnapshot.paperUnits; canonicalMediaName=$lastSnapshot.canonicalMediaName
+      paperWidth=$lastSnapshot.paperWidth; paperHeight=$lastSnapshot.paperHeight
+    })
+    if ($consecutiveExactReads -ge 2) {
+      return [ordered]@{ stable=$true; snapshot=$lastSnapshot; passes=[object[]]$passes.ToArray() }
+    }
+    $previousFingerprint = $fingerprint
+    Start-Sleep -Milliseconds 150
+  }
+  return [ordered]@{ stable=$false; snapshot=$lastSnapshot; passes=[object[]]$passes.ToArray() }
 }
 
 function Measure-VisiblePaper {
@@ -171,12 +234,12 @@ function Measure-VisiblePaper {
 }
 
 $preExistingProcessIds = @(Get-Process -Name 'acad' -ErrorAction SilentlyContinue | ForEach-Object { [int]$_.Id })
-$acad = $null; $scratch = $null; $reopened = $null; $result = $null; $automationProcessId = 0; $owned = $false; $engineVersion = ''
+$acad = $null; $scratch = $null; $reopened = $null; $result = $null; $automationProcessId = 0; $owned = $false; $engineVersion = ''; $automationProcessIdentity = $null
 $tempDwg = [IO.Path]::GetFullPath($TempDwgPath)
 $tempPng = [IO.Path]::GetFullPath($TempPngPath)
 $pidFile = [IO.Path]::GetFullPath($PidPath)
 try {
-  $acad = Invoke-ComRetry { New-Object -ComObject AutoCAD.Application.24.3 } -TimeoutSeconds 30
+  $acad = New-Object -ComObject AutoCAD.Application.24.3
   Invoke-ComRetry { $acad.Visible = $true; $acad.WindowState = 3 } | Out-Null
   [uint32]$resolvedProcessId = 0
   $hwnd = [int64](Invoke-ComRetry { $acad.HWND })
@@ -190,7 +253,11 @@ try {
   })
   Write-Host "[F-098] automation-process pid=$automationProcessId owned=$owned"
   if (-not $owned) { throw 'F-098 refuses to use a pre-existing AutoCAD process.' }
-  [ordered]@{ schemaVersion = 1; processId = $automationProcessId; owned = $true; token = $OwnershipToken } |
+  $automationProcess = Get-Process -Id $automationProcessId -ErrorAction Stop
+  $automationExecutablePath = [IO.Path]::GetFullPath([string]$automationProcess.Path)
+  if ([IO.Path]::GetFileName($automationExecutablePath) -ine 'acad.exe') { throw "F-098 PID $automationProcessId is not acad.exe." }
+  $automationProcessIdentity = [ordered]@{ processId=$automationProcessId; executablePath=$automationExecutablePath; startTimeUtc=$automationProcess.StartTime.ToUniversalTime().ToString('o') }
+  [ordered]@{ schemaVersion = 1; processId = $automationProcessId; executablePath=$automationProcessIdentity.executablePath; startTimeUtc=$automationProcessIdentity.startTimeUtc; owned = $true; token = $OwnershipToken } |
     ConvertTo-Json -Compress |
     Set-Content -LiteralPath $pidFile -Encoding ascii
   $scratch = if ([int](Invoke-ComRetry { $acad.Documents.Count }) -gt 0) { Invoke-ComRetry { $acad.ActiveDocument } } else { Invoke-ComRetry { $acad.Documents.Add() } }
@@ -202,26 +269,12 @@ try {
   $paper = $papers[0]
   foreach ($extra in @($papers | Select-Object -Skip 1)) { Invoke-ComRetry { $extra.Delete() } | Out-Null }
   Invoke-ComRetry { $paper.Name = 'F098 PAPER' } | Out-Null
-  Invoke-ComRetry {
-    $paper.ConfigName = 'DWG To PDF.pc3'
-    $paper.RefreshPlotDeviceInfo()
-    $paper.PaperUnits = 1
-    $a3Media = @($paper.GetCanonicalMediaNames() | Where-Object {
-      [string]$_ -match '(?i)A3' -and [string]$_ -match '420' -and [string]$_ -match '297'
-    } | Sort-Object { [string]$_ -match '(?i)full.?bleed' } | Select-Object -First 1)
-    if ($a3Media.Count -ne 1) { throw 'DWG To PDF.pc3 did not expose a canonical ISO A3 medium.' }
-    $paper.CanonicalMediaName = [string]$a3Media[0]
-    $paper.PlotRotation = 0
-  } | Out-Null
-  [double]$configuredWidth = 0; [double]$configuredHeight = 0
-  Invoke-ComRetry { $paper.GetPaperSize([ref]$configuredWidth, [ref]$configuredHeight) } | Out-Null
-  if ($configuredWidth -lt $configuredHeight) { Invoke-ComRetry { $paper.PlotRotation = 1 } | Out-Null }
   [double[]]$center = @(60, 60, 0)
   Invoke-ComRetry { $paper.Block.AddCircle($center, 30) } | Out-Null
   Send-AcadCommand $scratch "_.-LAYOUT`n_Set`nF098 PAPER`n_.ZOOM`n_All`n"
   Invoke-ComRetry { $scratch.MSpace = $false; $scratch.Regen(1) } | Out-Null
-  Start-Sleep -Milliseconds 600
-  $beforeSave = Get-PaperSnapshot $scratch
+  $beforeSaveReadback = Get-StableA3PaperSnapshot $scratch $true
+  $beforeSave = $beforeSaveReadback.snapshot
   $visual = Measure-VisiblePaper $hwnd $tempPng
 
   Invoke-ComRetry { $scratch.SaveAs($tempDwg, 64) } | Out-Null
@@ -233,7 +286,8 @@ try {
   $reopened = Invoke-ComRetry { $acad.Documents.Open($tempDwg) }
   Invoke-ComRetry { $reopened.Activate() } | Out-Null
   Wait-AcadIdle $reopened
-  $afterReopen = Get-PaperSnapshot $reopened
+  $afterReopenReadback = Get-StableA3PaperSnapshot $reopened $false
+  $afterReopen = $afterReopenReadback.snapshot
   $sheet = $visual.detectedLightSheet
   $screenAspect = if ($sheet.height -gt 0) { [double]$sheet.width / [double]$sheet.height } else { 0.0 }
   $nativeAspect = [double]$beforeSave.paperWidth / [double]$beforeSave.paperHeight
@@ -242,7 +296,7 @@ try {
   $visual.detectedLightSheet['nativePaperAspectRatio'] = $nativeAspect
   $visual.detectedLightSheet['paperAspectError'] = $paperAspectError
   $checks = [ordered]@{
-    nativePaperContext = $beforeSave.layoutName -eq 'F098 PAPER' -and $beforeSave.layoutKind -eq 'paper' -and $beforeSave.tileMode -eq 0 -and $beforeSave.cvport -eq 1 -and -not $beforeSave.mSpace -and $beforeSave.activeSpace -eq 0
+    nativePaperContext = $beforeSaveReadback.stable -and $afterReopenReadback.stable -and $beforeSave.layoutName -eq 'F098 PAPER' -and $beforeSave.layoutKind -eq 'paper' -and $beforeSave.tileMode -eq 0 -and $beforeSave.cvport -eq 1 -and -not $beforeSave.mSpace -and $beforeSave.activeSpace -eq 0
     millimeterPaperUnits = $beforeSave.paperUnits -eq 1 -and $afterReopen.paperUnits -eq 1
     exactA3Landscape = [Math]::Abs($beforeSave.paperWidth - 420) -lt 0.01 -and [Math]::Abs($beforeSave.paperHeight - 297) -lt 0.01 -and [string]$beforeSave.canonicalMediaName -match '(?i)A3'
     paperEntity = $beforeSave.circleCount -eq 1 -and $beforeSave.circleHandles.Count -eq 1
@@ -254,8 +308,8 @@ try {
   $result = [ordered]@{
     schemaVersion = 1; rowId = 'F-098'; benchmark = 'AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation'
     engine = 'Autodesk AutoCAD 2024 desktop COM/native command + non-retained pixel measurement'; engineVersion = $engineVersion
-    automationProcessId = $automationProcessId; automationProcessOwned = $owned
-    beforeSave = $beforeSave; afterReopen = $afterReopen; visual = $visual; checks = $checks
+    automationProcessId = $automationProcessId; automationProcessOwned = $owned; automationProcessIdentity = $automationProcessIdentity
+    beforeSave = $beforeSave; afterReopen = $afterReopen; paperReadback = [ordered]@{ beforeSave=$beforeSaveReadback; afterReopen=$afterReopenReadback }; visual = $visual; checks = $checks
     dwg = [ordered]@{ bytes = $dwgBytes; sha256 = $dwgSha256; saveAsType = 64; retained = $false }
     status = $status
   }

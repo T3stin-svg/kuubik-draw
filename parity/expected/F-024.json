@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-024",
+  "benchmark": "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
+  "autoCad": {
+    "engineVersionPrefix": "24.3",
+    "executableName": "acad.exe",
+    "executableFileVersion": "R24.3.152.0.0",
+    "executableProductVersion": "R24.3.152.0.0",
+    "installedUpdateDisplayName": "Autodesk AutoCAD 2024.1.2 Update",
+    "installedUpdateDisplayVersion": "24.3.152.0",
+    "construction": {
+      "xlineLineTrimRay": { "basePoint": [90, 4800], "direction": [-1, 0] },
+      "rayXlineTrimRay": { "basePoint": [100, 5410], "direction": [0, 1] },
+      "rayLineNoTrim": { "basePoint": [0, 5000], "direction": [1, 0] },
+      "xlineLineNoTrim": { "basePoint": [0, 5200], "direction": [1, 0] },
+      "arcCenters": [[90, 4610], [90, 4810], [90, 5010], [90, 5210], [90, 5410]]
+    },
+    "directFamilies": {
+      "F024_LINE_CIRCLE": [
+        { "type": "LINE", "vertices": [[-100, 3400], [100, 3400]], "colorNumber": 1, "lineweight": 50 },
+        { "type": "CIRCLE", "center": [0, 3430], "radius": 10, "colorNumber": 1, "lineweight": 50 },
+        { "type": "ARC", "center": [0, 3410], "radius": 10, "startAngle": 1.570796326794897, "endAngle": 4.71238898038469, "colorNumber": 1, "lineweight": 50 }
+      ],
+      "F024_LINE_ARC": [
+        { "type": "LINE", "vertices": [[200, 3600], [400, 3600]], "colorNumber": 1, "lineweight": 50 },
+        { "type": "ARC", "center": [300, 3630], "radius": 10, "startAngle": 3.141592653589793, "endAngle": 0, "colorNumber": 1, "lineweight": 50 },
+        { "type": "ARC", "center": [300, 3610], "radius": 10, "startAngle": 4.71238898038469, "endAngle": 1.5707963267948966, "colorNumber": 1, "lineweight": 50 }
+      ],
+      "F024_LINE_CIRCLE_TRIM": [
+        { "type": "LINE", "vertices": [[-200, 3800], [-9.544511501033227, 3800]], "colorNumber": 1, "lineweight": 50 },
+        { "type": "CIRCLE", "center": [100, 3800], "radius": 100, "colorNumber": 1, "lineweight": 50 },
+        { "type": "ARC", "center": [-9.544511501033227, 3810], "radius": 10, "startAngle": 4.71238898038469, "endAngle": 6.192150529142163, "colorNumber": 1, "lineweight": 50 }
+      ],
+      "F024_LINE_ELLIPSE": [
+        { "type": "LINE", "vertices": [[-200, 4000], [-8.557770070554682, 4000]], "colorNumber": 1, "lineweight": 50 },
+        { "type": "ELLIPSE", "center": [100, 4000], "majorAxis": [100, 0], "ratio": 0.5, "startParameter": 0, "endParameter": 6.283185307179585, "colorNumber": 1, "lineweight": 50 },
+        { "type": "ARC", "center": [-8.557770070552301, 4009.999999999998], "radius": 10, "startAngle": 4.712388980384446, "endAngle": 5.999818834820287, "colorNumber": 1, "lineweight": -1 }
+      ],
+      "F024_LINE_SPLINE": [
+        { "type": "LINE", "vertices": [[100, 4200], [291.57921680073053, 4200]], "colorNumber": 1, "lineweight": 50 },
+        { "type": "SPLINE", "degree": 3, "closed": false, "controlPoints": [[301.0864722797955, 4206.89966239648], [305.7999242205857, 4221.353569525349], [357.8793043007138, 4244.472138071974], [380, 4280], [400, 4300]], "fitPoints": [[301.0864722797955, 4206.89966239648], [340.00000000000006, 4240], [400.00000000000006, 4300.000000000001]], "savedFitPoints": [], "knots": [7.349693949914977, 7.349693949914977, 7.349693949914977, 7.349693949914977, 56.568542494923804, 141.4213562373095, 141.4213562373095, 141.4213562373095, 141.4213562373095], "weights": [1, 1, 1, 1, 1], "colorNumber": 1, "lineweight": 50 },
+        { "type": "ARC", "center": [291.57921680073025, 4210.000000000001], "radius": 10, "startAngle": 4.71238898038473, "endAngle": 5.967956764852173, "colorNumber": 1, "lineweight": -1 }
+      ]
+    }
+  },
+  "browser": {
+    "trimTargetHandles": ["10", "11", "20", "21", "50", "51"],
+    "trimResultHandles": ["10", "11", "52", "20", "21", "53", "50", "51", "54"],
+    "noTrimTargetHandles": ["30", "31", "40", "41"],
+    "noTrimResultHandles": ["55", "56"]
+  },
+  "oracles": {
+    "librecad": "2.2.1.5",
+    "freecad": "1.1.3",
+    "certificationAuthority": false
+  }
+}

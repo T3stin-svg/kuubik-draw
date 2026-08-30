@@ -17,6 +17,7 @@ const expected = JSON.parse(await readFile(resolve(root, "parity/expected/F-022.
 const sourcePaths = [
   "tools/autocad/f022-standard-matrix.ps1",
   "tools/autocad/f022-shift-click.ps1",
+  "tools/autocad/f022-runner.test.mjs",
   "tools/autocad/run-f022.mjs",
   "tools/autocad/process-ownership.test.mjs",
 ];
@@ -161,7 +162,7 @@ async function runMatrix() {
     if (childResult.code !== 0) {
       const diagnostic = parseMatrixOutput(childResult.output);
       if (diagnostic) {
-        throw new Error(`AutoCAD F-022 matrix returned FAIL after cleanup ${JSON.stringify({ processId, automationProcessTerminated, processSetRestored, options: diagnostic.options, familyChecks: diagnostic.familyChecks, polyline: diagnostic.observations?.familyAfter?.polyline, hatchTarget: diagnostic.observations?.hatchTarget, nestedBlockChildLayerTargets: diagnostic.observations?.nestedBlockChildLayerTargets, rationalSpline: diagnostic.observations?.rationalSpline })}`);
+        throw new Error(`AutoCAD F-022 matrix returned FAIL after cleanup ${JSON.stringify({ processId, automationProcessTerminated, processSetRestored, options: diagnostic.options, familyChecks: diagnostic.familyChecks, standardBefore: diagnostic.observations?.standardBefore, standardBeforeReadback: diagnostic.observations?.standardBeforeReadback, standard: diagnostic.observations?.standard, standardReadback: diagnostic.observations?.standardReadback, polyline: diagnostic.observations?.familyAfter?.polyline, hatchTarget: diagnostic.observations?.hatchTarget, nestedBlockChildLayerTargets: diagnostic.observations?.nestedBlockChildLayerTargets, rationalSpline: diagnostic.observations?.rationalSpline })}`);
       }
       throw new Error(`AutoCAD F-022 matrix exited ${childResult.code} after cleanup ${JSON.stringify({ processId, automationProcessTerminated, processSetRestored })}: ${[childResult.output, childResult.errorText].filter(Boolean).join("\n")}`);
     }

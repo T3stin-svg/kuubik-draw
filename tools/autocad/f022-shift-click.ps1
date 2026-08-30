@@ -100,10 +100,19 @@ public static class F022PhysicalInput {
 
   private static IntPtr ActivateOwned(long mainWindowHandle, uint expectedProcessId) {
     IntPtr window = new IntPtr(mainWindowHandle);
-    if (!SetForegroundWindow(window)) throw new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error(), "AutoCAD could not be foregrounded.");
-    System.Threading.Thread.Sleep(200);
-    EnsureForeground(window, expectedProcessId);
-    return window;
+    Exception lastError = null;
+    for (int attempt = 0; attempt < 5; attempt++) {
+      try {
+        SetForegroundWindow(window);
+        System.Threading.Thread.Sleep(200);
+        EnsureForeground(window, expectedProcessId);
+        return window;
+      } catch (Exception error) {
+        lastError = error;
+        System.Threading.Thread.Sleep(150);
+      }
+    }
+    throw new InvalidOperationException("Owned AutoCAD could not be foregrounded after five authenticated attempts.", lastError);
   }
 
   private static void SafeKeyPress(IntPtr window, uint expectedProcessId, ushort key) {
