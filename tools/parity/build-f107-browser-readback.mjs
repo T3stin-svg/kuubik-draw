@@ -17,6 +17,7 @@ const forbidden = (value) => Array.isArray(value)
   : value && typeof value === "object" && Object.entries(value).some(([key, entry]) => key === "entities" || key === "blocks" || forbidden(entry));
 const sourcePaths = {
   e2e: "e2e/f107-named-page-setups.spec.ts",
+  layoutTools: "e2e/helpers/layout-tools.ts",
   fixture: "parity/fixtures/f107-document.ts",
   capture: "tools/parity/capture-f107-browser.mjs",
   builder: "tools/parity/build-f107-browser-readback.mjs",

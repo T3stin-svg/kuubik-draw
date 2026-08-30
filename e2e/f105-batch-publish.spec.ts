@@ -4,6 +4,7 @@ import { resolve } from "node:path";
 import { expect, test, type Download, type Page } from "@playwright/test";
 import type { KDrawDocumentV1 } from "@kuubik/cad-schema";
 import { createF105Document, F105_LAYOUT_IDS } from "../parity/fixtures/f105-document.js";
+import { openLayoutTools } from "./helpers/layout-tools.js";
 
 const sha256 = (value: Buffer | string): string => createHash("sha256").update(value).digest("hex");
 
@@ -124,6 +125,7 @@ test("F-105 persists ordered publish settings and downloads multi-page, excluded
   await page.setViewportSize({ width: 1920, height: 1080 });
   await seedLocalDocument(page, createF105Document("local"));
   await page.getByRole("button", { name: "F-105 SHEET 10 SECTION", exact: true }).click();
+  await openLayoutTools(page);
 
   const options = page.getByTestId("publish-options");
   await options.locator("summary").click();
@@ -187,6 +189,7 @@ test("F-105 persists ordered publish settings and downloads multi-page, excluded
   await page.reload();
   await expect(page.getByText(/Taastatud revision/u)).toBeVisible();
   await page.getByRole("button", { name: "F-105 SHEET 10 SECTION", exact: true }).click();
+  await openLayoutTools(page);
   const restored = page.getByTestId("publish-options");
   await expect(restored).toHaveAttribute("data-order", [...F105_LAYOUT_IDS].reverse().join("|"));
   await expect(restored).toHaveAttribute("data-included", [...F105_LAYOUT_IDS].reverse().join("|"));
@@ -227,6 +230,7 @@ test("F-105 captures an inactive Display layout source for batch publish", async
   document.layouts[1]!.pageSetup!.plotArea = { kind: "display" };
   await seedLocalDocument(page, document);
   await page.getByRole("button", { name: "F-105 SHEET 10 SECTION", exact: true }).click();
+  await openLayoutTools(page);
   const expectedWindow = await measuredDisplayWindow(page);
   const options = page.getByTestId("publish-options");
   await options.locator("summary").click();

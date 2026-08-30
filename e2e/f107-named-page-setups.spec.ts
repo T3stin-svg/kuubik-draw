@@ -5,6 +5,7 @@ import { expect, test, type Page } from "@playwright/test";
 import type { KDrawDocumentV1 } from "@kuubik/cad-schema";
 import { MAX_PAGE_SETUP_TEMPLATE_BYTES, createPageSetupTemplate, parsePageSetupTemplate, resolvePageSetupLibrary, serializePageSetupTemplate, type PageSetupTemplateV1 } from "../packages/cad-core/src/index.js";
 import { createF107Document } from "../parity/fixtures/f107-document.js";
+import { openLayoutTools } from "./helpers/layout-tools.js";
 
 const sha256 = (value: Buffer | string): string => createHash("sha256").update(value).digest("hex");
 
@@ -78,6 +79,7 @@ test("F-107 persists named page setup CRUD and imports a geometry-free template 
   await page.setViewportSize({ width: 1920, height: 1080 });
   await seedLocalDocument(page, createF107Document("local"), errors);
   await page.getByRole("button", { name: "F-107 ISSUE LAYOUT", exact: true }).click();
+  await openLayoutTools(page);
   const library = page.getByTestId("page-setup-library");
   await library.getByText("PAGE SETUPS", { exact: true }).click();
   await expect(library).toHaveAttribute("data-count", "0");
@@ -158,6 +160,7 @@ test("F-107 persists named page setup CRUD and imports a geometry-free template 
     const captureDir = resolve(process.env.PARITY_CAPTURE_DIR);
     await mkdir(captureDir, { recursive: true });
     await page.getByRole("button", { name: "F-107 ISSUE LAYOUT (2)", exact: true }).click();
+    await openLayoutTools(page);
     await page.getByTestId("page-setup-library").getByText("PAGE SETUPS", { exact: true }).click();
     await expect(library).toHaveAttribute("data-assigned", "page-setup-1");
     await expect(page.getByRole("combobox", { name: "Named page setup" })).toHaveValue("page-setup-1");
@@ -188,6 +191,7 @@ test("F-107 rejects a dangling template through the visible file input without c
   const errors = collectErrors(page);
   await page.setViewportSize({ width: 1920, height: 1080 });
   await seedLocalDocument(page, createF107Document("local"), errors);
+  await openLayoutTools(page);
   const template = createPageSetupTemplateFixture();
   template.layouts[1]!.pageSetupId = "missing";
   await page.getByTestId("page-setup-library").getByText("PAGE SETUPS", { exact: true }).click();

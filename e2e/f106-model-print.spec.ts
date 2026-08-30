@@ -4,6 +4,7 @@ import { resolve } from "node:path";
 import { expect, test, type Download, type Page } from "@playwright/test";
 import type { CadPageSetup, KDrawDocumentV1 } from "@kuubik/cad-schema";
 import { createF106Document } from "../parity/fixtures/f106-document.js";
+import { openLayoutTools } from "./helpers/layout-tools.js";
 
 const sha256 = (value: Buffer | string): string => createHash("sha256").update(value).digest("hex");
 type Rect = { x: number; y: number; width: number; height: number };
@@ -140,6 +141,7 @@ test("F-106 persists and plots Model Extents, Window and Display as physical vec
   await page.clock.setFixedTime("2026-08-29T00:00:00.000Z");
   await page.setViewportSize({ width: 1920, height: 1080 });
   await seedLocalDocument(page, createF106Document("local"));
+  await openLayoutTools(page);
   const controls = page.getByTestId("model-page-setup-controls");
   await expect(controls).toHaveAttribute("data-media", "ISO_A4");
   await expect(controls).toHaveAttribute("data-orientation", "portrait");
@@ -195,6 +197,7 @@ test("F-106 persists and plots Model Extents, Window and Display as physical vec
   expect(setup).toMatchObject({ mediaName: "ISO_A4", orientation: "portrait", plotArea: { kind: "display" }, plotScale: { mode: "custom", paperUnits: 1, drawingUnits: 100 }, centerPlot: true });
   await page.reload();
   await expect(page.getByText("Taastatud revision 4")).toBeVisible();
+  await openLayoutTools(page);
   await expect(controls).toHaveAttribute("data-plot-area", "display");
   await expect(controls).toHaveAttribute("data-plot-scale", "100");
   expect(errors).toEqual([]);
@@ -227,6 +230,7 @@ test("F-106 reports an empty Extents plot without a download or page error", asy
   const errors = collectErrors(page);
   await page.setViewportSize({ width: 1920, height: 1080 });
   await seedLocalDocument(page, { ...createF106Document("local"), entities: [] });
+  await openLayoutTools(page);
 
   await page.getByRole("button", { name: "Ekspordi model PDF" }).click();
   await expect(page.getByText(/Model PDF viga:.*no printable model-space geometry/u)).toBeVisible();

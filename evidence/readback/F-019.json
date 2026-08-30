@@ -4,8 +4,8 @@
   "kind": "readback",
   "authority": "independent-parser",
   "status": "PASS",
-  "artifactSha256": "5de8744237665666686c365508c3cbae8abfb46e255ef4fb0ebd24a8305bbc7a",
-  "observedAt": "2026-08-30T20:50:43.941Z",
+  "artifactSha256": "c65037e9c5e6a726cdadbe1847bdcbb7c522a3f8cb4a68f1982665a1d25768a4",
+  "observedAt": "2026-08-30T21:57:48.162Z",
   "workflow": "Production cad-core SCALE and cad-dxf output are parsed with dxf-parser@1.1.2; the twelve-family result is serialized by the production .kdraw writer and independently decoded with envelope byte-length and SHA-256 checks before atomic UNDO.",
   "result": "Independent DXF parsing found exact scaled LINE/LWPOLYLINE coordinates, while independent .kdraw decoding found all twelve scaled families with preserved handles and properties. Numeric and point-based Reference parsing, coordinate-factor rejection, Copy handles and locked/proxy rejects matched the golden fixture; a factor-one undo marker advanced one revision, one UNDO consumed only that marker, and the twelve-family SCALE restored in one atomic step.",
   "artifact": "evidence/artifacts/F-019-independent-readback.json"

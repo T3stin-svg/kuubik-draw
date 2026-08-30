@@ -376,6 +376,7 @@ export function affectedRows(files) {
     "parity/rows.mjs",
     "tools/parity-kit/core.mjs",
     "tools/parity-kit/cli.mjs",
+    "e2e/helpers/layout-tools.ts",
     ".github/workflows/ci.yml",
   ]);
   const affected = new Set();

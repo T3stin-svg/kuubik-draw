@@ -4,6 +4,7 @@ import { resolve } from "node:path";
 import { expect, test, type Download, type Page } from "@playwright/test";
 import { createEmptyDocument, createPaperLayout } from "@kuubik/cad-core";
 import type { KDrawDocumentV1 } from "@kuubik/cad-schema";
+import { openLayoutTools } from "./helpers/layout-tools.js";
 
 type RecordedOperation = { commandId: string; baseRevision: number };
 
@@ -178,6 +179,7 @@ test("F-103 applies/persists plot profiles, lineweights and transparency in prev
   await page.setViewportSize({ width: 1920, height: 1080 });
   await seedLocalDocument(page, plotStyleDocument());
   await page.getByRole("button", { name: "F103 PLOT STYLE", exact: true }).click();
+  await openLayoutTools(page);
   const sheet = page.getByTestId("paper-space-sheet");
   await expect(sheet).toHaveAttribute("data-plot-profile", "monochrome");
   await expect(sheet).toHaveAttribute("data-plot-lineweights", "true");
@@ -211,6 +213,7 @@ test("F-103 applies/persists plot profiles, lineweights and transparency in prev
   await page.reload();
   await expect(page.getByText("Taastatud revision 1")).toBeVisible();
   await page.getByRole("button", { name: "F103 PLOT STYLE", exact: true }).click();
+  await openLayoutTools(page);
   await expect(sheet).toHaveAttribute("data-plot-profile", "color");
   await expect(sheet).toHaveAttribute("data-plot-lineweights", "false");
 

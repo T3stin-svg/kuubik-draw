@@ -4,6 +4,7 @@ import { resolve } from "node:path";
 import { expect, test, type Download, type Page } from "@playwright/test";
 import { createEmptyDocument, createPaperLayout } from "@kuubik/cad-core";
 import type { KDrawDocumentV1 } from "@kuubik/cad-schema";
+import { openLayoutTools } from "./helpers/layout-tools.js";
 
 type RecordedOperation = { commandId: string; baseRevision: number };
 
@@ -121,6 +122,7 @@ test("F-102 applies/persists Page Setup, preserves viewport paper coordinates an
   await page.setViewportSize({ width: 1920, height: 1080 });
   await seedLocalDocument(page, pageSetupDocument());
   await page.getByRole("button", { name: "F102 PAGE SETUP", exact: true }).click();
+  await openLayoutTools(page);
   const sheet = page.getByTestId("paper-space-sheet"); const viewport = page.locator('[data-viewport-id="viewport-f102"]');
   await expect(sheet).toHaveAttribute("data-paper-width-mm", "420");
   await expect(sheet).toHaveAttribute("data-page-orientation", "landscape");

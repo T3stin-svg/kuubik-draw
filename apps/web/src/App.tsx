@@ -3691,6 +3691,17 @@ export function App() {
               }}
             >
               <canvas className="paper-space-entities" ref={canvas} aria-label={`${activeLayout.name} paberiruum`} />
+              <div
+                className="paper-printable-area"
+                data-testid="paper-printable-area"
+                aria-hidden="true"
+                style={{
+                  top: `${(activePaper.marginsMm.top / activePaper.heightMm) * 100}%`,
+                  right: `${(activePaper.marginsMm.right / activePaper.widthMm) * 100}%`,
+                  bottom: `${(activePaper.marginsMm.bottom / activePaper.heightMm) * 100}%`,
+                  left: `${(activePaper.marginsMm.left / activePaper.widthMm) * 100}%`,
+                }}
+              />
               {activeLayout.viewports.map((viewport) => (
                 <PaperViewportCanvas
                   key={viewport.id}
@@ -3890,6 +3901,9 @@ export function App() {
           </button>
         ))}
         <button type="button" className="layout-action" aria-label="Lisa paigutus" onClick={() => void createLayout()}>+</button>
+        <details className="layout-tools" data-testid="layout-tools">
+          <summary aria-label="Layout tools"><span aria-hidden="true">⚙</span><span>Layout</span></summary>
+          <div className="layout-tools-popover">
         {activeLayout.kind === "model" && activePageSetup && activePlotPaper && (
           <span
             className="page-setup-controls model-page-setup-controls"
@@ -4113,6 +4127,8 @@ export function App() {
                 }}
               />
             </label>
+          </div>
+        </details>
           </div>
         </details>
         <span className="layout-space">{activeSpace}</span>

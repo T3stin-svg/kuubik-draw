@@ -4,6 +4,7 @@ import { resolve } from "node:path";
 import { expect, test, type Locator, type Page } from "@playwright/test";
 import { createEmptyDocument } from "@kuubik/cad-core";
 import type { KDrawDocumentV1 } from "@kuubik/cad-schema";
+import { openLayoutTools } from "./helpers/layout-tools.js";
 
 type RecordedOperation = { commandId: string; baseRevision: number };
 
@@ -137,6 +138,7 @@ test("F-101 locks navigation, permits model editing, unlocks/relocks atomically 
   await expect(viewport).toHaveAttribute("data-navigation-enabled", "true");
   const initial = await viewportState(viewport);
 
+  await openLayoutTools(page);
   await page.getByRole("button", { name: "Lukusta viewport" }).click();
   await expect(viewport).toHaveAttribute("data-display-locked", "true");
   await expect(viewport).toHaveAttribute("data-navigation-enabled", "false");
@@ -144,6 +146,7 @@ test("F-101 locks navigation, permits model editing, unlocks/relocks atomically 
   await expect(viewport.locator(".paper-space-viewport-label")).toContainText("🔒");
   const locked = await viewportState(viewport);
   expect(locked).toMatchObject({ ...initial, locked: true, navigationEnabled: false });
+  await page.getByLabel("Layout tools").click();
 
   const canvas = viewport.locator("canvas");
   const box = await canvas.boundingBox();
@@ -161,6 +164,7 @@ test("F-101 locks navigation, permits model editing, unlocks/relocks atomically 
   const afterLockedPan = await viewportState(viewport);
   expect(afterLockedPan).toEqual(locked);
 
+  await openLayoutTools(page);
   await page.getByLabel("Viewport mõõtkava nimetaja").fill("25");
   await page.getByLabel("Viewport keskme X").fill("700");
   await page.getByLabel("Viewport keskme Y").fill("350");
@@ -181,6 +185,7 @@ test("F-101 locks navigation, permits model editing, unlocks/relocks atomically 
   await page.getByRole("button", { name: "Ava viewport" }).click();
   await expect(viewport).toHaveAttribute("data-display-locked", "false");
   await expect(viewport).toHaveAttribute("data-navigation-enabled", "true");
+  await page.getByLabel("Layout tools").click();
   await page.mouse.move(pointer.x, pointer.y);
   await page.mouse.wheel(0, -120);
   await expect.poll(async () => (await readDocument(page)).revision).toBe(4);
@@ -195,9 +200,11 @@ test("F-101 locks navigation, permits model editing, unlocks/relocks atomically 
   expect(panned.center).not.toBe(zoomed.center);
   expect(panned.scaleDenominator).toBeCloseTo(zoomed.scaleDenominator, 12);
 
+  await openLayoutTools(page);
   await page.getByRole("button", { name: "Lukusta viewport" }).click();
   await expect(viewport).toHaveAttribute("data-display-locked", "true");
   const relocked = await viewportState(viewport);
+  await page.getByLabel("Layout tools").click();
   await page.mouse.move(pointer.x, pointer.y);
   await page.mouse.wheel(0, 120);
   await page.mouse.down();

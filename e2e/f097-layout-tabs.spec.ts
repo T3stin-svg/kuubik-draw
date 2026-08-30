@@ -4,6 +4,7 @@ import { resolve } from "node:path";
 import { expect, test } from "@playwright/test";
 import type { KDrawDocumentV1 } from "@kuubik/cad-schema";
 import { f016StandardDocument } from "../parity/fixtures/f016-standard-fixture.mjs";
+import { openLayoutTools } from "./helpers/layout-tools.js";
 
 type RecordedOperation = { opId: string; commandId: string; baseRevision: number; args: Record<string, unknown>; targetHandles: string[]; resultHandles: string[] };
 
@@ -130,6 +131,7 @@ test("F-097 visible layout strip copies, reorders, deletes, undoes and persists 
   await seedLocalDocument(page, layoutDocument());
 
   await page.getByRole("button", { name: "F097 PLAN", exact: true }).click();
+  await openLayoutTools(page);
   for (const name of ["LINE test", "RECTANGLE", "Vali kõik", "MOVE", "COPY", "ROTATE", "SCALE", "MIRROR", "OFFSET", "OFFSET Undo", "ERASE"]) {
     await expect(page.getByRole("button", { name, exact: true })).toBeDisabled();
   }
@@ -189,6 +191,7 @@ test("F-097 creates and renames paper tabs while rejecting case-insensitive dupl
   await seedLocalDocument(page, empty);
   await page.getByRole("button", { name: "Lisa paigutus" }).click();
   await expect(page.getByRole("button", { name: "Layout 1", exact: true })).toHaveAttribute("aria-pressed", "true");
+  await openLayoutTools(page);
   await page.getByLabel("Paigutuse nimi").fill("F097 PLAN");
   await page.getByRole("button", { name: "Nimeta paigutus" }).click();
   await expect(page.getByRole("button", { name: "F097 PLAN", exact: true })).toHaveAttribute("aria-pressed", "true");

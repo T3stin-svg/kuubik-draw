@@ -32,6 +32,7 @@ const pixels = JSON.parse(execFileSync(python, [resolve(root, "tools/parity/read
 ], { windowsHide: true, encoding: "utf8" }));
 const sourcePaths = {
   e2e: "e2e/f105-batch-publish.spec.ts", fixture: "parity/fixtures/f105-document.ts", capture: "tools/parity/capture-f105-browser.mjs",
+  layoutTools: "e2e/helpers/layout-tools.ts",
   builder: "tools/parity/build-f105-browser-readback.mjs", pdfReader: "tools/parity/read-f105-pdf.py", pixelReader: "tools/parity/read-f105-rendered-png.py",
   app: "apps/web/src/App.tsx", style: "apps/web/src/style.css", publish: "packages/cad-core/src/publish.ts",
   transaction: "packages/cad-core/src/transaction.ts", cadPrint: "packages/cad-print/src/index.ts", packageLock: "package-lock.json",

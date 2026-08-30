@@ -32,6 +32,7 @@ const renderedPixels = JSON.parse(execFileSync(python, [resolve(root, "tools/par
 
 const sourcePaths = {
   e2e: "e2e/f104-vector-output.spec.ts", fixture: "parity/fixtures/f104-document.ts", capture: "tools/parity/capture-f104-browser.mjs",
+  layoutTools: "e2e/helpers/layout-tools.ts",
   builder: "tools/parity/build-f104-browser-readback.mjs", svgRenderer: "tools/parity/render-f104-svg.mjs", pdfReader: "tools/parity/read-f104-pdf.py", pixelReader: "tools/parity/read-f104-rendered-png.py",
   app: "apps/web/src/App.tsx", style: "apps/web/src/style.css", cadCoreLayouts: "packages/cad-core/src/layouts.ts",
   cadRenderer: "packages/cad-renderer/src/renderer.ts", cadPrint: "packages/cad-print/src/index.ts", packageLock: "package-lock.json",

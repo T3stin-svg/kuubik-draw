@@ -4,6 +4,7 @@ import { resolve } from "node:path";
 import { expect, test, type Page } from "@playwright/test";
 import type { KDrawDocumentV1 } from "@kuubik/cad-schema";
 import { createF114Document, F114_LAYOUT_IDS, F114_LAYOUT_NAMES } from "../parity/fixtures/f114-document.js";
+import { openLayoutTools } from "./helpers/layout-tools.js";
 
 const sha256 = (value: Buffer): string => createHash("sha256").update(value).digest("hex");
 
@@ -69,6 +70,7 @@ test("F-114 downloads a deterministic mixed-size vector PDF and restores it afte
   await page.setViewportSize({ width: 1920, height: 1080 });
   await seedLocalDocument(page, createF114Document("local"));
   await page.getByRole("button", { name: F114_LAYOUT_NAMES[0], exact: true }).click();
+  await openLayoutTools(page);
 
   const options = page.getByTestId("publish-options");
   await options.locator("summary").click();
@@ -97,6 +99,7 @@ test("F-114 downloads a deterministic mixed-size vector PDF and restores it afte
   await page.reload();
   await expect(page.getByText(/Taastatud revision/u)).toBeVisible();
   await page.getByRole("button", { name: F114_LAYOUT_NAMES[0], exact: true }).click();
+  await openLayoutTools(page);
   const restored = page.getByTestId("publish-options");
   await restored.locator("summary").click();
   await expect(restored.getByRole("textbox", { name: "Publish failinimi" })).toHaveValue("F114 Browser");

@@ -3,6 +3,7 @@ import { expect, test, type Page } from "@playwright/test";
 import DxfParser from "dxf-parser";
 import { createEmptyDocument, deserializeKDraw } from "@kuubik/cad-core";
 import type { KDrawDocumentV1 } from "@kuubik/cad-schema";
+import { openLayoutTools } from "./helpers/layout-tools.js";
 
 type RecordedOperation = { commandId: string; targetHandles: string[]; resultHandles: string[]; args: Record<string, unknown> };
 
@@ -194,12 +195,15 @@ test("F-030 MATCHPROP copies viewport special properties while preserving target
   });
   await seedLocalDocument(page, source);
   await page.getByRole("button", { name: "F030 VIEWPORTS", exact: true }).click();
+  await openLayoutTools(page);
 
   await page.getByRole("button", { name: "MATCHPROP viewport alusta" }).click();
+  await page.getByLabel("Layout tools").click();
   await page.locator('[data-viewport-id="match-source"]').click();
   await page.locator('[data-viewport-id="match-target"]').click();
   await expect(page.locator('[data-viewport-id="match-source"]')).toHaveAttribute("data-match-role", "source");
   await expect(page.locator('[data-viewport-id="match-target"]')).toHaveAttribute("data-match-role", "target");
+  await openLayoutTools(page);
   await expect(page.getByTestId("match-viewport-source")).toHaveText("Allikas: layout-f030-viewports/match-source");
   await expect(page.getByTestId("match-viewport-targets")).toHaveText("Siht: 1");
   await page.getByRole("button", { name: "Rakenda MATCHPROP viewportidele" }).click();

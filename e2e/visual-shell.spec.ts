@@ -173,7 +173,39 @@ test("AutoCAD-style shell keeps all eight primary zones visible at 1920x1080", a
   await page.getByRole("button", { name: "Lisa paigutus" }).click();
   await page.getByRole("button", { name: "Layout 1", exact: true }).click();
   await expect(page.getByTestId("paper-space-sheet")).toBeVisible();
+  const layoutTools = page.getByTestId("layout-tools");
+  await expect(layoutTools).not.toHaveAttribute("open", "");
+  await expect(page.getByTestId("page-setup-controls")).toBeHidden();
+  await expect(page.getByTestId("paper-printable-area")).toBeVisible();
+  const layoutGeometry = await page.evaluate(() => {
+    const bounds = (selector: string) => {
+      const rect = document.querySelector<HTMLElement>(selector)!.getBoundingClientRect();
+      return { x: rect.x, y: rect.y, width: rect.width, height: rect.height, right: rect.right, bottom: rect.bottom };
+    };
+    return {
+      desk: bounds("[data-testid='paper-space-desk']"),
+      sheet: bounds("[data-testid='paper-space-sheet']"),
+      printable: bounds("[data-testid='paper-printable-area']"),
+      palette: bounds(".layer-manager"),
+      layoutbar: bounds(".layoutbar"),
+    };
+  });
+  expect(layoutGeometry.desk.x).toBe(0);
+  expect(layoutGeometry.desk.width).toBe(1920);
+  expect(layoutGeometry.sheet.x).toBeGreaterThanOrEqual(layoutGeometry.palette.right + 20);
+  expect(layoutGeometry.sheet.width / layoutGeometry.sheet.height).toBeCloseTo(297 / 210, 3);
+  expect(layoutGeometry.printable.x).toBeGreaterThan(layoutGeometry.sheet.x);
+  expect(layoutGeometry.printable.right).toBeLessThan(layoutGeometry.sheet.right);
+  expect(layoutGeometry.printable.y).toBeGreaterThan(layoutGeometry.sheet.y);
+  expect(layoutGeometry.printable.bottom).toBeLessThan(layoutGeometry.sheet.bottom);
+  expect(layoutGeometry.layoutbar.height).toBe(30);
   if (captureRoot) await writeFile(resolve(captureRoot, "visual-shell-layout-paper-space.png"), await page.screenshot());
+  await page.getByLabel("Layout tools").click();
+  await expect(layoutTools).toHaveAttribute("open", "");
+  await expect(page.getByTestId("page-setup-controls")).toBeVisible();
+  if (captureRoot) await writeFile(resolve(captureRoot, "visual-shell-layout-tools-open.png"), await page.screenshot());
+  await page.getByLabel("Layout tools").click();
+  await expect(layoutTools).not.toHaveAttribute("open", "");
 
   await page.keyboard.press("F2");
   const commandTextWindow = page.getByTestId("command-text-window");
@@ -232,6 +264,8 @@ test("AutoCAD-style shell keeps all eight primary zones visible at 1920x1080", a
         },
         layerManagerRows: await page.getByRole("table", { name: "Kihtide loend" }).getByRole("row").count(),
         layoutPaperSpace: await page.getByTestId("paper-space-sheet").isVisible(),
+        layoutGeometry,
+        layoutTools: { compactByDefault: true, openStateVerified: true, pageSetupStillReachable: true },
         commandHistory: await page.getByRole("log", { name: "Käsuajalugu" }).isVisible(),
         commandHistoryGeometry,
       },

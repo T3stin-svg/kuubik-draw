@@ -4,7 +4,7 @@
   "kind": "readback",
   "authority": "independent-parser",
   "status": "PASS",
-  "artifactSha256": "2120070b4eb532230dfd24fa9c2750ed6c86941c213693150ed105dca8434856",
+  "artifactSha256": "46d851c18b68f122641d0beeb14328b0af4e6e7a7dd9e149fc5f99b8f9da6380",
   "observedAt": "2026-08-29T10:46:24.188Z",
   "workflow": "A fresh production DXF and the exact Chromium-downloaded DXF are compared byte-for-byte and independently opened with ezdxf 1.4.3 using strict audit and geometry/table read-back.",
   "result": "Both files had identical SHA-256 and 40/40 per-handle semantic geometry hashes. The strict reader confirmed two bulged polylines, full HATCH loop topology, millimetres, dynamic HANDSEED, exact ACI/TrueColor, lineweights, entity and layer transparency, Unicode text, DIMTXSTY, deliberately omitted stale header extents, and zero audit errors or fixes.",

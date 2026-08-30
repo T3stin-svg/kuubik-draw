@@ -4,6 +4,7 @@ import { resolve } from "node:path";
 import { expect, test, type Download, type Page } from "@playwright/test";
 import type { KDrawDocumentV1 } from "@kuubik/cad-schema";
 import { createF104Document, F104_LAYOUT_NAME, F104_VIEWPORT_IDS } from "../parity/fixtures/f104-document.js";
+import { openLayoutTools } from "./helpers/layout-tools.js";
 
 const sha256 = (value: Buffer | string): string => createHash("sha256").update(value).digest("hex");
 
@@ -113,6 +114,7 @@ test("F-104 exports deterministic A3 vector SVG/PDF from two persisted layout vi
   await page.setViewportSize({ width: 1920, height: 1080 });
   await seedLocalDocument(page, createF104Document("local"));
   await page.getByRole("button", { name: F104_LAYOUT_NAME, exact: true }).click();
+  await openLayoutTools(page);
 
   const sheet = page.getByTestId("paper-space-sheet");
   await expect(sheet).toHaveAttribute("data-plot-profile", "color");
@@ -152,6 +154,7 @@ test("F-104 exports deterministic A3 vector SVG/PDF from two persisted layout vi
   await page.reload();
   await expect(page.getByText("Taastatud revision 0")).toBeVisible();
   await page.getByRole("button", { name: F104_LAYOUT_NAME, exact: true }).click();
+  await openLayoutTools(page);
   const after = await viewportMetrics(page);
   expect(after.map(({ id, viewCenter, viewHeight, locked }) => ({ id, viewCenter, viewHeight, locked }))).toEqual(before.map(({ id, viewCenter, viewHeight, locked }) => ({ id, viewCenter, viewHeight, locked })));
   const secondSvg = await downloadedBytes(page, "Ekspordi layout SVG");

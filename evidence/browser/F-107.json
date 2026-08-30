@@ -4,7 +4,7 @@
   "kind": "browser",
   "authority": "kuubik-draw-browser",
   "status": "PASS",
-  "artifactSha256": "3810c3f1e5268e3683ed2652217dc5c14456272314f1e38ff459143b7f8d0921",
+  "artifactSha256": "4ac1e8ae3cdba2e6776dd478daf5754c33145ec2049f1e591bcd9d4020b06736",
   "observedAt": "2026-08-29T10:44:41.477Z",
   "workflow": "Chromium at 1920x1080 saves a unique A4 Layout 1:1 named setup, rejects a case-insensitive duplicate, mutates and restores the layout, renames and deletes the setup, downloads a geometry-free template, imports it through the visible file input, performs atomic Undo/Redo, and reloads IndexedDB revision 8.",
   "result": "The exact production template bytes reimported successfully; dangling, stale-assignment and oversized templates were rejected before commit; existing model and paper geometry survived, the imported layout remained geometry-free, named references survived reload, the screenshot shows F-107 A4 FINAL selected, and console/page errors were zero.",

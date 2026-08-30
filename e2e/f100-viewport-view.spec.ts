@@ -4,6 +4,7 @@ import { resolve } from "node:path";
 import { expect, test, type Locator, type Page } from "@playwright/test";
 import { createEmptyDocument } from "@kuubik/cad-core";
 import type { KDrawDocumentV1 } from "@kuubik/cad-schema";
+import { openLayoutTools } from "./helpers/layout-tools.js";
 
 type RecordedOperation = { opId: string; commandId: string; baseRevision: number };
 type ViewState = {
@@ -247,6 +248,7 @@ test("F-100 applies preset/custom scale, cursor-anchor zoom, rotated pan/twist, 
   await viewport.dblclick();
   await expect(viewport).toHaveAttribute("data-space-context", "model");
   await expect(viewport).toHaveAttribute("data-navigation-enabled", "true");
+  await openLayoutTools(page);
 
   await page.getByLabel("Viewport standardmõõtkava").selectOption("20");
   await expect(page.getByLabel("Viewport mõõtkava nimetaja")).toHaveValue("20");
@@ -254,6 +256,7 @@ test("F-100 applies preset/custom scale, cursor-anchor zoom, rotated pan/twist, 
   await page.getByLabel("Viewport keskme Y").fill("-500");
   await page.getByLabel("Viewport pöördenurk").fill("30");
   await page.getByRole("button", { name: "Rakenda viewport vaade" }).click();
+  await page.getByLabel("Layout tools").click();
   await expect(viewport).toHaveAttribute("data-scale-label", "1:20");
   const preset = await viewState(viewport);
   expect(preset).toMatchObject({ center: { x: 1000, y: -500 }, scaleDenominator: 20, scaleLabel: "1:20" });

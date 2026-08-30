@@ -4,6 +4,7 @@ import { resolve } from "node:path";
 import { expect, test, type Page } from "@playwright/test";
 import { createEmptyDocument } from "@kuubik/cad-core";
 import type { KDrawDocumentV1 } from "@kuubik/cad-schema";
+import { openLayoutTools } from "./helpers/layout-tools.js";
 
 type RecordedOperation = { opId: string; commandId: string; baseRevision: number };
 
@@ -134,6 +135,7 @@ test("F-099 creates independent rectangular and non-rectangular viewports, survi
   await page.setViewportSize({ width: 1920, height: 1080 });
   await seedLocalDocument(page, viewportDocument());
   await page.getByRole("button", { name: "F099 VIEWPORTS", exact: true }).click();
+  await openLayoutTools(page);
 
   await page.getByRole("button", { name: "Lisa ristkülikviewport" }).click();
   await expect(page.locator('[data-testid="paper-space-viewport"]')).toHaveCount(1);

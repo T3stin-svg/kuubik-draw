@@ -59,6 +59,8 @@ async function paperMetrics(page: Page) {
     const area = document.querySelector<HTMLElement>('.drawing-area[data-mode="paper"]')!;
     const desk = document.querySelector<HTMLElement>(".paper-space-desk")!;
     const sheet = document.querySelector<HTMLElement>(".paper-space-sheet")!;
+    const printable = document.querySelector<HTMLElement>(".paper-printable-area")!;
+    const palette = document.querySelector<HTMLElement>(".layer-manager")!;
     const canvas = sheet.querySelector<HTMLCanvasElement>("canvas")!;
     const rect = (element: HTMLElement) => {
       const box = element.getBoundingClientRect();
@@ -72,6 +74,8 @@ async function paperMetrics(page: Page) {
       area: rect(area),
       desk: rect(desk),
       sheet: rect(sheet),
+      printable: rect(printable),
+      palette: rect(palette),
       canvas: rect(canvas),
       canvasBitmap: { width: canvas.width, height: canvas.height, paintedPixels },
       paper: { widthMm: Number(sheet.dataset.paperWidthMm), heightMm: Number(sheet.dataset.paperHeightMm) },
@@ -111,6 +115,9 @@ test("F-098 shows a positive A3 paper sheet in the workspace and restores it fro
   expect(beforeReload.desk).toEqual(beforeReload.area);
   expect(beforeReload.sheet.width).toBeGreaterThan(700);
   expect(beforeReload.sheet.height).toBeGreaterThan(500);
+  expect(beforeReload.sheet.x).toBeGreaterThanOrEqual(beforeReload.desk.x + 20);
+  expect(beforeReload.printable.x).toBeGreaterThan(beforeReload.sheet.x);
+  expect(beforeReload.printable.y).toBeGreaterThan(beforeReload.sheet.y);
   expect(beforeReload.sheet.width / beforeReload.sheet.height).toBeCloseTo(420 / 297, 2);
   expect(beforeReload.canvas.width / beforeReload.canvas.height).toBeCloseTo(420 / 297, 2);
   expect(beforeReload.paper).toEqual({ widthMm: 420, heightMm: 297 });

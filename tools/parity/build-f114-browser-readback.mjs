@@ -26,6 +26,7 @@ const renderedPixels = JSON.parse(execFileSync(python, [resolve(root, "tools/par
 const expected = JSON.parse(await readFile(resolve(root, "parity/expected/F-114.json"), "utf8"));
 const sourcePaths = {
   e2e: "e2e/f114-vector-pdf.spec.ts", fixture: "parity/fixtures/f114-document.ts", capture: "tools/parity/capture-f114-browser.mjs",
+  layoutTools: "e2e/helpers/layout-tools.ts",
   builder: "tools/parity/build-f114-browser-readback.mjs", contract: "tools/parity/f114-evidence-contract.mjs", pdfReader: "tools/parity/read-f114-pdf.py",
   pixelReader: "tools/parity/read-f114-rendered-png.py", app: "apps/web/src/App.tsx", publish: "packages/cad-core/src/publish.ts",
   cadPrint: "packages/cad-print/src/index.ts", unitTest: "packages/cad-print/test/f114-vector-output.test.ts",
