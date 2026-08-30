@@ -26,13 +26,13 @@ if (!near(weight, 1) || !near(score, VISUAL_BASELINE.baselineScore)) {
 }
 
 const allStatesPassed = VISUAL_STATES.every((state) => state.status === VISUAL_ACCEPTANCE.requiredStatusForScoreIncrease
-  && state.autoCadEvidence && state.kuubikEvidence && state.measuredReadback);
+  && state.autoCadEvidence && state.kuubikEvidence && state.measuredReadback && state.comparisonReadback);
 if (VISUAL_BASELINE.claimedScore > VISUAL_BASELINE.baselineScore && !allStatesPassed) {
   throw new Error("Visual score cannot increase before all six paired states and read-backs PASS");
 }
 
 for (const state of VISUAL_STATES) {
-  for (const evidencePath of [state.kuubikEvidence, state.measuredReadback]) {
+  for (const evidencePath of [state.kuubikEvidence, state.measuredReadback, state.comparisonReadback]) {
     if (evidencePath) await access(resolve(evidencePath));
   }
 }
@@ -43,5 +43,22 @@ if (shellMetrics.viewport[0] !== VISUAL_BASELINE.viewport.width || shellMetrics.
   throw new Error(`Visual shell viewport mismatch: ${shellMetrics.viewport.join("x")}`);
 }
 if (shellMetrics.consoleErrors.length !== 0) throw new Error("Visual shell capture contains console errors");
+
+const commandHistoryState = VISUAL_STATES.find(({ id }) => id === "command-history-context");
+if (commandHistoryState.status === "PASS") {
+  const browserReadback = JSON.parse(await readFile(resolve(commandHistoryState.measuredReadback), "utf8"));
+  const comparisonReadback = JSON.parse(await readFile(resolve(commandHistoryState.comparisonReadback), "utf8"));
+  const actual = browserReadback.states.commandHistoryGeometry;
+  const reference = comparisonReadback.measuredReference.commandHistory;
+  const bounded = ["x", "y", "width", "height", "contentTop", "contentBottom", "promptTop"]
+    .every((key) => Math.abs(actual[key] - reference[key]) <= VISUAL_ACCEPTANCE.zoneTolerancePx);
+  const colorsExact = actual.titlebarBackgroundColor === "rgb(255, 255, 255)"
+    && actual.menubarBackgroundColor === "rgb(255, 255, 255)"
+    && actual.contentBackgroundColor === "rgb(200, 200, 200)"
+    && actual.promptBackgroundColor === "rgb(255, 255, 255)";
+  if (!bounded || !colorsExact || comparisonReadback.nativeCapture.status !== "PASS") {
+    throw new Error("Command-history paired visual state is outside the measured AutoCAD reference tolerance");
+  }
+}
 
 console.log(`Visual parity: ${(VISUAL_BASELINE.claimedScore * 100).toFixed(1)}% (baseline held; ${VISUAL_STATES.filter(({ status }) => status === "PASS").length}/${VISUAL_STATES.length} paired states PASS)`);

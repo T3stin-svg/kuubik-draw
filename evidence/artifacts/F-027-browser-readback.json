@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "rowId": "F-027",
   "status": "PASS",
-  "observedAt": "2026-08-30T19:07:35.260Z",
+  "observedAt": "2026-08-30T19:42:13.573Z",
   "checks": {
     "browserWorkflowPassedWithoutErrors": true,
     "exactPartialAndWholeGeometry": true,
@@ -20,11 +20,11 @@
   },
   "artifacts": {
     "evidence/artifacts/F-027-browser-matrix.json": {
-      "sha256": "76cc970ecdbca9b47ec49c42ceeb422440687e7716a50feffe4c528f07ad9dd7",
+      "sha256": "d106cd5c6022bad1e4f18054e33110c723a723dfe1362532e9109eb3f2f905b9",
       "byteLength": 12528
     },
     "evidence/artifacts/F-027-browser-native-edge-matrix.json": {
-      "sha256": "dd704ea36581419369ed1220c7b88cecb8041874e9cfb3121c0e1aacebe5224f",
+      "sha256": "cfff2ccc11ae938c3dc6c2dcd4afcb3c4d198e609d64c564d085427ed1020def",
       "byteLength": 4671
     },
     "evidence/artifacts/F-027-browser-locked.json": {
@@ -40,7 +40,7 @@
       "byteLength": 319
     },
     "evidence/artifacts/F-027-browser-ellipse.json": {
-      "sha256": "005fcc20c87b9a099086c0db88d8983335c1b0c40b885b71eebc3b956556b5f4",
+      "sha256": "1fb6690bbfdc498912ff6963c35fb087024fc8e8f2c56da273decb1d25305ff5",
       "byteLength": 4345
     },
     "evidence/artifacts/F-027-browser-ellipse.dxf": {
@@ -48,7 +48,7 @@
       "byteLength": 3966
     },
     "evidence/artifacts/F-027-browser-ellipse.kdraw": {
-      "sha256": "2911b59d2359b3465e0aa14b2692b4159d0a648f594cbb7ca666fe20c002a354",
+      "sha256": "da2b44beef5620fa0a529fb9f1a5102daa1326d9adda3328c940c4ac18cd8ff2",
       "byteLength": 1440
     },
     "evidence/artifacts/F-027-browser.dxf": {
@@ -56,13 +56,13 @@
       "byteLength": 4319
     },
     "evidence/artifacts/F-027-browser.kdraw": {
-      "sha256": "2e74a9755bee1b3b02c7e3010b88f383bb96ef8aa7934054f4ff1f6a8685c62c",
+      "sha256": "b67c7eab00426945a0e18a5b945038978214bc6130900f071fe0db11f13bf34f",
       "byteLength": 1849
     }
   },
   "sourceSha256": {
-    "apps/web/src/App.tsx": "362955c2d125ca844669d2c4352cc3f75293dd23e99024d8ebc1467c1a49fbb4",
-    "apps/web/src/style.css": "76b8ab8270fb6e09c6668c5d554b4911c5be1f0192398f1cef665d5823389c53",
+    "apps/web/src/App.tsx": "6f303ef9d67f4379034e3bc2d40148171e6139e0943319bfee06a4cc1f06a7a8",
+    "apps/web/src/style.css": "dc2f7a896d87137dfb7d59ad790efca887d12f72f7d95b07c89fb34b2d5b11d8",
     "apps/web/src/workflows/modify-command.ts": "9d1f7d0b1d3e308eac2a5d4055436626e3a497cbaaf116c05957e1fde15616c7",
     "apps/web/src/workflows/modify-command.test.ts": "aac0694d3a93a08ed5c6b98ea5456e62ba7c0f05777780a47d99dcabdf2e12b9",
     "packages/cad-core/src/stretch.ts": "5e76f375057f553ef91c38df96b28686d1e56cf57e1debd51b71bae8a2739944",

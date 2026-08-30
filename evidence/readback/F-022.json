@@ -4,8 +4,8 @@
   "kind": "readback",
   "authority": "independent-parser",
   "status": "PASS",
-  "artifactSha256": "055bd15d85111edbddbdd653ca2bc7407294ceed451a574347cad5759765c5e1",
-  "observedAt": "2026-08-30T19:05:29.982Z",
+  "artifactSha256": "2de42677f6609a61b8b4f8645f35918c411ef9c2cdb02250783cac6fbe06d723",
+  "observedAt": "2026-08-30T19:40:30.006Z",
   "workflow": "Production cad-core TRIM output is exported through cad-dxf and KDRAW1, then read independently with strict DXF parsing and base64/checksum validation. The fixture covers line, polyline, arc, ellipse and rational SPLINE results plus atomic Undo.",
   "result": "Independent read-back matched all result handles, entity kinds, geometry, layers, appearances, bulges, widths, ellipse parameters and SPLINE degree/control points/knots/weights without skipped or mismatched fields; KDRAW1 and DXF byte hashes matched and Undo restored the source revision.",
   "artifact": "evidence/artifacts/F-022-independent-readback.json"

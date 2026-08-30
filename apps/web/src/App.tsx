@@ -411,6 +411,22 @@ export function App() {
   useEffect(() => {
     setCommandHistory((previous) => previous.at(-1) === status ? previous : [...previous.slice(-19), status]);
   }, [status]);
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent): void => {
+      if (event.key === "F2" && !event.repeat) {
+        event.preventDefault();
+        setCommandHistoryOpen((open) => !open);
+        return;
+      }
+      if (event.key === "Escape" && commandHistoryOpen) {
+        event.preventDefault();
+        setCommandHistoryOpen(false);
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [commandHistoryOpen]);
   const activeLayout = document.layouts.find((layout) => layout.id === activeLayoutId) ?? document.layouts[0]!;
   const selectedViewport = activeLayout.kind === "paper"
     ? activeLayout.viewports.find((viewport) => viewport.id === selectedViewportId) ?? null
@@ -3688,9 +3704,19 @@ export function App() {
       </section>
       <section className="command-line" aria-label="Käsurida" data-visual-zone="command-line">
         {commandHistoryOpen && (
-          <div className="command-history-window" role="log" aria-label="Käsuajalugu">
-            {commandHistory.map((entry, index) => <div key={`${index}-${entry}`}>Command: {entry}</div>)}
-          </div>
+          <section className="command-history-window" role="dialog" aria-modal="true" aria-labelledby="command-text-window-title" data-testid="command-text-window">
+            <header className="command-text-titlebar">
+              <span className="command-text-app-icon" aria-hidden="true">K</span>
+              <span id="command-text-window-title">Kuubik Text Window — local.kdraw</span>
+              <button type="button" aria-label="Sulge Kuubik Text Window" onClick={() => setCommandHistoryOpen(false)}>×</button>
+            </header>
+            <nav className="command-text-menubar" aria-label="Käsuajaloo menüü"><span>Edit</span></nav>
+            <div className="command-text-log" role="log" aria-label="Käsuajalugu" tabIndex={0}>
+              <div>Kuubik command utilities loaded.</div>
+              {commandHistory.map((entry, index) => <div key={`${index}-${entry}`}>Command: {entry}</div>)}
+            </div>
+            <div className="command-text-prompt">Command:</div>
+          </section>
         )}
         <div className="command-history" role="status" aria-live="polite">{status}</div>
         <div className="command-prompt">

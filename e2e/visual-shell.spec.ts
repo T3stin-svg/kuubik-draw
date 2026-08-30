@@ -78,8 +78,42 @@ test("AutoCAD-style shell keeps all eight primary zones visible at 1920x1080", a
   await expect(page.getByTestId("paper-space-sheet")).toBeVisible();
   if (captureRoot) await writeFile(resolve(captureRoot, "visual-shell-layout-paper-space.png"), await page.screenshot());
 
-  await page.getByRole("button", { name: "Ava käsuajalugu" }).click();
+  await page.keyboard.press("F2");
+  const commandTextWindow = page.getByTestId("command-text-window");
+  await expect(commandTextWindow).toBeVisible();
   await expect(page.getByRole("log", { name: "Käsuajalugu" })).toBeVisible();
+  const commandHistoryGeometry = await commandTextWindow.evaluate((element) => {
+    const rect = element.getBoundingClientRect();
+    const style = getComputedStyle(element);
+    const titlebarElement = element.querySelector<HTMLElement>(".command-text-titlebar")!;
+    const menubarElement = element.querySelector<HTMLElement>(".command-text-menubar")!;
+    const logElement = element.querySelector<HTMLElement>(".command-text-log")!;
+    const promptElement = element.querySelector<HTMLElement>(".command-text-prompt")!;
+    const titlebar = titlebarElement.getBoundingClientRect();
+    const menubar = menubarElement.getBoundingClientRect();
+    const log = logElement.getBoundingClientRect();
+    const prompt = promptElement.getBoundingClientRect();
+    return {
+      x: rect.x, y: rect.y, width: rect.width, height: rect.height,
+      titlebarHeight: titlebar.height, menubarHeight: menubar.height, promptHeight: prompt.height,
+      backgroundColor: style.backgroundColor,
+      contentTop: log.y, contentBottom: log.bottom, promptTop: prompt.y,
+      titlebarBackgroundColor: getComputedStyle(titlebarElement).backgroundColor,
+      menubarBackgroundColor: getComputedStyle(menubarElement).backgroundColor,
+      contentBackgroundColor: getComputedStyle(logElement).backgroundColor,
+      promptBackgroundColor: getComputedStyle(promptElement).backgroundColor,
+    };
+  });
+  expect(commandHistoryGeometry).toMatchObject({
+    x: 0, y: 0, width: 1920, height: 1080,
+    titlebarHeight: 30, menubarHeight: 22, promptHeight: 28,
+    backgroundColor: "rgb(200, 200, 200)",
+    contentTop: 53, contentBottom: 1051, promptTop: 1051,
+    titlebarBackgroundColor: "rgb(255, 255, 255)",
+    menubarBackgroundColor: "rgb(255, 255, 255)",
+    contentBackgroundColor: "rgb(200, 200, 200)",
+    promptBackgroundColor: "rgb(255, 255, 255)",
+  });
   if (captureRoot) {
     await writeFile(resolve(captureRoot, "visual-shell-command-history.png"), await page.screenshot());
     await writeFile(resolve(captureRoot, "visual-shell-states.json"), `${JSON.stringify({
@@ -92,9 +126,12 @@ test("AutoCAD-style shell keeps all eight primary zones visible at 1920x1080", a
         layerManagerRows: await page.getByRole("table", { name: "Kihtide loend" }).getByRole("row").count(),
         layoutPaperSpace: await page.getByTestId("paper-space-sheet").isVisible(),
         commandHistory: await page.getByRole("log", { name: "Käsuajalugu" }).isVisible(),
+        commandHistoryGeometry,
       },
       consoleErrors,
     }, null, 2)}\n`, "utf8");
   }
+  await page.keyboard.press("Escape");
+  await expect(commandTextWindow).toBeHidden();
   expect(consoleErrors).toEqual([]);
 });

@@ -4,8 +4,8 @@
   "kind": "readback",
   "authority": "independent-parser",
   "status": "PASS",
-  "artifactSha256": "cdbe8e8707a8817f8980b18eaaab7cfebcfb3bf94ded1131680ae2908147894d",
-  "observedAt": "2026-08-30T19:03:58.517Z",
+  "artifactSha256": "b31b9eb9508acdc2be2fa76a89456284216c531edbf453c0502a067ac200cb2d",
+  "observedAt": "2026-08-30T19:39:01.539Z",
   "workflow": "Production cad-core ROTATE and cad-dxf output are parsed with dxf-parser@1.1.2; the full 12-family result is serialized by the production .kdraw writer and independently decoded with manifest byte-length and SHA-256 checks before atomic UNDO",
   "result": "The independent DXF read-back found exact quarter-turned LINE/LWPOLYLINE coordinates, while independent .kdraw decoding found all twelve rotated standard families with unchanged handles/properties; parsing modes, locked/proxy rejects, equal-angle no-op and one-command restoration matched the independent golden fixture.",
   "artifact": "evidence/artifacts/F-018-independent-readback.json"

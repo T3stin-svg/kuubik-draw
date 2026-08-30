@@ -327,3 +327,37 @@ public-tree checks pass. Pinned Gitleaks 8.30.1 found zero leaks in 1,031
 git-visible source files. LibreCAD 2.2.1.5 and FreeCAD 1.1.3 fixtures pass as
 secondary non-authorities with the honest local status
 `FIXTURE_PASS_NOT_NETWORK_ISOLATED`.
+
+## 2026-08-30 AutoCAD F2 text-window visual fidelity wave 4
+
+The previously missing sixth AutoCAD audit state now has an authenticated
+private 1920×1080 reference. A newly created owned AutoCAD 2024.1.2 process
+opened the native F2 Text Window, was identified by exact PID and title, and
+was privately captured at 96 DPI / 100%. The runner restored the observed
+profile geometry and closed state, terminated only its owned process, and
+proved that the pre-existing AutoCAD process set was unchanged. Autodesk
+pixels are not redistributed; the public evidence contains only measured
+geometry, colors and SHA-256 references.
+
+Kuubik now exposes a functional full-window F2 command history with a 30 px
+title, 22 px menu, measured gray transcript area, white 28 px command prompt,
+working close button and Escape handling. Fixed Chromium read-back is exact
+for window, title and menu geometry; the prompt boundary differs from the
+native reference by only -1 px. Reference and implementation colors match at
+`#ffffff` and `#c8c8c8`. The visual ratchet now reports **1/6 paired states
+PASS**, all six fresh Kuubik states, and zero console errors.
+
+The score remains deliberately **29/133, 21.8% raw / 25.2% weighted**, and
+**60.7% visual**. One paired state does not establish a complete re-audit of
+all five visual categories. All 29 certified functional rows received fresh
+browser, independent read-back, cross-evidence, global-topology and
+content-address receipts after the shared App/style change. LibreCAD and
+FreeCAD remain secondary non-authorities. No preview or production deployment
+was performed.
+
+The complete local gate passes typecheck, lint, production build, **83 Vitest
+files / 498 tests**, mutation **78/78**, DXF **47/47**, PDF **20/20** and
+Chromium **108/108**. Parity-kit, parity, visual, license and public-tree
+checks pass. Pinned Gitleaks 8.30.1 found zero leaks in 1,042 git-visible
+source files. LibreCAD 2.2.1.5 and FreeCAD 1.1.3 passed as
+`FIXTURE_PASS_NOT_NETWORK_ISOLATED`, with `certificationAuthority:false`.

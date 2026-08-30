@@ -4,8 +4,8 @@
   "kind": "readback",
   "authority": "independent-parser",
   "status": "PASS",
-  "artifactSha256": "db48eeab36f9e4563bb787a7aa9fa917a6e4a9faade34192a90d1e30ae33cfb5",
-  "observedAt": "2026-08-30T19:07:22.543Z",
+  "artifactSha256": "a7ede16331cea5b819f616e92ed6edad7e1721822de1e486f5d9353772ec2da7",
+  "observedAt": "2026-08-30T19:47:16.219Z",
   "workflow": "Production cad-core BREAK operations are committed atomically, exported through cad-dxf and KDRAW1, then read through strict Kuubik import, independent dxf-parser semantics and independent KDRAW1 checksum decoding. LINE, CIRCLE, ELLIPSE, open LWPOLYLINE, rational SPLINE, single-point capability and closed-target refusal cases are included.",
   "result": "Entity kinds, handles, exact geometry, properties, interpolated polyline widths and rational spline control points/knots/weights matched the fixed schema; DXF/KDRAW1 hashes matched current bytes and atomic Undo/Redo restored the exact source and committed revisions.",
   "artifact": "evidence/artifacts/F-026-independent-readback.json"
