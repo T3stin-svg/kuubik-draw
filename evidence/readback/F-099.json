@@ -4,8 +4,8 @@
   "kind": "readback",
   "authority": "independent-parser",
   "status": "PASS",
-  "artifactSha256": "0e451edeeda5eff3bd6135b42614e1a5fb2ad8d0116468fd25fecc64de9f852a",
-  "observedAt": "2026-08-30T08:28:58.628Z",
+  "artifactSha256": "919d2c629cc5d963e2103111cfbdedabba155106eaf209b35d67d95e122414cf",
+  "observedAt": "2026-08-30T15:34:06.635Z",
   "workflow": "Production cad-core creates the A3 layout and two viewport transactions, serializes KDRAW1, deletes the clipped viewport, undoes and redoes it, then serializes again. A separate reader validates magic, envelope, payload length, document SHA-256 and manifest checksum before parsing document.json without calling deserializeKDraw.",
   "result": "The independent reader recovered stable viewport-1 and viewport-2 IDs, exact disjoint frames, view centers 0 and 2000, the six-point polygon clip, revision 2 multiple-view state, adjacent selection after delete, exact two/one viewport undo-redo sequence and final revision 5 one-viewport state.",
   "artifact": "evidence/artifacts/F-099-independent-readback.json"

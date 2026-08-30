@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-029",
+  "benchmark": "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
+  "pointPairs": [
+    { "sourcePoint": { "x": 0, "y": 0 }, "destinationPoint": { "x": 100, "y": 200 } },
+    { "sourcePoint": { "x": 100, "y": 0 }, "destinationPoint": { "x": 100, "y": 400 } }
+  ],
+  "expectedTransform": { "angleRad": 1.5707963267948966, "scaleFactor": 2 },
+  "requiredCertificationChecks": [
+    "nativeDesktopLive",
+    "nativeDesktopSourcesCurrent",
+    "browserWorkflow",
+    "browserNestedArtifactsCurrent",
+    "browserSourcesCurrent",
+    "physicalFourPointCanvas",
+    "productionReadback",
+    "productionSourcesCurrent",
+    "secondaryOracles",
+    "oracleInputsAndSourcesCurrent",
+    "crossGeometryExact",
+    "lockedSelectionMatches",
+    "sourceHashCoverage"
+  ],
+  "independentReview": {
+    "status": "PASS",
+    "p0": 0,
+    "p1": 0,
+    "reviewedAt": "2026-08-30"
+  },
+  "remainingCertificationRequirements": []
+}

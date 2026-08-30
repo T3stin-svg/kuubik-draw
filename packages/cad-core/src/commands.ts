@@ -21,6 +21,14 @@ import {
 } from "./fillet.js";
 import { offsetCadEntity, type OffsetGeometryMode, type OffsetGeometryRejectReason } from "./offset.js";
 import { stretchCadEntity, validateStretchRegions, type StretchGeometryRejectReason, type StretchRegion } from "./stretch.js";
+import { executeMatchProperties, type MatchPropertiesArgs, type MatchPropertiesResult } from "./match-properties.js";
+import {
+  lengthenCadEntity,
+  type LengthenGeometryRejectReason,
+  type LengthenMeasurement,
+  type LengthenMode,
+  type LengthenSpecification,
+} from "./lengthen.js";
 import {
   extendCadEntity,
   trimClosestPoint,
@@ -407,6 +415,94 @@ export interface StretchCommandDefinition {
   execute(document: KDrawDocumentV1, args: StretchCommandArgs): StretchCommandResult;
 }
 
+export interface LengthenTargetPick {
+  handle: string;
+  pickPoint: CadPoint2;
+  dynamicPoint?: CadPoint2;
+}
+
+export interface LengthenCommandArgs {
+  mode: LengthenMode;
+  value?: number;
+  measurement?: LengthenMeasurement;
+  targets: readonly LengthenTargetPick[];
+}
+
+export interface LengthenRejectedTarget {
+  handle: string;
+  targetIndex: number;
+  reason: "missing" | "locked-layer" | "missing-dynamic-point" | LengthenGeometryRejectReason;
+}
+
+export interface LengthenCommandStep {
+  handle: string;
+  targetIndex: number;
+  endpoint: "start" | "end";
+  oldLength: number;
+  newLength: number;
+  oldIncludedAngleRad: number | null;
+  newIncludedAngleRad: number | null;
+}
+
+export interface LengthenCommandResult {
+  changes: EntityChange[];
+  sourceHandles: string[];
+  resultHandles: string[];
+  rejected: LengthenRejectedTarget[];
+  steps: LengthenCommandStep[];
+  mode: LengthenMode;
+  measurement: LengthenMeasurement;
+  value: number | null;
+  multiple: boolean;
+}
+
+export interface LengthenCommandDefinition {
+  id: "LENGTHEN";
+  aliases: readonly string[];
+  execute(document: KDrawDocumentV1, args: LengthenCommandArgs): LengthenCommandResult;
+}
+
+export interface AlignPointPair {
+  sourcePoint: CadPoint2;
+  destinationPoint: CadPoint2;
+}
+
+export interface AlignCommandArgs {
+  targetHandles: readonly string[];
+  pointPairs: readonly [AlignPointPair] | readonly [AlignPointPair, AlignPointPair];
+  scaleToFit: boolean;
+}
+
+export interface AlignRejectedTarget {
+  handle: string;
+  reason: "missing" | "locked-layer" | "unsupported-entity";
+}
+
+export interface AlignCommandResult {
+  changes: EntityChange[];
+  sourceHandles: string[];
+  resultHandles: string[];
+  rejected: AlignRejectedTarget[];
+  pointPairCount: 1 | 2;
+  scaleToFit: boolean;
+  angleRad: number;
+  scaleFactor: number;
+  translation: CadPoint2;
+  noChangeHandles: string[];
+}
+
+export interface AlignCommandDefinition {
+  id: "ALIGN";
+  aliases: readonly string[];
+  execute(document: KDrawDocumentV1, args: AlignCommandArgs): AlignCommandResult;
+}
+
+export interface MatchPropertiesCommandDefinition {
+  id: "MATCHPROP";
+  aliases: readonly string[];
+  execute(document: KDrawDocumentV1, args: MatchPropertiesArgs): MatchPropertiesResult;
+}
+
 export interface FilletPairPick {
   firstHandle: string;
   firstSegment?: number;
@@ -614,6 +710,33 @@ export function parseBreakTargetPicks(input: string): BreakTargetPick[] {
     return secondToken === "@"
       ? { handle, firstPoint, mode: "at-point" }
       : { handle, firstPoint, secondPoint: parseCartesianPoint(secondToken), mode: "two-point" };
+  });
+}
+
+/** Parses `handle@pickX,pickY` and Dynamic `handle@pickX,pickY>targetX,targetY` entries. */
+export function parseLengthenTargetPicks(input: string, mode: LengthenMode): LengthenTargetPick[] {
+  const tokens = input.split(/[;\r\n]+/u).map((token) => token.trim()).filter(Boolean);
+  if (tokens.length === 0) throw new CadCommandInputError("LENGTHEN requires at least one target endpoint pick.");
+  return tokens.map((token) => {
+    const at = token.indexOf("@");
+    const arrow = token.indexOf(">", at + 1);
+    if (at <= 0 || at === token.length - 1) {
+      throw new CadCommandInputError("LENGTHEN targets must use handle@pickX,pickY or Dynamic handle@pickX,pickY>targetX,targetY format.");
+    }
+    const handle = token.slice(0, at).trim();
+    if (!handle || /\s/u.test(handle)) throw new CadCommandInputError("LENGTHEN target handle is invalid.");
+    if (mode === "dynamic") {
+      if (arrow <= at + 1 || arrow === token.length - 1) {
+        throw new CadCommandInputError("Dynamic LENGTHEN requires handle@pickX,pickY>targetX,targetY.");
+      }
+      return {
+        handle,
+        pickPoint: parseCartesianPoint(token.slice(at + 1, arrow)),
+        dynamicPoint: parseCartesianPoint(token.slice(arrow + 1)),
+      };
+    }
+    if (arrow >= 0) throw new CadCommandInputError("Only Dynamic LENGTHEN accepts a target point after >.");
+    return { handle, pickPoint: parseCartesianPoint(token.slice(at + 1)) };
   });
 }
 
@@ -1925,6 +2048,154 @@ export function executeStretch(document: KDrawDocumentV1, args: StretchCommandAr
   };
 }
 
+/** Executes an ordered LENGTHEN Multiple sequence as one immutable Undo operation. */
+export function executeLengthen(document: KDrawDocumentV1, args: LengthenCommandArgs): LengthenCommandResult {
+  if (args.targets.length === 0) throw new CadCommandInputError("LENGTHEN requires at least one target.");
+  const measurement = args.measurement ?? "length";
+  if (measurement === "angle" && args.mode !== "delta" && args.mode !== "total") {
+    throw new CadCommandInputError("LENGTHEN Angle is available only for Delta or Total.");
+  }
+  if (args.mode !== "dynamic") {
+    if (!Number.isFinite(args.value)) throw new CadCommandInputError("LENGTHEN value must be finite.");
+    if ((args.mode === "percent" || args.mode === "total") && !(args.value! > 0)) {
+      throw new CadCommandInputError(`LENGTHEN ${args.mode} value must be greater than zero.`);
+    }
+  }
+  const layers = new Map(document.layers.map((layer) => [layer.id, layer]));
+  const original = new Map(document.entities.map((entity) => [entity.handle, entity]));
+  const working = new Map(document.entities.map((entity) => [entity.handle, structuredClone(entity)]));
+  const touched = new Set<string>();
+  const sourceHandles: string[] = [];
+  const rejected: LengthenRejectedTarget[] = [];
+  const steps: LengthenCommandStep[] = [];
+
+  args.targets.forEach((target, targetIndex) => {
+    assertFinitePoint(`LENGTHEN target ${targetIndex + 1} pick point`, target.pickPoint);
+    const entity = working.get(target.handle);
+    if (!entity) { rejected.push({ handle: target.handle, targetIndex, reason: "missing" }); return; }
+    if (layers.get(entity.layerId)?.locked) { rejected.push({ handle: target.handle, targetIndex, reason: "locked-layer" }); return; }
+    let specification: LengthenSpecification;
+    if (args.mode === "dynamic") {
+      if (!target.dynamicPoint) { rejected.push({ handle: target.handle, targetIndex, reason: "missing-dynamic-point" }); return; }
+      assertFinitePoint(`LENGTHEN target ${targetIndex + 1} dynamic point`, target.dynamicPoint);
+      specification = { mode: "dynamic", point: target.dynamicPoint };
+    } else {
+      specification = { mode: args.mode, value: args.value!, ...(args.mode === "percent" ? {} : { measurement }) } as LengthenSpecification;
+    }
+    const geometry = lengthenCadEntity(entity, target.pickPoint, specification);
+    if (!geometry.entity || !geometry.endpoint || geometry.oldLength === null || geometry.newLength === null) {
+      rejected.push({ handle: target.handle, targetIndex, reason: geometry.reason ?? "invalid-result" });
+      return;
+    }
+    working.set(target.handle, geometry.entity);
+    touched.add(target.handle);
+    if (!sourceHandles.includes(target.handle)) sourceHandles.push(target.handle);
+    steps.push({
+      handle: target.handle,
+      targetIndex,
+      endpoint: geometry.endpoint,
+      oldLength: geometry.oldLength,
+      newLength: geometry.newLength,
+      oldIncludedAngleRad: geometry.oldIncludedAngleRad,
+      newIncludedAngleRad: geometry.newIncludedAngleRad,
+    });
+  });
+
+  const changes: EntityChange[] = [...touched].map((handle) => ({ type: "put", entity: structuredClone(working.get(handle)!) }));
+  return {
+    changes,
+    sourceHandles,
+    resultHandles: [...sourceHandles],
+    rejected,
+    steps,
+    mode: args.mode,
+    measurement,
+    value: args.mode === "dynamic" ? null : args.value!,
+    multiple: args.targets.length > 1,
+  };
+}
+
+/**
+ * Executes the fixed 2D portion of AutoCAD ALIGN. One point pair translates;
+ * two pairs additionally rotate and optionally apply one uniform scale.
+ */
+export function executeAlign(document: KDrawDocumentV1, args: AlignCommandArgs): AlignCommandResult {
+  if (args.pointPairs.length !== 1 && args.pointPairs.length !== 2) {
+    throw new CadCommandInputError("2D ALIGN requires one or two source/destination point pairs.");
+  }
+  if (args.targetHandles.length === 0) throw new CadCommandInputError("ALIGN requires at least one target.");
+  args.pointPairs.forEach((pair, index) => {
+    assertFinitePoint(`ALIGN source point ${index + 1}`, pair.sourcePoint);
+    assertFinitePoint(`ALIGN destination point ${index + 1}`, pair.destinationPoint);
+  });
+
+  const first = args.pointPairs[0];
+  const translation = {
+    x: first.destinationPoint.x - first.sourcePoint.x,
+    y: first.destinationPoint.y - first.sourcePoint.y,
+  };
+  let angleRad = 0;
+  let scaleFactor = 1;
+  if (args.pointPairs.length === 2) {
+    const second = args.pointPairs[1];
+    const sourceVector = {
+      x: second.sourcePoint.x - first.sourcePoint.x,
+      y: second.sourcePoint.y - first.sourcePoint.y,
+    };
+    const destinationVector = {
+      x: second.destinationPoint.x - first.destinationPoint.x,
+      y: second.destinationPoint.y - first.destinationPoint.y,
+    };
+    const sourceLength = Math.hypot(sourceVector.x, sourceVector.y);
+    const destinationLength = Math.hypot(destinationVector.x, destinationVector.y);
+    if (!(sourceLength > 1e-12)) throw new CadCommandInputError("ALIGN source points must be distinct.");
+    if (!(destinationLength > 1e-12)) throw new CadCommandInputError("ALIGN destination points must be distinct.");
+    angleRad = Math.atan2(destinationVector.y, destinationVector.x) - Math.atan2(sourceVector.y, sourceVector.x);
+    scaleFactor = args.scaleToFit ? destinationLength / sourceLength : 1;
+    if (!Number.isFinite(scaleFactor) || !(scaleFactor > 0)) throw new CadCommandInputError("ALIGN scale factor must be finite and greater than zero.");
+  }
+
+  const entities = new Map(document.entities.map((entity) => [entity.handle, entity]));
+  const lockedLayers = new Set(document.layers.filter((layer) => layer.locked).map((layer) => layer.id));
+  const requested = [...new Set(args.targetHandles.map((handle) => handle.trim()).filter(Boolean))];
+  const changes: EntityChange[] = [];
+  const sourceHandles: string[] = [];
+  const rejected: AlignRejectedTarget[] = [];
+  const noChangeHandles: string[] = [];
+
+  for (const handle of requested) {
+    const entity = entities.get(handle);
+    if (!entity) { rejected.push({ handle, reason: "missing" }); continue; }
+    if (lockedLayers.has(entity.layerId)) { rejected.push({ handle, reason: "locked-layer" }); continue; }
+    // Capability-check even an identity ALIGN so unsupported proxy geometry
+    // cannot be misreported as a successful no-op.
+    let aligned: CadEntity | null = translateCadEntity(entity, { x: 0, y: 0 });
+    if (aligned && scaleFactor !== 1) aligned = scaleCadEntity(aligned, first.sourcePoint, scaleFactor);
+    if (aligned && angleRad !== 0) aligned = rotateCadEntity(aligned, first.sourcePoint, angleRad);
+    if (aligned && (translation.x !== 0 || translation.y !== 0)) aligned = translateCadEntity(aligned, translation);
+    if (!aligned) { rejected.push({ handle, reason: "unsupported-entity" }); continue; }
+    sourceHandles.push(handle);
+    if (JSON.stringify(aligned) === JSON.stringify(entity)) {
+      noChangeHandles.push(handle);
+      continue;
+    }
+    changes.push({ type: "put", entity: aligned });
+  }
+
+  return {
+    changes,
+    sourceHandles,
+    resultHandles: changes.flatMap((change) => change.type === "put" ? [change.entity.handle] : []),
+    rejected,
+    pointPairCount: args.pointPairs.length,
+    scaleToFit: args.pointPairs.length === 2 && args.scaleToFit,
+    angleRad,
+    scaleFactor,
+    translation,
+    noChangeHandles,
+  };
+}
+
 /** Executes an ordered BREAK sequence as one immutable document operation. */
 export function executeBreak(document: KDrawDocumentV1, args: BreakCommandArgs): BreakCommandResult {
   if (args.targets.length === 0) throw new CadCommandInputError("BREAK requires at least one target.");
@@ -2431,9 +2702,27 @@ const stretchCommand: StretchCommandDefinition = Object.freeze({
   execute: executeStretch,
 });
 
-export const cadCommandRegistry = Object.freeze([rectangleCommand, eraseCommand, moveCommand, copyCommand, rotateCommand, scaleCommand, mirrorCommand, offsetCommand, trimCommand, extendCommand, filletCommand, chamferCommand, breakCommand, stretchCommand]);
+const lengthenCommand: LengthenCommandDefinition = Object.freeze({
+  id: "LENGTHEN",
+  aliases: Object.freeze(["LEN", "LENGTHEN"]),
+  execute: executeLengthen,
+});
 
-export function resolveCadCommand(token: string): RectangleCommandDefinition | EraseCommandDefinition | MoveCommandDefinition | CopyCommandDefinition | RotateCommandDefinition | ScaleCommandDefinition | MirrorCommandDefinition | OffsetCommandDefinition | TrimCommandDefinition | ExtendCommandDefinition | FilletCommandDefinition | ChamferCommandDefinition | BreakCommandDefinition | StretchCommandDefinition | null {
+const alignCommand: AlignCommandDefinition = Object.freeze({
+  id: "ALIGN",
+  aliases: Object.freeze(["AL", "ALIGN"]),
+  execute: executeAlign,
+});
+
+const matchPropertiesCommand: MatchPropertiesCommandDefinition = Object.freeze({
+  id: "MATCHPROP",
+  aliases: Object.freeze(["MA", "MATCHPROP", "MATCHPROPERTIES"]),
+  execute: executeMatchProperties,
+});
+
+export const cadCommandRegistry = Object.freeze([rectangleCommand, eraseCommand, moveCommand, copyCommand, rotateCommand, scaleCommand, mirrorCommand, offsetCommand, trimCommand, extendCommand, filletCommand, chamferCommand, breakCommand, stretchCommand, lengthenCommand, alignCommand, matchPropertiesCommand]);
+
+export function resolveCadCommand(token: string): RectangleCommandDefinition | EraseCommandDefinition | MoveCommandDefinition | CopyCommandDefinition | RotateCommandDefinition | ScaleCommandDefinition | MirrorCommandDefinition | OffsetCommandDefinition | TrimCommandDefinition | ExtendCommandDefinition | FilletCommandDefinition | ChamferCommandDefinition | BreakCommandDefinition | StretchCommandDefinition | LengthenCommandDefinition | AlignCommandDefinition | MatchPropertiesCommandDefinition | null {
   const normalized = token.trim().toUpperCase();
   return cadCommandRegistry.find((command) => command.aliases.includes(normalized)) ?? null;
 }

@@ -27,4 +27,13 @@ describe("F-101 AutoCAD owned-process ratchet", () => {
     expect(runner).toMatch(/finally\s*\{\s*const cleanupErrors = \[\];[\s\S]*!await terminateOwnedProcess\(ownership\)[\s\S]*!await restoredProcessSet\(\)[\s\S]*AggregateError\(primaryError \? \[primaryError, \.\.\.cleanupErrors\]/gu);
     expect(runner).not.toContain("waitForNoResidualAcadProcesses");
   });
+
+  it("retries transient null viewport COM values before indexing coordinates", async () => {
+    const matrix = await readFile(new URL("f101-viewport-lock.ps1", import.meta.url), "utf8");
+    expect(matrix).toContain("function Invoke-NonNullCom");
+    expect(matrix).toContain('$viewport = Invoke-NonNullCom { $Document.HandleToObject($Handle) } "viewport handle $Handle"');
+    expect(matrix).toContain('target = Get-Point2 (Invoke-NonNullCom { $viewport.Target } "viewport $Handle target")');
+    expect(matrix).toContain("viewCenter = Get-Point2 (Invoke-NonNullCom { $Document.GetVariable('VIEWCTR') } 'VIEWCTR')");
+    expect(matrix).not.toContain("target = Get-Point2 (Invoke-ComRetry { $viewport.Target })");
+  });
 });

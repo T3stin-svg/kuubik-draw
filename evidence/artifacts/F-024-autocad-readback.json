@@ -4,19 +4,19 @@
   "benchmark": "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
   "engine": "Autodesk AutoCAD 2024 desktop COM",
   "engineVersion": "24.3s (LMS Tech)",
-  "automationProcessId": 33520,
+  "automationProcessId": 24132,
   "automationProcessOwned": true,
   "installedUpdateIdentity": {
     "displayName": "Autodesk AutoCAD 2024.1.2 Update",
     "displayVersion": "24.3.152.0"
   },
   "automationProcessIdentity": {
-    "processId": 33520,
+    "processId": 24132,
     "executableName": "acad.exe",
     "executableSha256": "0570749def2fa8dcfb62df1a6671f44245a9ef740dd61d9d0f9110794a76e70e",
     "fileVersion": "R24.3.152.0.0",
     "productVersion": "R24.3.152.0.0",
-    "startTimeSha256": "51fb77fde4846a3dd3f87253bf8e3fa3bb3f8097e40a7a40eb4266e981ee06a0"
+    "startTimeSha256": "8e0a19514f971c4189b88dbfbb6b57ecfc0c6ad4b1951528f22ad995b8de93da"
   },
   "checks": {
     "pairTrim": true,
@@ -2123,8 +2123,8 @@
       }
     ]
   },
-  "dxfOutputSha256": "f05a4d0d511d2cb7a4f7d98ec1ea19cdb4b8ef9b0eeb69f598e24ca8a56f93f1",
-  "parametricDxfOutputSha256": "b64c3c93e6d7a2a6813dcbefaa4e616977c356d224c274dace7414ecee93e0c9",
+  "dxfOutputSha256": "c45d1f8b1cfc0d65351b9e505499caa094a8edb1ecbee591b8963d673d715a45",
+  "parametricDxfOutputSha256": "d410779cceebe4a1959a48f4b7783cd25db70d5d57a30f1022c23588688a5a4d",
   "cmdNamesAfter": "",
   "status": "PASS",
   "userDocument": {
@@ -2134,10 +2134,11 @@
   "automationProcessTerminated": true,
   "processSetRestored": true,
   "preExistingProcessIds": [
-    11276
+    28304,
+    33160
   ],
   "dxfReadback": {
-    "sha256": "f05a4d0d511d2cb7a4f7d98ec1ea19cdb4b8ef9b0eeb69f598e24ca8a56f93f1",
+    "sha256": "c45d1f8b1cfc0d65351b9e505499caa094a8edb1ecbee591b8963d673d715a45",
     "layerTypes": {
       "F024_PAIR": {
         "LINE": 2,
@@ -3454,7 +3455,7 @@
     }
   },
   "parametricDxfReadback": {
-    "sha256": "b64c3c93e6d7a2a6813dcbefaa4e616977c356d224c274dace7414ecee93e0c9",
+    "sha256": "d410779cceebe4a1959a48f4b7783cd25db70d5d57a30f1022c23588688a5a4d",
     "layerTypes": {
       "0": {
         "LINE": 2,
@@ -3663,5 +3664,5 @@
   },
   "matrixScriptSha256": "44136e39408aa89a8e5ae69df620f88f29fcd8ea2b3525b9595941d7dc1794eb",
   "runnerSha256": "6eb484b4664661fbe81a6e4635b7985179106883b3b43f17bc22f58110f890b0",
-  "observedAt": "2026-08-30T02:51:55.653Z"
+  "observedAt": "2026-08-30T15:46:58.553Z"
 }

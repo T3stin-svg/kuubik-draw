@@ -75,8 +75,8 @@ function Set-RotationAndVerify {
   Invoke-ComRetry { $Entity.Rotation = $Expected; $Entity.Update() } | Out-Null
   Invoke-ComRetry { $Document.Regen(1) } | Out-Null
   Wait-AcadIdle $Document
+  $resolved = Get-EntityByHandle $Document $handle
   return Invoke-ComRetry {
-    $resolved = $Document.HandleToObject($handle)
     $actual = [double]$resolved.Rotation
     if ([Math]::Abs($actual - $Expected) -ge 0.000001) {
       throw "AutoCAD returned stale rotation $actual for handle $handle; expected $Expected."
@@ -101,8 +101,8 @@ function Set-CommonPropertiesAndVerify {
   } | Out-Null
   Invoke-ComRetry { $Document.Regen(1) } | Out-Null
   Wait-AcadIdle $Document
+  $resolved = Get-EntityByHandle $Document $handle
   return Invoke-ComRetry {
-    $resolved = $Document.HandleToObject($handle)
     $actualLayer = [string]$resolved.Layer
     $actualColor = [int]$resolved.Color
     $actualLinetype = [string]$resolved.Linetype

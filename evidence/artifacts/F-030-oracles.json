@@ -1,0 +1,229 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-030",
+  "certificationAuthority": false,
+  "generatedAt": "2026-08-30T13:58:52.863Z",
+  "sourceArtifact": "evidence/artifacts/F-030-kuubik.dxf",
+  "sourceArtifactSha256": "0a3bfd4ae65290b77b5924cedcb6170ae1c76b820d5296edbe7f2bab0e02518b",
+  "readbackArtifact": "evidence/artifacts/F-030-independent-readback.json",
+  "readbackArtifactSha256": "b8aa86f8607047a420286ab97ba0a3e7b3f6bcc043de37d7e60209db68f519ab",
+  "fixture": {
+    "lines": [
+      {
+        "id": "10",
+        "start": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        "end": {
+          "x": 100,
+          "y": 0,
+          "z": 0
+        }
+      },
+      {
+        "id": "20",
+        "start": {
+          "x": 10,
+          "y": 20,
+          "z": 0
+        },
+        "end": {
+          "x": 70,
+          "y": 20,
+          "z": 0
+        }
+      },
+      {
+        "id": "40",
+        "start": {
+          "x": 0,
+          "y": 200,
+          "z": 0
+        },
+        "end": {
+          "x": 100,
+          "y": 200,
+          "z": 0
+        }
+      }
+    ],
+    "circles": [
+      {
+        "id": "30",
+        "center": {
+          "x": 200,
+          "y": 100,
+          "z": 0
+        },
+        "radius": 30
+      }
+    ]
+  },
+  "implementationSha256": {
+    "tools/oracles/freecad-f030-headless.py": "f810662aa9fe92a5a3eeec1b8f30a161dc36a1b2bc63c995f6fac7691f2ec914",
+    "tools/oracles/network-isolation.mjs": "3fb18e9ad145b76e53ed241a0a529bb2ccd4eabe784b04e915d77cdd9203d415",
+    "tools/oracles/probe-tools.mjs": "86b118cdf03da095214901d4f5f3b4460d9994b1280ae991904aedb0b992883e",
+    "tools/oracles/run-fixtures.mjs": "0a97574ac92ef761f092b2c2d2990f5401a652b8f261b243c9724f49f4fa2800",
+    "tools/oracles/run-f030-oracles.mjs": "dd2fc03417bf668b9f1a469d196c679594374a26c85ce5c42181c647dc322500"
+  },
+  "runnerSha256": "dd2fc03417bf668b9f1a469d196c679594374a26c85ce5c42181c647dc322500",
+  "freeCadScriptSha256": "f810662aa9fe92a5a3eeec1b8f30a161dc36a1b2bc63c995f6fac7691f2ec914",
+  "networkIsolation": {
+    "proven": false,
+    "reason": "A protected signed network-isolation attestation was not configured."
+  },
+  "reports": [
+    {
+      "oracle": "librecad",
+      "expected": "2.2.1.5",
+      "status": "FIXTURE_PASS_NOT_NETWORK_ISOLATED",
+      "versionMatchesPin": true,
+      "executableSha256MatchesPin": true,
+      "certificationAuthority": false,
+      "executableSha256": "9b5ec58c40c9e88b2fc110678f03c5b071191cd8dd79b3c68d6620b269c03773",
+      "expectedExecutableSha256": "9b5ec58c40c9e88b2fc110678f03c5b071191cd8dd79b3c68d6620b269c03773",
+      "versionOutput": "LibreCAD v2.2.1.5",
+      "sandbox": {
+        "disposableDirectory": true,
+        "inputPolicy": "synthetic-generated-F-030-output-only",
+        "networkIsolationProven": false,
+        "networkPolicy": "not isolated; dead-proxy variables are defense in depth only",
+        "timeoutMs": 30000,
+        "oneProcessPerFixture": true
+      },
+      "fixtureReport": {
+        "fixture": "F-030 production MATCHPROP DXF rendered by LibreCAD 2.2.1.5",
+        "inputSha256": "0a3bfd4ae65290b77b5924cedcb6170ae1c76b820d5296edbe7f2bab0e02518b",
+        "output": {
+          "bytes": 1470,
+          "sha256": "8ef504c22e2e2f6278cc4a6bb5002d514144ebdba7ed16ba4c61cd1ed1b4ff39",
+          "hasPdfHeader": true,
+          "hasEof": true,
+          "pages": 1,
+          "imageXObjects": 0,
+          "mediaBox": [
+            0,
+            0,
+            595,
+            842
+          ],
+          "vectorOperators": {
+            "decodedStreams": 1,
+            "moveToOperators": 5,
+            "lineToOperators": 8,
+            "cubicCurveOperators": 8,
+            "paintedPathOperators": 4,
+            "geometry": null
+          }
+        },
+        "checks": {
+          "exitCodeZero": true,
+          "exactProductionDxfInput": true,
+          "validSinglePageVectorPdf": true,
+          "vectorGeometryPresent": true
+        }
+      }
+    },
+    {
+      "oracle": "freecad",
+      "expected": "1.1.3",
+      "status": "FIXTURE_PASS_NOT_NETWORK_ISOLATED",
+      "versionMatchesPin": true,
+      "executableSha256MatchesPin": true,
+      "certificationAuthority": false,
+      "executableSha256": "b5551d26050ed64981c5767729bb35900fd4975fa7fd31714c17dd714b6fd44c",
+      "expectedExecutableSha256": "b5551d26050ed64981c5767729bb35900fd4975fa7fd31714c17dd714b6fd44c",
+      "versionOutput": "FreeCAD 1.1.3 Revision: 20260725 (Git shallow)",
+      "sandbox": {
+        "disposableDirectory": true,
+        "inputPolicy": "synthetic-generated-F-030-output-only",
+        "networkIsolationProven": false,
+        "networkPolicy": "not isolated; dead-proxy variables are defense in depth only",
+        "timeoutMs": 30000,
+        "oneProcessPerFixture": true
+      },
+      "fixtureReport": {
+        "fixture": "F-030 geometry-preserving line/circle outputs independently rebuilt by FreeCAD 1.1.3/OCCT",
+        "inputSha256": "098e4f7933c7be37f7987b1ebe34b2982b1b2705715c9feb16d18aae9653d1a8",
+        "output": {
+          "certificationAuthority": false,
+          "freecadVersion": [
+            "1",
+            "1",
+            "3",
+            "20260725 (Git shallow)",
+            "Unknown",
+            "2026/07/25 04:52:02",
+            "grafted,grafted",
+            "145529fe741292ff0b3977a01195bf0247425794"
+          ],
+          "result": {
+            "circles": [
+              {
+                "center": {
+                  "x": 200,
+                  "y": 100,
+                  "z": 0
+                },
+                "id": "30",
+                "length": 188.49555921538757,
+                "radius": 30
+              }
+            ],
+            "lines": [
+              {
+                "end": {
+                  "x": 100,
+                  "y": 0
+                },
+                "id": "10",
+                "length": 100,
+                "start": {
+                  "x": 0,
+                  "y": 0
+                }
+              },
+              {
+                "end": {
+                  "x": 70,
+                  "y": 20
+                },
+                "id": "20",
+                "length": 60,
+                "start": {
+                  "x": 10,
+                  "y": 20
+                }
+              },
+              {
+                "end": {
+                  "x": 100,
+                  "y": 200
+                },
+                "id": "40",
+                "length": 100,
+                "start": {
+                  "x": 0,
+                  "y": 200
+                }
+              }
+            ]
+          },
+          "status": "PASS"
+        },
+        "checks": {
+          "exitCodeZero": true,
+          "statusPass": true,
+          "notCertificationAuthority": true,
+          "exactPinnedVersion": true,
+          "exactPinnedCommit": true,
+          "everyLineReconstructed": true,
+          "everyCircleReconstructed": true
+        }
+      }
+    }
+  ],
+  "status": "SECONDARY_ORACLE_REPORT_COMPLETE"
+}

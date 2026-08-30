@@ -3,7 +3,7 @@
   "rowId": "F-109",
   "authority": "autocad-2024.1.2-live",
   "status": "PASS",
-  "observedAt": "2026-08-29T23:08:14.487Z",
+  "observedAt": "2026-08-30T15:37:38.768Z",
   "sourceSha256": "28de58b3aa9e7a2c44bcf4d17b297b1cc64b08fbbbea448a33720b0d14c601ac",
   "workflow": "Open the exact Kuubik production DXF in AutoCAD 2024 Core Console and a separately owned visible desktop AutoCAD process, read native entities/tables, close without saving, and restore the prior process set.",
   "core": {
@@ -347,7 +347,7 @@
         4627.6398
       ]
     },
-    "observedAt": "2026-08-29T23:08:14.476Z",
+    "observedAt": "2026-08-30T15:37:38.758Z",
     "status": "PASS"
   },
   "desktop": {
@@ -356,10 +356,10 @@
     "benchmark": "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
     "engine": "Autodesk AutoCAD 2024 desktop COM",
     "engineVersion": "24.3s (LMS Tech)",
-    "automationProcessId": 2252,
+    "automationProcessId": 3456,
     "automationProcessOwned": true,
     "sourcePath": "F-109-production.dxf",
-    "documentName": "",
+    "documentName": "F-109-production.dxf",
     "units": 4,
     "totalEntities": 40,
     "entities": {
@@ -1041,7 +1041,7 @@
         "transparency": "",
         "pattern": "SOLID",
         "associative": false,
-        "loopCount": 1
+        "loopCount": 0
       },
       "1301": {
         "type": "AcDbHatch",
@@ -1132,7 +1132,7 @@
       "1500": {
         "type": "AcDbAlignedDimension",
         "layer": "JOONED",
-        "color": 0,
+        "color": 256,
         "trueColor": 0,
         "linetype": "ByLayer",
         "lineweight": -1,
@@ -1323,9 +1323,10 @@
     "automationProcessTerminated": true,
     "processSetRestored": true,
     "preExistingProcessIds": [
-      11276
+      28304,
+      33160
     ],
-    "observedAt": "2026-08-29T23:08:03.455Z"
+    "observedAt": "2026-08-30T15:37:27.553Z"
   },
   "palette": {
     "schemaVersion": 1,
@@ -1333,7 +1334,7 @@
     "benchmark": "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
     "engine": "Autodesk AutoCAD 2024 desktop COM AcCmColor.24",
     "engineVersion": "24.3s (LMS Tech)",
-    "automationProcessId": 34280,
+    "automationProcessId": 27704,
     "automationProcessOwned": true,
     "indices": "1..255",
     "palette": [
@@ -1607,24 +1608,25 @@
     "automationProcessTerminated": true,
     "processSetRestored": true,
     "preExistingProcessIds": [
-      11276
+      28304,
+      33160
     ],
     "implementationSha256": {
       "aciPalette": "a36541fb69f48c92f8e35ce4dfbd961ff870b18241e4a05712a08484bc03553e",
       "autocadAciMatrix": "b09d1a34decf15946d22475e1f251952a3d02465b401fa67ba309c33b5efd9ad",
       "autocadAciRunner": "9ad5fbb2fe47d23477e3777e0275484351c70eb8d33caee3b49496531f59c889"
     },
-    "observedAt": "2026-08-29T23:08:13.544Z"
+    "observedAt": "2026-08-30T15:37:37.836Z"
   },
   "evidenceSha256": {
-    "core": "54283392a63f3cf3a69417a820ea8c3e72dfea344af160914c2de0f658ce8ecd",
-    "desktop": "7127f4d9e27894cad074a6d51fc52c287dba3dcd11e148c5a35da2240e460f77",
-    "palette": "8d5eb0f8602ba7c7d71b8a0287bd5a8e57917718c7de4c90a96396ca34b0285b"
+    "core": "d147450b5d71b37fd4abb568d0ea8f55a20b9c86597a90f7c08c1205c4ce0f93",
+    "desktop": "b62abe54b822b4cb0c4c718c3d45ece201927aa805d929155b83b2fa5598584c",
+    "palette": "2b11f0f5bc64ef9064d75d4f74e59fc901fd7c02a3f1ef718d212191cbe33e15"
   },
   "implementationSha256": {
     "autocadAll": "c5a9efed9c33909099b04278e88316ca13666f851c5b8100db791016543d7558",
     "crossChecker": "c9720f6e99a80b5c8ea4f2f13a09d17bfd13c630c32cfb4bf91be8c2e236a617",
-    "packageLock": "c47743da8743230f2212f3c3ed34153295ef1bcd3865a07b4d743fd1ec544a7a",
+    "packageLock": "da1dcf889d8fbf35f6a8e4403b29ed34666b13176a2b98307a0c23e25fa06a53",
     "semanticNormalizer": "c5340b6853042aaebbe7fc8eec63271a62ce12bc0368598341b2518602d364e5",
     "autocadScript": "7d75185bc666b3214dae4751915b409d0a10c0b6621b85608de55be8935f7623",
     "autocadCore": "7940e529cd8ab5671cdcdc2fafb9294e8b69e3e984a927fd67c1d802cdd91e9b",

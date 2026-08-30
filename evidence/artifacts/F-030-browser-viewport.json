@@ -1,0 +1,257 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-030",
+  "status": "PASS",
+  "source": {
+    "sourceViewport": {
+      "id": "match-source",
+      "center": {
+        "x": 80,
+        "y": 90
+      },
+      "width": 100,
+      "height": 60,
+      "viewCenter": {
+        "x": 0,
+        "y": 0
+      },
+      "viewHeight": 1200,
+      "twistAngleRad": 0.1,
+      "locked": true,
+      "on": false,
+      "shadePlot": "wireframe",
+      "snapEnabled": true,
+      "gridEnabled": true,
+      "ucsIconVisible": false,
+      "ucsIconAtOrigin": false,
+      "clipBoundary": [
+        {
+          "x": 30,
+          "y": 60
+        },
+        {
+          "x": 130,
+          "y": 60
+        },
+        {
+          "x": 80,
+          "y": 120
+        }
+      ],
+      "layerOverrides": {
+        "0": {
+          "frozen": true,
+          "color": "#ff0000"
+        }
+      }
+    },
+    "targetViewport": {
+      "id": "match-target",
+      "center": {
+        "x": 280,
+        "y": 120
+      },
+      "width": 120,
+      "height": 80,
+      "viewCenter": {
+        "x": 2000,
+        "y": -500
+      },
+      "viewHeight": 800,
+      "twistAngleRad": 0.5,
+      "locked": false,
+      "on": true,
+      "shadePlot": "hidden",
+      "snapEnabled": false,
+      "gridEnabled": false,
+      "ucsIconVisible": true,
+      "ucsIconAtOrigin": true,
+      "clipBoundary": [
+        {
+          "x": 220,
+          "y": 80
+        },
+        {
+          "x": 340,
+          "y": 80
+        },
+        {
+          "x": 340,
+          "y": 160
+        },
+        {
+          "x": 220,
+          "y": 160
+        }
+      ],
+      "layerOverrides": {
+        "0": {
+          "frozen": false,
+          "color": "#00ff00"
+        }
+      }
+    }
+  },
+  "committed": {
+    "id": "match-target",
+    "center": {
+      "x": 280,
+      "y": 120
+    },
+    "width": 120,
+    "height": 80,
+    "viewCenter": {
+      "x": 2000,
+      "y": -500
+    },
+    "viewHeight": 1600,
+    "twistAngleRad": 0.5,
+    "locked": true,
+    "on": false,
+    "shadePlot": "wireframe",
+    "snapEnabled": true,
+    "gridEnabled": true,
+    "ucsIconVisible": false,
+    "ucsIconAtOrigin": false,
+    "clipBoundary": [
+      {
+        "x": 220,
+        "y": 80
+      },
+      {
+        "x": 340,
+        "y": 80
+      },
+      {
+        "x": 340,
+        "y": 160
+      },
+      {
+        "x": 220,
+        "y": 160
+      }
+    ],
+    "layerOverrides": {
+      "0": {
+        "frozen": false,
+        "color": "#00ff00"
+      }
+    }
+  },
+  "operation": {
+    "opId": "60e49387-11aa-4be7-a5fa-ec6c47b732e0",
+    "baseRevision": 0,
+    "commandId": "MATCHPROP",
+    "args": {
+      "kind": "viewport",
+      "source": {
+        "layoutId": "layout-f030-viewports",
+        "viewportId": "match-source"
+      },
+      "targets": [
+        {
+          "layoutId": "layout-f030-viewports",
+          "viewportId": "match-target"
+        }
+      ],
+      "settings": {
+        "viewport": true
+      }
+    },
+    "targetHandles": [],
+    "resultHandles": []
+  },
+  "undoRestored": {
+    "id": "match-target",
+    "center": {
+      "x": 280,
+      "y": 120
+    },
+    "width": 120,
+    "height": 80,
+    "viewCenter": {
+      "x": 2000,
+      "y": -500
+    },
+    "viewHeight": 800,
+    "twistAngleRad": 0.5,
+    "locked": false,
+    "on": true,
+    "shadePlot": "hidden",
+    "snapEnabled": false,
+    "gridEnabled": false,
+    "ucsIconVisible": true,
+    "ucsIconAtOrigin": true,
+    "clipBoundary": [
+      {
+        "x": 220,
+        "y": 80
+      },
+      {
+        "x": 340,
+        "y": 80
+      },
+      {
+        "x": 340,
+        "y": 160
+      },
+      {
+        "x": 220,
+        "y": 160
+      }
+    ],
+    "layerOverrides": {
+      "0": {
+        "frozen": false,
+        "color": "#00ff00"
+      }
+    }
+  },
+  "redone": {
+    "id": "match-target",
+    "center": {
+      "x": 280,
+      "y": 120
+    },
+    "width": 120,
+    "height": 80,
+    "viewCenter": {
+      "x": 2000,
+      "y": -500
+    },
+    "viewHeight": 1600,
+    "twistAngleRad": 0.5,
+    "locked": true,
+    "on": false,
+    "shadePlot": "wireframe",
+    "snapEnabled": true,
+    "gridEnabled": true,
+    "ucsIconVisible": false,
+    "ucsIconAtOrigin": false,
+    "clipBoundary": [
+      {
+        "x": 220,
+        "y": 80
+      },
+      {
+        "x": 340,
+        "y": 80
+      },
+      {
+        "x": 340,
+        "y": 160
+      },
+      {
+        "x": 220,
+        "y": 160
+      }
+    ],
+    "layerOverrides": {
+      "0": {
+        "frozen": false,
+        "color": "#00ff00"
+      }
+    }
+  },
+  "consoleErrors": []
+}

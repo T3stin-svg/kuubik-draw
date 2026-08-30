@@ -4,8 +4,8 @@
   "kind": "autocad",
   "authority": "autocad-2024.1.2-live",
   "status": "PASS",
-  "artifactSha256": "984f2467a953904480db1cc7a473343f9e1f63bc398d008524d8c2b8ed728d26",
-  "observedAt": "2026-08-30T09:45:41.886Z",
+  "artifactSha256": "879be7531123b0aec5dbf544bd7bdf4611c8d34c4e1bcec63f4f6215abe1db09",
+  "observedAt": "2026-08-30T16:01:56.919Z",
   "workflow": "A newly owned blank AutoCAD 2024.1.2 desktop process runs BREAK selection-first and explicit First, off-curve projection, BREAK plus @ and BREAKATPOINT on separate fresh open ELLIPSE and rational SPLINE fixtures, directed CIRCLE breaks, ARC/ELLIPSE/open and closed LWPOLYLINE/two-point SPLINE cases, locked/off/frozen layers, unsupported targets and one atomic Undo/Redo group. Native database state and saved DXF outputs are read independently.",
   "result": "Every native check passed with exact geometry, retained and new handles, layer, colour, lineweight, linetype, polyline widths/bulges and all rational spline control points/knots/weights. Open ELLIPSE split in both single-point forms, open SPLINE remained exact in both, two-point SPLINE split correctly, and the authenticated process cleanup restored the exact pre-existing AutoCAD process set.",
   "artifact": "evidence/artifacts/F-026-autocad-readback.json"

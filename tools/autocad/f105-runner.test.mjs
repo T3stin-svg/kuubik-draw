@@ -9,7 +9,11 @@ describe("F-105 AutoCAD batch-publish ratchet", () => {
     expect(matrix).not.toMatch(/Invoke-ComRetry\s*\{\s*New-Object\s+-ComObject/gu);
     expect(matrix).toContain("function Get-StableLayoutSnapshot");
     expect(matrix).toContain("two identical exact read-backs");
-    expect(matrix).toContain("Creation is intentionally single-shot");
+    expect(matrix).toContain("function Invoke-CreateComEntityExactlyOnce");
+    expect(matrix).toContain("handle-delta read-back proves");
+    expect(matrix.match(/= Invoke-CreateComEntityExactlyOnce /gu)).toHaveLength(4);
+    expect(matrix).toContain("created multiple entities after an ambiguous COM response");
+    expect(matrix).toContain("$newHandles.Count -eq 1");
     expect(matrix.match(/\.Block\.AddText\(/gu)).toHaveLength(2);
     expect(matrix.match(/\.Block\.AddCircle\(/gu)).toHaveLength(1);
     expect(matrix.match(/\.Block\.AddLine\(/gu)).toHaveLength(1);

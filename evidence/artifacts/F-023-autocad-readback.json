@@ -4,19 +4,19 @@
   "benchmark": "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
   "engine": "Autodesk AutoCAD 2024 desktop COM",
   "engineVersion": "24.3s (LMS Tech)",
-  "automationProcessId": 30636,
+  "automationProcessId": 14780,
   "automationProcessOwned": true,
   "installedUpdateIdentity": {
     "displayName": "Autodesk AutoCAD 2024.1.2 Update",
     "displayVersion": "24.3.152.0"
   },
   "automationProcessIdentity": {
-    "processId": 30636,
+    "processId": 14780,
     "executableName": "acad.exe",
     "executableSha256": "0570749def2fa8dcfb62df1a6671f44245a9ef740dd61d9d0f9110794a76e70e",
     "fileVersion": "R24.3.152.0.0",
     "productVersion": "R24.3.152.0.0",
-    "startTimeSha256": "6bd230b05fc62c5a7e1d33d69d339273138946612bafd73a871290e0fbeaab98"
+    "startTimeSha256": "13c29236cdb699da55a3be06014126f6ebab2471b8c4fa6a38310285827cd2c5"
   },
   "options": {
     "standard": true,
@@ -766,7 +766,7 @@
           }
         }
       ],
-      "outputSha256": "a015c715ece342b607a19589ebb1388cb6ca61c519536b9a38f80643638138c3",
+      "outputSha256": "2c848e6d62d212b6b66000f8e9dc0b485f1c311150a434d3ce4c9686cfe400d0",
       "boundaryDistanceProbe": [
         {
           "boundaryX": 3.5,
@@ -1595,11 +1595,12 @@
   "automationProcessTerminated": true,
   "processSetRestored": true,
   "preExistingProcessIds": [
-    11276
+    28304,
+    33160
   ],
   "rationalSplineDxfReadback": {
     "sourceSha256": "98044dced09c4da3a3c0acec291b90267cde5205425ba2fdb2aa5e97ab14ab30",
-    "outputSha256": "a015c715ece342b607a19589ebb1388cb6ca61c519536b9a38f80643638138c3",
+    "outputSha256": "2c848e6d62d212b6b66000f8e9dc0b485f1c311150a434d3ce4c9686cfe400d0",
     "source": [
       {
         "handle": "10",
@@ -1715,5 +1716,5 @@
   "runnerSha256": "9bc2197cce12a975d669e942b5490e0240baa470150dc06a968022a81ff030dc",
   "coreRunnerSha256": "21470c868ee4f770b921b84160a99cde6ef2913c4e7d543d7ad8346b34d1ee0d",
   "coreScriptSha256": "d1e8557ec8870eafde571caf0f37fda4b5f3808ac30bd18f394a01b10180ea63",
-  "observedAt": "2026-08-30T02:49:35.293Z"
+  "observedAt": "2026-08-30T15:44:37.236Z"
 }

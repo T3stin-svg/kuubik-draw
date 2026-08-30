@@ -4,8 +4,8 @@
   "kind": "autocad",
   "authority": "autocad-2024.1.2-live",
   "status": "PASS",
-  "artifactSha256": "5279a16884d49daeffe651dd8447dbe8235a57652590ac63b7f73ac694b03112",
-  "observedAt": "2026-08-30T00:29:52.652Z",
+  "artifactSha256": "d3075c323d6ee45dbe0306a9432e71f3d97732d6c9cd88fd185a7d864abec73d",
+  "observedAt": "2026-08-30T16:06:00.233Z",
   "workflow": "An owned isolated AutoCAD 24.3 process creates an ISO A3 native PViewport, resolves 1:20 by CustomScale read-back, sets Target 1000,-500 and TwistAngle 30 degrees, then uses AutoCAD Utility.TranslateCoordinates between WCS and DisplayDCS to derive an off-center cursor anchor, the 1.1 zoom center and a rotated 80,-50 pixel pan target before applying those derived values to the native viewport, saving and reopening an anonymous DWG.",
   "result": "Native DisplayDCS projected the WCS horizontal axis to screen slope -0.5773502692, preserved normalized cursor -0.28,0.15 through 1:20 to 1:18.181818 zoom, and derived pan target 175.73095557294994,-356.766773144808 for a 1000x692.5 reference viewport; scale, target and pi/6 twist survived DWG reopen; the owned PID terminated, zero acad.exe processes remained and no DWG, BAK or PID sidecar was retained.",
   "artifact": "evidence/artifacts/F-100-autocad-readback.json"

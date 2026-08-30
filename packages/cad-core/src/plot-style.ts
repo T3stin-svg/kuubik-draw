@@ -64,11 +64,22 @@ export function assertCadAppearance(appearance: CadAppearance | undefined, label
   if (appearance.linetypeId !== undefined && (typeof appearance.linetypeId !== "string" || appearance.linetypeId.length === 0)) {
     throw new TypeError(`${label} linetype ID must be a non-empty string.`);
   }
+  if (appearance.linetypeScale !== undefined && (!Number.isFinite(appearance.linetypeScale) || appearance.linetypeScale <= 0)) {
+    throw new TypeError(`${label} linetype scale must be finite and greater than zero.`);
+  }
   if (appearance.lineweightMm !== undefined && (!Number.isFinite(appearance.lineweightMm) || appearance.lineweightMm < 0)) {
     throw new TypeError(`${label} lineweight must be finite and non-negative.`);
   }
   if (appearance.transparency !== undefined && (!Number.isFinite(appearance.transparency) || appearance.transparency < 0 || appearance.transparency > 90)) {
     throw new TypeError(`${label} transparency must be a percentage from 0 to 90.`);
+  }
+  if (appearance.thickness !== undefined && !Number.isFinite(appearance.thickness)) {
+    throw new TypeError(`${label} thickness must be finite.`);
+  }
+  for (const [name, value] of [["plot style", appearance.plotStyleId], ["material", appearance.materialId]] as const) {
+    if (value !== undefined && (typeof value !== "string" || value.length === 0)) {
+      throw new TypeError(`${label} ${name} ID must be a non-empty string.`);
+    }
   }
 }
 

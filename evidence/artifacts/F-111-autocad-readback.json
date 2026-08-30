@@ -3,7 +3,7 @@
   "rowId": "F-111",
   "authority": "autocad-2024.1.2-live",
   "status": "PASS",
-  "observedAt": "2026-08-29T23:08:53.383Z",
+  "observedAt": "2026-08-30T15:38:35.123Z",
   "sourceSha256": "28de58b3aa9e7a2c44bcf4d17b297b1cc64b08fbbbea448a33720b0d14c601ac",
   "workflow": "Open the exact Chromium second-generation DXF in AutoCAD 2024 Core Console and a separately owned visible desktop AutoCAD process, read native entities/tables, close without saving, and restore the prior process set.",
   "core": {
@@ -347,7 +347,7 @@
         4627.6398
       ]
     },
-    "observedAt": "2026-08-29T23:08:53.374Z",
+    "observedAt": "2026-08-30T15:38:35.113Z",
     "status": "PASS"
   },
   "desktop": {
@@ -356,10 +356,10 @@
     "benchmark": "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
     "engine": "Autodesk AutoCAD 2024 desktop COM",
     "engineVersion": "24.3s (LMS Tech)",
-    "automationProcessId": 24340,
+    "automationProcessId": 26796,
     "automationProcessOwned": true,
     "sourcePath": "F-111-browser-roundtrip.dxf",
-    "documentName": "F-111-browser-roundtrip.dxf",
+    "documentName": "",
     "units": 4,
     "totalEntities": 40,
     "entities": {
@@ -1323,18 +1323,19 @@
     "automationProcessTerminated": true,
     "processSetRestored": true,
     "preExistingProcessIds": [
-      11276
+      28304,
+      33160
     ],
-    "observedAt": "2026-08-29T23:08:52.140Z"
+    "observedAt": "2026-08-30T15:38:33.877Z"
   },
   "evidenceSha256": {
-    "core": "e7ad1262d523a4fb2dc278aebd69d17adf2bca01c051a110eef15f028ff8bd91",
-    "desktop": "aa3fba1022b2e35af1db7ab584a0d3287596a19f0c1004f5a85662c2ab8326ad"
+    "core": "2fc05350b11af27537c8d38d2aa578110f094a5375642233c40c298567c30d14",
+    "desktop": "a53a66686cd3f9517a49a4beae73a12a7e1fd03ac723f5505f33593f2028e1c3"
   },
   "implementationSha256": {
     "autocadAll": "a143212b16f3a7e8adfc631c47a07c369e56a77e69b3c652d3324f9d65b7ef6e",
     "crossChecker": "00fc1a853c0ea918ca92b3d68c0098b0e6849df5bab67dffe970a702a56af327",
-    "packageLock": "c47743da8743230f2212f3c3ed34153295ef1bcd3865a07b4d743fd1ec544a7a",
+    "packageLock": "da1dcf889d8fbf35f6a8e4403b29ed34666b13176a2b98307a0c23e25fa06a53",
     "autocadScript": "7d75185bc666b3214dae4751915b409d0a10c0b6621b85608de55be8935f7623",
     "autocadCore": "49fc9cf885969ecf0fcc1c8f14a0dabcc1b9de6dc8e99953c9c978f5fc2481a8",
     "expected": "ff253dff947093ef57a579e229305f641e047d53c7247e759f36a8ff95cc9118",

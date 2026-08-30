@@ -9,6 +9,7 @@ import {
   parseExtendTargetPicks,
   parseFilletPairPicks,
   parseFilletRadius,
+  parseLengthenTargetPicks,
   parseMoveDestination,
   parseOffsetDistance,
   parseOffsetPlacementPoints,
@@ -19,6 +20,8 @@ import {
   parseStretchRegions,
   parseTrimTargetPicks,
   resolveCadCommand,
+  CadCommandInputError,
+  type AlignCommandResult,
   type CadChange,
   type BreakCommandResult,
   type ChamferCommandResult,
@@ -29,6 +32,11 @@ import {
   type FilletCommandResult,
   type FilletTrimMode,
   type MirrorCommandResult,
+  type MatchPropertiesResult,
+  type MatchPropertiesSettings,
+  type LengthenCommandResult,
+  type LengthenMeasurement,
+  type LengthenMode,
   type MoveCommandResult,
   type OffsetCommandResult,
   type OffsetGeometryMode,
@@ -47,9 +55,91 @@ import {
 import type { CadEntity, KDrawDocumentV1 } from "@kuubik/cad-schema";
 
 export interface PreparedModifyCommand<TResult> {
-  commandId: "MOVE" | "COPY" | "ROTATE" | "SCALE" | "MIRROR" | "OFFSET" | "TRIM" | "EXTEND" | "FILLET" | "CHAMFER" | "BREAK" | "STRETCH";
+  commandId: "MOVE" | "COPY" | "ROTATE" | "SCALE" | "MIRROR" | "OFFSET" | "TRIM" | "EXTEND" | "FILLET" | "CHAMFER" | "BREAK" | "STRETCH" | "LENGTHEN" | "ALIGN" | "MATCHPROP";
   operationArgs: Readonly<Record<string, unknown>>;
   result: TResult;
+}
+
+export function prepareAlign(document: KDrawDocumentV1, input: {
+  targetHandles: readonly string[];
+  firstSourceInput: string;
+  firstDestinationInput: string;
+  secondSourceInput?: string;
+  secondDestinationInput?: string;
+  scaleToFit: boolean;
+}): PreparedModifyCommand<AlignCommandResult> {
+  const command = resolveCadCommand("ALIGN");
+  if (!command || command.id !== "ALIGN") throw new Error("ALIGN command is missing from the registry.");
+  const first = {
+    sourcePoint: parseCartesianPoint(input.firstSourceInput),
+    destinationPoint: parseCartesianPoint(input.firstDestinationInput),
+  };
+  const secondSource = input.secondSourceInput?.trim() ?? "";
+  const secondDestination = input.secondDestinationInput?.trim() ?? "";
+  if ((secondSource.length === 0) !== (secondDestination.length === 0)) {
+    throw new CadCommandInputError("ALIGN second source and destination points must be supplied together.");
+  }
+  const pointPairs = secondSource.length > 0
+    ? [first, { sourcePoint: parseCartesianPoint(secondSource), destinationPoint: parseCartesianPoint(secondDestination) }] as const
+    : [first] as const;
+  const result = command.execute(document, { targetHandles: input.targetHandles, pointPairs, scaleToFit: input.scaleToFit });
+  return {
+    commandId: command.id,
+    operationArgs: {
+      targetHandles: [...input.targetHandles],
+      pointPairs,
+      pointPairCount: result.pointPairCount,
+      scaleToFit: result.scaleToFit,
+      angleRad: result.angleRad,
+      scaleFactor: result.scaleFactor,
+      translation: result.translation,
+      noChangeHandles: result.noChangeHandles,
+    },
+    result,
+  };
+}
+
+export function prepareLengthen(document: KDrawDocumentV1, input: {
+  mode: LengthenMode;
+  measurement: LengthenMeasurement;
+  valueInput: string;
+  targetsInput: string;
+}): PreparedModifyCommand<LengthenCommandResult> {
+  const command = resolveCadCommand("LENGTHEN");
+  if (!command || command.id !== "LENGTHEN") throw new Error("LENGTHEN command is missing from the registry.");
+  const targets = parseLengthenTargetPicks(input.targetsInput, input.mode);
+  let value: number | undefined;
+  if (input.mode !== "dynamic") {
+    value = Number(input.valueInput.trim().replace(",", "."));
+    if (!Number.isFinite(value)) throw new CadCommandInputError("LENGTHEN value must be finite.");
+  }
+  const args = {
+    mode: input.mode,
+    measurement: input.measurement,
+    ...(value === undefined ? {} : { value }),
+    targets,
+  };
+  const result = command.execute(document, args);
+  return {
+    commandId: command.id,
+    operationArgs: { ...args, steps: result.steps, multiple: result.multiple },
+    result,
+  };
+}
+
+export function prepareMatchProperties(document: KDrawDocumentV1, input: {
+  sourceHandle: string;
+  targetHandles: readonly string[];
+  settings?: Partial<MatchPropertiesSettings>;
+}): PreparedModifyCommand<MatchPropertiesResult> {
+  const command = resolveCadCommand("MATCHPROP");
+  if (!command || command.id !== "MATCHPROP") throw new Error("MATCHPROP command is missing from the registry.");
+  const result = command.execute(document, input);
+  return {
+    commandId: command.id,
+    operationArgs: { sourceHandle: result.sourceHandle, targetHandles: result.targetHandles, settings: result.settings },
+    result,
+  };
 }
 
 export function putEntities(changes: readonly CadChange[]): CadEntity[] {

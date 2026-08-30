@@ -26,6 +26,25 @@ function Invoke-ComRetry {
   } while ($true)
 }
 
+function Invoke-NonNullCom {
+  param(
+    [Parameter(Mandatory = $true)][scriptblock]$Action,
+    [Parameter(Mandatory = $true)][string]$Label,
+    [int]$TimeoutSeconds = 20
+  )
+  $deadline = [DateTime]::UtcNow.AddSeconds($TimeoutSeconds)
+  do {
+    try {
+      $value = & $Action
+      if ($null -ne $value) { return $value }
+    } catch {
+      if ([DateTime]::UtcNow -ge $deadline) { throw }
+    }
+    if ([DateTime]::UtcNow -ge $deadline) { throw "F-101 $Label remained null for $TimeoutSeconds seconds." }
+    Start-Sleep -Milliseconds 150
+  } while ($true)
+}
+
 function Wait-AcadIdle {
   param([Parameter(Mandatory = $true)]$Document, [int]$TimeoutSeconds = 30)
   $deadline = [DateTime]::UtcNow.AddSeconds($TimeoutSeconds)
@@ -63,12 +82,12 @@ function Get-Point2 {
 
 function Get-ViewportState {
   param([Parameter(Mandatory = $true)]$Document, [Parameter(Mandatory = $true)][string]$Handle)
-  $viewport = Invoke-ComRetry { $Document.HandleToObject($Handle) }
+  $viewport = Invoke-NonNullCom { $Document.HandleToObject($Handle) } "viewport handle $Handle"
   return [ordered]@{
     handle = [string](Invoke-ComRetry { $viewport.Handle })
     objectName = [string](Invoke-ComRetry { $viewport.ObjectName })
-    target = Get-Point2 (Invoke-ComRetry { $viewport.Target })
-    viewCenter = Get-Point2 (Invoke-ComRetry { $Document.GetVariable('VIEWCTR') })
+    target = Get-Point2 (Invoke-NonNullCom { $viewport.Target } "viewport $Handle target")
+    viewCenter = Get-Point2 (Invoke-NonNullCom { $Document.GetVariable('VIEWCTR') } 'VIEWCTR')
     viewHeight = [double](Invoke-ComRetry { $Document.GetVariable('VIEWSIZE') })
     customScale = [double](Invoke-ComRetry { $viewport.CustomScale })
     twistAngleRad = [double](Invoke-ComRetry { $viewport.TwistAngle })

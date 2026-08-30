@@ -1,6 +1,6 @@
 import { createEmptyDocument } from "@kuubik/cad-core";
 import { describe, expect, it } from "vitest";
-import { prepareBreak, prepareChamfer, prepareCopy, prepareExtend, prepareFillet, prepareMirror, prepareMove, prepareOffset, prepareRotate, prepareScale, prepareStretch, prepareTrim, putEntities } from "./modify-command.js";
+import { prepareAlign, prepareBreak, prepareChamfer, prepareCopy, prepareExtend, prepareFillet, prepareLengthen, prepareMatchProperties, prepareMirror, prepareMove, prepareOffset, prepareRotate, prepareScale, prepareStretch, prepareTrim, putEntities } from "./modify-command.js";
 
 function modifyDocument() {
   const document = createEmptyDocument({ documentId: "web-workflows", now: "2026-08-29T00:00:00.000Z" });
@@ -12,6 +12,49 @@ function modifyDocument() {
 }
 
 describe("web modify command workflows", () => {
+  it("normalizes ALIGN once for exact preview and atomic commit arguments", () => {
+    const document = modifyDocument();
+    const input = {
+      targetHandles: ["10"],
+      firstSourceInput: "0,0",
+      firstDestinationInput: "200,300",
+      secondSourceInput: "100,0",
+      secondDestinationInput: "200,500",
+      scaleToFit: true,
+    };
+    const preview = prepareAlign(document, input);
+    const commit = prepareAlign(document, input);
+    expect(preview).toEqual(commit);
+    expect(preview.commandId).toBe("ALIGN");
+    expect(preview.operationArgs).toMatchObject({ pointPairCount: 2, scaleToFit: true, scaleFactor: 2 });
+    expect(putEntities(preview.result.changes)[0]).toMatchObject({
+      kind: "line", start: { x: 200, y: 300 }, end: { x: 200, y: 500 },
+    });
+    expect(document.entities[0]).toMatchObject({ start: { x: 0, y: 0 }, end: { x: 100, y: 0 } });
+  });
+
+  it("normalizes LENGTHEN once for exact preview and atomic commit arguments", () => {
+    const document = modifyDocument();
+    const input = {
+      mode: "delta" as const,
+      measurement: "length" as const,
+      valueInput: "25",
+      targetsInput: "10@100,0; 10@125,0",
+    };
+    const preview = prepareLengthen(document, input);
+    const commit = prepareLengthen(document, input);
+    expect(preview).toEqual(commit);
+    expect(preview.commandId).toBe("LENGTHEN");
+    expect(preview.operationArgs).toMatchObject({
+      mode: "delta", measurement: "length", value: 25, multiple: true,
+      targets: [
+        { handle: "10", pickPoint: { x: 100, y: 0 } },
+        { handle: "10", pickPoint: { x: 125, y: 0 } },
+      ],
+    });
+    expect(putEntities(preview.result.changes)).toEqual([{ kind: "line", handle: "10", layerId: "0", start: { x: 0, y: 0 }, end: { x: 150, y: 0 } }]);
+  });
+
   it("normalizes MOVE through MIRROR once for both preview and commit", () => {
     const document = modifyDocument();
     const preparations = [
@@ -189,5 +232,25 @@ describe("web modify command workflows", () => {
       crossingInput: "40,-10; 110,20 | 45,-60; 60,-60; 60,-40; 45,-40",
       individualHandles: ["20"], baseInput: "0,0", destinationInput: "@25,5",
     })).toEqual(prepared);
+  });
+
+  it("uses one MATCHPROP preparation for preview and atomic commit", () => {
+    const document = modifyDocument();
+    document.entities[0]!.appearance = { color: "#ff0000", linetypeScale: 2, thickness: 3 };
+    document.entities[1]!.appearance = { color: "#00ff00" };
+    const input = {
+      sourceHandle: "10",
+      targetHandles: ["20"],
+      settings: { layer: false, thickness: false },
+    };
+    const preview = prepareMatchProperties(document, input);
+    const commit = prepareMatchProperties(document, input);
+    expect(preview).toEqual(commit);
+    expect(preview).toMatchObject({
+      commandId: "MATCHPROP",
+      operationArgs: { sourceHandle: "10", targetHandles: ["20"], settings: { layer: false, thickness: false } },
+      result: { sourceHandle: "10", targetHandles: ["20"], matchedHandles: ["20"], rejected: [] },
+    });
+    expect(putEntities(preview.result.changes)).toMatchObject([{ handle: "20", appearance: { color: "#ff0000", linetypeScale: 2 } }]);
   });
 });

@@ -53,4 +53,12 @@ describe("F-025 AutoCAD CHAMFER runner ratchet", () => {
     expect(matrix).toContain("$observations.crossLayer.current[0].lineweight -eq 35");
     expect(matrix).toContain("$observations.crossLayer.current[0].linetype -eq 'ByLayer'");
   });
+
+  it("accepts failed Escape watchdogs only when AutoCAD independently proves idle", async () => {
+    const matrix = await source("f025-standard-matrix.ps1");
+    expect(matrix).toMatch(/if \(@\(\$exitCodes \| Where-Object \{ \$_ -eq 0 \}\)\.Count -eq 0\) \{[\s\S]*Wait-AcadIdle \$Document 5/u);
+    expect(matrix).toContain("Escape watchdogs both failed and AutoCAD remained active");
+    expect(matrix).toContain("rejected-pair command was already idle after Escape watchdog failures");
+    expect(matrix).not.toContain('Escape watchdogs both failed: $($exitCodes');
+  });
 });

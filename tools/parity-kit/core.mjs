@@ -5,7 +5,7 @@ import { relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parse as parseYaml } from "yaml";
 import { parityManifest } from "../../parity/autocad-2024-2d.manifest.mjs";
-import { CERTIFICATION_SOURCE_ROOTS, PARITY_ROWS, RUNTIME_SOURCE_ROOTS, SOURCE_GROUPS, UNCERTIFIED_SOURCE_ROWS } from "../../parity/rows.mjs";
+import { CERTIFICATION_SOURCE_ROOTS, PARITY_ROWS, RUNTIME_SOURCE_ROOTS, SOURCE_GROUPS, UNCERTIFIED_ROW_DEPENDENCIES, UNCERTIFIED_SOURCE_ROWS } from "../../parity/rows.mjs";
 
 export const REPO_ROOT = resolve(fileURLToPath(new URL("../..", import.meta.url)));
 export const PARITY_STAGE_ORDER = Object.freeze(["browser", "readback", "oracle", "autocad", "cross"]);
@@ -366,7 +366,10 @@ export function sourceToRows() {
 
 export function affectedRows(files) {
   const graph = sourceToRows();
-  const allRows = PARITY_ROWS.map((row) => row.id);
+  const allRows = [...new Set([
+    ...PARITY_ROWS.map((row) => row.id),
+    ...Object.values(UNCERTIFIED_SOURCE_ROWS).flat(),
+  ])].sort();
   const globalFiles = new Set([
     "package.json",
     "package-lock.json",
@@ -791,6 +794,16 @@ export async function validateParityKit({ checkContentAddresses = true } = {}) {
     for (const rowId of rowIds) {
       if (!isAuditRowId(rowId)) errors.push(`Uncertified source mapping ${source} has invalid audit row ${rowId}.`);
       if (declaredIds.includes(rowId)) errors.push(`Certified row ${rowId} must use sourceGroups instead of UNCERTIFIED_SOURCE_ROWS.`);
+    }
+  }
+  const auditIds = new Set(parityManifest.rows.map((row) => row.id));
+  for (const [rowId, dependencies] of Object.entries(UNCERTIFIED_ROW_DEPENDENCIES)) {
+    if (!auditIds.has(rowId)) errors.push(`Uncertified dependency owner ${rowId} is not in the fixed audit denominator.`);
+    if (declaredIds.includes(rowId)) errors.push(`Certified row ${rowId} must not retain uncertified dependency gaps.`);
+    if (new Set(dependencies).size !== dependencies.length) errors.push(`Uncertified dependency owner ${rowId} contains duplicate audit rows.`);
+    for (const dependency of dependencies) {
+      if (!auditIds.has(dependency)) errors.push(`Uncertified dependency ${rowId} -> ${dependency} is not in the fixed audit denominator.`);
+      if (dependency === rowId) errors.push(`Uncertified dependency ${rowId} must not depend on itself.`);
     }
   }
   const graph = sourceToRows();

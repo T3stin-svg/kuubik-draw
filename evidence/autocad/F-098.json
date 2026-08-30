@@ -4,8 +4,8 @@
   "kind": "autocad",
   "authority": "autocad-2024.1.2-live",
   "status": "PASS",
-  "artifactSha256": "896fb8f530a3c888c91bbf8b59724d14ca821b2fe9bb160ad17be6037e0e26c4",
-  "observedAt": "2026-08-30T00:29:04.465Z",
+  "artifactSha256": "e1c7ebc3a5677a8dd4ee01f1f4a00225e1950bdb50e5024467c1c15b10fdf6d2",
+  "observedAt": "2026-08-30T16:04:58.244Z",
   "workflow": "An owned isolated AutoCAD 24.3 desktop process switches a blank scratch drawing to a native paper layout, configures the same ISO A3 landscape 420 x 297 mm case used by Kuubik, adds one paper-space circle, zooms to the complete sheet, measures the light connected component inside the actual AutoCAD window, saves an anonymous temporary native DWG and reopens it. The parent runner owns the PID sidecar and all temporary paths, terminates the exact new AutoCAD process and removes every temporary file even on failure.",
   "result": "AutoCAD remained in PAPER context with TILEMODE=0, CVPORT=1 and MSpace=false; exposed ISO A3 as an oriented 420 x 297 mm page; showed a 1664 x 1120 px light sheet whose aspect matched that landscape page; preserved the exact medium, rotation, one paper-space circle and page size after native DWG reopen; terminated the owned PID and retained neither PID sidecar, PNG nor DWG.",
   "artifact": "evidence/artifacts/F-098-autocad-readback.json"

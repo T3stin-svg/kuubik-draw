@@ -1,19 +1,19 @@
 {
   "schemaVersion": 1,
   "kind": "global-topology",
-  "observedAt": "2026-08-30T10:55:45.512Z",
+  "observedAt": "2026-08-30T16:41:26.200Z",
   "sourceSha256": {
-    ".github/workflows/ci.yml": "822720fd3ded462ca27d86cdb20452c1cdc6a85cf632001e6cfee402ccaa3921",
-    "package.json": "86d041b1d430560335c1e0cb913f5b34b80626ef7b6e1c1fccc22e08546284c9",
-    "package-lock.json": "c47743da8743230f2212f3c3ed34153295ef1bcd3865a07b4d743fd1ec544a7a",
-    "apps/web/package.json": "909bc418bb8fdc0a541cda6a96fd40ee3089c90b866d073dff2229edfb8ed79e",
-    "packages/cad-core/package.json": "de01a0868ec22e30b2ff38fceec29695883ef940639edfcac8dabe2ab4cf29d7",
-    "packages/cad-renderer/package.json": "ab72f3b9295c3377c4349c55c6353481f403cddd06b9a54e07d8bbc99b2409d9",
-    "packages/cad-dxf/package.json": "d4fb40b250d1146e0134ac586e3a8a136a3a0acda25360a175db62773f7545e0",
-    "packages/cad-print/package.json": "889433647fa396e8255f3d999838fec2b2a427d26e553c30d21dfc054a599f73",
+    ".github/workflows/ci.yml": "7524ae023f00ede9a6ae5e15d004e9acdc07ebfee12e76f681f07b2e7b7be09e",
+    "package.json": "9e394ffda51bda1366f50daecae78c675894a8b3ca1b6aec1f0b0223e07fc185",
+    "package-lock.json": "da1dcf889d8fbf35f6a8e4403b29ed34666b13176a2b98307a0c23e25fa06a53",
+    "apps/web/package.json": "eca74960936f1241303d6522a33575834cb07a8bd47dd8987d1052cd00e114af",
+    "packages/cad-core/package.json": "2aa8b6e3e87867acd7b954970b5c838240e04588679b58dc2444a27a49aeb93f",
+    "packages/cad-renderer/package.json": "d514c6c9a13d248b4b9df2057ff74efc806d2ce312de6f5fb3aa4fccb2374f7b",
+    "packages/cad-dxf/package.json": "08ccf0c936fbfddcb6da70b25e11649657605e6f70cc589a4adf2f3cc5dd70a3",
+    "packages/cad-print/package.json": "1acefddafd17ba0d039c4f0b9cedddc895f7e638f3aec9ca8fea204427c152fb",
     "evidence/artifacts/parity-package-v3-to-v4.json": "519a4237eb6d04099c9ff5a6ac97e6e0f8c9faee7276b02da03e37f185b17f97",
-    "parity/rows.mjs": "a7e593392ae79380c537a6ac5b591ff67f981502392f7f14423979d273b0d09e",
-    "tools/parity-kit/core.mjs": "0be03cfa3f7d4718a64f6eacf9473efd8f1099caf77a0dcf4eda16fe41beec2b",
+    "parity/rows.mjs": "4592bfd0308fe0f5d4b3a0f65b762b6df9f0e8685ab7ccf17a18ab2be53eb0d1",
+    "tools/parity-kit/core.mjs": "792fb7c93312268961bf71392e55b0acb8eb19afe2886ace5170ddb13b89a043",
     "tools/parity-kit/cli.mjs": "92f30f67ad0d2f419bf705cca94934c34e1dad57fab50777adfffb889d2c4ab2"
   },
   "certifiedRowIds": [
@@ -31,6 +31,7 @@
     "F-025",
     "F-026",
     "F-027",
+    "F-029",
     "F-097",
     "F-098",
     "F-099",
@@ -289,6 +290,28 @@
       "cross": {
         "script": "parity:f027:cross-evidence",
         "command": "node tools/parity/check-f027-cross-evidence.mjs"
+      }
+    },
+    "F-029": {
+      "browser": {
+        "script": "parity:f029:browser-artifact",
+        "command": "npm run build -w @kuubik/cad-core && node tools/parity/capture-f029-browser.mjs"
+      },
+      "readback": {
+        "script": "parity:f029:readback",
+        "command": "npm run build -w @kuubik/cad-core && npm run build -w @kuubik/cad-dxf && npx vite-node tools/parity/run-f029-readback.mjs"
+      },
+      "autocad": {
+        "script": "parity:f029:autocad",
+        "command": "node tools/autocad/run-f029.mjs"
+      },
+      "oracle": {
+        "script": "parity:f029:oracles",
+        "command": "npm run parity:f029:readback && node tools/oracles/run-f029-oracles.mjs"
+      },
+      "cross": {
+        "script": "parity:f029:cross-evidence",
+        "command": "node tools/parity/check-f029-cross-evidence.mjs"
       }
     },
     "F-097": {

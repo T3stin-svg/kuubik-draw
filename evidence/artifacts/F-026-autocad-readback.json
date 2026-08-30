@@ -4,19 +4,19 @@
   "benchmark": "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
   "engine": "Autodesk AutoCAD 2024 desktop COM",
   "engineVersion": "24.3s (LMS Tech)",
-  "automationProcessId": 20412,
+  "automationProcessId": 8468,
   "automationProcessOwned": true,
   "installedUpdateIdentity": {
     "displayName": "Autodesk AutoCAD 2024.1.2 Update",
     "displayVersion": "24.3.152.0"
   },
   "automationProcessIdentity": {
-    "processId": 20412,
+    "processId": 8468,
     "executableName": "acad.exe",
     "executableSha256": "0570749def2fa8dcfb62df1a6671f44245a9ef740dd61d9d0f9110794a76e70e",
     "fileVersion": "R24.3.152.0.0",
     "productVersion": "R24.3.152.0.0",
-    "startTimeSha256": "1bef51ba636bf3c00f42438990a2cb78ee1897241a136000734277813e874be8"
+    "startTimeSha256": "753c6a8d3703f7c94dbc815cc457c22b367629bdf76693484d02e8b7b31a8bf7"
   },
   "observations": {
     "default": [
@@ -1132,7 +1132,7 @@
         }
       }
     ],
-    "outputSha256": "85e000fbc849190dd36529ac3c6895a4c36f626b2893456a36a3df1f40878ed3"
+    "outputSha256": "c1fcce76c19785c72ffeca5118edd445cb7815e0dd7bacca6a51bcb0d6793bfa"
   },
   "checks": {
     "defaultSelectionFirstAndProjection": true,
@@ -1154,7 +1154,7 @@
     "breakAtSignOpenSplineRefused": true,
     "breakAtPointOpenSplineRefused": true
   },
-  "dxfOutputSha256": "6bc2c87c77ebe0ec35730da763fab38d70046e4c1d7dfd17ad1a4ce59254f5a0",
+  "dxfOutputSha256": "233b207e420b3ae835672f35b9788fc6cae028c0be01ca42a1efe619fb40cd06",
   "cmdNamesAfter": "",
   "userDocument": {
     "isolatedOwnedProcess": true,
@@ -1176,7 +1176,7 @@
     }
   ],
   "dxfReadback": {
-    "sha256": "6bc2c87c77ebe0ec35730da763fab38d70046e4c1d7dfd17ad1a4ce59254f5a0",
+    "sha256": "233b207e420b3ae835672f35b9788fc6cae028c0be01ca42a1efe619fb40cd06",
     "entityCount": 28,
     "byLayer": {
       "F026_DEFAULT": [
@@ -1576,7 +1576,7 @@
     }
   },
   "splineReadback": {
-    "sha256": "85e000fbc849190dd36529ac3c6895a4c36f626b2893456a36a3df1f40878ed3",
+    "sha256": "c1fcce76c19785c72ffeca5118edd445cb7815e0dd7bacca6a51bcb0d6793bfa",
     "entityCount": 4,
     "byLayer": {
       "0": [
@@ -1626,5 +1626,5 @@
   "runnerSha256": "c1750e2f508cac47d402c4fef4bb6548bd4ca94aa52c64f9c830fbc943b2bb5f",
   "processOwnershipSha256": "9f1d48d1b1058a631ef8d6df03c1beedc836688c06e0658a302ba424d654937d",
   "escapeHelperSha256": "e86d024998ce09c5c0d14a7dde9be1ce5bc3caa0fde4021e2f8d38c594e358b6",
-  "observedAt": "2026-08-30T09:45:41.886Z"
+  "observedAt": "2026-08-30T16:01:56.919Z"
 }

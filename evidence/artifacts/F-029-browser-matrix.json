@@ -1,0 +1,464 @@
+{
+  "rowId": "F-029",
+  "source": {
+    "schemaVersion": 1,
+    "documentId": "local",
+    "revision": 0,
+    "units": {
+      "linear": "mm",
+      "displayPrecision": 4,
+      "angularPrecision": 6
+    },
+    "currentLayerId": "0",
+    "entities": [
+      {
+        "kind": "line",
+        "handle": "10",
+        "layerId": "0",
+        "start": {
+          "x": 0,
+          "y": 0
+        },
+        "end": {
+          "x": 100,
+          "y": 0
+        },
+        "appearance": {
+          "color": "#ff0000",
+          "lineweightMm": 0.35
+        },
+        "extensionData": {
+          "rowId": "F-029"
+        }
+      },
+      {
+        "kind": "polyline",
+        "handle": "20",
+        "layerId": "0",
+        "closed": false,
+        "vertices": [
+          {
+            "x": 0,
+            "y": 200,
+            "startWidth": 2,
+            "endWidth": 4
+          },
+          {
+            "x": 100,
+            "y": 200,
+            "startWidth": 4,
+            "endWidth": 6
+          }
+        ]
+      },
+      {
+        "kind": "line",
+        "handle": "30",
+        "layerId": "locked",
+        "start": {
+          "x": 0,
+          "y": 400
+        },
+        "end": {
+          "x": 100,
+          "y": 400
+        }
+      }
+    ],
+    "layers": [
+      {
+        "id": "0",
+        "name": "0",
+        "visible": true,
+        "frozen": false,
+        "locked": false,
+        "plottable": true
+      },
+      {
+        "id": "locked",
+        "name": "Locked",
+        "visible": true,
+        "frozen": false,
+        "locked": true,
+        "plottable": true
+      }
+    ],
+    "linetypes": [],
+    "textStyles": [],
+    "dimensionStyles": [],
+    "blocks": [],
+    "layouts": [
+      {
+        "id": "model",
+        "name": "Model",
+        "kind": "model",
+        "viewports": [],
+        "entities": []
+      }
+    ],
+    "attachments": [],
+    "metadata": {
+      "createdAt": "2026-08-30T13:00:00.000Z",
+      "updatedAt": "2026-08-30T13:00:00.000Z"
+    }
+  },
+  "committed": {
+    "schemaVersion": 1,
+    "documentId": "local",
+    "revision": 1,
+    "units": {
+      "linear": "mm",
+      "displayPrecision": 4,
+      "angularPrecision": 6
+    },
+    "currentLayerId": "0",
+    "entities": [
+      {
+        "kind": "line",
+        "handle": "10",
+        "layerId": "0",
+        "start": {
+          "x": 100,
+          "y": 200
+        },
+        "end": {
+          "x": 100,
+          "y": 400
+        },
+        "appearance": {
+          "color": "#ff0000",
+          "lineweightMm": 0.35
+        },
+        "extensionData": {
+          "rowId": "F-029"
+        }
+      },
+      {
+        "kind": "polyline",
+        "handle": "20",
+        "layerId": "0",
+        "closed": false,
+        "vertices": [
+          {
+            "x": -300,
+            "y": 200,
+            "startWidth": 4,
+            "endWidth": 8
+          },
+          {
+            "x": -300,
+            "y": 400,
+            "startWidth": 8,
+            "endWidth": 12
+          }
+        ]
+      },
+      {
+        "kind": "line",
+        "handle": "30",
+        "layerId": "locked",
+        "start": {
+          "x": 0,
+          "y": 400
+        },
+        "end": {
+          "x": 100,
+          "y": 400
+        }
+      }
+    ],
+    "layers": [
+      {
+        "id": "0",
+        "name": "0",
+        "visible": true,
+        "frozen": false,
+        "locked": false,
+        "plottable": true
+      },
+      {
+        "id": "locked",
+        "name": "Locked",
+        "visible": true,
+        "frozen": false,
+        "locked": true,
+        "plottable": true
+      }
+    ],
+    "linetypes": [],
+    "textStyles": [],
+    "dimensionStyles": [],
+    "blocks": [],
+    "layouts": [
+      {
+        "id": "model",
+        "name": "Model",
+        "kind": "model",
+        "viewports": [],
+        "entities": []
+      }
+    ],
+    "attachments": [],
+    "metadata": {
+      "createdAt": "2026-08-30T13:00:00.000Z",
+      "updatedAt": "2026-08-30T16:36:10.925Z"
+    }
+  },
+  "operation": {
+    "opId": "5419976f-fb9a-4ca5-b9f1-0eab0b80b520",
+    "baseRevision": 0,
+    "commandId": "ALIGN",
+    "args": {
+      "targetHandles": [
+        "10",
+        "20",
+        "30"
+      ],
+      "pointPairs": [
+        {
+          "sourcePoint": {
+            "x": 0,
+            "y": 0
+          },
+          "destinationPoint": {
+            "x": 100,
+            "y": 200
+          }
+        },
+        {
+          "sourcePoint": {
+            "x": 100,
+            "y": 0
+          },
+          "destinationPoint": {
+            "x": 100,
+            "y": 400
+          }
+        }
+      ],
+      "pointPairCount": 2,
+      "scaleToFit": true,
+      "angleRad": 1.5707963267948966,
+      "scaleFactor": 2,
+      "translation": {
+        "x": 100,
+        "y": 200
+      },
+      "noChangeHandles": []
+    },
+    "targetHandles": [
+      "10",
+      "20"
+    ],
+    "resultHandles": [
+      "10",
+      "20"
+    ]
+  },
+  "undoRestored": {
+    "schemaVersion": 1,
+    "documentId": "local",
+    "revision": 2,
+    "units": {
+      "linear": "mm",
+      "displayPrecision": 4,
+      "angularPrecision": 6
+    },
+    "currentLayerId": "0",
+    "entities": [
+      {
+        "kind": "line",
+        "handle": "10",
+        "layerId": "0",
+        "start": {
+          "x": 0,
+          "y": 0
+        },
+        "end": {
+          "x": 100,
+          "y": 0
+        },
+        "appearance": {
+          "color": "#ff0000",
+          "lineweightMm": 0.35
+        },
+        "extensionData": {
+          "rowId": "F-029"
+        }
+      },
+      {
+        "kind": "polyline",
+        "handle": "20",
+        "layerId": "0",
+        "closed": false,
+        "vertices": [
+          {
+            "x": 0,
+            "y": 200,
+            "startWidth": 2,
+            "endWidth": 4
+          },
+          {
+            "x": 100,
+            "y": 200,
+            "startWidth": 4,
+            "endWidth": 6
+          }
+        ]
+      },
+      {
+        "kind": "line",
+        "handle": "30",
+        "layerId": "locked",
+        "start": {
+          "x": 0,
+          "y": 400
+        },
+        "end": {
+          "x": 100,
+          "y": 400
+        }
+      }
+    ],
+    "layers": [
+      {
+        "id": "0",
+        "name": "0",
+        "visible": true,
+        "frozen": false,
+        "locked": false,
+        "plottable": true
+      },
+      {
+        "id": "locked",
+        "name": "Locked",
+        "visible": true,
+        "frozen": false,
+        "locked": true,
+        "plottable": true
+      }
+    ],
+    "linetypes": [],
+    "textStyles": [],
+    "dimensionStyles": [],
+    "blocks": [],
+    "layouts": [
+      {
+        "id": "model",
+        "name": "Model",
+        "kind": "model",
+        "viewports": [],
+        "entities": []
+      }
+    ],
+    "attachments": [],
+    "metadata": {
+      "createdAt": "2026-08-30T13:00:00.000Z",
+      "updatedAt": "2026-08-30T16:36:11.242Z"
+    }
+  },
+  "redone": {
+    "schemaVersion": 1,
+    "documentId": "local",
+    "revision": 3,
+    "units": {
+      "linear": "mm",
+      "displayPrecision": 4,
+      "angularPrecision": 6
+    },
+    "currentLayerId": "0",
+    "entities": [
+      {
+        "kind": "line",
+        "handle": "10",
+        "layerId": "0",
+        "start": {
+          "x": 100,
+          "y": 200
+        },
+        "end": {
+          "x": 100,
+          "y": 400
+        },
+        "appearance": {
+          "color": "#ff0000",
+          "lineweightMm": 0.35
+        },
+        "extensionData": {
+          "rowId": "F-029"
+        }
+      },
+      {
+        "kind": "polyline",
+        "handle": "20",
+        "layerId": "0",
+        "closed": false,
+        "vertices": [
+          {
+            "x": -300,
+            "y": 200,
+            "startWidth": 4,
+            "endWidth": 8
+          },
+          {
+            "x": -300,
+            "y": 400,
+            "startWidth": 8,
+            "endWidth": 12
+          }
+        ]
+      },
+      {
+        "kind": "line",
+        "handle": "30",
+        "layerId": "locked",
+        "start": {
+          "x": 0,
+          "y": 400
+        },
+        "end": {
+          "x": 100,
+          "y": 400
+        }
+      }
+    ],
+    "layers": [
+      {
+        "id": "0",
+        "name": "0",
+        "visible": true,
+        "frozen": false,
+        "locked": false,
+        "plottable": true
+      },
+      {
+        "id": "locked",
+        "name": "Locked",
+        "visible": true,
+        "frozen": false,
+        "locked": true,
+        "plottable": true
+      }
+    ],
+    "linetypes": [],
+    "textStyles": [],
+    "dimensionStyles": [],
+    "blocks": [],
+    "layouts": [
+      {
+        "id": "model",
+        "name": "Model",
+        "kind": "model",
+        "viewports": [],
+        "entities": []
+      }
+    ],
+    "attachments": [],
+    "metadata": {
+      "createdAt": "2026-08-30T13:00:00.000Z",
+      "updatedAt": "2026-08-30T16:36:11.408Z"
+    }
+  },
+  "consoleErrors": [],
+  "status": "PASS"
+}

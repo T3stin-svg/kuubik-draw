@@ -344,6 +344,8 @@ function appearance(
   }
   const rawLineweight = integerValue(pairs, 370, "appearance", false);
   const commonTransparency = integerValue(pairs, 440, "appearance", false);
+  const linetypeScale = numberValue(pairs, 48, "appearance", false);
+  const thickness = numberValue(pairs, 39, "appearance", false);
   const layerTransparency = options.layer ? xdataTransparency(pairs) : undefined;
   const result: CadAppearance = {};
   if (trueColor !== undefined) {
@@ -358,9 +360,14 @@ function appearance(
     throw new DxfImportError(`Appearance ACI ${index} is unsupported.`);
   }
   if (linetypeId) result.linetypeId = linetypeId;
+  if (linetypeScale !== undefined) {
+    if (linetypeScale <= 0) throw new DxfImportError("Appearance linetype scale must be greater than zero.");
+    result.linetypeScale = linetypeScale;
+  }
   if (rawLineweight !== undefined && rawLineweight >= 0) result.lineweightMm = rawLineweight / 100;
   const parsedTransparency = commonTransparency === undefined ? layerTransparency : transparencyPercent(commonTransparency);
   if (parsedTransparency !== undefined) result.transparency = parsedTransparency;
+  if (thickness !== undefined) result.thickness = thickness;
   return Object.keys(result).length ? result : undefined;
 }
 

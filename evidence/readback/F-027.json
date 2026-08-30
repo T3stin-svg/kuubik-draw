@@ -4,8 +4,8 @@
   "kind": "readback",
   "authority": "independent-parser",
   "status": "PASS",
-  "artifactSha256": "915ccf0c363119f90bf1463142d02cd1138475c664b5b12031604dce89003f4c",
-  "observedAt": "2026-08-30T10:35:50.354Z",
+  "artifactSha256": "03f0a2e39f19e0b64d043d02d562684fc2523cfbdc4fc62ee643148d0537b030",
+  "observedAt": "2026-08-30T15:33:33.809Z",
   "workflow": "Production cad-core STRETCH operations are committed atomically, exported through cad-dxf and KDRAW1, then read through strict Kuubik import, independent dxf-parser semantics and independent KDRAW1 checksum decoding.",
   "result": "Crossing-partial and whole-object moves, exact handles/properties, bulged polyline sagitta behavior, partial ellipse reconstruction, zero-delta refusal and exact Undo/Redo matched the fixed schema in both file formats.",
   "artifact": "evidence/artifacts/F-027-independent-readback.json"

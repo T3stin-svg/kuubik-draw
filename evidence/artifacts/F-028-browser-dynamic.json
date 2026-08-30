@@ -1,0 +1,59 @@
+{
+  "rowId": "F-028",
+  "targetInput": "10@1000,0>1500.000111,49.999889",
+  "committed": {
+    "schemaVersion": 1,
+    "documentId": "local",
+    "revision": 1,
+    "units": {
+      "linear": "mm",
+      "displayPrecision": 4,
+      "angularPrecision": 6
+    },
+    "currentLayerId": "0",
+    "entities": [
+      {
+        "kind": "line",
+        "handle": "10",
+        "layerId": "0",
+        "start": {
+          "x": 0,
+          "y": 0
+        },
+        "end": {
+          "x": 1500.000111,
+          "y": 0
+        }
+      }
+    ],
+    "layers": [
+      {
+        "id": "0",
+        "name": "0",
+        "visible": true,
+        "frozen": false,
+        "locked": false,
+        "plottable": true
+      }
+    ],
+    "linetypes": [],
+    "textStyles": [],
+    "dimensionStyles": [],
+    "blocks": [],
+    "layouts": [
+      {
+        "id": "model",
+        "name": "Model",
+        "kind": "model",
+        "viewports": [],
+        "entities": []
+      }
+    ],
+    "attachments": [],
+    "metadata": {
+      "createdAt": "2026-08-30T12:30:00.000Z",
+      "updatedAt": "2026-08-30T15:23:24.384Z"
+    }
+  },
+  "status": "PASS"
+}

@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-029",
+  "kind": "autocad",
+  "authority": "autocad-2024.1.2-live",
+  "status": "PASS",
+  "artifactSha256": "c8c12b11a2742082c3cbf6f7826a70361599024d69a95fc6b782bf4401296e1a",
+  "observedAt": "2026-08-30T16:35:47.181Z",
+  "workflow": "A newly owned and authenticated AutoCAD 2024.1.2 Desktop process runs ALIGN with one pair, two pairs Scale No/Yes, opposite direction, no-op and mixed locked selection over five native entity families, then performs one atomic Undo/Redo cycle and SaveAs DXF.",
+  "result": "Native LINE, CIRCLE, closed LWPOLYLINE, rational control-vertex SPLINE and TEXT states matched exact transformed expectations. The independently parsed 11-entity DXF matched every native handle, property and geometry field, including SPLINE degree/control points/knots/normalized weights/flags; the original AutoCAD process set was restored.",
+  "artifact": "evidence/artifacts/F-029-autocad-readback.json"
+}

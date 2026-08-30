@@ -663,7 +663,12 @@ function splineExtensionCurve(jet: SplineEndpointJet, span: number): TrimSplineC
   } : null;
 }
 
-function splineEndpointExtension(entity: CadSpline, endpoint: "start" | "end", span: number): CadSpline | null {
+/**
+ * Extends a supported open spline from one endpoint without mutating the
+ * source. LENGTHEN reuses this exact continuation primitive so EXTEND and
+ * LENGTHEN cannot develop different spline extrapolation rules.
+ */
+export function splineEndpointExtension(entity: CadSpline, endpoint: "start" | "end", span: number): CadSpline | null {
   const jet = splineEndpointJet(entity, endpoint); const bezier = jet ? splineExtensionBezier(jet, span) : null;
   if (!jet || !bezier) return null;
   const domainStart = entity.knots[entity.degree]!; const domainEnd = entity.knots[entity.controlPoints.length]!;

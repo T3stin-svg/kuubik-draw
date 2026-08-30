@@ -4,8 +4,8 @@
   "kind": "autocad",
   "authority": "autocad-2024.1.2-live",
   "status": "PASS",
-  "artifactSha256": "2aaef21c57d0b68dd6fb5dfbd4f3c2c1d7e08ce127ad421493ead3c9b8e9a58e",
-  "observedAt": "2026-08-30T00:27:48.553Z",
+  "artifactSha256": "a7a31bff9bba3b7dc77fb4b76ae45ddb6c47070c1e59dc2c6a8cbfd3923786d0",
+  "observedAt": "2026-08-30T15:39:57.002Z",
   "workflow": "AutoCAD 24.3 scratch documents: Core Console verifies LINE/LWPOLYLINE MOVE, one-command U and mixed locked-layer behavior; desktop COM drives the real MOVE command over 12 standard native families from base 100,200 to destination 600,950 and then one U",
   "result": "LINE, LWPOLYLINE, CIRCLE, ARC, ELLIPSE, SPLINE, TEXT, MTEXT, LEADER, aligned DIMENSION, HATCH and BLOCK REFERENCE retained their handles, shifted exact bounding boxes by +500,+750 and were all restored by one U; the locked-layer line stayed fixed.",
   "artifact": "evidence/artifacts/F-016-autocad-readback.json"

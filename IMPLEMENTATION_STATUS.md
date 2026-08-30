@@ -89,9 +89,10 @@
 
 ## Certified state and explicit remaining limits
 
-- the new application is publicly certified through F-027 at **28/133**
-  (**21.1% raw / 24.7% weighted**) with independent `0 P0 / 0 P1` review;
-- all 22 legacy-certified rows and F-022…F-027 are publicly mirrored;
+- the new application is locally certified through F-029 at **29/133**
+  (**21.8% raw / 25.2% weighted**) with independent `0 P0 / 0 P1` review;
+- all 22 legacy-certified rows and F-022…F-027 are publicly mirrored; F-029
+  has passed the full local gate and is awaiting exact-commit public CI;
 - spline/NURBS rendering is rejected rather than drawn as a misleading control polygon;
 - Unicode PDF text is rejected until a font-embedding path exists;
 - LibreCAD/FreeCAD fixtures pass locally, but the machine has no signed OS
@@ -127,3 +128,135 @@ next highest-impact small Modify row is F-030
 MATCHPROP; F-028 LENGTHEN and F-029 ALIGN remain in the same P1 wave. F-108 native
 PC3/CTB/STB remains blocked on a licensed adapter. No production deployment is
 authorized.
+
+F-030 MATCHPROP now has an **uncertified candidate implementation**: the exact
+public MIT schema commit `a7d3e8e8ca4f71192926bffd0d13708da9df08f9` adds
+optional linetype-scale, thickness, plot-style, material and typed viewport
+special fields, and its public CI run `33311867348` is green;
+the Draw core transfers AutoCAD's basic property set plus the represented
+Polyline/Text/Dimension/Hatch special subsets through one pure preview/commit
+predicate. The visible workflow supports physical source/target picks, multiple
+destinations, persistent per-property settings, resolved color/weight/opacity/
+linetype preview, one atomic operation, Undo/Redo and DXF/KDRAW1 read-back.
+Viewport MATCHPROP is now a visible paper-space source→multi-target workflow:
+it copies scale, display lock/on, shade plot, snap/grid and UCS-icon state while
+preserving the destination frame, camera centre/twist, clip boundary and
+per-viewport layer overrides. The core cross-document path imports Layer,
+Linetype, Text style and Dimension style dependencies in the same atomic command,
+with deterministic lossless ID/name collision remapping and exact Undo cleanup.
+The remaining Multileader/Table/Center object surfaces are explicitly attached
+to F-060/F-069/F-071, plot-style definition semantics to F-108 and visible
+multi-document destination selection to F-128; those rows remain in the fixed
+denominator. **F-030 remains at its existing 0.75 score** until the AutoCAD live
+matrix, current-byte evidence and independent review pass.
+
+F-028 LENGTHEN now also has an **uncertified candidate implementation**. One
+typed predicate supports Delta, Percent, Total and Dynamic for LINE, ARC and
+open POLYLINE plus Dynamic for elliptical arcs; the audited rational
+control-point SPLINE fails closed while fit-point data remains an explicit
+F-012/F-028 dependency. ARC accepts both length and
+included-angle Delta/Total input. The picked endpoint moves, whole-polyline
+length is used, terminal bulge/common properties survive and tapered terminal
+widths interpolate or extrapolate by the exact length ratio. Multiple
+targets use an immutable working map, command-local Undo removes the last pick
+and the final commit is one atomic global Undo/Redo operation. Closed, locked,
+missing and unsupported targets fail without partial mutation. The same result
+passes physical canvas picking, preview=commit, IndexedDB operation capture,
+production DXF/KDRAW1 download and independent DXF parser read-back. A new
+regression caught and fixed Dynamic elliptical-arc start handling: the measured
+length now follows the retained pre-end interval instead of the opposite arc.
+
+F-029 ALIGN now also has an **uncertified candidate implementation**. One point
+pair performs translation only; two pairs perform translation+rotation and an
+explicit Yes/No uniform scale around the first source point. The typed command
+rejects degenerate references and missing/proxy sources without mutation;
+mixed locked selections commit only eligible targets and report each rejected
+handle. Preview, commit, physical four-point canvas capture,
+atomic Undo/Redo and exact KDRAW1/DXF read-back use the same transform contract.
+
+The combined dirty Modify wave previously passed lint/typecheck/build, **79
+Vitest files / 486 tests**, mutation **76/76**, DXF **47/47**, PDF **20/20** and
+headless Chromium **107/107**. After the native LENGTHEN correction its targeted
+unit/mutation/DXF suite passes **17/17**, its three Chromium workflows pass and
+production read-back plus LibreCAD/FreeCAD secondary oracles are current. The
+F-028 cross-check is exact for all represented geometry, modes, layer visibility
+and source hashes. Global receipts and the full suite still require a final
+rerun. F-028 remains at **0.75** because fit-point SPLINE, independent final
+review, score ratchet and exact public CI remain open. The certified score
+therefore stays **28/133, 21.1% raw / 24.7%
+weighted**, with visual similarity unchanged at **60.7%**.
+
+The F-029 certification harness is now implemented without launching AutoCAD.
+Production `AL/ALIGN` read-back verifies exact LINE/CIRCLE/POLYLINE/rational
+SPLINE/TEXT geometry, handles, supported appearance and one atomic Undo/Redo
+through strict import, independent `dxf-parser` and KDRAW1 checksum decoding.
+Two headless Chromium flows verify the visible Scale Yes workflow and four
+physical canvas points. Pinned LibreCAD 2.2.1.5 and FreeCAD 1.1.3 fixtures pass
+as secondary non-authorities. The owned AutoCAD Desktop matrix contract covers
+one pair, two pairs Scale No/Yes, opposite direction, no-op, mixed locked
+selection, five native families, complete DXF read-back and authenticated
+process cleanup. It has not been run yet; F-029 therefore remains at `0.75`.
+
+F-028 now has current local production and browser artifacts too. Its
+five-family Delta-length fixture proves an exact +25 length change for LINE,
+ARC, open POLYLINE, ELLIPSE and rational SPLINE, plus Percent/Total/Dynamic and
+ARC angle modes, strict/independent DXF, KDRAW1 and atomic Undo/Redo. Three
+headless Chromium flows cover Multiple, command-local Undo, locked refusal,
+physical Dynamic endpoint/destination picks and ARC angle input. The complete
+non-native gate now passes **80 Vitest files / 488 tests**, mutation **76/76**,
+DXF **47/47**, PDF **20/20**, Chromium **107/107**, typecheck, lint and build.
+`parity:kit:validate` still reports stale global topology/content addresses and
+`parity:check` still fails F-022 current-source coverage by design until the
+batched native evidence and receipt regeneration. Scores remain unchanged.
+
+## 2026-08-30 current evidence-ratchet status
+
+The batched evidence regeneration described above is now complete. All 28
+score-1 rows have fresh AutoCAD/browser/read-back descriptors, current-byte
+artifact hashes, a 28-row global-topology receipt and refreshed content
+addresses. Every applicable F-022…F-027 and F-100…F-114 cross-evidence check
+passes. Pinned Gitleaks 8.30.1 scanned 998 git-visible source files with zero
+findings with the exact source-tree SHA recorded in
+`evidence/security/gitleaks-run.json`; the public-tree scan passes 1001 files.
+`parity:kit:validate` and
+`parity:check` are green at **28/133, 21.1% raw / 24.7% weighted**, while
+visual similarity remains **60.7%**.
+
+Three native-runner defects found during regeneration are now ratcheted:
+F-025 accepts failed authenticated Escape helpers only when independent
+`CMDNAMES`/`CMDACTIVE` read-back proves AutoCAD is already idle; F-101 retries
+temporarily null viewport COM values before coordinate access; F-105 creates
+paper entities exactly once by resolving ambiguous COM responses from the
+paper-block handle delta. The complete post-fix gate passes typecheck, lint,
+production build, **82 Vitest files / 496 tests**, mutation **78/78**, DXF
+**47/47**, PDF **20/20**, Chromium **107/107**, license, public-tree, Gitleaks,
+parity-kit and parity checks. All owned AutoCAD processes were terminated and
+the pre-existing PIDs `28304` and `33160` were preserved.
+
+F-028 and F-030 remain deliberately outside `certifiedIds` at score `0.75`.
+Their native AutoCAD, browser, production read-back, source coverage and
+LibreCAD/FreeCAD secondary-oracle checks are current. F-028 still requires the
+F-012 fit-point SPLINE dependency, independent final review, score ratchet and
+exact public CI. F-030's supported basic/polyline/text subset is cross-exact,
+but full certification remains blocked by F-060, F-069, F-071, F-108 and
+F-128 plus an independent final review. No preview or production deployment
+was performed.
+
+## 2026-08-30 F-029 ALIGN local certification
+
+F-029 is now in `certifiedIds` and `local-certifications.json` at score `1.00`.
+The owned AutoCAD 2024.1.2 matrix proves one-pair move, two-pair rotation with
+Scale No/Yes, opposite alignment, no-op, mixed locked selection, full native
+state and authenticated process cleanup. The production round-trip and cross
+checker compare a closed LWPOLYLINE and rational SPLINE degree, control points,
+knots, normalized weights and flags exactly rather than accepting object counts.
+
+The final local gate passes **82 test files / 496 Vitest tests**, mutation
+**78/78**, DXF **47/47**, PDF **20/20**, Chromium **107/107**, typecheck, lint,
+production build, parity-kit, parity, license and dependency audit. Pinned
+LibreCAD 2.2.1.5 and FreeCAD 1.1.3 reports pass as
+`certificationAuthority:false`; their local status remains
+`FIXTURE_PASS_NOT_NETWORK_ISOLATED`, so they are secondary evidence only.
+Independent final review found **0 P0 / 0 P1**. The resulting local score is
+**29/133, 21.8% raw / 25.2% weighted**, while visual similarity remains
+**60.7%**. Exact-commit public CI is still pending.

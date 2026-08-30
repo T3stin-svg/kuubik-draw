@@ -68,6 +68,10 @@ function appearance(value: UnknownRecord): CadAppearance | undefined {
   }
   if (typeof value.lwMm === "number" && Number.isFinite(value.lwMm)) output.lineweightMm = value.lwMm;
   if (typeof value.lt === "string") output.linetypeId = value.lt;
+  if (typeof value.linetypeScale === "number" && Number.isFinite(value.linetypeScale) && value.linetypeScale > 0) output.linetypeScale = value.linetypeScale;
+  if (typeof value.thickness === "number" && Number.isFinite(value.thickness)) output.thickness = value.thickness;
+  if (typeof value.plotStyleId === "string" && value.plotStyleId) output.plotStyleId = value.plotStyleId;
+  if (typeof value.materialId === "string" && value.materialId) output.materialId = value.materialId;
   return Object.keys(output).length > 0 ? output : undefined;
 }
 

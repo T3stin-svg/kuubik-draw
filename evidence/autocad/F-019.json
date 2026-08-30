@@ -4,8 +4,8 @@
   "kind": "autocad",
   "authority": "autocad-2024.1.2-live",
   "status": "PASS",
-  "artifactSha256": "54949186ea1353885b013a5a42c29b2d5f530efc2ba689a5b39221c772ec45b8",
-  "observedAt": "2026-08-29T23:35:19.766Z",
+  "artifactSha256": "36e8ec916778cf475badb54d5eb33afa4a0757e21fd212ed7512537636205e92",
+  "observedAt": "2026-08-30T15:41:10.267Z",
   "workflow": "AutoCAD 24.3 desktop COM creates twelve native entity families in a newly owned isolated process, drives SCALE from base 100,200 through a two-point Reference of 1000 to new length 2000, performs U, repeats with Copy/U, validates factor-one through a preceding MOVE sentinel and one U, then exercises numeric and point-based Reference lengths, refused zero/negative/coincident inputs and a mixed editable/locked pickset.",
   "result": "All twelve native families scaled uniformly by two with handles and properties preserved; aligned-dimension extension points and measurement scaled while its style-controlled text gap stayed constant, and U restored every semantic point. Copy created twelve fresh native handles. The factor-one sentinel proved AutoCAD creates a consumable undo entry despite unchanged geometry. Refused inputs and the locked object did not mutate, the non-certifying 2,0 probe remains assigned to F-052, and the exact owned AutoCAD process was terminated with no acad.exe left behind.",
   "artifact": "evidence/artifacts/F-019-autocad-readback.json"

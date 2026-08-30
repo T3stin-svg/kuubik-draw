@@ -18,6 +18,7 @@ function fakeContext() {
     rotate: (angle) => calls.push(["rotate", angle]),
     translate: (x, y) => calls.push(["translate", x, y]),
     clearRect: () => undefined,
+    setLineDash: (...segments) => calls.push(["dash", ...segments.flat()]),
     strokeStyle: "#fff",
     fillStyle: "#fff",
     lineWidth: 1,
@@ -248,5 +249,24 @@ describe("Canvas2D parity invariants", () => {
     expect(stats).toEqual({ totalEntities: 1, visibleCandidates: 1, drawnEntities: 1 });
     expect(calls).not.toContainEqual(["move", 10, 10]);
     expect(calls).toContainEqual(["move", 90, 10]);
+  });
+
+  it("renders MATCHPROP preview with resolved color, opacity, weight and scaled linetype", () => {
+    const renderer = new CadCanvasRenderer();
+    renderer.setLinetypes([{ id: "hidden", name: "HIDDEN", pattern: [5, -2] }]);
+    renderer.setEntities([{ kind: "line", handle: "20", layerId: "0", start: { x: 0, y: 0 }, end: { x: 10, y: 0 } }]);
+    const { context, calls } = fakeContext();
+    renderer.render(
+      context,
+      { world: { minX: 0, minY: 0, maxX: 20, maxY: 20 }, widthPx: 200, heightPx: 200, devicePixelRatio: 1 },
+      [{ id: "0", name: "0", visible: true, frozen: false, locked: false, plottable: true }],
+      [{ kind: "line", handle: "20", layerId: "0", start: { x: 0, y: 0 }, end: { x: 10, y: 0 }, appearance: { color: "#ff0000", colorMethod: "trueColor", transparency: 40, lineweightMm: 0.5, linetypeId: "hidden", linetypeScale: 2 } }],
+      ["20"],
+      { previewAppearance: "resolved" },
+    );
+    expect(context.strokeStyle).toBe("#ff0000");
+    expect(context.globalAlpha).toBeCloseTo(0.6, 12);
+    expect(context.lineWidth).toBeCloseTo(0.05, 12);
+    expect(calls).toContainEqual(["dash", 10, 4]);
   });
 });

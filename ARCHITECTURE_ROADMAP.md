@@ -33,10 +33,11 @@ selles teekaardis teadlikult `Won't have`.
 
 ## Now
 
-1. F-027 on avalikult sertifitseeritud seisul **28/133 · 21,1% raw / 24,7% weighted**;
+1. F-029 on lokaalselt sertifitseeritud seisul **29/133 · 21,8% raw / 25,2% weighted**;
    AutoCAD/Chromium/DXF/KDRAW1/oracle risttõend ja sõltumatu lõppreview
-   `0 P0 / 0 P1` on rohelised. Feature-commit `57b1c14` läbis GitHub Actions
-   exact-commit run'i `33308045837` fast- ja verify-väravad.
+   `0 P0 / 0 P1` on rohelised. Exact-commit avalik GitHub Actions kontroll on
+   veel ootel; viimane avalikult suletud rida on F-027 commitil `57b1c14`,
+   run `33308045837`.
 2. STRETCH crossing window/polygon, osaline ja whole-object liikumine, täielik
    14-objektiline native/DXF state, nested SHA-receipt'id ja atomic Undo/Redo
    kasutavad fail-closed ratchet'it. Sõltumatu review on `0 P0 / 0 P1`.
@@ -105,13 +106,62 @@ parity/content-address-, litsentsi- ja turvaväravad. Sõltumatu lõppreview oli
 `0 P0 / 0 P1`. Tingimuslikud self-hosted AutoCAD/oracle job'id jäid selle push'i
 jaoks ausalt `skipped`; checked-in native tõendeid kontrolliti üldises ratchet'is.
 
-## Next — F-030 MATCHPROP
+## Next — Modify evidence batch F-028 / F-029 / F-030
 
-Sulgeda järgmise kõrgeima mõju ja väikese mahuga P1 reana F-030 `MATCHPROP`
-(kaal 5, maht S): AutoCADi valikute/omaduste maatriks, typed property transfer,
-locked/hidden/unsupported käitumine, preview/commit, atomic Undo/Redo,
-Chromium, DXF/KDRAW1 ja sõltumatu review. F-028 `LENGTHEN` ning F-029 `ALIGN`
-järgnevad samas Modify-laines.
+F-030 `MATCHPROP` typed core/browser/DXF kandidaat on valmis ja kogu 107-testine
+Chromiumi regressioon on roheline. Paberiruumi visible source→multi-target
+viewport MATCHPROP ning cross-document Layer/Linetype/Text style/Dimension style
+ressursiimport on samuti teostatud. Nime/ID konflikt ei kirjuta sihtdokumenti üle
+ning kogu resource+entity muutus on üks Undo-samm. Rida jääb ausalt `0,75` peale,
+kuni järgmised alamväravad on suletud:
+
+1. lõpetada Multileader/Table/Center object koos F-060/F-069/F-071-ga, native
+   plot-style definitions koos F-108-ga ja visible cross-document tabivalik
+   koos F-128-ga; dependency-ratchet hoiab need read nimetajas;
+2. läbida üks koondatud AutoCAD 2024.1.2 live-maatriks ja värskendada shared
+   App/schema muudatusest mõjutatud varasemad browser/read-back/cross receipt'id;
+3. sõltumatu `0 P0 / 0 P1` review, exact public commit ja roheline GitHub CI.
+
+F-028 `LENGTHEN` typed core/browser/DXF kandidaat on samuti valmis. Delta,
+Percent, Total ja Dynamic kasutavad sama preview/commit predikaati LINE/ARC/open
+POLYLINE/elliptical-arc/open rational-SPLINE geomeetrial; ARC toetab length/angle
+variante. Kogu ühendatud regressioon on 472 Vitest, 72 mutation, 46 DXF, 20 PDF
+ja 104 Chromiumi testi. Rida jääb `0,75` peale kuni owned AutoCAD 2024.1.2
+live-maatriksi, sõltumatu read-back'i/cross-evidence'i ning `0 P0 / 0 P1`
+review'ni. Mittekuubilise SPLINE extension keeldub seni fail-closed.
+
+F-029 `ALIGN` typed core/browser/DXF kandidaat on valmis. Autodesk 2024 ametliku 2D lepingu järgi
+üks source→destination punktipaar tegema ainult translatsiooni; kaks paari
+teevad translatsiooni ja pöörde ning küsivad eraldi Yes/No ühtlase scale'i,
+mille referents on kahe source- ja destination-punkti vaheline pikkus. Kolme
+punktipaari 3D tilt jääb fikseeritud 2D auditi nimetajast välja, mitte peidetud
+`N/A` erandiks. Vastuvõtukorpus sisaldab:
+
+1. preselection ja command-first valik, üks ning kaks punktipaari;
+2. Scale Yes/No, vastassuunaline joondus, null-/kokkulangeva referentsi aus
+   refusal ja samade punktide no-op semantika;
+3. standardne 2D entity-maatriks, mixed locked-layer valik, properties/handles,
+   preview=commit ja üks atomic Undo/Redo;
+4. füüsilised canvas-pick'id, IndexedDB, KDRAW1/DXF read-back ja null console
+   errors;
+5. owned AutoCAD 2024.1.2 live-maatriks, current-byte cross-evidence, sõltumatu `0 P0 / 0 P1` review,
+   kõikide mõjutatud receipt'ide regenereerimine, exact public commit ja roheline
+   GitHub CI.
+
+Rakendatud ALIGN läbib nullreferentsi/no-op/mixed-locked keeldumised, füüsilise
+nelja canvas-punkti valiku, preview=commit, ühe atomaarse Undo/Redo ning
+KDRAW1/DXF täpse tagasilugemise. Sertifikaati ega skoori ei anta enne punkti 5.
+
+AutoCADi akent ei avata iga väikese koodimuudatuse järel: F-028/F-029/F-030
+native kontrollid koondatakse ühe valmis maatriksiga tõendusväravasse.
+
+Checkpoint: F-029 production/browser/oracle/owned-runner/cross-evidence leping
+on täidetud ja rida lokaalselt skooril `1,00`. Owned AutoCAD 2024.1.2 Desktop,
+Chromium, sõltumatu DXF/KDRAW1 read-back, LibreCAD/FreeCAD secondary oracle'id,
+täielik current-byte ratchet ja sõltumatu `0 P0 / 0 P1` review on rohelised.
+Exact-commit avalik CI on veel ootel. F-028 jääb `0,75` peale F-012 fit-point
+SPLINE sõltuvuse tõttu; F-030 jääb `0,75` peale F-060/F-069/F-071/F-108/F-128
+sõltuvuste tõttu. Järgmine geomeetriat avav laine on F-012 SPLINE → F-028.
 
 ## Later
 

@@ -135,6 +135,31 @@ export const SOURCE_GROUPS = Object.freeze({
     "tools/oracles/run-fixtures.mjs",
     "tools/oracles/run-f027-oracles.mjs",
   ]),
+  "f029-shared-tests": Object.freeze([
+    "apps/web/src/workflows/modify-command.test.ts",
+    "packages/cad-core/test/align.test.ts",
+    "packages/cad-core/test/f029-mutation-proven.test.ts",
+    "packages/cad-dxf/test/f029-align-roundtrip.test.ts",
+    "e2e/f029-align.spec.ts",
+    "parity/F-029-scope.md",
+    "parity/expected/F-029.json",
+    "tools/autocad/f029-runner.test.mjs",
+    "tools/autocad/f029-standard-matrix.ps1",
+    "tools/autocad/process-ownership.mjs",
+    "tools/autocad/run-f029.mjs",
+    "tools/parity/capture-f029-browser.mjs",
+    "tools/parity/build-f029-browser-readback.mjs",
+    "tools/parity/run-f029-readback.mjs",
+    "tools/parity/check-f029-cross-evidence.mjs",
+  ]),
+  "oracle-lab-f029": Object.freeze([
+    "tools/oracles/freecad-f029-headless.py",
+    "tools/oracles/network-isolation.mjs",
+    "tools/oracles/pins.json",
+    "tools/oracles/probe-tools.mjs",
+    "tools/oracles/run-fixtures.mjs",
+    "tools/oracles/run-f029-oracles.mjs",
+  ]),
   "autocad-owned-process-failure-cleanup": Object.freeze([
     "tools/autocad/owned-process-failure-cleanup.test.mjs",
   ]),
@@ -217,10 +242,74 @@ export const SOURCE_GROUPS = Object.freeze({
  * mappings separate prevents source coverage from being confused with a 1.00
  * score in parity/local-certifications.json.
  */
-export const UNCERTIFIED_SOURCE_ROWS = Object.freeze({});
+export const UNCERTIFIED_SOURCE_ROWS = Object.freeze({
+  "package.json": Object.freeze(["F-028", "F-030"]),
+  "package-lock.json": Object.freeze(["F-030"]),
+  "apps/web/package.json": Object.freeze(["F-030"]),
+  "apps/web/src/App.tsx": Object.freeze(["F-028", "F-030"]),
+  "apps/web/src/style.css": Object.freeze(["F-030"]),
+  "apps/web/src/workflows/modify-command.ts": Object.freeze(["F-028", "F-030"]),
+  "packages/cad-core/src/commands.ts": Object.freeze(["F-028", "F-030"]),
+  "packages/cad-core/src/index.ts": Object.freeze(["F-028", "F-030"]),
+  "packages/cad-core/src/legacy-import.ts": Object.freeze(["F-030"]),
+  "packages/cad-core/src/lengthen.ts": Object.freeze(["F-028"]),
+  "packages/cad-core/src/match-properties.ts": Object.freeze(["F-030"]),
+  "packages/cad-core/src/plot-style.ts": Object.freeze(["F-030"]),
+  "packages/cad-core/src/transaction.ts": Object.freeze(["F-030"]),
+  "packages/cad-core/package.json": Object.freeze(["F-030"]),
+  "packages/cad-dxf/package.json": Object.freeze(["F-030"]),
+  "packages/cad-core/src/trim.ts": Object.freeze(["F-028"]),
+  "packages/cad-dxf/src/import.ts": Object.freeze(["F-030"]),
+  "packages/cad-dxf/src/index.ts": Object.freeze(["F-030"]),
+  "packages/cad-renderer/src/renderer.ts": Object.freeze(["F-030"]),
+  "packages/cad-renderer/package.json": Object.freeze(["F-030"]),
+  "packages/cad-print/package.json": Object.freeze(["F-030"]),
+  "packages/cad-core/test/lengthen.test.ts": Object.freeze(["F-028"]),
+  "packages/cad-core/test/f028-mutation-proven.test.ts": Object.freeze(["F-028"]),
+  "packages/cad-dxf/test/f028-lengthen-roundtrip.test.ts": Object.freeze(["F-028"]),
+  "e2e/f028-lengthen.spec.ts": Object.freeze(["F-028"]),
+  "parity/F-028-scope.md": Object.freeze(["F-028"]),
+  "parity/expected/F-028.json": Object.freeze(["F-028"]),
+  "tools/autocad/f028-runner.test.mjs": Object.freeze(["F-028"]),
+  "tools/autocad/f028-standard-matrix.ps1": Object.freeze(["F-028"]),
+  "tools/autocad/owned-desktop-matrix.mjs": Object.freeze(["F-028", "F-030"]),
+  "tools/autocad/run-f028.mjs": Object.freeze(["F-028"]),
+  "tools/oracles/freecad-f028-headless.py": Object.freeze(["F-028"]),
+  "tools/oracles/run-f028-oracles.mjs": Object.freeze(["F-028"]),
+  "tools/parity/build-f028-browser-readback.mjs": Object.freeze(["F-028"]),
+  "tools/parity/capture-f028-browser.mjs": Object.freeze(["F-028"]),
+  "tools/parity/check-f028-cross-evidence.mjs": Object.freeze(["F-028"]),
+  "tools/parity/run-f028-readback.mjs": Object.freeze(["F-028"]),
+  "packages/cad-core/test/match-properties.test.ts": Object.freeze(["F-030"]),
+  "packages/cad-core/test/f030-mutation-proven.test.ts": Object.freeze(["F-030"]),
+  "packages/cad-dxf/test/f030-match-properties-roundtrip.test.ts": Object.freeze(["F-030"]),
+  "e2e/f030-match-properties.spec.ts": Object.freeze(["F-030"]),
+  "parity/F-030-scope.md": Object.freeze(["F-030"]),
+  "parity/expected/F-030.json": Object.freeze(["F-030"]),
+  "tools/autocad/f030-runner.test.mjs": Object.freeze(["F-030"]),
+  "tools/autocad/f030-standard-matrix.ps1": Object.freeze(["F-030"]),
+  "tools/autocad/run-f030.mjs": Object.freeze(["F-030"]),
+  "tools/oracles/freecad-f030-headless.py": Object.freeze(["F-030"]),
+  "tools/oracles/run-f030-oracles.mjs": Object.freeze(["F-030"]),
+  "tools/parity/build-f030-browser-readback.mjs": Object.freeze(["F-030"]),
+  "tools/parity/capture-f030-browser.mjs": Object.freeze(["F-030"]),
+  "tools/parity/check-f030-cross-evidence.mjs": Object.freeze(["F-030"]),
+  "tools/parity/run-f030-readback.mjs": Object.freeze(["F-030"]),
+});
+
+/**
+ * Audit rows that own MATCHPROP surface area not represented by the current
+ * document schema or shell. These dependencies do not remove rows from the
+ * denominator and never award F-030 a score; they keep its remaining gaps
+ * explicit until the owning rows are implemented and the combined AutoCAD
+ * matrix passes.
+ */
+export const UNCERTIFIED_ROW_DEPENDENCIES = Object.freeze({
+  "F-030": Object.freeze(["F-060", "F-069", "F-071", "F-108", "F-128"]),
+});
 
 const certifiedIds = Object.freeze([
-  "F-003", "F-015", "F-016", "F-017", "F-018", "F-019", "F-020", "F-021", "F-022", "F-023", "F-024", "F-025", "F-026", "F-027",
+  "F-003", "F-015", "F-016", "F-017", "F-018", "F-019", "F-020", "F-021", "F-022", "F-023", "F-024", "F-025", "F-026", "F-027", "F-029",
   "F-097", "F-098", "F-099", "F-100", "F-101", "F-102", "F-103", "F-104", "F-105",
   "F-106", "F-107", "F-109", "F-111", "F-114",
 ]);
@@ -240,6 +329,7 @@ const groupsByRow = Object.freeze({
   "F-025": ["web-modify-workflow", "cad-container", "cad-modify", "cad-chamfer", "physical-shift-input", "dxf", "dxf-import", "f025-shared-tests", "oracle-lab-f025"],
   "F-026": ["web-modify-workflow", "cad-container", "cad-modify", "cad-break", "cad-trim", "dxf", "dxf-import", "f026-shared-tests", "oracle-lab-f026"],
   "F-027": ["web-modify-workflow", "cad-container", "cad-modify", "cad-stretch", "cad-trim", "dxf", "dxf-import", "f027-shared-tests", "oracle-lab-f027"],
+  "F-029": ["web-modify-workflow", "cad-container", "cad-modify", "cad-trim", "dxf", "dxf-import", "f029-shared-tests", "oracle-lab-f029"],
   "F-097": ["cad-layout", "cad-container"],
   "F-098": ["cad-layout", "cad-container", "renderer"],
   "F-099": ["cad-layout", "cad-container", "renderer"],
@@ -271,6 +361,7 @@ const stageOverrides = Object.freeze({
   "F-025": { browser: "parity:f025:browser-artifact", readback: "parity:f025:readback", autocad: "parity:f025:autocad", oracle: "parity:f025:oracles", cross: "parity:f025:cross-evidence" },
   "F-026": { browser: "parity:f026:browser-artifact", readback: "parity:f026:readback", autocad: "parity:f026:autocad", oracle: "parity:f026:oracles", cross: "parity:f026:cross-evidence" },
   "F-027": { browser: "parity:f027:browser-artifact", readback: "parity:f027:readback", autocad: "parity:f027:autocad", oracle: "parity:f027:oracles", cross: "parity:f027:cross-evidence" },
+  "F-029": { browser: "parity:f029:browser-artifact", readback: "parity:f029:readback", autocad: "parity:f029:autocad", oracle: "parity:f029:oracles", cross: "parity:f029:cross-evidence" },
   "F-097": { browser: "parity:f097:browser-artifact", readback: "parity:f097:readback", autocad: "parity:f097:autocad" },
   "F-098": { browser: "parity:f098:browser-artifact", readback: "parity:f098:readback", autocad: "parity:f098:autocad" },
   "F-099": { browser: "parity:f099:browser-artifact", readback: "parity:f099:readback", autocad: "parity:f099:autocad" },
@@ -301,7 +392,7 @@ export const PARITY_ROWS = Object.freeze(certifiedIds.map((id) => Object.freeze(
   }),
   receipts: Object.freeze([
     { kind: "global", path: "evidence/artifacts/parity-global-topology.json" },
-    ...(["F-022", "F-023", "F-024", "F-025", "F-026", "F-027"].includes(id) ? [{ kind: "oracle", path: `evidence/artifacts/${id}-oracles.json` }] : []),
+    ...(["F-022", "F-023", "F-024", "F-025", "F-026", "F-027", "F-029"].includes(id) ? [{ kind: "oracle", path: `evidence/artifacts/${id}-oracles.json` }] : []),
     ...(stageOverrides[id]?.cross && !["F-100", "F-101"].includes(id)
       ? [{ kind: "cross", path: `evidence/artifacts/${id}-cross-evidence.json` }]
       : []),

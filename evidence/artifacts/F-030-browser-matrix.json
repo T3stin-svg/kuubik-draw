@@ -1,0 +1,512 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-030",
+  "status": "PASS",
+  "source": {
+    "schemaVersion": 1,
+    "documentId": "local",
+    "revision": 0,
+    "units": {
+      "linear": "mm",
+      "displayPrecision": 4,
+      "angularPrecision": 6
+    },
+    "currentLayerId": "0",
+    "entities": [
+      {
+        "kind": "line",
+        "handle": "10",
+        "layerId": "source",
+        "start": {
+          "x": 0,
+          "y": 0
+        },
+        "end": {
+          "x": 1000,
+          "y": 0
+        },
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "trueColor",
+          "linetypeId": "hidden",
+          "linetypeScale": 2.5,
+          "lineweightMm": 0.5,
+          "transparency": 40,
+          "thickness": -3.25
+        }
+      },
+      {
+        "kind": "line",
+        "handle": "20",
+        "layerId": "0",
+        "start": {
+          "x": 0,
+          "y": 200
+        },
+        "end": {
+          "x": 1000,
+          "y": 200
+        },
+        "appearance": {
+          "color": "#00ff00",
+          "linetypeScale": 0.5
+        }
+      },
+      {
+        "kind": "circle",
+        "handle": "30",
+        "layerId": "0",
+        "center": {
+          "x": 500,
+          "y": 500
+        },
+        "radius": 100,
+        "appearance": {
+          "color": "#0000ff"
+        }
+      }
+    ],
+    "layers": [
+      {
+        "id": "0",
+        "name": "0",
+        "visible": true,
+        "frozen": false,
+        "locked": false,
+        "plottable": true
+      },
+      {
+        "id": "source",
+        "name": "SOURCE",
+        "visible": true,
+        "frozen": false,
+        "locked": false,
+        "plottable": true
+      }
+    ],
+    "linetypes": [
+      {
+        "id": "hidden",
+        "name": "HIDDEN",
+        "description": "F-030",
+        "pattern": [
+          5,
+          -2
+        ]
+      }
+    ],
+    "textStyles": [],
+    "dimensionStyles": [],
+    "blocks": [],
+    "layouts": [
+      {
+        "id": "model",
+        "name": "Model",
+        "kind": "model",
+        "viewports": [],
+        "entities": []
+      }
+    ],
+    "attachments": [],
+    "metadata": {
+      "createdAt": "2026-08-30T14:40:00.000Z",
+      "updatedAt": "2026-08-30T14:40:00.000Z"
+    }
+  },
+  "committed": {
+    "schemaVersion": 1,
+    "documentId": "local",
+    "revision": 1,
+    "units": {
+      "linear": "mm",
+      "displayPrecision": 4,
+      "angularPrecision": 6
+    },
+    "currentLayerId": "0",
+    "entities": [
+      {
+        "kind": "line",
+        "handle": "10",
+        "layerId": "source",
+        "start": {
+          "x": 0,
+          "y": 0
+        },
+        "end": {
+          "x": 1000,
+          "y": 0
+        },
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "trueColor",
+          "linetypeId": "hidden",
+          "linetypeScale": 2.5,
+          "lineweightMm": 0.5,
+          "transparency": 40,
+          "thickness": -3.25
+        }
+      },
+      {
+        "kind": "line",
+        "handle": "20",
+        "layerId": "0",
+        "start": {
+          "x": 0,
+          "y": 200
+        },
+        "end": {
+          "x": 1000,
+          "y": 200
+        },
+        "appearance": {
+          "color": "#ff0000",
+          "linetypeScale": 2.5,
+          "colorMethod": "trueColor",
+          "linetypeId": "hidden",
+          "lineweightMm": 0.5,
+          "transparency": 40,
+          "thickness": -3.25
+        }
+      },
+      {
+        "kind": "circle",
+        "handle": "30",
+        "layerId": "0",
+        "center": {
+          "x": 500,
+          "y": 500
+        },
+        "radius": 100,
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "trueColor",
+          "linetypeId": "hidden",
+          "linetypeScale": 2.5,
+          "lineweightMm": 0.5,
+          "transparency": 40,
+          "thickness": -3.25
+        }
+      }
+    ],
+    "layers": [
+      {
+        "id": "0",
+        "name": "0",
+        "visible": true,
+        "frozen": false,
+        "locked": false,
+        "plottable": true
+      },
+      {
+        "id": "source",
+        "name": "SOURCE",
+        "visible": true,
+        "frozen": false,
+        "locked": false,
+        "plottable": true
+      }
+    ],
+    "linetypes": [
+      {
+        "id": "hidden",
+        "name": "HIDDEN",
+        "description": "F-030",
+        "pattern": [
+          5,
+          -2
+        ]
+      }
+    ],
+    "textStyles": [],
+    "dimensionStyles": [],
+    "blocks": [],
+    "layouts": [
+      {
+        "id": "model",
+        "name": "Model",
+        "kind": "model",
+        "viewports": [],
+        "entities": []
+      }
+    ],
+    "attachments": [],
+    "metadata": {
+      "createdAt": "2026-08-30T14:40:00.000Z",
+      "updatedAt": "2026-08-30T13:58:20.703Z"
+    }
+  },
+  "operation": {
+    "opId": "23f93c91-9633-4d0e-8abc-5354564b119d",
+    "baseRevision": 0,
+    "commandId": "MATCHPROP",
+    "args": {
+      "sourceHandle": "10",
+      "targetHandles": [
+        "10",
+        "20",
+        "30"
+      ],
+      "settings": {
+        "color": true,
+        "layer": false,
+        "linetype": true,
+        "linetypeScale": true,
+        "lineweight": true,
+        "transparency": true,
+        "thickness": true,
+        "plotStyle": true,
+        "dimension": true,
+        "polyline": true,
+        "material": true,
+        "text": true,
+        "viewport": true,
+        "multileader": true,
+        "hatch": true,
+        "table": true,
+        "centerObject": true
+      }
+    },
+    "targetHandles": [
+      "20",
+      "30"
+    ],
+    "resultHandles": [
+      "20",
+      "30"
+    ]
+  },
+  "undoRestored": {
+    "schemaVersion": 1,
+    "documentId": "local",
+    "revision": 2,
+    "units": {
+      "linear": "mm",
+      "displayPrecision": 4,
+      "angularPrecision": 6
+    },
+    "currentLayerId": "0",
+    "entities": [
+      {
+        "kind": "line",
+        "handle": "10",
+        "layerId": "source",
+        "start": {
+          "x": 0,
+          "y": 0
+        },
+        "end": {
+          "x": 1000,
+          "y": 0
+        },
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "trueColor",
+          "linetypeId": "hidden",
+          "linetypeScale": 2.5,
+          "lineweightMm": 0.5,
+          "transparency": 40,
+          "thickness": -3.25
+        }
+      },
+      {
+        "kind": "line",
+        "handle": "20",
+        "layerId": "0",
+        "start": {
+          "x": 0,
+          "y": 200
+        },
+        "end": {
+          "x": 1000,
+          "y": 200
+        },
+        "appearance": {
+          "color": "#00ff00",
+          "linetypeScale": 0.5
+        }
+      },
+      {
+        "kind": "circle",
+        "handle": "30",
+        "layerId": "0",
+        "center": {
+          "x": 500,
+          "y": 500
+        },
+        "radius": 100,
+        "appearance": {
+          "color": "#0000ff"
+        }
+      }
+    ],
+    "layers": [
+      {
+        "id": "0",
+        "name": "0",
+        "visible": true,
+        "frozen": false,
+        "locked": false,
+        "plottable": true
+      },
+      {
+        "id": "source",
+        "name": "SOURCE",
+        "visible": true,
+        "frozen": false,
+        "locked": false,
+        "plottable": true
+      }
+    ],
+    "linetypes": [
+      {
+        "id": "hidden",
+        "name": "HIDDEN",
+        "description": "F-030",
+        "pattern": [
+          5,
+          -2
+        ]
+      }
+    ],
+    "textStyles": [],
+    "dimensionStyles": [],
+    "blocks": [],
+    "layouts": [
+      {
+        "id": "model",
+        "name": "Model",
+        "kind": "model",
+        "viewports": [],
+        "entities": []
+      }
+    ],
+    "attachments": [],
+    "metadata": {
+      "createdAt": "2026-08-30T14:40:00.000Z",
+      "updatedAt": "2026-08-30T13:58:21.103Z"
+    }
+  },
+  "redone": {
+    "schemaVersion": 1,
+    "documentId": "local",
+    "revision": 3,
+    "units": {
+      "linear": "mm",
+      "displayPrecision": 4,
+      "angularPrecision": 6
+    },
+    "currentLayerId": "0",
+    "entities": [
+      {
+        "kind": "line",
+        "handle": "10",
+        "layerId": "source",
+        "start": {
+          "x": 0,
+          "y": 0
+        },
+        "end": {
+          "x": 1000,
+          "y": 0
+        },
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "trueColor",
+          "linetypeId": "hidden",
+          "linetypeScale": 2.5,
+          "lineweightMm": 0.5,
+          "transparency": 40,
+          "thickness": -3.25
+        }
+      },
+      {
+        "kind": "line",
+        "handle": "20",
+        "layerId": "0",
+        "start": {
+          "x": 0,
+          "y": 200
+        },
+        "end": {
+          "x": 1000,
+          "y": 200
+        },
+        "appearance": {
+          "color": "#ff0000",
+          "linetypeScale": 2.5,
+          "colorMethod": "trueColor",
+          "linetypeId": "hidden",
+          "lineweightMm": 0.5,
+          "transparency": 40,
+          "thickness": -3.25
+        }
+      },
+      {
+        "kind": "circle",
+        "handle": "30",
+        "layerId": "0",
+        "center": {
+          "x": 500,
+          "y": 500
+        },
+        "radius": 100,
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "trueColor",
+          "linetypeId": "hidden",
+          "linetypeScale": 2.5,
+          "lineweightMm": 0.5,
+          "transparency": 40,
+          "thickness": -3.25
+        }
+      }
+    ],
+    "layers": [
+      {
+        "id": "0",
+        "name": "0",
+        "visible": true,
+        "frozen": false,
+        "locked": false,
+        "plottable": true
+      },
+      {
+        "id": "source",
+        "name": "SOURCE",
+        "visible": true,
+        "frozen": false,
+        "locked": false,
+        "plottable": true
+      }
+    ],
+    "linetypes": [
+      {
+        "id": "hidden",
+        "name": "HIDDEN",
+        "description": "F-030",
+        "pattern": [
+          5,
+          -2
+        ]
+      }
+    ],
+    "textStyles": [],
+    "dimensionStyles": [],
+    "blocks": [],
+    "layouts": [
+      {
+        "id": "model",
+        "name": "Model",
+        "kind": "model",
+        "viewports": [],
+        "entities": []
+      }
+    ],
+    "attachments": [],
+    "metadata": {
+      "createdAt": "2026-08-30T14:40:00.000Z",
+      "updatedAt": "2026-08-30T13:58:21.186Z"
+    }
+  },
+  "consoleErrors": []
+}

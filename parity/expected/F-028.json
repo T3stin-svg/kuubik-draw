@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-028",
+  "benchmark": "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
+  "productionFixture": {
+    "sourceDxf": "evidence/artifacts/F-028-source.dxf",
+    "outputDxf": "evidence/artifacts/F-028-kuubik.dxf",
+    "handles": ["10", "20", "30", "40", "50"],
+    "deltaHandles": ["10", "20", "30"],
+    "deltaLength": 25,
+    "dynamicEllipseHandle": "40",
+    "controlSplineRefusedHandle": "50"
+  },
+  "nativeVisibilityBehavior": [
+    { "state": "locked", "behavior": "unchanged" },
+    { "state": "off", "behavior": "changed" },
+    { "state": "frozen", "behavior": "changed" }
+  ],
+  "fitPointSpline": {
+    "status": "PENDING",
+    "owner": "F-012/F-028",
+    "reason": "The public schema and DXF path represent control-point splines only."
+  },
+  "requiredCertificationChecks": [
+    "nativeDesktopLive",
+    "nativeDesktopSourcesCurrent",
+    "exactSourceDxfShared",
+    "browserWorkflow",
+    "browserNestedArtifactsCurrent",
+    "browserSourcesCurrent",
+    "physicalDynamicCanvas",
+    "productionReadback",
+    "productionSourcesCurrent",
+    "secondaryOracles",
+    "oracleInputsAndSourcesCurrent",
+    "crossGeometryExact",
+    "modeMatrixEquivalent",
+    "visibilityBehaviorMatches",
+    "sourceHashCoverage",
+    "fitPointSplineDependencyClosed"
+  ],
+  "independentReview": {
+    "status": "PENDING",
+    "p0": null,
+    "p1": null,
+    "reviewedAt": null
+  },
+  "remainingCertificationRequirements": [
+    "fit-point SPLINE schema and live workflow",
+    "independent 0 P0 / 0 P1 review",
+    "score ratchet and exact public-commit CI"
+  ]
+}

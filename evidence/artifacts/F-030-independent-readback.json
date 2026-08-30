@@ -1,0 +1,695 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-030",
+  "status": "PASS",
+  "observedAt": "2026-08-30T13:58:51.164Z",
+  "source": "production MA/MATCHPROP registry -> basic/special/viewport/cross-document predicates -> atomic commit -> production DXF/KDRAW1 -> strict importer + dxf-parser -> Undo/Redo",
+  "checks": {
+    "registry": true,
+    "exactBasicProperties": true,
+    "identityGeometryExtensionPreserved": true,
+    "typedRefusals": true,
+    "strictDxf": true,
+    "independentDxf": true,
+    "kdrawChecksum": true,
+    "atomicUndoRedo": true,
+    "specialProperties": true,
+    "viewportProperties": true,
+    "crossDocumentResources": true
+  },
+  "implementationSha256": {
+    "packages/cad-core/src/commands.ts": "540e6f79dafb8d71f0e3ba5d43a1dcd39bd9f5809c03ea383c070de3636609fc",
+    "packages/cad-core/src/index.ts": "681d425d328d1938f98e2821886e13b68097a86ee26de483efd7ba31dfc362fc",
+    "packages/cad-core/src/match-properties.ts": "dd632cdf73babfc2bdbaa5b7462cd3267d24c56f358bdeb93252a4dd579618f2",
+    "packages/cad-core/src/transaction.ts": "ab5734699108451ed63290424d56f69b8b0031efb22969f9fef5bd2dd20ac388",
+    "packages/cad-core/test/match-properties.test.ts": "d3bee42812b64fa768f4c8e7d9fafde5ca10acd6c3d010931799816a02de9474",
+    "packages/cad-core/test/f030-mutation-proven.test.ts": "9e2078a65c705dc875a485a170537af48f8b13625a287f1d4da2e9099febca75",
+    "packages/cad-dxf/src/import.ts": "2f375b882304f0d3f9461b84b69d97e09bec8326863b6253f100e42cd9214a59",
+    "packages/cad-dxf/src/index.ts": "e01ff7bd77cf6dfef6da8d86f00c13d87dc847bb0135dbd1d79ece80717edc13",
+    "packages/cad-dxf/test/f030-match-properties-roundtrip.test.ts": "a8f3d007bd1daa1a03aca6234b294932a9ad4a8a38eb92b269db9d577d11f4a9",
+    "tools/parity/run-f030-readback.mjs": "5cbaee54f4a154237bb00f253a25f4a6f36d4e5b6350f46271ec9ac5134c5e71"
+  },
+  "sourceDocument": {
+    "schemaVersion": 1,
+    "documentId": "F-030-readback",
+    "revision": 0,
+    "units": {
+      "linear": "mm",
+      "displayPrecision": 4,
+      "angularPrecision": 6
+    },
+    "currentLayerId": "0",
+    "entities": [
+      {
+        "kind": "line",
+        "handle": "10",
+        "layerId": "source",
+        "start": {
+          "x": 0,
+          "y": 0
+        },
+        "end": {
+          "x": 100,
+          "y": 0
+        },
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "aci",
+          "aciIndex": 1,
+          "linetypeId": "hidden",
+          "linetypeScale": 2.5,
+          "lineweightMm": 0.5,
+          "transparency": 40,
+          "thickness": -3.25
+        },
+        "extensionData": {
+          "source": true
+        }
+      },
+      {
+        "kind": "line",
+        "handle": "20",
+        "layerId": "target",
+        "start": {
+          "x": 10,
+          "y": 20
+        },
+        "end": {
+          "x": 70,
+          "y": 20
+        },
+        "appearance": {
+          "color": "#00ff00",
+          "linetypeScale": 0.5
+        },
+        "extensionData": {
+          "target": "line"
+        }
+      },
+      {
+        "kind": "circle",
+        "handle": "30",
+        "layerId": "target",
+        "center": {
+          "x": 200,
+          "y": 100
+        },
+        "radius": 30,
+        "appearance": {
+          "color": "#0000ff"
+        },
+        "extensionData": {
+          "target": "circle"
+        }
+      },
+      {
+        "kind": "line",
+        "handle": "40",
+        "layerId": "locked",
+        "start": {
+          "x": 0,
+          "y": 200
+        },
+        "end": {
+          "x": 100,
+          "y": 200
+        },
+        "appearance": {
+          "color": "#00ffff"
+        }
+      }
+    ],
+    "layers": [
+      {
+        "id": "0",
+        "name": "0",
+        "visible": true,
+        "frozen": false,
+        "locked": false,
+        "plottable": true
+      },
+      {
+        "id": "source",
+        "name": "SOURCE",
+        "visible": true,
+        "frozen": false,
+        "locked": false,
+        "plottable": true
+      },
+      {
+        "id": "target",
+        "name": "TARGET",
+        "visible": true,
+        "frozen": false,
+        "locked": false,
+        "plottable": true
+      },
+      {
+        "id": "locked",
+        "name": "LOCKED",
+        "visible": true,
+        "frozen": false,
+        "locked": true,
+        "plottable": true
+      }
+    ],
+    "linetypes": [
+      {
+        "id": "hidden",
+        "name": "HIDDEN",
+        "description": "F-030",
+        "pattern": [
+          5,
+          -2
+        ]
+      }
+    ],
+    "textStyles": [],
+    "dimensionStyles": [],
+    "blocks": [],
+    "layouts": [
+      {
+        "id": "model",
+        "name": "Model",
+        "kind": "model",
+        "viewports": [],
+        "entities": []
+      }
+    ],
+    "attachments": [],
+    "metadata": {
+      "createdAt": "2026-08-30T18:00:00.000Z",
+      "updatedAt": "2026-08-30T18:00:00.000Z"
+    }
+  },
+  "committedDocument": {
+    "schemaVersion": 1,
+    "documentId": "F-030-readback",
+    "revision": 1,
+    "units": {
+      "linear": "mm",
+      "displayPrecision": 4,
+      "angularPrecision": 6
+    },
+    "currentLayerId": "0",
+    "entities": [
+      {
+        "kind": "line",
+        "handle": "10",
+        "layerId": "source",
+        "start": {
+          "x": 0,
+          "y": 0
+        },
+        "end": {
+          "x": 100,
+          "y": 0
+        },
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "aci",
+          "aciIndex": 1,
+          "linetypeId": "hidden",
+          "linetypeScale": 2.5,
+          "lineweightMm": 0.5,
+          "transparency": 40,
+          "thickness": -3.25
+        },
+        "extensionData": {
+          "source": true
+        }
+      },
+      {
+        "kind": "line",
+        "handle": "20",
+        "layerId": "source",
+        "start": {
+          "x": 10,
+          "y": 20
+        },
+        "end": {
+          "x": 70,
+          "y": 20
+        },
+        "appearance": {
+          "color": "#ff0000",
+          "linetypeScale": 2.5,
+          "colorMethod": "aci",
+          "aciIndex": 1,
+          "linetypeId": "hidden",
+          "lineweightMm": 0.5,
+          "transparency": 40,
+          "thickness": -3.25
+        },
+        "extensionData": {
+          "target": "line"
+        }
+      },
+      {
+        "kind": "circle",
+        "handle": "30",
+        "layerId": "source",
+        "center": {
+          "x": 200,
+          "y": 100
+        },
+        "radius": 30,
+        "appearance": {
+          "color": "#ff0000",
+          "colorMethod": "aci",
+          "aciIndex": 1,
+          "linetypeId": "hidden",
+          "linetypeScale": 2.5,
+          "lineweightMm": 0.5,
+          "transparency": 40,
+          "thickness": -3.25
+        },
+        "extensionData": {
+          "target": "circle"
+        }
+      },
+      {
+        "kind": "line",
+        "handle": "40",
+        "layerId": "locked",
+        "start": {
+          "x": 0,
+          "y": 200
+        },
+        "end": {
+          "x": 100,
+          "y": 200
+        },
+        "appearance": {
+          "color": "#00ffff"
+        }
+      }
+    ],
+    "layers": [
+      {
+        "id": "0",
+        "name": "0",
+        "visible": true,
+        "frozen": false,
+        "locked": false,
+        "plottable": true
+      },
+      {
+        "id": "source",
+        "name": "SOURCE",
+        "visible": true,
+        "frozen": false,
+        "locked": false,
+        "plottable": true
+      },
+      {
+        "id": "target",
+        "name": "TARGET",
+        "visible": true,
+        "frozen": false,
+        "locked": false,
+        "plottable": true
+      },
+      {
+        "id": "locked",
+        "name": "LOCKED",
+        "visible": true,
+        "frozen": false,
+        "locked": true,
+        "plottable": true
+      }
+    ],
+    "linetypes": [
+      {
+        "id": "hidden",
+        "name": "HIDDEN",
+        "description": "F-030",
+        "pattern": [
+          5,
+          -2
+        ]
+      }
+    ],
+    "textStyles": [],
+    "dimensionStyles": [],
+    "blocks": [],
+    "layouts": [
+      {
+        "id": "model",
+        "name": "Model",
+        "kind": "model",
+        "viewports": [],
+        "entities": []
+      }
+    ],
+    "attachments": [],
+    "metadata": {
+      "createdAt": "2026-08-30T18:00:00.000Z",
+      "updatedAt": "2026-08-30T18:00:01.000Z"
+    }
+  },
+  "expected": [
+    {
+      "handle": "10",
+      "kind": "line",
+      "layerId": "source",
+      "appearance": {
+        "color": "#ff0000",
+        "colorMethod": "aci",
+        "aciIndex": 1,
+        "linetypeId": "hidden",
+        "linetypeScale": 2.5,
+        "lineweightMm": 0.5,
+        "transparency": 40,
+        "thickness": -3.25
+      },
+      "extensionData": {
+        "source": true
+      },
+      "start": {
+        "x": 0,
+        "y": 0
+      },
+      "end": {
+        "x": 100,
+        "y": 0
+      }
+    },
+    {
+      "handle": "20",
+      "kind": "line",
+      "layerId": "source",
+      "appearance": {
+        "color": "#ff0000",
+        "linetypeScale": 2.5,
+        "colorMethod": "aci",
+        "aciIndex": 1,
+        "linetypeId": "hidden",
+        "lineweightMm": 0.5,
+        "transparency": 40,
+        "thickness": -3.25
+      },
+      "extensionData": {
+        "target": "line"
+      },
+      "start": {
+        "x": 10,
+        "y": 20
+      },
+      "end": {
+        "x": 70,
+        "y": 20
+      }
+    },
+    {
+      "handle": "30",
+      "kind": "circle",
+      "layerId": "source",
+      "appearance": {
+        "color": "#ff0000",
+        "colorMethod": "aci",
+        "aciIndex": 1,
+        "linetypeId": "hidden",
+        "linetypeScale": 2.5,
+        "lineweightMm": 0.5,
+        "transparency": 40,
+        "thickness": -3.25
+      },
+      "extensionData": {
+        "target": "circle"
+      },
+      "center": {
+        "x": 200,
+        "y": 100
+      },
+      "radius": 30
+    },
+    {
+      "handle": "40",
+      "kind": "line",
+      "layerId": "locked",
+      "appearance": {
+        "color": "#00ffff"
+      },
+      "start": {
+        "x": 0,
+        "y": 200
+      },
+      "end": {
+        "x": 100,
+        "y": 200
+      }
+    }
+  ],
+  "rejected": [
+    {
+      "handle": "10",
+      "reason": "source-target"
+    },
+    {
+      "handle": "40",
+      "reason": "locked-layer"
+    },
+    {
+      "handle": "missing",
+      "reason": "missing"
+    }
+  ],
+  "strictChecks": [
+    {
+      "handle": "20",
+      "geometry": true,
+      "layerName": true,
+      "linetypeName": true,
+      "linetypeScale": true,
+      "lineweight": true,
+      "transparency": true,
+      "thickness": true
+    },
+    {
+      "handle": "30",
+      "geometry": true,
+      "layerName": true,
+      "linetypeName": true,
+      "linetypeScale": true,
+      "lineweight": true,
+      "transparency": true,
+      "thickness": true
+    }
+  ],
+  "independentChecks": [
+    {
+      "handle": "20",
+      "type": true,
+      "geometry": true,
+      "layer": true,
+      "linetype": true,
+      "colorAndWeight": true,
+      "rawThickness": true,
+      "rawTransparency": true
+    },
+    {
+      "handle": "30",
+      "type": true,
+      "geometry": true,
+      "layer": true,
+      "linetype": true,
+      "colorAndWeight": true,
+      "rawThickness": true,
+      "rawTransparency": true
+    }
+  ],
+  "specialChecks": {
+    "selectiveByLayerDeletion": true,
+    "uniformPolylineWidthOnly": true,
+    "textWithoutContentOrGeometry": true,
+    "dimensionStyleOnly": true,
+    "hatchPatternOnly": true
+  },
+  "viewport": {
+    "source": {
+      "id": "source-vp",
+      "center": {
+        "x": 10,
+        "y": 10
+      },
+      "width": 200,
+      "height": 100,
+      "viewCenter": {
+        "x": 1000,
+        "y": 2000
+      },
+      "viewHeight": 5000,
+      "twistAngleRad": 0.5,
+      "locked": true,
+      "on": false,
+      "shadePlot": "wireframe",
+      "snapEnabled": true,
+      "gridEnabled": true,
+      "ucsIconVisible": false,
+      "ucsIconAtOrigin": false,
+      "clipBoundary": [
+        {
+          "x": 0,
+          "y": 0
+        },
+        {
+          "x": 200,
+          "y": 0
+        },
+        {
+          "x": 100,
+          "y": 100
+        }
+      ],
+      "layerOverrides": {
+        "source": {
+          "frozen": true,
+          "color": "#ff0000"
+        }
+      }
+    },
+    "target": {
+      "id": "target-vp",
+      "center": {
+        "x": 300,
+        "y": 200
+      },
+      "width": 80,
+      "height": 40,
+      "viewCenter": {
+        "x": -500,
+        "y": 700
+      },
+      "viewHeight": 400,
+      "twistAngleRad": -0.25,
+      "locked": false,
+      "on": true,
+      "shadePlot": "hidden",
+      "snapEnabled": false,
+      "gridEnabled": false,
+      "ucsIconVisible": true,
+      "ucsIconAtOrigin": true,
+      "clipBoundary": [
+        {
+          "x": 260,
+          "y": 180
+        },
+        {
+          "x": 340,
+          "y": 180
+        },
+        {
+          "x": 340,
+          "y": 220
+        },
+        {
+          "x": 260,
+          "y": 220
+        }
+      ],
+      "layerOverrides": {
+        "target": {
+          "frozen": false,
+          "color": "#00ff00"
+        }
+      }
+    },
+    "committed": {
+      "id": "target-vp",
+      "center": {
+        "x": 300,
+        "y": 200
+      },
+      "width": 80,
+      "height": 40,
+      "viewCenter": {
+        "x": -500,
+        "y": 700
+      },
+      "viewHeight": 2000,
+      "twistAngleRad": -0.25,
+      "locked": true,
+      "on": false,
+      "shadePlot": "wireframe",
+      "snapEnabled": true,
+      "gridEnabled": true,
+      "ucsIconVisible": false,
+      "ucsIconAtOrigin": false,
+      "clipBoundary": [
+        {
+          "x": 260,
+          "y": 180
+        },
+        {
+          "x": 340,
+          "y": 180
+        },
+        {
+          "x": 340,
+          "y": 220
+        },
+        {
+          "x": 260,
+          "y": 220
+        }
+      ],
+      "layerOverrides": {
+        "target": {
+          "frozen": false,
+          "color": "#00ff00"
+        }
+      }
+    },
+    "check": true
+  },
+  "crossDocument": {
+    "resourceImports": [
+      {
+        "kind": "linetype",
+        "sourceId": "dash",
+        "targetId": "dash$matchprop1",
+        "sourceName": "DASH",
+        "targetName": "DASH [MATCHPROP 1]",
+        "action": "import"
+      },
+      {
+        "kind": "layer",
+        "sourceId": "A",
+        "targetId": "A$matchprop1",
+        "sourceName": "A",
+        "targetName": "A [MATCHPROP 1]",
+        "action": "import"
+      }
+    ],
+    "committedEntity": {
+      "kind": "line",
+      "handle": "10",
+      "layerId": "0",
+      "start": {
+        "x": 5,
+        "y": 5
+      },
+      "end": {
+        "x": 6,
+        "y": 5
+      }
+    },
+    "check": true
+  },
+  "dxf": {
+    "sha256": "0a3bfd4ae65290b77b5924cedcb6170ae1c76b820d5296edbe7f2bab0e02518b",
+    "byteLength": 5066,
+    "emittedHandles": [
+      "10",
+      "20",
+      "30",
+      "40"
+    ]
+  },
+  "kdraw": {
+    "sha256": "599cf721d4a908d0902523eddda13676422a9ec2a7540ae23d1c8d71556a3174",
+    "byteLength": 2837,
+    "documentSha256": "acb256a676af3b1f647336abaaa49075c9241779415a2d2a2fd4a8c4e23bcb19"
+  }
+}

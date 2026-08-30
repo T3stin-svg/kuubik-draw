@@ -26,6 +26,46 @@ function Invoke-ComRetry {
   } while ($true)
 }
 
+function Get-BlockEntitiesByHandle {
+  param([Parameter(Mandatory = $true)]$Block)
+  $result = @{}
+  $count = [int](Invoke-ComRetry { $Block.Count })
+  for ($index = 0; $index -lt $count; $index += 1) {
+    $entity = Invoke-ComRetry { $Block.Item($index) }
+    $handle = [string](Invoke-ComRetry { $entity.Handle })
+    if ($result.ContainsKey($handle)) { throw "Duplicate handle $handle while reading a paper-space block." }
+    $result[$handle] = $entity
+  }
+  return $result
+}
+
+function Invoke-CreateComEntityExactlyOnce {
+  param(
+    [Parameter(Mandatory = $true)]$Block,
+    [Parameter(Mandatory = $true)][scriptblock]$Action,
+    [Parameter(Mandatory = $true)][string]$Label,
+    [int]$TimeoutSeconds = 25
+  )
+  $before = Get-BlockEntitiesByHandle $Block
+  $deadline = [DateTime]::UtcNow.AddSeconds($TimeoutSeconds)
+  $lastError = $null
+  do {
+    try {
+      $created = & $Action
+      if ($null -ne $created) { return $created }
+    } catch { $lastError = $_ }
+    $after = Get-BlockEntitiesByHandle $Block
+    $newHandles = @($after.Keys | Where-Object { -not $before.ContainsKey($_) })
+    if ($newHandles.Count -eq 1) { return $after[$newHandles[0]] }
+    if ($newHandles.Count -gt 1) { throw "F-105 $Label created multiple entities after an ambiguous COM response: $($newHandles -join ', ')." }
+    if ([DateTime]::UtcNow -ge $deadline) {
+      if ($null -ne $lastError) { throw $lastError }
+      throw "F-105 $Label did not return or create an entity within $TimeoutSeconds seconds."
+    }
+    Start-Sleep -Milliseconds 150
+  } while ($true)
+}
+
 function Invoke-NonEmptyCom {
   param([Parameter(Mandatory = $true)][scriptblock]$Action, [string]$Label = 'COM value', [int]$TimeoutSeconds = 25)
   $deadline = [DateTime]::UtcNow.AddSeconds($TimeoutSeconds)
@@ -164,12 +204,12 @@ try {
   Invoke-ComRetry { $section.Name = 'F-105 SHEET 10 SECTION'; $section.TabOrder = 1 } | Out-Null
   $plan = $scratch.Layouts.Add('F-105 SHEET 20 PLAN'); Invoke-ComRetry { $plan.TabOrder = 2 } | Out-Null
   $sectionMedia = Set-A4Portrait $section; $planMedia = Set-A4Portrait $plan
-  # Creation is intentionally single-shot. Retrying a compound mutating COM
-  # block can duplicate entities when a later property write is transient.
-  $sectionCircle = $section.Block.AddCircle([double[]]@(105, 160, 0), 45)
-  $sectionText = $section.Block.AddText('F-105 SHEET 10 SECTION', [double[]]@(15, 18, 0), 6)
-  $planLine = $plan.Block.AddLine([double[]]@(20, 45, 0), [double[]]@(190, 245, 0))
-  $planText = $plan.Block.AddText('F-105 SHEET 20 PLAN', [double[]]@(15, 18, 0), 6)
+  # Each creation is retried only when a handle-delta read-back proves that
+  # the rejected COM call did not already create the entity.
+  $sectionCircle = Invoke-CreateComEntityExactlyOnce $section.Block { $section.Block.AddCircle([double[]]@(105, 160, 0), 45) } 'section circle'
+  $sectionText = Invoke-CreateComEntityExactlyOnce $section.Block { $section.Block.AddText('F-105 SHEET 10 SECTION', [double[]]@(15, 18, 0), 6) } 'section text'
+  $planLine = Invoke-CreateComEntityExactlyOnce $plan.Block { $plan.Block.AddLine([double[]]@(20, 45, 0), [double[]]@(190, 245, 0)) } 'plan line'
+  $planText = Invoke-CreateComEntityExactlyOnce $plan.Block { $plan.Block.AddText('F-105 SHEET 20 PLAN', [double[]]@(15, 18, 0), 6) } 'plan text'
   Invoke-ComRetry { $sectionCircle.Color = 5; $sectionText.Color = 5; $planLine.Color = 1; $planText.Color = 1; $scratch.Regen(1) } | Out-Null
   $beforeSave = @((Get-StableLayoutSnapshot $section 'F-105 SHEET 10 SECTION'), (Get-StableLayoutSnapshot $plan 'F-105 SHEET 20 PLAN'))
   Invoke-ComRetry { $scratch.SaveAs($tempDwg, 64) } | Out-Null

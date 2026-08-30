@@ -4,7 +4,7 @@
   "benchmark": "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
   "engine": "Autodesk AutoCAD 2024 desktop COM/native viewports, VPCLIP, DWG To PDF.pc3 and DWG reopen",
   "engineVersion": "24.3s (LMS Tech)",
-  "automationProcessId": 31196,
+  "automationProcessId": 21940,
   "automationProcessOwned": true,
   "media": "ISO_expand_A3_(297.00_x_420.00_MM)",
   "handles": {
@@ -162,19 +162,19 @@
     "paperSpaceRestored": true
   },
   "dwg": {
-    "bytes": 33523,
-    "sha256": "6ee8481a7bace98be9ccbb286de7091e695e71a1e99201023e292a608923ac94",
+    "bytes": 33555,
+    "sha256": "122b82b9705e5de375fc3f2e6069b38eff1d3de1c8b4d9cbc6562545f307616b",
     "saveAsType": 64,
     "retained": false
   },
   "pdf": {
     "bytes": 89958,
-    "sha256": "6b7279106d422af7f5858eb37f5d9d029070f57dc74ee403bf9180933acd6d27",
+    "sha256": "ec6bbcd8d9a5920d534279eee60c6015931dbc4aa6189ed807bff0c6f0e73254",
     "retained": false
   },
   "reopenPdf": {
     "bytes": 89958,
-    "sha256": "c388ca2af7edfdd534aed0349f0dda44de960c15e5bee7c8dd01723c6e1801f8",
+    "sha256": "7fd09ab68208e4275149c9d1757245e6c7daf6d541e9a2a40439b34663a8a0d8",
     "retained": false
   },
   "status": "PASS",
@@ -185,7 +185,8 @@
   "automationProcessTerminated": true,
   "processSetRestored": true,
   "preExistingProcessIds": [
-    11276
+    28304,
+    33160
   ],
   "independentPdfReadback": {
     "readers": {
@@ -195,7 +196,7 @@
     "documents": {
       "native": {
         "label": "native",
-        "path": "KuubikDraw-F104-9bef3462-1eea-4316-9f33-ab864660ecf8.pdf",
+        "path": "KuubikDraw-F104-5e821d21-7408-49d5-ad94-86c8bbb9b4fc.pdf",
         "pypdf": {
           "pages": 1,
           "mediaBox": [
@@ -293,7 +294,7 @@
       },
       "reopen": {
         "label": "reopen",
-        "path": "KuubikDraw-F104-9bef3462-1eea-4316-9f33-ab864660ecf8.reopen.pdf",
+        "path": "KuubikDraw-F104-5e821d21-7408-49d5-ad94-86c8bbb9b4fc.reopen.pdf",
         "pypdf": {
           "pages": 1,
           "mediaBox": [
@@ -461,5 +462,5 @@
   "runnerScriptSha256": "0c8a1125136a2371b0f750e39ae9728456ee206a0a8246c984f226a8ad932b44",
   "pdfReaderSha256": "d29a89cb4a35425198436619356b3497c1a5d107adee669414ae258ec6382025",
   "pixelReaderSha256": "952e09b669d31675204170186a821e85889f748c640f6d439ffa04d71c3314dc",
-  "observedAt": "2026-08-29T23:07:23.875Z"
+  "observedAt": "2026-08-30T16:12:28.623Z"
 }

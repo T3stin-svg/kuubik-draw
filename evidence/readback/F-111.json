@@ -4,7 +4,7 @@
   "kind": "readback",
   "authority": "independent-parser",
   "status": "PASS",
-  "artifactSha256": "400683ec8978d22c3cb7e2125a8bb713d845a6a70c91e6a3e32ec2a68122fa6a",
+  "artifactSha256": "9f3a4eda080f03cfa9af2ef1281087734e30f28e210afea48a5396969cdd431f",
   "observedAt": "2026-08-29T10:46:27.008Z",
   "workflow": "A fresh production DXF is imported into the immutable KDraw document and exported again; source, direct roundtrip and exact Chromium roundtrip bytes are compared and each is opened independently with strict ezdxf 1.4.3.",
   "result": "All three 13679-byte files had SHA-256 28de58b3... and identical 40/40 per-handle semantic hashes. Independent read-back preserved two bulged polylines, seven HATCH records and loops, aligned DIMENSION points, millimetres, layers, linetypes, styles, ACI/TrueColor, lineweight and transparency with zero audit errors or fixes.",

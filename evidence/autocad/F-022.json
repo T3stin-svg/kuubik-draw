@@ -4,8 +4,8 @@
   "kind": "autocad",
   "authority": "autocad-2024.1.2-live",
   "status": "PASS",
-  "artifactSha256": "d921738b523785ed5efd333433a1f5aeb340015be4b16f8ff005e61d89c62ee9",
-  "observedAt": "2026-08-30T02:48:42.147Z",
+  "artifactSha256": "4a9a33e1c4e84ebf0690bee057d84100a29839e471bba63581ce7601f139e6f1",
+  "observedAt": "2026-08-30T15:43:51.238Z",
   "workflow": "An owned isolated AutoCAD 24.3 desktop process runs Standard and Quick TRIM, all/explicit cutting edges, Edge, Project, Erase, command Undo, Fence, Crossing, physical Shift-Extend, six entity families, locked/hidden targets, closed bulge-width polyline, ignored HATCH loops, transformed nested blocks and effective layer-0 versus named hidden/frozen block children. The same Chromium-exported rational SPLINE source DXF is trimmed at x=25 and x=75.",
   "result": "All option and geometry workflows matched exact AutoCAD behavior. Typed COM and an independent parser of AutoCAD's saved DXF reproduced both rational cubic SPLINE pieces with exact degree, knots, weights and control points. The owned acad.exe process terminated and the pre-existing process set was restored.",
   "artifact": "evidence/artifacts/F-022-autocad-readback.json"

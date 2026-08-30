@@ -4,8 +4,8 @@
   "kind": "autocad",
   "authority": "autocad-2024.1.2-live",
   "status": "PASS",
-  "artifactSha256": "d4cd3a1547d13b30fc9689e576ac0f583567e19023b2060f653254b8b3b422d4",
-  "observedAt": "2026-08-29T23:23:39.343Z",
+  "artifactSha256": "43d3ea973f72753b4b3f892a902d0f2e01a88ef5880041d65e21183da6b45920",
+  "observedAt": "2026-08-30T15:39:40.898Z",
   "workflow": "AutoCAD 24.3 scratch document: erase two selected editable lines, one-command U, then attempt to erase a line on a locked layer",
   "result": "Entity counts were 3 -> 1 -> 3; the locked-layer erase remained at 3 and the locked handle survived.",
   "artifact": "evidence/artifacts/F-015-autocad-readback.json"

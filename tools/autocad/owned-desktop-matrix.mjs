@@ -1,0 +1,137 @@
+import { createHash, randomUUID } from "node:crypto";
+import { execFileSync, spawn } from "node:child_process";
+import { mkdtemp, readFile, rm } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { resolve } from "node:path";
+import { planAuthenticatedCleanup, processIdentitySetsEqual } from "./process-ownership.mjs";
+
+export const sha256 = (bytes) => createHash("sha256").update(bytes).digest("hex");
+
+function acadProcessIdentities() {
+  const script = "@(Get-Process acad -ErrorAction SilentlyContinue | ForEach-Object { [ordered]@{ processId=[int]$_.Id; executablePath=[IO.Path]::GetFullPath([string]$_.Path); startTimeUtc=$_.StartTime.ToUniversalTime().ToString('o') } }) | ConvertTo-Json -Compress";
+  const output = execFileSync("powershell.exe", ["-NoProfile", "-Command", script], { windowsHide: true, encoding: "utf8" }).trim();
+  if (!output) return [];
+  const parsed = JSON.parse(output);
+  return (Array.isArray(parsed) ? parsed : [parsed]).toSorted((a, b) => a.processId - b.processId);
+}
+
+function processIdentity(processId) {
+  const script = `$process=Get-Process -Id ${processId} -ErrorAction SilentlyContinue; if($process){[ordered]@{processId=[int]$process.Id;executablePath=[IO.Path]::GetFullPath([string]$process.Path);startTimeUtc=$process.StartTime.ToUniversalTime().ToString('o')}|ConvertTo-Json -Compress};exit 0`;
+  const output = execFileSync("powershell.exe", ["-NoProfile", "-Command", script], { windowsHide: true, encoding: "utf8" }).trim();
+  return output ? JSON.parse(output) : null;
+}
+
+function parseMatrixOutput(output) {
+  const start = output.indexOf("{");
+  const end = output.lastIndexOf("}");
+  if (start < 0 || end < start) return null;
+  try { return JSON.parse(output.slice(start, end + 1)); } catch { return null; }
+}
+
+export async function runOwnedDesktopMatrix({ rowId, matrixScriptPath, timeoutEnvironmentName, validateDxf, extraArguments = [] }) {
+  const rowSlug = rowId.replace("-", "");
+  const preExistingProcesses = acadProcessIdentities();
+  const preExistingProcessIds = new Set(preExistingProcesses.map(({ processId }) => processId));
+  const tempRoot = await mkdtemp(resolve(tmpdir(), `KuubikDraw-${rowSlug}-`));
+  const pidPath = resolve(tempRoot, `${rowSlug}.pid`);
+  const dxfOutputPath = resolve(tempRoot, `${rowSlug}-autocad.dxf`);
+  const ownershipToken = randomUUID();
+
+  const newAutomationProcesses = () => {
+    const script = "Get-CimInstance Win32_Process -Filter \"Name='acad.exe'\" | Select-Object ProcessId,CommandLine | ConvertTo-Json -Compress";
+    const output = execFileSync("powershell.exe", ["-NoProfile", "-Command", script], { windowsHide: true, encoding: "utf8" }).trim();
+    if (!output) return [];
+    const records = JSON.parse(output);
+    return (Array.isArray(records) ? records : [records])
+      .filter((record) => !preExistingProcessIds.has(Number(record.ProcessId)) && /\/Automation\s+-Embedding/iu.test(String(record.CommandLine ?? "")))
+      .map((record) => processIdentity(Number(record.ProcessId))).filter(Boolean);
+  };
+  const ownedSidecar = async () => {
+    try {
+      const sidecar = JSON.parse(await readFile(pidPath, "utf8"));
+      if (sidecar.token !== ownershipToken || sidecar.owned !== true || !Number.isInteger(sidecar.processId) || sidecar.processId <= 0
+        || preExistingProcessIds.has(sidecar.processId) || sidecar.executableName?.toLowerCase() !== "acad.exe"
+        || typeof sidecar.executablePath !== "string" || !sidecar.executablePath.toLowerCase().endsWith("\\acad.exe")
+        || typeof sidecar.startTimeUtc !== "string" || !/^[a-f0-9]{64}$/u.test(sidecar.executableSha256 ?? "")
+        || !/^[a-f0-9]{64}$/u.test(sidecar.startTimeSha256 ?? "")) return null;
+      return sidecar;
+    } catch (error) { if (error?.code === "ENOENT") return null; throw error; }
+  };
+  const identityMatches = (expected, current) => current?.processId === expected.processId
+    && current.executablePath?.toLowerCase() === expected.executablePath.toLowerCase()
+    && current.startTimeUtc === expected.startTimeUtc;
+  const terminate = async (sidecar) => {
+    if (!sidecar) return false;
+    let current = processIdentity(sidecar.processId);
+    if (!current) return true;
+    if (!identityMatches(sidecar, current)) throw new Error(`Refusing to terminate PID ${sidecar.processId}: identity changed.`);
+    try { process.kill(sidecar.processId); } catch (error) { if (error?.code === "ESRCH") return true; throw error; }
+    for (let attempt = 0; attempt < 100; attempt += 1) {
+      await new Promise((done) => setTimeout(done, 100));
+      current = processIdentity(sidecar.processId);
+      if (!current) return true;
+      if (!identityMatches(sidecar, current)) throw new Error(`PID ${sidecar.processId} was reused during ${rowId} cleanup.`);
+    }
+    return false;
+  };
+  const restoredProcessSet = async () => {
+    for (let attempt = 0; attempt < 100; attempt += 1) {
+      if (processIdentitySetsEqual(preExistingProcesses, acadProcessIdentities())) return true;
+      await new Promise((done) => setTimeout(done, 100));
+    }
+    return false;
+  };
+
+  const timeoutMs = Number(process.env[timeoutEnvironmentName] ?? 300_000);
+  if (!Number.isFinite(timeoutMs) || timeoutMs < 30_000 || timeoutMs > 300_000) throw new Error(`${timeoutEnvironmentName} must be between 30000 and 300000.`);
+  let sidecar = null;
+  let primaryError = null;
+  try {
+    const childResult = await new Promise((resolveRun, reject) => {
+      const child = spawn("powershell.exe", ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", matrixScriptPath, "-PidPath", pidPath, "-OwnershipToken", ownershipToken, "-DxfOutputPath", dxfOutputPath, ...extraArguments], {
+        cwd: process.cwd(), windowsHide: true, stdio: ["ignore", "pipe", "pipe"],
+      });
+      const stdout = [];
+      const stderr = [];
+      let timedOut = false;
+      child.stdout.on("data", (chunk) => stdout.push(chunk));
+      child.stderr.on("data", (chunk) => stderr.push(chunk));
+      const timeout = setTimeout(() => {
+        timedOut = true;
+        try { execFileSync("taskkill.exe", ["/PID", String(child.pid), "/T", "/F"], { windowsHide: true, stdio: "ignore" }); } catch { child.kill(); }
+      }, timeoutMs);
+      child.on("error", (error) => { clearTimeout(timeout); reject(error); });
+      child.on("close", (code) => {
+        clearTimeout(timeout);
+        resolveRun({ code, timedOut, output: Buffer.concat(stdout).toString("utf8").trim(), errorText: Buffer.concat(stderr).toString("utf8").trim() });
+      });
+    });
+    sidecar = await ownedSidecar();
+    const processId = sidecar?.processId ?? 0;
+    const automationProcessTerminated = await terminate(sidecar);
+    const processSetRestored = await restoredProcessSet();
+    const matrix = parseMatrixOutput(childResult.output);
+    if (childResult.timedOut) throw new Error(`AutoCAD ${rowId} matrix exceeded ${timeoutMs / 1000}s; PID=${processId || "missing"}; trace=${childResult.output || childResult.errorText}`);
+    if (childResult.code !== 0) throw new Error(`AutoCAD ${rowId} matrix exited ${childResult.code} after cleanup ${JSON.stringify({ processId, automationProcessTerminated, processSetRestored, checks: matrix?.checks })}: ${childResult.errorText || childResult.output}`);
+    if (!(processId > 0) || !automationProcessTerminated || !processSetRestored || !matrix) throw new Error(`${rowId} cleanup/matrix failure: ${JSON.stringify({ processId, automationProcessTerminated, processSetRestored, matrix: Boolean(matrix) })}`);
+    if (matrix.automationProcessId !== sidecar.processId || matrix.automationProcessIdentity?.processId !== sidecar.processId
+      || matrix.automationProcessIdentity?.executableSha256 !== sidecar.executableSha256 || matrix.automationProcessIdentity?.startTimeSha256 !== sidecar.startTimeSha256) throw new Error(`${rowId} PID sidecar and AutoCAD COM identity disagreed.`);
+    const dxfBytes = await readFile(dxfOutputPath);
+    const dxfReadback = validateDxf(dxfBytes, matrix);
+    return { ...matrix, automationProcessTerminated, processSetRestored, preExistingProcesses, dxfReadback: { sha256: sha256(dxfBytes), ...dxfReadback } };
+  } catch (error) {
+    primaryError = error;
+    throw error;
+  } finally {
+    const cleanupErrors = [];
+    try {
+      if (!sidecar) sidecar = await ownedSidecar();
+      const plan = planAuthenticatedCleanup(sidecar, newAutomationProcesses());
+      if (plan.refusedProcessIds.length) cleanupErrors.push(new Error(`${rowId} left unauthenticated AutoCAD processes untouched: ${plan.refusedProcessIds.join(", ")}`));
+      if (plan.terminate && !await terminate(plan.terminate)) cleanupErrors.push(new Error(`Owned AutoCAD PID ${plan.terminate.processId} remained.`));
+    } catch (error) { cleanupErrors.push(error); }
+    try { if (!await restoredProcessSet()) cleanupErrors.push(new Error(`${rowId} did not restore the exact pre-existing AutoCAD process set.`)); } catch (error) { cleanupErrors.push(error); }
+    try { await rm(tempRoot, { recursive: true, force: true }); } catch (error) { cleanupErrors.push(error); }
+    if (cleanupErrors.length) throw new AggregateError(primaryError ? [primaryError, ...cleanupErrors] : cleanupErrors, `${rowId} cleanup verification failed.`);
+  }
+}

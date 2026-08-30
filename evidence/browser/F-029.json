@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-029",
+  "kind": "browser",
+  "authority": "kuubik-draw-browser",
+  "status": "PASS",
+  "artifactSha256": "b9de676260bf9c9be19ca460fb08a75406aac81bb0de8172a6b6f731e7c7d391",
+  "observedAt": "2026-08-30T16:36:12.922Z",
+  "workflow": "Headless Chromium /d/local resolves AL/ALIGN through the visible registry, captures two source/destination pairs by physical canvas clicks, chooses Scale Yes, previews and commits eligible targets, refuses the locked target, performs atomic Undo/Redo and downloads production DXF/KDRAW1.",
+  "result": "Both browser workflows passed with zero console or page errors. Exact transformed geometry, operation arguments, locked refusal, persisted output and nested artifact/source receipts matched current bytes.",
+  "test": "e2e/f029-align.spec.ts",
+  "artifact": "evidence/artifacts/F-029-browser-readback.json"
+}

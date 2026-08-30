@@ -4,7 +4,7 @@
   "benchmark": "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
   "engine": "Autodesk AutoCAD 2024 desktop COM/native VPCLIP",
   "engineVersion": "24.3s (LMS Tech)",
-  "automationProcessId": 34916,
+  "automationProcessId": 2248,
   "automationProcessOwned": true,
   "handles": {
     "systemViewport": "281",
@@ -207,6 +207,16 @@
       "passes": [
         {
           "pass": 1,
+          "exact": false,
+          "consecutiveExactReads": 0,
+          "viewportHandles": [
+            "28A",
+            "28C"
+          ],
+          "boundaryHandles": []
+        },
+        {
+          "pass": 2,
           "exact": true,
           "consecutiveExactReads": 1,
           "viewportHandles": [
@@ -218,7 +228,7 @@
           ]
         },
         {
-          "pass": 2,
+          "pass": 3,
           "exact": true,
           "consecutiveExactReads": 2,
           "viewportHandles": [
@@ -381,7 +391,7 @@
   },
   "dwg": {
     "bytes": 32852,
-    "sha256": "60dbdba3685028b0bd9187bf650b96664673c8786324cda6fee0ff984da6f09b",
+    "sha256": "37f01e56c58038f0133af3bb98417bc37e47f966cb381c493051d66c8a8f3f31",
     "saveAsType": 64,
     "retained": false
   },
@@ -393,5 +403,5 @@
   "automationProcessTerminated": true,
   "scriptSha256": "1392731ffd773f7a5d5051b5c5160ee8323cc1f4273f731b1f3eaa8326729163",
   "matrixScriptSha256": "1e526ee5b2e3c1c98c1a5f8cdaa6f13eea0a3aea467cc17ae6b96030604827c1",
-  "observedAt": "2026-08-29T23:44:46.954Z"
+  "observedAt": "2026-08-30T16:05:23.603Z"
 }

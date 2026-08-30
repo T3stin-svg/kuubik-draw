@@ -1,0 +1,1350 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-029",
+  "benchmark": "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
+  "engine": "Autodesk AutoCAD 2024 desktop COM",
+  "engineVersion": "24.3s (LMS Tech)",
+  "automationProcessId": 24612,
+  "automationProcessOwned": true,
+  "installedUpdateIdentity": {
+    "displayName": "Autodesk AutoCAD 2024.1.2 Update",
+    "displayVersion": "24.3.152.0"
+  },
+  "automationProcessIdentity": {
+    "processId": 24612,
+    "executableName": "acad.exe",
+    "executableSha256": "0570749def2fa8dcfb62df1a6671f44245a9ef740dd61d9d0f9110794a76e70e",
+    "fileVersion": "R24.3.152.0.0",
+    "productVersion": "R24.3.152.0.0",
+    "startTimeSha256": "0bed7b71d4519c4c0d9523ba6628f2482ac0a8ea583f619506243884338d20b6"
+  },
+  "observations": {
+    "onePair": {
+      "source": {
+        "objectName": "AcDbLine",
+        "handle": "286",
+        "layer": "F029_ONE",
+        "color": 1,
+        "lineweight": 35,
+        "linetype": "ByLayer",
+        "details": {
+          "start": [
+            0,
+            0
+          ],
+          "end": [
+            100,
+            0
+          ]
+        }
+      },
+      "committed": {
+        "objectName": "AcDbLine",
+        "handle": "286",
+        "layer": "F029_ONE",
+        "color": 1,
+        "lineweight": 35,
+        "linetype": "ByLayer",
+        "details": {
+          "start": [
+            50,
+            25
+          ],
+          "end": [
+            150,
+            25
+          ]
+        }
+      }
+    },
+    "twoPairNoScale": {
+      "objectName": "AcDbLine",
+      "handle": "287",
+      "layer": "F029_NOSCALE",
+      "color": 1,
+      "lineweight": 35,
+      "linetype": "ByLayer",
+      "details": {
+        "start": [
+          100,
+          200
+        ],
+        "end": [
+          100,
+          300
+        ]
+      }
+    },
+    "opposite": {
+      "objectName": "AcDbLine",
+      "handle": "288",
+      "layer": "F029_OPPOSITE",
+      "color": 1,
+      "lineweight": 35,
+      "linetype": "ByLayer",
+      "details": {
+        "start": [
+          -6.123233995736766e-15,
+          100
+        ],
+        "end": [
+          0,
+          0
+        ]
+      }
+    },
+    "noOp": {
+      "source": {
+        "objectName": "AcDbLine",
+        "handle": "289",
+        "layer": "F029_NOOP",
+        "color": 1,
+        "lineweight": 35,
+        "linetype": "ByLayer",
+        "details": {
+          "start": [
+            0,
+            0
+          ],
+          "end": [
+            100,
+            0
+          ]
+        }
+      },
+      "committed": {
+        "objectName": "AcDbLine",
+        "handle": "289",
+        "layer": "F029_NOOP",
+        "color": 1,
+        "lineweight": 35,
+        "linetype": "ByLayer",
+        "details": {
+          "start": [
+            0,
+            0
+          ],
+          "end": [
+            100,
+            0
+          ]
+        }
+      }
+    },
+    "locked": {
+      "source": [
+        {
+          "objectName": "AcDbLine",
+          "handle": "28A",
+          "layer": "F029_UNLOCKED",
+          "color": 1,
+          "lineweight": 35,
+          "linetype": "ByLayer",
+          "details": {
+            "start": [
+              0,
+              700
+            ],
+            "end": [
+              100,
+              700
+            ]
+          }
+        },
+        {
+          "objectName": "AcDbLine",
+          "handle": "28B",
+          "layer": "F029_LOCKED",
+          "color": 1,
+          "lineweight": 35,
+          "linetype": "ByLayer",
+          "details": {
+            "start": [
+              0,
+              750
+            ],
+            "end": [
+              100,
+              750
+            ]
+          }
+        }
+      ],
+      "committed": [
+        {
+          "objectName": "AcDbLine",
+          "handle": "28A",
+          "layer": "F029_UNLOCKED",
+          "color": 1,
+          "lineweight": 35,
+          "linetype": "ByLayer",
+          "details": {
+            "start": [
+              50,
+              725
+            ],
+            "end": [
+              150,
+              725
+            ]
+          }
+        },
+        {
+          "objectName": "AcDbLine",
+          "handle": "28B",
+          "layer": "F029_LOCKED",
+          "color": 1,
+          "lineweight": 35,
+          "linetype": "ByLayer",
+          "details": {
+            "start": [
+              0,
+              750
+            ],
+            "end": [
+              100,
+              750
+            ]
+          }
+        }
+      ],
+      "behavior": "unlocked-only"
+    },
+    "scale": {
+      "source": [
+        {
+          "objectName": "AcDbLine",
+          "handle": "28C",
+          "layer": "F029_SCALE",
+          "color": 1,
+          "lineweight": 35,
+          "linetype": "ByLayer",
+          "details": {
+            "start": [
+              0,
+              0
+            ],
+            "end": [
+              100,
+              0
+            ]
+          }
+        },
+        {
+          "objectName": "AcDbCircle",
+          "handle": "28D",
+          "layer": "F029_SCALE",
+          "color": 1,
+          "lineweight": 35,
+          "linetype": "ByLayer",
+          "details": {
+            "center": [
+              0,
+              100
+            ],
+            "radius": 25
+          }
+        },
+        {
+          "objectName": "AcDbPolyline",
+          "handle": "28E",
+          "layer": "F029_SCALE",
+          "color": 1,
+          "lineweight": 35,
+          "linetype": "ByLayer",
+          "details": {
+            "vertices": [
+              [
+                0,
+                200
+              ],
+              [
+                100,
+                200
+              ]
+            ],
+            "closed": true,
+            "bulges": [
+              0,
+              0.5
+            ],
+            "widths": [
+              [
+                2,
+                4
+              ],
+              [
+                4,
+                6
+              ]
+            ]
+          }
+        },
+        {
+          "objectName": "AcDbSpline",
+          "handle": "28F",
+          "layer": "F029_SCALE",
+          "color": 1,
+          "lineweight": 35,
+          "linetype": "ByLayer",
+          "details": {
+            "degree": 3,
+            "controlPoints": [
+              [
+                0,
+                300
+              ],
+              [
+                40,
+                380
+              ],
+              [
+                80,
+                380
+              ],
+              [
+                120,
+                300
+              ]
+            ],
+            "knots": [
+              0,
+              0,
+              0,
+              0,
+              1,
+              1,
+              1,
+              1
+            ],
+            "weights": [
+              1,
+              0.8,
+              1.2,
+              1
+            ],
+            "closed": false,
+            "periodic": false,
+            "rational": true,
+            "fitPointCount": 0,
+            "controlPointCount": 4
+          }
+        },
+        {
+          "objectName": "AcDbText",
+          "handle": "290",
+          "layer": "F029_SCALE",
+          "color": 1,
+          "lineweight": 35,
+          "linetype": "ByLayer",
+          "details": {
+            "position": [
+              0,
+              450
+            ],
+            "height": 10,
+            "rotation": 0,
+            "text": "ALIGN"
+          }
+        }
+      ],
+      "committed": [
+        {
+          "objectName": "AcDbLine",
+          "handle": "28C",
+          "layer": "F029_SCALE",
+          "color": 1,
+          "lineweight": 35,
+          "linetype": "ByLayer",
+          "details": {
+            "start": [
+              100,
+              200
+            ],
+            "end": [
+              100,
+              400
+            ]
+          }
+        },
+        {
+          "objectName": "AcDbCircle",
+          "handle": "28D",
+          "layer": "F029_SCALE",
+          "color": 1,
+          "lineweight": 35,
+          "linetype": "ByLayer",
+          "details": {
+            "center": [
+              -100,
+              200
+            ],
+            "radius": 50
+          }
+        },
+        {
+          "objectName": "AcDbPolyline",
+          "handle": "28E",
+          "layer": "F029_SCALE",
+          "color": 1,
+          "lineweight": 35,
+          "linetype": "ByLayer",
+          "details": {
+            "vertices": [
+              [
+                -300,
+                200
+              ],
+              [
+                -300,
+                400
+              ]
+            ],
+            "closed": true,
+            "bulges": [
+              0,
+              0.5
+            ],
+            "widths": [
+              [
+                4,
+                8
+              ],
+              [
+                8,
+                12
+              ]
+            ]
+          }
+        },
+        {
+          "objectName": "AcDbSpline",
+          "handle": "28F",
+          "layer": "F029_SCALE",
+          "color": 1,
+          "lineweight": 35,
+          "linetype": "ByLayer",
+          "details": {
+            "degree": 3,
+            "controlPoints": [
+              [
+                -500,
+                200
+              ],
+              [
+                -660,
+                280
+              ],
+              [
+                -660,
+                360
+              ],
+              [
+                -500,
+                440
+              ]
+            ],
+            "knots": [
+              0,
+              0,
+              0,
+              0,
+              1,
+              1,
+              1,
+              1
+            ],
+            "weights": [
+              1,
+              0.8,
+              1.2,
+              1
+            ],
+            "closed": false,
+            "periodic": false,
+            "rational": true,
+            "fitPointCount": 0,
+            "controlPointCount": 4
+          }
+        },
+        {
+          "objectName": "AcDbText",
+          "handle": "290",
+          "layer": "F029_SCALE",
+          "color": 1,
+          "lineweight": 35,
+          "linetype": "ByLayer",
+          "details": {
+            "position": [
+              -800,
+              200.00000000000006
+            ],
+            "height": 20,
+            "rotation": 1.5707963267948966,
+            "text": "ALIGN"
+          }
+        }
+      ],
+      "undone": [
+        {
+          "objectName": "AcDbLine",
+          "handle": "28C",
+          "layer": "F029_SCALE",
+          "color": 1,
+          "lineweight": 35,
+          "linetype": "ByLayer",
+          "details": {
+            "start": [
+              0,
+              0
+            ],
+            "end": [
+              100,
+              0
+            ]
+          }
+        },
+        {
+          "objectName": "AcDbCircle",
+          "handle": "28D",
+          "layer": "F029_SCALE",
+          "color": 1,
+          "lineweight": 35,
+          "linetype": "ByLayer",
+          "details": {
+            "center": [
+              0,
+              100
+            ],
+            "radius": 25
+          }
+        },
+        {
+          "objectName": "AcDbPolyline",
+          "handle": "28E",
+          "layer": "F029_SCALE",
+          "color": 1,
+          "lineweight": 35,
+          "linetype": "ByLayer",
+          "details": {
+            "vertices": [
+              [
+                0,
+                200
+              ],
+              [
+                100,
+                200
+              ]
+            ],
+            "closed": true,
+            "bulges": [
+              0,
+              0.5
+            ],
+            "widths": [
+              [
+                2,
+                4
+              ],
+              [
+                4,
+                6
+              ]
+            ]
+          }
+        },
+        {
+          "objectName": "AcDbSpline",
+          "handle": "28F",
+          "layer": "F029_SCALE",
+          "color": 1,
+          "lineweight": 35,
+          "linetype": "ByLayer",
+          "details": {
+            "degree": 3,
+            "controlPoints": [
+              [
+                0,
+                300
+              ],
+              [
+                39.99999999999997,
+                380
+              ],
+              [
+                80,
+                380
+              ],
+              [
+                120,
+                300
+              ]
+            ],
+            "knots": [
+              0,
+              0,
+              0,
+              0,
+              1,
+              1,
+              1,
+              1
+            ],
+            "weights": [
+              1,
+              0.8,
+              1.2,
+              1
+            ],
+            "closed": false,
+            "periodic": false,
+            "rational": true,
+            "fitPointCount": 0,
+            "controlPointCount": 4
+          }
+        },
+        {
+          "objectName": "AcDbText",
+          "handle": "290",
+          "layer": "F029_SCALE",
+          "color": 1,
+          "lineweight": 35,
+          "linetype": "ByLayer",
+          "details": {
+            "position": [
+              0,
+              450
+            ],
+            "height": 10,
+            "rotation": 0,
+            "text": "ALIGN"
+          }
+        }
+      ],
+      "redone": [
+        {
+          "objectName": "AcDbLine",
+          "handle": "28C",
+          "layer": "F029_SCALE",
+          "color": 1,
+          "lineweight": 35,
+          "linetype": "ByLayer",
+          "details": {
+            "start": [
+              100,
+              200
+            ],
+            "end": [
+              100,
+              400
+            ]
+          }
+        },
+        {
+          "objectName": "AcDbCircle",
+          "handle": "28D",
+          "layer": "F029_SCALE",
+          "color": 1,
+          "lineweight": 35,
+          "linetype": "ByLayer",
+          "details": {
+            "center": [
+              -100,
+              200
+            ],
+            "radius": 50
+          }
+        },
+        {
+          "objectName": "AcDbPolyline",
+          "handle": "28E",
+          "layer": "F029_SCALE",
+          "color": 1,
+          "lineweight": 35,
+          "linetype": "ByLayer",
+          "details": {
+            "vertices": [
+              [
+                -300,
+                200
+              ],
+              [
+                -300,
+                400
+              ]
+            ],
+            "closed": true,
+            "bulges": [
+              0,
+              0.5
+            ],
+            "widths": [
+              [
+                4,
+                8
+              ],
+              [
+                8,
+                12
+              ]
+            ]
+          }
+        },
+        {
+          "objectName": "AcDbSpline",
+          "handle": "28F",
+          "layer": "F029_SCALE",
+          "color": 1,
+          "lineweight": 35,
+          "linetype": "ByLayer",
+          "details": {
+            "degree": 3,
+            "controlPoints": [
+              [
+                -500,
+                200
+              ],
+              [
+                -660,
+                280
+              ],
+              [
+                -660,
+                360
+              ],
+              [
+                -500,
+                440
+              ]
+            ],
+            "knots": [
+              0,
+              0,
+              0,
+              0,
+              1,
+              1,
+              1,
+              1
+            ],
+            "weights": [
+              1,
+              0.8,
+              1.2,
+              1
+            ],
+            "closed": false,
+            "periodic": false,
+            "rational": true,
+            "fitPointCount": 0,
+            "controlPointCount": 4
+          }
+        },
+        {
+          "objectName": "AcDbText",
+          "handle": "290",
+          "layer": "F029_SCALE",
+          "color": 1,
+          "lineweight": 35,
+          "linetype": "ByLayer",
+          "details": {
+            "position": [
+              -800,
+              200.00000000000006
+            ],
+            "height": 20,
+            "rotation": 1.5707963267948966,
+            "text": "ALIGN"
+          }
+        }
+      ]
+    }
+  },
+  "finalStates": [
+    {
+      "objectName": "AcDbLine",
+      "handle": "286",
+      "layer": "F029_ONE",
+      "color": 1,
+      "lineweight": 35,
+      "linetype": "ByLayer",
+      "details": {
+        "start": [
+          50,
+          25
+        ],
+        "end": [
+          150,
+          25
+        ]
+      }
+    },
+    {
+      "objectName": "AcDbLine",
+      "handle": "287",
+      "layer": "F029_NOSCALE",
+      "color": 1,
+      "lineweight": 35,
+      "linetype": "ByLayer",
+      "details": {
+        "start": [
+          100,
+          200
+        ],
+        "end": [
+          100,
+          300
+        ]
+      }
+    },
+    {
+      "objectName": "AcDbSpline",
+      "handle": "28F",
+      "layer": "F029_SCALE",
+      "color": 1,
+      "lineweight": 35,
+      "linetype": "ByLayer",
+      "details": {
+        "degree": 3,
+        "controlPoints": [
+          [
+            -500,
+            200
+          ],
+          [
+            -660,
+            280
+          ],
+          [
+            -660,
+            360
+          ],
+          [
+            -500,
+            440
+          ]
+        ],
+        "knots": [
+          0,
+          0,
+          0,
+          0,
+          1,
+          1,
+          1,
+          1
+        ],
+        "weights": [
+          1,
+          0.8,
+          1.2,
+          1
+        ],
+        "closed": false,
+        "periodic": false,
+        "rational": true,
+        "fitPointCount": 0,
+        "controlPointCount": 4
+      }
+    },
+    {
+      "objectName": "AcDbText",
+      "handle": "290",
+      "layer": "F029_SCALE",
+      "color": 1,
+      "lineweight": 35,
+      "linetype": "ByLayer",
+      "details": {
+        "position": [
+          -800,
+          200.00000000000006
+        ],
+        "height": 20,
+        "rotation": 1.5707963267948966,
+        "text": "ALIGN"
+      }
+    },
+    {
+      "objectName": "AcDbPolyline",
+      "handle": "28E",
+      "layer": "F029_SCALE",
+      "color": 1,
+      "lineweight": 35,
+      "linetype": "ByLayer",
+      "details": {
+        "vertices": [
+          [
+            -300,
+            200
+          ],
+          [
+            -300,
+            400
+          ]
+        ],
+        "closed": true,
+        "bulges": [
+          0,
+          0.5
+        ],
+        "widths": [
+          [
+            4,
+            8
+          ],
+          [
+            8,
+            12
+          ]
+        ]
+      }
+    },
+    {
+      "objectName": "AcDbLine",
+      "handle": "28C",
+      "layer": "F029_SCALE",
+      "color": 1,
+      "lineweight": 35,
+      "linetype": "ByLayer",
+      "details": {
+        "start": [
+          100,
+          200
+        ],
+        "end": [
+          100,
+          400
+        ]
+      }
+    },
+    {
+      "objectName": "AcDbCircle",
+      "handle": "28D",
+      "layer": "F029_SCALE",
+      "color": 1,
+      "lineweight": 35,
+      "linetype": "ByLayer",
+      "details": {
+        "center": [
+          -100,
+          200
+        ],
+        "radius": 50
+      }
+    },
+    {
+      "objectName": "AcDbLine",
+      "handle": "288",
+      "layer": "F029_OPPOSITE",
+      "color": 1,
+      "lineweight": 35,
+      "linetype": "ByLayer",
+      "details": {
+        "start": [
+          -6.123233995736766e-15,
+          100
+        ],
+        "end": [
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "objectName": "AcDbLine",
+      "handle": "289",
+      "layer": "F029_NOOP",
+      "color": 1,
+      "lineweight": 35,
+      "linetype": "ByLayer",
+      "details": {
+        "start": [
+          0,
+          0
+        ],
+        "end": [
+          100,
+          0
+        ]
+      }
+    },
+    {
+      "objectName": "AcDbLine",
+      "handle": "28A",
+      "layer": "F029_UNLOCKED",
+      "color": 1,
+      "lineweight": 35,
+      "linetype": "ByLayer",
+      "details": {
+        "start": [
+          50,
+          725
+        ],
+        "end": [
+          150,
+          725
+        ]
+      }
+    },
+    {
+      "objectName": "AcDbLine",
+      "handle": "28B",
+      "layer": "F029_LOCKED",
+      "color": 1,
+      "lineweight": 35,
+      "linetype": "ByLayer",
+      "details": {
+        "start": [
+          0,
+          750
+        ],
+        "end": [
+          100,
+          750
+        ]
+      }
+    }
+  ],
+  "checks": {
+    "onePairTranslation": true,
+    "twoPairNoScale": true,
+    "oppositeDirection": true,
+    "noOpExact": true,
+    "lockedSelectionBehaviorMeasured": true,
+    "scaleLine": true,
+    "scaleCircle": true,
+    "scalePolyline": true,
+    "scaleSpline": true,
+    "scaleText": true,
+    "undoLine": true,
+    "undoCircle": true,
+    "undoPolyline": true,
+    "undoSpline": true,
+    "undoText": true,
+    "atomicUndo": true,
+    "atomicRedo": true
+  },
+  "dxfOutputSha256": "9ea8c22e558b10a51eb8840223b89c7e3b0259a18b2ce9d2ac8e6e9f69683fa4",
+  "cmdNamesAfter": "",
+  "userDocument": {
+    "isolatedOwnedProcess": true,
+    "blankRestored": true
+  },
+  "status": "PASS",
+  "automationProcessTerminated": true,
+  "processSetRestored": true,
+  "preExistingProcesses": [
+    {
+      "processId": 28304,
+      "executablePath": "C:\\Program Files\\Autodesk\\AutoCAD 2024\\acad.exe",
+      "startTimeUtc": "2026-08-30T04:04:44.6769957Z"
+    },
+    {
+      "processId": 33160,
+      "executablePath": "C:\\Program Files\\Autodesk\\AutoCAD 2024\\acad.exe",
+      "startTimeUtc": "2026-08-30T05:53:33.2219546Z"
+    }
+  ],
+  "dxfReadback": {
+    "sha256": "9ea8c22e558b10a51eb8840223b89c7e3b0259a18b2ce9d2ac8e6e9f69683fa4",
+    "entityCount": 11,
+    "entities": [
+      {
+        "handle": "286",
+        "layer": "F029_ONE",
+        "type": "LINE",
+        "colorIndex": 1,
+        "lineweight": 35,
+        "lineType": "ByLayer",
+        "vertices": [
+          {
+            "x": 50,
+            "y": 25,
+            "bulge": 0,
+            "startWidth": 0,
+            "endWidth": 0
+          },
+          {
+            "x": 150,
+            "y": 25,
+            "bulge": 0,
+            "startWidth": 0,
+            "endWidth": 0
+          }
+        ],
+        "weights": null,
+        "splineFlags": 0
+      },
+      {
+        "handle": "287",
+        "layer": "F029_NOSCALE",
+        "type": "LINE",
+        "colorIndex": 1,
+        "lineweight": 35,
+        "lineType": "ByLayer",
+        "vertices": [
+          {
+            "x": 100,
+            "y": 200,
+            "bulge": 0,
+            "startWidth": 0,
+            "endWidth": 0
+          },
+          {
+            "x": 100,
+            "y": 300,
+            "bulge": 0,
+            "startWidth": 0,
+            "endWidth": 0
+          }
+        ],
+        "weights": null,
+        "splineFlags": 0
+      },
+      {
+        "handle": "288",
+        "layer": "F029_OPPOSITE",
+        "type": "LINE",
+        "colorIndex": 1,
+        "lineweight": 35,
+        "lineType": "ByLayer",
+        "vertices": [
+          {
+            "x": -6.1e-15,
+            "y": 100,
+            "bulge": 0,
+            "startWidth": 0,
+            "endWidth": 0
+          },
+          {
+            "x": 0,
+            "y": 0,
+            "bulge": 0,
+            "startWidth": 0,
+            "endWidth": 0
+          }
+        ],
+        "weights": null,
+        "splineFlags": 0
+      },
+      {
+        "handle": "289",
+        "layer": "F029_NOOP",
+        "type": "LINE",
+        "colorIndex": 1,
+        "lineweight": 35,
+        "lineType": "ByLayer",
+        "vertices": [
+          {
+            "x": 0,
+            "y": 0,
+            "bulge": 0,
+            "startWidth": 0,
+            "endWidth": 0
+          },
+          {
+            "x": 100,
+            "y": 0,
+            "bulge": 0,
+            "startWidth": 0,
+            "endWidth": 0
+          }
+        ],
+        "weights": null,
+        "splineFlags": 0
+      },
+      {
+        "handle": "28A",
+        "layer": "F029_UNLOCKED",
+        "type": "LINE",
+        "colorIndex": 1,
+        "lineweight": 35,
+        "lineType": "ByLayer",
+        "vertices": [
+          {
+            "x": 50,
+            "y": 725,
+            "bulge": 0,
+            "startWidth": 0,
+            "endWidth": 0
+          },
+          {
+            "x": 150,
+            "y": 725,
+            "bulge": 0,
+            "startWidth": 0,
+            "endWidth": 0
+          }
+        ],
+        "weights": null,
+        "splineFlags": 0
+      },
+      {
+        "handle": "28B",
+        "layer": "F029_LOCKED",
+        "type": "LINE",
+        "colorIndex": 1,
+        "lineweight": 35,
+        "lineType": "ByLayer",
+        "vertices": [
+          {
+            "x": 0,
+            "y": 750,
+            "bulge": 0,
+            "startWidth": 0,
+            "endWidth": 0
+          },
+          {
+            "x": 100,
+            "y": 750,
+            "bulge": 0,
+            "startWidth": 0,
+            "endWidth": 0
+          }
+        ],
+        "weights": null,
+        "splineFlags": 0
+      },
+      {
+        "handle": "28C",
+        "layer": "F029_SCALE",
+        "type": "LINE",
+        "colorIndex": 1,
+        "lineweight": 35,
+        "lineType": "ByLayer",
+        "vertices": [
+          {
+            "x": 100,
+            "y": 200,
+            "bulge": 0,
+            "startWidth": 0,
+            "endWidth": 0
+          },
+          {
+            "x": 100,
+            "y": 400,
+            "bulge": 0,
+            "startWidth": 0,
+            "endWidth": 0
+          }
+        ],
+        "weights": null,
+        "splineFlags": 0
+      },
+      {
+        "handle": "28D",
+        "layer": "F029_SCALE",
+        "type": "CIRCLE",
+        "colorIndex": 1,
+        "lineweight": 35,
+        "lineType": "ByLayer",
+        "center": {
+          "x": -100,
+          "y": 200
+        },
+        "radius": 50,
+        "weights": null,
+        "splineFlags": 0
+      },
+      {
+        "handle": "28E",
+        "layer": "F029_SCALE",
+        "type": "LWPOLYLINE",
+        "colorIndex": 1,
+        "lineweight": 35,
+        "lineType": "ByLayer",
+        "vertices": [
+          {
+            "x": -300,
+            "y": 200,
+            "bulge": 0,
+            "startWidth": 4,
+            "endWidth": 8
+          },
+          {
+            "x": -300,
+            "y": 400,
+            "bulge": 0.5,
+            "startWidth": 8,
+            "endWidth": 12
+          }
+        ],
+        "closed": true,
+        "weights": [
+          1,
+          1.5
+        ],
+        "splineFlags": 1
+      },
+      {
+        "handle": "28F",
+        "layer": "F029_SCALE",
+        "type": "SPLINE",
+        "colorIndex": 1,
+        "lineweight": 35,
+        "lineType": "ByLayer",
+        "controlPoints": [
+          {
+            "x": -500,
+            "y": 200
+          },
+          {
+            "x": -660,
+            "y": 280
+          },
+          {
+            "x": -660,
+            "y": 360
+          },
+          {
+            "x": -500,
+            "y": 440
+          }
+        ],
+        "knots": [
+          0,
+          0,
+          0,
+          0,
+          1,
+          1,
+          1,
+          1
+        ],
+        "weights": [
+          1,
+          0.8,
+          1.199999999999999,
+          1
+        ],
+        "degree": 3,
+        "splineFlags": 12
+      },
+      {
+        "handle": "290",
+        "layer": "F029_SCALE",
+        "type": "TEXT",
+        "colorIndex": 1,
+        "lineweight": 35,
+        "lineType": "ByLayer",
+        "weights": null,
+        "splineFlags": 0,
+        "textPoint": {
+          "x": -800,
+          "y": 200
+        },
+        "textHeight": 20,
+        "rotation": 90,
+        "text": "ALIGN"
+      }
+    ],
+    "fullStateMatchesNative": true
+  },
+  "certificationAuthority": true,
+  "workflow": "owned AutoCAD 2024.1.2 desktop ALIGN one/two-pair Scale No/Yes, opposite/no-op/locked and atomic Undo/Redo matrix + independently parsed DXF",
+  "matrixScriptSha256": "8059ad744e647c1e7af6cf65a1bb8690d6b0aec7208f2fb21561f0edca731ad4",
+  "runnerSha256": "3eeb0e0886e7f0d6710553e08b671343403e470113f66136585c93a576f33906",
+  "processOwnershipSha256": "9f1d48d1b1058a631ef8d6df03c1beedc836688c06e0658a302ba424d654937d",
+  "observedAt": "2026-08-30T16:35:47.181Z"
+}

@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { UNCERTIFIED_ROW_DEPENDENCIES } from "../../parity/rows.mjs";
 import { PACKAGE_SEMANTIC_MIGRATION_TARGET, affectedRows, buildPackageSemanticMigrationReceipt, canonicalJson, checkoutStepsUseFullHistory, exactContentAddress, exactSchemaAndYamlParserMigration, exactSchemaPinMigration, exactYamlParserAddition, executableStages, inferredRowIds, packageContractForRow, semanticContentAddress, semanticValue, sourceContentAddress, sourceToRows, staleEvidenceBindings, workflowJobContainsOrderedRuns } from "./core.mjs";
 
 describe("parity kit", () => {
@@ -195,19 +196,25 @@ describe("parity kit", () => {
     expect(semanticValue({ generatedAt: "now", value: 1 })).toEqual({ value: 1 });
   });
 
-  it("maps shared modify sources through certified F-027 and package locks to every certified row", () => {
-    expect(affectedRows(["packages/cad-core/src/trim.ts"]).rows).toEqual(["F-022", "F-023", "F-024", "F-026", "F-027"]);
-    expect(affectedRows(["apps/web/src/workflows/modify-command.ts"]).rows).toEqual(["F-015", "F-016", "F-017", "F-018", "F-019", "F-020", "F-021", "F-022", "F-023", "F-024", "F-025", "F-026", "F-027"]);
+  it("maps shared modify sources through certified F-027/F-029, uncertified F-028/F-030 and package locks to every relevant row", () => {
+    expect(affectedRows(["packages/cad-core/src/trim.ts"]).rows).toEqual(["F-022", "F-023", "F-024", "F-026", "F-027", "F-028", "F-029"]);
+    expect(affectedRows(["apps/web/src/workflows/modify-command.ts"]).rows).toEqual(["F-015", "F-016", "F-017", "F-018", "F-019", "F-020", "F-021", "F-022", "F-023", "F-024", "F-025", "F-026", "F-027", "F-028", "F-029", "F-030"]);
     expect(affectedRows(["apps/web/src/workflows/modify-command.ts"]).rows).not.toContain("F-114");
-    expect(affectedRows(["package-lock.json"]).rows).toHaveLength(28);
+    expect(affectedRows(["package-lock.json"]).rows).toHaveLength(31);
     expect(affectedRows(["package-lock.json"]).rows).toContain("F-024");
     expect(affectedRows(["package-lock.json"]).rows).toContain("F-025");
     expect(affectedRows(["package-lock.json"]).rows).toContain("F-026");
     expect(affectedRows(["package-lock.json"]).rows).toContain("F-027");
-    expect(affectedRows(["apps/web/package.json"]).rows).toHaveLength(28);
-    expect(affectedRows(["packages/cad-core/package.json"]).rows).toHaveLength(28);
-    expect(sourceToRows().get("packages/cad-core/src/trim.ts")).toEqual(["F-022", "F-023", "F-024", "F-026", "F-027"]);
+    expect(affectedRows(["package-lock.json"]).rows).toContain("F-030");
+    expect(affectedRows(["package.json"]).rows).toHaveLength(31);
+    expect(affectedRows(["apps/web/package.json"]).rows).toHaveLength(30);
+    expect(affectedRows(["packages/cad-core/package.json"]).rows).toHaveLength(30);
+    expect(sourceToRows().get("packages/cad-core/src/trim.ts")).toEqual(["F-022", "F-023", "F-024", "F-026", "F-027", "F-028", "F-029"]);
     expect(sourceToRows().get("packages/cad-core/src/stretch.ts")).toEqual(["F-027"]);
+    expect(sourceToRows().get("packages/cad-core/src/lengthen.ts")).toEqual(["F-028"]);
+    expect(sourceToRows().get("packages/cad-core/src/commands.ts")).toContain("F-029");
+    expect(sourceToRows().get("packages/cad-core/src/match-properties.ts")).toEqual(["F-030"]);
+    expect(sourceToRows().get("packages/cad-core/src/transaction.ts")).toContain("F-030");
     expect(sourceToRows().get("tools/autocad/f022-shift-click.ps1")).toEqual(["F-022", "F-023", "F-024", "F-025"]);
     expect(sourceToRows().get("packages/cad-core/src/chamfer.ts")).toEqual(["F-025"]);
     expect(sourceToRows().get("packages/cad-core/src/break.ts")).toEqual(["F-026"]);
@@ -217,6 +224,10 @@ describe("parity kit", () => {
       expect(affectedRows([sharedSource]).rows).toEqual(["F-109", "F-111"]);
       expect(affectedRows([sharedSource]).unmappedRuntime).toEqual([]);
     }
+  });
+
+  it("keeps F-030 special-object and cross-document UI gaps attached to their owning audit rows", () => {
+    expect(UNCERTIFIED_ROW_DEPENDENCIES["F-030"]).toEqual(["F-060", "F-069", "F-071", "F-108", "F-128"]);
   });
 
   it("fails closed for a new unmapped runtime source", () => {

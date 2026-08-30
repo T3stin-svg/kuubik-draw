@@ -106,6 +106,8 @@ jobs:
       - run: npm run parity:f026:cross-evidence
       - run: npm run parity:f027:oracles
       - run: npm run parity:f027:cross-evidence
+      - run: npm run parity:f029:oracles
+      - run: npm run parity:f029:cross-evidence
 
   autocad-2024-certification:
     if: ${{ vars.REQUIRE_AUTOCAD_CERTIFICATION == 'true' && (github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main')) }}
@@ -157,6 +159,11 @@ jobs:
       - run: npm run parity:f027:autocad
       - run: npm run parity:f027:oracles
       - run: npm run parity:f027:cross-evidence
+      - run: npm run parity:f029:browser-artifact
+      - run: npm run parity:f029:readback
+      - run: npm run parity:f029:autocad
+      - run: npm run parity:f029:oracles
+      - run: npm run parity:f029:cross-evidence
       - run: npm run parity:f102:browser-artifact
       - run: npm run parity:f102:readback
       - run: npm run parity:f102:autocad

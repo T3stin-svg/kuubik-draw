@@ -4,8 +4,8 @@
   "benchmark": "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
   "authority": "autocad-2024.1.2-live",
   "sourceRowId": "F-104",
-  "sourceArtifactSha256": "f245f482f4310a9c1370054b51ccaeab86de89559d0f8fa1efa7ea98659a7e14",
-  "sourceObservedAt": "2026-08-29T23:07:23.875Z",
+  "sourceArtifactSha256": "e162659a9e8a370cb043ddcf5d240f671fce16a2d26d7729aabd7fb6193adf05",
+  "sourceObservedAt": "2026-08-30T16:12:28.623Z",
   "workflow": "Fresh owned AutoCAD 2024 A3 layout plot through DWG To PDF.pc3, native DWG save/reopen and second plot; both PDFs reopened by pypdf/pdfplumber and rendered by Poppler.",
   "engineVersion": "24.3s (LMS Tech)",
   "automationProcessOwned": true,
@@ -13,7 +13,7 @@
   "processSetRestored": true,
   "nativePdf": {
     "label": "native",
-    "path": "KuubikDraw-F104-9bef3462-1eea-4316-9f33-ab864660ecf8.pdf",
+    "path": "KuubikDraw-F104-5e821d21-7408-49d5-ad94-86c8bbb9b4fc.pdf",
     "pypdf": {
       "pages": 1,
       "mediaBox": [
@@ -111,7 +111,7 @@
   },
   "reopenPdf": {
     "label": "reopen",
-    "path": "KuubikDraw-F104-9bef3462-1eea-4316-9f33-ab864660ecf8.reopen.pdf",
+    "path": "KuubikDraw-F104-5e821d21-7408-49d5-ad94-86c8bbb9b4fc.reopen.pdf",
     "pypdf": {
       "pages": 1,
       "mediaBox": [
@@ -283,6 +283,6 @@
     "popplerSharpAndStable": true,
     "nativeReopenStable": true
   },
-  "observedAt": "2026-08-29T23:07:33.799Z",
+  "observedAt": "2026-08-30T16:12:28.633Z",
   "status": "PASS"
 }

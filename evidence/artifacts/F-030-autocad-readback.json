@@ -1,0 +1,1119 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-030",
+  "benchmark": "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
+  "engine": "Autodesk AutoCAD 2024 desktop COM",
+  "engineVersion": "24.3s (LMS Tech)",
+  "automationProcessId": 3848,
+  "automationProcessOwned": true,
+  "installedUpdateIdentity": {
+    "displayName": "Autodesk AutoCAD 2024.1.2 Update",
+    "displayVersion": "24.3.152.0"
+  },
+  "automationProcessIdentity": {
+    "processId": 3848,
+    "executableName": "acad.exe",
+    "executableSha256": "0570749def2fa8dcfb62df1a6671f44245a9ef740dd61d9d0f9110794a76e70e",
+    "fileVersion": "R24.3.152.0.0",
+    "productVersion": "R24.3.152.0.0",
+    "startTimeSha256": "6b25653d5681a789acfd5f469e7e2903828b864973b5b109c3c7242517defe54"
+  },
+  "observations": {
+    "basic": {
+      "source": [
+        {
+          "objectName": "AcDbLine",
+          "handle": "286",
+          "layer": "F030_SOURCE",
+          "color": 1,
+          "lineweight": 50,
+          "linetype": "HIDDEN",
+          "linetypeScale": 2.5,
+          "transparency": "40",
+          "thickness": -3.25,
+          "details": {
+            "start": [
+              0,
+              0
+            ],
+            "end": [
+              100,
+              0
+            ]
+          }
+        },
+        {
+          "objectName": "AcDbLine",
+          "handle": "287",
+          "layer": "F030_TARGET",
+          "color": 256,
+          "lineweight": -1,
+          "linetype": "ByLayer",
+          "linetypeScale": 1,
+          "transparency": "ByLayer",
+          "thickness": 0,
+          "details": {
+            "start": [
+              0,
+              200
+            ],
+            "end": [
+              100,
+              200
+            ]
+          }
+        },
+        {
+          "objectName": "AcDbCircle",
+          "handle": "288",
+          "layer": "F030_TARGET",
+          "color": 256,
+          "lineweight": -1,
+          "linetype": "ByLayer",
+          "linetypeScale": 1,
+          "transparency": "ByLayer",
+          "thickness": 0,
+          "details": {
+            "center": [
+              200,
+              200
+            ],
+            "radius": 25
+          }
+        },
+        {
+          "objectName": "AcDbLine",
+          "handle": "289",
+          "layer": "F030_LOCKED",
+          "color": 256,
+          "lineweight": -1,
+          "linetype": "ByLayer",
+          "linetypeScale": 1,
+          "transparency": "ByLayer",
+          "thickness": 0,
+          "details": {
+            "start": [
+              0,
+              400
+            ],
+            "end": [
+              100,
+              400
+            ]
+          }
+        },
+        {
+          "objectName": "AcDbLine",
+          "handle": "28A",
+          "layer": "F030_SOURCE",
+          "color": 1,
+          "lineweight": 50,
+          "linetype": "HIDDEN",
+          "linetypeScale": 2.5,
+          "transparency": "40",
+          "thickness": -3.25,
+          "details": {
+            "start": [
+              0,
+              450
+            ],
+            "end": [
+              100,
+              450
+            ]
+          }
+        }
+      ],
+      "committed": [
+        {
+          "objectName": "AcDbLine",
+          "handle": "286",
+          "layer": "F030_SOURCE",
+          "color": 1,
+          "lineweight": 50,
+          "linetype": "HIDDEN",
+          "linetypeScale": 2.5,
+          "transparency": "40",
+          "thickness": -3.25,
+          "details": {
+            "start": [
+              0,
+              0
+            ],
+            "end": [
+              100,
+              0
+            ]
+          }
+        },
+        {
+          "objectName": "AcDbLine",
+          "handle": "287",
+          "layer": "F030_SOURCE",
+          "color": 1,
+          "lineweight": 50,
+          "linetype": "HIDDEN",
+          "linetypeScale": 2.5,
+          "transparency": "40",
+          "thickness": -3.25,
+          "details": {
+            "start": [
+              0,
+              200
+            ],
+            "end": [
+              100,
+              200
+            ]
+          }
+        },
+        {
+          "objectName": "AcDbCircle",
+          "handle": "288",
+          "layer": "F030_SOURCE",
+          "color": 1,
+          "lineweight": 50,
+          "linetype": "HIDDEN",
+          "linetypeScale": 2.5,
+          "transparency": "40",
+          "thickness": -3.25,
+          "details": {
+            "center": [
+              200,
+              200
+            ],
+            "radius": 25
+          }
+        },
+        {
+          "objectName": "AcDbLine",
+          "handle": "289",
+          "layer": "F030_LOCKED",
+          "color": 256,
+          "lineweight": -1,
+          "linetype": "ByLayer",
+          "linetypeScale": 1,
+          "transparency": "ByLayer",
+          "thickness": 0,
+          "details": {
+            "start": [
+              0,
+              400
+            ],
+            "end": [
+              100,
+              400
+            ]
+          }
+        },
+        {
+          "objectName": "AcDbLine",
+          "handle": "28A",
+          "layer": "F030_SOURCE",
+          "color": 1,
+          "lineweight": 50,
+          "linetype": "HIDDEN",
+          "linetypeScale": 2.5,
+          "transparency": "40",
+          "thickness": -3.25,
+          "details": {
+            "start": [
+              0,
+              450
+            ],
+            "end": [
+              100,
+              450
+            ]
+          }
+        }
+      ],
+      "undone": [
+        {
+          "objectName": "AcDbLine",
+          "handle": "286",
+          "layer": "F030_SOURCE",
+          "color": 1,
+          "lineweight": 50,
+          "linetype": "HIDDEN",
+          "linetypeScale": 2.5,
+          "transparency": "40",
+          "thickness": -3.25,
+          "details": {
+            "start": [
+              0,
+              0
+            ],
+            "end": [
+              100,
+              0
+            ]
+          }
+        },
+        {
+          "objectName": "AcDbLine",
+          "handle": "287",
+          "layer": "F030_TARGET",
+          "color": 256,
+          "lineweight": -1,
+          "linetype": "ByLayer",
+          "linetypeScale": 1,
+          "transparency": "ByLayer",
+          "thickness": 0,
+          "details": {
+            "start": [
+              0,
+              200
+            ],
+            "end": [
+              100,
+              200
+            ]
+          }
+        },
+        {
+          "objectName": "AcDbCircle",
+          "handle": "288",
+          "layer": "F030_TARGET",
+          "color": 256,
+          "lineweight": -1,
+          "linetype": "ByLayer",
+          "linetypeScale": 1,
+          "transparency": "ByLayer",
+          "thickness": 0,
+          "details": {
+            "center": [
+              200,
+              200
+            ],
+            "radius": 25
+          }
+        },
+        {
+          "objectName": "AcDbLine",
+          "handle": "289",
+          "layer": "F030_LOCKED",
+          "color": 256,
+          "lineweight": -1,
+          "linetype": "ByLayer",
+          "linetypeScale": 1,
+          "transparency": "ByLayer",
+          "thickness": 0,
+          "details": {
+            "start": [
+              0,
+              400
+            ],
+            "end": [
+              100,
+              400
+            ]
+          }
+        },
+        {
+          "objectName": "AcDbLine",
+          "handle": "28A",
+          "layer": "F030_SOURCE",
+          "color": 1,
+          "lineweight": 50,
+          "linetype": "HIDDEN",
+          "linetypeScale": 2.5,
+          "transparency": "40",
+          "thickness": -3.25,
+          "details": {
+            "start": [
+              0,
+              450
+            ],
+            "end": [
+              100,
+              450
+            ]
+          }
+        }
+      ],
+      "redone": [
+        {
+          "objectName": "AcDbLine",
+          "handle": "286",
+          "layer": "F030_SOURCE",
+          "color": 1,
+          "lineweight": 50,
+          "linetype": "HIDDEN",
+          "linetypeScale": 2.5,
+          "transparency": "40",
+          "thickness": -3.25,
+          "details": {
+            "start": [
+              0,
+              0
+            ],
+            "end": [
+              100,
+              0
+            ]
+          }
+        },
+        {
+          "objectName": "AcDbLine",
+          "handle": "287",
+          "layer": "F030_SOURCE",
+          "color": 1,
+          "lineweight": 50,
+          "linetype": "HIDDEN",
+          "linetypeScale": 2.5,
+          "transparency": "40",
+          "thickness": -3.25,
+          "details": {
+            "start": [
+              0,
+              200
+            ],
+            "end": [
+              100,
+              200
+            ]
+          }
+        },
+        {
+          "objectName": "AcDbCircle",
+          "handle": "288",
+          "layer": "F030_SOURCE",
+          "color": 1,
+          "lineweight": 50,
+          "linetype": "HIDDEN",
+          "linetypeScale": 2.5,
+          "transparency": "40",
+          "thickness": -3.25,
+          "details": {
+            "center": [
+              200,
+              200
+            ],
+            "radius": 25
+          }
+        },
+        {
+          "objectName": "AcDbLine",
+          "handle": "289",
+          "layer": "F030_LOCKED",
+          "color": 256,
+          "lineweight": -1,
+          "linetype": "ByLayer",
+          "linetypeScale": 1,
+          "transparency": "ByLayer",
+          "thickness": 0,
+          "details": {
+            "start": [
+              0,
+              400
+            ],
+            "end": [
+              100,
+              400
+            ]
+          }
+        },
+        {
+          "objectName": "AcDbLine",
+          "handle": "28A",
+          "layer": "F030_SOURCE",
+          "color": 1,
+          "lineweight": 50,
+          "linetype": "HIDDEN",
+          "linetypeScale": 2.5,
+          "transparency": "40",
+          "thickness": -3.25,
+          "details": {
+            "start": [
+              0,
+              450
+            ],
+            "end": [
+              100,
+              450
+            ]
+          }
+        }
+      ]
+    },
+    "polyline": {
+      "source": {
+        "objectName": "AcDbPolyline",
+        "handle": "28B",
+        "layer": "F030_POLY",
+        "color": 256,
+        "lineweight": -1,
+        "linetype": "ByLayer",
+        "linetypeScale": 1,
+        "transparency": "ByLayer",
+        "thickness": 0,
+        "details": {
+          "vertices": [
+            [
+              0,
+              600
+            ],
+            [
+              100,
+              600
+            ]
+          ],
+          "closed": false,
+          "bulges": [
+            0,
+            0
+          ],
+          "widths": [
+            [
+              3,
+              3
+            ],
+            [
+              3,
+              3
+            ]
+          ]
+        }
+      },
+      "before": {
+        "objectName": "AcDbPolyline",
+        "handle": "28C",
+        "layer": "F030_POLY",
+        "color": 256,
+        "lineweight": -1,
+        "linetype": "ByLayer",
+        "linetypeScale": 1,
+        "transparency": "ByLayer",
+        "thickness": 0,
+        "details": {
+          "vertices": [
+            [
+              0,
+              650
+            ],
+            [
+              100,
+              650
+            ]
+          ],
+          "closed": false,
+          "bulges": [
+            0.5,
+            0
+          ],
+          "widths": [
+            [
+              1,
+              2
+            ],
+            [
+              2,
+              1
+            ]
+          ]
+        }
+      },
+      "after": {
+        "objectName": "AcDbPolyline",
+        "handle": "28C",
+        "layer": "F030_POLY",
+        "color": 256,
+        "lineweight": -1,
+        "linetype": "ByLayer",
+        "linetypeScale": 1,
+        "transparency": "ByLayer",
+        "thickness": 0,
+        "details": {
+          "vertices": [
+            [
+              0,
+              650
+            ],
+            [
+              100,
+              650
+            ]
+          ],
+          "closed": false,
+          "bulges": [
+            0.5,
+            0
+          ],
+          "widths": [
+            [
+              3,
+              3
+            ],
+            [
+              3,
+              3
+            ]
+          ]
+        }
+      }
+    },
+    "text": {
+      "source": {
+        "objectName": "AcDbText",
+        "handle": "28D",
+        "layer": "F030_TEXT",
+        "color": 256,
+        "lineweight": -1,
+        "linetype": "ByLayer",
+        "linetypeScale": 1,
+        "transparency": "ByLayer",
+        "thickness": 0,
+        "details": {
+          "position": [
+            0,
+            800
+          ],
+          "height": 10,
+          "rotation": 0.5,
+          "styleName": "F030_STYLE",
+          "text": "SOURCE"
+        }
+      },
+      "before": {
+        "objectName": "AcDbText",
+        "handle": "28E",
+        "layer": "F030_TEXT",
+        "color": 256,
+        "lineweight": -1,
+        "linetype": "ByLayer",
+        "linetypeScale": 1,
+        "transparency": "ByLayer",
+        "thickness": 0,
+        "details": {
+          "position": [
+            0,
+            850
+          ],
+          "height": 2,
+          "rotation": 0,
+          "styleName": "Standard",
+          "text": "KEEP"
+        }
+      },
+      "after": {
+        "objectName": "AcDbText",
+        "handle": "28E",
+        "layer": "F030_TEXT",
+        "color": 256,
+        "lineweight": -1,
+        "linetype": "ByLayer",
+        "linetypeScale": 1,
+        "transparency": "ByLayer",
+        "thickness": 0,
+        "details": {
+          "position": [
+            0,
+            850
+          ],
+          "height": 10,
+          "rotation": 0.5,
+          "styleName": "F030_STYLE",
+          "text": "KEEP"
+        }
+      }
+    },
+    "unsupportedDependencies": [
+      "dimension full special matrix",
+      "hatch origin/full special matrix",
+      "viewport full special matrix",
+      "multileader",
+      "table",
+      "center object",
+      "cross-drawing visible tab workflow",
+      "named plot style"
+    ]
+  },
+  "finalStates": [
+    {
+      "objectName": "AcDbCircle",
+      "handle": "288",
+      "layer": "F030_SOURCE",
+      "color": 1,
+      "lineweight": 50,
+      "linetype": "HIDDEN",
+      "linetypeScale": 2.5,
+      "transparency": "40",
+      "thickness": -3.25,
+      "details": {
+        "center": [
+          200,
+          200
+        ],
+        "radius": 25
+      }
+    },
+    {
+      "objectName": "AcDbLine",
+      "handle": "28A",
+      "layer": "F030_SOURCE",
+      "color": 1,
+      "lineweight": 50,
+      "linetype": "HIDDEN",
+      "linetypeScale": 2.5,
+      "transparency": "40",
+      "thickness": -3.25,
+      "details": {
+        "start": [
+          0,
+          450
+        ],
+        "end": [
+          100,
+          450
+        ]
+      }
+    },
+    {
+      "objectName": "AcDbLine",
+      "handle": "286",
+      "layer": "F030_SOURCE",
+      "color": 1,
+      "lineweight": 50,
+      "linetype": "HIDDEN",
+      "linetypeScale": 2.5,
+      "transparency": "40",
+      "thickness": -3.25,
+      "details": {
+        "start": [
+          0,
+          0
+        ],
+        "end": [
+          100,
+          0
+        ]
+      }
+    },
+    {
+      "objectName": "AcDbLine",
+      "handle": "287",
+      "layer": "F030_SOURCE",
+      "color": 1,
+      "lineweight": 50,
+      "linetype": "HIDDEN",
+      "linetypeScale": 2.5,
+      "transparency": "40",
+      "thickness": -3.25,
+      "details": {
+        "start": [
+          0,
+          200
+        ],
+        "end": [
+          100,
+          200
+        ]
+      }
+    },
+    {
+      "objectName": "AcDbLine",
+      "handle": "289",
+      "layer": "F030_LOCKED",
+      "color": 256,
+      "lineweight": -1,
+      "linetype": "ByLayer",
+      "linetypeScale": 1,
+      "transparency": "ByLayer",
+      "thickness": 0,
+      "details": {
+        "start": [
+          0,
+          400
+        ],
+        "end": [
+          100,
+          400
+        ]
+      }
+    },
+    {
+      "objectName": "AcDbPolyline",
+      "handle": "28C",
+      "layer": "F030_POLY",
+      "color": 256,
+      "lineweight": -1,
+      "linetype": "ByLayer",
+      "linetypeScale": 1,
+      "transparency": "ByLayer",
+      "thickness": 0,
+      "details": {
+        "vertices": [
+          [
+            0,
+            650
+          ],
+          [
+            100,
+            650
+          ]
+        ],
+        "closed": false,
+        "bulges": [
+          0.5,
+          0
+        ],
+        "widths": [
+          [
+            3,
+            3
+          ],
+          [
+            3,
+            3
+          ]
+        ]
+      }
+    },
+    {
+      "objectName": "AcDbPolyline",
+      "handle": "28B",
+      "layer": "F030_POLY",
+      "color": 256,
+      "lineweight": -1,
+      "linetype": "ByLayer",
+      "linetypeScale": 1,
+      "transparency": "ByLayer",
+      "thickness": 0,
+      "details": {
+        "vertices": [
+          [
+            0,
+            600
+          ],
+          [
+            100,
+            600
+          ]
+        ],
+        "closed": false,
+        "bulges": [
+          0,
+          0
+        ],
+        "widths": [
+          [
+            3,
+            3
+          ],
+          [
+            3,
+            3
+          ]
+        ]
+      }
+    },
+    {
+      "objectName": "AcDbText",
+      "handle": "28E",
+      "layer": "F030_TEXT",
+      "color": 256,
+      "lineweight": -1,
+      "linetype": "ByLayer",
+      "linetypeScale": 1,
+      "transparency": "ByLayer",
+      "thickness": 0,
+      "details": {
+        "position": [
+          0,
+          850
+        ],
+        "height": 10,
+        "rotation": 0.5,
+        "styleName": "F030_STYLE",
+        "text": "KEEP"
+      }
+    },
+    {
+      "objectName": "AcDbText",
+      "handle": "28D",
+      "layer": "F030_TEXT",
+      "color": 256,
+      "lineweight": -1,
+      "linetype": "ByLayer",
+      "linetypeScale": 1,
+      "transparency": "ByLayer",
+      "thickness": 0,
+      "details": {
+        "position": [
+          0,
+          800
+        ],
+        "height": 10,
+        "rotation": 0.5,
+        "styleName": "F030_STYLE",
+        "text": "SOURCE"
+      }
+    }
+  ],
+  "checks": {
+    "basicMultiple": true,
+    "targetIdentityGeometryPreserved": true,
+    "sourceUnchanged": true,
+    "lockedUnchanged": true,
+    "noOpUnchanged": true,
+    "atomicUndo": true,
+    "atomicRedo": true,
+    "polylineSpecial": true,
+    "textSpecial": true
+  },
+  "dxfOutputSha256": "3011c7d86ab3b072dfcfc013e552943b143a4f621a41b419866569802364f804",
+  "cmdNamesAfter": "",
+  "userDocument": {
+    "isolatedOwnedProcess": true,
+    "blankRestored": true
+  },
+  "status": "PASS",
+  "automationProcessTerminated": true,
+  "processSetRestored": true,
+  "preExistingProcesses": [
+    {
+      "processId": 28304,
+      "executablePath": "C:\\Program Files\\Autodesk\\AutoCAD 2024\\acad.exe",
+      "startTimeUtc": "2026-08-30T04:04:44.6769957Z"
+    },
+    {
+      "processId": 33160,
+      "executablePath": "C:\\Program Files\\Autodesk\\AutoCAD 2024\\acad.exe",
+      "startTimeUtc": "2026-08-30T05:53:33.2219546Z"
+    }
+  ],
+  "dxfReadback": {
+    "sha256": "3011c7d86ab3b072dfcfc013e552943b143a4f621a41b419866569802364f804",
+    "entityCount": 9,
+    "entities": [
+      {
+        "handle": "286",
+        "layer": "F030_SOURCE",
+        "type": "LINE",
+        "colorIndex": 1,
+        "lineweight": 50,
+        "lineType": "HIDDEN",
+        "lineTypeScale": 2.5,
+        "thickness": -3.25,
+        "transparency": "40",
+        "vertices": [
+          {
+            "x": 0,
+            "y": 0,
+            "bulge": 0,
+            "startWidth": 0,
+            "endWidth": 0
+          },
+          {
+            "x": 100,
+            "y": 0,
+            "bulge": 0,
+            "startWidth": 0,
+            "endWidth": 0
+          }
+        ]
+      },
+      {
+        "handle": "287",
+        "layer": "F030_SOURCE",
+        "type": "LINE",
+        "colorIndex": 1,
+        "lineweight": 50,
+        "lineType": "HIDDEN",
+        "lineTypeScale": 2.5,
+        "thickness": -3.25,
+        "transparency": "40",
+        "vertices": [
+          {
+            "x": 0,
+            "y": 200,
+            "bulge": 0,
+            "startWidth": 0,
+            "endWidth": 0
+          },
+          {
+            "x": 100,
+            "y": 200,
+            "bulge": 0,
+            "startWidth": 0,
+            "endWidth": 0
+          }
+        ]
+      },
+      {
+        "handle": "288",
+        "layer": "F030_SOURCE",
+        "type": "CIRCLE",
+        "colorIndex": 1,
+        "lineweight": 50,
+        "lineType": "HIDDEN",
+        "lineTypeScale": 2.5,
+        "thickness": -3.25,
+        "transparency": "40",
+        "center": {
+          "x": 200,
+          "y": 200
+        },
+        "radius": 25
+      },
+      {
+        "handle": "289",
+        "layer": "F030_LOCKED",
+        "type": "LINE",
+        "colorIndex": 256,
+        "lineweight": -1,
+        "lineType": "ByLayer",
+        "lineTypeScale": 1,
+        "thickness": 0,
+        "transparency": "ByLayer",
+        "vertices": [
+          {
+            "x": 0,
+            "y": 400,
+            "bulge": 0,
+            "startWidth": 0,
+            "endWidth": 0
+          },
+          {
+            "x": 100,
+            "y": 400,
+            "bulge": 0,
+            "startWidth": 0,
+            "endWidth": 0
+          }
+        ]
+      },
+      {
+        "handle": "28A",
+        "layer": "F030_SOURCE",
+        "type": "LINE",
+        "colorIndex": 1,
+        "lineweight": 50,
+        "lineType": "HIDDEN",
+        "lineTypeScale": 2.5,
+        "thickness": -3.25,
+        "transparency": "40",
+        "vertices": [
+          {
+            "x": 0,
+            "y": 450,
+            "bulge": 0,
+            "startWidth": 0,
+            "endWidth": 0
+          },
+          {
+            "x": 100,
+            "y": 450,
+            "bulge": 0,
+            "startWidth": 0,
+            "endWidth": 0
+          }
+        ]
+      },
+      {
+        "handle": "28B",
+        "layer": "F030_POLY",
+        "type": "LWPOLYLINE",
+        "colorIndex": 256,
+        "lineweight": -1,
+        "lineType": "ByLayer",
+        "lineTypeScale": 1,
+        "thickness": 0,
+        "transparency": "ByLayer",
+        "constantWidth": 3,
+        "vertices": [
+          {
+            "x": 0,
+            "y": 600,
+            "bulge": 0,
+            "startWidth": 0,
+            "endWidth": 0
+          },
+          {
+            "x": 100,
+            "y": 600,
+            "bulge": 0,
+            "startWidth": 0,
+            "endWidth": 0
+          }
+        ]
+      },
+      {
+        "handle": "28C",
+        "layer": "F030_POLY",
+        "type": "LWPOLYLINE",
+        "colorIndex": 256,
+        "lineweight": -1,
+        "lineType": "ByLayer",
+        "lineTypeScale": 1,
+        "thickness": 0,
+        "transparency": "ByLayer",
+        "constantWidth": 3,
+        "vertices": [
+          {
+            "x": 0,
+            "y": 650,
+            "bulge": 0.5,
+            "startWidth": 0,
+            "endWidth": 0
+          },
+          {
+            "x": 100,
+            "y": 650,
+            "bulge": 0,
+            "startWidth": 0,
+            "endWidth": 0
+          }
+        ]
+      },
+      {
+        "handle": "28D",
+        "layer": "F030_TEXT",
+        "type": "TEXT",
+        "colorIndex": 256,
+        "lineweight": -1,
+        "lineType": "ByLayer",
+        "lineTypeScale": 1,
+        "thickness": 0,
+        "transparency": "ByLayer",
+        "textPoint": {
+          "x": 0,
+          "y": 800
+        },
+        "textHeight": 10,
+        "rotation": 28.64788975654116,
+        "text": "SOURCE",
+        "styleName": "F030_STYLE"
+      },
+      {
+        "handle": "28E",
+        "layer": "F030_TEXT",
+        "type": "TEXT",
+        "colorIndex": 256,
+        "lineweight": -1,
+        "lineType": "ByLayer",
+        "lineTypeScale": 1,
+        "thickness": 0,
+        "transparency": "ByLayer",
+        "textPoint": {
+          "x": 0,
+          "y": 850
+        },
+        "textHeight": 10,
+        "rotation": 28.64788975654116,
+        "text": "KEEP",
+        "styleName": "F030_STYLE"
+      }
+    ],
+    "fullStateMatchesNative": true
+  },
+  "certificationAuthority": true,
+  "certificationScope": "basic + polyline + text subset only; unsupportedDependencies must be empty before F-030 score 1.00",
+  "workflow": "owned AutoCAD 2024.1.2 desktop MATCHPROP basic multiple/locked/no-op, polyline/text special and atomic Undo/Redo matrix + independently parsed DXF",
+  "matrixScriptSha256": "cc3ccf04cefec97155c66714fa3a33325931b6899ba4217acda270d9f9e003fb",
+  "runnerSha256": "f220ccb1977be320356e64dab679868534fb1c15238e2ed34fd7294e36827b69",
+  "sharedRunnerSha256": "5b669dc220884b788e2457594aebc10f5e7cb6cf96d0a967424094d6d9dfc8b8",
+  "processOwnershipSha256": "9f1d48d1b1058a631ef8d6df03c1beedc836688c06e0658a302ba424d654937d",
+  "observedAt": "2026-08-30T14:41:26.607Z"
+}

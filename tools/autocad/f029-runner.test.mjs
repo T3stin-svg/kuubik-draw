@@ -1,0 +1,71 @@
+import { describe, expect, it } from "vitest";
+import { readFile } from "node:fs/promises";
+
+const source = async (name) => readFile(new URL(name, import.meta.url), "utf8");
+
+describe("F-029 AutoCAD ALIGN runner ratchet", () => {
+  it("owns one new desktop process and authenticates cleanup by full identity", async () => {
+    const matrix = await source("f029-standard-matrix.ps1");
+    const runner = await source("run-f029.mjs");
+    expect(matrix.match(/New-Object\s+-ComObject\s+AutoCAD\.Application\.24\.3/gu)).toHaveLength(1);
+    expect(matrix).not.toContain("GetActiveObject('AutoCAD.Application.24.3')");
+    expect(matrix).toContain("$preExistingProcessIds-notcontains$automationProcessId");
+    expect(matrix).toContain("[uint32]$acadPid=0");
+    expect(matrix).not.toMatch(/\[uint32\]\$pid\b/iu);
+    expect(matrix).not.toMatch(/\breturn\$/u);
+    expect(matrix).toContain("if($Scale){'\"_Yes\"'}else{'\"_No\"'}");
+    expect(matrix).not.toContain("if($Scale){'`\"_Yes`\"'}");
+    expect(matrix).toContain("F-029 refuses to use a pre-existing AutoCAD process");
+    expect(matrix).not.toContain("$candidate.Saved");
+    expect(matrix).toContain("$candidate.ModelSpace.Count");
+    expect(matrix).toMatch(/Write-OwnedPidSidecar[\s\S]*executableSha256[\s\S]*startTimeSha256/gu);
+    expect(runner).toContain("async function ownedSidecar()");
+    expect(runner).toContain("function identityMatches(expected, current)");
+    expect(runner).toContain("planAuthenticatedCleanup(sidecar, newAutomationProcesses())");
+    expect(runner).toContain("F-029 PID sidecar and AutoCAD COM identity disagreed");
+    expect(runner).toMatch(/finally\s*\{[\s\S]*planAuthenticatedCleanup[\s\S]*restoredProcessSet[\s\S]*rm\(tempRoot/gu);
+  });
+
+  it("executes the audited ALIGN matrix and independently reads every final DXF entity", async () => {
+    const matrix = await source("f029-standard-matrix.ps1");
+    const runner = await source("run-f029.mjs");
+    const cross = await source("../parity/check-f029-cross-evidence.mjs");
+    for (const contract of ["onePairTranslation", "twoPairNoScale", "oppositeDirection", "noOpExact", "lockedSelectionBehaviorMeasured", "scaleLine", "scaleCircle", "scalePolyline", "scaleSpline", "scaleText", "undoLine", "undoCircle", "undoPolyline", "undoSpline", "undoText", "atomicUndo", "atomicRedo"]) expect(matrix).toContain(contract);
+    expect(matrix).toContain('`"_.ALIGN`"');
+    expect(matrix).toContain("$lockedBehavior=if");
+    expect(matrix).not.toContain("$scratch.StartUndoMark()");
+    expect(matrix).not.toContain("$scratch.EndUndoMark()");
+    expect(matrix).toContain('$scratch.SendCommand("_.U`n")');
+    expect(matrix).toMatch(/Invoke-ComRetry\{\$Document\.SendCommand\(\$lisp\)\}\|Out-Null;Wait-AcadMarker \$Document \$marker\r?\n/gu);
+    expect(matrix).toContain("function Test-StateEquivalent");
+    expect(matrix).toContain("function Test-StateSetEquivalent");
+    expect(matrix).toContain("function New-RationalSpline");
+    expect(matrix).toContain("(cons 70 4)");
+    expect(matrix).toContain("(cons 41 0.8)");
+    expect(matrix).toContain("$poly.Closed=$true");
+    expect(matrix).toContain("$details.controlPoints");
+    expect(matrix).toContain("$details.knots");
+    expect(matrix).toContain("$details.weights");
+    expect(matrix).toContain("$details.rational");
+    expect(matrix).toContain("atomicUndo=Test-StateSetEquivalent $scaleUndone $scaleSource");
+    expect(matrix).toContain("atomicRedo=Test-StateSetEquivalent $scaleRedone $scaleCommitted");
+    expect(matrix).not.toContain("$scaleSource|ConvertTo-Json -Depth 12 -Compress");
+    expect(matrix).toContain("$scratch.SaveAs($DxfOutputPath,65)");
+    expect(runner).toContain("new DxfParser().parseSync");
+    expect(runner).toContain("function dxfEntityMatchesNative");
+    expect(runner).toContain("function dxfMatchesAllNativeStates");
+    expect(runner).toContain("dxf.closed === details.closed");
+    expect(runner).toContain("pointsMatch(dxf.controlPoints, details.controlPoints)");
+    expect(runner).toContain("numbersMatch(dxf.knots, details.knots)");
+    expect(runner).toContain("numbersMatch(dxf.weights, details.weights)");
+    expect(runner).toContain("rawValues(rawByHandle.get(entity.handle), 41)");
+    expect(runner).toContain("Boolean(dxf.splineFlags & 4) === details.rational");
+    expect(cross).toContain("polyline?.details?.closed === expectedPolyline?.closed");
+    expect(cross).toContain("pointSetMatches(spline?.details?.controlPoints, expectedSpline?.controlPoints)");
+    expect(cross).toContain("numberSetMatches(spline?.details?.knots, expectedSpline?.knots)");
+    expect(cross).toContain("numberSetMatches(normalizeWeights(spline?.details?.weights), normalizeWeights(expectedSpline?.weights))");
+    expect(runner).toContain("summary.fullStateMatchesNative = dxfMatchesAllNativeStates(summary, matrix)");
+    expect(runner).toContain("matrix.dxfReadback.fullStateMatchesNative !== true");
+    expect(runner).toContain("processOwnershipSha256: sha256(await readFile(processOwnershipPath))");
+  });
+});

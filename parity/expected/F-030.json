@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-030",
+  "benchmark": "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
+  "dependencyRows": ["F-060", "F-069", "F-071", "F-108", "F-128"],
+  "nativeUnsupportedDependencies": [
+    "dimension full special matrix",
+    "hatch origin/full special matrix",
+    "viewport full special matrix",
+    "multileader",
+    "table",
+    "center object",
+    "cross-drawing visible tab workflow",
+    "named plot style"
+  ],
+  "requiredCertificationChecks": [
+    "nativeDesktopSupportedSubset",
+    "nativeDesktopSourcesCurrent",
+    "browserWorkflow",
+    "browserNestedArtifactsCurrent",
+    "browserSourcesCurrent",
+    "physicalCanvasSelection",
+    "productionReadback",
+    "productionSourcesCurrent",
+    "secondaryOracles",
+    "oracleInputsAndSourcesCurrent",
+    "supportedSubsetCrossExact",
+    "sourceHashCoverage",
+    "allSpecialDependenciesClosed"
+  ],
+  "independentReview": { "status": "PENDING", "p0": null, "p1": null, "reviewedAt": null },
+  "remainingCertificationRequirements": [
+    "owned AutoCAD 2024.1.2 supported-subset matrix",
+    "F-060/F-069/F-071/F-108/F-128 implementations",
+    "full native dimension/hatch/viewport/multileader/table/center/plot/cross-drawing matrix",
+    "current-byte cross-evidence",
+    "independent 0 P0 / 0 P1 review",
+    "score ratchet and exact public-commit CI"
+  ]
+}

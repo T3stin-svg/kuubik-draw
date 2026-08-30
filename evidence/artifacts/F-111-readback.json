@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "rowId": "F-111",
-  "checkedAt": "2026-08-30T08:29:39.305Z",
+  "checkedAt": "2026-08-30T15:38:04.187Z",
   "productionPath": "App.importDxfFile -> @kuubik/cad-dxf.importDxf -> CadSession DXFIN -> @kuubik/cad-dxf.exportDxf",
   "exactByteAgreement": true,
   "source": {
@@ -3645,10 +3645,10 @@
     "100B": "8c845ab09e3ad721db851faef96d0dab30c2a9f61a2c11706b1bb50932cbcd0a"
   },
   "implementationSha256": {
-    "importer": "ffdef7a01488d09f32b8bab171b0632092317a5687cd6eca2231629a4fc51f20",
-    "exporter": "82ca8f21ac22b29cd0f36be39f51b379ffd9307ec96c69c45d93da713cc9b2bd",
-    "transaction": "e250aa2906e63905202a4b9591367632830745acbf731884f8e711d165750599",
-    "app": "1f7a21731e70245bbe0e696e9ec34a52ada002985cec6d0b3126a5f8d3313bb3",
+    "importer": "2f375b882304f0d3f9461b84b69d97e09bec8326863b6253f100e42cd9214a59",
+    "exporter": "e01ff7bd77cf6dfef6da8d86f00c13d87dc847bb0135dbd1d79ece80717edc13",
+    "transaction": "ab5734699108451ed63290424d56f69b8b0031efb22969f9fef5bd2dd20ac388",
+    "app": "239cc76784db5313fe70639ee8651177f9b28f2806f0660b885fd8ef4ba9fff3",
     "unitTests": "da7cb55eb5dcb24e995127cc42cb075be48a815133957b4856bd61241f52b60b",
     "mutationTests": "5a44c30a0f4efb9da6cbf776e2753560cc48a06673ce22829fa23115a1322a5d",
     "transactionTests": "4c809f87a11a6fadea8524fe2d2023383109d353923072d4d7fbb6ee525bc953",
@@ -3659,7 +3659,7 @@
     "fixture": "6125e54db81b099e7c4e10c1ee66b720792994de896a778a3d8a65d8676bbc60",
     "expected": "ff253dff947093ef57a579e229305f641e047d53c7247e759f36a8ff95cc9118",
     "scope": "fb9d633ce6b43238f60f33cb3a8adced4fb060288d7830d55833aae07d286c45",
-    "packageLock": "c47743da8743230f2212f3c3ed34153295ef1bcd3865a07b4d743fd1ec544a7a"
+    "packageLock": "da1dcf889d8fbf35f6a8e4403b29ed34666b13176a2b98307a0c23e25fa06a53"
   },
   "passed": true
 }

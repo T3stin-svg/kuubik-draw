@@ -4,8 +4,8 @@
   "kind": "autocad",
   "authority": "autocad-2024.1.2-live",
   "status": "PASS",
-  "artifactSha256": "977b01d70222ab9bcf48b8a0115612d848fd7e66f05e0acc421f4b8ca0975e21",
-  "observedAt": "2026-08-29T23:08:14.487Z",
+  "artifactSha256": "3a8ef8e1481b4e8ea1fc66193ace7fe6494ab4d064c228acc58a425b7d11f7b6",
+  "observedAt": "2026-08-30T15:37:38.768Z",
   "workflow": "A separately owned visible AutoCAD 2024 desktop process opens the exact Kuubik production DXF read-only and performs a regeneration-stable handle read-back; a second owned process reads ACI 1..255 through AcCmColor.24; installed AutoCAD 2024 Core Console then reads the same native DXF.",
   "result": "Both AutoCAD 24.3 DXF readers found all 40 stable handles and the exact LINE/LWPOLYLINE/TEXT/HATCH/CIRCLE/aligned-DIMENSION geometry. The desktop second read proved stable open/closed polyline state. Live AcCmColor returned the exact checked-in 255-colour palette with SHA-256 5ff10c83.... Core Console also read exact ACI/TrueColor, HATCH topology, transparency, DIMTXSTY, Unicode text and regenerated extents; every owned process terminated and restored the pre-existing process set.",
   "artifact": "evidence/artifacts/F-109-autocad-readback.json"

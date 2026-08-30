@@ -5,6 +5,8 @@ export * from "./fillet.js";
 export * from "./chamfer.js";
 export * from "./break.js";
 export * from "./stretch.js";
+export * from "./match-properties.js";
+export * from "./lengthen.js";
 export * from "./legacy-import.js";
 export * from "./layouts.js";
 export * from "./offset.js";

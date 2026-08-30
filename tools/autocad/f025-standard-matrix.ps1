@@ -294,7 +294,14 @@ function Invoke-ChamferRejectedPair {
       if (-not $helper.WaitForExit(15000)) { throw 'F-025 rejected-pair Escape watchdog did not exit.' }
       $exitCodes += $helper.ExitCode
     }
-    if (@($exitCodes | Where-Object { $_ -eq 0 }).Count -eq 0) { throw "F-025 rejected-pair Escape watchdogs both failed: $($exitCodes -join ',')." }
+    if (@($exitCodes | Where-Object { $_ -eq 0 }).Count -eq 0) {
+      try {
+        Wait-AcadIdle $Document 5
+        Write-Host "[F-025] rejected-pair command was already idle after Escape watchdog failures: $($exitCodes -join ',')"
+      } catch {
+        throw "F-025 rejected-pair Escape watchdogs both failed and AutoCAD remained active: $($exitCodes -join ','). $($_.Exception.Message)"
+      }
+    }
   } finally {
     $errors = @()
     foreach ($helper in $helpers) { try { Stop-InputHelper $helper 'F-025 rejected-pair Escape watchdog' } catch { $errors += $_.Exception.Message } }

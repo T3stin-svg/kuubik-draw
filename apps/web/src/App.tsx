@@ -1,16 +1,46 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ISO_PAPER_MEDIA, MAX_PAGE_SETUP_TEMPLATE_BYTES, STANDARD_VIEWPORT_SCALE_DENOMINATORS, allocateEntityHandles, applyNamedPageSetup, buildLayoutPublishPlan, CadCommandInputError, CadSession, clearNamedPageSetupAssignment, createPageSetupTemplate, LayoutCommandError, LayoutPublishSettingsError, NoOpOperationError, PageSetupLibraryError, copyPaperLayout, createEmptyDocument, createPaperLayout, createPaperViewport, deleteNamedPageSetup, deletePaperLayout, deletePaperViewport, formatViewportScale, importPageSetupTemplate, metadataWithLayoutPublishSettings, movePaperLayout, panPaperViewportByPixels, paperDefinitionForPageSetup, parseCartesianPoint, parsePageSetupTemplate, renameNamedPageSetup, renamePaperLayout, replaceDrawingContentPreservingLayouts, resolveCadCommand, resolveLayoutPublishSettings, resolveModelPageSetup, resolvePageSetup, resolvePageSetupLibrary, resolvePaperDefinition, sanitizePdfFileStem, saveNamedPageSetup, serializeKDraw, serializePageSetupTemplate, setModelLayoutPageSetup, setPaperLayoutPageSetup, setPaperViewportDisplayLocked, setPaperViewportView, viewportScaleDenominator, zoomPaperViewportAtModelPoint, type BreakMode, type BreakRejectedTarget, type CadChange, type ChamferRejectedTarget, type ChamferTrimMode, type CopyRejectedTarget, type ExtendRejectedTarget, type ExtendTargetAction, type FilletRejectedTarget, type FilletTrimMode, type LayoutPublishSettingsV1, type MirrorRejectedTarget, type MoveRejectedTarget, type OffsetLayerMode, type OffsetRejectedTarget, type RotateRejectedTarget, type ScaleRejectedTarget, type StretchRejectedTarget, type TrimEdgeMode, type TrimMode, type TrimProjectMode, type TrimRejectedTarget, type TrimTargetAction } from "@kuubik/cad-core";
+import { DEFAULT_MATCH_PROPERTIES_SETTINGS, ISO_PAPER_MEDIA, MAX_PAGE_SETUP_TEMPLATE_BYTES, STANDARD_VIEWPORT_SCALE_DENOMINATORS, allocateEntityHandles, applyNamedPageSetup, buildLayoutPublishPlan, CadCommandInputError, CadSession, clearNamedPageSetupAssignment, createPageSetupTemplate, LayoutCommandError, LayoutPublishSettingsError, NoOpOperationError, PageSetupLibraryError, copyPaperLayout, createEmptyDocument, createPaperLayout, createPaperViewport, deleteNamedPageSetup, deletePaperLayout, deletePaperViewport, executeMatchViewportProperties, formatViewportScale, importPageSetupTemplate, metadataWithLayoutPublishSettings, movePaperLayout, panPaperViewportByPixels, paperDefinitionForPageSetup, parseCartesianPoint, parsePageSetupTemplate, renameNamedPageSetup, renamePaperLayout, replaceDrawingContentPreservingLayouts, resolveCadCommand, resolveLayoutPublishSettings, resolveMatchPropertiesSettings, resolveModelPageSetup, resolvePageSetup, resolvePageSetupLibrary, resolvePaperDefinition, sanitizePdfFileStem, saveNamedPageSetup, serializeKDraw, serializePageSetupTemplate, setModelLayoutPageSetup, setPaperLayoutPageSetup, setPaperViewportDisplayLocked, setPaperViewportView, viewportScaleDenominator, zoomPaperViewportAtModelPoint, type AlignRejectedTarget, type BreakMode, type BreakRejectedTarget, type CadChange, type ChamferRejectedTarget, type ChamferTrimMode, type CopyRejectedTarget, type ExtendRejectedTarget, type ExtendTargetAction, type FilletRejectedTarget, type FilletTrimMode, type LayoutPublishSettingsV1, type LengthenMeasurement, type LengthenMode, type LengthenRejectedTarget, type MatchPropertiesRejectedTarget, type MatchPropertiesSettings, type MatchViewportRef, type MirrorRejectedTarget, type MoveRejectedTarget, type OffsetLayerMode, type OffsetRejectedTarget, type RotateRejectedTarget, type ScaleRejectedTarget, type StretchRejectedTarget, type TrimEdgeMode, type TrimMode, type TrimProjectMode, type TrimRejectedTarget, type TrimTargetAction } from "@kuubik/cad-core";
 import { DxfImportError, MAX_DXF_IMPORT_BYTES, exportDxf, importDxf } from "@kuubik/cad-dxf";
 import { exportLayoutSvg, exportLayoutsVectorPdf, exportLayoutVectorPdf, exportModelSvg, exportModelVectorPdf, type LayoutPlotOptions, type ModelPlotOptions } from "@kuubik/cad-print";
 import { CadCanvasRenderer, pickCadEntity, pannedViewportWorldCenter, selectCadEntityHitsByCrossingPolygon, selectCadEntityHitsByFence, viewportScreenToWorld, viewportScreenTransform, type Viewport2D } from "@kuubik/cad-renderer";
 import type { CadEntity, CadLayout, CadPageSetup, CadPaperRect, CadPlotStyle, CadViewport, KDrawDocumentV1 } from "@kuubik/cad-schema";
 import { KDrawIndexedDb, StorageRevisionConflictError } from "./indexed-db.js";
-import { prepareBreak, prepareChamfer, prepareCopy, prepareExtend, prepareFillet, prepareMirror, prepareMove, prepareOffset, prepareRotate, prepareScale, prepareStretch, prepareTrim, putEntities } from "./workflows/modify-command.js";
+import { prepareAlign, prepareBreak, prepareChamfer, prepareCopy, prepareExtend, prepareFillet, prepareLengthen, prepareMatchProperties, prepareMirror, prepareMove, prepareOffset, prepareRotate, prepareScale, prepareStretch, prepareTrim, putEntities } from "./workflows/modify-command.js";
 import "./style.css";
 
 const LOCAL_DOCUMENT_ID = "local";
-const MODEL_SPACE_COMMANDS = new Set(["LINE", "RECTANGLE", "MOVE", "COPY", "ROTATE", "SCALE", "MIRROR", "OFFSET", "TRIM", "EXTEND", "FILLET", "CHAMFER", "BREAK", "STRETCH", "ERASE"]);
+const MATCH_PROPERTIES_SETTINGS_KEY = "kuubik-draw.match-properties-settings.v1";
+const MATCH_PROPERTY_LABELS: Readonly<Record<keyof MatchPropertiesSettings, string>> = Object.freeze({
+  color: "Värv",
+  layer: "Kiht",
+  linetype: "Joonetüüp",
+  linetypeScale: "Joonetüübi mõõtkava",
+  lineweight: "Joonepaksus",
+  transparency: "Läbipaistvus",
+  thickness: "Paksus",
+  plotStyle: "Plotistiil",
+  dimension: "Mõõt",
+  polyline: "Polüjoon",
+  material: "Materjal",
+  text: "Tekst",
+  viewport: "Vaateava",
+  multileader: "Multiviide",
+  hatch: "Viirutus",
+  table: "Tabel",
+  centerObject: "Keskobjekt",
+});
+const MODEL_SPACE_COMMANDS = new Set(["LINE", "RECTANGLE", "MOVE", "COPY", "ROTATE", "SCALE", "MIRROR", "OFFSET", "TRIM", "EXTEND", "FILLET", "CHAMFER", "BREAK", "STRETCH", "LENGTHEN", "ALIGN", "MATCHPROP", "ERASE"]);
 const MODEL_VIEW_WORLD = Object.freeze({ minX: -500, minY: -500, maxX: 2500, maxY: 2500 });
+
+function loadMatchPropertiesSettings(): MatchPropertiesSettings {
+  if (typeof window === "undefined") return { ...DEFAULT_MATCH_PROPERTIES_SETTINGS };
+  try {
+    const serialized = window.localStorage.getItem(MATCH_PROPERTIES_SETTINGS_KEY);
+    return serialized ? resolveMatchPropertiesSettings(JSON.parse(serialized) as Partial<MatchPropertiesSettings>) : { ...DEFAULT_MATCH_PROPERTIES_SETTINGS };
+  } catch {
+    return { ...DEFAULT_MATCH_PROPERTIES_SETTINGS };
+  }
+}
 
 function nextInteractiveHandle(document: KDrawDocumentV1): string {
   const preferred = (document.revision + 16).toString(16).toUpperCase();
@@ -46,6 +76,10 @@ function viewportRender2D(viewport: CadViewport, widthPx: number, heightPx: numb
   };
 }
 
+function sameViewportRef(first: MatchViewportRef, second: MatchViewportRef): boolean {
+  return first.layoutId === second.layoutId && first.viewportId === second.viewportId;
+}
+
 function PaperViewportCanvas({
   document,
   viewport,
@@ -54,7 +88,9 @@ function PaperViewportCanvas({
   modelContext,
   navigationEnabled,
   plotStyle,
+  matchRole,
   onSelect,
+  onMatchPick,
   onEnterModel,
   onZoom,
   onPan,
@@ -66,7 +102,9 @@ function PaperViewportCanvas({
   modelContext: boolean;
   navigationEnabled: boolean;
   plotStyle: CadPlotStyle | undefined;
+  matchRole: "source" | "target" | null;
   onSelect: () => void;
+  onMatchPick: () => void;
   onEnterModel: () => void;
   onZoom: (anchorModel: { x: number; y: number }, scaleFactor: number) => void;
   onPan: (deltaPx: { x: number; y: number }, viewportPx: { width: number; height: number }) => void;
@@ -88,6 +126,7 @@ function PaperViewportCanvas({
     if (!element || !context) return;
     const renderer = new CadCanvasRenderer();
     renderer.setBlocks(document.blocks);
+    renderer.setLinetypes(document.linetypes);
     renderer.setEntities(document.entities);
     const render = () => {
       const widthPx = element.clientWidth;
@@ -96,6 +135,8 @@ function PaperViewportCanvas({
       const devicePixelRatio = window.devicePixelRatio || 1;
       element.width = Math.max(1, Math.round(widthPx * devicePixelRatio));
       element.height = Math.max(1, Math.round(heightPx * devicePixelRatio));
+      context.clearRect(0, 0, element.width, element.height);
+      if (renderViewport.on === false) return;
       renderer.render(context, viewportRender2D(renderViewport, widthPx, heightPx, devicePixelRatio), document.layers, null, [], plotStyle ? {
         plotStyle,
         pixelsPerMillimeter: widthPx / viewport.width,
@@ -105,7 +146,7 @@ function PaperViewportCanvas({
     const observer = new ResizeObserver(render);
     observer.observe(element);
     return () => observer.disconnect();
-  }, [document.blocks, document.entities, document.layers, plotStyle, renderViewport, viewport.width]);
+  }, [document.blocks, document.entities, document.layers, document.linetypes, plotStyle, renderViewport, viewport.width]);
 
   useEffect(() => {
     const element = container.current;
@@ -128,7 +169,7 @@ function PaperViewportCanvas({
   return (
     <div
       ref={container}
-      className={`paper-space-viewport${active ? " selected" : ""}${modelContext ? " model-context" : ""}`}
+      className={`paper-space-viewport${active ? " selected" : ""}${modelContext ? " model-context" : ""}${matchRole ? ` match-${matchRole}` : ""}`}
       data-testid="paper-space-viewport"
       data-viewport-id={viewport.id}
       data-viewport-kind={viewport.clipBoundary ? "polygon" : "rectangle"}
@@ -143,6 +184,8 @@ function PaperViewportCanvas({
       data-twist-angle-rad={renderViewport.twistAngleRad}
       data-twist-angle-deg={(renderViewport.twistAngleRad * 180) / Math.PI}
       data-display-locked={viewport.locked ? "true" : "false"}
+      data-viewport-on={viewport.on === false ? "false" : "true"}
+      data-match-role={matchRole ?? "none"}
       data-navigation-enabled={navigationEnabled ? "true" : "false"}
       style={{
         left: `${((viewport.center.x - viewport.width / 2) / paper.widthMm) * 100}%`,
@@ -151,7 +194,7 @@ function PaperViewportCanvas({
         height: `${(viewport.height / paper.heightMm) * 100}%`,
         clipPath: viewportClipPath(viewport),
       }}
-      onClick={(event) => { event.stopPropagation(); onSelect(); }}
+      onClick={(event) => { event.stopPropagation(); onSelect(); onMatchPick(); }}
       onDoubleClick={(event) => { event.stopPropagation(); onEnterModel(); }}
       onPointerDown={(event) => {
         event.stopPropagation();
@@ -188,7 +231,7 @@ function PaperViewportCanvas({
       onPointerCancel={() => { panStart.current = null; setDraftCenter(null); }}
     >
       <canvas ref={canvas} aria-label={`Viewport ${viewport.id}`} />
-      <span className="paper-space-viewport-label">{viewport.locked ? "🔒 · " : ""}{viewport.id} · {formatViewportScale(renderViewport)}</span>
+      <span className="paper-space-viewport-label">{viewport.locked ? "🔒 · " : ""}{viewport.on === false ? "OFF · " : ""}{viewport.id} · {formatViewportScale(renderViewport)}</span>
     </div>
   );
 }
@@ -329,7 +372,29 @@ export function App() {
     startWorld: { x: number; y: number };
   } | null>(null);
   const [lastStretchRejected, setLastStretchRejected] = useState<StretchRejectedTarget[]>([]);
-  const [previewCommand, setPreviewCommand] = useState<"MOVE" | "COPY" | "ROTATE" | "SCALE" | "MIRROR" | "OFFSET" | "TRIM" | "EXTEND" | "FILLET" | "CHAMFER" | "BREAK" | "STRETCH">("MOVE");
+  const [lengthenMode, setLengthenMode] = useState<LengthenMode>("delta");
+  const [lengthenMeasurement, setLengthenMeasurement] = useState<LengthenMeasurement>("length");
+  const [lengthenValueInput, setLengthenValueInput] = useState("250");
+  const [lengthenTargetsInput, setLengthenTargetsInput] = useState("10@1000,0");
+  const [lengthenFirstCanvasPick, setLengthenFirstCanvasPick] = useState<{ handle: string; point: { x: number; y: number } } | null>(null);
+  const [lengthenCanvasSessionActive, setLengthenCanvasSessionActive] = useState(false);
+  const [lastLengthenRejected, setLastLengthenRejected] = useState<LengthenRejectedTarget[]>([]);
+  const [alignPointPairCount, setAlignPointPairCount] = useState<1 | 2>(1);
+  const [alignFirstSourceInput, setAlignFirstSourceInput] = useState("0,0");
+  const [alignFirstDestinationInput, setAlignFirstDestinationInput] = useState("250,50");
+  const [alignSecondSourceInput, setAlignSecondSourceInput] = useState("1000,0");
+  const [alignSecondDestinationInput, setAlignSecondDestinationInput] = useState("250,1050");
+  const [alignScaleToFit, setAlignScaleToFit] = useState(false);
+  const [alignCanvasPoints, setAlignCanvasPoints] = useState<Array<{ x: number; y: number }>>([]);
+  const [lastAlignRejected, setLastAlignRejected] = useState<AlignRejectedTarget[]>([]);
+  const [matchSourceHandle, setMatchSourceHandle] = useState("");
+  const [matchSettings, setMatchSettings] = useState<MatchPropertiesSettings>(loadMatchPropertiesSettings);
+  const [lastMatchRejected, setLastMatchRejected] = useState<MatchPropertiesRejectedTarget[]>([]);
+  const [matchViewportSession, setMatchViewportSession] = useState<{
+    source: MatchViewportRef | null;
+    targets: MatchViewportRef[];
+  } | null>(null);
+  const [previewCommand, setPreviewCommand] = useState<"MOVE" | "COPY" | "ROTATE" | "SCALE" | "MIRROR" | "OFFSET" | "TRIM" | "EXTEND" | "FILLET" | "CHAMFER" | "BREAK" | "STRETCH" | "LENGTHEN" | "ALIGN" | "MATCHPROP">("MOVE");
   const activeLayer = document.layers.find((layer) => layer.id === document.currentLayerId)!;
   const activeLayout = document.layouts.find((layout) => layout.id === activeLayoutId) ?? document.layouts[0]!;
   const selectedViewport = activeLayout.kind === "paper"
@@ -342,8 +407,8 @@ export function App() {
   const activeSpace = modelSpaceEditing ? "MODEL" : "PAPER";
   const pendingViewportScale = Number(viewportScaleInput.trim().replace(",", "."));
   const selectedViewportPreset = String(STANDARD_VIEWPORT_SCALE_DENOMINATORS.find((candidate) => Math.abs(candidate - pendingViewportScale) <= Math.max(1, candidate) * 1e-9) ?? "custom");
-  const canUndoInActiveLayout = session.current.canUndo && (modelSpaceEditing || /^(LAYOUT|VIEWPORT|PAGESETUP|PUBLISH)/u.test(session.current.nextUndoCommandId ?? ""));
-  const canRedoInActiveLayout = session.current.canRedo && (modelSpaceEditing || /^(LAYOUT|VIEWPORT|PAGESETUP|PUBLISH)/u.test(session.current.nextRedoCommandId ?? ""));
+  const canUndoInActiveLayout = session.current.canUndo && (modelSpaceEditing || /^(LAYOUT|VIEWPORT|PAGESETUP|PUBLISH|MATCHPROP)/u.test(session.current.nextUndoCommandId ?? ""));
+  const canRedoInActiveLayout = session.current.canRedo && (modelSpaceEditing || /^(LAYOUT|VIEWPORT|PAGESETUP|PUBLISH|MATCHPROP)/u.test(session.current.nextRedoCommandId ?? ""));
   const paperLayouts = document.layouts.filter((layout) => layout.kind === "paper");
   const publishSettings = useMemo(() => resolveLayoutPublishSettings(document), [document]);
   const pageSetupLibrary = useMemo(() => resolvePageSetupLibrary(document), [document]);
@@ -576,6 +641,61 @@ export function App() {
       return null;
     }
   }, [document, previewCommand, selectedHandles, stretchBaseInput, stretchCrossingInput, stretchDestinationInput]);
+  const lengthenPreview = useMemo((): { entities: CadEntity[]; sourceHandles: string[]; steps: number } | null => {
+    if (previewCommand !== "LENGTHEN") return null;
+    try {
+      const { result } = prepareLengthen(document, {
+        mode: lengthenMode,
+        measurement: lengthenMeasurement,
+        valueInput: lengthenValueInput,
+        targetsInput: lengthenTargetsInput,
+      });
+      return { entities: putEntities(result.changes), sourceHandles: result.sourceHandles, steps: result.steps.length };
+    } catch {
+      return null;
+    }
+  }, [document, lengthenMeasurement, lengthenMode, lengthenTargetsInput, lengthenValueInput, previewCommand]);
+  const alignPreview = useMemo((): { entities: CadEntity[]; sourceHandles: string[]; pointPairCount: 1 | 2; scaleFactor: number; angleRad: number } | null => {
+    if (previewCommand !== "ALIGN" || selectedHandles.length === 0) return null;
+    try {
+      const { result } = prepareAlign(document, {
+        targetHandles: selectedHandles,
+        firstSourceInput: alignFirstSourceInput,
+        firstDestinationInput: alignFirstDestinationInput,
+        ...(alignPointPairCount === 2 ? {
+          secondSourceInput: alignSecondSourceInput,
+          secondDestinationInput: alignSecondDestinationInput,
+        } : {}),
+        scaleToFit: alignScaleToFit,
+      });
+      return {
+        entities: putEntities(result.changes),
+        sourceHandles: result.sourceHandles,
+        pointPairCount: result.pointPairCount,
+        scaleFactor: result.scaleFactor,
+        angleRad: result.angleRad,
+      };
+    } catch {
+      return null;
+    }
+  }, [alignFirstDestinationInput, alignFirstSourceInput, alignPointPairCount, alignScaleToFit, alignSecondDestinationInput, alignSecondSourceInput, document, previewCommand, selectedHandles]);
+  const matchPropertiesPreview = useMemo((): { entities: CadEntity[]; targetHandles: string[]; rejected: MatchPropertiesRejectedTarget[] } | null => {
+    if (previewCommand !== "MATCHPROP" || !matchSourceHandle.trim() || selectedHandles.length === 0) return null;
+    try {
+      const { result } = prepareMatchProperties(document, {
+        sourceHandle: matchSourceHandle,
+        targetHandles: selectedHandles,
+        settings: matchSettings,
+      });
+      return {
+        entities: putEntities(result.changes),
+        targetHandles: result.matchedHandles,
+        rejected: result.rejected,
+      };
+    } catch {
+      return null;
+    }
+  }, [document, matchSettings, matchSourceHandle, previewCommand, selectedHandles]);
 
   useEffect(() => {
     let active = true;
@@ -598,6 +718,14 @@ export function App() {
   useEffect(() => {
     setPublishBaseNameInput(publishSettings.baseFileName);
   }, [publishSettings.baseFileName]);
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(MATCH_PROPERTIES_SETTINGS_KEY, JSON.stringify(matchSettings));
+    } catch {
+      // Private browser modes may refuse localStorage; the active command still remains deterministic.
+    }
+  }, [matchSettings]);
 
   useEffect(() => {
     const assigned = pageSetupLibrary.assignments[activeLayout.id] ?? "";
@@ -673,6 +801,7 @@ export function App() {
     if (!context) return;
     const renderer = new CadCanvasRenderer();
     renderer.setBlocks(document.blocks);
+    renderer.setLinetypes(document.linetypes);
     renderer.setEntities(activeLayout.kind === "model" ? document.entities : (activeLayout.entities ?? []));
     const render = () => {
       const ratio = window.devicePixelRatio || 1;
@@ -688,7 +817,7 @@ export function App() {
         widthPx,
         heightPx,
         devicePixelRatio: ratio,
-      }, document.layers, activeLayout.kind === "model" ? [...(movePreview?.entities ?? []), ...(copyPreview?.entities ?? []), ...(rotatePreview?.entities ?? []), ...(scalePreview?.entities ?? []), ...(mirrorPreview?.entities ?? []), ...(offsetPreview?.entities ?? []), ...(trimPreview?.entities ?? []), ...(extendPreview?.entities ?? []), ...(filletPreview?.entities ?? []), ...(chamferPreview?.entities ?? []), ...(breakPreview?.entities ?? []), ...(stretchPreview?.entities ?? [])] : [], [
+      }, document.layers, activeLayout.kind === "model" ? [...(movePreview?.entities ?? []), ...(copyPreview?.entities ?? []), ...(rotatePreview?.entities ?? []), ...(scalePreview?.entities ?? []), ...(mirrorPreview?.entities ?? []), ...(offsetPreview?.entities ?? []), ...(trimPreview?.entities ?? []), ...(extendPreview?.entities ?? []), ...(filletPreview?.entities ?? []), ...(chamferPreview?.entities ?? []), ...(breakPreview?.entities ?? []), ...(stretchPreview?.entities ?? []), ...(lengthenPreview?.entities ?? []), ...(alignPreview?.entities ?? []), ...(matchPropertiesPreview?.entities ?? [])] : [], [
         ...(mirrorPreview?.eraseSource ? mirrorPreview.sourceHandles : []),
         ...(offsetPreview?.eraseSource ? offsetPreview.sourceHandles : []),
         ...(trimPreview?.sourceHandles ?? []),
@@ -697,16 +826,20 @@ export function App() {
         ...(chamferPreview?.trimMode === "trim" ? chamferPreview.sourceHandles : []),
         ...(breakPreview?.sourceHandles ?? []),
         ...(stretchPreview?.sourceHandles ?? []),
+        ...(lengthenPreview?.sourceHandles ?? []),
+        ...(alignPreview?.sourceHandles ?? []),
+        ...(matchPropertiesPreview?.targetHandles ?? []),
       ], activePaper && activePageSetup?.displayPlotStyles ? {
         plotStyle: activePageSetup.plotStyle ?? { profile: "monochrome", plotLineweights: true, plotTransparency: true },
         pixelsPerMillimeter: widthPx / activePaper.widthMm,
-      } : {});
+        ...(matchPropertiesPreview ? { previewAppearance: "resolved" as const } : {}),
+      } : matchPropertiesPreview ? { previewAppearance: "resolved" as const } : {});
     };
     render();
     const observer = new ResizeObserver(render);
     observer.observe(element);
     return () => observer.disconnect();
-  }, [activeLayout, activePageSetup, activePaper, breakPreview, chamferPreview, copyPreview, document, extendPreview, filletPreview, mirrorPreview, movePreview, offsetPreview, rotatePreview, scalePreview, stretchPreview, trimPreview]);
+  }, [activeLayout, activePageSetup, activePaper, alignPreview, breakPreview, chamferPreview, copyPreview, document, extendPreview, filletPreview, lengthenPreview, matchPropertiesPreview, mirrorPreview, movePreview, offsetPreview, rotatePreview, scalePreview, stretchPreview, trimPreview]);
 
   async function recoverFromStorageConflict(error: unknown): Promise<void> {
     if (!(error instanceof StorageRevisionConflictError)) throw error;
@@ -742,7 +875,8 @@ export function App() {
     resultHandles: string[],
     targetHandles: string[] = [],
   ): Promise<void> {
-    if (activeLayout.kind !== "model" && modelViewportId === null && MODEL_SPACE_COMMANDS.has(commandId)) {
+    const paperViewportMatch = commandId === "MATCHPROP" && changes.length > 0 && changes.every((change) => change.type === "set-layouts");
+    if (activeLayout.kind !== "model" && modelViewportId === null && MODEL_SPACE_COMMANDS.has(commandId) && !paperViewportMatch) {
       throw new CadCommandInputError(`${commandId} cannot mutate hidden Model geometry while a paper layout is active.`);
     }
     const operation = {
@@ -1172,12 +1306,33 @@ export function App() {
       setStatus(`STRETCH Crossing: esimene nurk ${pickPoint.x},${pickPoint.y}; lohista vastasnurka`);
       return;
     }
-    if (previewCommand !== "TRIM" && previewCommand !== "EXTEND" && previewCommand !== "FILLET" && previewCommand !== "CHAMFER" && previewCommand !== "BREAK") return;
+    if (previewCommand !== "TRIM" && previewCommand !== "EXTEND" && previewCommand !== "FILLET" && previewCommand !== "CHAMFER" && previewCommand !== "BREAK" && previewCommand !== "LENGTHEN" && previewCommand !== "ALIGN" && previewCommand !== "MATCHPROP") return;
     if (previewCommand === "BREAK" && breakFirstCanvasPick) {
       const target = `${breakFirstCanvasPick.handle}@${breakFirstCanvasPick.point.x},${breakFirstCanvasPick.point.y}>${pickPoint.x},${pickPoint.y}`;
       setBreakTargetsInput((current) => current.trim() ? `${current.trim()}; ${target}` : target);
       setBreakFirstCanvasPick(null);
       setStatus(`BREAK teine punkt lisatud objektile ${breakFirstCanvasPick.handle}; vali järgmine objekt või käivita BREAK`);
+      return;
+    }
+    if (previewCommand === "LENGTHEN" && lengthenMode === "dynamic" && lengthenFirstCanvasPick) {
+      const target = `${lengthenFirstCanvasPick.handle}@${lengthenFirstCanvasPick.point.x},${lengthenFirstCanvasPick.point.y}>${pickPoint.x},${pickPoint.y}`;
+      setLengthenTargetsInput((current) => current.trim() ? `${current.trim()}; ${target}` : target);
+      setLengthenFirstCanvasPick(null);
+      setStatus(`LENGTHEN Dynamic sihtpunkt lisatud objektile ${lengthenFirstCanvasPick.handle}; vali järgmine objekt või käivita LENGTHEN`);
+      return;
+    }
+    if (previewCommand === "ALIGN") {
+      const required = alignPointPairCount * 2;
+      const next = alignCanvasPoints.length >= required ? [pickPoint] : [...alignCanvasPoints, pickPoint];
+      const index = next.length - 1;
+      setAlignCanvasPoints(next);
+      const value = `${pickPoint.x},${pickPoint.y}`;
+      if (index === 0) setAlignFirstSourceInput(value);
+      else if (index === 1) setAlignFirstDestinationInput(value);
+      else if (index === 2) setAlignSecondSourceInput(value);
+      else setAlignSecondDestinationInput(value);
+      const labels = ["esimene source", "esimene destination", "teine source", "teine destination"];
+      setStatus(`ALIGN ${labels[index]} punkt: ${value}${next.length === required ? "; punktipaarid valmis" : ""}`);
       return;
     }
     const tolerance = viewportScreenTransform(viewport).worldUnitsPerPixel * 8;
@@ -1193,6 +1348,21 @@ export function App() {
       return;
     }
     const entityPickPoint = { x: cleanCoordinate(hit.point.x), y: cleanCoordinate(hit.point.y) };
+    if (previewCommand === "MATCHPROP") {
+      if (!matchSourceHandle.trim()) {
+        setMatchSourceHandle(hit.handle);
+        setSelectedHandles([]);
+        setStatus(`MATCHPROP lähteobjekt ${hit.handle} valitud; vali üks või mitu sihtobjekti`);
+        return;
+      }
+      if (hit.handle === matchSourceHandle.trim()) {
+        setStatus(`MATCHPROP: ${hit.handle} on lähteobjekt; vali teine objekt`);
+        return;
+      }
+      setSelectedHandles((current) => current.includes(hit.handle) ? current.filter((handle) => handle !== hit.handle) : [...current, hit.handle]);
+      setStatus(`MATCHPROP sihtobjekt ${hit.handle} ${selectedHandles.includes(hit.handle) ? "eemaldatud" : "lisatud"}; käivita MATCHPROP või vali veel`);
+      return;
+    }
     if (previewCommand === "BREAK") {
       if (!breakCanvasSessionActive) setBreakTargetsInput("");
       setBreakCanvasSessionActive(true);
@@ -1204,6 +1374,19 @@ export function App() {
       }
       setBreakFirstCanvasPick({ handle: hit.handle, point: entityPickPoint });
       setStatus(`BREAK objekt ${hit.handle} ja esimene punkt valitud; vali teine katkestuspunkt`);
+      return;
+    }
+    if (previewCommand === "LENGTHEN") {
+      if (!lengthenCanvasSessionActive) setLengthenTargetsInput("");
+      setLengthenCanvasSessionActive(true);
+      if (lengthenMode === "dynamic") {
+        setLengthenFirstCanvasPick({ handle: hit.handle, point: entityPickPoint });
+        setStatus(`LENGTHEN Dynamic objekt ${hit.handle} ja muudetav ots valitud; määra uus otsapunkt`);
+        return;
+      }
+      const target = `${hit.handle}@${entityPickPoint.x},${entityPickPoint.y}`;
+      setLengthenTargetsInput((current) => lengthenCanvasSessionActive && current.trim() ? `${current.trim()}; ${target}` : target);
+      setStatus(`LENGTHEN siht ${hit.handle} lisatud; vali järgmine ots või käivita LENGTHEN`);
       return;
     }
     if (previewCommand === "CHAMFER") {
@@ -1638,6 +1821,229 @@ export function App() {
     } catch (error) {
       if (error instanceof StorageRevisionConflictError) await recoverFromStorageConflict(error);
       else if (error instanceof CadCommandInputError) setStatus(`STRETCH viga: ${error.message}`);
+      else throw error;
+    } finally {
+      committing.current = false;
+    }
+  }
+
+  function undoLengthenTarget(): void {
+    if (lengthenFirstCanvasPick) {
+      setLengthenFirstCanvasPick(null);
+      setStatus("LENGTHEN Undo: pooleliolev Dynamic otsavalik tühistatud");
+      return;
+    }
+    const targets = lengthenTargetsInput.split(/[;\r\n]+/u).map((target) => target.trim()).filter(Boolean);
+    if (targets.length === 0) {
+      setStatus("LENGTHEN Undo: käsk on täielikult tagasi võetud; globaalset UNDO sammu ei loodud");
+      return;
+    }
+    targets.pop();
+    setLengthenTargetsInput(targets.join("; "));
+    setPreviewCommand("LENGTHEN");
+    setStatus(targets.length ? `LENGTHEN Undo: viimane siht eemaldatud; ${targets.length} jääb` : "LENGTHEN Undo: kõik sihid eemaldatud; globaalset UNDO sammu ei loodud");
+  }
+
+  async function lengthenTargets(): Promise<void> {
+    if (committing.current) return;
+    setPreviewCommand("LENGTHEN");
+    committing.current = true;
+    try {
+      const prepared = prepareLengthen(document, {
+        mode: lengthenMode,
+        measurement: lengthenMeasurement,
+        valueInput: lengthenValueInput,
+        targetsInput: lengthenTargetsInput,
+      });
+      const { result } = prepared;
+      setLastLengthenRejected(result.rejected);
+      if (result.changes.length === 0) {
+        const suffix = result.rejected.length ? `; ${result.rejected.length} lukus, puudu, suletud, muutumatu või sobimatu` : "";
+        setStatus(`LENGTHEN ei muutnud geomeetriat${suffix}`);
+        return;
+      }
+      await commitChanges(prepared.commandId, prepared.operationArgs, result.changes, result.resultHandles, result.sourceHandles);
+      setLengthenFirstCanvasPick(null);
+      setLengthenCanvasSessionActive(false);
+      setSelectedHandles([]);
+      const suffix = result.rejected.length ? `; ${result.rejected.length} jäi muutmata` : "";
+      setStatus(`${result.steps.length} LENGTHEN sammu salvestatud ühe Undo-operatsioonina${suffix}`);
+    } catch (error) {
+      if (error instanceof StorageRevisionConflictError) await recoverFromStorageConflict(error);
+      else if (error instanceof CadCommandInputError) setStatus(`LENGTHEN viga: ${error.message}`);
+      else throw error;
+    } finally {
+      committing.current = false;
+    }
+  }
+
+  function resetAlignPoints(): void {
+    setPreviewCommand("ALIGN");
+    setAlignCanvasPoints([]);
+    setLastAlignRejected([]);
+    setStatus("ALIGN punktid tühjendatud; vali esimene source ja destination punkt");
+  }
+
+  async function alignSelected(): Promise<void> {
+    if (committing.current) return;
+    setPreviewCommand("ALIGN");
+    if (selectedHandles.length === 0) {
+      setStatus("ALIGN: vali vähemalt üks objekt, seejärel määra punktipaarid");
+      return;
+    }
+    committing.current = true;
+    try {
+      const prepared = prepareAlign(document, {
+        targetHandles: selectedHandles,
+        firstSourceInput: alignFirstSourceInput,
+        firstDestinationInput: alignFirstDestinationInput,
+        ...(alignPointPairCount === 2 ? {
+          secondSourceInput: alignSecondSourceInput,
+          secondDestinationInput: alignSecondDestinationInput,
+        } : {}),
+        scaleToFit: alignScaleToFit,
+      });
+      const { result } = prepared;
+      setLastAlignRejected(result.rejected);
+      if (result.changes.length === 0) {
+        const rejected = result.rejected.length ? `; ${result.rejected.length} lukus, puudu või sobimatu` : "";
+        const unchanged = result.noChangeHandles.length ? `; ${result.noChangeHandles.length} juba joondatud` : "";
+        setStatus(`ALIGN ei muutnud geomeetriat${rejected}${unchanged}`);
+        return;
+      }
+      await commitChanges(prepared.commandId, prepared.operationArgs, result.changes, result.resultHandles, result.sourceHandles);
+      setSelectedHandles([]);
+      setAlignCanvasPoints([]);
+      const rejected = result.rejected.length ? `; ${result.rejected.length} jäi muutmata` : "";
+      setStatus(`${result.changes.length} objekti joondatud ${result.pointPairCount} punktipaariga${result.scaleToFit ? ` ja ×${result.scaleFactor.toFixed(6)} scale'iga` : ""} ühe Undo-operatsioonina${rejected}`);
+    } catch (error) {
+      if (error instanceof StorageRevisionConflictError) await recoverFromStorageConflict(error);
+      else if (error instanceof CadCommandInputError) setStatus(`ALIGN viga: ${error.message}`);
+      else throw error;
+    } finally {
+      committing.current = false;
+    }
+  }
+
+  function setMatchPropertySetting(key: keyof MatchPropertiesSettings, enabled: boolean): void {
+    setPreviewCommand("MATCHPROP");
+    setMatchSettings((current) => ({ ...current, [key]: enabled }));
+  }
+
+  function resetMatchPropertiesSource(): void {
+    setPreviewCommand("MATCHPROP");
+    setMatchViewportSession(null);
+    setMatchSourceHandle("");
+    setSelectedHandles([]);
+    setLastMatchRejected([]);
+    setStatus("MATCHPROP: vali lõuendilt lähteobjekt, seejärel sihtobjektid");
+  }
+
+  function startMatchViewportProperties(): void {
+    if (activeLayout.kind !== "paper") {
+      setStatus("MATCHPROP viewport: aktiveeri paberlayout");
+      return;
+    }
+    setPreviewCommand("MATCHPROP");
+    setMatchSourceHandle("");
+    setSelectedHandles([]);
+    setLastMatchRejected([]);
+    setModelViewportId(null);
+    setMatchViewportSession({ source: null, targets: [] });
+    setStatus("MATCHPROP viewport: vali lähtevaateava, seejärel üks või mitu sihtvaateava");
+  }
+
+  function pickMatchViewport(viewportId: string): void {
+    if (matchViewportSession === null || activeLayout.kind !== "paper") return;
+    const picked = { layoutId: activeLayout.id, viewportId };
+    if (matchViewportSession.source === null) {
+      setMatchViewportSession({ source: picked, targets: [] });
+      setStatus(`MATCHPROP viewport lähteobjekt ${activeLayout.name}/${viewportId}; vali sihtvaateavad`);
+      return;
+    }
+    if (sameViewportRef(matchViewportSession.source, picked)) {
+      setStatus(`MATCHPROP viewport: ${viewportId} on lähteobjekt; vali teine vaateava`);
+      return;
+    }
+    const alreadySelected = matchViewportSession.targets.some((target) => sameViewportRef(target, picked));
+    const targets = alreadySelected
+      ? matchViewportSession.targets.filter((target) => !sameViewportRef(target, picked))
+      : [...matchViewportSession.targets, picked];
+    setMatchViewportSession({ source: matchViewportSession.source, targets });
+    setStatus(`MATCHPROP viewport ${activeLayout.name}/${viewportId} ${alreadySelected ? "eemaldatud" : "lisatud"}; ${targets.length} sihtvaateava`);
+  }
+
+  async function matchSelectedViewportProperties(): Promise<void> {
+    if (committing.current) return;
+    if (!matchSettings.viewport) {
+      setStatus("MATCHPROP viewport: Vaateava property setting on välja lülitatud");
+      return;
+    }
+    if (!matchViewportSession?.source) {
+      setStatus("MATCHPROP viewport: vali lähtevaateava");
+      return;
+    }
+    if (matchViewportSession.targets.length === 0) {
+      setStatus("MATCHPROP viewport: vali vähemalt üks sihtvaateava");
+      return;
+    }
+    committing.current = true;
+    try {
+      const result = executeMatchViewportProperties(document, matchViewportSession.source, matchViewportSession.targets);
+      if (result.changes.length === 0) {
+        setStatus(`MATCHPROP viewport ei muutnud omadusi; ${result.rejected.length} muutumatu, puudu või lähteobjekt`);
+        return;
+      }
+      await commitChanges("MATCHPROP", {
+        kind: "viewport",
+        source: result.source,
+        targets: result.targets,
+        settings: { viewport: true },
+      }, result.changes, [], []);
+      setMatchViewportSession({ source: result.source, targets: [] });
+      const suffix = result.rejected.length ? `; ${result.rejected.length} jäi muutmata` : "";
+      setStatus(`${result.matched.length} viewporti omadused sobitatud ühe Undo-operatsioonina${suffix}`);
+    } catch (error) {
+      if (error instanceof StorageRevisionConflictError) await recoverFromStorageConflict(error);
+      else if (error instanceof RangeError || error instanceof TypeError || error instanceof CadCommandInputError) setStatus(`MATCHPROP viewport viga: ${error.message}`);
+      else throw error;
+    } finally {
+      committing.current = false;
+    }
+  }
+
+  async function matchSelectedProperties(): Promise<void> {
+    if (committing.current) return;
+    setPreviewCommand("MATCHPROP");
+    if (!matchSourceHandle.trim()) {
+      setStatus("MATCHPROP: vali või sisesta lähteobjekti handle");
+      return;
+    }
+    if (selectedHandles.length === 0) {
+      setStatus("MATCHPROP: vali vähemalt üks sihtobjekt");
+      return;
+    }
+    committing.current = true;
+    try {
+      const prepared = prepareMatchProperties(document, {
+        sourceHandle: matchSourceHandle,
+        targetHandles: selectedHandles,
+        settings: matchSettings,
+      });
+      const { result } = prepared;
+      setLastMatchRejected(result.rejected);
+      if (result.changes.length === 0) {
+        const suffix = result.rejected.length ? `; ${result.rejected.length} lukus, puudu, lähteobjekt või muutumatu` : "";
+        setStatus(`MATCHPROP ei muutnud omadusi${suffix}`);
+        return;
+      }
+      await commitChanges(prepared.commandId, prepared.operationArgs, result.changes, result.matchedHandles, result.matchedHandles);
+      setSelectedHandles([]);
+      const suffix = result.rejected.length ? `; ${result.rejected.length} jäi muutmata` : "";
+      setStatus(`${result.matchedHandles.length} objekti omadused sobitatud ühe Undo-operatsioonina${suffix}`);
+    } catch (error) {
+      if (error instanceof StorageRevisionConflictError) await recoverFromStorageConflict(error);
+      else if (error instanceof RangeError || error instanceof TypeError) setStatus(`MATCHPROP viga: ${error.message}`);
       else throw error;
     } finally {
       committing.current = false;
@@ -2836,6 +3242,118 @@ export function App() {
         </label>
         <button type="button" onClick={() => void stretchTargets()} disabled={!modelSpaceEditing}>STRETCH</button>
         <button type="button" onClick={undoStretchSelection} disabled={!modelSpaceEditing}>STRETCH Undo</button>
+        <label className="coordinate-input">
+          <span>LENGTHEN režiim</span>
+          <select
+            aria-label="LENGTHEN režiim"
+            value={lengthenMode}
+            onFocus={() => setPreviewCommand("LENGTHEN")}
+            onChange={(event) => {
+              setPreviewCommand("LENGTHEN");
+              setLengthenMode(event.target.value as LengthenMode);
+              setLengthenFirstCanvasPick(null);
+              setLengthenCanvasSessionActive(false);
+            }}
+          >
+            <option value="delta">Delta</option>
+            <option value="percent">Percent</option>
+            <option value="total">Total</option>
+            <option value="dynamic">Dynamic</option>
+          </select>
+        </label>
+        {(lengthenMode === "delta" || lengthenMode === "total") && (
+          <label className="coordinate-input">
+            <span>LENGTHEN mõõt</span>
+            <select aria-label="LENGTHEN mõõt" value={lengthenMeasurement} onFocus={() => setPreviewCommand("LENGTHEN")} onChange={(event) => { setPreviewCommand("LENGTHEN"); setLengthenMeasurement(event.target.value as LengthenMeasurement); }}>
+              <option value="length">Length</option>
+              <option value="angle">Angle (ARC)</option>
+            </select>
+          </label>
+        )}
+        {lengthenMode !== "dynamic" && (
+          <label className="coordinate-input">
+            <span>LENGTHEN väärtus</span>
+            <input aria-label="LENGTHEN väärtus" value={lengthenValueInput} onFocus={() => setPreviewCommand("LENGTHEN")} onChange={(event) => { setPreviewCommand("LENGTHEN"); setLengthenValueInput(event.target.value); }} placeholder={lengthenMode === "percent" ? "protsent" : lengthenMeasurement === "angle" ? "kraadid" : "joonise ühikud"} />
+          </label>
+        )}
+        <label className="coordinate-input">
+          <span>LENGTHEN sihid</span>
+          <input aria-label="LENGTHEN sihid" value={lengthenTargetsInput} onFocus={() => setPreviewCommand("LENGTHEN")} onChange={(event) => { setPreviewCommand("LENGTHEN"); setLengthenTargetsInput(event.target.value); setLengthenFirstCanvasPick(null); setLengthenCanvasSessionActive(false); }} placeholder={lengthenMode === "dynamic" ? "10@pickX,pickY>targetX,targetY" : "10@pickX,pickY; 20@pickX,pickY"} />
+        </label>
+        <button type="button" onClick={() => void lengthenTargets()} disabled={!modelSpaceEditing || lengthenFirstCanvasPick !== null}>LENGTHEN</button>
+        <button type="button" onClick={undoLengthenTarget} disabled={!modelSpaceEditing}>LENGTHEN Undo</button>
+        <label className="coordinate-input">
+          <span>ALIGN punktipaare</span>
+          <select
+            aria-label="ALIGN punktipaaride arv"
+            value={alignPointPairCount}
+            onFocus={() => setPreviewCommand("ALIGN")}
+            onChange={(event) => {
+              const count = Number(event.target.value) === 2 ? 2 : 1;
+              setPreviewCommand("ALIGN");
+              setAlignPointPairCount(count);
+              if (count === 1) setAlignScaleToFit(false);
+              setAlignCanvasPoints([]);
+            }}
+          >
+            <option value={1}>1 — Move</option>
+            <option value={2}>2 — Move + Rotate</option>
+          </select>
+        </label>
+        <label className="coordinate-input">
+          <span>ALIGN source 1</span>
+          <input aria-label="ALIGN source 1" value={alignFirstSourceInput} onFocus={() => setPreviewCommand("ALIGN")} onChange={(event) => { setPreviewCommand("ALIGN"); setAlignFirstSourceInput(event.target.value); setAlignCanvasPoints([]); }} placeholder="x,y" />
+        </label>
+        <label className="coordinate-input">
+          <span>ALIGN destination 1</span>
+          <input aria-label="ALIGN destination 1" value={alignFirstDestinationInput} onFocus={() => setPreviewCommand("ALIGN")} onChange={(event) => { setPreviewCommand("ALIGN"); setAlignFirstDestinationInput(event.target.value); setAlignCanvasPoints([]); }} placeholder="x,y" />
+        </label>
+        {alignPointPairCount === 2 && <>
+          <label className="coordinate-input">
+            <span>ALIGN source 2</span>
+            <input aria-label="ALIGN source 2" value={alignSecondSourceInput} onFocus={() => setPreviewCommand("ALIGN")} onChange={(event) => { setPreviewCommand("ALIGN"); setAlignSecondSourceInput(event.target.value); setAlignCanvasPoints([]); }} placeholder="x,y" />
+          </label>
+          <label className="coordinate-input">
+            <span>ALIGN destination 2</span>
+            <input aria-label="ALIGN destination 2" value={alignSecondDestinationInput} onFocus={() => setPreviewCommand("ALIGN")} onChange={(event) => { setPreviewCommand("ALIGN"); setAlignSecondDestinationInput(event.target.value); setAlignCanvasPoints([]); }} placeholder="x,y" />
+          </label>
+          <label className="coordinate-input">
+            <span>ALIGN Scale</span>
+            <input aria-label="ALIGN Scale Yes" type="checkbox" checked={alignScaleToFit} onFocus={() => setPreviewCommand("ALIGN")} onChange={(event) => { setPreviewCommand("ALIGN"); setAlignScaleToFit(event.target.checked); }} />
+          </label>
+        </>}
+        <button type="button" onClick={() => void alignSelected()} disabled={!modelSpaceEditing}>ALIGN</button>
+        <button type="button" onClick={resetAlignPoints} disabled={!modelSpaceEditing}>ALIGN punktid nulli</button>
+        <label className="coordinate-input">
+          <span>MATCHPROP lähteobjekt</span>
+          <input
+            aria-label="MATCHPROP lähteobjekt"
+            value={matchSourceHandle}
+            onFocus={() => setPreviewCommand("MATCHPROP")}
+            onChange={(event) => { setPreviewCommand("MATCHPROP"); setMatchSourceHandle(event.target.value); }}
+            placeholder="handle või vali lõuendilt"
+          />
+        </label>
+        <button type="button" onClick={resetMatchPropertiesSource} disabled={!modelSpaceEditing}>MATCHPROP vali lähteobjekt</button>
+        <details className="match-properties-options" onToggle={() => setPreviewCommand("MATCHPROP")}>
+          <summary>MATCHPROP seaded</summary>
+          <div className="match-properties-options-grid">
+            {(Object.keys(MATCH_PROPERTY_LABELS) as Array<keyof MatchPropertiesSettings>).map((key) => (
+              <label key={key}>
+                <span>{MATCH_PROPERTY_LABELS[key]}</span>
+                <input
+                  aria-label={`MATCHPROP ${MATCH_PROPERTY_LABELS[key]}`}
+                  type="checkbox"
+                  checked={matchSettings[key]}
+                  onFocus={() => setPreviewCommand("MATCHPROP")}
+                  onChange={(event) => setMatchPropertySetting(key, event.target.checked)}
+                />
+              </label>
+            ))}
+            <button type="button" onClick={() => setMatchSettings({ ...DEFAULT_MATCH_PROPERTIES_SETTINGS })}>Kõik omadused</button>
+          </div>
+        </details>
+        <button type="button" onClick={() => void matchSelectedProperties()} disabled={!modelSpaceEditing}>MATCHPROP</button>
         <button type="button" onClick={() => void eraseSelected()} disabled={!modelSpaceEditing || selectedHandles.length === 0}>ERASE</button>
         <button type="button" onClick={() => void undoLast()} disabled={!canUndoInActiveLayout}>UNDO</button>
         <button type="button" onClick={() => void redoLast()} disabled={!canRedoInActiveLayout}>REDO</button>
@@ -2863,6 +3381,9 @@ export function App() {
         {chamferPreview && <span data-testid="chamfer-preview" data-hidden-source-count={chamferPreview.trimMode === "trim" ? chamferPreview.sourceHandles.length : 0}>CHAMFER eelvaade: {chamferPreview.entities.length} tulemust · {chamferPreview.steps} sammu</span>}
         {breakPreview && <span data-testid="break-preview" data-hidden-source-count={breakPreview.sourceHandles.length}>BREAK eelvaade: {breakPreview.entities.length} tulemust · {breakPreview.steps} sammu</span>}
         {stretchPreview && <span data-testid="stretch-preview" data-hidden-source-count={stretchPreview.sourceHandles.length}>STRETCH eelvaade: {stretchPreview.entities.length} tulemust · {stretchPreview.steps} sammu · Δ{stretchPreview.delta.x},{stretchPreview.delta.y}</span>}
+        {lengthenPreview && <span data-testid="lengthen-preview" data-hidden-source-count={lengthenPreview.sourceHandles.length}>LENGTHEN eelvaade: {lengthenPreview.entities.length} tulemust · {lengthenPreview.steps} sammu</span>}
+        {alignPreview && <span data-testid="align-preview" data-hidden-source-count={alignPreview.sourceHandles.length}>ALIGN eelvaade: {alignPreview.entities.length} tulemust · {alignPreview.pointPairCount} paar · {((alignPreview.angleRad * 180) / Math.PI).toFixed(3)}° · ×{alignPreview.scaleFactor.toFixed(6)}</span>}
+        {matchPropertiesPreview && <span data-testid="match-properties-preview" data-hidden-source-count={matchPropertiesPreview.targetHandles.length}>MATCHPROP eelvaade: {matchPropertiesPreview.entities.length} tulemust · {matchPropertiesPreview.rejected.length} muutmata</span>}
         {lastMoveRejected.length > 0 && (
           <span data-testid="move-rejected" data-rejected={JSON.stringify(lastMoveRejected)}>
             MOVE muutmata: {lastMoveRejected.map(({ handle, reason }) => `${handle} (${reason})`).join(", ")}
@@ -2923,6 +3444,21 @@ export function App() {
             STRETCH muutmata: {lastStretchRejected.map(({ handle, reason }) => `${handle} (${reason})`).join(", ")}
           </span>
         )}
+        {lastLengthenRejected.length > 0 && (
+          <span data-testid="lengthen-rejected" data-rejected={JSON.stringify(lastLengthenRejected)}>
+            LENGTHEN muutmata: {lastLengthenRejected.map(({ handle, targetIndex, reason }) => `${handle}#${targetIndex + 1} (${reason})`).join(", ")}
+          </span>
+        )}
+        {lastAlignRejected.length > 0 && (
+          <span data-testid="align-rejected" data-rejected={JSON.stringify(lastAlignRejected)}>
+            ALIGN muutmata: {lastAlignRejected.map(({ handle, reason }) => `${handle} (${reason})`).join(", ")}
+          </span>
+        )}
+        {lastMatchRejected.length > 0 && (
+          <span data-testid="match-properties-rejected" data-rejected={JSON.stringify(lastMatchRejected)}>
+            MATCHPROP muutmata: {lastMatchRejected.map(({ handle, reason }) => `${handle} (${reason})`).join(", ")}
+          </span>
+        )}
       </section>
       <section className={`drawing-area ${activePaper ? "paper-mode" : "model-mode"}`} data-mode={activePaper ? "paper" : "model"}>
         {activePaper ? (
@@ -2958,12 +3494,17 @@ export function App() {
                   modelContext={viewport.id === modelViewportId}
                   navigationEnabled={viewport.id === modelViewportId && !viewport.locked}
                   plotStyle={activePageSetup?.displayPlotStyles ? (activePageSetup.plotStyle ?? { profile: "monochrome", plotLineweights: true, plotTransparency: true }) : undefined}
+                  matchRole={matchViewportSession?.source && sameViewportRef(matchViewportSession.source, { layoutId: activeLayout.id, viewportId: viewport.id })
+                    ? "source"
+                    : matchViewportSession?.targets.some((target) => sameViewportRef(target, { layoutId: activeLayout.id, viewportId: viewport.id })) ? "target" : null}
                   onSelect={() => {
                     setSelectedViewportId(viewport.id);
                     if (modelViewportId !== viewport.id) setModelViewportId(null);
                     setStatus(`Viewport ${viewport.id} valitud; PAPER aktiivne`);
                   }}
+                  onMatchPick={() => pickMatchViewport(viewport.id)}
                   onEnterModel={() => {
+                    if (matchViewportSession !== null) return;
                     setSelectedViewportId(viewport.id);
                     setModelViewportId(viewport.id);
                     setStatus(`Viewport ${viewport.id}: MODEL aktiivne`);
@@ -3163,6 +3704,13 @@ export function App() {
             <button type="button" className="layout-action" aria-label="Lisa ristkülikviewport" onClick={() => void addViewport("rectangle")}>+ View</button>
             <button type="button" className="layout-action" aria-label="Lisa polügoonviewport" onClick={() => void addViewport("polygon")}>+ Clip</button>
             <button type="button" className="layout-action danger" aria-label="Kustuta viewport" disabled={selectedViewportId === null} onClick={() => void deleteSelectedViewport()}>− View</button>
+            <button type="button" className="layout-action" aria-label="MATCHPROP viewport alusta" aria-pressed={matchViewportSession !== null} onClick={startMatchViewportProperties}>MATCHPROP View</button>
+            {matchViewportSession !== null && <span className="viewport-match-controls" data-testid="match-viewport-session">
+              <span data-testid="match-viewport-source">Allikas: {matchViewportSession.source ? `${matchViewportSession.source.layoutId}/${matchViewportSession.source.viewportId}` : "vali"}</span>
+              <span data-testid="match-viewport-targets">Siht: {matchViewportSession.targets.length}</span>
+              <button type="button" className="layout-action" aria-label="Rakenda MATCHPROP viewportidele" disabled={!matchViewportSession.source || matchViewportSession.targets.length === 0 || !matchSettings.viewport} onClick={() => void matchSelectedViewportProperties()}>Rakenda MATCHPROP</button>
+              <button type="button" className="layout-action" aria-label="Tühista MATCHPROP viewport" onClick={() => { setMatchViewportSession(null); setStatus("MATCHPROP viewport tühistatud"); }}>Tühista</button>
+            </span>}
             {selectedViewport && (
               <span className="viewport-view-controls" aria-label="Viewport vaate seaded">
                 <button

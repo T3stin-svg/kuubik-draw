@@ -1,0 +1,261 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-028",
+  "certificationAuthority": false,
+  "generatedAt": "2026-08-30T15:25:05.874Z",
+  "sourceArtifact": "evidence/artifacts/F-028-kuubik.dxf",
+  "sourceArtifactSha256": "2cf0d6dd00a0ce9a08bd1f5bd4403ddcd52707e6b9465d711300888532d3c883",
+  "readbackArtifact": "evidence/artifacts/F-028-independent-readback.json",
+  "readbackArtifactSha256": "6298fe3505a2345eb2c20ba393377ff3983d57114687fcb82cfb87383526a2fa",
+  "fixture": {
+    "lines": [
+      {
+        "id": "10",
+        "start": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        "end": {
+          "x": 125,
+          "y": 0,
+          "z": 0
+        }
+      }
+    ],
+    "splines": [
+      {
+        "id": "50",
+        "degree": 3,
+        "controlPoints": [
+          {
+            "x": 400,
+            "y": 500
+          },
+          {
+            "x": 440,
+            "y": 580
+          },
+          {
+            "x": 480,
+            "y": 580
+          },
+          {
+            "x": 520,
+            "y": 500
+          }
+        ],
+        "weights": [
+          1,
+          0.8,
+          1.2,
+          1
+        ],
+        "knots": [
+          0,
+          1
+        ],
+        "multiplicities": [
+          4,
+          4
+        ]
+      }
+    ]
+  },
+  "implementationSha256": {
+    "tools/oracles/freecad-f028-headless.py": "de5d08289f3ddc9de0aa002587769da7a57903a6eb8ab264bfc2608b7b79d159",
+    "tools/oracles/network-isolation.mjs": "3fb18e9ad145b76e53ed241a0a529bb2ccd4eabe784b04e915d77cdd9203d415",
+    "tools/oracles/probe-tools.mjs": "86b118cdf03da095214901d4f5f3b4460d9994b1280ae991904aedb0b992883e",
+    "tools/oracles/run-fixtures.mjs": "0a97574ac92ef761f092b2c2d2990f5401a652b8f261b243c9724f49f4fa2800",
+    "tools/oracles/run-f028-oracles.mjs": "7449d12e871bf0e78417c7b8058580f6dab1585c491ef4a84d6d3c7f7d21a88f"
+  },
+  "runnerSha256": "7449d12e871bf0e78417c7b8058580f6dab1585c491ef4a84d6d3c7f7d21a88f",
+  "freeCadScriptSha256": "de5d08289f3ddc9de0aa002587769da7a57903a6eb8ab264bfc2608b7b79d159",
+  "networkIsolation": {
+    "proven": false,
+    "reason": "A protected signed network-isolation attestation was not configured."
+  },
+  "reports": [
+    {
+      "oracle": "librecad",
+      "expected": "2.2.1.5",
+      "status": "FIXTURE_PASS_NOT_NETWORK_ISOLATED",
+      "versionMatchesPin": true,
+      "executableSha256MatchesPin": true,
+      "certificationAuthority": false,
+      "executableSha256": "9b5ec58c40c9e88b2fc110678f03c5b071191cd8dd79b3c68d6620b269c03773",
+      "expectedExecutableSha256": "9b5ec58c40c9e88b2fc110678f03c5b071191cd8dd79b3c68d6620b269c03773",
+      "versionOutput": "LibreCAD v2.2.1.5",
+      "sandbox": {
+        "disposableDirectory": true,
+        "inputPolicy": "synthetic-generated-F-028-output-only",
+        "networkIsolationProven": false,
+        "networkPolicy": "not isolated; dead-proxy variables are defense in depth only",
+        "timeoutMs": 30000,
+        "oneProcessPerFixture": true
+      },
+      "fixtureReport": {
+        "fixture": "F-028 production LENGTHEN DXF rendered by LibreCAD 2.2.1.5",
+        "inputSha256": "2cf0d6dd00a0ce9a08bd1f5bd4403ddcd52707e6b9465d711300888532d3c883",
+        "output": {
+          "bytes": 4175,
+          "sha256": "6afa62d0cf7eb0b2f64a4267d41be4ee29f3a9ba70e61ee3cbc05bbcf42d6eb0",
+          "hasPdfHeader": true,
+          "hasEof": true,
+          "pages": 1,
+          "imageXObjects": 0,
+          "mediaBox": [
+            0,
+            0,
+            595,
+            842
+          ],
+          "vectorOperators": {
+            "decodedStreams": 1,
+            "moveToOperators": 12,
+            "lineToOperators": 175,
+            "cubicCurveOperators": 73,
+            "paintedPathOperators": 8,
+            "geometry": {
+              "line": {
+                "start": [
+                  450,
+                  3011.999995
+                ],
+                "end": [
+                  2271,
+                  3011.999995
+                ],
+                "length": 1821
+              },
+              "circle": {
+                "center": [
+                  7733.999995,
+                  6653.999995
+                ],
+                "radius": 1365.7916050000001,
+                "cubicSegments": 4
+              },
+              "inferredUniformTransform": {
+                "scale": 18.21,
+                "centerError": 6934.161408293363,
+                "centerErrorNormalized": 3.8078865504082167,
+                "radiusError": 1183.6916050000002,
+                "radiusErrorNormalized": 0.6500228473366283
+              }
+            }
+          }
+        },
+        "checks": {
+          "exitCodeZero": true,
+          "exactProductionDxfInput": true,
+          "validSinglePageVectorPdf": true,
+          "vectorLengthenGeometryPresent": true
+        }
+      }
+    },
+    {
+      "oracle": "freecad",
+      "expected": "1.1.3",
+      "status": "FIXTURE_PASS_NOT_NETWORK_ISOLATED",
+      "versionMatchesPin": true,
+      "executableSha256MatchesPin": true,
+      "certificationAuthority": false,
+      "executableSha256": "b5551d26050ed64981c5767729bb35900fd4975fa7fd31714c17dd714b6fd44c",
+      "expectedExecutableSha256": "b5551d26050ed64981c5767729bb35900fd4975fa7fd31714c17dd714b6fd44c",
+      "versionOutput": "FreeCAD 1.1.3 Revision: 20260725 (Git shallow)",
+      "sandbox": {
+        "disposableDirectory": true,
+        "inputPolicy": "synthetic-generated-F-028-output-only",
+        "networkIsolationProven": false,
+        "networkPolicy": "not isolated; dead-proxy variables are defense in depth only",
+        "timeoutMs": 30000,
+        "oneProcessPerFixture": true
+      },
+      "fixtureReport": {
+        "fixture": "F-028 lengthened line and unchanged rational control-point SPLINE independently rebuilt by FreeCAD 1.1.3/OCCT",
+        "inputSha256": "cfcb1870f54fb71ef29f0fc5190a16eea5f4a3b27be8dced1391cc229f76c5ee",
+        "output": {
+          "certificationAuthority": false,
+          "freecadVersion": [
+            "1",
+            "1",
+            "3",
+            "20260725 (Git shallow)",
+            "Unknown",
+            "2026/07/25 04:52:02",
+            "grafted,grafted",
+            "145529fe741292ff0b3977a01195bf0247425794"
+          ],
+          "result": {
+            "lines": [
+              {
+                "end": {
+                  "x": 125,
+                  "y": 0
+                },
+                "id": "10",
+                "length": 125,
+                "start": {
+                  "x": 0,
+                  "y": 0
+                }
+              }
+            ],
+            "splines": [
+              {
+                "degree": 3,
+                "id": "50",
+                "knots": [
+                  0,
+                  1
+                ],
+                "length": 177.41818256307604,
+                "multiplicities": [
+                  4,
+                  4
+                ],
+                "poles": [
+                  {
+                    "x": 400,
+                    "y": 500
+                  },
+                  {
+                    "x": 440,
+                    "y": 580
+                  },
+                  {
+                    "x": 480,
+                    "y": 580
+                  },
+                  {
+                    "x": 520,
+                    "y": 500
+                  }
+                ],
+                "rational": true,
+                "weights": [
+                  1,
+                  0.8,
+                  1.2,
+                  1
+                ]
+              }
+            ]
+          },
+          "status": "PASS"
+        },
+        "checks": {
+          "exitCodeZero": true,
+          "statusPass": true,
+          "notCertificationAuthority": true,
+          "exactPinnedVersion": true,
+          "exactPinnedCommit": true,
+          "everyLineReconstructed": true,
+          "everySplineReconstructed": true
+        }
+      }
+    }
+  ],
+  "status": "SECONDARY_ORACLE_REPORT_COMPLETE"
+}

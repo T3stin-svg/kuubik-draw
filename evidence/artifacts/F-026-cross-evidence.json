@@ -27,28 +27,28 @@
     "atPointCapabilityExact": true
   },
   "evidenceSha256": {
-    "evidence/artifacts/F-026-browser-readback.json": "cf5ad9f6bbb2999943fa07d211ebab3457ab55f3f163b6b32d4e5c4bed944148",
-    "evidence/artifacts/F-026-browser-matrix.json": "1df655f6dbb90ebe00c89bd0481fd38f394ad385e75a661da293500fe1769e12",
-    "evidence/artifacts/F-026-independent-readback.json": "cdec3ec5d7988e4eb4e12be165e7a20b9cbfe4f86b70beee1271808f11ce2bcd",
-    "evidence/artifacts/F-026-autocad-readback.json": "984f2467a953904480db1cc7a473343f9e1f63bc398d008524d8c2b8ed728d26",
+    "evidence/artifacts/F-026-browser-readback.json": "625dced3153df5fb7b9567cdeec094764e18bb7dc42948366a82506763f97324",
+    "evidence/artifacts/F-026-browser-matrix.json": "e4071c74319bdcf26dfc4adcfb9c58940c5b1b49612cab0bd17606fc7cfa995b",
+    "evidence/artifacts/F-026-independent-readback.json": "2953570ca7a4b2f8422d056fe50ad3625e67266ee8946a7f844b4ad246c7b73b",
+    "evidence/artifacts/F-026-autocad-readback.json": "879be7531123b0aec5dbf544bd7bdf4611c8d34c4e1bcec63f4f6215abe1db09",
     "evidence/artifacts/F-026-autocad-core.json": "39de05789a2aac5cdf9eac093053877d0b9dfe07a7e81c8d343ff85314c80c4a",
-    "evidence/artifacts/F-026-oracles.json": "f35f8bb7473dd77d0823160bde0dce396c4e5e489f9bda23f2cf23be1514e60f"
+    "evidence/artifacts/F-026-oracles.json": "991d0fe3599618fd83639e19772f3ea3241ecf91f12936c568f386a861355f92"
   },
   "nestedReceipts": {
     "browserArtifacts": {
       "evidence/artifacts/F-026-browser-matrix.json": {
-        "expected": "1df655f6dbb90ebe00c89bd0481fd38f394ad385e75a661da293500fe1769e12",
-        "actual": "1df655f6dbb90ebe00c89bd0481fd38f394ad385e75a661da293500fe1769e12",
+        "expected": "e4071c74319bdcf26dfc4adcfb9c58940c5b1b49612cab0bd17606fc7cfa995b",
+        "actual": "e4071c74319bdcf26dfc4adcfb9c58940c5b1b49612cab0bd17606fc7cfa995b",
         "byteLength": 10034
       },
       "evidence/artifacts/F-026-browser-canvas.json": {
-        "expected": "011194d7d9925b051b7e51dae46dc09eef2a413c6e078858d0606c63baab8589",
-        "actual": "011194d7d9925b051b7e51dae46dc09eef2a413c6e078858d0606c63baab8589",
+        "expected": "1ae55882c8a5c880e161a93b852105ec21cdbeea450ac812896fe5233e258dd1",
+        "actual": "1ae55882c8a5c880e161a93b852105ec21cdbeea450ac812896fe5233e258dd1",
         "byteLength": 3438
       },
       "evidence/artifacts/F-026-browser-at-point.json": {
-        "expected": "9f823a56803dc7446a14e1afed9cab9031e87a1e443e5ff3723d38ae4d694c18",
-        "actual": "9f823a56803dc7446a14e1afed9cab9031e87a1e443e5ff3723d38ae4d694c18",
+        "expected": "9539d3309d0ca9087b66aaa634a252fdf3fbc833e20ff31d795aaad79f469bdb",
+        "actual": "9539d3309d0ca9087b66aaa634a252fdf3fbc833e20ff31d795aaad79f469bdb",
         "byteLength": 9938
       },
       "evidence/artifacts/F-026-browser.dxf": {
@@ -57,26 +57,26 @@
         "byteLength": 4160
       },
       "evidence/artifacts/F-026-browser.kdraw": {
-        "expected": "80a064d81d2679e57b40760a19722a662a0899b1484aaf04dfb4c35f9abb1d44",
-        "actual": "80a064d81d2679e57b40760a19722a662a0899b1484aaf04dfb4c35f9abb1d44",
+        "expected": "84bee2a64219699ac9e283cef1f900c6c796c9b14bfc7f312703c2c51ff64ba3",
+        "actual": "84bee2a64219699ac9e283cef1f900c6c796c9b14bfc7f312703c2c51ff64ba3",
         "byteLength": 1717
       }
     },
     "browserSources": {
       "apps/web/src/App.tsx": {
-        "expected": "1f7a21731e70245bbe0e696e9ec34a52ada002985cec6d0b3126a5f8d3313bb3",
-        "actual": "1f7a21731e70245bbe0e696e9ec34a52ada002985cec6d0b3126a5f8d3313bb3",
-        "byteLength": 186072
+        "expected": "239cc76784db5313fe70639ee8651177f9b28f2806f0660b885fd8ef4ba9fff3",
+        "actual": "239cc76784db5313fe70639ee8651177f9b28f2806f0660b885fd8ef4ba9fff3",
+        "byteLength": 216913
       },
       "apps/web/src/workflows/modify-command.ts": {
-        "expected": "cf95272f005691140541de01bc1be02009c03342b9520fa0cf70a21d9e50f332",
-        "actual": "cf95272f005691140541de01bc1be02009c03342b9520fa0cf70a21d9e50f332",
-        "byteLength": 13589
+        "expected": "9d1f7d0b1d3e308eac2a5d4055436626e3a497cbaaf116c05957e1fde15616c7",
+        "actual": "9d1f7d0b1d3e308eac2a5d4055436626e3a497cbaaf116c05957e1fde15616c7",
+        "byteLength": 17142
       },
       "apps/web/src/workflows/modify-command.test.ts": {
-        "expected": "b9b303e1a53ce508b9cf28a7aad1ccd226194f48275deb74b66aa54e5e5e546b",
-        "actual": "b9b303e1a53ce508b9cf28a7aad1ccd226194f48275deb74b66aa54e5e5e546b",
-        "byteLength": 9794
+        "expected": "aac0694d3a93a08ed5c6b98ea5456e62ba7c0f05777780a47d99dcabdf2e12b9",
+        "actual": "aac0694d3a93a08ed5c6b98ea5456e62ba7c0f05777780a47d99dcabdf2e12b9",
+        "byteLength": 12632
       },
       "packages/cad-core/src/break.ts": {
         "expected": "1d51abb8c5600efcea5a128754007ae9d39a7f5e42dd2bffda0aff3251750900",
@@ -84,19 +84,19 @@
         "byteLength": 6406
       },
       "packages/cad-core/src/commands.ts": {
-        "expected": "a69c694cd82a59269ac9b56b0deeb85870c298f23555bcf011a747e68297645d",
-        "actual": "a69c694cd82a59269ac9b56b0deeb85870c298f23555bcf011a747e68297645d",
-        "byteLength": 102512
+        "expected": "540e6f79dafb8d71f0e3ba5d43a1dcd39bd9f5809c03ea383c070de3636609fc",
+        "actual": "540e6f79dafb8d71f0e3ba5d43a1dcd39bd9f5809c03ea383c070de3636609fc",
+        "byteLength": 114531
       },
       "packages/cad-core/src/index.ts": {
-        "expected": "97de6f5ca45dc6f8f05e2e24d0bbaf5f0a793be00fa7b7e63aa51be234074435",
-        "actual": "97de6f5ca45dc6f8f05e2e24d0bbaf5f0a793be00fa7b7e63aa51be234074435",
-        "byteLength": 498
+        "expected": "681d425d328d1938f98e2821886e13b68097a86ee26de483efd7ba31dfc362fc",
+        "actual": "681d425d328d1938f98e2821886e13b68097a86ee26de483efd7ba31dfc362fc",
+        "byteLength": 568
       },
       "packages/cad-core/src/trim.ts": {
-        "expected": "2b79501c802c648e6fb1a38134c339a549852794f063c8c22c04e8d7d728185e",
-        "actual": "2b79501c802c648e6fb1a38134c339a549852794f063c8c22c04e8d7d728185e",
-        "byteLength": 65325
+        "expected": "e94ff7d5cece029f142e17ec4303edc3487513547df4ed63512a74f8b81359b9",
+        "actual": "e94ff7d5cece029f142e17ec4303edc3487513547df4ed63512a74f8b81359b9",
+        "byteLength": 65554
       },
       "packages/cad-core/src/container.ts": {
         "expected": "931db68e6aa0688ac9a7aa6d5ac56c07d1cd5e0126adec836f27258011419502",
@@ -104,9 +104,9 @@
         "byteLength": 4273
       },
       "packages/cad-core/src/transaction.ts": {
-        "expected": "e250aa2906e63905202a4b9591367632830745acbf731884f8e711d165750599",
-        "actual": "e250aa2906e63905202a4b9591367632830745acbf731884f8e711d165750599",
-        "byteLength": 20571
+        "expected": "ab5734699108451ed63290424d56f69b8b0031efb22969f9fef5bd2dd20ac388",
+        "actual": "ab5734699108451ed63290424d56f69b8b0031efb22969f9fef5bd2dd20ac388",
+        "byteLength": 23985
       },
       "packages/cad-core/test/break.test.ts": {
         "expected": "2f1686a1414e75821ff5de44350b7f7646bb4b1dc2b5a9640c5d75923dc38af8",
@@ -119,14 +119,14 @@
         "byteLength": 6348
       },
       "packages/cad-dxf/src/import.ts": {
-        "expected": "ffdef7a01488d09f32b8bab171b0632092317a5687cd6eca2231629a4fc51f20",
-        "actual": "ffdef7a01488d09f32b8bab171b0632092317a5687cd6eca2231629a4fc51f20",
-        "byteLength": 43411
+        "expected": "2f375b882304f0d3f9461b84b69d97e09bec8326863b6253f100e42cd9214a59",
+        "actual": "2f375b882304f0d3f9461b84b69d97e09bec8326863b6253f100e42cd9214a59",
+        "byteLength": 43799
       },
       "packages/cad-dxf/src/index.ts": {
-        "expected": "82ca8f21ac22b29cd0f36be39f51b379ffd9307ec96c69c45d93da713cc9b2bd",
-        "actual": "82ca8f21ac22b29cd0f36be39f51b379ffd9307ec96c69c45d93da713cc9b2bd",
-        "byteLength": 39900
+        "expected": "e01ff7bd77cf6dfef6da8d86f00c13d87dc847bb0135dbd1d79ece80717edc13",
+        "actual": "e01ff7bd77cf6dfef6da8d86f00c13d87dc847bb0135dbd1d79ece80717edc13",
+        "byteLength": 40230
       },
       "packages/cad-dxf/test/f026-break-roundtrip.test.ts": {
         "expected": "d563ca09c1f6c59199d738b1de085d11892e9438c197a8558133325b7f1883e8",
@@ -156,19 +156,19 @@
         "byteLength": 6406
       },
       "packages/cad-core/src/commands.ts": {
-        "expected": "a69c694cd82a59269ac9b56b0deeb85870c298f23555bcf011a747e68297645d",
-        "actual": "a69c694cd82a59269ac9b56b0deeb85870c298f23555bcf011a747e68297645d",
-        "byteLength": 102512
+        "expected": "540e6f79dafb8d71f0e3ba5d43a1dcd39bd9f5809c03ea383c070de3636609fc",
+        "actual": "540e6f79dafb8d71f0e3ba5d43a1dcd39bd9f5809c03ea383c070de3636609fc",
+        "byteLength": 114531
       },
       "packages/cad-core/src/index.ts": {
-        "expected": "97de6f5ca45dc6f8f05e2e24d0bbaf5f0a793be00fa7b7e63aa51be234074435",
-        "actual": "97de6f5ca45dc6f8f05e2e24d0bbaf5f0a793be00fa7b7e63aa51be234074435",
-        "byteLength": 498
+        "expected": "681d425d328d1938f98e2821886e13b68097a86ee26de483efd7ba31dfc362fc",
+        "actual": "681d425d328d1938f98e2821886e13b68097a86ee26de483efd7ba31dfc362fc",
+        "byteLength": 568
       },
       "packages/cad-core/src/trim.ts": {
-        "expected": "2b79501c802c648e6fb1a38134c339a549852794f063c8c22c04e8d7d728185e",
-        "actual": "2b79501c802c648e6fb1a38134c339a549852794f063c8c22c04e8d7d728185e",
-        "byteLength": 65325
+        "expected": "e94ff7d5cece029f142e17ec4303edc3487513547df4ed63512a74f8b81359b9",
+        "actual": "e94ff7d5cece029f142e17ec4303edc3487513547df4ed63512a74f8b81359b9",
+        "byteLength": 65554
       },
       "packages/cad-core/src/container.ts": {
         "expected": "931db68e6aa0688ac9a7aa6d5ac56c07d1cd5e0126adec836f27258011419502",
@@ -176,9 +176,9 @@
         "byteLength": 4273
       },
       "packages/cad-core/src/transaction.ts": {
-        "expected": "e250aa2906e63905202a4b9591367632830745acbf731884f8e711d165750599",
-        "actual": "e250aa2906e63905202a4b9591367632830745acbf731884f8e711d165750599",
-        "byteLength": 20571
+        "expected": "ab5734699108451ed63290424d56f69b8b0031efb22969f9fef5bd2dd20ac388",
+        "actual": "ab5734699108451ed63290424d56f69b8b0031efb22969f9fef5bd2dd20ac388",
+        "byteLength": 23985
       },
       "packages/cad-core/test/break.test.ts": {
         "expected": "2f1686a1414e75821ff5de44350b7f7646bb4b1dc2b5a9640c5d75923dc38af8",
@@ -191,14 +191,14 @@
         "byteLength": 6348
       },
       "packages/cad-dxf/src/import.ts": {
-        "expected": "ffdef7a01488d09f32b8bab171b0632092317a5687cd6eca2231629a4fc51f20",
-        "actual": "ffdef7a01488d09f32b8bab171b0632092317a5687cd6eca2231629a4fc51f20",
-        "byteLength": 43411
+        "expected": "2f375b882304f0d3f9461b84b69d97e09bec8326863b6253f100e42cd9214a59",
+        "actual": "2f375b882304f0d3f9461b84b69d97e09bec8326863b6253f100e42cd9214a59",
+        "byteLength": 43799
       },
       "packages/cad-dxf/src/index.ts": {
-        "expected": "82ca8f21ac22b29cd0f36be39f51b379ffd9307ec96c69c45d93da713cc9b2bd",
-        "actual": "82ca8f21ac22b29cd0f36be39f51b379ffd9307ec96c69c45d93da713cc9b2bd",
-        "byteLength": 39900
+        "expected": "e01ff7bd77cf6dfef6da8d86f00c13d87dc847bb0135dbd1d79ece80717edc13",
+        "actual": "e01ff7bd77cf6dfef6da8d86f00c13d87dc847bb0135dbd1d79ece80717edc13",
+        "byteLength": 40230
       },
       "packages/cad-dxf/test/f026-break-roundtrip.test.ts": {
         "expected": "d563ca09c1f6c59199d738b1de085d11892e9438c197a8558133325b7f1883e8",
@@ -262,8 +262,8 @@
         "byteLength": 5494
       },
       "evidence/artifacts/F-026-independent-readback.json": {
-        "expected": "cdec3ec5d7988e4eb4e12be165e7a20b9cbfe4f86b70beee1271808f11ce2bcd",
-        "actual": "cdec3ec5d7988e4eb4e12be165e7a20b9cbfe4f86b70beee1271808f11ce2bcd",
+        "expected": "2953570ca7a4b2f8422d056fe50ad3625e67266ee8946a7f844b4ad246c7b73b",
+        "actual": "2953570ca7a4b2f8422d056fe50ad3625e67266ee8946a7f844b4ad246c7b73b",
         "byteLength": 27199
       },
       "tools/oracles/freecad-f026-headless.py": {
@@ -294,7 +294,7 @@
     }
   },
   "browserDxfSha256": "28651cb1560005165e4b83f1b8730cffb4327e0dced7b0f2424a287712dc45e5",
-  "browserKdrawSha256": "80a064d81d2679e57b40760a19722a662a0899b1484aaf04dfb4c35f9abb1d44",
+  "browserKdrawSha256": "84bee2a64219699ac9e283cef1f900c6c796c9b14bfc7f312703c2c51ff64ba3",
   "productionDxfSha256": "c3e8b4e15a5ad9e6e65bd8bc64916e7c5671f12f6e97f6f4ae8dde5b80a90085",
   "productionKdrawSha256": "4d7259927f1815d144d949e49f609aa89b397ba01784ef787201c229d3e456a6",
   "certificationAuthorities": {

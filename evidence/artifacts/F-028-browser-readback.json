@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-028",
+  "status": "PASS",
+  "observedAt": "2026-08-30T15:23:25.873Z",
+  "checks": {
+    "browserWorkflowPassedWithoutErrors": true,
+    "exactCommittedGeometry": true,
+    "exactAtomicOperation": true,
+    "atomicUndoExact": true,
+    "atomicRedoExact": true,
+    "physicalDynamicCanvas": true,
+    "downloadedKdrawContainerExact": true,
+    "independentDxfExact": true
+  },
+  "artifacts": {
+    "evidence/artifacts/F-028-browser-matrix.json": {
+      "sha256": "c3ac65785e9e6ee0a11f37af3bc282a86db1f065cd93b5ac77d78693b39ca861",
+      "byteLength": 9740
+    },
+    "evidence/artifacts/F-028-browser-dynamic.json": {
+      "sha256": "8f84998830b07ec07f8fc9e1048308d61abe1677490800ecf6061f4854c8ded7",
+      "byteLength": 1134
+    },
+    "evidence/artifacts/F-028-browser.dxf": {
+      "sha256": "9c2f17cf2de882a128d7e13c96e6c16765332c6ce4ac29fbe2f540390114d200",
+      "byteLength": 4336
+    },
+    "evidence/artifacts/F-028-browser.kdraw": {
+      "sha256": "bf4d6840daf26661231c6a530d798c0b0b6e04351443e967308e11b117e543bf",
+      "byteLength": 1797
+    }
+  },
+  "sourceSha256": {
+    "apps/web/src/App.tsx": "239cc76784db5313fe70639ee8651177f9b28f2806f0660b885fd8ef4ba9fff3",
+    "apps/web/src/style.css": "b2c566d216b0eb9e011bd5458680cbc0ed9765ec86872e73297ea48f400f8f04",
+    "apps/web/src/workflows/modify-command.ts": "9d1f7d0b1d3e308eac2a5d4055436626e3a497cbaaf116c05957e1fde15616c7",
+    "apps/web/src/workflows/modify-command.test.ts": "aac0694d3a93a08ed5c6b98ea5456e62ba7c0f05777780a47d99dcabdf2e12b9",
+    "packages/cad-core/src/commands.ts": "540e6f79dafb8d71f0e3ba5d43a1dcd39bd9f5809c03ea383c070de3636609fc",
+    "packages/cad-core/src/index.ts": "681d425d328d1938f98e2821886e13b68097a86ee26de483efd7ba31dfc362fc",
+    "packages/cad-core/src/lengthen.ts": "be4471745db7a8bcac101b0d9731e5a318d35bf1dec14f55d746d222e0177b35",
+    "packages/cad-core/src/transaction.ts": "ab5734699108451ed63290424d56f69b8b0031efb22969f9fef5bd2dd20ac388",
+    "packages/cad-core/src/trim.ts": "e94ff7d5cece029f142e17ec4303edc3487513547df4ed63512a74f8b81359b9",
+    "packages/cad-core/test/lengthen.test.ts": "609caf08adc1a4628279537441cab6321e8729b770bc211580a9dc519b213e0c",
+    "packages/cad-core/test/f028-mutation-proven.test.ts": "405f186aa158cdc2bb97f89a05a9489820c4a513a163888c865c769ff349c461",
+    "packages/cad-dxf/src/import.ts": "2f375b882304f0d3f9461b84b69d97e09bec8326863b6253f100e42cd9214a59",
+    "packages/cad-dxf/src/index.ts": "e01ff7bd77cf6dfef6da8d86f00c13d87dc847bb0135dbd1d79ece80717edc13",
+    "packages/cad-dxf/test/f028-lengthen-roundtrip.test.ts": "52a0d50063bac963dfdd5eee513731ff6d6952a59a8b63157ffc0f6202079ae0",
+    "e2e/f028-lengthen.spec.ts": "ceae3ee5198f5bcdc0417234336c2393a87ba8b544d1097ef63c1bdedc69d607",
+    "tools/parity/run-f028-readback.mjs": "f377fa21841471b479f7141e9e5f8963189fb6aca6a1432da0533a832cf538c7",
+    "tools/parity/capture-f028-browser.mjs": "405f3d5ac2b17fc99130f1ac7e421b62a0119380f6423a9f182ca0d47f43b38b",
+    "tools/parity/build-f028-browser-readback.mjs": "141d9fae75752574227a3dc98a8e36f78f18e463b287f2ee3c18212939424f1f"
+  }
+}

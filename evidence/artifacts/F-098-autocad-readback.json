@@ -4,12 +4,12 @@
   "benchmark": "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
   "engine": "Autodesk AutoCAD 2024 desktop COM/native command + non-retained pixel measurement",
   "engineVersion": "24.3s (LMS Tech)",
-  "automationProcessId": 35972,
+  "automationProcessId": 31316,
   "automationProcessOwned": true,
   "automationProcessIdentity": {
-    "processId": 35972,
+    "processId": 31316,
     "executablePath": "C:\\Program Files\\Autodesk\\AutoCAD 2024\\acad.exe",
-    "startTimeUtc": "2026-08-30T00:28:48.4614607Z"
+    "startTimeUtc": "2026-08-30T16:04:41.4950850Z"
   },
   "beforeSave": {
     "layoutName": "F098 PAPER",
@@ -77,6 +77,16 @@
       "passes": [
         {
           "pass": 1,
+          "exact": false,
+          "consecutiveExactReads": 0,
+          "configName": "DWG To PDF.pc3",
+          "paperUnits": 0,
+          "canonicalMediaName": "ISO_expand_A3_(297.00_x_420.00_MM)",
+          "paperWidth": 420,
+          "paperHeight": 297
+        },
+        {
+          "pass": 2,
           "exact": true,
           "consecutiveExactReads": 1,
           "configName": "DWG To PDF.pc3",
@@ -86,7 +96,7 @@
           "paperHeight": 297
         },
         {
-          "pass": 2,
+          "pass": 3,
           "exact": true,
           "consecutiveExactReads": 2,
           "configName": "DWG To PDF.pc3",
@@ -153,12 +163,12 @@
       "y": 212,
       "width": 1664,
       "height": 1120,
-      "sampledComponentPixels": 29091,
+      "sampledComponentPixels": 29070,
       "aspectRatio": 1.4857142857142858,
       "nativePaperAspectRatio": 1.4141414141414141,
       "paperAspectError": 0.07157287157287162
     },
-    "pngSha256": "6921cd5d87cb88b8bae753467e6b27b3a81a3406592ec8ef63a43cb2e797d352",
+    "pngSha256": "b1a32da66853485f1c4e42521995badf04c878c70e0c2c5f13a0ca36fd501114",
     "retained": false
   },
   "checks": {
@@ -172,7 +182,7 @@
   },
   "dwg": {
     "bytes": 32243,
-    "sha256": "b51a3fc32af544c8de296b1688d283d3bb9bef8380863f5a98d6065dffbcb2d8",
+    "sha256": "b70958247757fd44730296cc49404df1ff47ab55f5040b6ef4ca419b8a7f4ce9",
     "saveAsType": 64,
     "retained": false
   },
@@ -184,9 +194,10 @@
   "automationProcessTerminated": true,
   "processSetRestored": true,
   "preExistingProcessIds": [
-    11276
+    28304,
+    33160
   ],
   "scriptSha256": "c1156f45884a36ac303aaa285ac977d9d1aff48329f752c1faec91b4f4ebb65f",
   "matrixScriptSha256": "63efb924e628ebf36a2d696d8d29fb2a19d5fc1922507f9c72425501bb105b24",
-  "observedAt": "2026-08-30T00:29:04.465Z"
+  "observedAt": "2026-08-30T16:04:58.244Z"
 }

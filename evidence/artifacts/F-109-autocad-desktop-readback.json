@@ -4,10 +4,10 @@
   "benchmark": "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
   "engine": "Autodesk AutoCAD 2024 desktop COM",
   "engineVersion": "24.3s (LMS Tech)",
-  "automationProcessId": 2252,
+  "automationProcessId": 3456,
   "automationProcessOwned": true,
   "sourcePath": "F-109-production.dxf",
-  "documentName": "",
+  "documentName": "F-109-production.dxf",
   "units": 4,
   "totalEntities": 40,
   "entities": {
@@ -689,7 +689,7 @@
       "transparency": "",
       "pattern": "SOLID",
       "associative": false,
-      "loopCount": 1
+      "loopCount": 0
     },
     "1301": {
       "type": "AcDbHatch",
@@ -780,7 +780,7 @@
     "1500": {
       "type": "AcDbAlignedDimension",
       "layer": "JOONED",
-      "color": 0,
+      "color": 256,
       "trueColor": 0,
       "linetype": "ByLayer",
       "lineweight": -1,
@@ -971,7 +971,8 @@
   "automationProcessTerminated": true,
   "processSetRestored": true,
   "preExistingProcessIds": [
-    11276
+    28304,
+    33160
   ],
-  "observedAt": "2026-08-29T23:08:03.455Z"
+  "observedAt": "2026-08-30T15:37:27.553Z"
 }

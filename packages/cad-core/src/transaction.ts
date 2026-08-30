@@ -22,6 +22,12 @@ export type CadChange =
   | EntityChange
   | { type: "put-layer"; layer: CadLayer }
   | { type: "delete-layer"; layerId: string }
+  | { type: "put-linetype"; linetype: CadLinetype; index?: number }
+  | { type: "delete-linetype"; linetypeId: string }
+  | { type: "put-text-style"; textStyle: CadTextStyle; index?: number }
+  | { type: "delete-text-style"; textStyleId: string }
+  | { type: "put-dimension-style"; dimensionStyle: CadDimensionStyle; index?: number }
+  | { type: "delete-dimension-style"; dimensionStyleId: string }
   | { type: "set-current-layer"; layerId: string }
   | DrawingContentChange
   | { type: "set-layouts"; layouts: CadLayout[] }
@@ -299,6 +305,37 @@ export function applyAtomicOperation(
   let layouts = structuredClone(source.layouts);
   let metadata = structuredClone(source.metadata);
   const inverseChanges: CadChange[] = [];
+  const putResource = <T extends { id: string }>(
+    collection: T[],
+    value: T,
+    index: number | undefined,
+    put: (item: T, restoreIndex?: number) => CadChange,
+    remove: (id: string) => CadChange,
+  ): void => {
+    const existingIndex = collection.findIndex((item) => item.id === value.id);
+    if (existingIndex >= 0) {
+      inverseChanges.unshift(put(structuredClone(collection[existingIndex]!)));
+      collection[existingIndex] = structuredClone(value);
+      return;
+    }
+    const insertionIndex = index ?? collection.length;
+    if (!Number.isSafeInteger(insertionIndex) || insertionIndex < 0 || insertionIndex > collection.length) {
+      throw new RangeError(`Resource insertion index ${insertionIndex} is outside 0..${collection.length}.`);
+    }
+    inverseChanges.unshift(remove(value.id));
+    collection.splice(insertionIndex, 0, structuredClone(value));
+  };
+  const deleteResource = <T extends { id: string }>(
+    collection: T[],
+    id: string,
+    put: (item: T, restoreIndex?: number) => CadChange,
+    label: string,
+  ): void => {
+    const index = collection.findIndex((item) => item.id === id);
+    if (index < 0) throw new RangeError(`Cannot delete missing ${label} ${id}.`);
+    inverseChanges.unshift(put(structuredClone(collection[index]!), index));
+    collection.splice(index, 1);
+  };
   for (const change of changes) {
     if (change.type === "undo-mark") {
       inverseChanges.unshift({ type: "undo-mark" });
@@ -333,6 +370,30 @@ export function applyAtomicOperation(
       const before = layers.get(change.layer.id);
       inverseChanges.unshift(before ? { type: "put-layer", layer: structuredClone(before) } : { type: "delete-layer", layerId: change.layer.id });
       layers.set(change.layer.id, structuredClone(change.layer));
+      continue;
+    }
+    if (change.type === "put-linetype") {
+      putResource(linetypes, change.linetype, change.index, (linetype, index) => ({ type: "put-linetype", linetype, ...(index === undefined ? {} : { index }) }), (linetypeId) => ({ type: "delete-linetype", linetypeId }));
+      continue;
+    }
+    if (change.type === "delete-linetype") {
+      deleteResource(linetypes, change.linetypeId, (linetype, index) => ({ type: "put-linetype", linetype, ...(index === undefined ? {} : { index }) }), "linetype");
+      continue;
+    }
+    if (change.type === "put-text-style") {
+      putResource(textStyles, change.textStyle, change.index, (textStyle, index) => ({ type: "put-text-style", textStyle, ...(index === undefined ? {} : { index }) }), (textStyleId) => ({ type: "delete-text-style", textStyleId }));
+      continue;
+    }
+    if (change.type === "delete-text-style") {
+      deleteResource(textStyles, change.textStyleId, (textStyle, index) => ({ type: "put-text-style", textStyle, ...(index === undefined ? {} : { index }) }), "text style");
+      continue;
+    }
+    if (change.type === "put-dimension-style") {
+      putResource(dimensionStyles, change.dimensionStyle, change.index, (dimensionStyle, index) => ({ type: "put-dimension-style", dimensionStyle, ...(index === undefined ? {} : { index }) }), (dimensionStyleId) => ({ type: "delete-dimension-style", dimensionStyleId }));
+      continue;
+    }
+    if (change.type === "delete-dimension-style") {
+      deleteResource(dimensionStyles, change.dimensionStyleId, (dimensionStyle, index) => ({ type: "put-dimension-style", dimensionStyle, ...(index === undefined ? {} : { index }) }), "dimension style");
       continue;
     }
     if (change.type === "replace-drawing-content") {

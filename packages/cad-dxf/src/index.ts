@@ -255,7 +255,8 @@ function linetypeName(context: Context, id: string | undefined): string | undefi
   return symbolName(value.name, "linetype");
 }
 
-function appearanceRows(context: Context, appearance: CadAppearance | undefined): string {
+function appearanceRows(context: Context, entity: CadEntity): string {
+  const appearance = entity.appearance;
   if (!appearance) return "";
   let output = "";
   const colorIndex = appearanceAci(appearance);
@@ -266,9 +267,15 @@ function appearanceRows(context: Context, appearance: CadAppearance | undefined)
   }
   const linetype = linetypeName(context, appearance.linetypeId);
   if (linetype) output += pair(6, linetype);
+  if (appearance.linetypeScale !== undefined && entity.kind !== "hatch" && entity.kind !== "mtext") {
+    output += pair(48, appearance.linetypeScale);
+  }
   if (appearance.lineweightMm !== undefined) output += pair(370, lineweight(appearance.lineweightMm));
   if (appearance.transparency !== undefined) {
     output += pair(440, transparency(appearance.transparency));
+  }
+  if (appearance.thickness !== undefined && ["line", "polyline", "circle", "arc", "text"].includes(entity.kind)) {
+    output += pair(39, appearance.thickness);
   }
   return output;
 }
@@ -277,7 +284,7 @@ function header(context: Context, type: string, entity: CadEntity): string {
   const handle = context.handleMap.get(entity.handle);
   if (!handle) throw new TypeError(`Missing allocated DXF handle for CAD entity: ${entity.handle}`);
   return pair(0, type) + pair(5, handle) + pair(330, "1A") +
-    pair(100, "AcDbEntity") + pair(8, layerName(context, entity.layerId)) + appearanceRows(context, entity.appearance);
+    pair(100, "AcDbEntity") + pair(8, layerName(context, entity.layerId)) + appearanceRows(context, entity);
 }
 
 function midpoint(first: CadPoint2, second: CadPoint2): CadPoint2 {

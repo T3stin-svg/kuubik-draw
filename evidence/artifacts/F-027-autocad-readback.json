@@ -4,25 +4,25 @@
   "benchmark": "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
   "engine": "Autodesk AutoCAD 2024 desktop COM",
   "engineVersion": "24.3s (LMS Tech)",
-  "automationProcessId": 32852,
+  "automationProcessId": 26944,
   "automationProcessOwned": true,
   "installedUpdateIdentity": {
     "displayName": "Autodesk AutoCAD 2024.1.2 Update",
     "displayVersion": "24.3.152.0"
   },
   "automationProcessIdentity": {
-    "processId": 32852,
+    "processId": 26944,
     "executableName": "acad.exe",
     "executableSha256": "0570749def2fa8dcfb62df1a6671f44245a9ef740dd61d9d0f9110794a76e70e",
     "fileVersion": "R24.3.152.0.0",
     "productVersion": "R24.3.152.0.0",
-    "startTimeSha256": "9687cdeca5d88272a71621a3852dd2493f9f404be6a872c5889cfd294dc1c682"
+    "startTimeSha256": "3cac9d7383e93aa4663dd9cd84bb49b15047fd27e7ee2f2bfe5e9804dd29e14e"
   },
   "observations": {
     "source": {
       "line": {
         "objectName": "AcDbLine",
-        "handle": "28C",
+        "handle": "8C",
         "layer": "F027_LINE",
         "color": 1,
         "lineweight": 50,
@@ -40,7 +40,7 @@
       },
       "crossingPolygon": {
         "objectName": "AcDbLine",
-        "handle": "28D",
+        "handle": "8D",
         "layer": "F027_CPOLY",
         "color": 1,
         "lineweight": 50,
@@ -58,7 +58,7 @@
       },
       "polyline": {
         "objectName": "AcDbPolyline",
-        "handle": "28E",
+        "handle": "8E",
         "layer": "F027_POLY",
         "color": 1,
         "lineweight": 50,
@@ -102,7 +102,7 @@
       },
       "arc": {
         "objectName": "AcDbArc",
-        "handle": "28F",
+        "handle": "8F",
         "layer": "F027_ARC",
         "color": 1,
         "lineweight": 50,
@@ -119,7 +119,7 @@
       },
       "arcCenter": {
         "objectName": "AcDbArc",
-        "handle": "290",
+        "handle": "90",
         "layer": "F027_ARC_CENTER",
         "color": 1,
         "lineweight": 50,
@@ -136,7 +136,7 @@
       },
       "ellipse": {
         "objectName": "AcDbEllipse",
-        "handle": "291",
+        "handle": "91",
         "layer": "F027_ELLIPSE",
         "color": 1,
         "lineweight": 50,
@@ -157,7 +157,7 @@
       },
       "wrapped": {
         "objectName": "AcDbEllipse",
-        "handle": "292",
+        "handle": "92",
         "layer": "F027_WRAP",
         "color": 1,
         "lineweight": 50,
@@ -178,7 +178,7 @@
       },
       "ellipseMidpoint": {
         "objectName": "AcDbEllipse",
-        "handle": "293",
+        "handle": "93",
         "layer": "F027_ELLIPSE_MID",
         "color": 1,
         "lineweight": 50,
@@ -199,7 +199,7 @@
       },
       "fullEllipse": {
         "objectName": "AcDbEllipse",
-        "handle": "294",
+        "handle": "94",
         "layer": "F027_FULL",
         "color": 1,
         "lineweight": 50,
@@ -220,7 +220,7 @@
       },
       "circle": {
         "objectName": "AcDbCircle",
-        "handle": "295",
+        "handle": "95",
         "layer": "F027_CIRCLE",
         "color": 1,
         "lineweight": 50,
@@ -235,7 +235,7 @@
       },
       "individual": {
         "objectName": "AcDbLine",
-        "handle": "296",
+        "handle": "96",
         "layer": "F027_INDIVIDUAL",
         "color": 1,
         "lineweight": 50,
@@ -253,7 +253,7 @@
       },
       "locked": {
         "objectName": "AcDbLine",
-        "handle": "299",
+        "handle": "99",
         "layer": "F027_LOCKED",
         "color": 1,
         "lineweight": 50,
@@ -272,7 +272,7 @@
     },
     "line": {
       "objectName": "AcDbLine",
-      "handle": "28C",
+      "handle": "8C",
       "layer": "F027_LINE",
       "color": 1,
       "lineweight": 50,
@@ -290,7 +290,7 @@
     },
     "crossingPolygon": {
       "objectName": "AcDbLine",
-      "handle": "28D",
+      "handle": "8D",
       "layer": "F027_CPOLY",
       "color": 1,
       "lineweight": 50,
@@ -308,7 +308,7 @@
     },
     "polyline": {
       "objectName": "AcDbPolyline",
-      "handle": "28E",
+      "handle": "8E",
       "layer": "F027_POLY",
       "color": 1,
       "lineweight": 50,
@@ -352,7 +352,7 @@
     },
     "arc": {
       "objectName": "AcDbArc",
-      "handle": "28F",
+      "handle": "8F",
       "layer": "F027_ARC",
       "color": 1,
       "lineweight": 50,
@@ -369,7 +369,7 @@
     },
     "arcCenter": {
       "objectName": "AcDbArc",
-      "handle": "290",
+      "handle": "90",
       "layer": "F027_ARC_CENTER",
       "color": 1,
       "lineweight": 50,
@@ -386,7 +386,7 @@
     },
     "ellipse": {
       "objectName": "AcDbEllipse",
-      "handle": "291",
+      "handle": "91",
       "layer": "F027_ELLIPSE",
       "color": 1,
       "lineweight": 50,
@@ -407,7 +407,7 @@
     },
     "wrapped": {
       "objectName": "AcDbEllipse",
-      "handle": "292",
+      "handle": "92",
       "layer": "F027_WRAP",
       "color": 1,
       "lineweight": 50,
@@ -428,7 +428,7 @@
     },
     "ellipseMidpoint": {
       "objectName": "AcDbEllipse",
-      "handle": "293",
+      "handle": "93",
       "layer": "F027_ELLIPSE_MID",
       "color": 1,
       "lineweight": 50,
@@ -449,7 +449,7 @@
     },
     "fullEllipse": {
       "objectName": "AcDbEllipse",
-      "handle": "294",
+      "handle": "94",
       "layer": "F027_FULL",
       "color": 1,
       "lineweight": 50,
@@ -470,7 +470,7 @@
     },
     "circle": {
       "objectName": "AcDbCircle",
-      "handle": "295",
+      "handle": "95",
       "layer": "F027_CIRCLE",
       "color": 1,
       "lineweight": 50,
@@ -485,7 +485,7 @@
     },
     "individual": {
       "objectName": "AcDbLine",
-      "handle": "296",
+      "handle": "96",
       "layer": "F027_INDIVIDUAL",
       "color": 1,
       "lineweight": 50,
@@ -505,7 +505,7 @@
       "source": [
         {
           "objectName": "AcDbLine",
-          "handle": "298",
+          "handle": "98",
           "layer": "F027_GLOBAL",
           "color": 1,
           "lineweight": 50,
@@ -523,7 +523,7 @@
         },
         {
           "objectName": "AcDbLine",
-          "handle": "297",
+          "handle": "97",
           "layer": "F027_GLOBAL",
           "color": 1,
           "lineweight": 50,
@@ -543,7 +543,7 @@
       "committed": [
         {
           "objectName": "AcDbLine",
-          "handle": "298",
+          "handle": "98",
           "layer": "F027_GLOBAL",
           "color": 1,
           "lineweight": 50,
@@ -561,7 +561,7 @@
         },
         {
           "objectName": "AcDbLine",
-          "handle": "297",
+          "handle": "97",
           "layer": "F027_GLOBAL",
           "color": 1,
           "lineweight": 50,
@@ -581,7 +581,7 @@
       "undone": [
         {
           "objectName": "AcDbLine",
-          "handle": "298",
+          "handle": "98",
           "layer": "F027_GLOBAL",
           "color": 1,
           "lineweight": 50,
@@ -599,7 +599,7 @@
         },
         {
           "objectName": "AcDbLine",
-          "handle": "297",
+          "handle": "97",
           "layer": "F027_GLOBAL",
           "color": 1,
           "lineweight": 50,
@@ -619,7 +619,7 @@
       "redone": [
         {
           "objectName": "AcDbLine",
-          "handle": "298",
+          "handle": "98",
           "layer": "F027_GLOBAL",
           "color": 1,
           "lineweight": 50,
@@ -637,7 +637,7 @@
         },
         {
           "objectName": "AcDbLine",
-          "handle": "297",
+          "handle": "97",
           "layer": "F027_GLOBAL",
           "color": 1,
           "lineweight": 50,
@@ -657,7 +657,7 @@
     },
     "locked": {
       "objectName": "AcDbLine",
-      "handle": "299",
+      "handle": "99",
       "layer": "F027_LOCKED",
       "color": 1,
       "lineweight": 50,
@@ -691,7 +691,7 @@
     "lockedLayerNoChange": true,
     "handlesAndPropertiesPreserved": true
   },
-  "dxfOutputSha256": "1aba509f42f12712631c90e16dd684753b44fda21f16efb187095420acba0f96",
+  "dxfOutputSha256": "1a13341a56749e45be21772692e7644adf1e15fbc5202494bef5f779ff6163e3",
   "cmdNamesAfter": "",
   "userDocument": {
     "isolatedOwnedProcess": true,
@@ -713,11 +713,11 @@
     }
   ],
   "dxfReadback": {
-    "sha256": "1aba509f42f12712631c90e16dd684753b44fda21f16efb187095420acba0f96",
+    "sha256": "1a13341a56749e45be21772692e7644adf1e15fbc5202494bef5f779ff6163e3",
     "entityCount": 14,
     "entities": [
       {
-        "handle": "28C",
+        "handle": "8C",
         "layer": "F027_LINE",
         "type": "LINE",
         "colorIndex": 1,
@@ -741,7 +741,7 @@
         ]
       },
       {
-        "handle": "28D",
+        "handle": "8D",
         "layer": "F027_CPOLY",
         "type": "LINE",
         "colorIndex": 1,
@@ -765,7 +765,7 @@
         ]
       },
       {
-        "handle": "28E",
+        "handle": "8E",
         "layer": "F027_POLY",
         "type": "LWPOLYLINE",
         "colorIndex": 1,
@@ -797,7 +797,7 @@
         ]
       },
       {
-        "handle": "28F",
+        "handle": "8F",
         "layer": "F027_ARC",
         "type": "ARC",
         "colorIndex": 1,
@@ -812,7 +812,7 @@
         "endAngle": 3.04605442683294
       },
       {
-        "handle": "290",
+        "handle": "90",
         "layer": "F027_ARC_CENTER",
         "type": "ARC",
         "colorIndex": 1,
@@ -827,7 +827,7 @@
         "endAngle": 3.141592653589793
       },
       {
-        "handle": "291",
+        "handle": "91",
         "layer": "F027_ELLIPSE",
         "type": "ELLIPSE",
         "colorIndex": 1,
@@ -846,7 +846,7 @@
         "endAngle": 1.647986447046899
       },
       {
-        "handle": "292",
+        "handle": "92",
         "layer": "F027_WRAP",
         "type": "ELLIPSE",
         "colorIndex": 1,
@@ -865,7 +865,7 @@
         "endAngle": 3.841890538582326
       },
       {
-        "handle": "293",
+        "handle": "93",
         "layer": "F027_ELLIPSE_MID",
         "type": "ELLIPSE",
         "colorIndex": 1,
@@ -884,7 +884,7 @@
         "endAngle": 1.570796326794896
       },
       {
-        "handle": "294",
+        "handle": "94",
         "layer": "F027_FULL",
         "type": "ELLIPSE",
         "colorIndex": 1,
@@ -903,7 +903,7 @@
         "endAngle": 6.283185307179586
       },
       {
-        "handle": "295",
+        "handle": "95",
         "layer": "F027_CIRCLE",
         "type": "CIRCLE",
         "colorIndex": 1,
@@ -916,7 +916,7 @@
         "radius": 100
       },
       {
-        "handle": "296",
+        "handle": "96",
         "layer": "F027_INDIVIDUAL",
         "type": "LINE",
         "colorIndex": 1,
@@ -940,7 +940,7 @@
         ]
       },
       {
-        "handle": "297",
+        "handle": "97",
         "layer": "F027_GLOBAL",
         "type": "LINE",
         "colorIndex": 1,
@@ -964,7 +964,7 @@
         ]
       },
       {
-        "handle": "298",
+        "handle": "98",
         "layer": "F027_GLOBAL",
         "type": "LINE",
         "colorIndex": 1,
@@ -988,7 +988,7 @@
         ]
       },
       {
-        "handle": "299",
+        "handle": "99",
         "layer": "F027_LOCKED",
         "type": "LINE",
         "colorIndex": 1,
@@ -1020,5 +1020,5 @@
   "runnerSha256": "5401416bb3ef114e84f4130e9fe3f8be023534bc82411cb7ae31c75e00d751a2",
   "processOwnershipSha256": "9f1d48d1b1058a631ef8d6df03c1beedc836688c06e0658a302ba424d654937d",
   "escapeHelperSha256": "e86d024998ce09c5c0d14a7dde9be1ce5bc3caa0fde4021e2f8d38c594e358b6",
-  "observedAt": "2026-08-30T10:49:34.511Z"
+  "observedAt": "2026-08-30T16:04:01.639Z"
 }

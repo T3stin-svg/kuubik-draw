@@ -1,4 +1,4 @@
-import type { CadBlockDefinition, CadEntity, CadLayer, CadPoint2, CadSpline } from "@kuubik/cad-schema";
+import type { CadBlockDefinition, CadEntity, CadLayer, CadLinetype, CadPoint2, CadSpline } from "@kuubik/cad-schema";
 import type { CadPlotStyle } from "@kuubik/cad-schema";
 import { resolveCadAppearance, resolveEntityPlotAppearance } from "@kuubik/cad-core";
 import { entityBounds, entityHasUnboundedGeometry, type Bounds2 } from "./bounds.js";
@@ -19,6 +19,7 @@ export interface Canvas2DContext {
   rotate(angle: number): void;
   translate(x: number, y: number): void;
   clearRect(x: number, y: number, width: number, height: number): void;
+  setLineDash?(segments: number[]): void;
   strokeStyle: string | object;
   fillStyle: string | object;
   lineWidth: number;
@@ -47,6 +48,21 @@ export interface RenderOptions {
   plotStyle?: CadPlotStyle;
   /** CSS pixels per paper millimetre; required to preview physical lineweights. */
   pixelsPerMillimeter?: number;
+  /** MATCHPROP previews resolved destination properties; geometry edits retain the blue highlight. */
+  previewAppearance?: "highlight" | "resolved";
+}
+
+function lineDashForEntity(
+  entity: CadEntity,
+  layers: readonly CadLayer[],
+  linetypes: ReadonlyMap<string, CadLinetype>,
+): number[] {
+  const layer = layers.find((candidate) => candidate.id === entity.layerId);
+  const linetypeId = entity.appearance?.linetypeId ?? layer?.appearance?.linetypeId;
+  if (!linetypeId) return [];
+  const pattern = linetypes.get(linetypeId)?.pattern ?? [];
+  const scale = entity.appearance?.linetypeScale ?? layer?.appearance?.linetypeScale ?? 1;
+  return pattern.map((segment) => Math.max(Math.abs(segment) * scale, Number.EPSILON));
 }
 
 export interface ViewportScreenTransform {
@@ -347,6 +363,7 @@ export class CadCanvasRenderer {
   readonly #index = new RTreeIndex();
   #entities = new Map<string, CadEntity>();
   #blocks = new Map<string, CadBlockDefinition>();
+  #linetypes = new Map<string, CadLinetype>();
   #unboundedHandles = new Set<string>();
 
   setEntities(entities: readonly CadEntity[]): void {
@@ -372,6 +389,10 @@ export class CadCanvasRenderer {
   setBlocks(blocks: readonly CadBlockDefinition[]): void {
     this.#blocks = new Map(blocks.map((block) => [block.id, block]));
     this.#rebuildIndex();
+  }
+
+  setLinetypes(linetypes: readonly CadLinetype[]): void {
+    this.#linetypes = new Map(linetypes.map((linetype) => [linetype.id, structuredClone(linetype)]));
   }
 
   visibleHandles(world: Bounds2): string[] {
@@ -430,15 +451,26 @@ export class CadCanvasRenderer {
         ? 1 / viewport.devicePixelRatio
         : appearance.lineweightMm * previewScale;
       context.lineWidth = previewWidthPx / scale;
+      context.setLineDash?.(lineDashForEntity(entity, layers, this.#linetypes));
       if (drawEntity(context, entity, this.#blocks, clipBounds)) drawnEntities += 1;
     }
     const previews = preview ? (Array.isArray(preview) ? preview : [preview]) : [];
     for (const previewEntity of previews) {
       if (hidden.has(previewEntity.layerId)) continue;
-      context.globalAlpha = 0.65;
-      context.strokeStyle = "#56a8ff";
-      context.fillStyle = "#56a8ff";
-      context.lineWidth = (previewEntity.appearance?.lineweightMm ?? 0.25) / scale;
+      if (options.previewAppearance === "resolved") {
+        const appearance = resolveCadAppearance(previewEntity, layers);
+        context.globalAlpha = 1 - appearance.transparencyPercent / 100;
+        context.strokeStyle = appearance.color;
+        context.fillStyle = appearance.color;
+        context.lineWidth = appearance.lineweightMm / scale;
+        context.setLineDash?.(lineDashForEntity(previewEntity, layers, this.#linetypes));
+      } else {
+        context.globalAlpha = 0.65;
+        context.strokeStyle = "#56a8ff";
+        context.fillStyle = "#56a8ff";
+        context.lineWidth = (previewEntity.appearance?.lineweightMm ?? 0.25) / scale;
+        context.setLineDash?.([]);
+      }
       if (drawEntity(context, previewEntity, this.#blocks, clipBounds)) drawnEntities += 1;
     }
     context.restore();
