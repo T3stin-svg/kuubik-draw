@@ -4,8 +4,8 @@
   "kind": "readback",
   "authority": "independent-parser",
   "status": "PASS",
-  "artifactSha256": "8c80ac9d4723ccfaa2272c960ee97672e53449d650d1376dbf6c054d5b7f52ca",
-  "observedAt": "2026-08-30T17:48:07.887Z",
+  "artifactSha256": "393ce6d960ed9c77f55be758851981ff1e079b77b30043e06138be78073343fc",
+  "observedAt": "2026-08-30T18:28:19.873Z",
   "workflow": "Production cad-core applies preset viewport state, cursor-anchored zoom and rotated pixel pan as three transactions, undoes and redoes the pan, serializes KDRAW1, then a separate reader validates magic, envelope, payload length, manifest SHA-256 and document SHA-256 before parsing document.json without deserializeKDraw.",
   "result": "The reader recovered revision 5 with exact 1:18.181818 scale-derived view height and pi/6 twist; the native-reference anchor was -524.3969044771432,1339.6671105448686 and the 1000x692.5 rotated pan center was 175.73095557294994,-356.7667731448078, matching AutoCAD's independent DisplayDCS result; undo and redo restored exact viewport states.",
   "artifact": "evidence/artifacts/F-100-independent-readback.json"

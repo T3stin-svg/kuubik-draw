@@ -28,7 +28,12 @@ test("AutoCAD-style shell keeps all eight primary zones visible at 1920x1080", a
     "command-line": { x: 0, width: 1920, height: 52 },
     statusbar: { x: 0, width: 1920, height: 24 },
   });
-  expect((zones as Record<string, { x: number; width: number; height: number }>)["properties-palette"]).toMatchObject({ x: 0, width: 340 });
+  expect((zones as Record<string, { x: number; width: number; height: number }>)["properties-palette"]).toMatchObject({ x: 0, width: 680 });
+  const palette = page.getByRole("complementary", { name: "Properties palette" });
+  await expect(palette.getByRole("complementary", { name: "Layer filters" })).toBeVisible();
+  await expect(palette.getByRole("row").first().locator("span")).toHaveCount(7);
+  await expect(palette.getByText("Linetype scale")).toBeVisible();
+  await expect(palette.getByText("Transparency")).toBeVisible();
   const ribbonPrimary = await page.getByLabel("Home ribbon").evaluate((element) => ({ clientWidth: element.clientWidth, scrollWidth: element.scrollWidth }));
   expect(ribbonPrimary.scrollWidth).toBeLessThanOrEqual(ribbonPrimary.clientWidth);
 

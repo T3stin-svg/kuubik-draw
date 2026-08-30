@@ -397,11 +397,16 @@ export function App() {
     source: MatchViewportRef | null;
     targets: MatchViewportRef[];
   } | null>(null);
+  const [layerFilterInput, setLayerFilterInput] = useState("");
   const [previewCommand, setPreviewCommand] = useState<"MOVE" | "COPY" | "ROTATE" | "SCALE" | "MIRROR" | "OFFSET" | "TRIM" | "EXTEND" | "FILLET" | "CHAMFER" | "BREAK" | "STRETCH" | "LENGTHEN" | "ALIGN" | "MATCHPROP">("MOVE");
   const activeLayer = document.layers.find((layer) => layer.id === document.currentLayerId)!;
   const primarySelectedEntity = selectedHandles.length === 1
     ? document.entities.find((entity) => entity.handle === selectedHandles[0]) ?? null
     : null;
+  const primarySelectedLayer = primarySelectedEntity
+    ? document.layers.find((layer) => layer.id === primarySelectedEntity.layerId) ?? activeLayer
+    : activeLayer;
+  const visiblePaletteLayers = document.layers.filter((layer) => layer.name.toLocaleLowerCase().includes(layerFilterInput.trim().toLocaleLowerCase()));
 
   useEffect(() => {
     setCommandHistory((previous) => previous.at(-1) === status ? previous : [...previous.slice(-19), status]);
@@ -3625,38 +3630,55 @@ export function App() {
         <aside className="properties-palette" aria-label="Properties palette" data-visual-zone="properties-palette" data-dock="left">
           <section className="layer-manager" aria-label="Layer Properties Manager">
             <header><strong>LAYER PROPERTIES MANAGER</strong><span>×</span></header>
-            <div className="layer-current">Current layer: <strong>{activeLayer.name}</strong></div>
-            <div className="layer-toolbar" aria-hidden="true">▤　▱　☀　🔒　⌕</div>
-            <div className="layer-grid" role="table" aria-label="Kihtide loend">
-              <div className="layer-grid-header" role="row"><span>Name</span><span>On</span><span>Freeze</span><span>Lock</span></div>
-              {document.layers.map((layer) => (
-                <div className={layer.id === activeLayer.id ? "layer-grid-row active" : "layer-grid-row"} role="row" key={layer.id}>
-                  <span>{layer.id === activeLayer.id ? "✓ " : ""}{layer.name}</span><span>{layer.visible ? "●" : "○"}</span><span>{layer.frozen ? "❄" : "☀"}</span><span>{layer.locked ? "🔒" : "🔓"}</span>
-                </div>
-              ))}
+            <div className="layer-current"><span>Current layer: <strong>{activeLayer.name}</strong></span><label>Search for layer<input aria-label="Search for layer" value={layerFilterInput} onChange={(event) => setLayerFilterInput(event.target.value)} /></label></div>
+            <div className="layer-toolbar" aria-label="Layer tools"><span>▤</span><span>＋</span><span>−</span><span>✓</span><span>↻</span><span>⚙</span></div>
+            <div className="layer-manager-body">
+              <aside className="layer-filter-rail" aria-label="Layer filters">
+                <strong>Filters</strong>
+                <button type="button" className="active">All</button>
+                <button type="button">All Used Layers</button>
+                <label><input type="checkbox" /> Invert filter</label>
+              </aside>
+              <div className="layer-grid" role="table" aria-label="Kihtide loend">
+                <div className="layer-grid-header" role="row"><span>Status</span><span>Name</span><span>On</span><span>Freeze</span><span>Lock</span><span>Plot</span><span>Color</span></div>
+                {visiblePaletteLayers.map((layer) => (
+                  <div className={layer.id === activeLayer.id ? "layer-grid-row active" : "layer-grid-row"} role="row" key={layer.id}>
+                    <span>{layer.id === activeLayer.id ? "✓" : ""}</span><span>{layer.name}</span><span>{layer.visible ? "●" : "○"}</span><span>{layer.frozen ? "❄" : "☀"}</span><span>{layer.locked ? "■" : "□"}</span><span>{layer.plottable ? "▣" : "□"}</span><span><i className="layer-color-swatch" style={{ background: layer.appearance?.color ?? "#ffffff" }} />{layer.appearance?.color ?? "White"}</span>
+                  </div>
+                ))}
+                {visiblePaletteLayers.length === 0 && <div className="layer-grid-empty">No matching layers</div>}
+              </div>
             </div>
+            <footer className="layer-manager-summary">All: {visiblePaletteLayers.length} layers displayed of {document.layers.length} total layers</footer>
           </section>
           <header>
             <strong>PROPERTIES</strong>
             <span>{selectedHandles.length === 0 ? "No selection" : `${selectedHandles.length} selected`}</span>
           </header>
+          <div className="properties-selection-summary">{selectedHandles.length === 0 ? "No selection" : primarySelectedEntity?.kind.toUpperCase() ?? `${selectedHandles.length} objects`}</div>
           <section>
             <h2>General</h2>
             <dl>
               <div><dt>Type</dt><dd>{primarySelectedEntity?.kind.toUpperCase() ?? (selectedHandles.length > 1 ? "Multiple" : "None")}</dd></div>
               <div><dt>Handle</dt><dd>{primarySelectedEntity?.handle ?? "—"}</dd></div>
-              <div><dt>Layer</dt><dd>{primarySelectedEntity?.layerId ?? activeLayer.name}</dd></div>
               <div><dt>Color</dt><dd>{primarySelectedEntity?.appearance?.color ?? "ByLayer"}</dd></div>
+              <div><dt>Layer</dt><dd>{primarySelectedLayer.name}</dd></div>
               <div><dt>Linetype</dt><dd>{primarySelectedEntity?.appearance?.linetypeId ?? "ByLayer"}</dd></div>
+              <div><dt>Linetype scale</dt><dd>{primarySelectedEntity?.appearance?.linetypeScale ?? 1}</dd></div>
+              <div><dt>Plot style</dt><dd>{primarySelectedEntity?.appearance?.plotStyleId ?? "ByColor"}</dd></div>
+              <div><dt>Lineweight</dt><dd>{primarySelectedEntity?.appearance?.lineweightMm === undefined ? "ByLayer" : `${primarySelectedEntity.appearance.lineweightMm.toFixed(2)} mm`}</dd></div>
+              <div><dt>Transparency</dt><dd>{primarySelectedEntity?.appearance?.transparency === undefined ? "ByLayer" : `${primarySelectedEntity.appearance.transparency}%`}</dd></div>
+              <div><dt>Thickness</dt><dd>{primarySelectedEntity?.appearance?.thickness ?? 0}</dd></div>
             </dl>
           </section>
           <section>
-            <h2>Layer</h2>
+            <h2>3D Visualization</h2>
             <dl>
-              <div><dt>Current</dt><dd>{activeLayer.name}</dd></div>
-              <div><dt>State</dt><dd>{activeLayer.locked ? "Locked" : activeLayer.frozen ? "Frozen" : "On"}</dd></div>
+              <div><dt>Material</dt><dd>{primarySelectedEntity?.appearance?.materialId ?? "ByLayer"}</dd></div>
             </dl>
           </section>
+          <section><h2>Plot style</h2></section>
+          <section><h2>View</h2></section>
         </aside>
       </section>
       <section className="command-line" aria-label="Käsurida" data-visual-zone="command-line">

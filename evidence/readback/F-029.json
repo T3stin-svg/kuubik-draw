@@ -4,8 +4,8 @@
   "kind": "readback",
   "authority": "independent-parser",
   "status": "PASS",
-  "artifactSha256": "fbbd0876710a075357b496b5fafe8829146541ae4f7abd9f25b9b8230c9c8a43",
-  "observedAt": "2026-08-30T17:47:30.213Z",
+  "artifactSha256": "0f2231ee106373d010e777ca299b27ba97e8ce9b926fe22103515d288b197a55",
+  "observedAt": "2026-08-30T18:27:31.945Z",
   "workflow": "Production cad-core ALIGN is committed atomically, exported through cad-dxf and KDRAW1, then decoded through strict Kuubik import, independent dxf-parser semantics, raw DXF group inspection and independent KDRAW1 checksum verification.",
   "result": "Exact handles, geometry, closed-polyline widths/bulge, rational SPLINE degree/control points/knots/group-41 weights/flags, supported appearance, no-op and atomic Undo/Redo matched the fixed fixture in both file formats.",
   "artifact": "evidence/artifacts/F-029-independent-readback.json"

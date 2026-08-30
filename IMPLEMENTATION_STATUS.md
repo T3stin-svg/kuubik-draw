@@ -271,3 +271,27 @@ AutoCAD/oracle jobs were honestly skipped while their checked-in local evidence
 remained mandatory in the fail-closed ratchet. The resulting public score is
 **29/133, 21.8% raw / 25.2% weighted**, while visual similarity remains
 **60.7%**.
+
+## 2026-08-30 AutoCAD visual palette fidelity wave 2
+
+The fixed 1920×1080 comparison now uses the original private AutoCAD 2024.1.2
+screenshots by SHA-256 without redistributing Autodesk pixels. Their measured
+drawing boundary is y=182 and the docked Layer/Properties palette ends at
+x=678. Kuubik now measures y=181 and x=680, within the fixed ±2 px zone gate.
+The palette includes the 190 px filter rail, seven visible layer columns, a
+working layer-name filter and ten honest document-backed General properties.
+
+All six Kuubik states were recaptured under
+`evidence/artifacts/visual-shell-wave-2`; the visual browser test verifies the
+680 px dock, seven columns, property density and zero console errors. The wider
+overlay initially blocked physical canvas picks, and the regression gate found
+16 failures. Non-interactive palette surfaces now pass pointer input through
+while its real inputs and buttons remain interactive; all 52 affected Modify
+tests then passed.
+
+The visual score remains deliberately **60.7%** because this is not a complete
+five-category same-environment re-audit and the sixth AutoCAD command-history
+reference is still absent. The functional score also remains **29/133, 21.8%
+raw / 25.2% weighted**. All 29 certified rows received fresh browser/read-back,
+cross, global-topology and content-address evidence. No production deployment
+was performed.

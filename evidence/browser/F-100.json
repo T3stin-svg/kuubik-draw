@@ -4,7 +4,7 @@
   "kind": "browser",
   "authority": "kuubik-draw-browser",
   "status": "PASS",
-  "artifactSha256": "fad9c74ba14ec88e198bacaec7bb583768ef99a1b53691536f7760e7fc130762",
+  "artifactSha256": "7c76aabf6906069863ade83ffe500dfe3525698dda5ac8d4310cc64986bcc1ce",
   "observedAt": "2026-08-29T10:54:11.197Z",
   "workflow": "Chromium at 1920x1080 opens /d/local with a seeded A3 viewport, enters MODEL, applies 1:20, center 1000,-500 and 30 degree twist, measures the painted canvas slope, wheel-zooms at an off-center cursor, pointer-pans the rotated view, performs undo/redo, downloads production KDRAW1 and reloads IndexedDB.",
   "result": "The canvas painted the AutoCAD-native twist direction at slope -0.5773598521; a red model marker moved only 0.0964 by 0.0039 CSS pixels through cursor zoom while the exact screen-to-model anchor stayed invariant; rotated drag pan reached its independently calculated center 150.5012306168894,-357.0842881006725 without changing scale or twist; revision 5 survived KDRAW1 decode and reload with zero console or page errors.",

@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "rowId": "F-029",
   "status": "PASS",
-  "observedAt": "2026-08-30T17:47:12.329Z",
+  "observedAt": "2026-08-30T18:27:13.322Z",
   "checks": {
     "browserWorkflowPassedWithoutErrors": true,
     "exactCommittedGeometry": true,
@@ -14,7 +14,7 @@
   },
   "artifacts": {
     "evidence/artifacts/F-029-browser-matrix.json": {
-      "sha256": "7382d461d063ff8181006d2f62e255f971934f7b8a14fd277ff35e67143fde72",
+      "sha256": "92dadb55c7e98a43db867fd7bb1b753c63052ba7579c04b0b80c4a0a9da39af6",
       "byteLength": 8949
     },
     "evidence/artifacts/F-029-browser.dxf": {
@@ -22,13 +22,13 @@
       "byteLength": 4309
     },
     "evidence/artifacts/F-029-browser.kdraw": {
-      "sha256": "12b788c56449bab1651ff8e0d3203bcb47ba2a8cfcadb8eb12eb707c162256a9",
+      "sha256": "266827053a295e4dc6b791a553bb069dfb2330b49fad471cc098b84bf44cab15",
       "byteLength": 1749
     }
   },
   "sourceSha256": {
-    "apps/web/src/App.tsx": "cd786f3324f68b645f0b92e7d1be60b8829795f8439359acbb08e65a011ec7d0",
-    "apps/web/src/style.css": "3dd297dded1a7a80022c992d4a71b8ac72b1c3099366f6862326950ddaa2de1e",
+    "apps/web/src/App.tsx": "22ea9cbb5f0ed64ba1620002be3e355a5870eab9a5e35f980a9c850ad793b768",
+    "apps/web/src/style.css": "76b8ab8270fb6e09c6668c5d554b4911c5be1f0192398f1cef665d5823389c53",
     "apps/web/src/workflows/modify-command.ts": "9d1f7d0b1d3e308eac2a5d4055436626e3a497cbaaf116c05957e1fde15616c7",
     "apps/web/src/workflows/modify-command.test.ts": "aac0694d3a93a08ed5c6b98ea5456e62ba7c0f05777780a47d99dcabdf2e12b9",
     "packages/cad-core/src/commands.ts": "540e6f79dafb8d71f0e3ba5d43a1dcd39bd9f5809c03ea383c070de3636609fc",

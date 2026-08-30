@@ -4,7 +4,7 @@
   "kind": "browser",
   "authority": "kuubik-draw-browser",
   "status": "PASS",
-  "artifactSha256": "ee594666108e7941a7cd8422da3a0d90cafa41d9138aaafd0fefaabd28a10ecb",
+  "artifactSha256": "c25144514c53283496e63a829df2e4474ee818eed896d30fa2ec45b279ae874a",
   "observedAt": "2026-08-29T10:44:59.205Z",
   "workflow": "Chromium at 1920x1080 opens the persisted A3 layout, publishes the fixed A3/A4 set, inspects the A4 paper, reloads IndexedDB and downloads the same production PDF again.",
   "result": "The exact download was a strict two-page PDF 1.4 with A3 landscape then A4 portrait MediaBoxes, searchable titles, exact /CA=/ca=0.6 transparency, transformed line endpoints, four checked circle Bezier segments, zero image XObjects and byte-identical reload output. pypdf, pdfplumber and Poppler independently verified both unclipped 5 mm border bboxes with zero console/page errors.",
