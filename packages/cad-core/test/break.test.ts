@@ -112,6 +112,33 @@ describe("F-026 BREAK clean-room geometry", () => {
     expect(polyline.entities[1]).toMatchObject({ kind: "polyline", vertices: [{ x: 100, y: 50 }, { x: 100, y: 100 }, { x: 0, y: 100 }] });
   });
 
+  it("matches the AutoCAD-live single-point capability matrix for an open ellipse and spline", () => {
+    const ellipse = {
+      kind: "ellipse" as const,
+      handle: "30",
+      layerId: "0",
+      center: { x: 0, y: 0 },
+      majorAxis: { x: 100, y: 0 },
+      ratio: 0.5,
+      startParameter: 0,
+      endParameter: Math.PI,
+    };
+    const ellipseResult = breakCadEntity(ellipse, { x: 0, y: 50 }, undefined, "at-point");
+    expect(ellipseResult).toMatchObject({
+      reason: null,
+      mode: "at-point",
+      removedInterval: null,
+      entities: [{ kind: "ellipse" }, { kind: "ellipse" }],
+    });
+    expect(ellipseResult.entities).toHaveLength(2);
+    expect(breakCadEntity(spline, { x: 50, y: 0 }, undefined, "at-point")).toMatchObject({
+      reason: "unsupported-target",
+      mode: "at-point",
+      entities: [],
+      breakPoints: null,
+    });
+  });
+
   it("removes across multiple open polyline segments and keeps bulge/width data", () => {
     const polyline: CadPolyline = {
       kind: "polyline", handle: "40", layerId: "0", closed: false,

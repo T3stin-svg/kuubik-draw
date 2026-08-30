@@ -11,9 +11,10 @@ efektiivsusvärav on failis [`ARCHITECTURE_ROADMAP.md`](ARCHITECTURE_ROADMAP.md)
 
 - vana Drawi auditi snapshot: **63,9% raw / 68,3% weighted / 60,7% visual**;
 - vana Drawi AutoCADi live-tõendiga read: **22/133**;
-- selle uue eraldatud rakenduse avalikult sertifitseeritud seis pärast F-025:
-  **26/133 · 19,5% raw / 23,2% weighted**;
-- F-025 sõltumatu lõppreview: `0 P0 / 0 P1`;
+- selle uue eraldatud rakenduse lokaalselt sertifitseeritud seis pärast F-026:
+  **27/133 · 20,3% raw / 23,7% weighted**;
+- F-026 sõltumatu lõppreview: `0 P0 / 0 P1`; avalik exact-commit CI on veel
+  selle laine viimane värav;
 - F-025 feature-commit `d0d6421`, GitHub Actions run `33293697704`: `fast`
   roheline 54 sekundiga ja täielik `verify` 3 minuti 26 sekundiga;
 - F-024 feature-commit `4462631`, GitHub Actions run `33283660256` ja
@@ -23,8 +24,6 @@ efektiivsusvärav on failis [`ARCHITECTURE_ROADMAP.md`](ARCHITECTURE_ROADMAP.md)
 - avalikult suletud arhitektuurivärav: lõpp-HEAD `d097b34`, GitHub Actions
   run `33250270350`, sõltumatu review `0 P0 / 0 P1`;
 - native DWG/DWT/XREF ja PC3/CTB/STB pariteet on veel blokeeritud.
-- F-026 `BREAK` on avalik kandidaat, kuid ootab eraldatud omatud AutoCAD
-  Desktopi maatriksit ja sõltumatut `0 P0 / 0 P1` review'd;
 - F-027 `STRETCH` on kohalik kandidaat: typed crossing window/polygon,
   preview=commit, atomic Undo/Redo ning DXF/KDRAW1 read-back on rohelised, kuid
   rida ei ole samade kahe lõppväravata sertifitseeritud.
@@ -64,8 +63,16 @@ Liiga lühike valitud polyline-segment keeldub muutmata dokumendi ja Undo-olekug
 standalone LINE/RAY/XLINE jääb pikendatavaks ning full process-identity ratchet
 kaitseb olemasolevaid AutoCADi protsesse. Chromium, AutoCAD 2024 ning sõltumatu
 DXF/KDRAW1 read-back on rohelised; sama exact commit läbis ka avaliku CI.
-F-026 `BREAK` ja F-027 `STRETCH` jäävad kandidaatideks ega mõjuta skoori enne
-eraldatud AutoCAD Desktopi tõendit, sõltumatut review'd ja rohelist avalikku CI-d.
+F-026 `BREAK` lisab selection-first/First-point ja ühe- või kahepunktilise
+katkestuse LINE/ARC/CIRCLE/ELLIPSE/open-closed LWPOLYLINE/rational-SPLINE
+geomeetriale. Eraldi värsked AutoCADi fixture'id tõendavad, et avatud ELLIPSE
+jaguneb nii `BREAK + @` kui `BREAKATPOINT` kaudu, kuid avatud SPLINE jääb
+mõlemas muutmata. Täielik native state, handle'id, layer-omadused, polyline'i
+laiused/bulge'id, spline'i control point'id/knots/weights, atomic Undo/Redo,
+Chromium, DXF/KDRAW1 ning nested SHA-receipt'id läbisid; sõltumatu review oli
+`0 P0 / 0 P1`.
+F-027 `STRETCH` jääb kandidaadiks ega mõjuta skoori enne eraldatud AutoCAD
+Desktopi tõendit, sõltumatut review'd ja rohelist avalikku CI-d.
 F-097 `Layout tabs` lisab revisioneeritud create/copy/reorder/delete töövoo,
 AutoCADi copy-before-source nimekuju, sõltumatud viewport'i ID-d ja paberiruumi
 handle'id, atomaarse Undo/Redo ning IndexedDB/`.kdraw` taastamise.

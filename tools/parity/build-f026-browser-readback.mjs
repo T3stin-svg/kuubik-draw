@@ -71,7 +71,16 @@ const checks = {
     && exact(canvas.operation?.resultHandles, ["10", "11"]),
   atPointAndLockedRefusalExact: byHandle(atPoint.opened?.entities, "10")?.kind === "arc"
     && byHandle(atPoint.opened?.entities, "21")?.kind === "arc"
-    && exact(atPoint.lockedRestored, atPoint.source) && exact(atPoint.lockedOperations, []),
+    && exact(atPoint.lockedRestored, atPoint.source) && exact(atPoint.lockedOperations, [])
+    && byHandle(atPoint.capabilityCommitted?.entities, "30")?.kind === "ellipse"
+    && close(byHandle(atPoint.capabilityCommitted?.entities, "30")?.startParameter, 0, 1e-9)
+    && close(byHandle(atPoint.capabilityCommitted?.entities, "30")?.endParameter, Math.PI / 2, 1e-9)
+    && byHandle(atPoint.capabilityCommitted?.entities, "41")?.kind === "ellipse"
+    && close(byHandle(atPoint.capabilityCommitted?.entities, "41")?.startParameter, Math.PI / 2, 1e-9)
+    && close(byHandle(atPoint.capabilityCommitted?.entities, "41")?.endParameter, Math.PI, 1e-9)
+    && exact(byHandle(atPoint.capabilityCommitted?.entities, "40"), byHandle(atPoint.capabilitySource?.entities, "40"))
+    && exact(atPoint.capabilityOperation?.targetHandles, ["30"])
+    && exact(atPoint.capabilityOperation?.resultHandles, ["30", "41"]),
   independentDxfExact: exact(dxf?.entities?.map((entity) => [entity.handle, entity.type]), [["10", "LINE"], ["20", "ARC"], ["21", "LINE"]]),
 };
 if (Object.values(checks).some((value) => value !== true)) throw new Error(`F-026 browser read-back mismatch: ${JSON.stringify(checks)}`);

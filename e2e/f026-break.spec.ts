@@ -204,5 +204,27 @@ test("F-026 BREAK at point canvas creates an explicit at-point target and locked
   const lockedOperations = await readOperations(page);
   expect(lockedRestored).toEqual(source);
   expect(lockedOperations).toEqual([]);
-  await capture("F-026-browser-at-point.json", { rowId: "F-026", source, opened, lockedRestored, lockedOperations, status: "PASS" });
+
+  const capabilitySource = createEmptyDocument({ documentId: "local", now: "2026-08-30T06:30:00.000Z" });
+  capabilitySource.entities = [
+    { kind: "ellipse", handle: "30", layerId: "0", center: { x: 1500, y: 0 }, majorAxis: { x: 500, y: 0 }, ratio: 0.5, startParameter: 0, endParameter: Math.PI },
+    { kind: "spline", handle: "40", layerId: "0", degree: 3, controlPoints: [{ x: 0, y: 600 }, { x: 1000 / 3, y: 600 }, { x: 2000 / 3, y: 600 }, { x: 1000, y: 600 }], knots: [0, 0, 0, 0, 1, 1, 1, 1], weights: [2, 2, 2, 2], closed: false, periodic: false },
+  ];
+  await seedLocalDocument(page, capabilitySource);
+  await page.getByLabel("BREAK sihid").fill("30@1500,250>@; 40@500,600>@");
+  await page.getByRole("button", { name: "BREAK", exact: true }).click();
+  await expect(page.getByTestId("break-rejected")).toContainText("40#2 (unsupported-target)");
+  const capabilityCommitted = await readDocument(page);
+  const firstEllipsePiece = capabilityCommitted.entities.find((entity) => entity.handle === "30");
+  const secondEllipsePiece = capabilityCommitted.entities.find((entity) => entity.handle === "41");
+  expect(firstEllipsePiece).toMatchObject({ kind: "ellipse", startParameter: 0 });
+  expect(secondEllipsePiece).toMatchObject({ kind: "ellipse" });
+  if (firstEllipsePiece?.kind !== "ellipse" || secondEllipsePiece?.kind !== "ellipse") throw new Error("Expected open ellipse BREAKATPOINT to emit two ellipse pieces.");
+  expect(firstEllipsePiece.endParameter).toBeCloseTo(Math.PI / 2, 10);
+  expect(secondEllipsePiece.startParameter).toBeCloseTo(Math.PI / 2, 10);
+  expect(secondEllipsePiece.endParameter).toBeCloseTo(Math.PI, 10);
+  expect(capabilityCommitted.entities.find((entity) => entity.handle === "40")).toEqual(capabilitySource.entities[1]);
+  const [capabilityOperation] = await readOperations(page);
+  expect(capabilityOperation).toMatchObject({ commandId: "BREAK", targetHandles: ["30"], resultHandles: ["30", "41"] });
+  await capture("F-026-browser-at-point.json", { rowId: "F-026", source, opened, lockedRestored, lockedOperations, capabilitySource, capabilityCommitted, capabilityOperation, status: "PASS" });
 });

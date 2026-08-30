@@ -2,21 +2,21 @@
   "schemaVersion": 1,
   "rowId": "F-026",
   "source": "production BREAKATPOINT alias -> BREAK registry -> immutable atomic commit -> production DXF/KDRAW1 -> strict importer + dxf-parser -> Undo/Redo",
-  "observedAt": "2026-08-30T06:04:59.558Z",
+  "observedAt": "2026-08-30T09:20:20.142Z",
   "status": "PASS",
   "implementationSha256": {
-    "packages/cad-core/src/break.ts": "2e20753fe212dda2d8123273d6a22c99874ce12c9c8310402efc83a602f06a1a",
-    "packages/cad-core/src/commands.ts": "9e24d22e58b2793996306fa912038d9318df823f2e07101e4b3b34fa6ec55304",
-    "packages/cad-core/src/index.ts": "9a3034316d7a4997a457a51e92f3208349d889272fa908d2b98f00dce335c40a",
+    "packages/cad-core/src/break.ts": "1d51abb8c5600efcea5a128754007ae9d39a7f5e42dd2bffda0aff3251750900",
+    "packages/cad-core/src/commands.ts": "a69c694cd82a59269ac9b56b0deeb85870c298f23555bcf011a747e68297645d",
+    "packages/cad-core/src/index.ts": "97de6f5ca45dc6f8f05e2e24d0bbaf5f0a793be00fa7b7e63aa51be234074435",
     "packages/cad-core/src/trim.ts": "2b79501c802c648e6fb1a38134c339a549852794f063c8c22c04e8d7d728185e",
     "packages/cad-core/src/container.ts": "931db68e6aa0688ac9a7aa6d5ac56c07d1cd5e0126adec836f27258011419502",
     "packages/cad-core/src/transaction.ts": "e250aa2906e63905202a4b9591367632830745acbf731884f8e711d165750599",
-    "packages/cad-core/test/break.test.ts": "188fd2a4f80407af9b8ddbc0e4ce422c72e0b6483c50c38550ff1894d2b64675",
-    "packages/cad-core/test/f026-mutation-proven.test.ts": "5dd19acc5caa07515650c2edd9f672a29192c7412acbed54a879d01ee39da8d2",
+    "packages/cad-core/test/break.test.ts": "2f1686a1414e75821ff5de44350b7f7646bb4b1dc2b5a9640c5d75923dc38af8",
+    "packages/cad-core/test/f026-mutation-proven.test.ts": "fd8f859a3e702d8415161633b07362b91d05ff56943fcd6961df74ed2625c467",
     "packages/cad-dxf/src/import.ts": "ffdef7a01488d09f32b8bab171b0632092317a5687cd6eca2231629a4fc51f20",
     "packages/cad-dxf/src/index.ts": "82ca8f21ac22b29cd0f36be39f51b379ffd9307ec96c69c45d93da713cc9b2bd",
     "packages/cad-dxf/test/f026-break-roundtrip.test.ts": "d563ca09c1f6c59199d738b1de085d11892e9438c197a8558133325b7f1883e8",
-    "tools/parity/run-f026-readback.mjs": "2efd953ab152a8fdd6538da2d8eeef9e48f4f7006bd781e6d92c6c9ead30b43c"
+    "tools/parity/run-f026-readback.mjs": "41273f1871c037ae5c75c861685b900e252f597ae1a19241426b5e6d1599246b"
   },
   "command": {
     "targets": [
@@ -1173,6 +1173,99 @@
     ],
     "steps": [],
     "multiple": false
+  },
+  "atPointCapabilities": {
+    "openEllipse": {
+      "changes": [
+        {
+          "type": "put",
+          "entity": {
+            "handle": "30",
+            "layerId": "0",
+            "kind": "ellipse",
+            "center": {
+              "x": 350,
+              "y": 0
+            },
+            "majorAxis": {
+              "x": 50,
+              "y": 0
+            },
+            "ratio": 0.5,
+            "startParameter": 0,
+            "endParameter": 1.570796326795
+          }
+        },
+        {
+          "type": "put",
+          "entity": {
+            "handle": "51",
+            "layerId": "0",
+            "kind": "ellipse",
+            "center": {
+              "x": 350,
+              "y": 0
+            },
+            "majorAxis": {
+              "x": 50,
+              "y": 0
+            },
+            "ratio": 0.5,
+            "startParameter": 1.570796326795,
+            "endParameter": 3.14159265359
+          }
+        }
+      ],
+      "sourceHandles": [
+        "30"
+      ],
+      "resultHandles": [
+        "30",
+        "51"
+      ],
+      "createdHandles": [
+        "51"
+      ],
+      "rejected": [],
+      "steps": [
+        {
+          "sourceHandle": "30",
+          "resultHandles": [
+            "30",
+            "51"
+          ],
+          "targetIndex": 0,
+          "mode": "at-point",
+          "breakPoints": [
+            {
+              "x": 350,
+              "y": 25
+            },
+            {
+              "x": 350,
+              "y": 25
+            }
+          ],
+          "removedInterval": null
+        }
+      ],
+      "multiple": false
+    },
+    "openSpline": {
+      "changes": [],
+      "sourceHandles": [],
+      "resultHandles": [],
+      "createdHandles": [],
+      "rejected": [
+        {
+          "handle": "50",
+          "targetIndex": 0,
+          "reason": "unsupported-target"
+        }
+      ],
+      "steps": [],
+      "multiple": false
+    }
   },
   "dxf": {
     "sha256": "c3e8b4e15a5ad9e6e65bd8bc64916e7c5671f12f6e97f6f4ae8dde5b80a90085",

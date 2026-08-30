@@ -33,13 +33,12 @@ selles teekaardis teadlikult `Won't have`.
 
 ## Now
 
-1. F-025 on avalikult sertifitseeritud seisul **26/133 · 19,5% raw / 23,2% weighted**;
-   AutoCAD/Chromium/DXF/KDRAW1 risttõend, sõltumatu lõppreview `0 P0 / 0 P1`
-   ja exact commit'i `d0d6421` GitHub Actions run `33293697704` on rohelised
-   (`fast` 54 s, täielik `verify` 3 min 26 s).
-2. CHAMFER Distance/Angle/Method, Trim/No Trim, Multiple/Polyline, Shift-zero,
-   selected-segment bounds, open-terminal closure ja LINE/RAY/XLINE extension
-   kasutavad sama preview=commit predikaati ning üht atomic Undo/Redo sammu.
+1. F-026 on lokaalselt sertifitseeritud seisul **27/133 · 20,3% raw / 23,7% weighted**;
+   AutoCAD/Chromium/DXF/KDRAW1/oracle risttõend ja sõltumatu lõppreview
+   `0 P0 / 0 P1` on rohelised. Exact commit'i avalik CI on veel lõpetamisel.
+2. BREAK selection-first/First, ühe- ja kahepunktiline katkestus, värsked
+   `BREAK + @`/`BREAKATPOINT` ellipse/spline fixture'id, täielik native state,
+   nested SHA-receipt'id ning atomic Undo/Redo kasutavad fail-closed ratchet'it.
 3. Quick/Standard TRIM ja EXTEND, closed bulge/width polyline, hidden/locked target,
    ignored HATCH loop, nested block layer-semantika ja rational SPLINE läbivad
    AutoCAD 2024.1.2, Chromiumi ning sõltumatu DXF/KDRAW1 read-back'i.
@@ -102,18 +101,17 @@ parity/content-address-, litsentsi- ja turvaväravad. Sõltumatu lõppreview oli
 `0 P0 / 0 P1`. Tingimuslikud self-hosted AutoCAD/oracle job'id jäid selle push'i
 jaoks ausalt `skipped`; checked-in native tõendeid kontrolliti üldises ratchet'is.
 
-## Next — F-026 BREAK
+## Next — F-027 STRETCH
 
-Rakendada AutoCAD 2024.1.2 järgi BREAK ühe ja kahe katkestuspunktiga, First point
-valikuga ning sama-punkti katkestusega. Katta line/polyline/arc/circle/ellipse/
-rational-spline geomeetria, polyline'i valitud segment, handle'ite ja omaduste
-säilimine, preview=commit, command Undo, atomic global Undo/Redo ning exact
-DXF/KDRAW1 read-back. Skoor muutub ainult pärast AutoCADi live-maatriksit,
-Chromiumi töövoogu, sõltumatut väljundikontrolli ja `0 P0 / 0 P1` review'd.
+Sulgeda olemasolev F-027 kandidaat eraldatud omatud AutoCAD 2024.1.2 Desktopi
+live-maatriksiga. Kontrollida crossing window/polygon valikut, lõpp-endpoint'i
+liikumist, üle `2π` parameetrimähist, täisellipsi no-change/refusal olekut,
+properties/handle'e, atomic Undo/Redo'd ning Chromiumi ja DXF/KDRAW1 tulemuse
+täpset risttõendit. Skoor muutub ainult pärast `0 P0 / 0 P1` review'd.
 
 ## Later
 
-1. Rakendada F-026 `BREAK` ning jätkata mõjupõhises P0 → P1 → P2 järjekorras
+1. Sertifitseerida F-027 `STRETCH` ning jätkata mõjupõhises P0 → P1 → P2 järjekorras
    kuni 133/133.
 2. Native DWG/DWT/XREF ja PC3/CTB/STB ainult litsentsitud ODA/RealDWG teega.
 3. Pärast funktsionaalset 133/133 väravat viia kõik viis visuaalkategooriat

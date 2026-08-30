@@ -10,9 +10,9 @@ import { planAuthenticatedCleanup, processIdentitySetsEqual } from "./process-ow
 const root = process.cwd();
 const matrixScriptPath = resolve(root, "tools/autocad/f026-standard-matrix.ps1");
 const runnerPath = resolve(root, "tools/autocad/run-f026.mjs");
+const processOwnershipPath = resolve(root, "tools/autocad/process-ownership.mjs");
 const splineFixturePath = resolve(root, "evidence/artifacts/F-022-browser-spline-source.dxf");
 const escapeHelperPath = resolve(root, "tools/autocad/send-escape.ps1");
-const acadExecutable = "C:\\Program Files\\Autodesk\\AutoCAD 2024\\acad.exe";
 const outputPath = resolve(root, process.argv[2] ?? "evidence/artifacts/F-026-autocad-readback.json");
 const tempRoot = await mkdtemp(resolve(tmpdir(), "KuubikDraw-F026-"));
 const pidPath = resolve(tempRoot, "F026.pid");
@@ -106,14 +106,10 @@ function dxfSummary(bytes) {
 async function runMatrix() {
   const timeoutMs = Number(process.env.F026_AUTOCAD_TIMEOUT_MS ?? 300_000);
   if (!Number.isFinite(timeoutMs) || timeoutMs < 30_000 || timeoutMs > 300_000) throw new Error("F026_AUTOCAD_TIMEOUT_MS must be between 30000 and 300000.");
-  let sidecar = null; let primaryError = null; let launchedIdentity = null;
+  let sidecar = null; let primaryError = null;
   try {
-    const acadChild = spawn(acadExecutable, ["/nologo"], { cwd: root, windowsHide: false, detached: false, stdio: "ignore" });
-    if (!Number.isInteger(acadChild.pid) || acadChild.pid <= 0 || preExistingProcessIds.has(acadChild.pid)) throw new Error("F-026 could not create a distinct AutoCAD desktop process.");
-    for (let attempt = 0; attempt < 100 && !launchedIdentity; attempt += 1) { await new Promise((done) => setTimeout(done, 100)); launchedIdentity = processIdentity(acadChild.pid); }
-    if (!launchedIdentity || launchedIdentity.executablePath.toLowerCase() !== acadExecutable.toLowerCase()) throw new Error(`F-026 direct AutoCAD process identity mismatch: ${JSON.stringify(launchedIdentity)}`);
     const childResult = await new Promise((resolveRun, reject) => {
-      const child = spawn("powershell.exe", ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", matrixScriptPath, "-PidPath", pidPath, "-OwnershipToken", ownershipToken, "-DxfOutputPath", dxfOutputPath, "-SplineFixturePath", splineFixturePath, "-SplineOutputPath", splineOutputPath, "-EscapeHelperPath", escapeHelperPath, "-ExpectedProcessId", String(acadChild.pid)], { cwd: root, windowsHide: true, stdio: ["ignore", "pipe", "pipe"] });
+      const child = spawn("powershell.exe", ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", matrixScriptPath, "-PidPath", pidPath, "-OwnershipToken", ownershipToken, "-DxfOutputPath", dxfOutputPath, "-SplineFixturePath", splineFixturePath, "-SplineOutputPath", splineOutputPath, "-EscapeHelperPath", escapeHelperPath], { cwd: root, windowsHide: true, stdio: ["ignore", "pipe", "pipe"] });
       const stdout = []; const stderr = []; let timedOut = false;
       child.stdout.on("data", (chunk) => stdout.push(chunk)); child.stderr.on("data", (chunk) => stderr.push(chunk));
       const timeout = setTimeout(() => { timedOut = true; try { execFileSync("taskkill.exe", ["/PID", String(child.pid), "/T", "/F"], { windowsHide: true, stdio: "ignore" }); } catch { child.kill(); } }, timeoutMs);
@@ -126,12 +122,15 @@ async function runMatrix() {
     if (childResult.timedOut) throw new Error(`AutoCAD F-026 matrix exceeded ${timeoutMs / 1000}s; PID=${processId || "missing"}; trace=${childResult.output || childResult.errorText}`);
     if (childResult.code !== 0) throw new Error(`AutoCAD F-026 matrix exited ${childResult.code} after cleanup ${JSON.stringify({ processId, automationProcessTerminated, processSetRestored, checks: matrix?.checks, observations: matrix?.observations })}: ${childResult.errorText || childResult.output}`);
     if (!(processId > 0) || !automationProcessTerminated || !processSetRestored || !matrix) throw new Error(`F-026 cleanup/matrix failure: ${JSON.stringify({ processId, automationProcessTerminated, processSetRestored, matrix: Boolean(matrix) })}`);
+    if (matrix.automationProcessId !== sidecar.processId || matrix.automationProcessIdentity?.processId !== sidecar.processId
+      || matrix.automationProcessIdentity?.executableSha256 !== sidecar.executableSha256
+      || matrix.automationProcessIdentity?.startTimeSha256 !== sidecar.startTimeSha256) throw new Error("F-026 PID sidecar and AutoCAD COM identity disagreed.");
     const dxfBytes = await readFile(dxfOutputPath); const splineBytes = await readFile(splineOutputPath);
     return { ...matrix, automationProcessTerminated, processSetRestored, preExistingProcesses, dxfReadback: { sha256: sha256(dxfBytes), ...dxfSummary(dxfBytes) }, splineReadback: { sha256: sha256(splineBytes), ...dxfSummary(splineBytes) } };
   } catch (error) { primaryError = error; throw error; }
   finally {
     const cleanupErrors = [];
-    try { if (!sidecar) sidecar = await ownedSidecar(); const cleanupIdentity = sidecar ?? launchedIdentity; const plan = planAuthenticatedCleanup(cleanupIdentity, newAutomationProcesses()); if (plan.refusedProcessIds.length) cleanupErrors.push(new Error(`F-026 left unauthenticated AutoCAD processes untouched: ${plan.refusedProcessIds.join(", ")}`)); if (plan.terminate && !await terminate(plan.terminate)) cleanupErrors.push(new Error(`Owned AutoCAD PID ${plan.terminate.processId} remained.`)); } catch (error) { cleanupErrors.push(error); }
+    try { if (!sidecar) sidecar = await ownedSidecar(); const plan = planAuthenticatedCleanup(sidecar, newAutomationProcesses()); if (plan.refusedProcessIds.length) cleanupErrors.push(new Error(`F-026 left unauthenticated AutoCAD processes untouched: ${plan.refusedProcessIds.join(", ")}`)); if (plan.terminate && !await terminate(plan.terminate)) cleanupErrors.push(new Error(`Owned AutoCAD PID ${plan.terminate.processId} remained.`)); } catch (error) { cleanupErrors.push(error); }
     try { if (!await restoredProcessSet()) cleanupErrors.push(new Error("F-026 did not restore the exact pre-existing AutoCAD process set.")); } catch (error) { cleanupErrors.push(error); }
     try { await rm(tempRoot, { recursive: true, force: true }); } catch (error) { cleanupErrors.push(error); }
     if (cleanupErrors.length) throw new AggregateError(primaryError ? [primaryError, ...cleanupErrors] : cleanupErrors, "F-026 cleanup verification failed.");
@@ -146,6 +145,6 @@ if (matrix.schemaVersion !== 1 || matrix.rowId !== "F-026" || !matrix.engineVers
   || Object.values(matrix.checks ?? {}).some((value) => value !== true) || matrix.cmdNamesAfter !== ""
   || matrix.dxfReadback.sha256 !== matrix.dxfOutputSha256 || matrix.splineReadback.sha256 !== matrix.rationalSpline?.outputSha256) throw new Error(`F-026 AutoCAD result mismatch: ${JSON.stringify(matrix)}`);
 
-const report = { ...matrix, certificationAuthority: true, workflow: "owned AutoCAD 2024.1.2 desktop BREAK command matrix + independently parsed DXF", fixtureSha256: sha256(await readFile(splineFixturePath)), matrixScriptSha256: sha256(await readFile(matrixScriptPath)), runnerSha256: sha256(await readFile(runnerPath)), observedAt: new Date().toISOString() };
+const report = { ...matrix, certificationAuthority: true, workflow: "owned AutoCAD 2024.1.2 desktop BREAK command matrix + independently parsed DXF", fixtureSha256: sha256(await readFile(splineFixturePath)), matrixScriptSha256: sha256(await readFile(matrixScriptPath)), runnerSha256: sha256(await readFile(runnerPath)), processOwnershipSha256: sha256(await readFile(processOwnershipPath)), escapeHelperSha256: sha256(await readFile(escapeHelperPath)), observedAt: new Date().toISOString() };
 await mkdir(dirname(outputPath), { recursive: true }); await writeFile(outputPath, `${JSON.stringify(report, null, 2)}\n`, "utf8");
 console.log(`F-026 AutoCAD 2024.1.2 BREAK live matrix PASS; pre-existing AutoCAD PIDs preserved: ${[...preExistingProcessIds].join(", ") || "none"}.`);

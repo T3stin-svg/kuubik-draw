@@ -17,11 +17,19 @@ a deterministic new handle without losing layer, appearance or extension data.
 
 The audited two-point targets are LINE, ARC, CIRCLE, ELLIPSE, open/closed
 LWPOLYLINE and rational SPLINE. The zero-gap path covers open LINE, ARC,
-LWPOLYLINE and the AutoCAD-live-confirmed subset of other open curves. Closed
-objects such as CIRCLE, full ELLIPSE and closed LWPOLYLINE are rejected at a
-single point rather than being silently converted to a full-cycle open object.
+LWPOLYLINE and the AutoCAD-live-confirmed open ELLIPSE. AutoCAD 2024.1.2 leaves
+an open SPLINE unchanged in both the `BREAK` + `@` and `BREAKATPOINT`
+workflows, so Kuubik rejects that single-point target while retaining two-point
+SPLINE BREAK. Closed objects such as CIRCLE, full ELLIPSE and closed
+LWPOLYLINE are rejected at a single point rather than being silently converted
+to a full-cycle open object.
 Blocks, dimensions, multilines, regions and other unsupported objects fail
 closed without partial writes.
+
+The native matrix uses separate fresh ELLIPSE and SPLINE fixtures for
+`BREAK` + `@` and `BREAKATPOINT`. It compares complete geometry, handles,
+layer/colour/lineweight/linetype, polyline widths and bulges, rational spline
+control points/knots/weights, and exact committed/Undo/Redo snapshots.
 
 The browser matrix must prove visible two-point/at-point controls, an actual
 canvas object pick, a free second click projected back to the chosen object,

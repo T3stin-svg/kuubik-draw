@@ -74,6 +74,11 @@ export function breakCadEntity(
   if (!["line", "arc", "circle", "ellipse", "polyline", "spline"].includes(entity.kind)) {
     return rejected(mode, "unsupported-target");
   }
+  // AutoCAD 2024 accepts a zero-gap BREAK/BREAKATPOINT on an open ellipse,
+  // but leaves an open SPLINE unchanged. Two-point BREAK remains valid for a
+  // spline. Keep the capability check ahead of curve subdivision so preview
+  // and commit cannot silently create a non-native single-point spline split.
+  if (mode === "at-point" && entity.kind === "spline") return rejected(mode, "unsupported-target");
   const curves = trimCurvesOfEntity(entity);
   if (curves.length === 0) return rejected(mode, "degenerate-geometry");
   const firstHit = trimClosestPoint(entity, firstPoint);

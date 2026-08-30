@@ -81,9 +81,9 @@
 
 ## Certified state and explicit remaining limits
 
-- the new application is publicly certified through F-025 at **26/133**
-  (**19.5% raw / 23.2% weighted**) with independent `0 P0 / 0 P1` review;
-- all 22 legacy-certified rows and the first four new rows F-022/F-023/F-024/F-025
+- the new application is locally certified through F-026 at **27/133**
+  (**20.3% raw / 23.7% weighted**) with independent `0 P0 / 0 P1` review;
+- all 22 legacy-certified rows and the first five new rows F-022/F-023/F-024/F-025/F-026
   are publicly mirrored;
 - spline/NURBS rendering is rejected rather than drawn as a misleading control polygon;
 - Unicode PDF text is rejected until a font-embedding path exists;
@@ -94,8 +94,8 @@
 - native DWG/DWT/XREF and PC3/CTB/STB remain deferred;
 - no preview or production deployment has been made.
 
-The F-025 final full gate passed 61 test files / 393 Vitest tests,
-57 mutation tests, 40 DXF tests, 20 PDF tests and 90 Chromium E2E tests.
+The F-026 final local gate passed 69 test files / 438 Vitest tests,
+68 mutation tests, 43 DXF tests, 20 PDF tests and 98 Chromium E2E tests.
 GitHub Actions run `33293697704` passed `fast` in 54 seconds and full `verify`
 in 3 minutes 26 seconds on the exact public commit `d0d6421`. Protected-runner
 jobs `required-oracles`, `autocad-2024-certification` and `row-certification`
@@ -110,8 +110,9 @@ public Ubuntu CI and an independent `0 P0 / 0 P1` review. Its App-shell refactor
 was followed by all 22 browser captures, 23 independent read-backs, a fresh
 F-102 native AutoCAD live run, schema-v3 exact stage receipts, real F-003
 Chromium DXF capture and cross-platform content-address verification. F-025
-CHAMFER now has its complete AutoCAD/Chromium/DXF/KDRAW1 evidence chain,
-zero-open-P0/P1 review and exact-commit public-green CI. The next functional
-row is F-026 BREAK. F-108 native
+CHAMFER has its public-green chain. F-026 BREAK now has a complete
+AutoCAD/Chromium/DXF/KDRAW1/oracle chain, content-address ratchet and
+zero-open-P0/P1 review; exact-commit public CI is the remaining release check.
+The next functional row is F-027 STRETCH. F-108 native
 PC3/CTB/STB remains blocked on a licensed adapter. No production deployment is
 authorized.

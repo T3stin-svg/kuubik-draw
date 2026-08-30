@@ -160,7 +160,7 @@
     "attachments": [],
     "metadata": {
       "createdAt": "2026-08-30T06:20:00.000Z",
-      "updatedAt": "2026-08-30T06:04:53.506Z"
+      "updatedAt": "2026-08-30T09:16:32.712Z"
     }
   },
   "lockedRestored": {
@@ -239,5 +239,274 @@
     }
   },
   "lockedOperations": [],
+  "capabilitySource": {
+    "schemaVersion": 1,
+    "documentId": "local",
+    "revision": 0,
+    "units": {
+      "linear": "mm",
+      "displayPrecision": 4,
+      "angularPrecision": 6
+    },
+    "currentLayerId": "0",
+    "entities": [
+      {
+        "kind": "ellipse",
+        "handle": "30",
+        "layerId": "0",
+        "center": {
+          "x": 1500,
+          "y": 0
+        },
+        "majorAxis": {
+          "x": 500,
+          "y": 0
+        },
+        "ratio": 0.5,
+        "startParameter": 0,
+        "endParameter": 3.141592653589793
+      },
+      {
+        "kind": "spline",
+        "handle": "40",
+        "layerId": "0",
+        "degree": 3,
+        "controlPoints": [
+          {
+            "x": 0,
+            "y": 600
+          },
+          {
+            "x": 333.3333333333333,
+            "y": 600
+          },
+          {
+            "x": 666.6666666666666,
+            "y": 600
+          },
+          {
+            "x": 1000,
+            "y": 600
+          }
+        ],
+        "knots": [
+          0,
+          0,
+          0,
+          0,
+          1,
+          1,
+          1,
+          1
+        ],
+        "weights": [
+          2,
+          2,
+          2,
+          2
+        ],
+        "closed": false,
+        "periodic": false
+      }
+    ],
+    "layers": [
+      {
+        "id": "0",
+        "name": "0",
+        "visible": true,
+        "frozen": false,
+        "locked": false,
+        "plottable": true
+      }
+    ],
+    "linetypes": [],
+    "textStyles": [],
+    "dimensionStyles": [],
+    "blocks": [],
+    "layouts": [
+      {
+        "id": "model",
+        "name": "Model",
+        "kind": "model",
+        "viewports": [],
+        "entities": []
+      }
+    ],
+    "attachments": [],
+    "metadata": {
+      "createdAt": "2026-08-30T06:30:00.000Z",
+      "updatedAt": "2026-08-30T06:30:00.000Z"
+    }
+  },
+  "capabilityCommitted": {
+    "schemaVersion": 1,
+    "documentId": "local",
+    "revision": 1,
+    "units": {
+      "linear": "mm",
+      "displayPrecision": 4,
+      "angularPrecision": 6
+    },
+    "currentLayerId": "0",
+    "entities": [
+      {
+        "handle": "30",
+        "layerId": "0",
+        "kind": "ellipse",
+        "center": {
+          "x": 1500,
+          "y": 0
+        },
+        "majorAxis": {
+          "x": 500,
+          "y": 0
+        },
+        "ratio": 0.5,
+        "startParameter": 0,
+        "endParameter": 1.570796326795
+      },
+      {
+        "kind": "spline",
+        "handle": "40",
+        "layerId": "0",
+        "degree": 3,
+        "controlPoints": [
+          {
+            "x": 0,
+            "y": 600
+          },
+          {
+            "x": 333.3333333333333,
+            "y": 600
+          },
+          {
+            "x": 666.6666666666666,
+            "y": 600
+          },
+          {
+            "x": 1000,
+            "y": 600
+          }
+        ],
+        "knots": [
+          0,
+          0,
+          0,
+          0,
+          1,
+          1,
+          1,
+          1
+        ],
+        "weights": [
+          2,
+          2,
+          2,
+          2
+        ],
+        "closed": false,
+        "periodic": false
+      },
+      {
+        "handle": "41",
+        "layerId": "0",
+        "kind": "ellipse",
+        "center": {
+          "x": 1500,
+          "y": 0
+        },
+        "majorAxis": {
+          "x": 500,
+          "y": 0
+        },
+        "ratio": 0.5,
+        "startParameter": 1.570796326795,
+        "endParameter": 3.14159265359
+      }
+    ],
+    "layers": [
+      {
+        "id": "0",
+        "name": "0",
+        "visible": true,
+        "frozen": false,
+        "locked": false,
+        "plottable": true
+      }
+    ],
+    "linetypes": [],
+    "textStyles": [],
+    "dimensionStyles": [],
+    "blocks": [],
+    "layouts": [
+      {
+        "id": "model",
+        "name": "Model",
+        "kind": "model",
+        "viewports": [],
+        "entities": []
+      }
+    ],
+    "attachments": [],
+    "metadata": {
+      "createdAt": "2026-08-30T06:30:00.000Z",
+      "updatedAt": "2026-08-30T09:16:34.096Z"
+    }
+  },
+  "capabilityOperation": {
+    "opId": "c2f58a42-0688-47af-bd57-70411f1591d6",
+    "baseRevision": 0,
+    "commandId": "BREAK",
+    "args": {
+      "targets": [
+        {
+          "handle": "30",
+          "firstPoint": {
+            "x": 1500,
+            "y": 250
+          },
+          "mode": "at-point"
+        },
+        {
+          "handle": "40",
+          "firstPoint": {
+            "x": 500,
+            "y": 600
+          },
+          "mode": "at-point"
+        }
+      ],
+      "steps": [
+        {
+          "sourceHandle": "30",
+          "resultHandles": [
+            "30",
+            "41"
+          ],
+          "targetIndex": 0,
+          "mode": "at-point",
+          "breakPoints": [
+            {
+              "x": 1500,
+              "y": 250
+            },
+            {
+              "x": 1500,
+              "y": 250
+            }
+          ],
+          "removedInterval": null
+        }
+      ],
+      "multiple": true
+    },
+    "targetHandles": [
+      "30"
+    ],
+    "resultHandles": [
+      "30",
+      "41"
+    ]
+  },
   "status": "PASS"
 }

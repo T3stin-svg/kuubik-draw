@@ -16,43 +16,43 @@
   },
   "artifacts": {
     "evidence/artifacts/F-026-browser-matrix.json": {
-      "sha256": "14fed8cb2edafbbd3372bfa0222bbfad0015edfc51106fec829d6c8f76b2e35f",
+      "sha256": "1df655f6dbb90ebe00c89bd0481fd38f394ad385e75a661da293500fe1769e12",
       "byteLength": 10034
     },
     "evidence/artifacts/F-026-browser-canvas.json": {
-      "sha256": "103a70ef29225e61b195d32b9b85c8ee40a20d5c73446d6780bac79fbea86481",
+      "sha256": "011194d7d9925b051b7e51dae46dc09eef2a413c6e078858d0606c63baab8589",
       "byteLength": 3438
     },
     "evidence/artifacts/F-026-browser-at-point.json": {
-      "sha256": "32c4ad1fe930039addb05574b65a6ca18fcdc48d6e79ee0080a7d6144de7bfa3",
-      "byteLength": 4830
+      "sha256": "9f823a56803dc7446a14e1afed9cab9031e87a1e443e5ff3723d38ae4d694c18",
+      "byteLength": 9938
     },
     "evidence/artifacts/F-026-browser.dxf": {
       "sha256": "28651cb1560005165e4b83f1b8730cffb4327e0dced7b0f2424a287712dc45e5",
       "byteLength": 4160
     },
     "evidence/artifacts/F-026-browser.kdraw": {
-      "sha256": "28a6d27b3c801b9ae716829c46a0949b85280f53174ae9bfd314bc422c6bed08",
+      "sha256": "80a064d81d2679e57b40760a19722a662a0899b1484aaf04dfb4c35f9abb1d44",
       "byteLength": 1717
     }
   },
   "sourceSha256": {
-    "apps/web/src/App.tsx": "4fd63d45a2e002abc3c8e46de93a0ad49b8fd797bcd923585669457959eff806",
-    "apps/web/src/workflows/modify-command.ts": "e1017aae7232f43399cbcd57eb301c530a7b6b31b322f50597ae929afb068066",
-    "apps/web/src/workflows/modify-command.test.ts": "c24df8aa3e94652107a758265fa55cb5a03a27e1b8b60a723cdddb7578bac481",
-    "packages/cad-core/src/break.ts": "2e20753fe212dda2d8123273d6a22c99874ce12c9c8310402efc83a602f06a1a",
-    "packages/cad-core/src/commands.ts": "9e24d22e58b2793996306fa912038d9318df823f2e07101e4b3b34fa6ec55304",
-    "packages/cad-core/src/index.ts": "9a3034316d7a4997a457a51e92f3208349d889272fa908d2b98f00dce335c40a",
+    "apps/web/src/App.tsx": "1f7a21731e70245bbe0e696e9ec34a52ada002985cec6d0b3126a5f8d3313bb3",
+    "apps/web/src/workflows/modify-command.ts": "cf95272f005691140541de01bc1be02009c03342b9520fa0cf70a21d9e50f332",
+    "apps/web/src/workflows/modify-command.test.ts": "b9b303e1a53ce508b9cf28a7aad1ccd226194f48275deb74b66aa54e5e5e546b",
+    "packages/cad-core/src/break.ts": "1d51abb8c5600efcea5a128754007ae9d39a7f5e42dd2bffda0aff3251750900",
+    "packages/cad-core/src/commands.ts": "a69c694cd82a59269ac9b56b0deeb85870c298f23555bcf011a747e68297645d",
+    "packages/cad-core/src/index.ts": "97de6f5ca45dc6f8f05e2e24d0bbaf5f0a793be00fa7b7e63aa51be234074435",
     "packages/cad-core/src/trim.ts": "2b79501c802c648e6fb1a38134c339a549852794f063c8c22c04e8d7d728185e",
     "packages/cad-core/src/container.ts": "931db68e6aa0688ac9a7aa6d5ac56c07d1cd5e0126adec836f27258011419502",
     "packages/cad-core/src/transaction.ts": "e250aa2906e63905202a4b9591367632830745acbf731884f8e711d165750599",
-    "packages/cad-core/test/break.test.ts": "188fd2a4f80407af9b8ddbc0e4ce422c72e0b6483c50c38550ff1894d2b64675",
-    "packages/cad-core/test/f026-mutation-proven.test.ts": "5dd19acc5caa07515650c2edd9f672a29192c7412acbed54a879d01ee39da8d2",
+    "packages/cad-core/test/break.test.ts": "2f1686a1414e75821ff5de44350b7f7646bb4b1dc2b5a9640c5d75923dc38af8",
+    "packages/cad-core/test/f026-mutation-proven.test.ts": "fd8f859a3e702d8415161633b07362b91d05ff56943fcd6961df74ed2625c467",
     "packages/cad-dxf/src/import.ts": "ffdef7a01488d09f32b8bab171b0632092317a5687cd6eca2231629a4fc51f20",
     "packages/cad-dxf/src/index.ts": "82ca8f21ac22b29cd0f36be39f51b379ffd9307ec96c69c45d93da713cc9b2bd",
     "packages/cad-dxf/test/f026-break-roundtrip.test.ts": "d563ca09c1f6c59199d738b1de085d11892e9438c197a8558133325b7f1883e8",
-    "e2e/f026-break.spec.ts": "28d3d02974512c956aa55e5a3424fe702f41fc4cba9fa4661cced00ac9c1ad54",
+    "e2e/f026-break.spec.ts": "35662f535b32c3cb0fa4d2eb866bf5a040fd3f2cdedab0bc6ba0b001f348126f",
     "tools/parity/capture-f026-browser.mjs": "0e70939019d35d577fa52ef727af6acf9f0c141d97d410d8c4ffc5807e941f37",
-    "tools/parity/build-f026-browser-readback.mjs": "c012d10b87eff0b57997c99c1bfd2b57b62b4c7ad003a3a1dd5e7b170ce582f2"
+    "tools/parity/build-f026-browser-readback.mjs": "e67a02ccf1b81887667dd5894c0f1c96d52775b79d03237bcef88724a46bc14a"
   }
 }

@@ -124,6 +124,19 @@ if (!redo || JSON.stringify(session.document.entities) !== JSON.stringify(commit
 const closedAtPoint = command.execute(source, { targets: [{ handle: "20", firstPoint: { x: 250, y: 0 }, mode: "at-point" }] });
 if (closedAtPoint.changes.length || closedAtPoint.rejected[0]?.reason !== "closed-at-point") throw new Error(`F-026 closed at-point refusal mismatch: ${JSON.stringify(closedAtPoint)}`);
 
+const atPointCapabilitySource = structuredClone(source);
+const openEllipse = atPointCapabilitySource.entities.find((entity) => entity.handle === "30");
+if (!openEllipse || openEllipse.kind !== "ellipse") throw new Error("F-026 open ellipse capability fixture is missing.");
+openEllipse.endParameter = Math.PI;
+const openEllipseAtPoint = command.execute(atPointCapabilitySource, { targets: [{ handle: "30", firstPoint: { x: 350, y: 25 }, mode: "at-point" }] });
+if (openEllipseAtPoint.rejected.length || openEllipseAtPoint.steps.length !== 1 || openEllipseAtPoint.changes.length !== 2) {
+  throw new Error(`F-026 open ellipse at-point capability mismatch: ${JSON.stringify(openEllipseAtPoint)}`);
+}
+const openSplineAtPoint = command.execute(atPointCapabilitySource, { targets: [{ handle: "50", firstPoint: { x: 50, y: 300 }, mode: "at-point" }] });
+if (openSplineAtPoint.changes.length || openSplineAtPoint.rejected[0]?.reason !== "unsupported-target") {
+  throw new Error(`F-026 open spline at-point refusal mismatch: ${JSON.stringify(openSplineAtPoint)}`);
+}
+
 const report = {
   schemaVersion: 1,
   rowId: "F-026",
@@ -135,6 +148,7 @@ const report = {
   sourceDocument: source,
   output: { schema: committed.entities.map(schemaSummary), strictChecks, independentTypes },
   closedAtPoint,
+  atPointCapabilities: { openEllipse: openEllipseAtPoint, openSpline: openSplineAtPoint },
   dxf: { sha256: sha256(exported.bytes), byteLength: exported.bytes.byteLength, emittedHandles: exported.report.emittedHandles },
   kdraw: { sha256: sha256(kdrawBytes), byteLength: kdrawBytes.byteLength, documentSha256: documentEntry.sha256, manifestEntryCount: restored.manifest.entries.length, attachmentCount: restored.attachments.size },
   undoRedo: { undo: Boolean(undo), redo: Boolean(redo), exactSourceRestored: true, exactCommittedRestored: true },

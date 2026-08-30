@@ -614,6 +614,17 @@ export async function buildGlobalTopologyReceipt(observedAt = new Date().toISOSt
       "npm run parity:f025:oracles",
       "npm run parity:f025:cross-evidence",
     ]),
+    protectedF026AutoCadChainPresent: workflowJobContainsOrderedRuns(ciBytes.toString("utf8"), "autocad-2024-certification", [
+      "npm run parity:f026:browser-artifact",
+      "npm run parity:f026:readback",
+      "npm run parity:f026:autocad",
+      "npm run parity:f026:oracles",
+      "npm run parity:f026:cross-evidence",
+    ]),
+    requiredF026OracleChainPresent: workflowJobContainsOrderedRuns(ciBytes.toString("utf8"), "required-oracles", [
+      "npm run parity:f026:oracles",
+      "npm run parity:f026:cross-evidence",
+    ]),
   };
   if (Object.values(checks).some((value) => value !== true)) throw new Error(`Global topology receipt failed: ${JSON.stringify(checks)}`);
   const sourceSha256 = Object.fromEntries(await Promise.all(GLOBAL_TOPOLOGY_SOURCE_PATHS.map(async (path) => [

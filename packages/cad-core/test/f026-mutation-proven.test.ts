@@ -36,6 +36,38 @@ describe("F-026 mutation-proven BREAK ratchet", () => {
     expect(atPoint).toMatchObject({ reason: "closed-at-point", entities: [], breakPoints: null });
   });
 
+  it("kills the AutoCAD-live spline-at-point acceptance mutant without disabling open ellipses", () => {
+    const openSpline = {
+      kind: "spline" as const,
+      handle: "21",
+      layerId: "0",
+      degree: 3,
+      controlPoints: [{ x: 0, y: 0 }, { x: 100 / 3, y: 0 }, { x: 200 / 3, y: 0 }, { x: 100, y: 0 }],
+      knots: [0, 0, 0, 0, 1, 1, 1, 1],
+      weights: [2, 2, 2, 2],
+      closed: false,
+      periodic: false,
+    };
+    expect(breakCadEntity(openSpline, { x: 50, y: 5 }, undefined, "at-point")).toMatchObject({
+      reason: "unsupported-target",
+      entities: [],
+    });
+    const openEllipse = {
+      kind: "ellipse" as const,
+      handle: "22",
+      layerId: "0",
+      center: { x: 0, y: 0 },
+      majorAxis: { x: 100, y: 0 },
+      ratio: 0.5,
+      startParameter: 0,
+      endParameter: Math.PI,
+    };
+    expect(breakCadEntity(openEllipse, { x: 0, y: 50 }, undefined, "at-point")).toMatchObject({
+      reason: null,
+      entities: [{ kind: "ellipse" }, { kind: "ellipse" }],
+    });
+  });
+
   it("kills polyline path-collapse, bulge and interpolated-width mutants", () => {
     const polyline = {
       kind: "polyline" as const, handle: "30", layerId: "0", closed: false,
