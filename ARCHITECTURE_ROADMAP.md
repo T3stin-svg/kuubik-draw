@@ -33,10 +33,10 @@ selles teekaardis teadlikult `Won't have`.
 
 ## Now
 
-1. F-025 lokaalne sertifikaadikandidaat on **26/133 · 19,5% raw / 23,2% weighted**;
-   AutoCAD/Chromium/DXF/KDRAW1 risttõend ja sõltumatu lõppreview `0 P0 / 0 P1`
-   on rohelised. Viimane avalik roheline seis jääb F-024 järel 25/133 peale,
-   kuni F-025 exact commit läbib GitHub Actionsi.
+1. F-025 on avalikult sertifitseeritud seisul **26/133 · 19,5% raw / 23,2% weighted**;
+   AutoCAD/Chromium/DXF/KDRAW1 risttõend, sõltumatu lõppreview `0 P0 / 0 P1`
+   ja exact commit'i `d0d6421` GitHub Actions run `33293697704` on rohelised
+   (`fast` 54 s, täielik `verify` 3 min 26 s).
 2. CHAMFER Distance/Angle/Method, Trim/No Trim, Multiple/Polyline, Shift-zero,
    selected-segment bounds, open-terminal closure ja LINE/RAY/XLINE extension
    kasutavad sama preview=commit predikaati ning üht atomic Undo/Redo sammu.

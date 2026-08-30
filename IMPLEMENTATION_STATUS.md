@@ -81,12 +81,10 @@
 
 ## Certified state and explicit remaining limits
 
-- the new application has a local F-025 certification candidate at **26/133**
+- the new application is publicly certified through F-025 at **26/133**
   (**19.5% raw / 23.2% weighted**) with independent `0 P0 / 0 P1` review;
-  the last public-green state remains F-024 at **25/133** until the exact F-025
-  commit passes GitHub Actions;
 - all 22 legacy-certified rows and the first four new rows F-022/F-023/F-024/F-025
-  are locally mirrored;
+  are publicly mirrored;
 - spline/NURBS rendering is rejected rather than drawn as a misleading control polygon;
 - Unicode PDF text is rejected until a font-embedding path exists;
 - LibreCAD/FreeCAD fixtures pass locally, but the machine has no signed OS
@@ -96,10 +94,13 @@
 - native DWG/DWT/XREF and PC3/CTB/STB remain deferred;
 - no preview or production deployment has been made.
 
-The F-024 final full gate passed 56 test files / 351 Vitest tests,
-50 mutation tests, 36 DXF tests, 20 PDF tests and 79 Chromium E2E tests.
-GitHub Actions run `33283660256` passed both `fast` and full `verify` jobs on
-the exact public commit `4462631`. The checked-in licensed AutoCAD evidence is
+The F-025 final full gate passed 61 test files / 393 Vitest tests,
+57 mutation tests, 40 DXF tests, 20 PDF tests and 90 Chromium E2E tests.
+GitHub Actions run `33293697704` passed `fast` in 54 seconds and full `verify`
+in 3 minutes 26 seconds on the exact public commit `d0d6421`. Protected-runner
+jobs `required-oracles`, `autocad-2024-certification` and `row-certification`
+were honestly skipped; the checked-in evidence had already passed the local
+mandatory ratchet and independent review. The checked-in licensed AutoCAD evidence is
 fresh for F-016/F-017/F-018/F-024/F-098/F-100/F-101/F-105; LibreCAD/FreeCAD
 remain secondary oracles and report `FIXTURE_PASS_NOT_NETWORK_ISOLATED`, not
 certification authority.
@@ -109,8 +110,8 @@ public Ubuntu CI and an independent `0 P0 / 0 P1` review. Its App-shell refactor
 was followed by all 22 browser captures, 23 independent read-backs, a fresh
 F-102 native AutoCAD live run, schema-v3 exact stage receipts, real F-003
 Chromium DXF capture and cross-platform content-address verification. F-025
-CHAMFER now has its complete AutoCAD/Chromium/DXF/KDRAW1 evidence chain and
-zero-open-P0/P1 review; its public CI gate is the remaining promotion step.
-The next functional row is F-026 BREAK. F-108 native
+CHAMFER now has its complete AutoCAD/Chromium/DXF/KDRAW1 evidence chain,
+zero-open-P0/P1 review and exact-commit public-green CI. The next functional
+row is F-026 BREAK. F-108 native
 PC3/CTB/STB remains blocked on a licensed adapter. No production deployment is
 authorized.
