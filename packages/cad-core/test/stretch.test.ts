@@ -50,7 +50,7 @@ describe("F-027 STRETCH clean-room geometry", () => {
     });
   });
 
-  it("unions multiple crossing polygons and preserves polyline bulges and widths", () => {
+  it("unions crossing polygons, preserves widths and scales one-ended arc bulges by chord length", () => {
     const polyline: CadPolyline = {
       kind: "polyline", handle: "20", layerId: "0", closed: false,
       vertices: [
@@ -65,23 +65,37 @@ describe("F-027 STRETCH clean-room geometry", () => {
     expect(result.entity).toEqual({
       ...polyline,
       vertices: [
-        polyline.vertices[0],
+        { ...polyline.vertices[0], bulge: 0.3996803834887157 },
         { ...polyline.vertices[1], x: 125, y: 5 },
         { ...polyline.vertices[2], x: 225, y: 5 },
       ],
     });
   });
 
-  it("moves circles, ellipses, blocks and text only when their anchor is enclosed", () => {
-    const region: StretchRegion = { kind: "crossing-window", points: [{ x: -5, y: -5 }, { x: 5, y: 5 }] };
-    const entities: CadEntity[] = [
-      { kind: "circle", handle: "30", layerId: "0", center: { x: 0, y: 0 }, radius: 100 },
-      { kind: "ellipse", handle: "31", layerId: "0", center: { x: 0, y: 0 }, majorAxis: { x: 100, y: 0 }, ratio: 0.5, startParameter: 0, endParameter: Math.PI * 2 },
+  it("moves circle/ellipse centers only after their visible curve is crossing-selected", () => {
+    const centerOnly: StretchRegion = { kind: "crossing-window", points: [{ x: -5, y: -5 }, { x: 5, y: 5 }] };
+    const centerAndCurve: StretchRegion = { kind: "crossing-window", points: [{ x: -10, y: -10 }, { x: 110, y: 10 }] };
+    const circle: CadEntity = { kind: "circle", handle: "30", layerId: "0", center: { x: 0, y: 0 }, radius: 100 };
+    const ellipse: CadEntity = { kind: "ellipse", handle: "31", layerId: "0", center: { x: 0, y: 0 }, majorAxis: { x: 100, y: 0 }, ratio: 0.5, startParameter: 0, endParameter: Math.PI * 2 };
+    for (const entity of [circle, ellipse]) {
+      expect(stretchCadEntity(entity, [centerOnly], delta)).toMatchObject({ selected: false, reason: "not-selected" });
+      expect(stretchCadEntity(entity, [centerAndCurve], delta)).toMatchObject({ mode: "move", movedPointCount: 1, reason: null });
+    }
+    const anchored: CadEntity[] = [
       { kind: "blockRef", handle: "32", layerId: "0", blockId: "symbol", insertion: { x: 0, y: 0 }, scale: { x: 1, y: 1 }, rotationRad: 0, attributes: { TAG: "A" } },
       { kind: "text", handle: "33", layerId: "0", position: { x: 0, y: 0 }, text: "A", height: 2.5, rotationRad: 0 },
     ];
-    for (const entity of entities) expect(stretchCadEntity(entity, [region], delta)).toMatchObject({ mode: "move", movedPointCount: 1, reason: null });
-    expect(stretchCadEntity({ ...entities[0]!, center: { x: -100, y: 0 } } as CadEntity, [region], delta)).toMatchObject({ selected: false, reason: "not-selected" });
+    for (const entity of anchored) expect(stretchCadEntity(entity, [centerOnly], delta)).toMatchObject({ mode: "move", movedPointCount: 1, reason: null });
+  });
+
+  it("does not treat an arc center or an ellipse midpoint as a command stretch point", () => {
+    const arc: CadArc = { kind: "arc", handle: "34", layerId: "0", center: { x: 0, y: 0 }, radius: 100, startAngleRad: 0, endAngleRad: Math.PI, counterClockwise: true };
+    const centerAndTop: StretchRegion = { kind: "crossing-window", points: [{ x: -10, y: -10 }, { x: 10, y: 110 }] };
+    expect(stretchCadEntity(arc, [centerAndTop], delta)).toMatchObject({ selected: false, reason: "not-selected" });
+
+    const ellipse: CadEllipse = { kind: "ellipse", handle: "35", layerId: "0", center: { x: 0, y: 0 }, majorAxis: { x: 100, y: 0 }, ratio: 0.5, startParameter: 0, endParameter: Math.PI / 2 };
+    const midpoint: StretchRegion = { kind: "crossing-window", points: [{ x: 60, y: 25 }, { x: 80, y: 45 }] };
+    expect(stretchCadEntity(ellipse, [midpoint], delta)).toMatchObject({ selected: false, reason: "not-selected" });
   });
 
   it("matches AutoCAD 2024's transported-sagitta arc stretch", () => {
@@ -220,6 +234,24 @@ describe("F-027 STRETCH clean-room geometry", () => {
       expect(result.entity.ratio).toBeGreaterThan(0);
       expect(result.entity.ratio).toBeLessThanOrEqual(1);
     });
+  });
+
+  it("matches AutoCAD 2024 for an ellipse arc whose parameter interval crosses 2pi", () => {
+    const source: CadEllipse = {
+      kind: "ellipse", handle: "4A", layerId: "0", center: { x: 0, y: 0 },
+      majorAxis: { x: 100, y: 0 }, ratio: 0.5, startParameter: 5.5, endParameter: 7,
+    };
+    const region: StretchRegion = { kind: "crossing-window", points: [{ x: 65, y: 20 }, { x: 85, y: 45 }] };
+    const result = stretchCadEntity(source, [region], delta);
+    if (result.entity?.kind !== "ellipse") throw new Error("Expected the wrapped ellipse arc to stretch.");
+    expect(result).toMatchObject({ mode: "stretch", movedPointCount: 1, reason: null });
+    expect(result.entity.center.x).toBeCloseTo(16.321187837475, 10);
+    expect(result.entity.center.y).toBeCloseTo(24.74162641794247, 10);
+    expect(result.entity.majorAxis.x).toBeCloseTo(-95.68145757452969, 10);
+    expect(result.entity.majorAxis.y).toBeCloseTo(29.35210104127352, 10);
+    expect(result.entity.ratio).toBeCloseTo(0.576564048333548, 10);
+    expect(result.entity.startParameter).toBeCloseTo(2.341890538582327, 10);
+    expect(result.entity.endParameter).toBeCloseTo(3.841890538582323, 10);
   });
 
   it("canonicalizes a valid sub-millimetre ellipse arc without an absolute-area rejection", () => {

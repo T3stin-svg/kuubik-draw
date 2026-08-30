@@ -125,6 +125,17 @@ describe("parity kit", () => {
     expect(workflowJobContainsOrderedRuns(valid.replace("      - run: npm run parity:f026:cross-evidence\n", ""), "required-oracles", oracleChain)).toBe(false);
   });
 
+  it("requires the complete ordered F-027 evidence chain in both protected jobs", () => {
+    const valid = `jobs:\n  required-oracles:\n    steps:\n      - run: npm run parity:f027:oracles\n      - run: npm run parity:f027:cross-evidence\n  autocad-2024-certification:\n    steps:\n      - run: npm run parity:f027:browser-artifact\n      - run: npm run parity:f027:readback\n      - run: npm run parity:f027:autocad\n      - run: npm run parity:f027:oracles\n      - run: npm run parity:f027:cross-evidence\n`;
+    const autoCadChain = ["npm run parity:f027:browser-artifact", "npm run parity:f027:readback", "npm run parity:f027:autocad", "npm run parity:f027:oracles", "npm run parity:f027:cross-evidence"];
+    const oracleChain = ["npm run parity:f027:oracles", "npm run parity:f027:cross-evidence"];
+    expect(workflowJobContainsOrderedRuns(valid, "autocad-2024-certification", autoCadChain)).toBe(true);
+    expect(workflowJobContainsOrderedRuns(valid, "required-oracles", oracleChain)).toBe(true);
+    expect(workflowJobContainsOrderedRuns(valid.replace("      - run: npm run parity:f027:autocad\n", ""), "autocad-2024-certification", autoCadChain)).toBe(false);
+    expect(workflowJobContainsOrderedRuns(valid.replace("      - run: npm run parity:f027:autocad\n      - run: npm run parity:f027:oracles", "      - run: npm run parity:f027:oracles\n      - run: npm run parity:f027:autocad"), "autocad-2024-certification", autoCadChain)).toBe(false);
+    expect(workflowJobContainsOrderedRuns(valid.replace("      - run: npm run parity:f027:cross-evidence\n", ""), "required-oracles", oracleChain)).toBe(false);
+  });
+
   it("accepts only the exact pinned schema migration and lock integrity", () => {
     const oldPin = "https://github.com/T3stin-svg/kuubik-cad-schema/archive/5eab9934aec937b679f0614382b8f947d3f21e8e.tar.gz";
     const newPin = "https://github.com/T3stin-svg/kuubik-cad-schema/archive/b9964e0991884151784d1b262ded8c5c14706d9c.tar.gz";
@@ -184,22 +195,24 @@ describe("parity kit", () => {
     expect(semanticValue({ generatedAt: "now", value: 1 })).toEqual({ value: 1 });
   });
 
-  it("maps shared modify sources through certified F-026, uncertified F-027 and package locks to every certified row", () => {
-    expect(affectedRows(["packages/cad-core/src/trim.ts"]).rows).toEqual(["F-022", "F-023", "F-024", "F-026"]);
+  it("maps shared modify sources through certified F-027 and package locks to every certified row", () => {
+    expect(affectedRows(["packages/cad-core/src/trim.ts"]).rows).toEqual(["F-022", "F-023", "F-024", "F-026", "F-027"]);
     expect(affectedRows(["apps/web/src/workflows/modify-command.ts"]).rows).toEqual(["F-015", "F-016", "F-017", "F-018", "F-019", "F-020", "F-021", "F-022", "F-023", "F-024", "F-025", "F-026", "F-027"]);
     expect(affectedRows(["apps/web/src/workflows/modify-command.ts"]).rows).not.toContain("F-114");
-    expect(affectedRows(["package-lock.json"]).rows).toHaveLength(27);
+    expect(affectedRows(["package-lock.json"]).rows).toHaveLength(28);
     expect(affectedRows(["package-lock.json"]).rows).toContain("F-024");
     expect(affectedRows(["package-lock.json"]).rows).toContain("F-025");
     expect(affectedRows(["package-lock.json"]).rows).toContain("F-026");
-    expect(affectedRows(["apps/web/package.json"]).rows).toHaveLength(27);
-    expect(affectedRows(["packages/cad-core/package.json"]).rows).toHaveLength(27);
-    expect(sourceToRows().get("packages/cad-core/src/trim.ts")).toEqual(["F-022", "F-023", "F-024", "F-026"]);
+    expect(affectedRows(["package-lock.json"]).rows).toContain("F-027");
+    expect(affectedRows(["apps/web/package.json"]).rows).toHaveLength(28);
+    expect(affectedRows(["packages/cad-core/package.json"]).rows).toHaveLength(28);
+    expect(sourceToRows().get("packages/cad-core/src/trim.ts")).toEqual(["F-022", "F-023", "F-024", "F-026", "F-027"]);
     expect(sourceToRows().get("packages/cad-core/src/stretch.ts")).toEqual(["F-027"]);
     expect(sourceToRows().get("tools/autocad/f022-shift-click.ps1")).toEqual(["F-022", "F-023", "F-024", "F-025"]);
     expect(sourceToRows().get("packages/cad-core/src/chamfer.ts")).toEqual(["F-025"]);
     expect(sourceToRows().get("packages/cad-core/src/break.ts")).toEqual(["F-026"]);
     expect(sourceToRows().get("tools/autocad/process-ownership.mjs")).toContain("F-026");
+    expect(sourceToRows().get("tools/autocad/process-ownership.mjs")).toContain("F-027");
     for (const sharedSource of ["tools/autocad/f109-desktop-readback.ps1", "tools/autocad/f109-runner.test.mjs", "parity/expected/F-109.json"]) {
       expect(affectedRows([sharedSource]).rows).toEqual(["F-109", "F-111"]);
       expect(affectedRows([sharedSource]).unmappedRuntime).toEqual([]);

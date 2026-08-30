@@ -50,6 +50,34 @@
           "y": 0
         },
         "radius": 100
+      },
+      {
+        "kind": "polyline",
+        "handle": "40",
+        "layerId": "0",
+        "closed": false,
+        "vertices": [
+          {
+            "x": 0,
+            "y": 400,
+            "bulge": 0.5,
+            "startWidth": 2,
+            "endWidth": 4
+          },
+          {
+            "x": 1000,
+            "y": 400,
+            "bulge": -0.25,
+            "startWidth": 4,
+            "endWidth": 6
+          },
+          {
+            "x": 2000,
+            "y": 400,
+            "startWidth": 6,
+            "endWidth": 8
+          }
+        ]
       }
     ],
     "layers": [
@@ -131,6 +159,34 @@
           "y": 0
         },
         "radius": 100
+      },
+      {
+        "kind": "polyline",
+        "handle": "40",
+        "layerId": "0",
+        "closed": false,
+        "vertices": [
+          {
+            "x": 0,
+            "y": 400,
+            "bulge": 0.39968038348871576,
+            "startWidth": 2,
+            "endWidth": 4
+          },
+          {
+            "x": 1250,
+            "y": 450,
+            "bulge": -0.33259505261886957,
+            "startWidth": 4,
+            "endWidth": 6
+          },
+          {
+            "x": 2000,
+            "y": 400,
+            "startWidth": 6,
+            "endWidth": 8
+          }
+        ]
       }
     ],
     "layers": [
@@ -159,11 +215,11 @@
     "attachments": [],
     "metadata": {
       "createdAt": "2026-08-30T09:00:00.000Z",
-      "updatedAt": "2026-08-30T08:39:35.485Z"
+      "updatedAt": "2026-08-30T10:53:03.948Z"
     }
   },
   "operation": {
-    "opId": "d29f80d3-2eac-4542-8682-2e86d33e1bd2",
+    "opId": "24a578e2-c302-4c4d-b406-eb4d6f3ad513",
     "baseRevision": 0,
     "commandId": "STRETCH",
     "args": {
@@ -201,6 +257,19 @@
               "y": 10
             }
           ]
+        },
+        {
+          "kind": "crossing-window",
+          "points": [
+            {
+              "x": 900,
+              "y": 300
+            },
+            {
+              "x": 1100,
+              "y": 500
+            }
+          ]
         }
       ],
       "basePoint": {
@@ -225,16 +294,23 @@
           "handle": "20",
           "mode": "move",
           "movedPointCount": 1
+        },
+        {
+          "handle": "40",
+          "mode": "stretch",
+          "movedPointCount": 1
         }
       ]
     },
     "targetHandles": [
       "10",
-      "20"
+      "20",
+      "40"
     ],
     "resultHandles": [
       "10",
-      "20"
+      "20",
+      "40"
     ]
   },
   "restored": {
@@ -287,6 +363,34 @@
           "y": 0
         },
         "radius": 100
+      },
+      {
+        "kind": "polyline",
+        "handle": "40",
+        "layerId": "0",
+        "closed": false,
+        "vertices": [
+          {
+            "x": 0,
+            "y": 400,
+            "bulge": 0.39968038348871576,
+            "startWidth": 2,
+            "endWidth": 4
+          },
+          {
+            "x": 1250,
+            "y": 450,
+            "bulge": -0.33259505261886957,
+            "startWidth": 4,
+            "endWidth": 6
+          },
+          {
+            "x": 2000,
+            "y": 400,
+            "startWidth": 6,
+            "endWidth": 8
+          }
+        ]
       }
     ],
     "layers": [
@@ -315,7 +419,7 @@
     "attachments": [],
     "metadata": {
       "createdAt": "2026-08-30T09:00:00.000Z",
-      "updatedAt": "2026-08-30T08:39:35.485Z"
+      "updatedAt": "2026-08-30T10:53:03.948Z"
     }
   },
   "undoRestored": {
@@ -368,6 +472,34 @@
           "y": 0
         },
         "radius": 100
+      },
+      {
+        "kind": "polyline",
+        "handle": "40",
+        "layerId": "0",
+        "closed": false,
+        "vertices": [
+          {
+            "x": 0,
+            "y": 400,
+            "bulge": 0.5,
+            "startWidth": 2,
+            "endWidth": 4
+          },
+          {
+            "x": 1000,
+            "y": 400,
+            "bulge": -0.25,
+            "startWidth": 4,
+            "endWidth": 6
+          },
+          {
+            "x": 2000,
+            "y": 400,
+            "startWidth": 6,
+            "endWidth": 8
+          }
+        ]
       }
     ],
     "layers": [
@@ -396,7 +528,7 @@
     "attachments": [],
     "metadata": {
       "createdAt": "2026-08-30T09:00:00.000Z",
-      "updatedAt": "2026-08-30T08:39:35.818Z"
+      "updatedAt": "2026-08-30T10:53:04.280Z"
     }
   },
   "redone": {
@@ -449,6 +581,34 @@
           "y": 0
         },
         "radius": 100
+      },
+      {
+        "kind": "polyline",
+        "handle": "40",
+        "layerId": "0",
+        "closed": false,
+        "vertices": [
+          {
+            "x": 0,
+            "y": 400,
+            "bulge": 0.39968038348871576,
+            "startWidth": 2,
+            "endWidth": 4
+          },
+          {
+            "x": 1250,
+            "y": 450,
+            "bulge": -0.33259505261886957,
+            "startWidth": 4,
+            "endWidth": 6
+          },
+          {
+            "x": 2000,
+            "y": 400,
+            "startWidth": 6,
+            "endWidth": 8
+          }
+        ]
       }
     ],
     "layers": [
@@ -477,7 +637,7 @@
     "attachments": [],
     "metadata": {
       "createdAt": "2026-08-30T09:00:00.000Z",
-      "updatedAt": "2026-08-30T08:39:35.884Z"
+      "updatedAt": "2026-08-30T10:53:04.348Z"
     }
   },
   "consoleErrors": [],

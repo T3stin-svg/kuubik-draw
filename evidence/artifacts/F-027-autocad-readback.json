@@ -1,0 +1,1024 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-027",
+  "benchmark": "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
+  "engine": "Autodesk AutoCAD 2024 desktop COM",
+  "engineVersion": "24.3s (LMS Tech)",
+  "automationProcessId": 32852,
+  "automationProcessOwned": true,
+  "installedUpdateIdentity": {
+    "displayName": "Autodesk AutoCAD 2024.1.2 Update",
+    "displayVersion": "24.3.152.0"
+  },
+  "automationProcessIdentity": {
+    "processId": 32852,
+    "executableName": "acad.exe",
+    "executableSha256": "0570749def2fa8dcfb62df1a6671f44245a9ef740dd61d9d0f9110794a76e70e",
+    "fileVersion": "R24.3.152.0.0",
+    "productVersion": "R24.3.152.0.0",
+    "startTimeSha256": "9687cdeca5d88272a71621a3852dd2493f9f404be6a872c5889cfd294dc1c682"
+  },
+  "observations": {
+    "source": {
+      "line": {
+        "objectName": "AcDbLine",
+        "handle": "28C",
+        "layer": "F027_LINE",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "details": {
+          "start": [
+            0,
+            0
+          ],
+          "end": [
+            100,
+            0
+          ]
+        }
+      },
+      "crossingPolygon": {
+        "objectName": "AcDbLine",
+        "handle": "28D",
+        "layer": "F027_CPOLY",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "details": {
+          "start": [
+            0,
+            100
+          ],
+          "end": [
+            100,
+            100
+          ]
+        }
+      },
+      "polyline": {
+        "objectName": "AcDbPolyline",
+        "handle": "28E",
+        "layer": "F027_POLY",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "details": {
+          "vertices": [
+            [
+              0,
+              200
+            ],
+            [
+              100,
+              200
+            ],
+            [
+              200,
+              200
+            ]
+          ],
+          "closed": false,
+          "bulges": [
+            0.5,
+            -0.25,
+            0
+          ],
+          "widths": [
+            [
+              2,
+              4
+            ],
+            [
+              4,
+              6
+            ],
+            [
+              0,
+              0
+            ]
+          ]
+        }
+      },
+      "arc": {
+        "objectName": "AcDbArc",
+        "handle": "28F",
+        "layer": "F027_ARC",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "details": {
+          "center": [
+            300,
+            300
+          ],
+          "radius": 100,
+          "startAngle": 0,
+          "endAngle": 3.141592653589793
+        }
+      },
+      "arcCenter": {
+        "objectName": "AcDbArc",
+        "handle": "290",
+        "layer": "F027_ARC_CENTER",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "details": {
+          "center": [
+            600,
+            300
+          ],
+          "radius": 100,
+          "startAngle": 0,
+          "endAngle": 3.141592653589793
+        }
+      },
+      "ellipse": {
+        "objectName": "AcDbEllipse",
+        "handle": "291",
+        "layer": "F027_ELLIPSE",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "details": {
+          "center": [
+            900,
+            300
+          ],
+          "majorAxis": [
+            100,
+            0
+          ],
+          "ratio": 0.5,
+          "startParameter": 0,
+          "endParameter": 1.5707963267948966
+        }
+      },
+      "wrapped": {
+        "objectName": "AcDbEllipse",
+        "handle": "292",
+        "layer": "F027_WRAP",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "details": {
+          "center": [
+            1200,
+            300
+          ],
+          "majorAxis": [
+            100,
+            0
+          ],
+          "ratio": 0.5,
+          "startParameter": 5.5,
+          "endParameter": 7
+        }
+      },
+      "ellipseMidpoint": {
+        "objectName": "AcDbEllipse",
+        "handle": "293",
+        "layer": "F027_ELLIPSE_MID",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "details": {
+          "center": [
+            1500,
+            300
+          ],
+          "majorAxis": [
+            100,
+            0
+          ],
+          "ratio": 0.5,
+          "startParameter": 0,
+          "endParameter": 1.5707963267948966
+        }
+      },
+      "fullEllipse": {
+        "objectName": "AcDbEllipse",
+        "handle": "294",
+        "layer": "F027_FULL",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "details": {
+          "center": [
+            1800,
+            300
+          ],
+          "majorAxis": [
+            100,
+            0
+          ],
+          "ratio": 0.5,
+          "startParameter": 0,
+          "endParameter": 6.283185307179586
+        }
+      },
+      "circle": {
+        "objectName": "AcDbCircle",
+        "handle": "295",
+        "layer": "F027_CIRCLE",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "details": {
+          "center": [
+            2100,
+            300
+          ],
+          "radius": 100
+        }
+      },
+      "individual": {
+        "objectName": "AcDbLine",
+        "handle": "296",
+        "layer": "F027_INDIVIDUAL",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "details": {
+          "start": [
+            0,
+            500
+          ],
+          "end": [
+            100,
+            500
+          ]
+        }
+      },
+      "locked": {
+        "objectName": "AcDbLine",
+        "handle": "299",
+        "layer": "F027_LOCKED",
+        "color": 1,
+        "lineweight": 50,
+        "linetype": "ByLayer",
+        "details": {
+          "start": [
+            0,
+            750
+          ],
+          "end": [
+            100,
+            750
+          ]
+        }
+      }
+    },
+    "line": {
+      "objectName": "AcDbLine",
+      "handle": "28C",
+      "layer": "F027_LINE",
+      "color": 1,
+      "lineweight": 50,
+      "linetype": "ByLayer",
+      "details": {
+        "start": [
+          0,
+          0
+        ],
+        "end": [
+          125,
+          5
+        ]
+      }
+    },
+    "crossingPolygon": {
+      "objectName": "AcDbLine",
+      "handle": "28D",
+      "layer": "F027_CPOLY",
+      "color": 1,
+      "lineweight": 50,
+      "linetype": "ByLayer",
+      "details": {
+        "start": [
+          0,
+          100
+        ],
+        "end": [
+          125,
+          105
+        ]
+      }
+    },
+    "polyline": {
+      "objectName": "AcDbPolyline",
+      "handle": "28E",
+      "layer": "F027_POLY",
+      "color": 1,
+      "lineweight": 50,
+      "linetype": "ByLayer",
+      "details": {
+        "vertices": [
+          [
+            0,
+            200
+          ],
+          [
+            125,
+            205
+          ],
+          [
+            200,
+            200
+          ]
+        ],
+        "closed": false,
+        "bulges": [
+          0.39968038348871576,
+          -0.3325950526188697,
+          0
+        ],
+        "widths": [
+          [
+            2,
+            4
+          ],
+          [
+            4,
+            6
+          ],
+          [
+            0,
+            0
+          ]
+        ]
+      }
+    },
+    "arc": {
+      "objectName": "AcDbArc",
+      "handle": "28F",
+      "layer": "F027_ARC",
+      "color": 1,
+      "lineweight": 50,
+      "linetype": "ByLayer",
+      "details": {
+        "center": [
+          312.7957603151085,
+          289.1907858201167
+        ],
+        "radius": 113.31250000000001,
+        "startAngle": 0.1399753574102913,
+        "endAngle": 3.04605442683294
+      }
+    },
+    "arcCenter": {
+      "objectName": "AcDbArc",
+      "handle": "290",
+      "layer": "F027_ARC_CENTER",
+      "color": 1,
+      "lineweight": 50,
+      "linetype": "ByLayer",
+      "details": {
+        "center": [
+          600,
+          300
+        ],
+        "radius": 100,
+        "startAngle": 0,
+        "endAngle": 3.141592653589793
+      }
+    },
+    "ellipse": {
+      "objectName": "AcDbEllipse",
+      "handle": "291",
+      "layer": "F027_ELLIPSE",
+      "color": 1,
+      "lineweight": 50,
+      "linetype": "ByLayer",
+      "details": {
+        "center": [
+          909.8520048727913,
+          298.9222357577537
+        ],
+        "majorAxis": [
+          115.56484390156807,
+          2.120881991279924
+        ],
+        "ratio": 0.44472303997961865,
+        "startParameter": 0.077190120252004,
+        "endParameter": 1.6479864470468994
+      }
+    },
+    "wrapped": {
+      "objectName": "AcDbEllipse",
+      "handle": "292",
+      "layer": "F027_WRAP",
+      "color": 1,
+      "lineweight": 50,
+      "linetype": "ByLayer",
+      "details": {
+        "center": [
+          1216.3211878374757,
+          324.7416264179425
+        ],
+        "majorAxis": [
+          -95.68145757452922,
+          29.352101041273738
+        ],
+        "ratio": 0.5765640483335496,
+        "startParameter": 2.3418905385823305,
+        "endParameter": 3.8418905385823265
+      }
+    },
+    "ellipseMidpoint": {
+      "objectName": "AcDbEllipse",
+      "handle": "293",
+      "layer": "F027_ELLIPSE_MID",
+      "color": 1,
+      "lineweight": 50,
+      "linetype": "ByLayer",
+      "details": {
+        "center": [
+          1500,
+          300
+        ],
+        "majorAxis": [
+          100,
+          0
+        ],
+        "ratio": 0.5,
+        "startParameter": 0,
+        "endParameter": 1.5707963267948966
+      }
+    },
+    "fullEllipse": {
+      "objectName": "AcDbEllipse",
+      "handle": "294",
+      "layer": "F027_FULL",
+      "color": 1,
+      "lineweight": 50,
+      "linetype": "ByLayer",
+      "details": {
+        "center": [
+          1825,
+          305
+        ],
+        "majorAxis": [
+          100,
+          0
+        ],
+        "ratio": 0.5,
+        "startParameter": 0,
+        "endParameter": 6.283185307179586
+      }
+    },
+    "circle": {
+      "objectName": "AcDbCircle",
+      "handle": "295",
+      "layer": "F027_CIRCLE",
+      "color": 1,
+      "lineweight": 50,
+      "linetype": "ByLayer",
+      "details": {
+        "center": [
+          2125,
+          305
+        ],
+        "radius": 100
+      }
+    },
+    "individual": {
+      "objectName": "AcDbLine",
+      "handle": "296",
+      "layer": "F027_INDIVIDUAL",
+      "color": 1,
+      "lineweight": 50,
+      "linetype": "ByLayer",
+      "details": {
+        "start": [
+          25,
+          505
+        ],
+        "end": [
+          125,
+          505
+        ]
+      }
+    },
+    "globalUndoRedo": {
+      "source": [
+        {
+          "objectName": "AcDbLine",
+          "handle": "298",
+          "layer": "F027_GLOBAL",
+          "color": 1,
+          "lineweight": 50,
+          "linetype": "ByLayer",
+          "details": {
+            "start": [
+              0,
+              650
+            ],
+            "end": [
+              100,
+              650
+            ]
+          }
+        },
+        {
+          "objectName": "AcDbLine",
+          "handle": "297",
+          "layer": "F027_GLOBAL",
+          "color": 1,
+          "lineweight": 50,
+          "linetype": "ByLayer",
+          "details": {
+            "start": [
+              0,
+              600
+            ],
+            "end": [
+              100,
+              600
+            ]
+          }
+        }
+      ],
+      "committed": [
+        {
+          "objectName": "AcDbLine",
+          "handle": "298",
+          "layer": "F027_GLOBAL",
+          "color": 1,
+          "lineweight": 50,
+          "linetype": "ByLayer",
+          "details": {
+            "start": [
+              0,
+              650
+            ],
+            "end": [
+              125,
+              655
+            ]
+          }
+        },
+        {
+          "objectName": "AcDbLine",
+          "handle": "297",
+          "layer": "F027_GLOBAL",
+          "color": 1,
+          "lineweight": 50,
+          "linetype": "ByLayer",
+          "details": {
+            "start": [
+              0,
+              600
+            ],
+            "end": [
+              125,
+              605
+            ]
+          }
+        }
+      ],
+      "undone": [
+        {
+          "objectName": "AcDbLine",
+          "handle": "298",
+          "layer": "F027_GLOBAL",
+          "color": 1,
+          "lineweight": 50,
+          "linetype": "ByLayer",
+          "details": {
+            "start": [
+              0,
+              650
+            ],
+            "end": [
+              100,
+              650
+            ]
+          }
+        },
+        {
+          "objectName": "AcDbLine",
+          "handle": "297",
+          "layer": "F027_GLOBAL",
+          "color": 1,
+          "lineweight": 50,
+          "linetype": "ByLayer",
+          "details": {
+            "start": [
+              0,
+              600
+            ],
+            "end": [
+              100,
+              600
+            ]
+          }
+        }
+      ],
+      "redone": [
+        {
+          "objectName": "AcDbLine",
+          "handle": "298",
+          "layer": "F027_GLOBAL",
+          "color": 1,
+          "lineweight": 50,
+          "linetype": "ByLayer",
+          "details": {
+            "start": [
+              0,
+              650
+            ],
+            "end": [
+              125,
+              655
+            ]
+          }
+        },
+        {
+          "objectName": "AcDbLine",
+          "handle": "297",
+          "layer": "F027_GLOBAL",
+          "color": 1,
+          "lineweight": 50,
+          "linetype": "ByLayer",
+          "details": {
+            "start": [
+              0,
+              600
+            ],
+            "end": [
+              125,
+              605
+            ]
+          }
+        }
+      ]
+    },
+    "locked": {
+      "objectName": "AcDbLine",
+      "handle": "299",
+      "layer": "F027_LOCKED",
+      "color": 1,
+      "lineweight": 50,
+      "linetype": "ByLayer",
+      "details": {
+        "start": [
+          0,
+          750
+        ],
+        "end": [
+          100,
+          750
+        ]
+      }
+    }
+  },
+  "checks": {
+    "sourceStatesExact": true,
+    "crossingWindowEndpoint": true,
+    "crossingPolygonEndpoint": true,
+    "polylineVertexAndProperties": true,
+    "arcEndpoint": true,
+    "arcCenterNotStretchPoint": true,
+    "quarterEllipse": true,
+    "wrappedEllipse": true,
+    "ellipseMidpointNoChange": true,
+    "fullEllipseCenterMovesWhole": true,
+    "circleCenterMovesWhole": true,
+    "individualMovesWhole": true,
+    "atomicUndoRedo": true,
+    "lockedLayerNoChange": true,
+    "handlesAndPropertiesPreserved": true
+  },
+  "dxfOutputSha256": "1aba509f42f12712631c90e16dd684753b44fda21f16efb187095420acba0f96",
+  "cmdNamesAfter": "",
+  "userDocument": {
+    "isolatedOwnedProcess": true,
+    "blankRestored": true
+  },
+  "status": "PASS",
+  "automationProcessTerminated": true,
+  "processSetRestored": true,
+  "preExistingProcesses": [
+    {
+      "processId": 28304,
+      "executablePath": "C:\\Program Files\\Autodesk\\AutoCAD 2024\\acad.exe",
+      "startTimeUtc": "2026-08-30T04:04:44.6769957Z"
+    },
+    {
+      "processId": 33160,
+      "executablePath": "C:\\Program Files\\Autodesk\\AutoCAD 2024\\acad.exe",
+      "startTimeUtc": "2026-08-30T05:53:33.2219546Z"
+    }
+  ],
+  "dxfReadback": {
+    "sha256": "1aba509f42f12712631c90e16dd684753b44fda21f16efb187095420acba0f96",
+    "entityCount": 14,
+    "entities": [
+      {
+        "handle": "28C",
+        "layer": "F027_LINE",
+        "type": "LINE",
+        "colorIndex": 1,
+        "lineweight": 50,
+        "lineType": "ByLayer",
+        "vertices": [
+          {
+            "x": 0,
+            "y": 0,
+            "bulge": 0,
+            "startWidth": 0,
+            "endWidth": 0
+          },
+          {
+            "x": 125,
+            "y": 5,
+            "bulge": 0,
+            "startWidth": 0,
+            "endWidth": 0
+          }
+        ]
+      },
+      {
+        "handle": "28D",
+        "layer": "F027_CPOLY",
+        "type": "LINE",
+        "colorIndex": 1,
+        "lineweight": 50,
+        "lineType": "ByLayer",
+        "vertices": [
+          {
+            "x": 0,
+            "y": 100,
+            "bulge": 0,
+            "startWidth": 0,
+            "endWidth": 0
+          },
+          {
+            "x": 125,
+            "y": 105,
+            "bulge": 0,
+            "startWidth": 0,
+            "endWidth": 0
+          }
+        ]
+      },
+      {
+        "handle": "28E",
+        "layer": "F027_POLY",
+        "type": "LWPOLYLINE",
+        "colorIndex": 1,
+        "lineweight": 50,
+        "lineType": "ByLayer",
+        "closed": false,
+        "vertices": [
+          {
+            "x": 0,
+            "y": 200,
+            "bulge": 0.3996803834887158,
+            "startWidth": 2,
+            "endWidth": 4
+          },
+          {
+            "x": 125,
+            "y": 205,
+            "bulge": -0.3325950526188697,
+            "startWidth": 4,
+            "endWidth": 6
+          },
+          {
+            "x": 200,
+            "y": 200,
+            "bulge": 0,
+            "startWidth": 0,
+            "endWidth": 0
+          }
+        ]
+      },
+      {
+        "handle": "28F",
+        "layer": "F027_ARC",
+        "type": "ARC",
+        "colorIndex": 1,
+        "lineweight": 50,
+        "lineType": "ByLayer",
+        "center": {
+          "x": 312.7957603151085,
+          "y": 289.1907858201167
+        },
+        "radius": 113.3125,
+        "startAngle": 0.1399753574102913,
+        "endAngle": 3.04605442683294
+      },
+      {
+        "handle": "290",
+        "layer": "F027_ARC_CENTER",
+        "type": "ARC",
+        "colorIndex": 1,
+        "lineweight": 50,
+        "lineType": "ByLayer",
+        "center": {
+          "x": 600,
+          "y": 300
+        },
+        "radius": 100,
+        "startAngle": 0,
+        "endAngle": 3.141592653589793
+      },
+      {
+        "handle": "291",
+        "layer": "F027_ELLIPSE",
+        "type": "ELLIPSE",
+        "colorIndex": 1,
+        "lineweight": 50,
+        "lineType": "ByLayer",
+        "center": {
+          "x": 909.8520048727912,
+          "y": 298.9222357577537
+        },
+        "majorAxisEndPoint": {
+          "x": 115.564843901568,
+          "y": 2.120881991279924
+        },
+        "axisRatio": 0.4447230399796187,
+        "startAngle": 0.077190120252004,
+        "endAngle": 1.647986447046899
+      },
+      {
+        "handle": "292",
+        "layer": "F027_WRAP",
+        "type": "ELLIPSE",
+        "colorIndex": 1,
+        "lineweight": 50,
+        "lineType": "ByLayer",
+        "center": {
+          "x": 1216.321187837476,
+          "y": 324.7416264179425
+        },
+        "majorAxisEndPoint": {
+          "x": -95.68145757452922,
+          "y": 29.35210104127374
+        },
+        "axisRatio": 0.5765640483335496,
+        "startAngle": 2.34189053858233,
+        "endAngle": 3.841890538582326
+      },
+      {
+        "handle": "293",
+        "layer": "F027_ELLIPSE_MID",
+        "type": "ELLIPSE",
+        "colorIndex": 1,
+        "lineweight": 50,
+        "lineType": "ByLayer",
+        "center": {
+          "x": 1500,
+          "y": 300
+        },
+        "majorAxisEndPoint": {
+          "x": 100,
+          "y": 0
+        },
+        "axisRatio": 0.5,
+        "startAngle": 0,
+        "endAngle": 1.570796326794896
+      },
+      {
+        "handle": "294",
+        "layer": "F027_FULL",
+        "type": "ELLIPSE",
+        "colorIndex": 1,
+        "lineweight": 50,
+        "lineType": "ByLayer",
+        "center": {
+          "x": 1825,
+          "y": 305
+        },
+        "majorAxisEndPoint": {
+          "x": 100,
+          "y": 0
+        },
+        "axisRatio": 0.5,
+        "startAngle": 0,
+        "endAngle": 6.283185307179586
+      },
+      {
+        "handle": "295",
+        "layer": "F027_CIRCLE",
+        "type": "CIRCLE",
+        "colorIndex": 1,
+        "lineweight": 50,
+        "lineType": "ByLayer",
+        "center": {
+          "x": 2125,
+          "y": 305
+        },
+        "radius": 100
+      },
+      {
+        "handle": "296",
+        "layer": "F027_INDIVIDUAL",
+        "type": "LINE",
+        "colorIndex": 1,
+        "lineweight": 50,
+        "lineType": "ByLayer",
+        "vertices": [
+          {
+            "x": 25,
+            "y": 505,
+            "bulge": 0,
+            "startWidth": 0,
+            "endWidth": 0
+          },
+          {
+            "x": 125,
+            "y": 505,
+            "bulge": 0,
+            "startWidth": 0,
+            "endWidth": 0
+          }
+        ]
+      },
+      {
+        "handle": "297",
+        "layer": "F027_GLOBAL",
+        "type": "LINE",
+        "colorIndex": 1,
+        "lineweight": 50,
+        "lineType": "ByLayer",
+        "vertices": [
+          {
+            "x": 0,
+            "y": 600,
+            "bulge": 0,
+            "startWidth": 0,
+            "endWidth": 0
+          },
+          {
+            "x": 125,
+            "y": 605,
+            "bulge": 0,
+            "startWidth": 0,
+            "endWidth": 0
+          }
+        ]
+      },
+      {
+        "handle": "298",
+        "layer": "F027_GLOBAL",
+        "type": "LINE",
+        "colorIndex": 1,
+        "lineweight": 50,
+        "lineType": "ByLayer",
+        "vertices": [
+          {
+            "x": 0,
+            "y": 650,
+            "bulge": 0,
+            "startWidth": 0,
+            "endWidth": 0
+          },
+          {
+            "x": 125,
+            "y": 655,
+            "bulge": 0,
+            "startWidth": 0,
+            "endWidth": 0
+          }
+        ]
+      },
+      {
+        "handle": "299",
+        "layer": "F027_LOCKED",
+        "type": "LINE",
+        "colorIndex": 1,
+        "lineweight": 50,
+        "lineType": "ByLayer",
+        "vertices": [
+          {
+            "x": 0,
+            "y": 750,
+            "bulge": 0,
+            "startWidth": 0,
+            "endWidth": 0
+          },
+          {
+            "x": 100,
+            "y": 750,
+            "bulge": 0,
+            "startWidth": 0,
+            "endWidth": 0
+          }
+        ]
+      }
+    ],
+    "fullStateMatchesNative": true
+  },
+  "certificationAuthority": true,
+  "workflow": "owned AutoCAD 2024.1.2 desktop STRETCH crossing-window/cpolygon matrix + independently parsed DXF",
+  "matrixScriptSha256": "fc67b1f3ebdca8867a0d879e4469cd26d620c470da6db633a64fd51a7467c0cc",
+  "runnerSha256": "5401416bb3ef114e84f4130e9fe3f8be023534bc82411cb7ae31c75e00d751a2",
+  "processOwnershipSha256": "9f1d48d1b1058a631ef8d6df03c1beedc836688c06e0658a302ba424d654937d",
+  "escapeHelperSha256": "e86d024998ce09c5c0d14a7dde9be1ce5bc3caa0fde4021e2f8d38c594e358b6",
+  "observedAt": "2026-08-30T10:49:34.511Z"
+}

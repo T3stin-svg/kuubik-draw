@@ -1,4 +1,4 @@
-# Implementation status — 2026-08-29
+# Implementation status — 2026-08-30
 
 ## Shipped foundation
 
@@ -40,6 +40,14 @@
   ellipse/rational-spline geometry. Chromium, production DXF/KDRAW1,
   independent read-back, secondary pinned LibreCAD/FreeCAD oracles and an
   owned AutoCAD 2024 desktop live matrix all pass locally.
+- F-024 FILLET, F-025 CHAMFER and F-026 BREAK are certified with command
+  options, typed geometry, atomic Undo/Redo, Chromium, owned AutoCAD Desktop,
+  independent DXF/KDRAW1 read-back and zero-open-P0/P1 reviews.
+- F-027 STRETCH is locally certified for physical crossing window/polygon,
+  partial and whole-object moves, locked refusal, preview=commit and exact
+  Undo/Redo. AutoCAD source/result state and the independently parsed 14-entity
+  DXF are checked field-by-field; every nested stage/source receipt is current.
+  Independent review closed at 0 P0 / 0 P1.
 - F-097 Layout tabs mirrored with create/rename/copy-before-source/reorder/delete,
   independent viewport and paper-entity identifiers, atomic Undo/Redo, IndexedDB reload,
   production KDRAW1 read-back and an owned AutoCAD native-DWG reopen workflow.
@@ -81,10 +89,10 @@
 
 ## Certified state and explicit remaining limits
 
-- the new application is locally certified through F-026 at **27/133**
-  (**20.3% raw / 23.7% weighted**) with independent `0 P0 / 0 P1` review;
-- all 22 legacy-certified rows and the first five new rows F-022/F-023/F-024/F-025/F-026
-  are publicly mirrored;
+- the new application is locally certified through F-027 at **28/133**
+  (**21.1% raw / 24.7% weighted**) with independent `0 P0 / 0 P1` review;
+- all 22 legacy-certified rows and F-022…F-026 are publicly mirrored; F-027 is
+  locally mirrored and awaits its exact public-commit CI;
 - spline/NURBS rendering is rejected rather than drawn as a misleading control polygon;
 - Unicode PDF text is rejected until a font-embedding path exists;
 - LibreCAD/FreeCAD fixtures pass locally, but the machine has no signed OS
@@ -94,14 +102,15 @@
 - native DWG/DWT/XREF and PC3/CTB/STB remain deferred;
 - no preview or production deployment has been made.
 
-The F-026 final local gate passed 69 test files / 438 Vitest tests,
-68 mutation tests, 43 DXF tests, 20 PDF tests and 98 Chromium E2E tests.
-GitHub Actions run `33293697704` passed `fast` in 54 seconds and full `verify`
-in 3 minutes 26 seconds on the exact public commit `d0d6421`. Protected-runner
+The F-027 full local gate passes 70 test files / 443 Vitest tests,
+68 mutation tests, 43 DXF tests, 20 PDF tests and 99 Chromium E2E tests,
+plus production build, license, public-tree and Gitleaks 8.30.1 with zero
+findings across 919 source files. F-027 exact-commit public CI is pending.
+F-026 commit `b3474d3` passed GitHub Actions run `33305223655`. Protected-runner
 jobs `required-oracles`, `autocad-2024-certification` and `row-certification`
 were honestly skipped; the checked-in evidence had already passed the local
 mandatory ratchet and independent review. The checked-in licensed AutoCAD evidence is
-fresh for F-016/F-017/F-018/F-024/F-098/F-100/F-101/F-105; LibreCAD/FreeCAD
+fresh for F-016/F-017/F-018/F-024/F-027/F-098/F-100/F-101/F-105; LibreCAD/FreeCAD
 remain secondary oracles and report `FIXTURE_PASS_NOT_NETWORK_ISOLATED`, not
 certification authority.
 
@@ -112,7 +121,9 @@ F-102 native AutoCAD live run, schema-v3 exact stage receipts, real F-003
 Chromium DXF capture and cross-platform content-address verification. F-025
 CHAMFER has its public-green chain. F-026 BREAK now has a complete
 AutoCAD/Chromium/DXF/KDRAW1/oracle chain, content-address ratchet and
-zero-open-P0/P1 review; exact-commit public CI is the remaining release check.
-The next functional row is F-027 STRETCH. F-108 native
+zero-open-P0/P1 review and public-green exact commit. F-027 STRETCH now has the
+same complete chain and zero-open-P0/P1 review; exact-commit public CI is the
+remaining release check. The next highest-impact small Modify row is F-030
+MATCHPROP; F-028 LENGTHEN and F-029 ALIGN remain in the same P1 wave. F-108 native
 PC3/CTB/STB remains blocked on a licensed adapter. No production deployment is
 authorized.

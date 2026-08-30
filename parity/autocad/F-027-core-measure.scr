@@ -88,6 +88,61 @@
 (f027:print-code "ELLIPSE_ROTATED_START" f027:ellipseRotated 41)
 (f027:print-code "ELLIPSE_ROTATED_END" f027:ellipseRotated 42)
 
+;; A partial ellipse exposes center/start/mid/end stretch points through the
+;; native API. Exercise the non-endpoint midpoint through the real command.
+(setq f027:ellipseMid (entmakex '((0 . "ELLIPSE") (100 . "AcDbEntity") (8 . "F027_ELLIPSE") (100 . "AcDbEllipse") (10 2700.0 0.0 0.0) (11 100.0 0.0 0.0) (210 0.0 0.0 1.0) (40 . 0.5) (41 . 0.0) (42 . 1.570796326794897))))
+(command "F027POINTS")
+(command "_.REGEN")
+(command "_.ZOOM" "_Object" f027:ellipseMid "")
+(command "_.STRETCH" "_Crossing" '(2760 25 0) '(2780 45 0) "" '(0 0 0) '(25 5 0))
+(f027:print-code "ELLIPSE_MID_CENTER" f027:ellipseMid 10)
+(f027:print-code "ELLIPSE_MID_MAJOR" f027:ellipseMid 11)
+(f027:print-code "ELLIPSE_MID_RATIO" f027:ellipseMid 40)
+(f027:print-code "ELLIPSE_MID_START" f027:ellipseMid 41)
+(f027:print-code "ELLIPSE_MID_END" f027:ellipseMid 42)
+
+;; The arc center is not returned by GetStretchPoints. Select a window which
+;; crosses the arc and contains its center but excludes both endpoints.
+(setq f027:arcCenter (entmakex '((0 . "ARC") (100 . "AcDbEntity") (8 . "F027_ARC") (100 . "AcDbCircle") (10 3000.0 0.0 0.0) (40 . 100.0) (210 0.0 0.0 1.0) (100 . "AcDbArc") (50 . 0.0) (51 . 3.141592653589793))))
+(command "F027POINTS")
+(command "_.REGEN")
+(command "_.ZOOM" "_Object" f027:arcCenter "")
+(command "_.STRETCH" "_Crossing" '(2990 -10 0) '(3010 110 0) "" '(0 0 0) '(25 5 0))
+(f027:print-code "ARC_CENTER_ONLY_CENTER" f027:arcCenter 10)
+(f027:print-code "ARC_CENTER_ONLY_RADIUS" f027:arcCenter 40)
+(f027:print-code "ARC_CENTER_ONLY_START" f027:arcCenter 50)
+(f027:print-code "ARC_CENTER_ONLY_END" f027:arcCenter 51)
+
+;; Circles move when the crossing selection both selects the curve and contains
+;; the sole native stretch point at the center.
+(setq f027:circleCenter (entmakex '((0 . "CIRCLE") (100 . "AcDbEntity") (8 . "F027_CIRCLE") (100 . "AcDbCircle") (10 3300.0 0.0 0.0) (40 . 100.0) (210 0.0 0.0 1.0))))
+(command "F027POINTS")
+(command "_.REGEN")
+(command "_.ZOOM" "_Object" f027:circleCenter "")
+(command "_.STRETCH" "_Crossing" '(3290 -10 0) '(3410 10 0) "" '(0 0 0) '(25 5 0))
+(f027:print-code "CIRCLE_CENTER_CROSS_CENTER" f027:circleCenter 10)
+(f027:print-code "CIRCLE_CENTER_CROSS_RADIUS" f027:circleCenter 40)
+
+(setq f027:circleHalf (entmakex '((0 . "CIRCLE") (100 . "AcDbEntity") (8 . "F027_CIRCLE") (100 . "AcDbCircle") (10 4200.0 0.0 0.0) (40 . 100.0) (210 0.0 0.0 1.0))))
+(command "F027POINTS")
+(command "_.REGEN")
+(command "_.ZOOM" "_Object" f027:circleHalf "")
+(command "_.STRETCH" "_Crossing" '(4100 -150 0) '(4250 150 0) "" '(0 0 0) '(25 5 0))
+(f027:print-code "CIRCLE_HALF_CENTER" f027:circleHalf 10)
+(f027:print-code "CIRCLE_HALF_RADIUS" f027:circleHalf 40)
+
+;; Preserve an ellipse arc whose parameter interval crosses 2*pi.
+(setq f027:ellipseWrapped (entmakex '((0 . "ELLIPSE") (100 . "AcDbEntity") (8 . "F027_ELLIPSE") (100 . "AcDbEllipse") (10 3900.0 0.0 0.0) (11 100.0 0.0 0.0) (210 0.0 0.0 1.0) (40 . 0.5) (41 . 5.5) (42 . 7.0))))
+(command "F027POINTS")
+(command "_.REGEN")
+(command "_.ZOOM" "_Object" f027:ellipseWrapped "")
+(command "_.STRETCH" "_Crossing" '(3965 20 0) '(3985 45 0) "" '(0 0 0) '(25 5 0))
+(f027:print-code "ELLIPSE_WRAPPED_CENTER" f027:ellipseWrapped 10)
+(f027:print-code "ELLIPSE_WRAPPED_MAJOR" f027:ellipseWrapped 11)
+(f027:print-code "ELLIPSE_WRAPPED_RATIO" f027:ellipseWrapped 40)
+(f027:print-code "ELLIPSE_WRAPPED_START" f027:ellipseWrapped 41)
+(f027:print-code "ELLIPSE_WRAPPED_END" f027:ellipseWrapped 42)
+
 (setvar "CLAYER" "F027_FULL_ELLIPSE")
 (setq f027:ellipseFullEdge (entmakex '((0 . "ELLIPSE") (100 . "AcDbEntity") (8 . "F027_FULL_ELLIPSE") (100 . "AcDbEllipse") (10 2100.0 0.0 0.0) (11 100.0 0.0 0.0) (210 0.0 0.0 1.0) (40 . 0.5) (41 . 0.0) (42 . 6.283185307179586))))
 (command "F027POINTS")
@@ -106,6 +161,15 @@
 (f027:print-code "ELLIPSE_FULL_CENTER_MAJOR" f027:ellipseFullCenter 11)
 (f027:print-code "ELLIPSE_FULL_CENTER_RATIO" f027:ellipseFullCenter 40)
 
+(setq f027:ellipseFullCenterEdge (entmakex '((0 . "ELLIPSE") (100 . "AcDbEntity") (8 . "F027_FULL_ELLIPSE") (100 . "AcDbEllipse") (10 3600.0 0.0 0.0) (11 100.0 0.0 0.0) (210 0.0 0.0 1.0) (40 . 0.5) (41 . 0.0) (42 . 6.283185307179586))))
+(command "F027POINTS")
+(command "_.REGEN")
+(command "_.ZOOM" "_Object" f027:ellipseFullCenterEdge "")
+(command "_.STRETCH" "_Crossing" '(3590 -10 0) '(3710 10 0) "" '(0 0 0) '(25 5 0))
+(f027:print-code "ELLIPSE_FULL_CENTER_EDGE_CENTER" f027:ellipseFullCenterEdge 10)
+(f027:print-code "ELLIPSE_FULL_CENTER_EDGE_MAJOR" f027:ellipseFullCenterEdge 11)
+(f027:print-code "ELLIPSE_FULL_CENTER_EDGE_RATIO" f027:ellipseFullCenterEdge 40)
+
 (setvar "CLAYER" "F027_EDGE_CIRCLE")
 (command "_.CIRCLE" '(900 0 0) 100)
 (setq f027:edgeCircle (entlast))
@@ -118,6 +182,11 @@
 (command "_.STRETCH" f027:set "" '(0 0 0) '(25 5 0))
 (f027:print-code "INDIVIDUAL_START" f027:individual 10)
 (f027:print-code "INDIVIDUAL_END" f027:individual 11)
+(setq f027:cpolygon (entmakex '((0 . "LINE") (100 . "AcDbEntity") (8 . "F027_LINE") (100 . "AcDbLine") (10 0.0 900.0 0.0) (11 100.0 900.0 0.0) (210 0.0 0.0 1.0))))
+(command "_.ZOOM" "_Object" f027:cpolygon "")
+(command "_.STRETCH" "_CPolygon" '(90 890 0) '(110 890 0) '(110 910 0) '(90 910 0) "" "" '(0 0 0) '(25 5 0))
+(f027:print-code "CPOLYGON_START" f027:cpolygon 10)
+(f027:print-code "CPOLYGON_END" f027:cpolygon 11)
 (f027:print-value "ACADVER" (getvar "ACADVER"))
 (f027:print-value "DONE" 1)
 (princ)

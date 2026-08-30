@@ -73,6 +73,7 @@
     "parity:f027:readback": "npm run build -w @kuubik/cad-core && npm run build -w @kuubik/cad-dxf && npx vite-node tools/parity/run-f027-readback.mjs",
     "parity:f027:browser-artifact": "node tools/parity/capture-f027-browser.mjs",
     "parity:f027:oracles": "npm run parity:f027:readback && node tools/oracles/run-f027-oracles.mjs",
+    "parity:f027:autocad": "node tools/autocad/run-f027.mjs",
     "parity:f027:autocad-core": "node tools/autocad/run-f027-core.mjs",
     "parity:f027:cross-evidence": "node tools/parity/check-f027-cross-evidence.mjs",
     "parity:f020-f021:runner-evidence": "node tools/parity/check-f020-f021-runner-evidence.mjs",

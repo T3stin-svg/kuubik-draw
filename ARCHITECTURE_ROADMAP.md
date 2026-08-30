@@ -33,23 +33,26 @@ selles teekaardis teadlikult `Won't have`.
 
 ## Now
 
-1. F-026 on lokaalselt sertifitseeritud seisul **27/133 · 20,3% raw / 23,7% weighted**;
+1. F-027 on lokaalselt sertifitseeritud seisul **28/133 · 21,1% raw / 24,7% weighted**;
    AutoCAD/Chromium/DXF/KDRAW1/oracle risttõend ja sõltumatu lõppreview
    `0 P0 / 0 P1` on rohelised. Exact commit'i avalik CI on veel lõpetamisel.
-2. BREAK selection-first/First, ühe- ja kahepunktiline katkestus, värsked
+2. STRETCH crossing window/polygon, osaline ja whole-object liikumine, täielik
+   14-objektiline native/DXF state, nested SHA-receipt'id ja atomic Undo/Redo
+   kasutavad fail-closed ratchet'it. Sõltumatu review on `0 P0 / 0 P1`.
+3. BREAK selection-first/First, ühe- ja kahepunktiline katkestus, värsked
    `BREAK + @`/`BREAKATPOINT` ellipse/spline fixture'id, täielik native state,
    nested SHA-receipt'id ning atomic Undo/Redo kasutavad fail-closed ratchet'it.
-3. Quick/Standard TRIM ja EXTEND, closed bulge/width polyline, hidden/locked target,
+4. Quick/Standard TRIM ja EXTEND, closed bulge/width polyline, hidden/locked target,
    ignored HATCH loop, nested block layer-semantika ja rational SPLINE läbivad
    AutoCAD 2024.1.2, Chromiumi ning sõltumatu DXF/KDRAW1 read-back'i.
-4. F-023 feature-commit `1f4a96c` ja CI portability fix `7e252de` läbisid
+5. F-023 feature-commit `1f4a96c` ja CI portability fix `7e252de` läbisid
    GitHub Actions run'i `33260160549`; sõltumatu lõppreview oli `0 P0 / 0 P1`.
-5. Architecture-efficiency gate on avalikult suletud: MOVE…TRIM kasutavad
+6. Architecture-efficiency gate on avalikult suletud: MOVE…TRIM kasutavad
    ühist workflow-moodulit, 23 sertifitseeritud rida on deklaratiivses
    parity-kit'is ning täpne ratchet töötab võrdselt Windowsis ja Linuxis.
    Põhilaine commit `da45a56`, lõpp-HEAD `d097b34` ja GitHub Actions run
    `33250270350` läbisid fast- ja täieliku certification-värava.
-6. F-023 laine schema-v4 package-ratchet seob iga rea ainult tema transitiivsete
+7. F-023 laine schema-v4 package-ratchet seob iga rea ainult tema transitiivsete
    npm authority-etappidega, hoides dependency- ja globaalse CI-pinna eraldi
    fail-closed kontrollis. Ühekordne v3→v4 receipt tõendab, et varasema 23 rea
    etapikäsud ning `package-lock.json` ei muutunud. Kõik CI checkout-stepid
@@ -101,17 +104,17 @@ parity/content-address-, litsentsi- ja turvaväravad. Sõltumatu lõppreview oli
 `0 P0 / 0 P1`. Tingimuslikud self-hosted AutoCAD/oracle job'id jäid selle push'i
 jaoks ausalt `skipped`; checked-in native tõendeid kontrolliti üldises ratchet'is.
 
-## Next — F-027 STRETCH
+## Next — F-030 MATCHPROP
 
-Sulgeda olemasolev F-027 kandidaat eraldatud omatud AutoCAD 2024.1.2 Desktopi
-live-maatriksiga. Kontrollida crossing window/polygon valikut, lõpp-endpoint'i
-liikumist, üle `2π` parameetrimähist, täisellipsi no-change/refusal olekut,
-properties/handle'e, atomic Undo/Redo'd ning Chromiumi ja DXF/KDRAW1 tulemuse
-täpset risttõendit. Skoor muutub ainult pärast `0 P0 / 0 P1` review'd.
+Sulgeda järgmise kõrgeima mõju ja väikese mahuga P1 reana F-030 `MATCHPROP`
+(kaal 5, maht S): AutoCADi valikute/omaduste maatriks, typed property transfer,
+locked/hidden/unsupported käitumine, preview/commit, atomic Undo/Redo,
+Chromium, DXF/KDRAW1 ja sõltumatu review. F-028 `LENGTHEN` ning F-029 `ALIGN`
+järgnevad samas Modify-laines.
 
 ## Later
 
-1. Sertifitseerida F-027 `STRETCH` ning jätkata mõjupõhises P0 → P1 → P2 järjekorras
+1. Sertifitseerida järgmised Modify-read mõjupõhises P0 → P1 → P2 järjekorras
    kuni 133/133.
 2. Native DWG/DWT/XREF ja PC3/CTB/STB ainult litsentsitud ODA/RealDWG teega.
 3. Pärast funktsionaalset 133/133 väravat viia kõik viis visuaalkategooriat

@@ -1,6 +1,6 @@
-# F-027 STRETCH candidate scope
+# F-027 STRETCH certification scope
 
-Status: **implemented candidate; not certified; score unchanged**.
+Status: **locally certified at 1.00; independent review 0 P0 / 0 P1; exact public-commit CI pending**.
 
 Benchmark: AutoCAD 2024.1.2 on Windows, 2D Drafting & Annotation.
 
@@ -21,18 +21,16 @@ Autodesk's STRETCH contract says crossing-enclosed endpoints and vertices move w
 - <https://help.autodesk.com/cloudhelp/2026/ENU/AutoCAD-Core/files/GUID-F000A502-D39E-4D31-A8E2-4A626473FB72.htm>
 - <https://help.autodesk.com/cloudhelp/2022/ENU/OARX-ManagedRefGuide/files/OARX-ManagedRefGuide-Autodesk_AutoCAD_DatabaseServices_Entity_MoveStretchPointsAt_IntegerCollection_Vector3d.html>
 
-## Known parity gaps
+## Closed evidence gaps
 
-1. The full workflow has not yet run in an isolated, owned AutoCAD 2024.1.2 Desktop process.
-2. Independent review has not yet reached `0 P0 / 0 P1`.
+- A newly owned and authenticated AutoCAD 2024.1.2 Desktop process completed the full matrix without touching the two pre-existing AutoCAD processes.
+- Source and result state is captured for every native entity. Typed predicates verify all vertices, bulges, widths, closed state, ellipse parameters, handles, layers and common properties.
+- The independently parsed AutoCAD DXF contains exactly the same complete 14-entity final state.
+- Every nested browser artifact and every browser, production, Desktop, Core and oracle source receipt is rebound to current bytes and byte lengths.
+- Independent review found `0 P0 / 0 P1` after the three initial P1 evidence gaps were fixed and rechecked.
 
-The current cross-evidence receipt is deliberately labeled `CANDIDATE_PASS_DESKTOP_AND_REVIEW_REQUIRED`; it cannot be consumed as a certification receipt.
-
-The final Desktop/review matrix must pay special attention to end-endpoint
-movement, parameter spans that wrap past `2π`, and AutoCAD's full-ellipse
-no-change selection/status wording. These are review targets, not certified
-claims in the current candidate.
+The cross-evidence receipt is `PASS`. LibreCAD and FreeCAD remain explicitly non-authoritative secondary oracles.
 
 ## Certification gate
 
-F-027 must not enter `certifiedIds` or `local-certifications.json` until every gap above is closed, all existing 26 certified rows retain their SHA/evidence ratchet, the public CI is green on the exact candidate commit, and the score is independently recalculated.
+F-027 may enter the local score ratchet only while every check above remains green. The release wave is complete only after the exact public commit passes GitHub Actions; no production deployment is authorized by this certification.

@@ -81,29 +81,39 @@ test("F-027 STRETCH crossing preview equals atomic commit, Undo/Redo and file re
     { kind: "line", handle: "10", layerId: "0", start: { x: 0, y: 0 }, end: { x: 1000, y: 0 }, appearance: { color: "#ff0000", lineweightMm: 0.35 }, extensionData: { rowId: "F-027" } },
     { kind: "circle", handle: "20", layerId: "0", center: { x: 800, y: 0 }, radius: 50 },
     { kind: "circle", handle: "30", layerId: "0", center: { x: 350, y: 0 }, radius: 100 },
+    { kind: "polyline", handle: "40", layerId: "0", closed: false, vertices: [
+      { x: 0, y: 400, bulge: 0.5, startWidth: 2, endWidth: 4 },
+      { x: 1000, y: 400, bulge: -0.25, startWidth: 4, endWidth: 6 },
+      { x: 2000, y: 400, startWidth: 6, endWidth: 8 },
+    ] },
   ];
   await seedLocalDocument(page, source);
 
-  await page.getByLabel("STRETCH crossing").fill("400,-100; 1100,100 | 790,-10; 810,-10; 810,10; 790,10");
+  await page.getByLabel("STRETCH crossing").fill("400,-100; 1100,100 | 790,-10; 810,-10; 810,10; 790,10 | 900,300; 1100,500");
   await page.getByLabel("STRETCH baaspunkt").fill("0,0");
   await page.getByLabel("STRETCH sihtpunkt").fill("@250,50");
-  await expect(page.getByTestId("stretch-preview")).toHaveText("STRETCH eelvaade: 2 tulemust · 2 sammu · Δ250,50");
-  await expect(page.getByTestId("stretch-preview")).toHaveAttribute("data-hidden-source-count", "2");
+  await expect(page.getByTestId("stretch-preview")).toHaveText("STRETCH eelvaade: 3 tulemust · 3 sammu · Δ250,50");
+  await expect(page.getByTestId("stretch-preview")).toHaveAttribute("data-hidden-source-count", "3");
 
   await page.getByRole("button", { name: "STRETCH Undo" }).click();
-  await expect(page.getByLabel("STRETCH crossing")).toHaveValue("400,-100; 1100,100");
+  await expect(page.getByLabel("STRETCH crossing")).toHaveValue("400,-100; 1100,100 | 790,-10; 810,-10; 810,10; 790,10");
   expect((await readDocument(page)).revision).toBe(0);
 
-  await page.getByLabel("STRETCH crossing").fill("400,-100; 1100,100 | 790,-10; 810,-10; 810,10; 790,10");
+  await page.getByLabel("STRETCH crossing").fill("400,-100; 1100,100 | 790,-10; 810,-10; 810,10; 790,10 | 900,300; 1100,500");
   await page.getByRole("button", { name: "STRETCH", exact: true }).click();
-  await expect(page.getByText("1 venitatud ja 1 liigutatud ühe Undo-operatsioonina")).toBeVisible();
+  await expect(page.getByText("2 venitatud ja 1 liigutatud ühe Undo-operatsioonina")).toBeVisible();
   const committed = await readDocument(page);
   expect(committed.revision).toBe(1);
   expect(committed.entities.find((entity) => entity.handle === "10")).toMatchObject({ start: { x: 0, y: 0 }, end: { x: 1250, y: 50 }, appearance: source.entities[0]!.appearance, extensionData: source.entities[0]!.extensionData });
   expect(committed.entities.find((entity) => entity.handle === "20")).toMatchObject({ kind: "circle", center: { x: 1050, y: 50 }, radius: 50 });
   expect(committed.entities.find((entity) => entity.handle === "30")).toEqual(source.entities[2]);
+  expect(committed.entities.find((entity) => entity.handle === "40")).toMatchObject({ kind: "polyline", vertices: [
+    { x: 0, y: 400, bulge: expect.closeTo(0.39968038348871576, 14), startWidth: 2, endWidth: 4 },
+    { x: 1250, y: 450, bulge: expect.closeTo(-0.3325950526188697, 14), startWidth: 4, endWidth: 6 },
+    { x: 2000, y: 400, startWidth: 6, endWidth: 8 },
+  ] });
   const [operation] = await readOperations(page);
-  expect(operation).toMatchObject({ commandId: "STRETCH", targetHandles: ["10", "20"], resultHandles: ["10", "20"], args: { delta: { x: 250, y: 50 } } });
+  expect(operation).toMatchObject({ commandId: "STRETCH", targetHandles: ["10", "20", "40"], resultHandles: ["10", "20", "40"], args: { delta: { x: 250, y: 50 } } });
 
   let download = page.waitForEvent("download");
   await page.getByRole("button", { name: "DXF eksport" }).click();
@@ -115,6 +125,11 @@ test("F-027 STRETCH crossing preview equals atomic commit, Undo/Redo and file re
     vertices: [{ x: 0, y: 0 }, { x: 1250, y: 50 }],
   });
   expect(parsed?.entities.find((entity) => entity.handle === "20")).toMatchObject({ type: "CIRCLE", center: { x: 1050, y: 50 }, radius: 50 });
+  expect(parsed?.entities.find((entity) => entity.handle === "40")?.vertices).toMatchObject([
+    { x: 0, y: 400, bulge: expect.closeTo(0.39968038348871576, 14), startWidth: 2, endWidth: 4 },
+    { x: 1250, y: 450, bulge: expect.closeTo(-0.3325950526188697, 14), startWidth: 4, endWidth: 6 },
+    { x: 2000, y: 400, startWidth: 6, endWidth: 8 },
+  ]);
 
   download = page.waitForEvent("download");
   await page.getByRole("button", { name: "KDraw eksport" }).click();
@@ -133,6 +148,47 @@ test("F-027 STRETCH crossing preview equals atomic commit, Undo/Redo and file re
   await capture("F-027-browser.dxf", dxfBytes);
   await capture("F-027-browser.kdraw", kdrawBytes);
   await capture("F-027-browser-matrix.json", { rowId: "F-027", source, committed, operation, restored: restored.document, undoRestored, redone, consoleErrors, status: "PASS" });
+});
+
+test("F-027 STRETCH browser matches native arc-center, ellipse-midpoint, wrapped and whole-anchor semantics", async ({ page }) => {
+  const consoleErrors: string[] = [];
+  page.on("console", (message) => { if (message.type() === "error") consoleErrors.push(message.text()); });
+  page.on("pageerror", (error) => consoleErrors.push(error.message));
+  const source = createEmptyDocument({ documentId: "local", now: "2026-08-30T09:03:00.000Z" });
+  source.entities = [
+    { kind: "arc", handle: "A1", layerId: "0", center: { x: 0, y: 1000 }, radius: 100, startAngleRad: 0, endAngleRad: Math.PI, counterClockwise: true },
+    { kind: "ellipse", handle: "E1", layerId: "0", center: { x: 500, y: 1000 }, majorAxis: { x: 100, y: 0 }, ratio: 0.5, startParameter: 0, endParameter: Math.PI / 2 },
+    { kind: "ellipse", handle: "E2", layerId: "0", center: { x: 1000, y: 1000 }, majorAxis: { x: 100, y: 0 }, ratio: 0.5, startParameter: 5.5, endParameter: 7 },
+    { kind: "ellipse", handle: "E3", layerId: "0", center: { x: 1500, y: 1000 }, majorAxis: { x: 100, y: 0 }, ratio: 0.5, startParameter: 0, endParameter: Math.PI * 2 },
+    { kind: "circle", handle: "C1", layerId: "0", center: { x: 2000, y: 1000 }, radius: 100 },
+  ];
+  await seedLocalDocument(page, source);
+  await page.getByLabel("STRETCH crossing").fill([
+    "-10,990; 10,1110",
+    "560,1025; 580,1045",
+    "1065,1020; 1085,1045",
+    "1490,990; 1610,1010",
+    "1990,990; 2110,1010",
+  ].join(" | "));
+  await page.getByLabel("STRETCH baaspunkt").fill("0,0");
+  await page.getByLabel("STRETCH sihtpunkt").fill("@25,5");
+  await expect(page.getByTestId("stretch-preview")).toHaveText("STRETCH eelvaade: 3 tulemust · 3 sammu · Δ25,5");
+  await page.getByRole("button", { name: "STRETCH", exact: true }).click();
+  const committed = await readDocument(page);
+  expect(committed.entities.find((entity) => entity.handle === "A1")).toEqual(source.entities[0]);
+  expect(committed.entities.find((entity) => entity.handle === "E1")).toEqual(source.entities[1]);
+  expect(committed.entities.find((entity) => entity.handle === "E2")).toMatchObject({
+    kind: "ellipse",
+    center: { x: expect.closeTo(1016.321187837475, 10), y: expect.closeTo(1024.7416264179425, 10) },
+    majorAxis: { x: expect.closeTo(-95.68145757452969, 10), y: expect.closeTo(29.35210104127352, 10) },
+    ratio: expect.closeTo(0.576564048333548, 10),
+    startParameter: expect.closeTo(2.341890538582327, 10),
+    endParameter: expect.closeTo(3.841890538582323, 10),
+  });
+  expect(committed.entities.find((entity) => entity.handle === "E3")).toMatchObject({ kind: "ellipse", center: { x: 1525, y: 1005 }, majorAxis: { x: 100, y: 0 }, ratio: 0.5 });
+  expect(committed.entities.find((entity) => entity.handle === "C1")).toMatchObject({ kind: "circle", center: { x: 2025, y: 1005 }, radius: 100 });
+  expect(consoleErrors).toEqual([]);
+  await capture("F-027-browser-native-edge-matrix.json", { rowId: "F-027", source, committed, consoleErrors, status: "PASS" });
 });
 
 test("F-027 STRETCH quarter ellipse matches native geometry through browser and file outputs", async ({ page }) => {

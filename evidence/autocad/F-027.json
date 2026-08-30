@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-027",
+  "kind": "autocad",
+  "authority": "autocad-2024.1.2-live",
+  "status": "PASS",
+  "artifactSha256": "8bf8550fc1bf3066e4448e8f8cc3f32acf2db3621d0e3e3ebddfa16379e9b227",
+  "observedAt": "2026-08-30T10:49:34.511Z",
+  "workflow": "A newly owned and authenticated AutoCAD 2024.1.2 Desktop process runs STRETCH by crossing window, crossing polygon and individual selection over line, bulged/width polyline, arc, partial/wrapped/full ellipse and circle fixtures, plus locked-layer refusal and one atomic Undo/Redo group.",
+  "result": "All native source/result states, handles, layers and properties matched typed expectations; every vertex, bulge, width, closed flag and ellipse parameter was checked. The independently parsed 14-entity DXF matched the complete native final state and the exact pre-existing AutoCAD process set was restored.",
+  "artifact": "evidence/artifacts/F-027-autocad-readback.json"
+}

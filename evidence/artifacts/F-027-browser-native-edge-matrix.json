@@ -1,0 +1,229 @@
+{
+  "rowId": "F-027",
+  "source": {
+    "schemaVersion": 1,
+    "documentId": "local",
+    "revision": 0,
+    "units": {
+      "linear": "mm",
+      "displayPrecision": 4,
+      "angularPrecision": 6
+    },
+    "currentLayerId": "0",
+    "entities": [
+      {
+        "kind": "arc",
+        "handle": "A1",
+        "layerId": "0",
+        "center": {
+          "x": 0,
+          "y": 1000
+        },
+        "radius": 100,
+        "startAngleRad": 0,
+        "endAngleRad": 3.141592653589793,
+        "counterClockwise": true
+      },
+      {
+        "kind": "ellipse",
+        "handle": "E1",
+        "layerId": "0",
+        "center": {
+          "x": 500,
+          "y": 1000
+        },
+        "majorAxis": {
+          "x": 100,
+          "y": 0
+        },
+        "ratio": 0.5,
+        "startParameter": 0,
+        "endParameter": 1.5707963267948966
+      },
+      {
+        "kind": "ellipse",
+        "handle": "E2",
+        "layerId": "0",
+        "center": {
+          "x": 1000,
+          "y": 1000
+        },
+        "majorAxis": {
+          "x": 100,
+          "y": 0
+        },
+        "ratio": 0.5,
+        "startParameter": 5.5,
+        "endParameter": 7
+      },
+      {
+        "kind": "ellipse",
+        "handle": "E3",
+        "layerId": "0",
+        "center": {
+          "x": 1500,
+          "y": 1000
+        },
+        "majorAxis": {
+          "x": 100,
+          "y": 0
+        },
+        "ratio": 0.5,
+        "startParameter": 0,
+        "endParameter": 6.283185307179586
+      },
+      {
+        "kind": "circle",
+        "handle": "C1",
+        "layerId": "0",
+        "center": {
+          "x": 2000,
+          "y": 1000
+        },
+        "radius": 100
+      }
+    ],
+    "layers": [
+      {
+        "id": "0",
+        "name": "0",
+        "visible": true,
+        "frozen": false,
+        "locked": false,
+        "plottable": true
+      }
+    ],
+    "linetypes": [],
+    "textStyles": [],
+    "dimensionStyles": [],
+    "blocks": [],
+    "layouts": [
+      {
+        "id": "model",
+        "name": "Model",
+        "kind": "model",
+        "viewports": [],
+        "entities": []
+      }
+    ],
+    "attachments": [],
+    "metadata": {
+      "createdAt": "2026-08-30T09:03:00.000Z",
+      "updatedAt": "2026-08-30T09:03:00.000Z"
+    }
+  },
+  "committed": {
+    "schemaVersion": 1,
+    "documentId": "local",
+    "revision": 1,
+    "units": {
+      "linear": "mm",
+      "displayPrecision": 4,
+      "angularPrecision": 6
+    },
+    "currentLayerId": "0",
+    "entities": [
+      {
+        "kind": "arc",
+        "handle": "A1",
+        "layerId": "0",
+        "center": {
+          "x": 0,
+          "y": 1000
+        },
+        "radius": 100,
+        "startAngleRad": 0,
+        "endAngleRad": 3.141592653589793,
+        "counterClockwise": true
+      },
+      {
+        "kind": "ellipse",
+        "handle": "E1",
+        "layerId": "0",
+        "center": {
+          "x": 500,
+          "y": 1000
+        },
+        "majorAxis": {
+          "x": 100,
+          "y": 0
+        },
+        "ratio": 0.5,
+        "startParameter": 0,
+        "endParameter": 1.5707963267948966
+      },
+      {
+        "kind": "ellipse",
+        "handle": "E2",
+        "layerId": "0",
+        "center": {
+          "x": 1016.3211878374753,
+          "y": 1024.7416264179433
+        },
+        "majorAxis": {
+          "x": -95.68145757452919,
+          "y": 29.35210104127552
+        },
+        "ratio": 0.5765640483335516,
+        "startParameter": 2.3418905385823443,
+        "endParameter": 3.8418905385823443
+      },
+      {
+        "kind": "ellipse",
+        "handle": "E3",
+        "layerId": "0",
+        "center": {
+          "x": 1525,
+          "y": 1005
+        },
+        "majorAxis": {
+          "x": 100,
+          "y": 0
+        },
+        "ratio": 0.5,
+        "startParameter": 0,
+        "endParameter": 6.283185307179586
+      },
+      {
+        "kind": "circle",
+        "handle": "C1",
+        "layerId": "0",
+        "center": {
+          "x": 2025,
+          "y": 1005
+        },
+        "radius": 100
+      }
+    ],
+    "layers": [
+      {
+        "id": "0",
+        "name": "0",
+        "visible": true,
+        "frozen": false,
+        "locked": false,
+        "plottable": true
+      }
+    ],
+    "linetypes": [],
+    "textStyles": [],
+    "dimensionStyles": [],
+    "blocks": [],
+    "layouts": [
+      {
+        "id": "model",
+        "name": "Model",
+        "kind": "model",
+        "viewports": [],
+        "entities": []
+      }
+    ],
+    "attachments": [],
+    "metadata": {
+      "createdAt": "2026-08-30T09:03:00.000Z",
+      "updatedAt": "2026-08-30T10:53:04.982Z"
+    }
+  },
+  "consoleErrors": [],
+  "status": "PASS"
+}

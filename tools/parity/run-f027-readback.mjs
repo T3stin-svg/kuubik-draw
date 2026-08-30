@@ -103,7 +103,11 @@ const committed = structuredClone(session.document);
 
 const expected = [
   { ...source.entities[0], end: { x: 125, y: 5 } },
-  { ...source.entities[1], vertices: [source.entities[1].vertices[0], { ...source.entities[1].vertices[1], x: 125, y: 105 }, source.entities[1].vertices[2]] },
+  { ...source.entities[1], vertices: [
+    { ...source.entities[1].vertices[0], bulge: 0.3996803834887157 },
+    { ...source.entities[1].vertices[1], x: 125, y: 105, bulge: -0.3325950526188696 },
+    source.entities[1].vertices[2],
+  ] },
   { ...source.entities[2], center: { x: 105, y: 55 } },
   { ...source.entities[3], controlPoints: [source.entities[3].controlPoints[0], { x: 125, y: 305 }, source.entities[3].controlPoints[2]] },
   { ...source.entities[4], center: { x: 312.79576031510857, y: 489.1907858201166 }, radius: 113.31249999999996, startAngleRad: 0.13997535741029188, endAngleRad: 3.0460544268329395 },

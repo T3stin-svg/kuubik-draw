@@ -43,6 +43,9 @@ export const SOURCE_GROUPS = Object.freeze({
   "cad-break": Object.freeze([
     "packages/cad-core/src/break.ts",
   ]),
+  "cad-stretch": Object.freeze([
+    "packages/cad-core/src/stretch.ts",
+  ]),
   "physical-shift-input": Object.freeze([
     "tools/autocad/f022-shift-click.ps1",
   ]),
@@ -102,6 +105,35 @@ export const SOURCE_GROUPS = Object.freeze({
     "tools/oracles/probe-tools.mjs",
     "tools/oracles/run-fixtures.mjs",
     "tools/oracles/run-f026-oracles.mjs",
+  ]),
+  "f027-shared-tests": Object.freeze([
+    "apps/web/src/workflows/modify-command.test.ts",
+    "packages/cad-core/test/stretch.test.ts",
+    "packages/cad-core/test/f027-mutation-proven.test.ts",
+    "packages/cad-dxf/test/f027-stretch-roundtrip.test.ts",
+    "e2e/f027-stretch.spec.ts",
+    "parity/F-027-scope.md",
+    "parity/autocad/F-027-core-measure.scr",
+    "parity/expected/F-027.json",
+    "tools/autocad/F027StretchPoints.cs",
+    "tools/autocad/f027-runner.test.mjs",
+    "tools/autocad/f027-standard-matrix.ps1",
+    "tools/autocad/process-ownership.mjs",
+    "tools/autocad/run-f027.mjs",
+    "tools/autocad/run-f027-core.mjs",
+    "tools/autocad/send-escape.ps1",
+    "tools/parity/capture-f027-browser.mjs",
+    "tools/parity/build-f027-browser-readback.mjs",
+    "tools/parity/run-f027-readback.mjs",
+    "tools/parity/check-f027-cross-evidence.mjs",
+  ]),
+  "oracle-lab-f027": Object.freeze([
+    "tools/oracles/freecad-f027-headless.py",
+    "tools/oracles/network-isolation.mjs",
+    "tools/oracles/pins.json",
+    "tools/oracles/probe-tools.mjs",
+    "tools/oracles/run-fixtures.mjs",
+    "tools/oracles/run-f027-oracles.mjs",
   ]),
   "autocad-owned-process-failure-cleanup": Object.freeze([
     "tools/autocad/owned-process-failure-cleanup.test.mjs",
@@ -185,16 +217,10 @@ export const SOURCE_GROUPS = Object.freeze({
  * mappings separate prevents source coverage from being confused with a 1.00
  * score in parity/local-certifications.json.
  */
-export const UNCERTIFIED_SOURCE_ROWS = Object.freeze({
-  "apps/web/src/App.tsx": Object.freeze(["F-027"]),
-  "apps/web/src/workflows/modify-command.ts": Object.freeze(["F-027"]),
-  "packages/cad-core/src/commands.ts": Object.freeze(["F-027"]),
-  "packages/cad-core/src/index.ts": Object.freeze(["F-027"]),
-  "packages/cad-core/src/stretch.ts": Object.freeze(["F-027"]),
-});
+export const UNCERTIFIED_SOURCE_ROWS = Object.freeze({});
 
 const certifiedIds = Object.freeze([
-  "F-003", "F-015", "F-016", "F-017", "F-018", "F-019", "F-020", "F-021", "F-022", "F-023", "F-024", "F-025", "F-026",
+  "F-003", "F-015", "F-016", "F-017", "F-018", "F-019", "F-020", "F-021", "F-022", "F-023", "F-024", "F-025", "F-026", "F-027",
   "F-097", "F-098", "F-099", "F-100", "F-101", "F-102", "F-103", "F-104", "F-105",
   "F-106", "F-107", "F-109", "F-111", "F-114",
 ]);
@@ -213,6 +239,7 @@ const groupsByRow = Object.freeze({
   "F-024": ["web-modify-workflow", "cad-container", "cad-modify", "cad-trim", "cad-fillet", "physical-shift-input", "dxf", "dxf-import", "print", "f024-shared-tests", "oracle-lab-f024"],
   "F-025": ["web-modify-workflow", "cad-container", "cad-modify", "cad-chamfer", "physical-shift-input", "dxf", "dxf-import", "f025-shared-tests", "oracle-lab-f025"],
   "F-026": ["web-modify-workflow", "cad-container", "cad-modify", "cad-break", "cad-trim", "dxf", "dxf-import", "f026-shared-tests", "oracle-lab-f026"],
+  "F-027": ["web-modify-workflow", "cad-container", "cad-modify", "cad-stretch", "cad-trim", "dxf", "dxf-import", "f027-shared-tests", "oracle-lab-f027"],
   "F-097": ["cad-layout", "cad-container"],
   "F-098": ["cad-layout", "cad-container", "renderer"],
   "F-099": ["cad-layout", "cad-container", "renderer"],
@@ -243,6 +270,7 @@ const stageOverrides = Object.freeze({
   "F-024": { browser: "parity:f024:browser-artifact", readback: "parity:f024:readback", autocad: "parity:f024:autocad", oracle: "parity:f024:oracles", cross: "parity:f024:cross-evidence" },
   "F-025": { browser: "parity:f025:browser-artifact", readback: "parity:f025:readback", autocad: "parity:f025:autocad", oracle: "parity:f025:oracles", cross: "parity:f025:cross-evidence" },
   "F-026": { browser: "parity:f026:browser-artifact", readback: "parity:f026:readback", autocad: "parity:f026:autocad", oracle: "parity:f026:oracles", cross: "parity:f026:cross-evidence" },
+  "F-027": { browser: "parity:f027:browser-artifact", readback: "parity:f027:readback", autocad: "parity:f027:autocad", oracle: "parity:f027:oracles", cross: "parity:f027:cross-evidence" },
   "F-097": { browser: "parity:f097:browser-artifact", readback: "parity:f097:readback", autocad: "parity:f097:autocad" },
   "F-098": { browser: "parity:f098:browser-artifact", readback: "parity:f098:readback", autocad: "parity:f098:autocad" },
   "F-099": { browser: "parity:f099:browser-artifact", readback: "parity:f099:readback", autocad: "parity:f099:autocad" },
@@ -273,7 +301,7 @@ export const PARITY_ROWS = Object.freeze(certifiedIds.map((id) => Object.freeze(
   }),
   receipts: Object.freeze([
     { kind: "global", path: "evidence/artifacts/parity-global-topology.json" },
-    ...(["F-022", "F-023", "F-024", "F-025", "F-026"].includes(id) ? [{ kind: "oracle", path: `evidence/artifacts/${id}-oracles.json` }] : []),
+    ...(["F-022", "F-023", "F-024", "F-025", "F-026", "F-027"].includes(id) ? [{ kind: "oracle", path: `evidence/artifacts/${id}-oracles.json` }] : []),
     ...(stageOverrides[id]?.cross && !["F-100", "F-101"].includes(id)
       ? [{ kind: "cross", path: `evidence/artifacts/${id}-cross-evidence.json` }]
       : []),

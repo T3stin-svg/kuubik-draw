@@ -15,7 +15,7 @@ function applyStretch(document: KDrawDocumentV1, changes: ReturnType<typeof exec
 }
 
 describe("F-027 STRETCH DXF roundtrip", () => {
-  it("preserves stable handles, exact crossing geometry, bulges, widths and appearance", () => {
+  it("preserves handles, widths and appearance while roundtripping AutoCAD-scaled bulges", () => {
     const source = createEmptyDocument({ documentId: "F-027-DXF", now: "2026-08-30T09:30:00.000Z" });
     source.entities = [
       {
@@ -58,8 +58,8 @@ describe("F-027 STRETCH DXF roundtrip", () => {
     expect(independent.entities.map((entity) => `${entity.handle}:${entity.type}`)).toEqual(["10:LINE", "20:LWPOLYLINE", "30:CIRCLE"]);
     expect(independent.entities.find((entity) => entity.handle === "10")?.vertices).toMatchObject([{ x: 0, y: 0 }, { x: 125, y: 5 }]);
     expect(independent.entities.find((entity) => entity.handle === "20")?.vertices).toMatchObject([
-      { x: 0, y: 10, bulge: 0.5, startWidth: 2, endWidth: 4 },
-      { x: 125, y: 15, bulge: -0.25, startWidth: 4, endWidth: 6 },
+      { x: 0, y: 10, bulge: expect.closeTo(0.39968038348871576, 14), startWidth: 2, endWidth: 4 },
+      { x: 125, y: 15, bulge: expect.closeTo(-0.3325950526188697, 14), startWidth: 4, endWidth: 6 },
       { x: 200, y: 10, startWidth: 6, endWidth: 8 },
     ]);
     expect(independent.entities.find((entity) => entity.handle === "30")).toMatchObject({ center: { x: 105, y: 10 }, radius: 4 });
@@ -74,8 +74,8 @@ describe("F-027 STRETCH DXF roundtrip", () => {
     expect(entities.get("20")).toMatchObject({
       kind: "polyline", closed: false,
       vertices: [
-        { x: 0, y: 10, bulge: 0.5, startWidth: 2, endWidth: 4 },
-        { x: 125, y: 15, bulge: -0.25, startWidth: 4, endWidth: 6 },
+        { x: 0, y: 10, bulge: expect.closeTo(0.39968038348871576, 14), startWidth: 2, endWidth: 4 },
+        { x: 125, y: 15, bulge: expect.closeTo(-0.3325950526188697, 14), startWidth: 4, endWidth: 6 },
         { x: 200, y: 10, startWidth: 6, endWidth: 8 },
       ],
       appearance: expect.objectContaining({ color: "#00ff00", lineweightMm: 0.35 }),

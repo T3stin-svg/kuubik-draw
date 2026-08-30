@@ -11,10 +11,12 @@ efektiivsusvärav on failis [`ARCHITECTURE_ROADMAP.md`](ARCHITECTURE_ROADMAP.md)
 
 - vana Drawi auditi snapshot: **63,9% raw / 68,3% weighted / 60,7% visual**;
 - vana Drawi AutoCADi live-tõendiga read: **22/133**;
-- selle uue eraldatud rakenduse lokaalselt sertifitseeritud seis pärast F-026:
-  **27/133 · 20,3% raw / 23,7% weighted**;
-- F-026 sõltumatu lõppreview: `0 P0 / 0 P1`; avalik exact-commit CI on veel
+- selle uue eraldatud rakenduse lokaalselt sertifitseeritud seis pärast F-027:
+  **28/133 · 21,1% raw / 24,7% weighted**;
+- F-027 sõltumatu lõppreview: `0 P0 / 0 P1`; avalik exact-commit CI on veel
   selle laine viimane värav;
+- F-026 feature-commit `b3474d3`, GitHub Actions run `33305223655`: avalik
+  exact-commit CI roheline;
 - F-025 feature-commit `d0d6421`, GitHub Actions run `33293697704`: `fast`
   roheline 54 sekundiga ja täielik `verify` 3 minuti 26 sekundiga;
 - F-024 feature-commit `4462631`, GitHub Actions run `33283660256` ja
@@ -24,9 +26,8 @@ efektiivsusvärav on failis [`ARCHITECTURE_ROADMAP.md`](ARCHITECTURE_ROADMAP.md)
 - avalikult suletud arhitektuurivärav: lõpp-HEAD `d097b34`, GitHub Actions
   run `33250270350`, sõltumatu review `0 P0 / 0 P1`;
 - native DWG/DWT/XREF ja PC3/CTB/STB pariteet on veel blokeeritud.
-- F-027 `STRETCH` on kohalik kandidaat: typed crossing window/polygon,
-  preview=commit, atomic Undo/Redo ning DXF/KDRAW1 read-back on rohelised, kuid
-  rida ei ole samade kahe lõppväravata sertifitseeritud.
+- F-027 `STRETCH` on lokaalselt sertifitseeritud; production deploy'd ei ole
+  tehtud.
 
 Need arvud on vana Drawi auditi muutmatu snapshot. Uus rakendus ei päri skoori
 enne, kui sama töövoog on siin reprodutseeritud ja tõendatud. LibreCADi või
@@ -71,8 +72,15 @@ mõlemas muutmata. Täielik native state, handle'id, layer-omadused, polyline'i
 laiused/bulge'id, spline'i control point'id/knots/weights, atomic Undo/Redo,
 Chromium, DXF/KDRAW1 ning nested SHA-receipt'id läbisid; sõltumatu review oli
 `0 P0 / 0 P1`.
-F-027 `STRETCH` jääb kandidaadiks ega mõjuta skoori enne eraldatud AutoCAD
-Desktopi tõendit, sõltumatut review'd ja rohelist avalikku CI-d.
+F-027 `STRETCH` lisab typed crossing window/polygon valiku, osalise vertex/
+endpoint/control-point stretch'i, täielikult valitud objekti whole-move'i,
+locked-layer keeldumise ja ühe atomaarse Undo/Redo sammu. Omatud AutoCAD
+2024.1.2 Desktopi maatriks kontrollib kõigi 14 objekti täielikku source/result
+olekut ning sõltumatu DXF-parser võrdleb kõiki handle'e, kihte, omadusi,
+vertices/bulge/width/closed-state'i ja ellipse-parameetreid. Kuus Chromiumi
+töövoogu, DXF/KDRAW1, pinned LibreCAD/FreeCAD sekundaaroracles ja sõltumatu
+review `0 P0 / 0 P1` on rohelised; exact-commit avalik CI on laine viimane
+värav.
 F-097 `Layout tabs` lisab revisioneeritud create/copy/reorder/delete töövoo,
 AutoCADi copy-before-source nimekuju, sõltumatud viewport'i ID-d ja paberiruumi
 handle'id, atomaarse Undo/Redo ning IndexedDB/`.kdraw` taastamise.

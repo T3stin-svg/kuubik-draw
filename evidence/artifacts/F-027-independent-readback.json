@@ -2,21 +2,21 @@
   "schemaVersion": 1,
   "rowId": "F-027",
   "source": "production S/STRETCH registry -> crossing-window/polygon union -> immutable atomic commit -> production DXF/KDRAW1 -> strict importer + dxf-parser -> Undo/Redo",
-  "observedAt": "2026-08-30T08:39:51.199Z",
+  "observedAt": "2026-08-30T10:35:50.354Z",
   "status": "PASS",
   "implementationSha256": {
-    "packages/cad-core/src/stretch.ts": "1682953cb896ac7dc3cb75e8e546bc6d71bcf14f1cec721500278b8849aa2f42",
+    "packages/cad-core/src/stretch.ts": "5e76f375057f553ef91c38df96b28686d1e56cf57e1debd51b71bae8a2739944",
     "packages/cad-core/src/commands.ts": "a69c694cd82a59269ac9b56b0deeb85870c298f23555bcf011a747e68297645d",
     "packages/cad-core/src/index.ts": "97de6f5ca45dc6f8f05e2e24d0bbaf5f0a793be00fa7b7e63aa51be234074435",
     "packages/cad-core/src/trim.ts": "2b79501c802c648e6fb1a38134c339a549852794f063c8c22c04e8d7d728185e",
     "packages/cad-core/src/container.ts": "931db68e6aa0688ac9a7aa6d5ac56c07d1cd5e0126adec836f27258011419502",
     "packages/cad-core/src/transaction.ts": "e250aa2906e63905202a4b9591367632830745acbf731884f8e711d165750599",
-    "packages/cad-core/test/stretch.test.ts": "f22317d2eff9ad79de3ed34285c515dedc8e7f59f4e579739e3b4f10cb02e7fd",
-    "packages/cad-core/test/f027-mutation-proven.test.ts": "a07e175798acc610b550cd72000ef2161be63340b09548e54131eddc98e703e4",
+    "packages/cad-core/test/stretch.test.ts": "9503a9e94fcfbd88cd554b7604c70bcfcc39eeea894fd52cf6d495a3f68fd390",
+    "packages/cad-core/test/f027-mutation-proven.test.ts": "7dcd5a4f82e62bccd9da4224a1d7a4490f84b90a32a44703410e16a65a62879c",
     "packages/cad-dxf/src/import.ts": "ffdef7a01488d09f32b8bab171b0632092317a5687cd6eca2231629a4fc51f20",
     "packages/cad-dxf/src/index.ts": "82ca8f21ac22b29cd0f36be39f51b379ffd9307ec96c69c45d93da713cc9b2bd",
-    "packages/cad-dxf/test/f027-stretch-roundtrip.test.ts": "d252e316ff243b9ba002263396b0539ca2550f3d7e47656dc8b78a56cdd2c275",
-    "tools/parity/run-f027-readback.mjs": "2de12bc9073f42a9d9b79fafd78add5a52f574877ffd5c4d3e9d564396706f65"
+    "packages/cad-dxf/test/f027-stretch-roundtrip.test.ts": "0dccba7b27894300f8f4479ac0350bcabfcb0f78c0b06133813dd2d6d55d1fd6",
+    "tools/parity/run-f027-readback.mjs": "3564ca234ea30edd213654b489ff50aee1a9792c77aeab335ebc74273c1d6601"
   },
   "command": {
     "regions": [
@@ -140,14 +140,14 @@
               {
                 "x": 0,
                 "y": 100,
-                "bulge": 0.5,
+                "bulge": 0.3996803834887157,
                 "startWidth": 2,
                 "endWidth": 4
               },
               {
                 "x": 125,
                 "y": 105,
-                "bulge": -0.25,
+                "bulge": -0.3325950526188696,
                 "startWidth": 4,
                 "endWidth": 6
               },
@@ -563,14 +563,14 @@
           {
             "x": 0,
             "y": 100,
-            "bulge": 0.5,
+            "bulge": 0.3996803834887157,
             "startWidth": 2,
             "endWidth": 4
           },
           {
             "x": 125,
             "y": 105,
-            "bulge": -0.25,
+            "bulge": -0.3325950526188696,
             "startWidth": 4,
             "endWidth": 6
           },
@@ -728,14 +728,14 @@
             {
               "x": 0,
               "y": 100,
-              "bulge": 0.5,
+              "bulge": 0.3996803834887157,
               "startWidth": 2,
               "endWidth": 4
             },
             {
               "x": 125,
               "y": 105,
-              "bulge": -0.25,
+              "bulge": -0.3325950526188696,
               "startWidth": 4,
               "endWidth": 6
             },
@@ -762,14 +762,14 @@
               "y": 100,
               "startWidth": 2,
               "endWidth": 4,
-              "bulge": 0.5
+              "bulge": 0.399680383488716
             },
             {
               "x": 125,
               "y": 105,
               "startWidth": 4,
               "endWidth": 6,
-              "bulge": -0.25
+              "bulge": -0.33259505261887
             },
             {
               "x": 200,
@@ -1035,8 +1035,8 @@
     }
   },
   "dxf": {
-    "sha256": "cb4b5c3677e8ff6073f67454472f61a64fa0a3f32c05553f8b8dfb18201e2892",
-    "byteLength": 5194,
+    "sha256": "4d88f09e9dd10ffc9493d253b5dca30ef51403808bab6b76185e99c8f99397a7",
+    "byteLength": 5220,
     "emittedHandles": [
       "10",
       "20",
@@ -1048,9 +1048,9 @@
     ]
   },
   "kdraw": {
-    "sha256": "21f296f807527c78be8582dca698143d0fea894a9e7a263d2fe34c8bd519980f",
-    "byteLength": 3029,
-    "documentSha256": "89e0efc829b1494611afe4bd28dc609234b4b6812913e71a62a1365104f913e3",
+    "sha256": "00cd3b9bb11efba51782f8886315a535fc16097fbb29f29bfd1405c8b99e9b60",
+    "byteLength": 3069,
+    "documentSha256": "9b91888b317b8e4ec9cd692bca1cec1378944fa54702f3ab435deda067f98d3e",
     "manifestEntryCount": 1,
     "attachmentCount": 0
   },

@@ -10,18 +10,28 @@
     "startParameter": 0.077190120252004,
     "endParameter": 1.647986447046899
   },
-  "requiredCandidateChecks": [
+  "requiredCertificationChecks": [
     "nativeCoreReference",
+    "nativeDesktopLive",
+    "nativeDesktopSourcesCurrent",
+    "nativeCoreSourcesCurrent",
     "browserWorkflow",
+    "browserNestedArtifactsCurrent",
+    "browserSourcesCurrent",
     "physicalCrossingWindow",
     "physicalCrossingPolygon",
     "quarterEllipseBrowserDxfKdraw",
     "productionReadback",
+    "productionSourcesCurrent",
     "secondaryOracles",
+    "oracleInputsAndSourcesCurrent",
     "sourceHashCoverage"
   ],
-  "remainingCertificationRequirements": [
-    "isolatedOwnedAutoCadDesktopLive",
-    "independentZeroP0P1Review"
-  ]
+  "independentReview": {
+    "status": "PASS",
+    "p0": 0,
+    "p1": 0,
+    "reviewedAt": "2026-08-30"
+  },
+  "remainingCertificationRequirements": []
 }

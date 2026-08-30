@@ -103,6 +103,13 @@ function curveGeometryFullyInside(entity: CadEntity, polygon: readonly CadPoint2
   return curves.every((curve) => stretchPointInPolygon(trimPointAt(curve, 0), polygon));
 }
 
+function curveGeometryTouchesPolygon(entity: CadEntity, polygon: readonly CadPoint2[]): boolean {
+  const curves = trimCurvesOfEntity(entity);
+  if (curves.length === 0) return false;
+  const edges = polygonEdges(polygon);
+  return curves.some((curve) => edges.some((edge) => trimCurveIntersections(curve, edge).length > 0));
+}
+
 function translateEntity(entity: CadEntity, delta: CadPoint2): CadEntity | null {
   switch (entity.kind) {
     case "line": return { ...entity, start: movedPoint(entity.start, delta), end: movedPoint(entity.end, delta) };
@@ -276,7 +283,14 @@ function canonicalEllipse(
     || !Number.isFinite(normalizedOrientation)
     || normalizedOrientation <= 1e-12
   ) return null;
-  const canonicalStart = normalizedAngle(startParameter - phase);
+  let canonicalStart = normalizedAngle(startParameter - phase);
+  // AutoCAD chooses the equivalent ellipse-axis direction whose emitted start
+  // parameter is in the first half turn. Without this sign normalization a
+  // wrapped arc has coincident geometry but different DXF group 11/41/42 data.
+  if (canonicalStart > Math.PI) {
+    majorAxis = { x: -majorAxis.x, y: -majorAxis.y };
+    canonicalStart -= Math.PI;
+  }
   return {
     center: basis.center,
     majorAxis,
@@ -346,12 +360,38 @@ function pointsSelected(points: readonly CadPoint2[], inside: (point: CadPoint2)
   return points.some(inside);
 }
 
+function stretchedPolylineVertices<T extends CadPoint2 & { bulge?: number }>(
+  vertices: readonly T[],
+  closed: boolean,
+  inside: (point: CadPoint2) => boolean,
+  delta: CadPoint2,
+): T[] {
+  const moved = vertices.map((vertex) => inside(vertex) ? ({ ...vertex, ...movedPoint(vertex, delta) }) : vertex);
+  const segmentCount = closed ? vertices.length : Math.max(0, vertices.length - 1);
+  return moved.map((vertex, index) => {
+    if (index >= segmentCount) return vertex;
+    const source = vertices[index]!;
+    const sourceNext = vertices[(index + 1) % vertices.length]!;
+    const targetNext = moved[(index + 1) % moved.length]!;
+    const bulge = source.bulge;
+    if (bulge === undefined || Math.abs(bulge) <= TRIM_EPSILON || inside(source) === inside(sourceNext)) return vertex;
+    const sourceChord = Math.hypot(sourceNext.x - source.x, sourceNext.y - source.y);
+    const targetChord = Math.hypot(targetNext.x - vertex.x, targetNext.y - vertex.y);
+    if (sourceChord <= TRIM_EPSILON || targetChord <= TRIM_EPSILON) return vertex;
+    // AutoCAD preserves the arc's absolute sagitta when exactly one endpoint is
+    // stretched. Since bulge = 2 * sagitta / chord, it scales inversely with
+    // the new chord length while widths remain unchanged.
+    return { ...vertex, bulge: bulge * sourceChord / targetChord };
+  });
+}
+
 /**
  * Clean-room 2D STRETCH predicate based on Autodesk's crossing contract. A whole
  * object moves when individually selected or completely enclosed. Otherwise
  * only endpoints, vertices, control points, centers, or insertion points inside
- * the union of crossing selections move; polyline widths/bulges and spline data
- * are preserved byte-for-byte.
+ * the union of crossing selections move. Polyline widths and spline data are
+ * preserved; a bulged segment whose single endpoint moves keeps its absolute
+ * sagitta, matching AutoCAD's measured native result.
  */
 export function stretchCadEntity(
   entity: CadEntity,
@@ -388,15 +428,12 @@ export function stretchCadEntity(
     if (!selected) return { entity: null, mode: null, movedPointCount: 0, selected: false, reason: "not-selected" };
     if (zeroDelta) return noOp();
     return {
-      entity: { ...entity, vertices: entity.vertices.map((vertex) => inside(vertex) ? ({ ...vertex, ...movedPoint(vertex, delta) }) : vertex) },
+      entity: { ...entity, vertices: stretchedPolylineVertices(entity.vertices, entity.closed, inside, delta) },
       mode: "stretch", movedPointCount: entity.vertices.filter(inside).length, selected: true, reason: null,
     };
   }
   if (entity.kind === "arc") {
-    if (zeroDelta && (inside(entity.center) || inside(arcEndpoint(entity, true)) || inside(arcEndpoint(entity, false)))) return noOp();
-    if (inside(entity.center)) {
-      return { entity: translateEntity(entity, delta), mode: "move", movedPointCount: 1, selected: true, reason: null };
-    }
+    if (zeroDelta && (inside(arcEndpoint(entity, true)) || inside(arcEndpoint(entity, false)))) return noOp();
     const result = stretchedArc(entity, inside, delta);
     return result
       ? { entity: result.entity, mode: "stretch", movedPointCount: result.count, selected: true, reason: null }
@@ -406,12 +443,14 @@ export function stretchCadEntity(
     const curve = trimCurvesOfEntity(entity)[0];
     const start = curve?.kind === "ellipse" ? trimPointAt(curve, 0) : null;
     const end = curve?.kind === "ellipse" ? trimPointAt(curve, 1) : null;
-    const selected = inside(entity.center) || Boolean(start && inside(start)) || Boolean(end && inside(end));
+    const centerSelected = inside(entity.center) && polygons.some((polygon) => curveGeometryTouchesPolygon(entity, polygon));
+    const selected = centerSelected || Boolean(start && inside(start)) || Boolean(end && inside(end));
     if (!selected) return { entity: null, mode: null, movedPointCount: 0, selected: false, reason: "not-selected" };
     if (zeroDelta) return noOp();
-    if (inside(entity.center)) {
+    if (centerSelected) {
       return { entity: translateEntity(entity, delta), mode: "move", movedPointCount: 1, selected: true, reason: null };
     }
+    if (curve?.kind === "ellipse" && curve.sweep >= Math.PI * 2 - 1e-8) return noOp();
     const result = stretchedEllipseArc(entity, inside, delta);
     return result
       ? { entity: result.entity, mode: "stretch", movedPointCount: result.count, selected: true, reason: null }
@@ -453,7 +492,9 @@ export function stretchCadEntity(
       : entity.kind === "text" || entity.kind === "mtext" ? entity.position
         : entity.kind === "blockRef" ? entity.insertion
           : null;
-  if (anchor && inside(anchor)) {
+  const anchorHasVisibleCrossing = entity.kind !== "circle"
+    || polygons.some((polygon) => curveGeometryTouchesPolygon(entity, polygon));
+  if (anchor && inside(anchor) && anchorHasVisibleCrossing) {
     if (zeroDelta) return noOp();
     const moved = translateEntity(entity, delta);
     return moved

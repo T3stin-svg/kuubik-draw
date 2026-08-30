@@ -90,9 +90,30 @@ const checks = {
   fullEllipseCenterWindowDoesNotSelectGeometry: numbers("ELLIPSE_FULL_CENTER_CENTER").slice(0, 2).every((value, index) => close(value, [2400, 0][index]))
     && numbers("ELLIPSE_FULL_CENTER_MAJOR").slice(0, 2).every((value, index) => close(value, [100, 0][index]))
     && close(numbers("ELLIPSE_FULL_CENTER_RATIO")[0], 0.5),
+  ellipseMidpointDoesNotStretch: numbers("ELLIPSE_MID_CENTER").slice(0, 2).every((value, index) => close(value, [2700, 0][index]))
+    && numbers("ELLIPSE_MID_MAJOR").slice(0, 2).every((value, index) => close(value, [100, 0][index]))
+    && close(numbers("ELLIPSE_MID_RATIO")[0], 0.5) && close(numbers("ELLIPSE_MID_START")[0], 0)
+    && close(numbers("ELLIPSE_MID_END")[0], Math.PI / 2),
+  arcCenterIsNotStretchPoint: numbers("ARC_CENTER_ONLY_CENTER").slice(0, 2).every((value, index) => close(value, [3000, 0][index]))
+    && close(numbers("ARC_CENTER_ONLY_RADIUS")[0], 100) && close(numbers("ARC_CENTER_ONLY_START")[0], 0)
+    && close(numbers("ARC_CENTER_ONLY_END")[0], Math.PI),
+  circleCenterCrossMovesWhole: numbers("CIRCLE_CENTER_CROSS_CENTER").slice(0, 2).every((value, index) => close(value, [3325, 5][index]))
+    && close(numbers("CIRCLE_CENTER_CROSS_RADIUS")[0], 100)
+    && numbers("CIRCLE_HALF_CENTER").slice(0, 2).every((value, index) => close(value, [4225, 5][index]))
+    && close(numbers("CIRCLE_HALF_RADIUS")[0], 100),
+  wrappedEllipseCanonical: numbers("ELLIPSE_WRAPPED_CENTER").slice(0, 2).every((value, index) => close(value, [3916.321187837475, 24.74162641794247][index], 1e-10))
+    && numbers("ELLIPSE_WRAPPED_MAJOR").slice(0, 2).every((value, index) => close(value, [-95.68145757452969, 29.35210104127352][index], 1e-10))
+    && close(numbers("ELLIPSE_WRAPPED_RATIO")[0], 0.576564048333548, 1e-12)
+    && close(numbers("ELLIPSE_WRAPPED_START")[0], 2.341890538582327, 1e-12)
+    && close(numbers("ELLIPSE_WRAPPED_END")[0], 3.841890538582323, 1e-12),
+  fullEllipseCenterCrossMovesWhole: numbers("ELLIPSE_FULL_CENTER_EDGE_CENTER").slice(0, 2).every((value, index) => close(value, [3625, 5][index]))
+    && numbers("ELLIPSE_FULL_CENTER_EDGE_MAJOR").slice(0, 2).every((value, index) => close(value, [100, 0][index]))
+    && close(numbers("ELLIPSE_FULL_CENTER_EDGE_RATIO")[0], 0.5),
   edgeOnlyCircleDoesNotMove: numbers("EDGE_CIRCLE_CENTER").slice(0, 2).every((value, index) => close(value, [900, 0][index])),
   individualMovesWhole: numbers("INDIVIDUAL_START").slice(0, 2).every((value, index) => close(value, [25, 505][index], 1e-9))
     && numbers("INDIVIDUAL_END").slice(0, 2).every((value, index) => close(value, [125, 505][index], 1e-9)),
+  crossingPolygonEndpoint: numbers("CPOLYGON_START").slice(0, 2).every((value, index) => close(value, [0, 900][index], 1e-9))
+    && numbers("CPOLYGON_END").slice(0, 2).every((value, index) => close(value, [125, 905][index], 1e-9)),
   nativeStretchPointsObserved: output.includes("F027_STRETCH_POINTS=F027_ARC|Arc") && output.includes("F027_STRETCH_POINTS=F027_ELLIPSE|Ellipse"),
   completed: marker("DONE")?.startsWith("1") === true,
 };
@@ -106,7 +127,13 @@ const markerNames = [
   "ELLIPSE_ROTATED_CENTER", "ELLIPSE_ROTATED_MAJOR", "ELLIPSE_ROTATED_RATIO", "ELLIPSE_ROTATED_START", "ELLIPSE_ROTATED_END",
   "ELLIPSE_FULL_EDGE_CENTER", "ELLIPSE_FULL_EDGE_MAJOR", "ELLIPSE_FULL_EDGE_RATIO",
   "ELLIPSE_FULL_CENTER_CENTER", "ELLIPSE_FULL_CENTER_MAJOR", "ELLIPSE_FULL_CENTER_RATIO",
-  "EDGE_CIRCLE_CENTER", "INDIVIDUAL_START", "INDIVIDUAL_END", "DONE",
+  "ELLIPSE_MID_CENTER", "ELLIPSE_MID_MAJOR", "ELLIPSE_MID_RATIO", "ELLIPSE_MID_START", "ELLIPSE_MID_END",
+  "ARC_CENTER_ONLY_CENTER", "ARC_CENTER_ONLY_RADIUS", "ARC_CENTER_ONLY_START", "ARC_CENTER_ONLY_END",
+  "CIRCLE_CENTER_CROSS_CENTER", "CIRCLE_CENTER_CROSS_RADIUS",
+  "CIRCLE_HALF_CENTER", "CIRCLE_HALF_RADIUS",
+  "ELLIPSE_WRAPPED_CENTER", "ELLIPSE_WRAPPED_MAJOR", "ELLIPSE_WRAPPED_RATIO", "ELLIPSE_WRAPPED_START", "ELLIPSE_WRAPPED_END",
+  "ELLIPSE_FULL_CENTER_EDGE_CENTER", "ELLIPSE_FULL_CENTER_EDGE_MAJOR", "ELLIPSE_FULL_CENTER_EDGE_RATIO",
+  "EDGE_CIRCLE_CENTER", "INDIVIDUAL_START", "INDIVIDUAL_END", "CPOLYGON_START", "CPOLYGON_END", "DONE",
 ];
 const report = {
   schemaVersion: 1,
@@ -118,6 +145,7 @@ const report = {
   measurementRole: "native-core-reference; isolated desktop live crossing workflow remains required",
   markers: Object.fromEntries(markerNames.map((name) => [name, marker(name)])),
   stretchPointObservations: output.split(/\r?\n/).filter((line) => line.startsWith("F027_STRETCH_POINTS=")),
+  commandSelectionObservations: output.split(/\r?\n/).map((line) => line.trim()).filter((line) => /(?:STRETCH|found$|found,)/iu.test(line)),
   checks,
   knownImplementationGaps: [
     "A physical crossing-polygon gesture and isolated AutoCAD Desktop live evidence remain required before score 1.00.",

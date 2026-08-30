@@ -60,8 +60,10 @@ describe("F-027 mutation-proven STRETCH ratchet", () => {
     const circle = { kind: "circle" as const, handle: "20", layerId: "0", center: { x: 0, y: 0 }, radius: 100 };
     const edgeOnly: StretchRegion = { kind: "crossing-window", points: [{ x: 95, y: -5 }, { x: 105, y: 5 }] };
     expect(stretchCadEntity(circle, [edgeOnly], delta)).toMatchObject({ selected: false, reason: "not-selected" });
-    const center: StretchRegion = { kind: "crossing-window", points: [{ x: -5, y: -5 }, { x: 5, y: 5 }] };
-    expect(stretchCadEntity(circle, [center], delta)).toMatchObject({ mode: "move", entity: { center: { x: 25, y: 5 }, radius: 100 } });
+    const centerOnly: StretchRegion = { kind: "crossing-window", points: [{ x: -5, y: -5 }, { x: 5, y: 5 }] };
+    expect(stretchCadEntity(circle, [centerOnly], delta)).toMatchObject({ selected: false, reason: "not-selected" });
+    const centerAndCurve: StretchRegion = { kind: "crossing-window", points: [{ x: -10, y: -10 }, { x: 110, y: 10 }] };
+    expect(stretchCadEntity(circle, [centerAndCurve], delta)).toMatchObject({ mode: "move", entity: { center: { x: 25, y: 5 }, radius: 100 } });
     expect(stretchCadEntity(line, [crossing], { x: 0, y: 0 })).toMatchObject({ selected: true, reason: "no-op" });
 
     const polyline = {
@@ -77,7 +79,11 @@ describe("F-027 mutation-proven STRETCH ratchet", () => {
     };
     expect(stretchCadEntity(polyline, [crossing], delta).entity).toEqual({
       ...polyline,
-      vertices: [polyline.vertices[0], { ...polyline.vertices[1], x: 125, y: 5 }, polyline.vertices[2]],
+      vertices: [
+        { ...polyline.vertices[0], bulge: 0.3996803834887157 },
+        { ...polyline.vertices[1], x: 125, y: 5, bulge: -0.3325950526188696 },
+        polyline.vertices[2],
+      ],
     });
   });
 
@@ -117,6 +123,17 @@ describe("F-027 mutation-proven STRETCH ratchet", () => {
       ratio: expect.closeTo(0.444723039979619, 10),
       startParameter: expect.closeTo(0.077190120252004, 10),
       endParameter: expect.closeTo(1.647986447046899, 10),
+    });
+
+    const wrapped = stretchCadEntity({
+      kind: "ellipse", handle: "43", layerId: "0", center: { x: 0, y: 0 }, majorAxis: { x: 100, y: 0 },
+      ratio: 0.5, startParameter: 5.5, endParameter: 7,
+    }, [{ kind: "crossing-window", points: [{ x: 65, y: 20 }, { x: 85, y: 45 }] }], delta);
+    expect(wrapped.entity).toMatchObject({
+      kind: "ellipse",
+      majorAxis: { x: expect.closeTo(-95.68145757452969, 10), y: expect.closeTo(29.35210104127352, 10) },
+      startParameter: expect.closeTo(2.341890538582327, 10),
+      endParameter: expect.closeTo(3.841890538582323, 10),
     });
   });
 
