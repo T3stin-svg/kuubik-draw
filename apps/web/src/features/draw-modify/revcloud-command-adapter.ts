@@ -1,12 +1,12 @@
 import type { KDrawDocumentV1 } from "@kuubik/cad-schema";
 import {
   prepareRevcloudCommand,
-  type RevcloudCommandInput,
-} from "../../../../../packages/cad-core/src/revcloud-command.js";
+  type RevcloudWorkflowCommandInput,
+} from "@kuubik/cad-core";
 import type { AtomicCommandAdapter, PreparedAtomicCommand } from "./atomic-command-workflow.js";
 
-export const revcloudCommandAdapter: AtomicCommandAdapter<RevcloudCommandInput> = {
-  prepare(document: KDrawDocumentV1, input: RevcloudCommandInput): PreparedAtomicCommand {
+export const revcloudCommandAdapter: AtomicCommandAdapter<RevcloudWorkflowCommandInput> = {
+  prepare(document: KDrawDocumentV1, input: RevcloudWorkflowCommandInput): PreparedAtomicCommand {
     const prepared = prepareRevcloudCommand(document, input);
     return {
       commandId: prepared.commandId,

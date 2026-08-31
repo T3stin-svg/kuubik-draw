@@ -25,6 +25,26 @@ export * from "./pedit.js";
 export * from "./pline-command.js";
 export * from "./polygon-command.js";
 export * from "./rectangle-command.js";
+export {
+  RevcloudCommandInputError,
+  applyInteractiveRevcloudAction,
+  prepareRevcloudCommand,
+  revcloudInputFromInteractiveState,
+  startInteractiveRevcloudCommand,
+} from "./revcloud-command.js";
+export type {
+  InteractiveRevcloudAction,
+  InteractiveRevcloudMode,
+  InteractiveRevcloudState,
+  NormalizedRevcloudDefinition,
+  PreparedRevcloudCommand,
+  RevcloudArcDirection,
+  RevcloudArcLengths,
+  RevcloudCommandErrorCode,
+  RevcloudCommandInput as RevcloudWorkflowCommandInput,
+  RevcloudConstruction,
+  RevcloudStyle,
+} from "./revcloud-command.js";
 export * from "./selection-query.js";
 export * from "./spline.js";
 export * from "./boundary-region.js";
