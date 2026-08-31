@@ -1,6 +1,6 @@
 import type { CadEntity, CadLayer, KDrawDocumentV1 } from "@kuubik/cad-schema";
 import { entityParticipates, type CadLayerPurpose } from "../../../../../packages/cad-core/src/layer-policy.js";
-import type { CadDrawOrderAction } from "../../../../../packages/cad-core/src/draw-order.js";
+import { readCadDrawOrderContract, type CadDrawOrderAction, type CadDrawOrderReadback } from "../../../../../packages/cad-core/src/draw-order.js";
 import {
   LayerManagerController,
   type LayerManagerCommit,
@@ -47,7 +47,7 @@ export const LAYER_MANAGER_CAPABILITY_ROWS: Readonly<Record<LayerManagerCapabili
   "layers.transparency": ["F-080"],
   "layers.plot": ["F-079"],
   "layers.properties": ["F-080"],
-  "layers.entity-properties": ["F-072", "F-076", "F-077", "F-078"],
+  "layers.entity-properties": ["F-072", "F-076", "F-077", "F-078", "F-080"],
   "layers.draw-order": ["F-086"],
 });
 
@@ -202,6 +202,10 @@ export class LayerManagerShellAdapter {
     if (layerIds === undefined) return layers;
     const selected = new Set(layerIds);
     return layers.filter((layer) => selected.has(layer.id));
+  }
+
+  readDrawOrder(): CadDrawOrderReadback {
+    return readCadDrawOrderContract(this.document);
   }
 
   participates(entity: CadEntity, purpose: CadLayerPurpose): boolean {

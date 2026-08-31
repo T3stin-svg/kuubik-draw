@@ -153,8 +153,8 @@ export class LayerManagerController {
         commandId: planned.commandId,
         args: planned.args,
         changes: planned.changes,
-        targetHandles: [...new Set(command.handles)],
-        resultHandles: [...new Set(command.handles)],
+        targetHandles: [...planned.args.handles as string[]],
+        resultHandles: [...planned.args.handles as string[]],
         orderedHandles: planned.orderedHandles,
       };
     }
