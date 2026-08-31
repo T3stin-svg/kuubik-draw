@@ -155,18 +155,28 @@ function readStableAnchor(value: unknown): StableEntityAnchor | null {
 
 function isTableCellValue(value: unknown): boolean {
   return isRecord(value) && (value.kind === "text"
-    ? typeof value.text === "string"
-    : value.kind === "field" && typeof value.code === "string" && typeof value.fallback === "string");
+    ? typeof value.text === "string" && value.text.length <= 10000 && !value.text.includes("\0")
+    : value.kind === "field" && typeof value.code === "string" && value.code.trim().length > 0 && value.code.length <= 4096 && !value.code.includes("\0")
+      && typeof value.fallback === "string" && value.fallback.length <= 10000 && !value.fallback.includes("\0"));
 }
 
 function isTableCellFormat(value: unknown): boolean {
   if (value === undefined) return true;
   return isRecord(value)
-    && (value.textStyleId === undefined || typeof value.textStyleId === "string")
-    && (value.textHeight === undefined || typeof value.textHeight === "number" && Number.isFinite(value.textHeight))
+    && (value.textStyleId === undefined || typeof value.textStyleId === "string" && value.textStyleId.trim().length > 0)
+    && (value.textHeight === undefined || typeof value.textHeight === "number" && Number.isFinite(value.textHeight) && value.textHeight > 0)
     && (value.bold === undefined || typeof value.bold === "boolean")
     && (value.italic === undefined || typeof value.italic === "boolean")
-    && (value.color === undefined || typeof value.color === "string");
+    && (value.color === undefined || typeof value.color === "string" && /^#[0-9a-fA-F]{6}$/u.test(value.color));
+}
+
+function normalizedTableId(value: string): string {
+  return value.trim().toLocaleUpperCase("en-US");
+}
+
+function uniqueTableIds(values: readonly string[]): boolean {
+  return values.every((value) => value.trim().length > 0)
+    && new Set(values.map(normalizedTableId)).size === values.length;
 }
 
 export function withAnnotationExtension<T extends CadEntity>(entity: T, value: AnnotationExtension): T {
@@ -313,10 +323,14 @@ export function readHatchAssociation(entity: CadEntity): HatchAssociation | null
 export function readTableContract(entity: CadEntity): TableContract | null {
   const value = entity.extensionData?.[ANNOTATION_EXTENSION_KEY];
   if (entity.kind !== "proxy" || entity.originalType !== "TABLE" || !isRecord(value) || value.kind !== "table" || value.version !== 1) return null;
-  if (!isPoint(value.origin) || !Number.isFinite(value.rotationRad) || typeof value.styleId !== "string") return null;
+  if (!isPoint(value.origin) || !Number.isFinite(value.rotationRad) || typeof value.styleId !== "string" || !value.styleId.trim()) return null;
   if (!Array.isArray(value.rows) || !Array.isArray(value.columns) || !Array.isArray(value.cells) || !Array.isArray(value.merges)) return null;
-  if (!value.rows.every((row) => isRecord(row) && typeof row.id === "string" && typeof row.height === "number" && Number.isFinite(row.height))) return null;
-  if (!value.columns.every((column) => isRecord(column) && typeof column.id === "string" && typeof column.width === "number" && Number.isFinite(column.width))) return null;
+  if (!value.rows.length || !value.columns.length) return null;
+  if (!value.rows.every((row) => isRecord(row) && typeof row.id === "string" && typeof row.height === "number" && Number.isFinite(row.height) && row.height > 0)) return null;
+  if (!value.columns.every((column) => isRecord(column) && typeof column.id === "string" && typeof column.width === "number" && Number.isFinite(column.width) && column.width > 0)) return null;
+  const rowIds = value.rows.map((row) => (row as { id: string }).id);
+  const columnIds = value.columns.map((column) => (column as { id: string }).id);
+  if (!uniqueTableIds(rowIds) || !uniqueTableIds(columnIds)) return null;
   if (!value.cells.every((cell) => isRecord(cell)
     && typeof cell.id === "string" && typeof cell.rowId === "string" && typeof cell.columnId === "string"
     && isTableCellValue(cell.value)
@@ -324,5 +338,32 @@ export function readTableContract(entity: CadEntity): TableContract | null {
     && (cell.verticalAlignment === undefined || ["top", "middle", "bottom"].includes(String(cell.verticalAlignment)))
     && isTableCellFormat(cell.format))) return null;
   if (!value.merges.every((merge) => isRecord(merge) && typeof merge.id === "string" && isStringArray(merge.rowIds) && isStringArray(merge.columnIds))) return null;
+  const cells = value.cells as Array<{ id: string; rowId: string; columnId: string }>;
+  if (cells.length !== rowIds.length * columnIds.length || !uniqueTableIds(cells.map((cell) => cell.id))) return null;
+  const rowIndexes = new Map(rowIds.map((id, index) => [normalizedTableId(id), index]));
+  const columnIndexes = new Map(columnIds.map((id, index) => [normalizedTableId(id), index]));
+  const coordinates = cells.map((cell) => {
+    const rowIndex = rowIndexes.get(normalizedTableId(cell.rowId));
+    const columnIndex = columnIndexes.get(normalizedTableId(cell.columnId));
+    return rowIndex === undefined || columnIndex === undefined ? null : `${rowIndex}:${columnIndex}`;
+  });
+  if (coordinates.includes(null) || new Set(coordinates).size !== coordinates.length) return null;
+  const merges = value.merges as Array<{ id: string; rowIds: string[]; columnIds: string[] }>;
+  if (!uniqueTableIds(merges.map((merge) => merge.id))) return null;
+  const occupied = new Set<string>();
+  for (const merge of merges) {
+    if (!uniqueTableIds(merge.rowIds) || !uniqueTableIds(merge.columnIds)) return null;
+    const mergeRows = merge.rowIds.map((id) => rowIndexes.get(normalizedTableId(id)));
+    const mergeColumns = merge.columnIds.map((id) => columnIndexes.get(normalizedTableId(id)));
+    if (mergeRows.some((index) => index === undefined) || mergeColumns.some((index) => index === undefined)) return null;
+    if (mergeRows.some((index, position) => position > 0 && index !== (mergeRows[position - 1] as number) + 1)) return null;
+    if (mergeColumns.some((index, position) => position > 0 && index !== (mergeColumns[position - 1] as number) + 1)) return null;
+    if (mergeRows.length * mergeColumns.length < 2) return null;
+    for (const rowIndex of mergeRows as number[]) for (const columnIndex of mergeColumns as number[]) {
+      const coordinate = `${rowIndex}:${columnIndex}`;
+      if (occupied.has(coordinate)) return null;
+      occupied.add(coordinate);
+    }
+  }
   return structuredClone(value) as unknown as TableContract;
 }
