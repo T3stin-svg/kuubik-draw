@@ -10,6 +10,7 @@ Audit environment: Chromium, 1920×1080, 100% zoom equivalent, Windows 96 DPI ta
 | 2 — dock/float/auto-hide, saved workspaces, accessibility | `wave-1-after/` | `wave-2-after/` | 3 palette modes, 3 workspace presets, 200%, focus, contrast and reduced-motion checked |
 | 3 — command/layout/status component boundary and recovery state | `wave-2-after/` | `wave-3-after/` | 6 states recaptured, 0 console errors; visual baseline ratchet held |
 | 4 — remove remaining shell font-glyph icons | `wave-3-after/` | `wave-4-after/` | palette, context, layout and viewport controls use original Kuubik SVG paths; 6 states recaptured |
+| 5 — integrated runtime adapters | `wave-4-after/` | `integration-wave/` | real LINE, Undo/Redo, precision, layer and document workflows plus validated MTEXT/INSERT intents; 0 console errors |
 
 ## Six audited states
 
@@ -20,7 +21,7 @@ Audit environment: Chromium, 1920×1080, 100% zoom equivalent, Windows 96 DPI ta
 5. `visual-shell-layout-paper-space.png` plus `visual-shell-layout-tools-open.png`
 6. `visual-shell-command-history.png` plus `visual-shell-context-menu.png`
 
-Each state exists in every applicable wave directory. `visual-shell-states.json` contains the DOM and interaction read-back; `visual-shell-zones.json` contains the primary zone geometry. Port-specific reruns use `e2e/visual-shell.config.ts` on the reserved dev port 5205.
+Each state exists in every applicable wave directory. `visual-shell-states.json` contains the DOM and interaction read-back; `visual-shell-zones.json` contains the primary zone geometry. The integrated runtime read-back is in `integration-wave/visual-shell-runtime-integration.json`. Port-specific reruns use `e2e/visual-shell.config.ts` on the reserved dev port 5215.
 
 ## Final measured read-back
 
@@ -61,3 +62,4 @@ All five fixed categories were re-measured locally: shell zones; ribbon/palette 
 - Selected commands owned by geometry workstreams expose a typed shell intent only; status precision modes remain disabled until a real adapter exists. They are not counted as functionally complete here.
 - No AutoCAD or Autodesk pixels, logos or proprietary icons were added. All new icons are original inline SVG paths in `apps/web/src/icons/CadIcon.tsx`.
 - No CAD core, DXF, print, document schema or geometry behavior was changed.
+- The integration wave does not change the 60.7% visual parity score or certify any F-row at 1.00. Annotation/block validation currently proves typed command intent, not committed annotation/block geometry.

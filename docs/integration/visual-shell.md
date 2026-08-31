@@ -8,26 +8,22 @@ This workstream owns only the Kuubik Draw shell, presentation state and visual e
 
 Ribbon and status controls expose `data-feature-row` and `data-scope-selected`. A row outside the selected set stays visible and disabled with the exact explanation `Pole sinu töövoogu valitud`.
 
-## Temporary typed adapter
+## Runtime adapter
 
-The shell currently emits two kinds of presentation-only intent:
+`apps/web/src/shell/runtime-adapter.ts` is the typed boundary between the visual shell and the integrated deterministic feature modules. A ribbon control is enabled only when both conditions hold: the F-row belongs to Reio's selected scope and `VisualShellRuntimeAdapter.canExecute()` confirms a real runtime binding.
 
-- selected ribbon tools that already have an application command keep their existing handler;
-- selected tools whose geometry workflow belongs to another workstream only update the command prompt/status and never mutate the document;
-- `ORTHO`, `OSNAP`, `OTRACK` and `DYN` carry their selected F-row metadata but stay disabled until the geometry-engine workstream provides the adapter.
+Current bindings:
 
-Integration must replace the temporary intents with typed command-registry calls. Until that happens, these controls must not be used as evidence that F-045, F-049, F-050 or F-052 geometry behavior is complete.
+- LINE and RECTANGLE use `CommandLineEngine` + `CommandRegistry`; LINE is prepared by `prepareGeometryCommand`, and both commit through `CadSession` plus IndexedDB read-back.
+- Existing Move/Copy/Rotate/Scale/Mirror/Offset/Trim/Stretch/Fillet/Match Properties application workflows retain their tested core planners and transaction path.
+- GRID, ORTHO, OSNAP, OTRACK and DYN are live state controls. Cursor read-back passes through `PrecisionFeatureModel.preview()`; the status bar exposes the resulting precision source.
+- Layer creation/current/toggles are planned by `LayerFeatureModel` and committed through the common document transaction path. React does not construct layer changes.
+- Annotation and block panels call `createAnnotationAction` and `createBlockAction`. These are validated typed intents only; they do not claim annotation/block geometry completion.
+- Document tabs use `document-tabs.ts` for open, activate, close, layout and dirty/persisted read-back. A `CadSession` is retained per open tab.
 
-Recommended adapter boundary:
+Selected commands without one of these bindings remain visible and disabled with the integration-pending explanation. Scope selection alone never enables a command.
 
-```ts
-export interface VisualShellCommandAdapter {
-  canExecute(rowId: string, context: "model" | "paper"): boolean;
-  execute(rowId: string): void;
-  precisionMode(rowId: "F-045" | "F-049" | "F-050" | "F-052"): boolean;
-  setPrecisionMode(rowId: "F-045" | "F-049" | "F-050" | "F-052", enabled: boolean): void;
-}
-```
+The browser regression at dev port 5215 proves LINE, Undo/Redo, precision toggle, layer creation, MTEXT/INSERT intent and document tab switching while capturing zero console/page errors. It does not certify AutoCAD parity or raise any F-row/visual score.
 
 ## Persisted shell keys
 

@@ -63,8 +63,8 @@ test("AutoCAD-style shell keeps all eight primary zones visible at 1920x1080", a
   expect(documentTabs).toEqual({
     menu: { x: 0, width: 42, right: 42, height: 26, backgroundColor: "rgba(0, 0, 0, 0)" },
     start: { x: 42, width: 48, right: 90, height: 26, backgroundColor: "rgba(0, 0, 0, 0)" },
-    drawing: { x: 90, width: 95, right: 185, height: 26, backgroundColor: "rgb(59, 68, 83)" },
-    new: { x: 185, width: 47, right: 232, height: 26, backgroundColor: "rgba(0, 0, 0, 0)" },
+    drawing: { x: 90, width: 118, right: 208, height: 26, backgroundColor: "rgb(59, 68, 83)" },
+    new: { x: 208, width: 47, right: 255, height: 26, backgroundColor: "rgba(0, 0, 0, 0)" },
   });
   const titleChrome = await page.locator(".titlebar").evaluate((element) => {
     const box = (selector: string) => {
@@ -133,11 +133,10 @@ test("AutoCAD-style shell keeps all eight primary zones visible at 1920x1080", a
     }];
   })));
   expect(statusControls.grid).toMatchObject({ disabled: false, pressed: "true", height: 30, backgroundColor: "rgb(23, 106, 153)" });
-  for (const name of ["ortho", "osnap", "otrack", "dyn"]) {
-    expect(statusControls[name]).toMatchObject({ disabled: true, pressed: null, height: 30, color: "rgb(120, 130, 139)", backgroundColor: "rgba(0, 0, 0, 0)" });
-  }
-  await expect(page.getByRole("button", { name: "ORTHO unavailable" })).toHaveAttribute("data-scope-selected", "true");
-  await expect(page.getByRole("button", { name: "ORTHO unavailable" })).toHaveAttribute("title", /funktsiooniliides pole veel ühendatud/u);
+  expect(statusControls.ortho).toMatchObject({ disabled: false, pressed: "false", height: 30, backgroundColor: "rgba(0, 0, 0, 0)" });
+  for (const name of ["osnap", "otrack", "dyn"]) expect(statusControls[name]).toMatchObject({ disabled: false, pressed: "true", height: 30, backgroundColor: "rgb(23, 106, 153)" });
+  await expect(page.getByRole("button", { name: "ORTHO precision mode" })).toHaveAttribute("data-scope-selected", "true");
+  await expect(page.getByRole("button", { name: "ORTHO precision mode" })).toHaveAttribute("title", /päris precision runtime/u);
   await expect(page.getByRole("button", { name: "Kiirpääsu DXF avamine" })).toBeEnabled();
   await expect(page.getByRole("button", { name: "Kiirpääsu KDraw salvestamine" })).toBeEnabled();
   await expect(page.getByRole("button", { name: "Kiirpääsu DXF-väljund" })).toBeEnabled();
@@ -180,8 +179,11 @@ test("AutoCAD-style shell keeps all eight primary zones visible at 1920x1080", a
   await expect(disabledRibbonTool).toBeDisabled();
   await expect(disabledRibbonTool).toHaveAttribute("data-scope-selected", "false");
   await expect(disabledRibbonTool).toHaveAttribute("title", /Pole sinu töövoogu valitud/u);
-  await expect(page.getByRole("button", { name: "Ribbon Polyline command" })).toBeEnabled();
-  await expect(page.getByRole("button", { name: "Ribbon Polyline command" })).toHaveAttribute("data-feature-row", "F-002");
+  const selectedWithoutAdapter = page.getByRole("button", { name: "Ribbon Polyline unavailable" });
+  await expect(selectedWithoutAdapter).toBeDisabled();
+  await expect(selectedWithoutAdapter).toHaveAttribute("data-scope-selected", "true");
+  await expect(selectedWithoutAdapter).toHaveAttribute("title", /funktsiooniliides pole veel ühendatud/u);
+  await expect(selectedWithoutAdapter).toHaveAttribute("data-feature-row", "F-002");
   const disabledRibbonState = await disabledRibbonTool.evaluate((element) => ({
     color: getComputedStyle(element).color,
     backgroundColor: getComputedStyle(element).backgroundColor,
@@ -194,7 +196,7 @@ test("AutoCAD-style shell keeps all eight primary zones visible at 1920x1080", a
     borderColor: getComputedStyle(element).borderColor,
   }));
   const modelCanvas = page.getByLabel("Kuubik Draw joonestusala");
-  const gridToggle = page.getByRole("button", { name: "Grid display" });
+  const gridToggle = page.getByRole("button", { name: "GRID precision mode" });
   await expect(gridToggle).toHaveAttribute("aria-pressed", "true");
   await expect(page.getByTestId("view-orientation-indicator")).toBeVisible();
   const canvasInkPixels = () => modelCanvas.evaluate((canvas) => {
@@ -385,7 +387,7 @@ test("AutoCAD-style shell keeps all eight primary zones visible at 1920x1080", a
   await expect(page.getByLabel("Kuubik Draw joonestusala")).toHaveAttribute("data-preview-command", "");
   const selectedFixture = await modelCanvas.evaluate(async (canvas) => {
     const database = await new Promise<IDBDatabase>((resolveOpen, rejectOpen) => {
-      const request = indexedDB.open("kuubik-draw", 1);
+      const request = indexedDB.open("kuubik-draw");
       request.onsuccess = () => resolveOpen(request.result);
       request.onerror = () => rejectOpen(request.error);
     });
@@ -680,7 +682,7 @@ test("scoped shell persists workspace and palette states and remains accessible"
   const scopedTools = page.locator(".ribbon [data-feature-row]");
   const scopedIconCount = await scopedTools.locator(".ribbon-glyph > svg").count();
   expect(scopedIconCount).toBe(await scopedTools.count());
-  await expect(page.getByRole("button", { name: "Ribbon Polyline command" })).toBeEnabled();
+  await expect(page.getByRole("button", { name: "Ribbon Polyline unavailable" })).toBeDisabled();
   const unselected = page.getByRole("button", { name: "Ribbon Match properties unavailable" });
   await expect(unselected).toBeDisabled();
   await expect(unselected).toHaveAttribute("data-scope-selected", "false");
@@ -782,6 +784,98 @@ test("scoped shell persists workspace and palette states and remains accessible"
       contrast,
       focusOutline,
       reducedMotion,
+      consoleErrors,
+    }, null, 2)}\n`, "utf8");
+  }
+  expect(consoleErrors).toEqual([]);
+});
+
+test("visual shell routes real runtime workflows without enabling unbound commands", async ({ page }) => {
+  const consoleErrors: string[] = [];
+  page.on("console", (message) => { if (message.type() === "error") consoleErrors.push(message.text()); });
+  page.on("pageerror", (error) => consoleErrors.push(error.message));
+  await page.setViewportSize({ width: 1920, height: 1080 });
+  await page.goto("/d/local");
+
+  const modelCanvas = page.getByLabel("Kuubik Draw joonestusala");
+  const commandInput = page.getByRole("textbox", { name: "Command input" });
+  await page.getByRole("button", { name: "Ribbon Line command" }).click();
+  await expect(commandInput).toHaveValue("LINE ");
+  await commandInput.fill("LINE 10,10 180,90");
+  await commandInput.press("Enter");
+  await expect(page.locator(".command-history")).toContainText("LINE runtime salvestatud");
+  await expect(modelCanvas).toHaveAttribute("data-selected-handles", /.+/u);
+  const committedLineHandle = await modelCanvas.getAttribute("data-selected-handles");
+  expect(committedLineHandle).toBeTruthy();
+
+  const undo = page.getByRole("button", { name: "Kiirpääsu Undo" });
+  const redo = page.getByRole("button", { name: "Kiirpääsu Redo" });
+  await undo.click();
+  await expect(page.getByLabel("Käsu parameetrid")).toContainText("0 objekti");
+  await redo.click();
+  await expect(page.getByLabel("Käsu parameetrid")).toContainText("1 objekti");
+  await expect(modelCanvas).toHaveAttribute("data-selected-handles", "");
+
+  const grid = page.getByRole("button", { name: "GRID precision mode" });
+  const ortho = page.getByRole("button", { name: "ORTHO precision mode" });
+  await grid.click();
+  await ortho.click();
+  await expect(grid).toHaveAttribute("aria-pressed", "false");
+  await expect(ortho).toHaveAttribute("aria-pressed", "true");
+  await modelCanvas.hover({ position: { x: 900, y: 420 } });
+  await expect(page.locator(".statusbar")).toHaveAttribute("data-precision-source", "ortho");
+
+  const layerRows = page.locator("[data-layer-id]");
+  await expect(layerRows).toHaveCount(1);
+  await page.getByRole("button", { name: "Loo uus kiht" }).click();
+  await expect(layerRows).toHaveCount(2);
+  await expect(page.locator(".command-history")).toContainText("LayerFeatureModeli kaudu");
+  await expect(page.getByRole("button", { name: "Layer 1 lukustus" })).toBeEnabled();
+
+  await page.getByRole("button", { name: "Mitmerealine tekst" }).click();
+  const intent = page.locator(".runtime-intent-readback");
+  await expect(intent).toHaveAttribute("data-runtime-intent-kind", "annotation");
+  await expect(intent).toHaveAttribute("data-runtime-command", "MTEXT");
+  const annotationIntent = { kind: await intent.getAttribute("data-runtime-intent-kind"), command: await intent.getAttribute("data-runtime-command") };
+  await page.getByRole("button", { name: "Sisesta plokk" }).click();
+  await expect(intent).toHaveAttribute("data-runtime-intent-kind", "block");
+  await expect(intent).toHaveAttribute("data-runtime-command", "INSERT");
+  const blockIntent = { kind: await intent.getAttribute("data-runtime-intent-kind"), command: await intent.getAttribute("data-runtime-command") };
+
+  await page.getByRole("button", { name: "Uus joonis", exact: true }).click();
+  await expect(page.locator("[data-document-id]")).toHaveCount(2);
+  await expect(page.locator("[data-document-id='drawing-2']")).toHaveClass(/active/u);
+  await page.getByRole("button", { name: "local.kdraw", exact: true }).click();
+  await expect(page.locator("[data-document-id='local']")).toHaveClass(/active/u);
+  await expect(page.getByLabel("Käsu parameetrid")).toContainText("1 objekti");
+  await page.getByRole("button", { name: "Sulge drawing-2.kdraw" }).click();
+  await expect(page.locator("[data-document-id]")).toHaveCount(1);
+
+  const domReadback = await page.evaluate(() => ({
+    commandAdapter: document.querySelector<HTMLInputElement>("[data-runtime-adapter='command-engine']")?.dataset.runtimeAdapter,
+    precisionSource: document.querySelector<HTMLElement>(".statusbar")?.dataset.precisionSource,
+    layerIds: [...document.querySelectorAll<HTMLElement>("[data-layer-id]")].map((element) => element.dataset.layerId),
+    tabs: [...document.querySelectorAll<HTMLElement>("[data-document-id]")].map((element) => ({ id: element.dataset.documentId, active: element.classList.contains("active") })),
+    runtimeIntent: {
+      kind: document.querySelector<HTMLElement>(".runtime-intent-readback")?.dataset.runtimeIntentKind,
+      command: document.querySelector<HTMLElement>(".runtime-intent-readback")?.dataset.runtimeCommand,
+    },
+  }));
+  const readback = { ...domReadback, validatedIntents: { annotation: annotationIntent, block: blockIntent } };
+  expect(readback).toMatchObject({
+    commandAdapter: "command-engine",
+    precisionSource: "ortho",
+    layerIds: ["0", "layer-layer-1"],
+    tabs: [{ id: "local", active: true }],
+    validatedIntents: { annotation: { kind: "annotation", command: "MTEXT" }, block: { kind: "block", command: "INSERT" } },
+  });
+  if (captureRoot) {
+    await writeFile(resolve(captureRoot, "visual-shell-runtime-integration.png"), await page.screenshot());
+    await writeFile(resolve(captureRoot, "visual-shell-runtime-integration.json"), `${JSON.stringify({
+      viewport: [1920, 1080],
+      committedLineHandle,
+      workflows: ["LINE", "UNDO", "REDO", "ORTHO", "LAYER_CREATE", "MTEXT_INTENT", "INSERT_INTENT", "DOCUMENT_NEW", "DOCUMENT_ACTIVATE", "DOCUMENT_CLOSE"],
+      readback,
       consoleErrors,
     }, null, 2)}\n`, "utf8");
   }
