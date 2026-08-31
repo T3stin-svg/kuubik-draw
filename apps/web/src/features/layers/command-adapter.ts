@@ -1,7 +1,7 @@
 import type { PrecisionShellRow, VisualShellCommandAdapter } from "../precision/command-adapter.js";
 
-export type LayerShellRow = "F-072" | "F-073" | "F-074" | "F-075" | "F-076" | "F-077" | "F-078" | "F-079" | "F-080" | "F-086";
-export type LayerShellAction = "create" | "current" | "lock" | "visibility" | "freeze" | "color" | "linetype" | "lineweight" | "manager" | "draw-order";
+export type LayerShellRow = "F-072" | "F-073" | "F-074" | "F-075" | "F-076" | "F-077" | "F-078" | "F-079" | "F-080";
+export type LayerShellAction = "create" | "current" | "lock" | "visibility" | "freeze" | "color" | "linetype" | "lineweight" | "manager";
 
 const LAYER_ROWS: Readonly<Record<LayerShellRow, LayerShellAction>> = Object.freeze({
   "F-072": "create",
@@ -13,7 +13,6 @@ const LAYER_ROWS: Readonly<Record<LayerShellRow, LayerShellAction>> = Object.fre
   "F-078": "linetype",
   "F-079": "lineweight",
   "F-080": "manager",
-  "F-086": "draw-order",
 });
 
 /** Composes layer action intents with the precision adapter without importing shell code. */
@@ -24,7 +23,7 @@ export class LayerVisualShellCommandAdapter implements VisualShellCommandAdapter
   ) {}
 
   canExecute(rowId: string, context: "model" | "paper"): boolean {
-    if (Object.hasOwn(LAYER_ROWS, rowId)) return rowId !== "F-086" || context === "model";
+    if (Object.hasOwn(LAYER_ROWS, rowId)) return true;
     return this.base.canExecute(rowId, context);
   }
 

@@ -8,6 +8,11 @@ import { CadSnapIndex, type CadSnapCandidate } from "../../../../../packages/cad
 import { CadObjectTrack, type CadTrackingCandidate } from "../../../../../packages/cad-renderer/src/tracking.js";
 import { LayerVisualShellCommandAdapter, type LayerShellAction, type LayerShellRow } from "../layers/command-adapter.js";
 import {
+  LayerManagerShellAdapter,
+  type LayerManagerShellCommand,
+  type LayerManagerShellCommit,
+} from "../layers/shell-adapter.js";
+import {
   LayerManagerController,
   type LayerManagerCommand,
   type LayerManagerCommit,
@@ -103,6 +108,7 @@ export class PreparedPrecisionPointer {
 export class PrecisionLayersShellContract {
   readonly precision: PrecisionCommandState;
   readonly tracking = new CadObjectTrack();
+  readonly layerManager: LayerManagerShellAdapter;
   readonly #precisionModel = new PrecisionFeatureModel();
   readonly #selection = new CadSelectionIndex();
   readonly #snap = new CadSnapIndex();
@@ -119,6 +125,7 @@ export class PrecisionLayersShellContract {
     this.#layers = options.layerController
       ? new LayerManagerController(document, options.layerController)
       : new LayerManagerController(document);
+    this.layerManager = new LayerManagerShellAdapter(this.#layers, { onDocumentChange: () => this.#syncSpatialIndexes() });
     this.#syncSpatialIndexes();
     const precisionAdapter = new PrecisionVisualShellAdapter(this.precision);
     this.#adapter = new LayerVisualShellCommandAdapter(precisionAdapter, (action, rowId) => {
@@ -229,16 +236,16 @@ export class PrecisionLayersShellContract {
     return committed;
   }
 
+  executeLayerCapability(command: LayerManagerShellCommand): LayerManagerShellCommit {
+    return this.layerManager.execute(command);
+  }
+
   undoLayer(): LayerManagerCommit | null {
-    const committed = this.#layers.undo();
-    if (committed) this.#syncSpatialIndexes();
-    return committed;
+    return this.layerManager.undo();
   }
 
   redoLayer(): LayerManagerCommit | null {
-    const committed = this.#layers.redo();
-    if (committed) this.#syncSpatialIndexes();
-    return committed;
+    return this.layerManager.redo();
   }
 
   #syncSpatialIndexes(): void {
