@@ -5,6 +5,7 @@ import { exportLayoutSvg, exportLayoutsVectorPdf, exportLayoutVectorPdf, exportM
 import { CadCanvasRenderer, pickCadEntity, pannedViewportWorldCenter, selectCadEntityHitsByCrossingPolygon, selectCadEntityHitsByFence, viewportScreenToWorld, viewportScreenTransform, type Viewport2D } from "@kuubik/cad-renderer";
 import type { CadEntity, CadLayout, CadPageSetup, CadPaperRect, CadPlotStyle, CadViewport, KDrawDocumentV1 } from "@kuubik/cad-schema";
 import { clampCadContextMenuPosition } from "./context-menu.js";
+import { CadIcon } from "./icons/CadIcon.js";
 import { KDrawIndexedDb, StorageRevisionConflictError } from "./indexed-db.js";
 import { CadShell, DrawingViewport, type WorkspacePreset } from "./shell/CadShell.js";
 import { CommandLine } from "./shell/CommandLine.js";
@@ -265,7 +266,7 @@ function PaperViewportCanvas({
       onPointerCancel={() => { panStart.current = null; setDraftCenter(null); }}
     >
       <canvas ref={canvas} aria-label={`Viewport ${viewport.id}`} />
-      <span className="paper-space-viewport-label">{viewport.locked ? "🔒 · " : ""}{viewport.on === false ? "OFF · " : ""}{viewport.id} · {formatViewportScale(renderViewport)}</span>
+      <span className="paper-space-viewport-label">{viewport.locked ? "LOCKED · " : ""}{viewport.on === false ? "OFF · " : ""}{viewport.id} · {formatViewportScale(renderViewport)}</span>
     </div>
   );
 }
@@ -3121,7 +3122,7 @@ export function App() {
           </section>
           <section className="ribbon-panel ribbon-panel-layers" aria-label="Layers panel" data-ribbon-panel="layers">
             <div className="ribbon-layer-tools">
-              <span className="ribbon-layer-current"><span aria-hidden="true">●</span>{activeLayer.name}</span>
+              <span className="ribbon-layer-current"><CadIcon name="layer" />{activeLayer.name}</span>
               <div className="ribbon-layer-actions">
                 <RibbonTool rowId="F-072" label="New layer" icon="layer" available onClick={() => void createLayer()} />
                 <RibbonTool rowId="F-074" label={activeLayer.locked ? "Unlock" : "Lock"} icon="lock" available onClick={() => void toggleActiveLayerLock()} />
@@ -3685,7 +3686,7 @@ export function App() {
         </label>
         <button type="button" onClick={downloadDxf}>DXF eksport</button>
         <button type="button" onClick={() => void downloadKDraw()}>KDraw eksport</button>
-        <span>{document.entities.length} objekti · {selectedHandles.length} valitud · {activeLayer.name}{activeLayer.locked ? " 🔒" : ""}</span>
+        <span>{document.entities.length} objekti · {selectedHandles.length} valitud · {activeLayer.name}{activeLayer.locked ? " · LOCKED" : ""}</span>
         {movePreview && <span data-testid="move-preview">MOVE eelvaade: {movePreview.entities.length} · Δ{movePreview.delta.x},{movePreview.delta.y}</span>}
         {copyPreview && <span data-testid="copy-preview">COPY eelvaade: {copyPreview.entities.length} · {copyPreview.deltas.length} paigutust</span>}
         {rotatePreview && <span data-testid="rotate-preview">ROTATE eelvaade: {rotatePreview.entities.length} · {rotatePreview.deltaAngleDeg}°</span>}
@@ -3886,11 +3887,11 @@ export function App() {
               <button type="button" role="menuitem" disabled={!activeCommandPrompt} onClick={cancelActiveCommandFromContextMenu}>
                 <span>{activeCommandPrompt ? `Cancel ${activeCommandPrompt}` : "Repeat last command"}</span><kbd>Esc</kbd>
               </button>
-              <button type="button" role="menuitem" disabled><span>Recent Input</span><span aria-hidden="true">›</span></button>
+              <button type="button" role="menuitem" disabled><span>Recent Input</span><CadIcon name="chevronRight" /></button>
               <div role="separator" />
-              <button type="button" role="menuitem" disabled><span>Clipboard</span><span aria-hidden="true">›</span></button>
+              <button type="button" role="menuitem" disabled><span>Clipboard</span><CadIcon name="chevronRight" /></button>
               <div role="separator" />
-              <button type="button" role="menuitem" disabled><span>Isolate Objects</span><span aria-hidden="true">›</span></button>
+              <button type="button" role="menuitem" disabled><span>Isolate Objects</span><CadIcon name="chevronRight" /></button>
               <div role="separator" />
               <button type="button" role="menuitem" disabled={!canUndoInActiveLayout} onClick={() => { closeDrawingContextMenu(); void undoLast(); }}><span>Undo</span><kbd>Ctrl+Z</kbd></button>
               <button type="button" role="menuitem" disabled={!canRedoInActiveLayout} onClick={() => { closeDrawingContextMenu(); void redoLast(); }}><span>Redo</span><kbd>Ctrl+Y</kbd></button>
@@ -3898,9 +3899,9 @@ export function App() {
               <button type="button" role="menuitem" disabled><span>Zoom</span></button>
               <button type="button" role="menuitem" disabled><span>SteeringWheels</span></button>
               <div role="separator" />
-              <button type="button" role="menuitem" disabled><span>Action Recorder</span><span aria-hidden="true">›</span></button>
+              <button type="button" role="menuitem" disabled><span>Action Recorder</span><CadIcon name="chevronRight" /></button>
               <div role="separator" />
-              <button type="button" role="menuitem" disabled><span>Subobject Selection Filter</span><span aria-hidden="true">›</span></button>
+              <button type="button" role="menuitem" disabled><span>Subobject Selection Filter</span><CadIcon name="chevronRight" /></button>
               <button type="button" role="menuitem" disabled={selectedHandles.length === 0} onClick={() => { closeDrawingContextMenu(); void eraseSelected(); }}><span>Erase</span><kbd>Del</kbd></button>
               <button type="button" role="menuitem" disabled={selectedHandles.length === 0} onClick={() => { setSelectedHandles([]); closeDrawingContextMenu(); setStatus("Selection cleared"); }}><span>Deselect All</span><kbd>Esc</kbd></button>
               <button type="button" role="menuitem" onClick={() => { closeDrawingContextMenu(); setStatus(`Count: ${selectedHandles.length || document.entities.length} object${(selectedHandles.length || document.entities.length) === 1 ? "" : "s"}`); }}><span>Count</span></button>
@@ -3925,21 +3926,21 @@ export function App() {
         )}
         <PaletteFrame mode={paletteMode} onModeChange={setPaletteMode}>
           <section className="layer-manager" aria-label="Layer Properties Manager">
-            <header><strong>LAYER PROPERTIES MANAGER</strong><span>×</span></header>
+            <header><strong>LAYER PROPERTIES MANAGER</strong><CadIcon name="close" /></header>
             <div className="layer-current"><span>Current layer: <strong>{activeLayer.name}</strong></span><label>Search for layer<input aria-label="Search for layer" value={layerFilterInput} onChange={(event) => setLayerFilterInput(event.target.value)} /></label></div>
-            <div className="layer-toolbar" aria-label="Layer tools"><span>▤</span><span>＋</span><span>−</span><span>✓</span><span>↻</span><span>⚙</span></div>
+            <div className="layer-toolbar" aria-label="Layer tools"><CadIcon name="layer" /><CadIcon name="add" /><CadIcon name="remove" /><CadIcon name="current" /><CadIcon name="refresh" /><CadIcon name="settings" /></div>
             <div className="layer-manager-body">
               <aside className="layer-filter-rail" aria-label="Layer filters">
                 <strong>Filters</strong>
-                <button type="button" className="active">All</button>
-                <button type="button">All Used Layers</button>
+                <button type="button" className="active"><CadIcon name="layer" />All</button>
+                <button type="button"><CadIcon name="layer" />All Used Layers</button>
                 <label><input type="checkbox" /> Invert filter</label>
               </aside>
               <div className="layer-grid" role="table" aria-label="Kihtide loend">
                 <div className="layer-grid-header" role="row"><span>Status</span><span>Name</span><span>On</span><span>Freeze</span><span>Lock</span><span>Plot</span><span>Color</span></div>
                 {visiblePaletteLayers.map((layer) => (
                   <div className={layer.id === activeLayer.id ? "layer-grid-row active" : "layer-grid-row"} role="row" key={layer.id}>
-                    <span>{layer.id === activeLayer.id ? "✓" : ""}</span><span>{layer.name}</span><span>{layer.visible ? "●" : "○"}</span><span>{layer.frozen ? "❄" : "☀"}</span><span>{layer.locked ? "■" : "□"}</span><span>{layer.plottable ? "▣" : "□"}</span><span><i className="layer-color-swatch" style={{ background: layer.appearance?.color ?? "#ffffff" }} />{layer.appearance?.color ?? "White"}</span>
+                    <span>{layer.id === activeLayer.id && <CadIcon name="current" />}</span><span>{layer.name}</span><span><CadIcon name={layer.visible ? "visible" : "hidden"} /></span><span><CadIcon name={layer.frozen ? "freeze" : "unfreeze"} /></span><span><CadIcon name="lock" className={layer.locked ? "is-on" : "is-off"} /></span><span><CadIcon name={layer.plottable ? "plot" : "unplot"} /></span><span><i className="layer-color-swatch" style={{ background: layer.appearance?.color ?? "#ffffff" }} />{layer.appearance?.color ?? "White"}</span>
                   </div>
                 ))}
                 {visiblePaletteLayers.length === 0 && <div className="layer-grid-empty">No matching layers</div>}
@@ -3980,7 +3981,7 @@ export function App() {
       <CommandLine status={status} activeCommand={activeCommandPrompt} historyOpen={commandHistoryOpen} history={commandHistory} onHistoryOpenChange={setCommandHistoryOpen} />
       <LayoutBar layouts={document.layouts} activeLayoutId={activeLayout.id} activeSpace={activeSpace} onActivate={activateLayout} onCreate={() => void createLayout()}>
         <details className="layout-tools" data-testid="layout-tools">
-          <summary aria-label="Layout tools"><span aria-hidden="true">⚙</span><span>Layout</span></summary>
+          <summary aria-label="Layout tools"><CadIcon name="settings" /><span>Layout</span></summary>
           <div className="layout-tools-popover">
         {activeLayout.kind === "model" && activePageSetup && activePlotPaper && (
           <span
@@ -4130,7 +4131,7 @@ export function App() {
             </details>
             <button type="button" className="layout-action" aria-label="Lisa ristkülikviewport" onClick={() => void addViewport("rectangle")}>+ View</button>
             <button type="button" className="layout-action" aria-label="Lisa polügoonviewport" onClick={() => void addViewport("polygon")}>+ Clip</button>
-            <button type="button" className="layout-action danger" aria-label="Kustuta viewport" disabled={selectedViewportId === null} onClick={() => void deleteSelectedViewport()}>− View</button>
+            <button type="button" className="layout-action danger" aria-label="Kustuta viewport" disabled={selectedViewportId === null} onClick={() => void deleteSelectedViewport()}><CadIcon name="remove" /> View</button>
             <button type="button" className="layout-action" aria-label="MATCHPROP viewport alusta" aria-pressed={matchViewportSession !== null} onClick={startMatchViewportProperties}>MATCHPROP View</button>
             {matchViewportSession !== null && <span className="viewport-match-controls" data-testid="match-viewport-session">
               <span data-testid="match-viewport-source">Allikas: {matchViewportSession.source ? `${matchViewportSession.source.layoutId}/${matchViewportSession.source.viewportId}` : "vali"}</span>
@@ -4147,7 +4148,7 @@ export function App() {
                   aria-pressed={selectedViewport.locked}
                   data-testid="viewport-lock-toggle"
                   onClick={() => void setSelectedViewportLock(!selectedViewport.locked)}
-                >{selectedViewport.locked ? "🔒 Lukus" : "🔓 Avatud"}</button>
+                ><CadIcon name="lock" />{selectedViewport.locked ? "Lukus" : "Avatud"}</button>
                 <select
                   aria-label="Viewport standardmõõtkava"
                   value={selectedViewportPreset}
@@ -4171,8 +4172,8 @@ export function App() {
               </span>
             )}
             {modelViewportId !== null && <button type="button" className="layout-action" aria-label="Tagasi PAPER" onClick={() => { setModelViewportId(null); setStatus("PAPER aktiivne"); }}>PAPER</button>}
-            <button type="button" className="layout-action" aria-label="Liiguta vasakule" disabled={activePaperIndex <= 0} onClick={() => void reorderLayout(-1)}>←</button>
-            <button type="button" className="layout-action" aria-label="Liiguta paremale" disabled={activePaperIndex < 0 || activePaperIndex >= paperLayouts.length - 1} onClick={() => void reorderLayout(1)}>→</button>
+            <button type="button" className="layout-action" aria-label="Liiguta vasakule" disabled={activePaperIndex <= 0} onClick={() => void reorderLayout(-1)}><CadIcon name="chevronLeft" /></button>
+            <button type="button" className="layout-action" aria-label="Liiguta paremale" disabled={activePaperIndex < 0 || activePaperIndex >= paperLayouts.length - 1} onClick={() => void reorderLayout(1)}><CadIcon name="chevronRight" /></button>
             <input aria-label="Paigutuse nimi" value={layoutRenameInput} maxLength={255} onChange={(event) => setLayoutRenameInput(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") void renameLayout(); }} />
             <button type="button" className="layout-action" aria-label="Nimeta paigutus" onClick={() => void renameLayout()}>Nimeta</button>
             <button type="button" className="layout-action danger" aria-label="Kustuta paigutus" disabled={paperLayouts.length <= 1} onClick={() => void deleteLayout()}>Kustuta</button>
