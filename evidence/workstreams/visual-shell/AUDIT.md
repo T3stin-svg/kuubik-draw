@@ -55,6 +55,18 @@ Additional measurements:
 
 All five fixed categories were re-measured locally: shell zones; ribbon/palette density; command/status/layout; color/type/icons; interaction states. This is a Kuubik-side audit, not a new six-state AutoCAD paired certification. `npm run visual:check` therefore correctly holds the visual score at **60.7% with 1/6 paired states PASS**. No percentage was raised.
 
+## Integration gate
+
+- `npm run typecheck` — PASS
+- `npm run lint` — PASS
+- `npm run test` — PASS, 114 files / 651 tests
+- `npm run build` — PASS
+- `npx playwright test e2e/visual-shell.spec.ts --config e2e/visual-shell.config.ts` — PASS, 3/3 at port 5215; includes 1920×1080 and 200% equivalent
+- `node tools/provenance/scan-public-tree.mjs` — PASS, 1370 files
+- `npm run license:check` — PASS, 119 installed packages
+- `npm run visual:check` — PASS, baseline held at 60.7% / 1 of 6 paired states
+- `git diff --check` — PASS
+
 ## Honest boundaries
 
 - F-122, F-127, F-131 and F-132 are complete in this visual-shell workstream.
