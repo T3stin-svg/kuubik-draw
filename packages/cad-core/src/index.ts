@@ -28,6 +28,7 @@ export * from "./annotation/dimensions.js";
 export * from "./annotation/text.js";
 export * from "./annotation/hatch.js";
 export * from "./annotation/update.js";
+export * from "./annotation/dxf-capability.js";
 export * from "./blocks/contracts.js";
 export * from "./blocks/operations.js";
 export * from "./blocks/transform.js";
