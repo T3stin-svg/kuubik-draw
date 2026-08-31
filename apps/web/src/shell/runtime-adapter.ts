@@ -37,6 +37,7 @@ import { prepareBlockCommand } from "../features/blocks/command-adapter.js";
 import { createBlockAction, type BlockAction, type BlockCommandId } from "../features/blocks/model.js";
 import { BLOCK_PROMPT_PLANS, type BlockPromptValueKind } from "../features/blocks/model.js";
 import { LayerManagerController, type LayerManagerCommand, type LayerManagerPlan } from "../features/layers/controller.js";
+import type { LayerManagerShellCommand } from "../features/layers/shell-adapter.js";
 import { PrecisionCommandState, type PrecisionDispatchResult } from "../features/precision/command-adapter.js";
 import { PrecisionFeatureModel } from "../features/precision/model.js";
 import { PrecisionLayersShellContract, type PrecisionPointerInput, type PrecisionPointerResolution } from "../features/precision/shell-contract.js";
@@ -57,7 +58,7 @@ const RUNTIME_ROWS = new Set([
   "F-045", "F-047", "F-049", "F-050", "F-052", "F-053",
   "F-057", "F-058", "F-059",
   "F-061", "F-062", "F-063", "F-064", "F-065", "F-066", "F-067", "F-068",
-  "F-072", "F-073", "F-074",
+  "F-072", "F-073", "F-074", "F-075", "F-076", "F-077", "F-078", "F-079", "F-080", "F-086",
   "F-087", "F-088", "F-089", "F-090", "F-091",
   "F-097", "F-098", "F-122", "F-127", "F-131", "F-132",
 ]);
@@ -720,6 +721,10 @@ export class VisualShellRuntimeAdapter {
 
   executeLayer(document: KDrawDocumentV1, command: LayerManagerCommand) {
     return this.precisionLayers(document).executeLayer(command);
+  }
+
+  executeLayerCapability(document: KDrawDocumentV1, command: LayerManagerShellCommand) {
+    return this.precisionLayers(document).executeLayerCapability(command);
   }
 
   livePrompt(session: CadSession, request: AnnotationBlockPromptRequest): VisualShellLivePrompt {
