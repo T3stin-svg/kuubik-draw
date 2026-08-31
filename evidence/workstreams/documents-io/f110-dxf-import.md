@@ -34,6 +34,8 @@ Licensed AutoCAD 2024 Core Console `U.152.0.0` opened the exact fixture. Its rea
 
 Therefore F-110 is a green implementation candidate but not an AutoCAD-certified parity row. A dedicated owned AutoCAD desktop roundtrip must resolve the anonymous DIMENSION block, save/reopen the DXF, and return zero AUDIT errors before any score change. LibreCAD/FreeCAD results, if run, remain secondary and cannot clear this blocker.
 
+Follow-up `work11/reio-documents-f110-audit` corrects the DIMENSION/BLOCK anonymous flags and obtains a licensed AutoCAD 2024 Core Console read-only `AUDIT` result of `Total errors found 0 fixed 0`; see `f110-dimension-block-audit.md`. The parity score remains unchanged until the separate AutoCAD desktop owner gate is completed.
+
 ## Tests
 
 - Golden/core roundtrip, deterministic units and insertion scale.

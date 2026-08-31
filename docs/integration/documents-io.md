@@ -16,6 +16,8 @@ Eighth-wave PAPER SPACE document-state source: `work8/reio-documents-live` from 
 
 F-110 DXF import hardening source: `work10/reio-documents-f110-import` from integrator base `c607df360f68714e87b475ffbbc1a889abf93306`.
 
+F-110 anonymous dimension-block audit source: `work11/reio-documents-f110-audit` from integrator base `6d6213d9e1c59a2471a106bdb3985176b9a1f41c`.
+
 This workstream deliberately does not modify `App.tsx`, `style.css`, package manifests, parity scores or security evidence. The integration owner must wire the following surfaces without weakening the existing F-097...F-107, F-109, F-111 and F-114 paths.
 
 ## Shared package exports
@@ -27,6 +29,7 @@ Already exported by `@kuubik/cad-dxf`:
 - `DxfOpenOptions`, `DxfOpenReadback`, `DxfOpenResult`
 - `importDxf` accepts optional `targetUnits` and `preserveUnsupported`; its report exposes source/target units, deterministic insertion scale and preserved proxy handles
 - F-110 typed import covers LINE/RAY/XLINE/LWPOLYLINE bulges/CIRCLE/ARC/ELLIPSE/SPLINE/TEXT/MTEXT/HATCH/linear-aligned DIMENSION and named BLOCK/INSERT
+- Exported DIMENSION picture blocks are deterministically normalized to `*D1`, `*D2`, ... in document-entity order. DIMENSION group 70 includes the R13+ single-owner bit 32; the matching BLOCK group 70 has anonymous bit 1; BLOCK_RECORD, BLOCK and ENDBLK use one record handle. Import intentionally drops these AutoCAD-owned picture blocks and export regenerates the same normalized sequence.
 
 Already exported by `@kuubik/cad-print`:
 
