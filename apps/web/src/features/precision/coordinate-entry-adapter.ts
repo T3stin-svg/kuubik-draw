@@ -1,11 +1,11 @@
 import type { CadPoint2, KDrawDocumentV1 } from "@kuubik/cad-schema";
-import {
-  type CadChange,
-  type CadSession,
-  type CommittedOperation,
-} from "../../../../../packages/cad-core/src/transaction.js";
-import type { PrecisionResult } from "../../../../../packages/cad-core/src/precision.js";
-import type { CadPrecisionInput } from "../../../../../packages/cad-core/src/precision-input.js";
+import type {
+  CadChange,
+  CadSession,
+  CommittedOperation,
+  PrecisionResult,
+  CadPrecisionInput,
+} from "@kuubik/cad-core";
 import type { PrecisionPointerInput, PrecisionPointerResolution, PreparedPrecisionPointer } from "./shell-contract.js";
 
 export type CoordinateEntryStatus = "idle" | "active" | "retry" | "preview" | "committed" | "cancelled";
