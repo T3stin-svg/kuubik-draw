@@ -1,4 +1,4 @@
-import type { CadAppearance, CadCircle, CadPoint2 } from "@kuubik/cad-schema";
+import type { CadAppearance, CadCircle, CadPoint2, KDrawDocumentV1 } from "@kuubik/cad-schema";
 import type { EntityChange } from "./transaction.js";
 
 const EPSILON = 1e-9;
@@ -12,7 +12,11 @@ export type CircleCommandErrorCode =
   | "DEGENERATE_CONSTRUCTION"
   | "NO_TANGENT_SOLUTION"
   | "AMBIGUOUS_TANGENT_SOLUTION"
-  | "INVALID_SOLUTION_SELECTION";
+  | "INVALID_SOLUTION_SELECTION"
+  | "LAYER_NOT_FOUND"
+  | "LAYER_LOCKED"
+  | "LAYER_HIDDEN"
+  | "HANDLE_COLLISION";
 
 export class CircleCommandInputError extends Error {
   constructor(readonly code: CircleCommandErrorCode, message: string) {
@@ -159,7 +163,13 @@ function circleThroughThreePoints(first: CadPoint2, second: CadPoint2, third: Ca
   const determinant = 2 * (first.x * (second.y - third.y)
     + second.x * (third.y - first.y)
     + third.x * (first.y - second.y));
-  if (Math.abs(determinant) <= EPSILON) {
+  const coordinateScale = Math.max(
+    1,
+    distance(first, second),
+    distance(second, third),
+    distance(third, first),
+  );
+  if (Math.abs(determinant) <= EPSILON * coordinateScale ** 2) {
     throw new CircleCommandInputError("DEGENERATE_CONSTRUCTION", "Three-point circle requires non-collinear points.");
   }
   const firstSquared = first.x ** 2 + first.y ** 2;
@@ -536,6 +546,10 @@ export function prepareCompleteCircleCommand(input: CompleteCircleCommandInput):
     throw new CircleCommandInputError("INVALID_IDENTITY", "Circle command, handle and layer are required.");
   }
   const resolved = resolveConstruction(input.construction);
+  if (!Number.isFinite(resolved.center.x) || !Number.isFinite(resolved.center.y)
+    || !Number.isFinite(resolved.radius) || !(resolved.radius > EPSILON)) {
+    throw new CircleCommandInputError("DEGENERATE_CONSTRUCTION", "Circle construction did not produce a finite non-zero circle.");
+  }
   const entity: CadCircle = {
     kind: "circle",
     handle: input.handle,
@@ -554,4 +568,28 @@ export function prepareCompleteCircleCommand(input: CompleteCircleCommandInput):
     candidates: structuredClone(resolved.candidates),
     selectedCandidateIndex: resolved.selectedCandidateIndex,
   };
+}
+
+/**
+ * Document-aware F-004 preparation gate used by browser preview and commit.
+ * The pure construction function remains available for geometry-only consumers.
+ */
+export function prepareCompleteCircleDocumentCommand(
+  document: KDrawDocumentV1,
+  input: CompleteCircleCommandInput,
+): PreparedCompleteCircleCommand {
+  const layer = document.layers.find((candidate) => candidate.id === input.layerId);
+  if (!layer) {
+    throw new CircleCommandInputError("LAYER_NOT_FOUND", `CIRCLE result layer ${input.layerId} does not exist.`);
+  }
+  if (layer.locked) {
+    throw new CircleCommandInputError("LAYER_LOCKED", `CIRCLE result layer ${input.layerId} is locked.`);
+  }
+  if (!layer.visible || layer.frozen) {
+    throw new CircleCommandInputError("LAYER_HIDDEN", `CIRCLE result layer ${input.layerId} is off or frozen.`);
+  }
+  if (document.entities.some((entity) => entity.handle === input.handle)) {
+    throw new CircleCommandInputError("HANDLE_COLLISION", `CIRCLE result handle ${input.handle} already exists.`);
+  }
+  return prepareCompleteCircleCommand(input);
 }

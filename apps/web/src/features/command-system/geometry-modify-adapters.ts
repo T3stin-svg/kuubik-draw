@@ -1,6 +1,7 @@
 import {
   prepareArrayCommand,
   prepareBoundaryCommand,
+  prepareCompleteCircleDocumentCommand,
   prepareGeometryCommand,
   preparePeditCommand,
   prepareRegionCommand,
@@ -9,6 +10,7 @@ import {
   selectSimilar,
   type ArrayCommandInput,
   type BoundaryCommandInput,
+  type CompleteCircleCommandInput,
   type GeometryCommandInput,
   type PeditCommandInput,
   type QuickSelectInput,
@@ -29,7 +31,7 @@ type MatrixInput<Id extends ModifyMatrixInput["command"]> = Extract<ModifyMatrix
 export interface GeometryModifyDocumentInputMap {
   LINE: GeometryInput<"LINE">;
   PLINE: GeometryInput<"PLINE">;
-  CIRCLE: GeometryInput<"CIRCLE">;
+  CIRCLE: CompleteCircleCommandInput;
   ARC: GeometryInput<"ARC">;
   POLYGON: GeometryInput<"POLYGON">;
   ELLIPSE: GeometryInput<"ELLIPSE">;
@@ -80,7 +82,11 @@ export function prepareGeometryModifyDocumentCommand(
   request: GeometryModifyDocumentRequest,
 ): PreparedAtomicCommand {
   switch (request.commandId) {
-    case "LINE": case "PLINE": case "CIRCLE": case "ARC": case "POLYGON": case "ELLIPSE": case "REVCLOUD": {
+    case "CIRCLE": {
+      const prepared = prepareCompleteCircleDocumentCommand(document, request.input);
+      return atomic(prepared.commandId, prepared.changes, [], prepared.resultHandles, request.input);
+    }
+    case "LINE": case "PLINE": case "ARC": case "POLYGON": case "ELLIPSE": case "REVCLOUD": {
       const prepared = prepareGeometryCommand(request.input);
       if (prepared.commandId !== request.commandId) throw new TypeError(`${request.commandId} adapter prepared ${prepared.commandId}.`);
       return atomic(prepared.commandId, prepared.changes, [], prepared.resultHandles, request.input);
@@ -157,7 +163,7 @@ export function createGeometryModifyCommandDefinitions(parsers: GeometryModifyIn
   return [
     { id: "LINE", aliases: ["L"], options: [option("CLOSE", ["C"]), option("UNDO", ["U"])], prepare: (document, invocation) => prepareGeometryModifyDocumentCommand(document, { commandId: "LINE", input: parsers.LINE(invocation) }) },
     { id: "PLINE", aliases: ["PL"], options: [option("ARC", ["A"]), option("LINE", ["L"]), option("CLOSE", ["C"]), option("UNDO", ["U"]), option("WIDTH", ["W"])], prepare: (document, invocation) => prepareGeometryModifyDocumentCommand(document, { commandId: "PLINE", input: parsers.PLINE(invocation) }) },
-    { id: "CIRCLE", aliases: ["C"], options: [option("2P"), option("3P"), option("DIAMETER", ["D"])], prepare: (document, invocation) => prepareGeometryModifyDocumentCommand(document, { commandId: "CIRCLE", input: parsers.CIRCLE(invocation) }) },
+    { id: "CIRCLE", aliases: ["C"], options: [option("2P"), option("3P"), option("TTR"), option("TTT"), option("DIAMETER", ["D"])], prepare: (document, invocation) => prepareGeometryModifyDocumentCommand(document, { commandId: "CIRCLE", input: parsers.CIRCLE(invocation) }) },
     { id: "ARC", aliases: ["A"], options: [option("CENTER", ["C"]), option("END", ["E"]), option("ANGLE", ["A"])], prepare: (document, invocation) => prepareGeometryModifyDocumentCommand(document, { commandId: "ARC", input: parsers.ARC(invocation) }) },
     { id: "POLYGON", aliases: ["POL"], options: [option("EDGE", ["E"]), option("INSCRIBED", ["I"]), option("CIRCUMSCRIBED", ["C"])], prepare: (document, invocation) => prepareGeometryModifyDocumentCommand(document, { commandId: "POLYGON", input: parsers.POLYGON(invocation) }) },
     { id: "ELLIPSE", aliases: ["EL"], options: [option("ARC", ["A"]), option("CENTER", ["C"])], prepare: (document, invocation) => prepareGeometryModifyDocumentCommand(document, { commandId: "ELLIPSE", input: parsers.ELLIPSE(invocation) }) },

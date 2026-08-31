@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-004",
+  "cases": [
+    {
+      "name": "center-radius",
+      "construction": { "mode": "center-radius", "center": { "x": 12.5, "y": -8.25 }, "radius": 6.75 },
+      "expected": { "center": { "x": 12.5, "y": -8.25 }, "radius": 6.75 }
+    },
+    {
+      "name": "center-diameter",
+      "construction": { "mode": "center-diameter", "center": { "x": -40, "y": 3 }, "diameter": 17.5 },
+      "expected": { "center": { "x": -40, "y": 3 }, "radius": 8.75 }
+    },
+    {
+      "name": "2p",
+      "construction": { "mode": "2p", "first": { "x": -5, "y": 9 }, "second": { "x": 15, "y": -3 } },
+      "expected": { "center": { "x": 5, "y": 3 }, "radius": 11.661903789690601 }
+    },
+    {
+      "name": "3p",
+      "construction": { "mode": "3p", "first": { "x": 9, "y": 4 }, "second": { "x": 4, "y": 9 }, "third": { "x": -1, "y": 4 } },
+      "expected": { "center": { "x": 4, "y": 4 }, "radius": 5 }
+    }
+  ]
+}
