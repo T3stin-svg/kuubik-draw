@@ -28,6 +28,29 @@ The typed web command boundaries are `annotation/command-adapter.ts`,
 `PreparedAtomicCommand`; the shell must preview and commit that value as one operation rather than
 committing intermediate prompts or planner results.
 
+## Live shell command contract
+
+The visual shell consumes only `AnnotationBlockShellAdapter` from
+`apps/web/src/features/annotation/shell-adapter.ts`. It exposes:
+
+- immutable `commandDefinitions` for the existing `CommandRegistry`;
+- a user-visible capability row for every annotation/block command;
+- command-specific `CommandPromptStateMachine` instances with typed value validation,
+  cancel and repeat-from-first-prompt behavior;
+- typed preview/execute plus whole-command Undo/Redo methods.
+
+Typed command payloads are URI-encoded JSON tokens produced by `annotationCommandLine` or
+`blockCommandLine`; visual code must not build raw command strings. `DIM` is the engine command
+and requires exactly one of `LINEAR`, `ALIGNED`, `ANGULAR`, `RADIUS`, `DIAMETER`, `CONTINUE` or
+`STYLE`. Its operation records both the canonical `DIM` command and the concrete typed planner
+command. Each other definition rejects a payload whose discriminant does not match its command.
+
+A command is registered as executable only when its planner and `AnnotationBlockSessionAdapter`
+are present. The capability object supplies a stable `code` and Estonian `message` for disabled
+UI state. AC1018 removes MLEADER from the executable registry and reports
+`unsupported-dxf-version`; AC1021 or newer is required. The adapter is intentionally not wired
+through `App.tsx` or `shell/**` in this workstream.
+
 ## Common invariants
 
 1. All points are finite double-precision model coordinates. View, zoom and paper coordinates

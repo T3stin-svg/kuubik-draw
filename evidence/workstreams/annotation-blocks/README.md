@@ -31,3 +31,22 @@ Second-wave additions:
 Final second-wave regression on 2026-08-31 passed 117 Vitest files / 673 tests, plus repository
 typecheck, lint, build, public-tree provenance scan, license check and `git diff --check`. Final
 commit SHA is recorded in the delivery report.
+
+Third-wave live-shell contract additions:
+
+- typed CommandLineEngine definitions for TEXT, MTEXT, LEADER, MLEADER, DIM, STYLE, HATCH,
+  BLOCK, INSERT, BEDIT, EXPLODE and ATTRIB;
+- `AnnotationBlockShellAdapter` as the only visual-worker boundary;
+- command-specific prompt value/option validation, cancel and prompt repeat;
+- preview and commit share the same planner, while one command remains one session commit and one
+  Undo/Redo step;
+- user-visible missing-planner, missing-session and unsupported-DXF capability states;
+- AC1018 MLEADER is absent from the executable registry and fails before document mutation;
+- corrupt typed-payload property/mutation cases fail without revision changes.
+
+This is application-runtime contract evidence only. No App/shell wiring, DXF file output,
+AutoCAD round trip or F-score promotion is claimed.
+
+Final third-wave regression on 2026-08-31 passed 120 Vitest files / 690 tests. Repository
+typecheck, lint, production build, public-tree scan (1370 files), license gate (119 installed
+packages) and `git diff --check` also passed.
