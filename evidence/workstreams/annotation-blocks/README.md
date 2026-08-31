@@ -166,3 +166,27 @@ Eighth-wave targeted verification passed 5 files / 26 tests. Final repository re
 for a minified chunk larger than 500 kB. The commit SHA is recorded in the delivery report. No
 DXF/PDF adapter, global shell, App/style/package/parity file or F-score was changed. No native file
 was produced or reopened, no AutoCAD live workflow was run and no F-score promotion is claimed.
+
+Ninth-wave (work11) F-057..F-060 hardening additions:
+
+- MTEXT, LEADER and MLEADER runtime payloads now fail closed for invalid enum values, non-boolean
+  landing flags, invalid anchors and case-insensitive handle/style-ID collisions;
+- character wrapping iterates Unicode code points instead of UTF-16 code units; a deterministic
+  256-corpus property test covers supplementary characters and repeatability;
+- MTEXT edits reconcile paragraphs by position, preserving surviving paragraph IDs and alignment
+  while allocating deterministic IDs only for newly added paragraphs;
+- explicit `null` edit values detach text styles and associations or remove optional LEADER text,
+  while omitted fields preserve the prior value;
+- DOM-independent web wiring proves STYLE, MTEXT, LEADER and MLEADER prompt/planner/preview/commit
+  equality, exact read-back and atomic Undo/Redo; a shared geometry change updates two associated
+  leader heads without changing either annotation handle;
+- the integration contract defines native DXF fields/version boundaries and presentation-only PDF
+  behavior for session 4 without changing either adapter or claiming unsupported round-trip parity.
+
+Targeted ninth-wave verification passed 18 files / 103 tests. Final repository regression passed
+229 Vitest files / 1071 tests. Repository typecheck, lint, production build, public-tree scan
+(1681 files), license gate (119 installed packages) and `git diff --check` passed. The build retained
+the known Vite warning for a minified chunk larger than 500 kB. No DXF/PDF adapter, global shell,
+App/style/package/index/scope/parity file or F-score was changed. No annotation file was produced or
+reopened, no AutoCAD 2024.1.2 plus Kuubik live workflow/read-back was run and no F-score promotion is
+claimed.

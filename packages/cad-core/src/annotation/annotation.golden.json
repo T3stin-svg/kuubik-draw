@@ -82,6 +82,30 @@
     "associative": true,
     "anchor": { "handle": "10", "feature": "start", "fallback": { "x": 0, "y": 0 } }
   },
+  "mtextStableEditContract": {
+    "kind": "mtext",
+    "version": 2,
+    "width": 24,
+    "attachment": "bottom-right",
+    "lineSpacingFactor": 1.5,
+    "wrapMode": "character",
+    "paragraphs": [
+      { "id": "TITLE", "alignment": "center" },
+      { "id": "BODY", "alignment": "justify" },
+      { "id": "P1", "alignment": "left" }
+    ]
+  },
+  "detachedMLeaderContract": {
+    "kind": "mleader",
+    "version": 2,
+    "styleId": "MLEADER-STD",
+    "textPosition": { "x": 35, "y": 15 },
+    "textHeight": 2.5,
+    "landingGap": 1.25,
+    "arrow": { "type": "open", "size": 3.5 },
+    "landing": { "enabled": false, "length": 0 },
+    "associative": false
+  },
   "tableContract": {
     "kind": "table",
     "version": 1,
