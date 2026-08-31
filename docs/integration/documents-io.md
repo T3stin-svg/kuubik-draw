@@ -14,6 +14,8 @@ Seventh-wave Model/Layout document-state source: `work7/reio-documents-live` fro
 
 Eighth-wave PAPER SPACE document-state source: `work8/reio-documents-live` from integrator base `7bfa2bea649583129844444f9f5788a701ff21a4`.
 
+F-110 DXF import hardening source: `work10/reio-documents-f110-import` from integrator base `c607df360f68714e87b475ffbbc1a889abf93306`.
+
 This workstream deliberately does not modify `App.tsx`, `style.css`, package manifests, parity scores or security evidence. The integration owner must wire the following surfaces without weakening the existing F-097...F-107, F-109, F-111 and F-114 paths.
 
 ## Shared package exports
@@ -23,6 +25,8 @@ Already exported by `@kuubik/cad-dxf`:
 - `openDxfDocument`
 - `readBackOpenedDxf`
 - `DxfOpenOptions`, `DxfOpenReadback`, `DxfOpenResult`
+- `importDxf` accepts optional `targetUnits` and `preserveUnsupported`; its report exposes source/target units, deterministic insertion scale and preserved proxy handles
+- F-110 typed import covers LINE/RAY/XLINE/LWPOLYLINE bulges/CIRCLE/ARC/ELLIPSE/SPLINE/TEXT/MTEXT/HATCH/linear-aligned DIMENSION and named BLOCK/INSERT
 
 Already exported by `@kuubik/cad-print`:
 
@@ -48,6 +52,8 @@ The transaction module also exports `put-attachment` and `delete-attachment` `Ca
 - `document-session-coordinator.ts`: one isolated `CadSession`, viewport, selection and active layout per `documentId`
 - `pdf-underlay-transaction.ts`: atomic attachment-byte/document commit and fail-closed stored-byte read-back
 - `document-live-orchestrator.ts`: browser-ready composition root that exposes a document only after session, tab, append-only storage and attachment read-back agree
+- `dxf-import-transaction.ts`: parse-before-commit DXFIN composition; converts source units into the open document units, retains paper layouts, commits one append-only operation, then exports and reparses the persisted document before returning
+- `dxf-import-harness.ts` and `.html`: real-Chromium IndexedDB import → Undo → Redo → unclean-session recovery read-back
 - `documents-live-harness.ts`: deterministic F-115/F-128/F-133 crash/reload, stale-revision and corrupt-tail fixture; it is also published as `window.runKuubikDocumentsLiveHarness` when imported in a browser
 - `documents-live-harness.html`: isolated real-Chromium IndexedDB runner; this test page is not part of `App.tsx`
 - `layout-plot-shell.ts`: DOM-independent F-096...F-107/F-114/F-115 caller contract over live document revisions, Layout/PageSetup/Plot primitives, vector PDF and underlay read-back

@@ -43,7 +43,10 @@ export function readBackOpenedDxf(document: KDrawDocumentV1, report: DxfImportRe
   const modelLayouts = document.layouts.filter((layout) => layout.kind === "model");
   if (modelLayouts.length !== 1) throw new DxfImportError(`Opened DXF must contain exactly one Model layout; found ${modelLayouts.length}.`, report);
   const importedHandles = [...report.importedHandles];
-  const actualHandles = document.entities.map((entity) => entity.handle);
+  const actualHandles = [
+    ...document.blocks.flatMap((block) => block.entities.map((entity) => entity.handle)),
+    ...document.entities.map((entity) => entity.handle),
+  ];
   if (new Set(importedHandles).size !== importedHandles.length || importedHandles.length !== actualHandles.length || importedHandles.some((handle, index) => handle !== actualHandles[index])) {
     throw new DxfImportError("Opened DXF entity handles do not match the parser report.", report);
   }
