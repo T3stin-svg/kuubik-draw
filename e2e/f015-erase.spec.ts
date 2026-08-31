@@ -2,6 +2,7 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { expect, test } from "@playwright/test";
 import DxfParser from "dxf-parser";
+import { clearModelSelection } from "./helpers/selection.js";
 
 async function downloadBytes(download: { path(): Promise<string | null> }, captureName: string): Promise<Buffer> {
   const path = await download.path();
@@ -23,10 +24,14 @@ test("F-015 ERASE selection to atomic delete, empty DXF and one-step UNDO", asyn
   page.on("pageerror", (error) => consoleErrors.push(error.message));
 
   await page.goto("/d/local");
+  await expect(page.getByText(/DocumentLiveOrchestrator/u)).toBeVisible();
   await page.getByRole("button", { name: "LINE test" }).click();
+  await expect(page.getByText("LINE runtime salvestatud, revision 1")).toBeVisible();
   await page.getByLabel("Esimene nurk").fill("125.25,-200.5");
   await page.getByLabel("Teine nurk").fill("600.75,900.125");
   await page.getByRole("button", { name: "RECTANGLE", exact: true }).click();
+  await expect(page.getByText("RECTANGLE salvestatud, revision 2")).toBeVisible();
+  await clearModelSelection(page);
   await expect(page.getByText("2 objekti · 0 valitud")).toBeVisible();
 
   await page.getByRole("button", { name: "Vali kõik" }).click();
@@ -47,7 +52,7 @@ test("F-015 ERASE selection to atomic delete, empty DXF and one-step UNDO", asyn
   await expect(page.getByText("UNDO taastatud, revision 4")).toBeVisible();
   await expect(page.getByText("2 objekti · 0 valitud")).toBeVisible();
   await page.reload();
-  await expect(page.getByText("Taastatud revision 4")).toBeVisible();
+  await expect(page.getByTestId("recovery-panel").getByText("Pärast katkestust taastati revisjon 4.", { exact: true })).toBeVisible();
   await expect(page.getByText("2 objekti · 0 valitud")).toBeVisible();
   const restoredDownloadPromise = page.waitForEvent("download");
   await page.getByRole("button", { name: "DXF eksport" }).click();
@@ -82,22 +87,25 @@ test("F-015 mixed selection preserves a locked-layer object through commit and r
   page.on("pageerror", (error) => consoleErrors.push(error.message));
 
   await page.goto("/d/local");
+  await expect(page.getByText(/DocumentLiveOrchestrator/u)).toBeVisible();
   await page.getByRole("button", { name: "LINE test" }).click();
-  await page.getByRole("button", { name: "Uus kiht" }).click();
-  await expect(page.getByText("Layer 1 loodud ja aktiivne")).toBeVisible();
+  await expect(page.getByText("LINE runtime salvestatud, revision 1")).toBeVisible();
+  await page.getByRole("button", { name: "Uus kiht", exact: true }).click();
+  await expect(page.getByText("Layer 1 loodud typed Layer Manageri kaudu")).toBeVisible();
   await page.getByLabel("Esimene nurk").fill("125.25,-200.5");
   await page.getByLabel("Teine nurk").fill("600.75,900.125");
   await page.getByRole("button", { name: "RECTANGLE", exact: true }).click();
+  await expect(page.getByText("RECTANGLE salvestatud, revision 3")).toBeVisible();
   await page.getByRole("button", { name: "Lukusta aktiivne" }).click();
   await expect(page.getByText("Layer 1 lukustatud")).toBeVisible();
 
   await page.getByRole("button", { name: "Vali kõik" }).click();
   await page.getByRole("button", { name: "ERASE", exact: true }).click();
   await expect(page.getByText("1 objekti kustutatud; 1 jäi muutmata")).toBeVisible();
-  await expect(page.getByText("1 objekti · 0 valitud · Layer 1 🔒")).toBeVisible();
+  await expect(page.getByText("1 objekti · 0 valitud · Layer 1 · LOCKED", { exact: true })).toBeVisible();
   await page.reload();
-  await expect(page.getByText("Taastatud revision 5")).toBeVisible();
-  await expect(page.getByText("1 objekti · 0 valitud · Layer 1 🔒")).toBeVisible();
+  await expect(page.getByTestId("recovery-panel").getByText("Pärast katkestust taastati revisjon 5.", { exact: true })).toBeVisible();
+  await expect(page.getByText("1 objekti · 0 valitud · Layer 1 · LOCKED", { exact: true })).toBeVisible();
 
   const downloadPromise = page.waitForEvent("download");
   await page.getByRole("button", { name: "DXF eksport" }).click();

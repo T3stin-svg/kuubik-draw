@@ -5,6 +5,7 @@ import { expect, test, type Locator, type Page } from "@playwright/test";
 import { createEmptyDocument } from "@kuubik/cad-core";
 import type { KDrawDocumentV1 } from "@kuubik/cad-schema";
 import { openLayoutTools } from "./helpers/layout-tools.js";
+import { seedKDrawDocument } from "./helpers/indexed-db.js";
 
 type RecordedOperation = { opId: string; commandId: string; baseRevision: number };
 type ViewState = {
@@ -63,31 +64,13 @@ function viewportDocument(): KDrawDocumentV1 {
 }
 
 async function seedLocalDocument(page: Page, document: KDrawDocumentV1): Promise<void> {
-  await page.goto("/d/local");
-  await page.evaluate(async (value) => {
-    const database = await new Promise<IDBDatabase>((resolveOpen, rejectOpen) => {
-      const request = indexedDB.open("kuubik-draw", 1);
-      request.onsuccess = () => resolveOpen(request.result);
-      request.onerror = () => rejectOpen(request.error);
-    });
-    await new Promise<void>((resolveWrite, rejectWrite) => {
-      const transaction = database.transaction(["documents", "operations", "snapshots"], "readwrite");
-      transaction.objectStore("documents").put(value);
-      transaction.objectStore("operations").clear();
-      transaction.objectStore("snapshots").clear();
-      transaction.oncomplete = () => resolveWrite();
-      transaction.onerror = () => rejectWrite(transaction.error);
-    });
-    database.close();
-  }, document);
-  await page.reload();
-  await expect(page.getByText("Taastatud revision 0")).toBeVisible();
+  await seedKDrawDocument(page, document);
 }
 
 async function readDocument(page: Page): Promise<KDrawDocumentV1> {
   return page.evaluate(async () => {
     const database = await new Promise<IDBDatabase>((resolveOpen, rejectOpen) => {
-      const request = indexedDB.open("kuubik-draw", 1);
+      const request = indexedDB.open("kuubik-draw");
       request.onsuccess = () => resolveOpen(request.result);
       request.onerror = () => rejectOpen(request.error);
     });
@@ -104,7 +87,7 @@ async function readDocument(page: Page): Promise<KDrawDocumentV1> {
 async function readOperations(page: Page): Promise<RecordedOperation[]> {
   return page.evaluate(async () => {
     const database = await new Promise<IDBDatabase>((resolveOpen, rejectOpen) => {
-      const request = indexedDB.open("kuubik-draw", 1);
+      const request = indexedDB.open("kuubik-draw");
       request.onsuccess = () => resolveOpen(request.result);
       request.onerror = () => rejectOpen(request.error);
     });
@@ -242,7 +225,7 @@ test("F-100 applies preset/custom scale, cursor-anchor zoom, rotated pan/twist, 
   await page.clock.setFixedTime("2026-08-28T00:00:00.000Z");
   await page.setViewportSize({ width: 1920, height: 1080 });
   await seedLocalDocument(page, viewportDocument());
-  await page.getByRole("button", { name: "F100 VIEW", exact: true }).click();
+  await page.getByRole("tab", { name: "F100 VIEW", exact: true }).click();
   const viewport = page.locator('[data-viewport-id="viewport-f100"]');
   await expect(viewport).toHaveCount(1);
   await viewport.dblclick();
@@ -318,14 +301,14 @@ test("F-100 applies preset/custom scale, cursor-anchor zoom, rotated pan/twist, 
   expect(exportedViewport.viewHeight / exportedViewport.height).toBeCloseTo(panned.scaleDenominator, 12);
   expect(exportedViewport.twistAngleRad).toBeCloseTo(Math.PI / 6, 12);
   const stored = await readDocument(page);
-  expect(stored.revision).toBe(5);
+  expect(stored.revision).toBe(6);
   const operations = await readOperations(page);
-  expect(operations.map((operation) => operation.commandId)).toEqual(["VIEWPORT_VIEW", "VIEWPORT_ZOOM", "VIEWPORT_PAN", "UNDO", "VIEWPORT_PAN"]);
-  expect(operations.map((operation) => operation.baseRevision)).toEqual([0, 1, 2, 3, 4]);
+  expect(operations.map((operation) => operation.commandId)).toEqual(["LAYOUT_ACTIVATE", "VIEWPORT_VIEW", "VIEWPORT_ZOOM", "VIEWPORT_PAN", "UNDO", "VIEWPORT_PAN"]);
+  expect(operations.map((operation) => operation.baseRevision)).toEqual([0, 1, 2, 3, 4, 5]);
 
   await page.reload();
-  await expect(page.getByText("Taastatud revision 5")).toBeVisible();
-  await page.getByRole("button", { name: "F100 VIEW", exact: true }).click();
+  await expect(page.getByTestId("recovery-panel").getByText("Pärast katkestust taastati revisjon 6.", { exact: true })).toBeVisible();
+  await page.getByRole("tab", { name: "F100 VIEW", exact: true }).click();
   const restoredViewport = page.locator('[data-viewport-id="viewport-f100"]');
   const restored = await viewState(restoredViewport);
   expect(restored.center.x).toBeCloseTo(panned.center.x, 9);

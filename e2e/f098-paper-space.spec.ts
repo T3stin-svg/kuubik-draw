@@ -4,6 +4,7 @@ import { resolve } from "node:path";
 import { expect, test, type Page } from "@playwright/test";
 import { createEmptyDocument } from "@kuubik/cad-core";
 import type { KDrawDocumentV1 } from "@kuubik/cad-schema";
+import { checkpointKDrawDocument, seedKDrawDocument } from "./helpers/indexed-db.js";
 
 function collectErrors(page: Page): string[] {
   const errors: string[] = [];
@@ -33,25 +34,7 @@ function paperDocument(): KDrawDocumentV1 {
 }
 
 async function seedLocalDocument(page: Page, document: KDrawDocumentV1): Promise<void> {
-  await page.goto("/d/local");
-  await page.evaluate(async (value) => {
-    const database = await new Promise<IDBDatabase>((resolveOpen, rejectOpen) => {
-      const request = indexedDB.open("kuubik-draw", 1);
-      request.onsuccess = () => resolveOpen(request.result);
-      request.onerror = () => rejectOpen(request.error);
-    });
-    await new Promise<void>((resolveWrite, rejectWrite) => {
-      const transaction = database.transaction(["documents", "operations", "snapshots"], "readwrite");
-      transaction.objectStore("documents").put(value);
-      transaction.objectStore("operations").clear();
-      transaction.objectStore("snapshots").clear();
-      transaction.oncomplete = () => resolveWrite();
-      transaction.onerror = () => rejectWrite(transaction.error);
-    });
-    database.close();
-  }, document);
-  await page.reload();
-  await expect(page.getByText("Taastatud revision 0")).toBeVisible();
+  await seedKDrawDocument(page, document);
 }
 
 async function paperMetrics(page: Page) {
@@ -104,9 +87,9 @@ test("F-098 shows a positive A3 paper sheet in the workspace and restores it fro
   await page.setViewportSize({ width: 1920, height: 1080 });
   await seedLocalDocument(page, paperDocument());
   await expect(page.locator('.drawing-area[data-mode="model"]')).toBeVisible();
-  await page.getByRole("button", { name: "F098 PAPER", exact: true }).click();
+  await page.getByRole("tab", { name: "F098 PAPER", exact: true }).click();
   await expect(page.locator('.drawing-area[data-mode="paper"]')).toBeVisible();
-  await expect(page.getByText("PAPER · mm · SNAP")).toBeVisible();
+  await expect(page.getByText("PAPER · mm · GRID")).toBeVisible();
 
   const beforeReload = await paperMetrics(page);
   expect(beforeReload.viewport).toMatchObject({ width: 1920, height: 1080 });
@@ -126,9 +109,10 @@ test("F-098 shows a positive A3 paper sheet in the workspace and restores it fro
   expect(beforeReload.canvasBitmap.paintedPixels).toBeGreaterThan(100);
   const exported = await downloadKDraw(page);
 
-  await page.reload();
-  await expect(page.getByText("Taastatud revision 0")).toBeVisible();
-  await page.getByRole("button", { name: "F098 PAPER", exact: true }).click();
+  expect(await checkpointKDrawDocument(page, { suspendApp: true })).toEqual({ revision: 1, layoutRepairs: [] });
+  await page.goto("/d/local");
+  await expect(page.getByTestId("recovery-panel").getByText("Pärast katkestust taastati revisjon 1.", { exact: true })).toBeVisible();
+  await page.getByRole("tab", { name: "F098 PAPER", exact: true }).click();
   const afterReload = await paperMetrics(page);
   expect(afterReload.paper).toEqual(beforeReload.paper);
   expect(afterReload.sheet.width).toBeCloseTo(beforeReload.sheet.width, 0);

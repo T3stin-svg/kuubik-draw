@@ -6,6 +6,7 @@ import type { CadPageSetup, KDrawDocumentV1 } from "@kuubik/cad-schema";
 import { modelVisibleWorldRect } from "./helpers/model-space.js";
 import { createF106Document } from "../parity/fixtures/f106-document.js";
 import { openLayoutTools } from "./helpers/layout-tools.js";
+import { seedKDrawDocument } from "./helpers/indexed-db.js";
 
 const sha256 = (value: Buffer | string): string => createHash("sha256").update(value).digest("hex");
 type Rect = { x: number; y: number; width: number; height: number };
@@ -18,31 +19,13 @@ function collectErrors(page: Page): string[] {
 }
 
 async function seedLocalDocument(page: Page, document: KDrawDocumentV1): Promise<void> {
-  await page.goto("/d/local");
-  await page.evaluate(async (value) => {
-    const database = await new Promise<IDBDatabase>((resolveOpen, rejectOpen) => {
-      const request = indexedDB.open("kuubik-draw", 1);
-      request.onsuccess = () => resolveOpen(request.result);
-      request.onerror = () => rejectOpen(request.error);
-    });
-    await new Promise<void>((resolveWrite, rejectWrite) => {
-      const transaction = database.transaction(["documents", "operations", "snapshots"], "readwrite");
-      transaction.objectStore("documents").put(value);
-      transaction.objectStore("operations").clear();
-      transaction.objectStore("snapshots").clear();
-      transaction.oncomplete = () => resolveWrite();
-      transaction.onerror = () => rejectWrite(transaction.error);
-    });
-    database.close();
-  }, document);
-  await page.reload();
-  await expect(page.getByText("Taastatud revision 0")).toBeVisible();
+  await seedKDrawDocument(page, document);
 }
 
 async function readLocalDocument(page: Page): Promise<KDrawDocumentV1> {
   return page.evaluate(async () => {
     const database = await new Promise<IDBDatabase>((resolveOpen, rejectOpen) => {
-      const request = indexedDB.open("kuubik-draw", 1);
+      const request = indexedDB.open("kuubik-draw");
       request.onsuccess = () => resolveOpen(request.result);
       request.onerror = () => rejectOpen(request.error);
     });
@@ -191,7 +174,7 @@ test("F-106 persists and plots Model Extents, Window and Display as physical vec
   expect(stored.revision).toBe(4);
   expect(setup).toMatchObject({ mediaName: "ISO_A4", orientation: "portrait", plotArea: { kind: "display" }, plotScale: { mode: "custom", paperUnits: 1, drawingUnits: 100 }, centerPlot: true });
   await page.reload();
-  await expect(page.getByText("Taastatud revision 4")).toBeVisible();
+  await expect(page.getByTestId("recovery-panel").getByText("Pärast katkestust taastati revisjon 4.", { exact: true })).toBeVisible();
   await openLayoutTools(page);
   await expect(controls).toHaveAttribute("data-plot-area", "display");
   await expect(controls).toHaveAttribute("data-plot-scale", "100");

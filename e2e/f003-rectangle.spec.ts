@@ -43,7 +43,7 @@ test("F-003 RECTANGLE registry to browser commit and independent DXF read-back",
   ]);
 
   await page.reload();
-  await expect(page.getByText("Taastatud revision 1")).toBeVisible();
+  await expect(page.getByTestId("recovery-panel").getByText("Pärast katkestust taastati revisjon 1.", { exact: true })).toBeVisible();
   await expect(page.getByText("1 objekti")).toBeVisible();
   expect(consoleErrors).toEqual([]);
 });

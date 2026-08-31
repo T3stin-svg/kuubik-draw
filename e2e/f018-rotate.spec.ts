@@ -12,6 +12,8 @@ import {
   f018ReferencePoints,
   f018StandardDocument,
 } from "../parity/fixtures/f018-standard-fixture.mjs";
+import { clearModelSelection } from "./helpers/selection.js";
+import { seedKDrawDocument } from "./helpers/indexed-db.js";
 
 async function downloadBytes(download: { path(): Promise<string | null> }, captureName: string): Promise<Buffer> {
   const path = await download.path();
@@ -35,32 +37,13 @@ function collectErrors(page: import("@playwright/test").Page): string[] {
 }
 
 async function seedLocalDocument(page: import("@playwright/test").Page): Promise<void> {
-  await page.goto("/d/local");
-  await page.evaluate(async (document) => {
-    const database = await new Promise<IDBDatabase>((resolveOpen, rejectOpen) => {
-      const request = indexedDB.open("kuubik-draw", 1);
-      request.onsuccess = () => resolveOpen(request.result);
-      request.onerror = () => rejectOpen(request.error);
-    });
-    await new Promise<void>((resolveWrite, rejectWrite) => {
-      const transaction = database.transaction(["documents", "operations", "snapshots"], "readwrite");
-      transaction.objectStore("documents").put(document);
-      transaction.objectStore("operations").clear();
-      transaction.objectStore("snapshots").clear();
-      transaction.oncomplete = () => resolveWrite();
-      transaction.onerror = () => rejectWrite(transaction.error);
-      transaction.onabort = () => rejectWrite(transaction.error);
-    });
-    database.close();
-  }, structuredClone(f018StandardDocument));
-  await page.reload();
-  await expect(page.getByText("Taastatud revision 0")).toBeVisible();
+  await seedKDrawDocument(page, f018StandardDocument);
 }
 
 async function readLocalDocument(page: import("@playwright/test").Page): Promise<typeof f018StandardDocument> {
   return page.evaluate(async () => {
     const database = await new Promise<IDBDatabase>((resolveOpen, rejectOpen) => {
-      const request = indexedDB.open("kuubik-draw", 1);
+      const request = indexedDB.open("kuubik-draw");
       request.onsuccess = () => resolveOpen(request.result);
       request.onerror = () => rejectOpen(request.error);
     });
@@ -82,7 +65,7 @@ async function readFirstOperation(page: import("@playwright/test").Page): Promis
 } | undefined> {
   return page.evaluate(async () => {
     const database = await new Promise<IDBDatabase>((resolveOpen, rejectOpen) => {
-      const request = indexedDB.open("kuubik-draw", 1);
+      const request = indexedDB.open("kuubik-draw");
       request.onsuccess = () => resolveOpen(request.result);
       request.onerror = () => rejectOpen(request.error);
     });
@@ -107,10 +90,13 @@ async function captureJson(name: string, value: unknown): Promise<void> {
 test("F-018 ROTATE preselection, numeric angle, DXF and atomic UNDO", async ({ page }) => {
   const consoleErrors = collectErrors(page);
   await page.goto("/d/local");
+  await expect(page.getByText(/DocumentLiveOrchestrator/u)).toBeVisible();
   await page.getByRole("button", { name: "LINE test" }).click();
+  await expect(page.getByText("LINE runtime salvestatud, revision 1")).toBeVisible();
   await page.getByLabel("Esimene nurk").fill("0,1000");
   await page.getByLabel("Teine nurk").fill("1000,1500");
   await page.getByRole("button", { name: "RECTANGLE", exact: true }).click();
+  await expect(page.getByText("RECTANGLE salvestatud, revision 2")).toBeVisible();
   await page.getByRole("button", { name: "Vali kõik" }).click();
   await page.getByLabel("ROTATE baaspunkt").fill("0,0");
   await page.getByLabel("ROTATE nurk").fill("90");
@@ -129,7 +115,7 @@ test("F-018 ROTATE preselection, numeric angle, DXF and atomic UNDO", async ({ p
   await page.getByRole("button", { name: "UNDO", exact: true }).click();
   await expect(page.getByText("UNDO taastatud, revision 4")).toBeVisible();
   await page.reload();
-  await expect(page.getByText("Taastatud revision 4")).toBeVisible();
+  await expect(page.getByTestId("recovery-panel").getByText("Pärast katkestust taastati revisjon 4.", { exact: true })).toBeVisible();
   const restoredDownload = page.waitForEvent("download");
   await page.getByRole("button", { name: "DXF eksport" }).click();
   const restored = new DxfParser().parseSync((await downloadBytes(await restoredDownload, "F-018-browser-restored.dxf")).toString("utf8"));
@@ -140,10 +126,16 @@ test("F-018 ROTATE preselection, numeric angle, DXF and atomic UNDO", async ({ p
 test("F-018 ROTATE postselection, numeric Reference, point target and mixed locked layer", async ({ page }) => {
   const consoleErrors = collectErrors(page);
   await page.goto("/d/local");
+  await expect(page.getByText(/DocumentLiveOrchestrator/u)).toBeVisible();
   await page.getByRole("button", { name: "LINE test" }).click();
-  await page.getByRole("button", { name: "Uus kiht" }).click();
+  await expect(page.getByText("LINE runtime salvestatud, revision 1")).toBeVisible();
+  await page.getByRole("button", { name: "Uus kiht", exact: true }).click();
+  await expect(page.getByText("Layer 1 loodud typed Layer Manageri kaudu")).toBeVisible();
   await page.getByRole("button", { name: "LINE test" }).click();
+  await expect(page.getByText("LINE runtime salvestatud, revision 3")).toBeVisible();
   await page.getByRole("button", { name: "Lukusta aktiivne" }).click();
+  await expect(page.getByText("Layer 1 lukustatud")).toBeVisible();
+  await clearModelSelection(page);
 
   await page.getByRole("button", { name: "ROTATE", exact: true }).click();
   await expect(page.getByText("ROTATE: vali objektid, seejärel kinnita valik, baaspunkt ja nurk")).toBeVisible();
@@ -157,17 +149,17 @@ test("F-018 ROTATE postselection, numeric Reference, point target and mixed lock
   await page.getByRole("button", { name: "ROTATE", exact: true }).click();
   await expect(page.getByText("1 objekti pööratud 90°; 1 jäi muutmata")).toBeVisible();
   expect(JSON.parse((await page.getByTestId("rotate-rejected").getAttribute("data-rejected")) ?? "null")).toEqual([
-    { handle: "12", reason: "locked-layer" },
+    { handle: "11", reason: "locked-layer" },
   ]);
   await page.reload();
-  await expect(page.getByText("Taastatud revision 5")).toBeVisible();
+  await expect(page.getByTestId("recovery-panel").getByText("Pärast katkestust taastati revisjon 5.", { exact: true })).toBeVisible();
 
   const mixedDownload = page.waitForEvent("download");
   await page.getByRole("button", { name: "DXF eksport" }).click();
   const mixed = new DxfParser().parseSync((await downloadBytes(await mixedDownload, "F-018-browser-locked.dxf")).toString("utf8"));
   expect(mixed?.entities.map((entity) => ({ handle: entity.handle, layer: entity.layer, vertices: entity.vertices }))).toEqual([
     { handle: "10", layer: "0", vertices: [{ x: -10, y: 10, z: 0 }, { x: -90, y: 180, z: 0 }] },
-    { handle: "12", layer: "Layer 1", vertices: [{ x: 10, y: 20, z: 0 }, { x: 180, y: 90, z: 0 }] },
+    { handle: "11", layer: "Layer 1", vertices: [{ x: 10, y: 20, z: 0 }, { x: 180, y: 90, z: 0 }] },
   ]);
   expect(consoleErrors).toEqual([]);
 });
@@ -175,6 +167,7 @@ test("F-018 ROTATE postselection, numeric Reference, point target and mixed lock
 test("F-018 ROTATE point angle, clockwise rotation, coincident Reference rejection and equal-angle no-op", async ({ page }) => {
   const consoleErrors = collectErrors(page);
   await page.goto("/d/local");
+  await expect(page.getByText(/DocumentLiveOrchestrator/u)).toBeVisible();
   await page.getByRole("button", { name: "LINE test" }).click();
   await page.getByRole("button", { name: "Vali kõik" }).click();
   await page.getByLabel("ROTATE baaspunkt").fill("0,0");
@@ -233,7 +226,7 @@ test("F-018 ROTATE two-point Reference standard matrix persists and undoes atomi
   await page.getByRole("button", { name: "UNDO", exact: true }).click();
   await expect(page.getByText("UNDO taastatud, revision 2")).toBeVisible();
   await page.reload();
-  await expect(page.getByText("Taastatud revision 2")).toBeVisible();
+  await expect(page.getByTestId("recovery-panel").getByText("Pärast katkestust taastati revisjon 2.", { exact: true })).toBeVisible();
   const restored = await readLocalDocument(page);
   expect(restored.entities).toEqual(f018StandardDocument.entities);
   await captureJson("F-018-browser-standard-matrix.json", {

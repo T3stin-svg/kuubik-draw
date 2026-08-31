@@ -5,6 +5,7 @@ import DxfParser from "dxf-parser";
 import { createEmptyDocument, deserializeKDraw } from "@kuubik/cad-core";
 import type { KDrawDocumentV1 } from "@kuubik/cad-schema";
 import { modelWorldToScreen } from "./helpers/model-space.js";
+import { currentKDrawDocument, seedKDrawDocument } from "./helpers/indexed-db.js";
 
 type RecordedOperation = { commandId: string; targetHandles: string[]; resultHandles: string[]; args: Record<string, unknown> };
 
@@ -45,31 +46,13 @@ function dxfRecordPairs(text: string, type: string, handle: string): Array<[numb
 }
 
 async function seedLocalDocument(page: Page, document: KDrawDocumentV1): Promise<void> {
-  await page.goto("/d/local");
-  await page.evaluate(async (value) => {
-    const database = await new Promise<IDBDatabase>((resolveOpen, rejectOpen) => {
-      const request = indexedDB.open("kuubik-draw", 1);
-      request.onsuccess = () => resolveOpen(request.result);
-      request.onerror = () => rejectOpen(request.error);
-    });
-    await new Promise<void>((resolveWrite, rejectWrite) => {
-      const transaction = database.transaction(["documents", "operations", "snapshots"], "readwrite");
-      transaction.objectStore("documents").put(value);
-      transaction.objectStore("operations").clear();
-      transaction.objectStore("snapshots").clear();
-      transaction.oncomplete = () => resolveWrite();
-      transaction.onerror = () => rejectWrite(transaction.error);
-    });
-    database.close();
-  }, structuredClone(document));
-  await page.reload();
-  await expect(page.getByText("Taastatud revision 0")).toBeVisible();
+  await seedKDrawDocument(page, document);
 }
 
 async function readDocument(page: Page): Promise<KDrawDocumentV1> {
   return page.evaluate(async () => {
     const database = await new Promise<IDBDatabase>((resolveOpen, rejectOpen) => {
-      const request = indexedDB.open("kuubik-draw", 1);
+      const request = indexedDB.open("kuubik-draw");
       request.onsuccess = () => resolveOpen(request.result);
       request.onerror = () => rejectOpen(request.error);
     });
@@ -91,7 +74,7 @@ async function readOperation(page: Page): Promise<RecordedOperation> {
 async function readOperations(page: Page): Promise<RecordedOperation[]> {
   return page.evaluate(async () => {
     const database = await new Promise<IDBDatabase>((resolveOpen, rejectOpen) => {
-      const request = indexedDB.open("kuubik-draw", 1);
+      const request = indexedDB.open("kuubik-draw");
       request.onsuccess = () => resolveOpen(request.result);
       request.onerror = () => rejectOpen(request.error);
     });
@@ -256,7 +239,7 @@ test("F-025 CHAMFER Shift no-op preview equals commit and writes no operation", 
   await expect(page.getByText("CHAMFER ei muutnud geomeetriat")).toBeVisible();
   const restored = await readDocument(page);
   const operations = await readOperations(page);
-  expect(restored).toEqual(document);
+  expect(restored).toEqual(currentKDrawDocument(document));
   expect(operations).toEqual([]);
   await capture("F-025-browser-shift-no-op.json", { rowId: "F-025", source: document, restored, operations, hiddenSourceCount: 0, status: "PASS" });
 });
@@ -474,7 +457,7 @@ test("F-025 CHAMFER zero-distance Polyline and seam pair preserve an exact four-
   await expect(page.getByTestId("chamfer-preview")).toHaveText("CHAMFER eelvaade: 0 tulemust · 1 sammu");
   await page.getByRole("button", { name: "CHAMFER", exact: true }).click();
   const restored = await readDocument(page);
-  expect(restored).toEqual(source);
+  expect(restored).toEqual(currentKDrawDocument(source));
   expect(await readOperations(page)).toEqual([]);
   let download = page.waitForEvent("download");
   await page.getByRole("button", { name: "DXF eksport" }).click();
@@ -484,7 +467,7 @@ test("F-025 CHAMFER zero-distance Polyline and seam pair preserve an exact four-
   download = page.waitForEvent("download");
   await page.getByRole("button", { name: "KDraw eksport" }).click();
   path = await (await download).path(); const kdrawBytes = await readFile(path!);
-  expect((await deserializeKDraw(kdrawBytes)).document).toEqual(source);
+  expect((await deserializeKDraw(kdrawBytes)).document).toEqual(currentKDrawDocument(source));
   await capture("F-025-browser-zero.dxf", dxfBytes);
   await capture("F-025-browser-zero.kdraw", kdrawBytes);
   await capture("F-025-browser-zero.json", { rowId: "F-025", source, restored, operations: [], status: "PASS" });
@@ -514,7 +497,7 @@ test("F-025 CHAMFER rejects oversized selected-polyline Trim without partial DXF
   await expect(page.getByRole("button", { name: "UNDO", exact: true })).toBeDisabled();
   const restored = await readDocument(page);
   const operations = await readOperations(page);
-  expect(restored).toEqual(source);
+  expect(restored).toEqual(currentKDrawDocument(source));
   expect(operations).toEqual([]);
 
   let download = page.waitForEvent("download");
@@ -533,7 +516,7 @@ test("F-025 CHAMFER rejects oversized selected-polyline Trim without partial DXF
   download = page.waitForEvent("download");
   await page.getByRole("button", { name: "KDraw eksport" }).click();
   path = await (await download).path(); const kdrawBytes = await readFile(path!);
-  expect((await deserializeKDraw(kdrawBytes)).document).toEqual(source);
+  expect((await deserializeKDraw(kdrawBytes)).document).toEqual(currentKDrawDocument(source));
   expect(consoleErrors).toEqual([]);
   await capture("F-025-browser-distance-too-large.dxf", dxfBytes);
   await capture("F-025-browser-distance-too-large.kdraw", kdrawBytes);

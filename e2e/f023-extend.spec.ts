@@ -5,6 +5,7 @@ import DxfParser from "dxf-parser";
 import { createEmptyDocument } from "@kuubik/cad-core";
 import type { KDrawDocumentV1 } from "@kuubik/cad-schema";
 import { modelWorldToScreen } from "./helpers/model-space.js";
+import { currentKDrawDocument, seedKDrawDocument } from "./helpers/indexed-db.js";
 
 type RecordedOperation = { commandId: string; targetHandles: string[]; resultHandles: string[]; args: Record<string, unknown> };
 
@@ -65,31 +66,13 @@ function refusalDocument(): KDrawDocumentV1 {
 }
 
 async function seedLocalDocument(page: Page, document: KDrawDocumentV1): Promise<void> {
-  await page.goto("/d/local");
-  await page.evaluate(async (value) => {
-    const database = await new Promise<IDBDatabase>((resolveOpen, rejectOpen) => {
-      const request = indexedDB.open("kuubik-draw", 1);
-      request.onsuccess = () => resolveOpen(request.result);
-      request.onerror = () => rejectOpen(request.error);
-    });
-    await new Promise<void>((resolveWrite, rejectWrite) => {
-      const transaction = database.transaction(["documents", "operations", "snapshots"], "readwrite");
-      transaction.objectStore("documents").put(value);
-      transaction.objectStore("operations").clear();
-      transaction.objectStore("snapshots").clear();
-      transaction.oncomplete = () => resolveWrite();
-      transaction.onerror = () => rejectWrite(transaction.error);
-    });
-    database.close();
-  }, structuredClone(document));
-  await page.reload();
-  await expect(page.getByText("Taastatud revision 0")).toBeVisible();
+  await seedKDrawDocument(page, document);
 }
 
 async function readDocument(page: Page): Promise<KDrawDocumentV1> {
   return page.evaluate(async () => {
     const database = await new Promise<IDBDatabase>((resolveOpen, rejectOpen) => {
-      const request = indexedDB.open("kuubik-draw", 1);
+      const request = indexedDB.open("kuubik-draw");
       request.onsuccess = () => resolveOpen(request.result);
       request.onerror = () => rejectOpen(request.error);
     });
@@ -106,7 +89,7 @@ async function readDocument(page: Page): Promise<KDrawDocumentV1> {
 async function readOperation(page: Page): Promise<RecordedOperation> {
   return page.evaluate(async () => {
     const database = await new Promise<IDBDatabase>((resolveOpen, rejectOpen) => {
-      const request = indexedDB.open("kuubik-draw", 1);
+      const request = indexedDB.open("kuubik-draw");
       request.onsuccess = () => resolveOpen(request.result);
       request.onerror = () => rejectOpen(request.error);
     });
@@ -123,7 +106,7 @@ async function readOperation(page: Page): Promise<RecordedOperation> {
 async function readOperationCount(page: Page): Promise<number> {
   return page.evaluate(async () => {
     const database = await new Promise<IDBDatabase>((resolveOpen, rejectOpen) => {
-      const request = indexedDB.open("kuubik-draw", 1);
+      const request = indexedDB.open("kuubik-draw");
       request.onsuccess = () => resolveOpen(request.result);
       request.onerror = () => rejectOpen(request.error);
     });
@@ -308,7 +291,7 @@ test("F-023 EXTEND wires Crossing, Edge, Project and layer refusals through the 
     { handle: "10", reason: "locked-layer" },
     { handle: "11", reason: "hidden-layer" },
   ]);
-  expect(await readDocument(page)).toEqual(refusalSource);
+  expect(await readDocument(page)).toEqual(currentKDrawDocument(refusalSource));
   expect(await readOperationCount(page)).toBe(0);
   expect(consoleErrors).toEqual([]);
 

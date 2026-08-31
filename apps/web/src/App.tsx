@@ -2987,7 +2987,11 @@ export function App() {
     }
   }
 
-  async function commitLayerCommand(command: Parameters<VisualShellRuntimeAdapter["executeLayerCapability"]>[1], success: string): Promise<void> {
+  async function commitLayerCommand(
+    command: Parameters<VisualShellRuntimeAdapter["executeLayerCapability"]>[1],
+    success: string,
+    options: { makeCreatedLayerCurrent?: boolean } = {},
+  ): Promise<void> {
     if (committing.current) return;
     committing.current = true;
     setLayerOperationState("loading");
@@ -2996,7 +3000,13 @@ export function App() {
     let finalMessage = "";
     try {
       const result = runtime.executeLayerCapability(document, command);
-      await commitChanges(result.committed.operation.commandId, result.committed.operation.args, result.committed.changes, result.committed.operation.resultHandles, result.committed.operation.targetHandles);
+      const changes: CadChange[] = [...result.committed.changes];
+      if (options.makeCreatedLayerCurrent) {
+        const createdLayerId = result.affectedLayerIds[0];
+        if (!createdLayerId) throw new TypeError("Layer create did not return the created layer id.");
+        changes.push({ type: "set-current-layer", layerId: createdLayerId });
+      }
+      await commitChanges(result.committed.operation.commandId, result.committed.operation.args, changes, result.committed.operation.resultHandles, result.committed.operation.targetHandles);
       setStatus(success);
       finalMessage = `${result.committed.operation.commandId} · revision ${result.document.revision}`;
     } catch (error) {
@@ -3021,7 +3031,11 @@ export function App() {
     let sequence = document.layers.length;
     while (document.layers.some((layer) => layer.name === `Layer ${sequence}`)) sequence += 1;
     const name = `Layer ${sequence}`;
-    await commitLayerCommand({ capability: "layers.create", name }, `${name} loodud typed Layer Manageri kaudu`);
+    await commitLayerCommand(
+      { capability: "layers.create", name },
+      `${name} loodud typed Layer Manageri kaudu`,
+      { makeCreatedLayerCurrent: true },
+    );
   }
 
   async function toggleActiveLayerLock(): Promise<void> {

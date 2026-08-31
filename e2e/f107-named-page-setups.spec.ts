@@ -6,6 +6,7 @@ import type { KDrawDocumentV1 } from "@kuubik/cad-schema";
 import { MAX_PAGE_SETUP_TEMPLATE_BYTES, createPageSetupTemplate, parsePageSetupTemplate, resolvePageSetupLibrary, serializePageSetupTemplate, type PageSetupTemplateV1 } from "../packages/cad-core/src/index.js";
 import { createF107Document } from "../parity/fixtures/f107-document.js";
 import { openLayoutTools } from "./helpers/layout-tools.js";
+import { checkpointKDrawDocument, seedKDrawDocument } from "./helpers/indexed-db.js";
 
 const sha256 = (value: Buffer | string): string => createHash("sha256").update(value).digest("hex");
 
@@ -17,43 +18,13 @@ function collectErrors(page: Page): string[] {
 }
 
 async function seedLocalDocument(page: Page, document: KDrawDocumentV1, errors: string[]): Promise<void> {
-  await page.goto("/d/local");
-  await page.evaluate(async (value) => {
-    const database = await new Promise<IDBDatabase>((resolveOpen, rejectOpen) => {
-      const request = indexedDB.open("kuubik-draw", 1);
-      request.onupgradeneeded = () => {
-        const next = request.result;
-        if (!next.objectStoreNames.contains("documents")) next.createObjectStore("documents", { keyPath: "documentId" });
-        if (!next.objectStoreNames.contains("operations")) {
-          const store = next.createObjectStore("operations", { keyPath: "opId" });
-          store.createIndex("byDocument", "documentId");
-        }
-        if (!next.objectStoreNames.contains("snapshots")) next.createObjectStore("snapshots", { keyPath: "key" });
-        if (!next.objectStoreNames.contains("attachments")) next.createObjectStore("attachments", { keyPath: "id" });
-      };
-      request.onsuccess = () => resolveOpen(request.result);
-      request.onerror = () => rejectOpen(request.error);
-    });
-    await new Promise<void>((resolveWrite, rejectWrite) => {
-      const transaction = database.transaction(["documents", "operations", "snapshots"], "readwrite");
-      transaction.objectStore("documents").put(value);
-      transaction.objectStore("operations").clear();
-      transaction.objectStore("snapshots").clear();
-      transaction.oncomplete = () => resolveWrite();
-      transaction.onerror = () => rejectWrite(transaction.error);
-    });
-    database.close();
-  }, document);
-  await page.reload();
-  await page.waitForTimeout(100);
-  if (await page.locator("main").count() === 0) throw new Error(`F-107 app failed to render after seed: ${errors.join(" | ")}`);
-  await expect(page.getByText("Taastatud revision 0")).toBeVisible();
+  await seedKDrawDocument(page, document);
 }
 
 async function readLocalDocument(page: Page): Promise<KDrawDocumentV1> {
   return page.evaluate(async () => {
     const database = await new Promise<IDBDatabase>((resolveOpen, rejectOpen) => {
-      const request = indexedDB.open("kuubik-draw", 1);
+      const request = indexedDB.open("kuubik-draw");
       request.onsuccess = () => resolveOpen(request.result);
       request.onerror = () => rejectOpen(request.error);
     });
@@ -78,7 +49,7 @@ test("F-107 persists named page setup CRUD and imports a geometry-free template 
   await page.clock.setFixedTime("2026-08-29T00:00:00.000Z");
   await page.setViewportSize({ width: 1920, height: 1080 });
   await seedLocalDocument(page, createF107Document("local"), errors);
-  await page.getByRole("button", { name: "F-107 ISSUE LAYOUT", exact: true }).click();
+  await page.getByRole("tab", { name: "F-107 ISSUE LAYOUT", exact: true }).click();
   await openLayoutTools(page);
   const library = page.getByTestId("page-setup-library");
   await library.getByText("PAGE SETUPS", { exact: true }).click();
@@ -94,7 +65,7 @@ test("F-107 persists named page setup CRUD and imports a geometry-free template 
   await page.getByRole("textbox", { name: "New page setup name" }).fill(" f-107 a4 issue ");
   await page.getByRole("button", { name: "Save named page setup" }).click();
   await expect(page.getByText(/PAGESETUP viga: Page setup name already exists/u)).toBeVisible();
-  expect((await readLocalDocument(page)).revision).toBe(1);
+  expect((await readLocalDocument(page)).revision).toBe(2);
 
   await page.getByRole("combobox", { name: "Paper media" }).selectOption("ISO_A3");
   await page.getByRole("combobox", { name: "Paper orientation" }).selectOption("landscape");
@@ -137,29 +108,34 @@ test("F-107 persists named page setup CRUD and imports a geometry-free template 
   await page.getByLabel("Import page setup template").setInputFiles({ name: "F-107-office.kdraw-template.json", mimeType: "application/json", buffer: templateBytes });
   await expect(page.getByText(/Template “F-107 office template” rakendatud ühe undo-sammuna: 1 setup'i, 1 layout'i/u)).toBeVisible();
   await expect(library).toHaveAttribute("data-count", "1");
-  await expect(page.getByRole("button", { name: "F-107 ISSUE LAYOUT (2)", exact: true })).toBeVisible();
+  await expect(page.getByRole("tab", { name: "F-107 ISSUE LAYOUT (2)", exact: true })).toBeVisible();
   const imported = await readLocalDocument(page);
-  expect(imported.revision).toBe(6);
+  expect(imported.revision).toBe(7);
   expect(imported.entities.map((entity) => entity.handle)).toEqual(["10", "11"]);
   expect(imported.layouts[1]!.entities?.map((entity) => entity.handle)).toEqual(["12"]);
   expect(imported.layouts[2]).toMatchObject({ name: "F-107 ISSUE LAYOUT (2)", entities: [] });
   expect(resolvePageSetupLibrary(imported)).toMatchObject({ setups: [{ name: "F-107 A4 FINAL" }], assignments: { "layout-2": "page-setup-1" } });
 
   await page.getByRole("button", { name: "UNDO", exact: true }).click();
-  await expect(page.getByRole("button", { name: "F-107 ISSUE LAYOUT (2)", exact: true })).toHaveCount(0);
+  await expect(page.getByRole("tab", { name: "F-107 ISSUE LAYOUT (2)", exact: true })).toHaveCount(0);
   await expect(library).toHaveAttribute("data-count", "0");
   await page.getByRole("button", { name: "REDO", exact: true }).click();
-  await expect(page.getByRole("button", { name: "F-107 ISSUE LAYOUT (2)", exact: true })).toBeVisible();
+  await expect(page.getByRole("tab", { name: "F-107 ISSUE LAYOUT (2)", exact: true })).toBeVisible();
   await expect(library).toHaveAttribute("data-count", "1");
-  await page.reload();
-  await expect(page.getByText("Taastatud revision 8")).toBeVisible();
-  await expect(page.getByRole("button", { name: "F-107 ISSUE LAYOUT (2)", exact: true })).toBeVisible();
+  await expect(page.getByText("REDO taastatud, revision 9", { exact: true })).toBeVisible();
+  expect(await checkpointKDrawDocument(page, { normalizeLayoutWorkspace: true, suspendApp: true })).toEqual({
+    revision: 10,
+    layoutRepairs: ["INVALID_TAB_ORDER", "INVALID_SEQUENCE"],
+  });
+  await page.goto("/d/local");
+  await expect(page.getByTestId("recovery-panel").getByText("Pärast katkestust taastati revisjon 10.", { exact: true })).toBeVisible();
+  await expect(page.getByRole("tab", { name: "F-107 ISSUE LAYOUT (2)", exact: true })).toBeVisible();
   expect(errors).toEqual([]);
 
   if (process.env.PARITY_CAPTURE_DIR) {
     const captureDir = resolve(process.env.PARITY_CAPTURE_DIR);
     await mkdir(captureDir, { recursive: true });
-    await page.getByRole("button", { name: "F-107 ISSUE LAYOUT (2)", exact: true }).click();
+    await page.getByRole("tab", { name: "F-107 ISSUE LAYOUT (2)", exact: true }).click();
     await openLayoutTools(page);
     await page.getByTestId("page-setup-library").getByText("PAGE SETUPS", { exact: true }).click();
     await expect(library).toHaveAttribute("data-assigned", "page-setup-1");

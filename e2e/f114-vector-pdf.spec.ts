@@ -5,6 +5,7 @@ import { expect, test, type Page } from "@playwright/test";
 import type { KDrawDocumentV1 } from "@kuubik/cad-schema";
 import { createF114Document, F114_LAYOUT_IDS, F114_LAYOUT_NAMES } from "../parity/fixtures/f114-document.js";
 import { openLayoutTools } from "./helpers/layout-tools.js";
+import { seedKDrawDocument } from "./helpers/indexed-db.js";
 
 const sha256 = (value: Buffer): string => createHash("sha256").update(value).digest("hex");
 
@@ -16,25 +17,7 @@ function collectErrors(page: Page): string[] {
 }
 
 async function seedLocalDocument(page: Page, document: KDrawDocumentV1): Promise<void> {
-  await page.goto("/d/local");
-  await page.evaluate(async (value) => {
-    const database = await new Promise<IDBDatabase>((resolveOpen, rejectOpen) => {
-      const request = indexedDB.open("kuubik-draw", 1);
-      request.onsuccess = () => resolveOpen(request.result);
-      request.onerror = () => rejectOpen(request.error);
-    });
-    await new Promise<void>((resolveWrite, rejectWrite) => {
-      const transaction = database.transaction(["documents", "operations", "snapshots"], "readwrite");
-      transaction.objectStore("documents").put(value);
-      transaction.objectStore("operations").clear();
-      transaction.objectStore("snapshots").clear();
-      transaction.oncomplete = () => resolveWrite();
-      transaction.onerror = () => rejectWrite(transaction.error);
-    });
-    database.close();
-  }, document);
-  await page.reload();
-  await expect(page.getByText("Taastatud revision 0")).toBeVisible();
+  await seedKDrawDocument(page, document);
 }
 
 async function publish(page: Page): Promise<{ bytes: Buffer; name: string }> {
@@ -69,7 +52,7 @@ test("F-114 downloads a deterministic mixed-size vector PDF and restores it afte
   await page.clock.setFixedTime("2026-08-29T00:00:00.000Z");
   await page.setViewportSize({ width: 1920, height: 1080 });
   await seedLocalDocument(page, createF114Document("local"));
-  await page.getByRole("button", { name: F114_LAYOUT_NAMES[0], exact: true }).click();
+  await page.getByRole("tab", { name: F114_LAYOUT_NAMES[0], exact: true }).click();
   await openLayoutTools(page);
 
   const options = page.getByTestId("publish-options");
@@ -93,12 +76,12 @@ test("F-114 downloads a deterministic mixed-size vector PDF and restores it afte
   expect(firstSummary.a4TitleAt).toBeGreaterThan(firstSummary.a3TitleAt);
 
   await options.locator("summary").click();
-  await page.getByRole("button", { name: F114_LAYOUT_NAMES[1], exact: true }).click();
+  await page.getByRole("tab", { name: F114_LAYOUT_NAMES[1], exact: true }).click();
   await expect(page.getByTestId("paper-space-sheet")).toHaveAttribute("data-paper-width-mm", "210");
   await expect(page.getByTestId("paper-space-sheet")).toHaveAttribute("data-paper-height-mm", "297");
   await page.reload();
-  await expect(page.getByText(/Taastatud revision/u)).toBeVisible();
-  await page.getByRole("button", { name: F114_LAYOUT_NAMES[0], exact: true }).click();
+  await expect(page.getByTestId("recovery-panel").getByText(/Pärast katkestust taastati revisjon/u)).toBeVisible();
+  await page.getByRole("tab", { name: F114_LAYOUT_NAMES[0], exact: true }).click();
   await openLayoutTools(page);
   const restored = page.getByTestId("publish-options");
   await restored.locator("summary").click();
