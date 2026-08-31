@@ -92,7 +92,38 @@ describe("F-110 DXF import core entities and units", () => {
     expect(second.report.importedHandles).toEqual(first.report.importedHandles);
     expect(() => importDxf(source.replace("  2\r\nSYMBOL\r\n 10\r\n150", "  2\r\nMISSING\r\n 10\r\n150"), { documentId: "missing-block" })).toThrow(/references missing block MISSING/u);
     expect(() => importDxf(source.replace("  5\r\nC1\r\n", "  5\r\nC0\r\n"), { documentId: "duplicate-block-handle" })).toThrow(/duplicate global handle C0/u);
-    expect(() => importDxf(source.replace("  0\r\nMTEXT\r\n", "  0\r\nMTEXT\r\n 11\r\n1\r\n 21\r\n0\r\n"), { documentId: "mtext-direction" })).toThrow(/direction-vector rotation/u);
+    const directionVector = source.replace(
+      " 50\r\n11.4591559026165\r\n",
+      " 11\r\n0.980066577841242\r\n 21\r\n0.198669330795061\r\n 31\r\n0\r\n",
+    );
+    const directionMtext = importDxf(directionVector, { documentId: "mtext-direction" }).document.entities.find((entity) => entity.handle === "80");
+    expect(directionMtext).toMatchObject({ kind: "mtext" });
+    expect(directionMtext?.rotationRad).toBeCloseTo(0.2, 12);
+    expect(() => importDxf(source.replace("  0\r\nMTEXT\r\n", "  0\r\nMTEXT\r\n 11\r\n1\r\n 21\r\n0\r\n"), { documentId: "mtext-ambiguous-direction" })).toThrow(/cannot combine group-50 and direction-vector/u);
+    expect(() => importDxf(directionVector.replace(" 21\r\n0.198669330795061\r\n", ""), { documentId: "mtext-missing-direction-y" })).toThrow(/requires both group 11 and group 21/u);
+    expect(() => importDxf(directionVector.replace(" 11\r\n0.980066577841242\r\n 21\r\n0.198669330795061", " 11\r\n0\r\n 21\r\n0"), { documentId: "mtext-zero-direction" })).toThrow(/must be non-zero/u);
+    expect(() => importDxf(directionVector.replace(" 21\r\n0.198669330795061\r\n 31\r\n0\r\n", " 21\r\n0.198669330795061\r\n 31\r\n1\r\n"), { documentId: "mtext-nonplanar-direction" })).toThrow(/audited planar subset/u);
+    const autoCadNoGradientHatch = source.replace(
+      " 98\r\n0\r\n  0\r\nDIMENSION",
+      " 98\r\n0\r\n450\r\n0\r\n451\r\n0\r\n460\r\n0\r\n461\r\n0\r\n452\r\n0\r\n462\r\n0\r\n453\r\n0\r\n470\r\n\r\n  0\r\nDIMENSION",
+    );
+    expect(importDxf(autoCadNoGradientHatch, { documentId: "autocad-no-gradient" }).document.entities.find((entity) => entity.handle === "90"))
+      .toMatchObject({ kind: "hatch", pattern: "SOLID" });
+    expect(() => importDxf(autoCadNoGradientHatch.replace("450\r\n0\r\n451", "450\r\n1\r\n451"), { documentId: "autocad-gradient-enabled" })).toThrow(/disabled-gradient subset/u);
+    expect(() => importDxf(autoCadNoGradientHatch.replace("470\r\n\r\n", "470\r\nLINEAR\r\n"), { documentId: "autocad-gradient-name" })).toThrow(/disabled-gradient subset/u);
     expect(() => importDxf(source.replace(" 41\r\n2\r\n 42\r\n0.5", " 41\r\n0\r\n 42\r\n0.5"), { documentId: "zero-insert-scale" })).toThrow(/scale/u);
+  });
+
+  it("decodes AutoCAD R2007+ byte streams as UTF-8 while retaining the legacy ANSI path", () => {
+    const source = exportDxf(createF110Document()).text;
+    const utf8Source = source
+      .replace("AC1018", "AC1032")
+      .replace("T\\U+00D5END \\U+0160\\U+017D\\U+20AC", "TÕEND ŠŽ€");
+    const imported = importDxf(new TextEncoder().encode(utf8Source), { documentId: "autocad-utf8" });
+    expect(imported.document.entities.find((entity) => entity.handle === "70")).toMatchObject({ kind: "text", text: "TÕEND ŠŽ€" });
+    const invalid = new TextEncoder().encode(utf8Source);
+    const textOffset = utf8Source.indexOf("TÕEND");
+    invalid[textOffset + 1] = 0xff;
+    expect(() => importDxf(invalid, { documentId: "autocad-invalid-utf8" })).toThrow(/not valid UTF-8/u);
   });
 });
