@@ -443,6 +443,54 @@ F-031/F-032 remain uncertified until the complete AutoCAD 2024.1.2 command/Prope
 the integration-owned Kuubik browser workflow are run with saved/rendered read-back. No parity
 score or certification record was changed in this lane.
 
+## Wave 16 exports (F-014 complete BOUNDARY/REGION matrix)
+
+This section supersedes the limited Wave 5 F-014 notes.
+
+From `packages/cad-core/src/boundary-region.ts`:
+
+- `prepareBoundaryCommand`
+- `prepareRegionCommand`
+- `BoundaryRegionInputError` and `BoundaryRegionInputErrorCode`
+- `BoundaryLoop`, `BoundaryCommandInput`, `PreparedBoundaryCommand`,
+  `RegionCommandInput`, and `PreparedRegionCommand`
+
+From `apps/web/src/features/draw-modify/boundary-region-command-adapter.ts`:
+
+- `boundaryCommandAdapter`
+- `regionCommandAdapter`
+
+The integration owner should route BOUNDARY and REGION through these adapters and the shared
+`createAtomicCommandWorkflow`. Preview and commit call the same immutable kernel. BOUNDARY creates
+one result as one operation; REGION deletes every contributing source and creates every loop proxy
+inside one operation, so Undo/Redo never exposes a partially converted topology. `deleteSource:
+false` provides the bounded DELOBJ=0 equivalent.
+
+The kernel accepts KDraw's coplanar 2D LINE, ARC, CIRCLE, and open or closed lightweight polyline
+geometry. Circular arcs and polyline bulges remain exact bulged segments in loop output; circles use
+four exact quarter-arc bulges. Endpoint stitching, loop start, winding, result order, and source
+handle order are deterministic and independent of selection order. Gap Tolerance is supported for
+explicit BOUNDARY sets. More than two curves at an endpoint fails closed instead of accepting
+AutoCAD's documented arbitrary branch result.
+
+Nested loops are classified by containment depth. The outer loop is counter-clockwise, a depth-one
+hole is clockwise, and orientation alternates for deeper islands. A polyline result contains the
+picked outer loop because KDraw's polyline schema cannot contain holes; `PreparedBoundaryCommand`
+still returns every detected nested loop. A region result stores all loops in the explicit
+`kuubik-region-v2` proxy payload.
+
+Missing, locked, off, frozen, unsupported, open, non-finite, collapsed, self-intersecting,
+crossing, ambiguous, seed-on-edge, and result-handle collision states fail before an
+`EntityChange` exists. REGION results inherit the deterministic first source's layer, appearance,
+and extension data; explicit BOUNDARY result identity and appearance override source values.
+
+Standard DXF round-trips BOUNDARY LWPOLYLINE geometry, handles, layers, closed state, exact bulges,
+true colour, and lineweight. KDraw v1 has no native REGION/ACIS entity or licensed SAT writer, so
+`ACDBREGION` remains an inert proxy that DXF export skips. Do not describe this as native REGION
+DXF parity. F-014 remains uncertified until the AutoCAD 2024.1.2 live BOUNDARY/REGION matrix and the
+integration-owned Kuubik browser workflow are run with saved/rendered read-back. No parity score or
+certification record was changed.
+
 ## Wave 15 exports (F-034 PEDIT matrix)
 
 From `packages/cad-core/src/pedit.ts`:

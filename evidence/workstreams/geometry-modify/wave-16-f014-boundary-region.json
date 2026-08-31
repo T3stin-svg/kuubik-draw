@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "wave": "f014-complete-boundary-region-matrix",
+  "rows": ["F-014"],
+  "status": "implemented-kernel-adapters-and-boundary-dxf-readback-not-browser-autocad-or-native-region-dxf-certified",
+  "sourceAuthority": "C:/Users/Olav/Downloads/kuubik-draw-reio-scope-v1.json",
+  "behaviorAuthorities": [
+    "https://help.autodesk.com/cloudhelp/2023/ENU/AutoCAD-Core/files/GUID-B95DD3D4-BDEA-40C0-85CD-1C1CD61BBDA7.htm",
+    "https://help.autodesk.com/view/ACDMAC/2024/ENU/?guid=GUID-8F8D5B88-3E66-450B-B582-A717877DA29A",
+    "https://help.autodesk.com/cloudhelp/2024/ENU/AutoCAD-LT-ActiveX-Reference/files/GUID-74C8765E-EB4A-4773-ADD4-6C0F318FE6BE.htm"
+  ],
+  "implemented": {
+    "BOUNDARY": [
+      "internal-point selection of the smallest enclosing loop",
+      "explicit boundary sets and deterministic endpoint stitching",
+      "finite non-negative Gap Tolerance",
+      "exact LINE, ARC, CIRCLE and lightweight-polyline bulges",
+      "nested island detection with alternating winding",
+      "polyline or kuubik-region-v2 proxy output",
+      "explicit result handle, layer, appearance and extension-data preservation"
+    ],
+    "REGION": [
+      "every closed loop becomes one deterministic region proxy",
+      "multiple LINE/ARC/open-polyline segments form closed loops",
+      "closed CIRCLE and bulged-polyline loops",
+      "source layer, appearance and extension-data inheritance",
+      "default source deletion and bounded deleteSource=false behavior",
+      "open, crossing, self-intersecting, unsupported and ambiguous geometry refusal"
+    ]
+  },
+  "invariants": {
+    "previewEqualsCommit": "BOUNDARY and REGION adapters prepare preview and commit through the same deterministic kernel",
+    "atomicUndoRedo": "all REGION source deletes and loop puts are one CadSession operation",
+    "deterministicLoops": "loop start, winding, nesting, source handles and result ordering are independent of input selection order",
+    "safeFailure": "invalid topology, geometry, layers and handles fail before an EntityChange exists",
+    "propertyIdentity": "result handles are explicit; BOUNDARY preserves requested properties and REGION inherits the deterministic first source",
+    "dxfReadback": "BOUNDARY LWPOLYLINE geometry, handle, layer, closed state, bulges, true colour and lineweight survive production DXF export/import"
+  },
+  "tests": {
+    "unitGoldenPropertyFuzz": "packages/cad-core/test/f014-boundary-region-command.test.ts and packages/cad-core/test/f014-boundary-region.golden.json",
+    "baselineRegression": "packages/cad-core/test/boundary-region.test.ts",
+    "mutation": "packages/cad-core/test/f014-boundary-region-mutation-proven.test.ts",
+    "featureWiringAtomic": "apps/web/src/features/draw-modify/f014-boundary-region-command-adapter.test.ts",
+    "dxfRoundtrip": "packages/cad-dxf/test/f014-boundary-region-roundtrip.test.ts",
+    "targetedResult": "5 files passed; 23 tests passed",
+    "fullVitestResult": "257 files passed; 1167 tests passed",
+    "dxfGateResult": "29 files passed; 73 tests passed",
+    "typecheckLintBuild": "PASS; Vite reported the existing large-chunk advisory only",
+    "publicTree": "PASS; 1772 files scanned",
+    "license": "PASS; 7 files, 5 provenance entries and 119 installed packages audited",
+    "diffCheck": "PASS"
+  },
+  "knownLimits": [
+    "KDraw v1 is a 2D schema, so coplanarity is inherent and no independent Z-plane matrix exists",
+    "this selected lane intentionally supports LINE, ARC, CIRCLE and lightweight polyline; ellipse and spline sources fail closed",
+    "arc topology intersection guards use deterministic bounded flattening while committed loop geometry retains exact bulges",
+    "a polyline entity cannot encode holes, so nested loops are returned in preparation metadata and retained together only by the region proxy",
+    "KDraw v1 has no native REGION/ACIS entity or licensed SAT writer; ACDBREGION proxy export stays fail-closed and is not a native DXF roundtrip",
+    "the shared cad-core barrel and command registry are intentionally unchanged by file ownership"
+  ],
+  "certificationGaps": [
+    "AutoCAD 2024.1.2 live BOUNDARY and REGION command/read-back matrix was not run in this lane",
+    "Kuubik browser BOUNDARY/REGION workflow and rendered read-back were not run because App.tsx and shared command wiring are outside this lane",
+    "native ACDBREGION DXF/SAT roundtrip is outside the pinned schema capability",
+    "F-014 parity score and certification records were intentionally not changed"
+  ]
+}

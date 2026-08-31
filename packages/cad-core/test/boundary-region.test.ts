@@ -37,7 +37,7 @@ describe("F-014 BOUNDARY", () => {
       handle: "20", layerId: "0", seedPoint: { x: 20, y: 20 }, output: "region", islandDetection: true,
     });
     expect(result.loops).toHaveLength(2);
-    expect(result.entity).toMatchObject({ kind: "proxy", originalType: "ACDBREGION", raw: { schema: "kuubik-region-v1", sourceKind: "BOUNDARY" } });
+    expect(result.entity).toMatchObject({ kind: "proxy", originalType: "ACDBREGION", raw: { schema: "kuubik-region-v2", sourceKind: "BOUNDARY" } });
   });
 
   it("commits one BOUNDARY result as one Undo/Redo operation", () => {
@@ -61,14 +61,14 @@ describe("F-014 BOUNDARY", () => {
 });
 
 describe("F-014 REGION", () => {
-  it("converts closed curves atomically and explicitly rejects open ones", () => {
+  it("converts a closed curve atomically and fails closed for an open selection", () => {
     const document = createEmptyDocument({ documentId: "region" });
     document.entities.push(
       { kind: "circle", handle: "10", layerId: "0", center: { x: 0, y: 0 }, radius: 10 },
       { kind: "polyline", handle: "11", layerId: "0", closed: false, vertices: [{ x: 0, y: 0 }, { x: 10, y: 0 }] },
     );
-    const result = prepareRegionCommand(document, { targetHandles: ["10", "11"], resultHandles: ["20", "21"] });
-    expect(result).toMatchObject({ targetHandles: ["10", "11"], resultHandles: ["20"], rejected: [{ handle: "11", reason: "not-closed-curve" }] });
+    const result = prepareRegionCommand(document, { targetHandles: ["10"], resultHandles: ["20"] });
+    expect(result).toMatchObject({ targetHandles: ["10"], resultHandles: ["20"], rejected: [] });
     expect(result.changes).toMatchObject([{ type: "delete", handle: "10" }, { type: "put", entity: { handle: "20", originalType: "ACDBREGION" } }]);
 
     const session = new CadSession(document);
@@ -76,5 +76,6 @@ describe("F-014 REGION", () => {
     expect(session.document.entities.map((entity) => entity.handle)).toEqual(["11", "20"]);
     session.undo();
     expect(session.document.entities.map((entity) => entity.handle)).toEqual(["10", "11"]);
+    expect(() => prepareRegionCommand(document, { targetHandles: ["10", "11"], resultHandles: ["20"] })).toThrow(BoundaryRegionInputError);
   });
 });
