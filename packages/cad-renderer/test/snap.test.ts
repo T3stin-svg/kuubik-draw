@@ -12,7 +12,10 @@ describe("F-048..F-050 OSNAP", () => {
     expect(candidates.some((item) => item.mode === "intersection" && item.point.x === 5 && item.point.y === 0)).toBe(true);
     expect(candidates.filter((item) => item.handle === "C" && item.mode === "quadrant")).toHaveLength(4);
     expect(candidates.map((item) => item.priority)).toEqual([...candidates.map((item) => item.priority)].sort((a, b) => a - b));
-    expect(CAD_OSNAP_PRIORITY).toMatchObject({ endpoint: 0, midpoint: 1, center: 2, quadrant: 3, intersection: 4, perpendicular: 5, tangent: 6, nearest: 7 });
+    expect(CAD_OSNAP_PRIORITY).toEqual({
+      endpoint: 0, midpoint: 1, center: 2, quadrant: 3, intersection: 4, extension: 5,
+      insertion: 6, perpendicular: 7, tangent: 8, nearest: 9, geometricCenter: 10, parallel: 11,
+    });
   });
 
   it("generates perpendicular, tangent and nearest from the same nearby entity set", () => {

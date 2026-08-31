@@ -28,6 +28,17 @@ describe("precision keyboard and command-line state", () => {
     expect(state.state).toEqual(before);
   });
 
+  it("normalizes the complete OSNAP alias set into fixed priority order", () => {
+    const state = new PrecisionCommandState();
+    expect(state.executeCommandLine("OSNAP PAR,GCE,NEA,TAN,PER,INS,EXT,INT,QUA,CEN,MID,END")).toMatchObject({
+      changed: true,
+      state: { osnapModes: [
+        "endpoint", "midpoint", "center", "quadrant", "intersection", "extension", "insertion",
+        "perpendicular", "tangent", "nearest", "geometricCenter", "parallel",
+      ] },
+    });
+  });
+
   it("uses SNAP for model-grid quantization and OSNAP/OTRACK only when enabled", () => {
     const state = new PrecisionCommandState({ ortho: true, grid: true, snap: false, osnap: false, otrack: true });
     const request = state.prepareRequest({

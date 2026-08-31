@@ -4,8 +4,18 @@ import type { CadPrecisionInput } from "../../../../../packages/cad-core/src/pre
 import type { PrecisionRequest, PrecisionResult } from "../../../../../packages/cad-core/src/precision.js";
 import { CadSelectionIndex } from "../../../../../packages/cad-renderer/src/selection-index.js";
 import type { CadPickHit } from "../../../../../packages/cad-renderer/src/selection.js";
-import { CadSnapIndex, type CadSnapCandidate } from "../../../../../packages/cad-renderer/src/snap.js";
-import { CadObjectTrack, type CadTrackingCandidate } from "../../../../../packages/cad-renderer/src/tracking.js";
+import {
+  CadSnapIndex,
+  CadSnapSelectionCycle,
+  type CadSnapCandidate,
+  type CadSnapCycleReadback,
+} from "../../../../../packages/cad-renderer/src/snap.js";
+import {
+  CadObjectTrack,
+  type CadTrackingCandidate,
+  type CadTrackingMutationReadback,
+  type CadTrackingPoint,
+} from "../../../../../packages/cad-renderer/src/tracking.js";
 import { LayerVisualShellCommandAdapter, type LayerShellAction, type LayerShellRow } from "../layers/command-adapter.js";
 import {
   LayerManagerShellAdapter,
@@ -35,12 +45,17 @@ export interface PrecisionPointerInput {
   input?: string | CadPrecisionInput;
   referencePoint?: CadPoint2;
   trackingAnglesRad?: readonly number[];
+  snapCandidateId?: string;
+  snapReferenceHandles?: readonly string[];
 }
 
 export interface PrecisionPointerResolution {
   preview: PrecisionResult;
   commit: PrecisionResult;
   dynamicInput: DynamicInputModel;
+  request: PrecisionRequest;
+  snapCandidateIds: string[];
+  selectedSnapCandidateId: string | null;
 }
 
 export interface LayerShellIntent {
@@ -72,11 +87,21 @@ export class PreparedPrecisionPointer {
   readonly #request: PrecisionRequest;
   readonly #units: CadUnits;
   readonly #model: PrecisionFeatureModel;
+  readonly #snapCandidateIds: string[];
+  readonly #selectedSnapCandidateId: string | null;
 
-  constructor(request: PrecisionRequest, units: CadUnits, model: PrecisionFeatureModel) {
+  constructor(
+    request: PrecisionRequest,
+    units: CadUnits,
+    model: PrecisionFeatureModel,
+    snapCandidateIds: readonly string[] = [],
+    selectedSnapCandidateId: string | null = null,
+  ) {
     this.#request = structuredClone(request);
     this.#units = structuredClone(units);
     this.#model = model;
+    this.#snapCandidateIds = [...snapCandidateIds];
+    this.#selectedSnapCandidateId = selectedSnapCandidateId;
   }
 
   get request(): PrecisionRequest {
@@ -96,7 +121,10 @@ export class PreparedPrecisionPointer {
   }
 
   resolve(): PrecisionPointerResolution {
-    return { preview: this.preview(), commit: this.commit(), dynamicInput: this.dynamicInput() };
+    return {
+      preview: this.preview(), commit: this.commit(), dynamicInput: this.dynamicInput(),
+      request: this.request, snapCandidateIds: [...this.#snapCandidateIds], selectedSnapCandidateId: this.#selectedSnapCandidateId,
+    };
   }
 }
 
@@ -108,6 +136,7 @@ export class PreparedPrecisionPointer {
 export class PrecisionLayersShellContract {
   readonly precision: PrecisionCommandState;
   readonly tracking = new CadObjectTrack();
+  readonly snapCycle = new CadSnapSelectionCycle();
   readonly layerManager: LayerManagerShellAdapter;
   readonly #precisionModel = new PrecisionFeatureModel();
   readonly #selection = new CadSelectionIndex();
@@ -176,28 +205,37 @@ export class PrecisionLayersShellContract {
           cursor: input.cursorPoint,
           aperture: this.#settings.aperture,
           ...(input.referencePoint ? { referencePoint: input.referencePoint } : {}),
+          ...(input.snapReferenceHandles ? { referenceHandles: [...input.snapReferenceHandles] } : {}),
         }, eligibleForSnap)
       : [];
+    const requestedCandidateId = input.snapCandidateId ?? this.snapCycle.candidateId;
+    const selectedCandidate = requestedCandidateId === null ? undefined : objectSnapCandidates.find((candidate) => candidate.id === requestedCandidateId);
+    if (input.snapCandidateId !== undefined && !selectedCandidate) throw new RangeError(`Snap candidate ${input.snapCandidateId} is not available for this pointer frame.`);
+    const activeSnapCandidates = selectedCandidate ? [selectedCandidate] : objectSnapCandidates;
+    const trackingAngles = input.trackingAnglesRad ?? this.#polarTrackingAngles();
     const trackingCandidates = precisionState.otrack
-      ? input.trackingAnglesRad
-        ? this.tracking.candidates(input.cursorPoint, this.#settings.aperture, input.trackingAnglesRad)
+      ? trackingAngles
+        ? this.tracking.candidates(input.cursorPoint, this.#settings.aperture, trackingAngles)
         : this.tracking.candidates(input.cursorPoint, this.#settings.aperture)
       : [];
     const request: PrecisionRequest = this.precision.prepareRequest({
       basePoint: { ...input.basePoint },
       cursorPoint: { ...input.cursorPoint },
       ...(input.input === undefined ? {} : { input: typeof input.input === "string" ? input.input : structuredClone(input.input) }),
-      objectSnapCandidates: objectSnapCandidates.map((candidate) => ({
+      objectSnapCandidates: activeSnapCandidates.map((candidate) => ({
         point: { ...candidate.point }, kind: candidate.mode, priority: candidate.priority, key: candidate.key,
       })),
       trackingCandidates: trackingCandidates.map((candidate) => ({
         point: { ...candidate.point }, kind: candidate.kind, priority: candidate.priority, key: candidate.key,
       })),
     }, this.#settings);
-    return new PreparedPrecisionPointer(request, this.#units, this.#precisionModel);
+    return new PreparedPrecisionPointer(
+      request, this.#units, this.#precisionModel,
+      objectSnapCandidates.map((candidate) => candidate.id), selectedCandidate?.id ?? null,
+    );
   }
 
-  querySnap(cursor: CadPoint2, referencePoint?: CadPoint2): CadSnapCandidate[] {
+  querySnap(cursor: CadPoint2, referencePoint?: CadPoint2, referenceHandles?: readonly string[]): CadSnapCandidate[] {
     const state = this.precision.state;
     if (!state.osnap) return [];
     const layers = this.document.layers;
@@ -206,18 +244,41 @@ export class PrecisionLayersShellContract {
       cursor,
       aperture: this.#settings.aperture,
       ...(referencePoint ? { referencePoint } : {}),
+      ...(referenceHandles ? { referenceHandles: [...referenceHandles] } : {}),
     }, (entity) => entityParticipates(entity, layers, "snap").participates);
   }
 
-  acquireTracking(candidate: CadSnapCandidate, acquiredAt?: number): void {
-    if (acquiredAt === undefined) this.tracking.acquire(candidate.key, candidate.point);
-    else this.tracking.acquire(candidate.key, candidate.point, acquiredAt);
+  updateSnapCycle(cursor: CadPoint2, referencePoint?: CadPoint2, referenceHandles?: readonly string[]): CadSnapCycleReadback {
+    return this.snapCycle.update(this.querySnap(cursor, referencePoint, referenceHandles));
+  }
+
+  cycleSnap(cursor: CadPoint2, step = 1, referencePoint?: CadPoint2, referenceHandles?: readonly string[]): CadSnapCycleReadback {
+    return this.snapCycle.cycle(this.querySnap(cursor, referencePoint, referenceHandles), step);
+  }
+
+  selectSnapCandidate(cursor: CadPoint2, candidateId: string, referencePoint?: CadPoint2, referenceHandles?: readonly string[]): CadSnapCycleReadback {
+    return this.snapCycle.select(this.querySnap(cursor, referencePoint, referenceHandles), candidateId);
+  }
+
+  acquireTracking(candidate: CadSnapCandidate, acquiredAt?: number): CadTrackingPoint {
+    return acquiredAt === undefined
+      ? this.tracking.acquire(candidate.id, candidate.point)
+      : this.tracking.acquire(candidate.id, candidate.point, acquiredAt);
+  }
+
+  releaseTracking(candidateId: string): CadTrackingMutationReadback {
+    return this.tracking.releaseReadback(candidateId);
+  }
+
+  clearTracking(): CadTrackingMutationReadback {
+    return this.tracking.clearReadback();
   }
 
   trackingCandidates(cursor: CadPoint2, anglesRad?: readonly number[]): CadTrackingCandidate[] {
     if (!this.precision.enabled("otrack")) return [];
-    return anglesRad
-      ? this.tracking.candidates(cursor, this.#settings.aperture, anglesRad)
+    const angles = anglesRad ?? this.#polarTrackingAngles();
+    return angles
+      ? this.tracking.candidates(cursor, this.#settings.aperture, angles)
       : this.tracking.candidates(cursor, this.#settings.aperture);
   }
 
@@ -254,5 +315,14 @@ export class PrecisionLayersShellContract {
     this.#selection.setEntities(document.entities);
     this.#snap.setBlocks(document.blocks);
     this.#snap.setEntities(document.entities);
+  }
+
+  #polarTrackingAngles(): readonly number[] | undefined {
+    if (!this.precision.enabled("polar")) return undefined;
+    const increment = this.#settings.polarIncrementRad;
+    const angles: number[] = [];
+    for (let angle = 0; angle < Math.PI - 1e-14; angle += increment) angles.push(angle);
+    angles.push(...(this.#settings.polarAdditionalAnglesRad ?? []));
+    return angles;
   }
 }

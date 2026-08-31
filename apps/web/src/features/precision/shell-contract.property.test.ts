@@ -28,6 +28,11 @@ describe("prepared pointer property coverage", () => {
       const resolved = prepared.resolve();
       expect(resolved.preview).toEqual(resolved.commit);
       expect(resolved.dynamicInput.point).toEqual(resolved.commit.point);
+      expect(resolved.dynamicInput.coordinate).toEqual(resolved.commit.point);
+      expect(resolved.dynamicInput.distanceValue).toBeGreaterThanOrEqual(0);
+      expect(resolved.dynamicInput.angleRad).toBeGreaterThanOrEqual(0);
+      expect(resolved.dynamicInput.angleRad).toBeLessThan(Math.PI * 2);
+      expect(resolved.request).toEqual(prepared.request);
       expect([resolved.commit.point.x, resolved.commit.point.y]).toSatisfy((values: number[]) => values.every(Number.isFinite));
     }
   });

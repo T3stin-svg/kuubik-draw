@@ -9,18 +9,25 @@ export const CAD_OSNAP_PRIORITY = Object.freeze({
   center: 2,
   quadrant: 3,
   intersection: 4,
-  perpendicular: 5,
-  tangent: 6,
-  nearest: 7,
+  extension: 5,
+  insertion: 6,
+  perpendicular: 7,
+  tangent: 8,
+  nearest: 9,
+  geometricCenter: 10,
+  parallel: 11,
 });
 
 export type CadOsnapMode = keyof typeof CAD_OSNAP_PRIORITY;
 
 export interface CadSnapCandidate {
+  /** Stable semantic identity. It never includes priority, distance or input order. */
+  id: string;
   mode: CadOsnapMode;
   point: CadPoint2;
   handle: string;
   otherHandle?: string;
+  otherSegment?: number;
   segment?: number;
   parameter?: number;
   priority: number;
@@ -29,19 +36,155 @@ export interface CadSnapCandidate {
 }
 
 function pointKey(point: CadPoint2): string {
-  return `${point.x.toPrecision(17)},${point.y.toPrecision(17)}`;
+  const x = Object.is(point.x, -0) ? 0 : point.x;
+  const y = Object.is(point.y, -0) ? 0 : point.y;
+  return `${x.toPrecision(17)},${y.toPrecision(17)}`;
 }
 
-function candidate(mode: CadOsnapMode, point: CadPoint2, cursor: CadPoint2, handle: string, suffix = "", extra: Partial<CadSnapCandidate> = {}): CadSnapCandidate {
+function candidate(
+  mode: CadOsnapMode,
+  point: CadPoint2,
+  cursor: CadPoint2,
+  handle: string,
+  suffix = "",
+  extra: Partial<CadSnapCandidate> = {},
+  stableIdentity = `${handle}:${suffix}`,
+): CadSnapCandidate {
+  const id = `${mode}:${stableIdentity}:${pointKey(point)}`;
   return {
+    id,
     mode,
     point,
     handle,
     priority: CAD_OSNAP_PRIORITY[mode],
     distance: Math.hypot(point.x - cursor.x, point.y - cursor.y),
-    key: `${CAD_OSNAP_PRIORITY[mode]}:${handle}:${suffix}:${pointKey(point)}`,
+    key: id,
     ...extra,
   };
+}
+
+interface DirectionalSegment {
+  start: CadPoint2;
+  end: CadPoint2;
+  segment: number;
+  terminal: "both" | "start" | "end" | "ray" | "none";
+}
+
+function finiteDirection(start: CadPoint2, end: CadPoint2): boolean {
+  return Number.isFinite(start.x) && Number.isFinite(start.y) && Number.isFinite(end.x) && Number.isFinite(end.y)
+    && Math.hypot(end.x - start.x, end.y - start.y) > TRIM_EPSILON;
+}
+
+function directionalSegments(entity: CadEntity): DirectionalSegment[] {
+  if (entity.kind === "line") return finiteDirection(entity.start, entity.end)
+    ? [{ start: entity.start, end: entity.end, segment: 0, terminal: "both" }]
+    : [];
+  if (entity.kind === "ray" || entity.kind === "xline") {
+    const end = { x: entity.basePoint.x + entity.direction.x, y: entity.basePoint.y + entity.direction.y };
+    return finiteDirection(entity.basePoint, end)
+      ? [{ start: entity.basePoint, end, segment: 0, terminal: entity.kind === "ray" ? "ray" : "none" }]
+      : [];
+  }
+  if (entity.kind !== "polyline" || entity.vertices.length < 2) return [];
+  const result: DirectionalSegment[] = [];
+  const count = entity.closed ? entity.vertices.length : entity.vertices.length - 1;
+  for (let index = 0; index < count; index += 1) {
+    const start = entity.vertices[index]!;
+    const end = entity.vertices[(index + 1) % entity.vertices.length]!;
+    if (Math.abs(start.bulge ?? 0) > TRIM_EPSILON || !finiteDirection(start, end)) continue;
+    const terminal = entity.closed ? "none" : index === 0 && index === count - 1 ? "both" : index === 0 ? "start" : index === count - 1 ? "end" : "none";
+    result.push({ start, end, segment: index, terminal });
+  }
+  return result;
+}
+
+function projectToLine(point: CadPoint2, segment: DirectionalSegment): { point: CadPoint2; parameter: number } {
+  const dx = segment.end.x - segment.start.x;
+  const dy = segment.end.y - segment.start.y;
+  const denominator = dx * dx + dy * dy;
+  const parameter = ((point.x - segment.start.x) * dx + (point.y - segment.start.y) * dy) / denominator;
+  return { point: { x: segment.start.x + parameter * dx, y: segment.start.y + parameter * dy }, parameter };
+}
+
+function extensionPoints(entity: CadEntity, cursor: CadPoint2): Array<{ point: CadPoint2; segment: number; parameter: number; suffix: string }> {
+  if (entity.kind === "arc") {
+    const dx = cursor.x - entity.center.x;
+    const dy = cursor.y - entity.center.y;
+    const length = Math.hypot(dx, dy);
+    if (length <= TRIM_EPSILON) return [];
+    const point = { x: entity.center.x + dx / length * entity.radius, y: entity.center.y + dy / length * entity.radius };
+    if ((trimClosestPoint(entity, point)?.distance ?? Infinity) <= TRIM_EPSILON * Math.max(1, entity.radius)) return [];
+    const parameter = Math.atan2(point.y - entity.center.y, point.x - entity.center.x);
+    return [{ point, segment: 0, parameter, suffix: `0:arc:${parameter.toPrecision(17)}` }];
+  }
+  return directionalSegments(entity).flatMap((segment) => {
+    const projected = projectToLine(cursor, segment);
+    const onExtension = segment.terminal === "both" ? projected.parameter < 0 || projected.parameter > 1
+      : segment.terminal === "start" || segment.terminal === "ray" ? projected.parameter < 0
+        : segment.terminal === "end" ? projected.parameter > 1 : false;
+    return onExtension ? [{ ...projected, segment: segment.segment, suffix: `${segment.segment}:${projected.parameter < 0 ? "start" : "end"}` }] : [];
+  });
+}
+
+function insertionPoints(entity: CadEntity): CadPoint2[] {
+  return entity.kind === "blockRef" ? [entity.insertion]
+    : entity.kind === "text" || entity.kind === "mtext" ? [entity.position]
+      : [];
+}
+
+function polygonAreaCentroid(points: readonly CadPoint2[]): { point: CadPoint2; area: number } | null {
+  if (points.length < 3) return null;
+  let areaTwice = 0;
+  let x = 0;
+  let y = 0;
+  for (let index = 0; index < points.length; index += 1) {
+    const first = points[index]!;
+    const second = points[(index + 1) % points.length]!;
+    const cross = first.x * second.y - second.x * first.y;
+    areaTwice += cross;
+    x += (first.x + second.x) * cross;
+    y += (first.y + second.y) * cross;
+  }
+  if (!Number.isFinite(areaTwice) || Math.abs(areaTwice) <= TRIM_EPSILON) return null;
+  return { point: { x: x / (3 * areaTwice), y: y / (3 * areaTwice) }, area: areaTwice / 2 };
+}
+
+function geometricCenters(entity: CadEntity): CadPoint2[] {
+  if (entity.kind === "polyline") {
+    if (!entity.closed || entity.vertices.some((vertex) => Math.abs(vertex.bulge ?? 0) > TRIM_EPSILON)) return [];
+    const center = polygonAreaCentroid(entity.vertices);
+    return center ? [center.point] : [];
+  }
+  if (entity.kind !== "hatch") return [];
+  let area = 0;
+  let x = 0;
+  let y = 0;
+  for (const loop of entity.loops) {
+    const centroid = polygonAreaCentroid(loop.vertices);
+    if (!centroid) continue;
+    const weight = Math.abs(centroid.area) * (loop.isHole ? -1 : 1);
+    area += weight;
+    x += centroid.point.x * weight;
+    y += centroid.point.y * weight;
+  }
+  return Math.abs(area) <= TRIM_EPSILON ? [] : [{ x: x / area, y: y / area }];
+}
+
+function parallelPoints(entity: CadEntity, cursor: CadPoint2, reference: CadPoint2): Array<{ point: CadPoint2; segment: number; directionKey: string }> {
+  return directionalSegments(entity).flatMap((segment) => {
+    const dx = segment.end.x - segment.start.x;
+    const dy = segment.end.y - segment.start.y;
+    const length = Math.hypot(dx, dy);
+    let ux = dx / length;
+    let uy = dy / length;
+    if (ux < 0 || (Math.abs(ux) <= TRIM_EPSILON && uy < 0)) { ux = -ux; uy = -uy; }
+    const scalar = (cursor.x - reference.x) * ux + (cursor.y - reference.y) * uy;
+    return [{
+      point: { x: reference.x + scalar * ux, y: reference.y + scalar * uy },
+      segment: segment.segment,
+      directionKey: `${ux.toPrecision(17)},${uy.toPrecision(17)}`,
+    }];
+  });
 }
 
 function endpoints(entity: CadEntity): CadPoint2[] {
@@ -141,6 +284,8 @@ export interface CadSnapGenerationOptions {
   cursor: CadPoint2;
   aperture: number;
   referencePoint?: CadPoint2;
+  /** Explicitly acquired/hovered entities used for unbounded Extension/Parallel queries. */
+  referenceHandles?: readonly string[];
 }
 
 export function generateCadSnapCandidates(entities: readonly CadEntity[], options: CadSnapGenerationOptions): CadSnapCandidate[] {
@@ -152,6 +297,8 @@ export function generateCadSnapCandidates(entities: readonly CadEntity[], option
     if (modes.has("midpoint")) trimCurvesOfEntity(entity).forEach((curve, index) => results.push(candidate("midpoint", trimPointAt(curve, 0.5), options.cursor, entity.handle, String(index), { segment: curve.segment, parameter: 0.5 })));
     if (modes.has("center")) centers(entity).forEach((point) => results.push(candidate("center", point, options.cursor, entity.handle)));
     if (modes.has("quadrant")) quadrants(entity).forEach((point, index) => results.push(candidate("quadrant", point, options.cursor, entity.handle, String(index))));
+    if (modes.has("extension")) extensionPoints(entity, options.cursor).forEach((item) => results.push(candidate("extension", item.point, options.cursor, entity.handle, item.suffix, { segment: item.segment, parameter: item.parameter })));
+    if (modes.has("insertion")) insertionPoints(entity).forEach((point, index) => results.push(candidate("insertion", point, options.cursor, entity.handle, String(index))));
     if (modes.has("perpendicular") && options.referencePoint) {
       const closest = trimClosestPoint(entity, options.referencePoint);
       if (closest) results.push(candidate("perpendicular", closest.point, options.cursor, entity.handle, `${closest.segment}`, { segment: closest.segment, parameter: closest.parameter }));
@@ -161,6 +308,10 @@ export function generateCadSnapCandidates(entities: readonly CadEntity[], option
       const closest = trimClosestPoint(entity, options.cursor);
       if (closest) results.push(candidate("nearest", closest.point, options.cursor, entity.handle, `${closest.segment}`, { segment: closest.segment, parameter: closest.parameter }));
     }
+    if (modes.has("geometricCenter")) geometricCenters(entity).forEach((point, index) => results.push(candidate("geometricCenter", point, options.cursor, entity.handle, String(index))));
+    if (modes.has("parallel") && options.referencePoint) parallelPoints(entity, options.cursor, options.referencePoint).forEach((item) => results.push(candidate(
+      "parallel", item.point, options.cursor, entity.handle, `${item.segment}:${item.directionKey}`, { segment: item.segment },
+    )));
   }
   if (modes.has("intersection")) {
     for (let firstIndex = 0; firstIndex < entities.length; firstIndex += 1) {
@@ -168,7 +319,18 @@ export function generateCadSnapCandidates(entities: readonly CadEntity[], option
         const first = entities[firstIndex]!;
         const second = entities[secondIndex]!;
         trimCurvesOfEntity(first).forEach((firstCurve) => trimCurvesOfEntity(second).forEach((secondCurve) => {
-          trimCurveIntersections(firstCurve, secondCurve).forEach((hit, index) => results.push(candidate("intersection", hit.point, options.cursor, first.handle, `${second.handle}:${index}`, { otherHandle: second.handle, segment: firstCurve.segment, parameter: hit.first })));
+          trimCurveIntersections(firstCurve, secondCurve).forEach((hit, index) => {
+            const stablePair = [
+              { handle: first.handle, segment: firstCurve.segment },
+              { handle: second.handle, segment: secondCurve.segment },
+            ].sort((a, b) => a.handle.localeCompare(b.handle) || a.segment - b.segment);
+            const stableIdentity = stablePair.map((item) => `${item.handle}:${item.segment}`).join("|");
+            results.push(candidate(
+              "intersection", hit.point, options.cursor, first.handle, `${second.handle}:${index}`,
+              { otherHandle: second.handle, segment: firstCurve.segment, otherSegment: secondCurve.segment, parameter: hit.first },
+              stableIdentity,
+            ));
+          });
         }));
       }
     }
@@ -176,6 +338,55 @@ export function generateCadSnapCandidates(entities: readonly CadEntity[], option
   const unique = new Map<string, CadSnapCandidate>();
   results.filter((item) => item.distance <= options.aperture).forEach((item) => { if (!unique.has(item.key)) unique.set(item.key, item); });
   return [...unique.values()].sort((a, b) => a.priority - b.priority || a.distance - b.distance || a.key.localeCompare(b.key));
+}
+
+export interface CadSnapCycleReadback {
+  candidate: CadSnapCandidate | null;
+  candidateId: string | null;
+  candidateIds: string[];
+  index: number;
+  count: number;
+}
+
+/** Stateful selection cycling that preserves the active semantic candidate ID across fresh queries. */
+export class CadSnapSelectionCycle {
+  #candidateId: string | null = null;
+
+  get candidateId(): string | null { return this.#candidateId; }
+
+  reset(): void { this.#candidateId = null; }
+
+  update(candidates: readonly CadSnapCandidate[]): CadSnapCycleReadback {
+    return this.#readback(candidates, 0, false);
+  }
+
+  cycle(candidates: readonly CadSnapCandidate[], step = 1): CadSnapCycleReadback {
+    if (!Number.isSafeInteger(step) || step === 0) throw new RangeError("Snap cycle step must be a non-zero safe integer.");
+    return this.#readback(candidates, step, true);
+  }
+
+  select(candidates: readonly CadSnapCandidate[], candidateId: string): CadSnapCycleReadback {
+    if (!candidates.some((candidate) => candidate.id === candidateId)) throw new RangeError(`Snap candidate ${candidateId} is not available.`);
+    this.#candidateId = candidateId;
+    return this.#readback(candidates, 0, false);
+  }
+
+  #readback(candidates: readonly CadSnapCandidate[], step: number, advance: boolean): CadSnapCycleReadback {
+    const unique = [...new Map(candidates.map((candidate) => [candidate.id, candidate])).values()];
+    if (unique.length === 0) {
+      this.#candidateId = null;
+      return { candidate: null, candidateId: null, candidateIds: [], index: -1, count: 0 };
+    }
+    let index = this.#candidateId === null ? 0 : unique.findIndex((candidate) => candidate.id === this.#candidateId);
+    if (index < 0) index = 0;
+    if (advance) index = ((index + step) % unique.length + unique.length) % unique.length;
+    const selected = unique[index]!;
+    this.#candidateId = selected.id;
+    return {
+      candidate: structuredClone(selected), candidateId: selected.id,
+      candidateIds: unique.map((candidate) => candidate.id), index, count: unique.length,
+    };
+  }
 }
 
 export class CadSnapIndex {
@@ -208,6 +419,7 @@ export class CadSnapIndex {
     const candidates = [
       ...this.#index.search({ minX: x - options.aperture, minY: y - options.aperture, maxX: x + options.aperture, maxY: y + options.aperture }).map((item) => item.handle),
       ...this.#unbounded,
+      ...(options.referenceHandles ?? []),
     ];
     return generateCadSnapCandidates([...new Set(candidates)].flatMap((handle) => {
       const entity = this.#entities.get(handle);
