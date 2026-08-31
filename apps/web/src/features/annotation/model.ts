@@ -27,6 +27,92 @@ export interface AnnotationAction {
   selectedHandles: string[];
 }
 
+export type AnnotationPromptValueKind = "point" | "points" | "string" | "number" | "select" | "boolean" | "handles" | "attributes";
+
+export interface AnnotationPromptField {
+  id: string;
+  label: string;
+  valueKind: AnnotationPromptValueKind;
+  required: boolean;
+  choices?: readonly string[];
+}
+
+export interface AnnotationPromptPlan {
+  commandId: AnnotationCommandId;
+  fields: readonly AnnotationPromptField[];
+}
+
+export const ANNOTATION_PROMPT_PLANS: Readonly<Record<AnnotationCommandId, AnnotationPromptPlan>> = Object.freeze({
+  DIMLINEAR: { commandId: "DIMLINEAR", fields: [
+    { id: "first", label: "Esimene mõõtepunkt", valueKind: "point", required: true },
+    { id: "second", label: "Teine mõõtepunkt", valueKind: "point", required: true },
+    { id: "dimensionLinePoint", label: "Mõõtjoone asukoht", valueKind: "point", required: true },
+    { id: "axis", label: "Suund", valueKind: "select", required: true, choices: ["horizontal", "vertical"] },
+    { id: "associative", label: "Assotsiatiivne", valueKind: "boolean", required: true },
+  ] },
+  DIMALIGNED: { commandId: "DIMALIGNED", fields: [
+    { id: "first", label: "Esimene mõõtepunkt", valueKind: "point", required: true },
+    { id: "second", label: "Teine mõõtepunkt", valueKind: "point", required: true },
+    { id: "dimensionLinePoint", label: "Mõõtjoone asukoht", valueKind: "point", required: true },
+    { id: "associative", label: "Assotsiatiivne", valueKind: "boolean", required: true },
+  ] },
+  DIMANGULAR: { commandId: "DIMANGULAR", fields: [
+    { id: "vertex", label: "Nurga tipp", valueKind: "point", required: true },
+    { id: "firstRayPoint", label: "Esimene haar", valueKind: "point", required: true },
+    { id: "secondRayPoint", label: "Teine haar", valueKind: "point", required: true },
+    { id: "arcPoint", label: "Mõõtkaare asukoht", valueKind: "point", required: true },
+  ] },
+  DIMRADIUS: { commandId: "DIMRADIUS", fields: [
+    { id: "circumferencePoint", label: "Ringjoone punkt", valueKind: "point", required: true },
+    { id: "textPoint", label: "Mõõtteksti asukoht", valueKind: "point", required: true },
+  ] },
+  DIMDIAMETER: { commandId: "DIMDIAMETER", fields: [
+    { id: "circumferencePoint", label: "Ringjoone punkt", valueKind: "point", required: true },
+    { id: "textPoint", label: "Mõõtteksti asukoht", valueKind: "point", required: true },
+  ] },
+  DIMCONTINUE: { commandId: "DIMCONTINUE", fields: [
+    { id: "points", label: "Mõõtketi punktid", valueKind: "points", required: true },
+    { id: "dimensionLinePoint", label: "Mõõtjoone asukoht", valueKind: "point", required: true },
+    { id: "axis", label: "Suund", valueKind: "select", required: true, choices: ["horizontal", "vertical"] },
+    { id: "chainId", label: "Mõõtketi ID", valueKind: "string", required: true },
+  ] },
+  DIMSTYLE: { commandId: "DIMSTYLE", fields: [
+    { id: "mode", label: "Tegevus", valueKind: "select", required: true, choices: ["create", "update"] },
+    { id: "style", label: "Mõõdustiil", valueKind: "attributes", required: true },
+  ] },
+  MTEXT: { commandId: "MTEXT", fields: [
+    { id: "position", label: "Sisestuspunkt", valueKind: "point", required: true },
+    { id: "text", label: "Tekst", valueKind: "string", required: true },
+    { id: "height", label: "Kõrgus", valueKind: "number", required: true },
+    { id: "width", label: "Tekstiala laius", valueKind: "number", required: true },
+  ] },
+  STYLE: { commandId: "STYLE", fields: [
+    { id: "mode", label: "Tegevus", valueKind: "select", required: true, choices: ["create", "update"] },
+    { id: "style", label: "Tekstistiil", valueKind: "attributes", required: true },
+  ] },
+  LEADER: { commandId: "LEADER", fields: [
+    { id: "vertices", label: "Viitjoone punktid", valueKind: "points", required: true },
+    { id: "text", label: "Tekst", valueKind: "string", required: false },
+  ] },
+  MLEADER: { commandId: "MLEADER", fields: [
+    { id: "vertices", label: "Multiviite punktid", valueKind: "points", required: true },
+    { id: "text", label: "Tekst", valueKind: "string", required: true },
+    { id: "textPosition", label: "Teksti asukoht", valueKind: "point", required: true },
+    { id: "styleId", label: "Multiviite stiil", valueKind: "string", required: true },
+  ] },
+  HATCH: { commandId: "HATCH", fields: [
+    { id: "boundaryHandles", label: "Piirid", valueKind: "handles", required: true },
+    { id: "pattern", label: "Muster", valueKind: "string", required: true },
+    { id: "angleRad", label: "Nurk", valueKind: "number", required: true },
+    { id: "scale", label: "Mõõtkava", valueKind: "number", required: true },
+    { id: "associative", label: "Assotsiatiivne", valueKind: "boolean", required: true },
+  ] },
+});
+
+export function annotationPromptPlan(commandId: AnnotationCommandId): AnnotationPromptPlan {
+  return structuredClone(ANNOTATION_PROMPT_PLANS[commandId]);
+}
+
 export function createAnnotationAction(commandId: AnnotationCommandId, selectedHandles: readonly string[]): AnnotationAction {
   const tool = ANNOTATION_TOOLS.find((candidate) => candidate.id === commandId);
   if (!tool) throw new RangeError(`Unknown annotation command: ${commandId}.`);
