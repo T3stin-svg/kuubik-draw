@@ -4,6 +4,8 @@ Second-wave source: `work2/reio-documents-io` from integrated commit `34683acfb1
 
 Third-wave live integration source: `work3/reio-documents-live` from integrator base `9af0b7b241ec28f6d5976ed69f79d973611f1c5b`.
 
+Fourth-wave layout/plot shell source: `work4/reio-documents-live` from integrator base `6bd651bff79e40f0b21c11e178af74cd477e9d11`.
+
 This workstream deliberately does not modify `App.tsx`, `style.css`, package manifests, parity scores or security evidence. The integration owner must wire the following surfaces without weakening the existing F-097...F-107, F-109, F-111 and F-114 paths.
 
 ## Shared package exports
@@ -40,6 +42,8 @@ The transaction module also exports `put-attachment` and `delete-attachment` `Ca
 - `document-live-orchestrator.ts`: browser-ready composition root that exposes a document only after session, tab, append-only storage and attachment read-back agree
 - `documents-live-harness.ts`: deterministic F-115/F-128/F-133 crash/reload, stale-revision and corrupt-tail fixture; it is also published as `window.runKuubikDocumentsLiveHarness` when imported in a browser
 - `documents-live-harness.html`: isolated real-Chromium IndexedDB runner; this test page is not part of `App.tsx`
+- `layout-plot-shell.ts`: DOM-independent F-096...F-107/F-114/F-115 caller contract over live document revisions, Layout/PageSetup/Plot primitives, vector PDF and underlay read-back
+- `layout-plot-shell-harness.ts` and `.html`: deterministic real-Chromium layout, rectangular viewport, scale/pan/twist/lock, page setup, named setup, publish, Undo/Redo and crash/reload fixture
 - `indexed-db.ts`: schema v2 attachment, append-only snapshot/operation and crash-event methods
 
 `KDrawIndexedDb(factory, databaseName?)` accepts an optional isolated database name for non-destructive browser fixtures. Production callers retain the default `kuubik-draw` name.
@@ -47,6 +51,12 @@ The transaction module also exports `put-attachment` and `delete-attachment` `Ca
 ## Live integration surface
 
 `DocumentLiveOrchestrator` is the approved F-115/F-128/F-133 integration boundary. Its `open`, `commit`, `attachPdf`, `activate`, view-context and `close` methods keep the pure tab state and the per-document `CadSession` synchronized. `commit` and `attachPdf` update the visible tab only after the candidate revision has been durably accepted. `close` records a clean boundary only after the exact revision and every referenced attachment have passed storage read-back.
+
+`DocumentLayoutPlotShell` is the approved DOM-independent F-096...F-107/F-114/F-115 shell boundary. It delegates semantic changes to the existing core planners and accepts them only through `DocumentLiveOrchestrator.commit`. Layout create/rename/delete, rectangular viewport creation, viewport view/pan/twist/lock, Model/Paper page setup, named page setup, publish settings, vector PDF and underlay read-back therefore share one revision contract.
+
+`DocumentLiveOrchestrator.undo`/`redo` use `DocumentSessionCoordinator.undoPersisted`/`redoPersisted`: a candidate history state is persisted before it replaces the accepted session. A failed storage callback leaves revision, document and Undo/Redo stacks unchanged. If an active layout is removed by a commit or Undo, the coordinator reconciles the session and tab to Model before callers select an adjacent paper layout.
+
+The shell capability map is intentionally not a parity score. F-096...F-107/F-114 and F-115 are `candidate`; they still require the row-specific browser/AutoCAD/read-back chain before score changes. F-108 PC3/CTB/STB is `disabled`, while F-112/F-113/F-117/F-121 remain `disabled` with `NATIVE_SDK_UNAVAILABLE`.
 
 The deterministic browser fixture is available during development at `/src/features/documents/documents-live-harness.html`. Each run uses a fresh isolated database name, creates two documents, persists a PDF underlay atomically, simulates process loss by closing the database without clean events, corrupts one operation-log tail, reloads both documents and proves:
 

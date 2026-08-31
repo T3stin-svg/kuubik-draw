@@ -1,0 +1,127 @@
+{
+  "documentId": "layout-plot",
+  "revision": 12,
+  "activeLayoutId": "layout-1",
+  "canUndo": false,
+  "canRedo": false,
+  "layouts": [
+    {
+      "id": "model",
+      "name": "Model",
+      "kind": "model",
+      "paper": null,
+      "pageSetup": {
+        "mediaName": "ISO_A4",
+        "orientation": "portrait",
+        "plotArea": { "kind": "extents" },
+        "plotScale": { "mode": "custom", "paperUnits": 1, "drawingUnits": 50 },
+        "centerPlot": true,
+        "plotOriginMm": { "x": 0, "y": 0 },
+        "plotStyle": { "profile": "monochrome", "plotLineweights": true, "plotTransparency": true },
+        "displayPlotStyles": false
+      },
+      "viewports": []
+    },
+    {
+      "id": "layout-1",
+      "name": "SHEET A - ISSUE 1",
+      "kind": "paper",
+      "paper": {
+        "widthMm": 420,
+        "heightMm": 297,
+        "marginsMm": { "top": 10, "right": 10, "bottom": 10, "left": 10 }
+      },
+      "pageSetup": {
+        "mediaName": "ISO_A3",
+        "orientation": "landscape",
+        "plotArea": { "kind": "layout" },
+        "plotScale": { "mode": "custom", "paperUnits": 1, "drawingUnits": 1 },
+        "centerPlot": false,
+        "plotOriginMm": { "x": 0, "y": 0 },
+        "plotStyle": { "profile": "monochrome", "plotLineweights": true, "plotTransparency": true },
+        "displayPlotStyles": true
+      },
+      "viewports": [
+        {
+          "id": "viewport-1",
+          "center": { "x": 210, "y": 148.5 },
+          "width": 380,
+          "height": 257,
+          "viewCenter": { "x": -736.3705754520149, "y": 2844.3147122739924 },
+          "scaleDenominator": 100,
+          "scaleLabel": "1:100",
+          "twistAngleRad": 0.5235987755982988,
+          "locked": true,
+          "rectangular": true
+        }
+      ]
+    }
+  ],
+  "namedPageSetups": {
+    "schemaVersion": 1,
+    "setups": [
+      {
+        "id": "page-setup-1",
+        "name": "A3 MONO",
+        "pageSetup": {
+          "mediaName": "ISO_A3",
+          "orientation": "landscape",
+          "plotArea": { "kind": "layout" },
+          "plotScale": { "mode": "custom", "paperUnits": 1, "drawingUnits": 1 },
+          "centerPlot": false,
+          "plotOriginMm": { "x": 0, "y": 0 },
+          "plotStyle": { "profile": "monochrome", "plotLineweights": true, "plotTransparency": true },
+          "displayPlotStyles": true
+        },
+        "paperMarginsMm": { "top": 10, "right": 10, "bottom": 10, "left": 10 }
+      }
+    ],
+    "assignments": { "layout-1": "page-setup-1" }
+  },
+  "publish": {
+    "settings": {
+      "schemaVersion": 1,
+      "sheets": [{ "layoutId": "layout-1", "included": true }],
+      "output": "multi-page",
+      "baseFileName": "KUUBIK-LAYOUT-PLOT"
+    },
+    "layoutIds": ["layout-1"],
+    "multiPageFileName": "KUUBIK-LAYOUT-PLOT.pdf",
+    "separateFiles": [{ "layoutId": "layout-1", "fileName": "KUUBIK-LAYOUT-PLOT-SHEET A - ISSUE 1.pdf" }]
+  },
+  "pdfUnderlays": [
+    {
+      "id": "reference-underlay",
+      "attachmentId": "reference-pdf",
+      "pageNumber": 1,
+      "position": { "x": 100, "y": 200 },
+      "widthMm": 104.95138888888889,
+      "heightMm": 148.51944444444442,
+      "rotationRad": 0.2617993877991494,
+      "opacity": 0.65,
+      "visible": true
+    }
+  ],
+  "capabilities": {
+    "modelLayoutPlot": {
+      "rows": ["F-096", "F-097", "F-098", "F-099", "F-100", "F-101", "F-102", "F-103", "F-104", "F-105", "F-106", "F-107", "F-114"],
+      "status": "candidate",
+      "reason": "DOM-independent deterministic contract; AutoCAD live evidence is still required for parity certification."
+    },
+    "pdfUnderlay": {
+      "rows": ["F-115"],
+      "status": "candidate",
+      "reason": "Atomic SHA-bound storage and read-back are enabled; complex PDF.js rendering and AutoCAD PDFATTACH evidence are still required."
+    },
+    "nativeDwg": {
+      "rows": ["F-112", "F-113", "F-117", "F-121"],
+      "status": "disabled",
+      "reason": "NATIVE_SDK_UNAVAILABLE: licensed ODA Drawings SDK or Autodesk RealDWG is not available."
+    },
+    "nativePlotProfiles": {
+      "rows": ["F-108"],
+      "status": "disabled",
+      "reason": "PC3/CTB/STB are vendor-native resources and require a licensed native adapter plus AutoCAD read-back."
+    }
+  }
+}
