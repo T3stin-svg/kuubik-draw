@@ -442,3 +442,45 @@ count, and source/path collision states fail before an operation exists.
 F-031/F-032 remain uncertified until the complete AutoCAD 2024.1.2 command/Properties matrix and
 the integration-owned Kuubik browser workflow are run with saved/rendered read-back. No parity
 score or certification record was changed in this lane.
+
+## Wave 15 exports (F-034 PEDIT matrix)
+
+From `packages/cad-core/src/pedit.ts`:
+
+- `preparePeditCommand`
+- `readPeditCurveDefinition`
+- `PeditInputError` and `PeditInputErrorCode`
+- `PeditAction`, `PeditCommandInput`, `PeditJoinType`, `PeditCurveMode`,
+  `PeditCurveDefinition`, `PeditJoinRejectionReason`, and `PreparedPeditCommand`
+
+From `apps/web/src/features/draw-modify/pedit-command-adapter.ts`:
+
+- `peditCommandAdapter`
+
+The integration owner should export the core symbols through the shared cad-core barrel and route
+the PEDIT parser to `peditCommandAdapter` plus `createAtomicCommandWorkflow`. The adapter prepares
+the same immutable change set for preview and commit. One commit includes the retained source
+handle plus every joined-entity deletion, so Undo and Redo cover the complete PEDIT action sequence
+atomically.
+
+The kernel converts a selected LINE or ARC into a lightweight polyline while retaining the selected
+entity's handle, layer, appearance, and extension data. JOIN accepts open LINE, ARC, and polyline
+targets, honours a finite fuzz tolerance, preserves exact signed ARC bulges, and exposes bounded
+`extend`, `add`, and `both` joint types. The result always inherits the first selected source's
+properties. Missing, locked, off, or frozen layers and unsupported/degenerate geometry fail closed;
+JOIN reports rejected secondary objects without deleting them.
+
+Supported edits are Open/Close, uniform Width, per-vertex start/end width, Reverse, Insert, Move,
+Delete, Straighten, Fit, Spline, Decurve, and linetype-generation state. Inserting on a bulged
+segment requires a point on that arc and splits both bulge and tapered width exactly. Fit/Spline are
+deterministic Kuubik approximations: KDraw v1 has no classic fit-polyline entity, so the curve frame
+is stored under `extensionData.kuubikPeditCurve` and the rendered entity is a sampled standard
+polyline. Frame edits refit the sampled geometry; Decurve restores the straight frame. JOIN also
+decurves before joining, matching the documented PEDIT workflow boundary.
+
+Standard DXF preserves the expanded LWPOLYLINE geometry, handle, layer, closed state, bulges,
+vertex widths, true colour, and lineweight. It intentionally does not preserve the Kuubik Fit/Spline
+frame metadata. F-034 has unit/golden/property/fuzz, mutation, feature-wiring, atomic Undo/Redo, and
+DXF read-back coverage. It remains uncertified until AutoCAD 2024.1.2 live PEDIT workflows and the
+integration-owned Kuubik browser workflow are run with saved/rendered output read-back. No parity
+score or certification record was changed in this lane.
