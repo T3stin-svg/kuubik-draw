@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { prepareArrayCommand, ArrayCommandInputError } from "../src/array-commands.js";
+import { arrayPathLength, arrayPathSample, prepareArrayCommand, ArrayCommandInputError } from "../src/array-commands.js";
 import { createEmptyDocument } from "../src/document.js";
 import { PeditInputError, preparePeditCommand } from "../src/pedit.js";
 import { quickSelect, selectSimilar } from "../src/selection-query.js";
@@ -59,6 +59,56 @@ describe("ARRAY and ARRAYPATH", () => {
       method: "measure", spacing: 40, startOffset: 20, alignItems: false,
     });
     expect(measured).toMatchObject({ itemCount: 3 });
+  });
+
+  it("uses exact circular-arc length and analytic tangents for ARRAYPATH placement", () => {
+    const document = createEmptyDocument({ documentId: "array-path-arc" });
+    document.entities.push(
+      { kind: "line", handle: "10", layerId: "0", start: { x: 100, y: 0 }, end: { x: 110, y: 0 } },
+      { kind: "arc", handle: "20", layerId: "0", center: { x: 0, y: 0 }, radius: 100, startAngleRad: 0, endAngleRad: Math.PI / 2, counterClockwise: true },
+    );
+    const path = document.entities[1]!;
+    expect(arrayPathLength(path)).toBeCloseTo(50 * Math.PI, 12);
+    const middle = arrayPathSample(path, 25 * Math.PI);
+    expect(middle.point).toEqual({ x: expect.closeTo(Math.SQRT1_2 * 100, 10), y: expect.closeTo(Math.SQRT1_2 * 100, 10) });
+    expect(middle.tangentAngle).toBeCloseTo(Math.PI * 3 / 4, 12);
+
+    const input = {
+      command: "ARRAYPATH" as const, targetHandles: ["10"], basePoint: { x: 100, y: 0 }, pathHandle: "20",
+      method: "divide" as const, items: 3, alignItems: true,
+    };
+    const first = prepareArrayCommand(document, input);
+    const second = prepareArrayCommand(document, input);
+    expect(second).toEqual(first);
+    expect(first.changes.map((change) => change.type === "put" ? change.entity : null)).toMatchObject([
+      { kind: "line", start: { x: 100, y: 0 }, end: { x: expect.closeTo(100, 10), y: expect.closeTo(10, 10) } },
+      { kind: "line", start: { x: expect.closeTo(Math.SQRT1_2 * 100, 10), y: expect.closeTo(Math.SQRT1_2 * 100, 10) } },
+      { kind: "line", start: { x: expect.closeTo(0, 10), y: expect.closeTo(100, 10) }, end: { x: expect.closeTo(-10, 10), y: expect.closeTo(100, 10) } },
+    ]);
+  });
+
+  it("adaptively measures a spline path with deterministic midpoint tangent", () => {
+    const spline = {
+      kind: "spline" as const, handle: "20", layerId: "0", degree: 3,
+      controlPoints: [{ x: 0, y: 0 }, { x: 0, y: 100 }, { x: 100, y: 100 }, { x: 100, y: 0 }],
+      knots: [0, 0, 0, 0, 1, 1, 1, 1], closed: false, periodic: false,
+    };
+    const measured = arrayPathLength(spline);
+    const measuredAgain = arrayPathLength(structuredClone(spline));
+    expect(measuredAgain).toBe(measured);
+    const highResolution = Array.from({ length: 20_001 }, (_unused, index) => {
+      const parameter = index / 20_000;
+      const inverse = 1 - parameter;
+      return {
+        x: 3 * inverse * parameter ** 2 * 100 + parameter ** 3 * 100,
+        y: 3 * inverse ** 2 * parameter * 100 + 3 * inverse * parameter ** 2 * 100,
+      };
+    });
+    const reference = highResolution.slice(1).reduce((sum, point, index) => sum + Math.hypot(point.x - highResolution[index]!.x, point.y - highResolution[index]!.y), 0);
+    expect(measured).toBeCloseTo(reference, 4);
+    const middle = arrayPathSample(spline, measured / 2);
+    expect(middle.point).toEqual({ x: expect.closeTo(50, 5), y: expect.closeTo(75, 5) });
+    expect(middle.tangentAngle).toBeCloseTo(0, 5);
   });
 
   it.each([

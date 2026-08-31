@@ -5,7 +5,7 @@
   "status": "implemented-not-certified",
   "implemented": {
     "F-031": ["rectangular rows and columns", "polar item count", "fill angle", "rotate items"],
-    "F-032": ["Divide", "Measure", "start offset", "align items", "line, arc, ellipse, polyline and spline path sampling"],
+    "F-032": ["Divide", "Measure", "start offset", "align items", "exact arc length and tangent", "adaptive deterministic ellipse and spline length", "stable spline tangent"],
     "F-034": ["Open", "Close", "Join", "line/polyline/arc-to-bulge Join", "Join tolerance", "Width", "Reverse", "Decurve", "linetype generation", "insert/delete/edit vertex"],
     "F-038": ["entire drawing", "current selection", "replace", "append", "exclude", "Select Similar criteria"]
   },
@@ -17,11 +17,11 @@
   "tests": {
     "unitGoldenMutation": "packages/cad-core/test/array-pedit-selection.test.ts",
     "wiringPreviewCommitUndoRedo": "apps/web/src/features/draw-modify/atomic-command-workflow.test.ts",
-    "lastResult": "PEDIT/ARRAY core file passed; 15 tests passed"
+    "lastResult": "PEDIT/ARRAY core file passed; 17 tests passed"
   },
   "knownLimits": [
     "ARRAY and ARRAYPATH are non-associative because KDraw v1 has no array entity",
-    "ARRAYPATH curve length and tangent are sampled for non-line paths"
+    "ellipse and spline length use deterministic adaptive numerical integration rather than a native associative path object"
   ],
   "certificationGaps": [
     "AutoCAD live workflow comparison not run",

@@ -79,49 +79,147 @@ function transformedCopy(entity: CadEntity, handle: string, delta: CadPoint2, ro
   return { ...transformed, handle } as CadEntity;
 }
 
-function curvePolyline(curve: TrimCurve, samples = 96): CadPoint2[] {
-  if (curve.kind === "line") return [curve.start, curve.end];
-  return Array.from({ length: samples + 1 }, (_, index) => trimPointAt(curve, index / samples));
-}
-
-interface PathSample {
+export interface ArrayPathSample {
   point: CadPoint2;
   tangentAngle: number;
 }
 
-function samplePath(entity: CadEntity, distanceAlong: number): PathSample {
-  const points = trimCurvesOfEntity(entity).flatMap((curve, index) => {
-    const sampled = curvePolyline(curve);
-    return index === 0 ? sampled : sampled.slice(1);
-  });
-  if (points.length < 2) throw new ArrayCommandInputError("ARRAYPATH requires a supported non-degenerate path.");
-  const segments = points.slice(0, -1).map((start, index) => {
-    const end = points[index + 1]!;
-    return { start, end, length: Math.hypot(end.x - start.x, end.y - start.y) };
-  }).filter((segment) => segment.length > EPSILON);
-  const total = segments.reduce((sum, segment) => sum + segment.length, 0);
-  if (total <= EPSILON) throw new ArrayCommandInputError("ARRAYPATH path length must be positive.");
-  let remaining = Math.max(0, Math.min(distanceAlong, total));
-  for (const segment of segments) {
-    if (remaining <= segment.length + EPSILON) {
-      const ratio = Math.min(1, remaining / segment.length);
-      return {
-        point: { x: segment.start.x + (segment.end.x - segment.start.x) * ratio, y: segment.start.y + (segment.end.y - segment.start.y) * ratio },
-        tangentAngle: Math.atan2(segment.end.y - segment.start.y, segment.end.x - segment.start.x),
-      };
-    }
-    remaining -= segment.length;
-  }
-  const last = segments.at(-1)!;
-  return { point: { ...last.end }, tangentAngle: Math.atan2(last.end.y - last.start.y, last.end.x - last.start.x) };
+interface PathNode {
+  parameter: number;
+  point: CadPoint2;
+  distance: number;
 }
 
-function pathLength(entity: CadEntity): number {
-  const curves = trimCurvesOfEntity(entity);
-  return curves.reduce((total, curve) => {
-    const points = curvePolyline(curve);
-    return total + points.slice(0, -1).reduce((sum, point, index) => sum + Math.hypot(points[index + 1]!.x - point.x, points[index + 1]!.y - point.y), 0);
-  }, 0);
+interface CurveMetric {
+  curve: TrimCurve;
+  length: number;
+  nodes: PathNode[] | null;
+}
+
+function pointDistance(first: CadPoint2, second: CadPoint2): number {
+  return Math.hypot(second.x - first.x, second.y - first.y);
+}
+
+function pointToChordDistance(point: CadPoint2, start: CadPoint2, end: CadPoint2): number {
+  const dx = end.x - start.x;
+  const dy = end.y - start.y;
+  const squared = dx * dx + dy * dy;
+  if (squared <= EPSILON) return pointDistance(point, start);
+  const ratio = Math.max(0, Math.min(1, ((point.x - start.x) * dx + (point.y - start.y) * dy) / squared));
+  return Math.hypot(point.x - start.x - dx * ratio, point.y - start.y - dy * ratio);
+}
+
+function curveScale(curve: TrimCurve): number {
+  if (curve.kind === "line") return pointDistance(curve.start, curve.end);
+  if (curve.kind === "arc") return curve.radius;
+  if (curve.kind === "ellipse") return Math.max(Math.hypot(curve.major.x, curve.major.y), Math.hypot(curve.minor.x, curve.minor.y));
+  const xs = curve.controlPoints.map((point) => point.x);
+  const ys = curve.controlPoints.map((point) => point.y);
+  return Math.hypot(Math.max(...xs) - Math.min(...xs), Math.max(...ys) - Math.min(...ys));
+}
+
+function adaptiveCurveNodes(curve: TrimCurve): PathNode[] {
+  const tolerance = Math.max(curveScale(curve) * 1e-8, 1e-8);
+  const nodes: Array<{ parameter: number; point: CadPoint2 }> = [{ parameter: 0, point: trimPointAt(curve, 0) }];
+  const subdivide = (from: number, fromPoint: CadPoint2, to: number, toPoint: CadPoint2, depth: number): void => {
+    const quarter = from + (to - from) * 0.25;
+    const middle = (from + to) / 2;
+    const threeQuarter = from + (to - from) * 0.75;
+    const quarterPoint = trimPointAt(curve, quarter);
+    const middlePoint = trimPointAt(curve, middle);
+    const threeQuarterPoint = trimPointAt(curve, threeQuarter);
+    const chord = pointDistance(fromPoint, toPoint);
+    const polygon = pointDistance(fromPoint, quarterPoint) + pointDistance(quarterPoint, middlePoint)
+      + pointDistance(middlePoint, threeQuarterPoint) + pointDistance(threeQuarterPoint, toPoint);
+    const error = Math.max(
+      pointToChordDistance(quarterPoint, fromPoint, toPoint),
+      pointToChordDistance(middlePoint, fromPoint, toPoint),
+      pointToChordDistance(threeQuarterPoint, fromPoint, toPoint),
+      polygon - chord,
+    );
+    if (error <= tolerance || depth >= 20) {
+      nodes.push({ parameter: to, point: toPoint });
+      return;
+    }
+    subdivide(from, fromPoint, middle, middlePoint, depth + 1);
+    subdivide(middle, middlePoint, to, toPoint, depth + 1);
+  };
+  subdivide(0, nodes[0]!.point, 1, trimPointAt(curve, 1), 0);
+  let distance = 0;
+  return nodes.map((node, index) => {
+    if (index > 0) distance += pointDistance(nodes[index - 1]!.point, node.point);
+    return { ...node, distance };
+  });
+}
+
+function metricForCurve(curve: TrimCurve): CurveMetric | null {
+  if (curve.kind === "line") {
+    const length = pointDistance(curve.start, curve.end);
+    return length > EPSILON ? { curve, length, nodes: null } : null;
+  }
+  if (curve.kind === "arc") {
+    const length = curve.radius * Math.abs(curve.sweep);
+    return length > EPSILON ? { curve, length, nodes: null } : null;
+  }
+  const nodes = adaptiveCurveNodes(curve);
+  const length = nodes.at(-1)?.distance ?? 0;
+  return length > EPSILON ? { curve, length, nodes } : null;
+}
+
+function metricsForPath(entity: CadEntity): CurveMetric[] {
+  const metrics = trimCurvesOfEntity(entity).map(metricForCurve).filter((metric): metric is CurveMetric => metric !== null);
+  if (metrics.length === 0) throw new ArrayCommandInputError("ARRAYPATH requires a supported non-degenerate path.");
+  return metrics;
+}
+
+function tangentAt(curve: TrimCurve, parameter: number): number {
+  if (curve.kind === "line") return Math.atan2(curve.end.y - curve.start.y, curve.end.x - curve.start.x);
+  if (curve.kind === "arc") {
+    const angle = curve.startAngle + curve.sweep * parameter;
+    return angle + (curve.sweep >= 0 ? Math.PI / 2 : -Math.PI / 2);
+  }
+  const delta = 1e-6;
+  const from = trimPointAt(curve, Math.max(0, parameter - delta));
+  const to = trimPointAt(curve, Math.min(1, parameter + delta));
+  if (pointDistance(from, to) <= EPSILON) {
+    const fallbackFrom = trimPointAt(curve, Math.max(0, parameter - 1e-4));
+    const fallbackTo = trimPointAt(curve, Math.min(1, parameter + 1e-4));
+    return Math.atan2(fallbackTo.y - fallbackFrom.y, fallbackTo.x - fallbackFrom.x);
+  }
+  return Math.atan2(to.y - from.y, to.x - from.x);
+}
+
+function sampleMetric(metric: CurveMetric, distanceAlong: number): ArrayPathSample {
+  const distance = Math.max(0, Math.min(distanceAlong, metric.length));
+  if (metric.curve.kind === "line" || metric.curve.kind === "arc") {
+    const parameter = metric.length <= EPSILON ? 0 : distance / metric.length;
+    return { point: trimPointAt(metric.curve, parameter), tangentAngle: tangentAt(metric.curve, parameter) };
+  }
+  const nodes = metric.nodes!;
+  let upperIndex = nodes.findIndex((node) => node.distance >= distance - EPSILON);
+  if (upperIndex <= 0) upperIndex = Math.min(1, nodes.length - 1);
+  const before = nodes[upperIndex - 1]!;
+  const after = nodes[upperIndex]!;
+  const span = after.distance - before.distance;
+  const ratio = span <= EPSILON ? 0 : (distance - before.distance) / span;
+  const parameter = before.parameter + (after.parameter - before.parameter) * Math.max(0, Math.min(1, ratio));
+  return { point: trimPointAt(metric.curve, parameter), tangentAngle: tangentAt(metric.curve, parameter) };
+}
+
+export function arrayPathLength(entity: CadEntity): number {
+  return metricsForPath(entity).reduce((total, metric) => total + metric.length, 0);
+}
+
+export function arrayPathSample(entity: CadEntity, distanceAlong: number): ArrayPathSample {
+  if (!Number.isFinite(distanceAlong)) throw new ArrayCommandInputError("ARRAYPATH sample distance must be finite.");
+  const metrics = metricsForPath(entity);
+  const total = metrics.reduce((sum, metric) => sum + metric.length, 0);
+  let remaining = Math.max(0, Math.min(distanceAlong, total));
+  for (const metric of metrics) {
+    if (remaining <= metric.length + EPSILON) return sampleMetric(metric, remaining);
+    remaining -= metric.length;
+  }
+  return sampleMetric(metrics.at(-1)!, metrics.at(-1)!.length);
 }
 
 export function prepareArrayCommand(document: KDrawDocumentV1, input: ArrayCommandInput): PreparedArrayCommand {
@@ -163,7 +261,7 @@ export function prepareArrayCommand(document: KDrawDocumentV1, input: ArrayComma
   } else {
     const path = document.entities.find((entity) => entity.handle === input.pathHandle);
     if (!path) throw new ArrayCommandInputError(`ARRAYPATH path ${input.pathHandle} does not exist.`);
-    const total = pathLength(path);
+    const total = arrayPathLength(path);
     const startOffset = input.startOffset ?? 0;
     if (!Number.isFinite(startOffset) || startOffset < 0 || startOffset > total + EPSILON) throw new ArrayCommandInputError("ARRAYPATH start offset is outside the path.");
     let distances: number[];
@@ -178,7 +276,7 @@ export function prepareArrayCommand(document: KDrawDocumentV1, input: ArrayComma
       if (distances.length < 1) throw new ArrayCommandInputError("ARRAYPATH spacing produced no items.");
     }
     placements.push(...distances.map((along) => {
-      const sampled = samplePath(path, along);
+      const sampled = arrayPathSample(path, along);
       return {
         delta: { x: sampled.point.x - input.basePoint.x, y: sampled.point.y - input.basePoint.y },
         rotation: input.alignItems ? { center: sampled.point, angle: sampled.tangentAngle } : null,
