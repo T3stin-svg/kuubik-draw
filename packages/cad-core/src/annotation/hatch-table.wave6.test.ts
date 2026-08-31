@@ -40,7 +40,7 @@ describe("F-067 associative HATCH", () => {
     );
     const hatch = createHatch(document, { handle: "H1", layerId: "0", boundaryHandles: ["P0", "P1", "P2"], pattern: "ANSI31", angleRad: Math.PI / 6, scale: 2.5, origin: { x: 3, y: 4 }, associative: true });
     expect(hatch.loops.map((loop) => loop.isHole)).toEqual([false, true, false]);
-    expect(readHatchAssociation(hatch)).toEqual({ kind: "hatch", islandDetection: "normal", pattern: { type: "line", angleRad: Math.PI / 6, scale: 2.5, origin: { x: 3, y: 4 } }, boundaryHandles: ["P0", "P1", "P2"] });
+    expect(readHatchAssociation(hatch)).toMatchObject({ kind: "hatch", version: 2, islandDetection: "normal", pattern: { type: "line", angleRad: Math.PI / 6, scale: 2.5, origin: { x: 3, y: 4 } }, boundaryHandles: ["P0", "P1", "P2"], boundaryDepths: [0, 1, 2] });
     expect(createHatch(document, { handle: "H2", layerId: "0", boundaryHandles: ["P0"], pattern: "SOLID", associative: false })).toMatchObject({ pattern: "SOLID", associative: false });
   });
 
@@ -53,7 +53,9 @@ describe("F-067 associative HATCH", () => {
     staged.entities[0] = hatchBoundaryPolyline("P0", "0", [{ x: 0, y: 0 }, { x: 75, y: 0 }, { x: 75, y: 50 }, { x: 0, y: 50 }]);
     const update = updateAssociativeHatches(staged, ["P0"]);
     expect(update).toMatchObject({ updatedHandles: ["H1"], broken: [], changes: [{ entity: { handle: "H1", pattern: "ANSI31", associative: true } }] });
-    expect(readHatchAssociation(update.changes[0]!.type === "put" ? update.changes[0]!.entity : hatch)).toEqual(readHatchAssociation(hatch));
+    const updatedContract = readHatchAssociation(update.changes[0]!.type === "put" ? update.changes[0]!.entity : hatch)!;
+    expect(updatedContract).toMatchObject({ boundaryHandles: ["P0"], boundaryDepths: [0], islandDetection: "normal", pattern: readHatchAssociation(hatch)!.pattern });
+    expect(updatedContract.boundaryVertices?.[0]?.[1]).toEqual({ x: 75, y: 0 });
     const orphan = structuredClone(document);
     orphan.entities = orphan.entities.filter((entity) => entity.handle !== "P0");
     expect(updateAssociativeHatches(orphan, ["P0"])).toMatchObject({ changes: [], updatedHandles: [], broken: [{ hatchHandle: "H1", boundaryHandle: "P0" }] });
@@ -82,7 +84,7 @@ describe("F-067 associative HATCH", () => {
   });
 });
 
-describe("F-068 TABLE typed contract", () => {
+describe("F-069 TABLE typed contract", () => {
   it("matches the golden row/column/cell/style contract and keeps fields inert with an explicit fallback", () => {
     const document = fixture();
     const table = createGoldenTable(document);

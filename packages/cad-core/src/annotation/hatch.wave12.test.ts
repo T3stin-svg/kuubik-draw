@@ -38,7 +38,7 @@ describe("F-067 HATCH AutoCAD-style completion", () => {
     if (change.type !== "put") throw new Error("Expected HATCH put change.");
     expect(change.entity).toMatchObject({ kind: "hatch", handle: "H1", pattern: "SOLID", associative: false, appearance: hatch.appearance, loops: [{ isHole: false }] });
     expect(change.entity.extensionData?.["kuubik.test"]).toEqual({ keep: true });
-    expect(readHatchAssociation(change.entity)).toEqual({
+    expect(readHatchAssociation(change.entity)).toMatchObject({
       kind: "hatch", islandDetection: "ignore", pattern: { type: "solid", angleRad: 0.75, scale: 4, origin: { x: 8, y: 9 } }, boundaryHandles: ["P0", "P1"],
     });
   });

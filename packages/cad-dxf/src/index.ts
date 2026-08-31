@@ -368,14 +368,20 @@ function emitHatch(context: Context, entity: Extract<CadEntity, { kind: "hatch" 
   if (!entity.loops.length || entity.loops.some((loop) => loop.vertices.length < 3)) {
     throw new TypeError(`DXF HATCH ${entity.handle} requires every boundary loop to contain at least three vertices.`);
   }
+  if (entity.associative) throw new TypeError(`DXF HATCH ${entity.handle} associative source references are outside the audited roundtrip subset.`);
   const loops = entity.loops;
   const solid = entity.pattern.trim().toUpperCase() === "SOLID";
   let output = header(context, "HATCH", entity) + pair(100, "AcDbHatch") + point(10, 20, { x: 0, y: 0 }) +
     pair(210, 0) + pair(220, 0) + pair(230, 1) + pair(2, solid ? "SOLID" : symbolName(entity.pattern, "hatch pattern")) +
     pair(70, solid ? 1 : 0) + pair(71, 0) + pair(91, loops.length);
   for (const loop of loops) {
-    output += pair(92, loop.isHole ? 2 : 3) + pair(72, 0) + pair(73, 1) + pair(93, loop.vertices.length);
-    for (const vertex of loop.vertices) output += pair(10, num(vertex.x)) + pair(20, num(vertex.y));
+    const vertices = loop.vertices as Array<CadPoint2 & { bulge?: number }>;
+    const hasBulges = vertices.some((vertex) => Math.abs(vertex.bulge ?? 0) > 0);
+    output += pair(92, loop.isHole ? 2 : 3) + pair(72, hasBulges ? 1 : 0) + pair(73, 1) + pair(93, vertices.length);
+    for (const vertex of vertices) {
+      output += pair(10, num(vertex.x)) + pair(20, num(vertex.y));
+      if (hasBulges) output += pair(42, num(vertex.bulge ?? 0));
+    }
     output += pair(97, 0);
   }
   output += pair(75, 1) + pair(76, solid ? 1 : 0);

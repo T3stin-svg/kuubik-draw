@@ -613,9 +613,11 @@ function parseHatch(record: DxfRecord, base: ReturnType<typeof entityBase>): Cad
   while (loops.length < expectedLoopCount) {
     if (record.pairs[index]?.code !== 92) throw new DxfImportError(`HATCH ${base.handle} loop ${loops.length + 1} does not begin with group 92.`);
     const flags = Number(record.pairs[index]!.value.trim());
-    if (!Number.isInteger(flags) || (flags !== 2 && flags !== 3)) throw new DxfImportError(`HATCH ${base.handle} loop flags ${flags} are outside the straight closed polyline subset.`);
+    if (!Number.isInteger(flags) || (flags !== 2 && flags !== 3)) throw new DxfImportError(`HATCH ${base.handle} loop flags ${flags} are outside the closed polyline subset.`);
     index += 1;
-    if (record.pairs[index]?.code !== 72 || Number(record.pairs[index]!.value.trim()) !== 0) throw new DxfImportError(`HATCH ${base.handle} bulged polyline boundaries are outside the audited roundtrip subset.`);
+    if (record.pairs[index]?.code !== 72) throw new DxfImportError(`HATCH ${base.handle} loop has no polyline bulge flag.`);
+    const hasBulges = Number(record.pairs[index]!.value.trim());
+    if (hasBulges !== 0 && hasBulges !== 1) throw new DxfImportError(`HATCH ${base.handle} polyline bulge flag is outside 0..1.`);
     index += 1;
     if (record.pairs[index]?.code !== 73 || Number(record.pairs[index]!.value.trim()) !== 1) throw new DxfImportError(`HATCH ${base.handle} boundary must be explicitly closed.`);
     index += 1;
@@ -623,7 +625,7 @@ function parseHatch(record: DxfRecord, base: ReturnType<typeof entityBase>): Cad
     const vertexCount = Number(record.pairs[index]!.value.trim());
     if (!Number.isInteger(vertexCount) || vertexCount < 3 || vertexCount > MAX_DXF_ENTITY_VERTICES) throw new DxfImportError(`HATCH ${base.handle} loop vertex count is outside 3..${MAX_DXF_ENTITY_VERTICES}.`);
     index += 1;
-    const vertices: CadPoint2[] = [];
+    const vertices: Array<CadPoint2 & { bulge?: number }> = [];
     while (vertices.length < vertexCount) {
       if (record.pairs[index]?.code !== 10) throw new DxfImportError(`HATCH ${base.handle} loop vertex ${vertices.length + 1} has no X coordinate.`);
       const x = Number(record.pairs[index]!.value.trim());
@@ -631,8 +633,15 @@ function parseHatch(record: DxfRecord, base: ReturnType<typeof entityBase>): Cad
       if (record.pairs[index]?.code !== 20) throw new DxfImportError(`HATCH ${base.handle} loop vertex has no Y coordinate.`);
       const y = Number(record.pairs[index]!.value.trim());
       if (!Number.isFinite(x) || !Number.isFinite(y)) throw new DxfImportError(`HATCH ${base.handle} loop contains a non-finite vertex.`);
-      vertices.push({ x, y });
       index += 1;
+      let bulge: number | undefined;
+      if (hasBulges === 1 && record.pairs[index]?.code === 42) {
+        const value = Number(record.pairs[index]!.value.trim());
+        if (!Number.isFinite(value)) throw new DxfImportError(`HATCH ${base.handle} loop contains a non-finite bulge.`);
+        if (value !== 0) bulge = value;
+        index += 1;
+      }
+      vertices.push({ x, y, ...(bulge !== undefined ? { bulge } : {}) });
     }
     if (record.pairs[index]?.code !== 97 || Number(record.pairs[index]!.value.trim()) !== 0) throw new DxfImportError(`HATCH ${base.handle} associative source handles are outside the audited roundtrip subset.`);
     index += 1;

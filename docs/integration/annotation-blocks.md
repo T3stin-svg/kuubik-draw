@@ -1,7 +1,8 @@
 # Annotation and block integration contract
 
-Status: candidate contract for session 4. This workstream does not modify DXF/PDF adapters,
-shared package exports, `App.tsx`, package manifests or parity scores.
+Status: candidate contract for session 4. The F-068 correction adds a bounded native DXF HATCH
+polyline-loop path only; it does not modify PDF, shared package exports, `App.tsx`, package
+manifests or parity scores.
 
 ## Core entry points to export
 
@@ -344,6 +345,7 @@ finite polygon vertices and `isHole`. The extension is:
 ```json
 {
   "kind": "hatch",
+  "version": 2,
   "islandDetection": "normal|outer|ignore",
   "pattern": {
     "type": "solid|line",
@@ -351,12 +353,20 @@ finite polygon vertices and `isHole`. The extension is:
     "scale": 2,
     "origin": { "x": 5, "y": 5 }
   },
-  "boundaryHandles": ["20", "21"]
+  "boundaryHandles": ["20", "21"],
+  "boundaryDepths": [0, 1],
+  "boundaryVertices": [
+    [{ "x": 0, "y": 0, "bulge": 0.41421356237309503 }, { "x": 100, "y": 0 }, { "x": 100, "y": 100 }],
+    [{ "x": 25, "y": 25 }, { "x": 75, "y": 25 }, { "x": 75, "y": 75 }]
+  ]
 }
 ```
 
 `boundaryHandles` retain the canonical stable sources even when an island style filters a loop from
-the rendered `loops[]`. `normal` uses even/odd nesting depth (`filled, hole, filled`); `outer` keeps
+the rendered `loops[]`. `boundaryDepths` is aligned with those handles and records the deterministic
+nesting depth. `boundaryVertices` is the exact supported closed-polyline snapshot; signed `bulge`
+values remain model geometry and are never replaced with display tessellation. `normal` uses
+even/odd nesting depth (`filled, hole, filled`); `outer` keeps
 only depth 0 and direct depth-1 holes; `ignore` keeps only outer depth-0 loops and fills through all
 internal objects. This matches AutoCAD's Normal/Outer/Ignore distinction documented in
 [Hatch Creation](https://help.autodesk.com/cloudhelp/2023/ENU/AutoCAD-Core/files/GUID-CF9C88AB-CD49-44A4-8A85-C26F60B828DA.htm)
@@ -365,7 +375,7 @@ and [About Hatch Islands](https://help.autodesk.com/cloudhelp/2022/ENU/AutoCAD-C
 `HATCH create` and `edit` share the same core constructor. Editing pattern, angle, scale, origin,
 island style, boundary set or associativity replaces one immutable entity under the same handle and
 one Undo/Redo step. Omitted edit fields retain their values. Association updates replace loop
-coordinates in the geometry command while retaining hatch handle, layer, appearance, pattern and
+coordinates and the version-2 topology snapshot in the geometry command while retaining hatch handle, layer, appearance, pattern and
 all non-HATCH extension payloads. Missing/open/degenerate boundaries report a broken association
 and cause no partial command mutation. AutoCAD likewise makes bounded hatches associative by
 default and updates them when boundary objects change; non-associative hatches remain unchanged
@@ -384,9 +394,12 @@ DXF group-code contract: group 2 is pattern name, 70 solid flag, 71 associativit
 Read-back must compare handle, loop geometry/count, island style, source handles, pattern name/type,
 angle, scale, origin and associativity, not only rendered fill pixels.
 
-The current `cad-dxf` source adapter is intentionally unchanged in this worktree. Its tested exact
-subset is non-associative SOLID with Outer-style straight closed loops: export→import→export is
-byte-identical and preserves entity/boundary handles and outer/hole geometry. For line patterns it
+The current `cad-dxf` source adapter has a bounded F-068 path for non-associative HATCH closed
+polyline loops containing straight segments and signed bulges. Export→import→export is byte-identical
+for that subset and preserves the HATCH handle, outer/hole flags, loop coordinates and bulges.
+Native edge/spline loop encodings, group-97 source-handle associations and `71=1` association
+semantics are rejected instead of silently flattened; exporting an associative Kuubik HATCH also
+fails closed. For line patterns the adapter
 currently writes fixed `71=0`, `75=1`, `52=0`, `41=1` and no group-97 source handles; import also
 drops the Kuubik HATCH extension. Therefore non-default angle/scale/origin, Normal/Ignore style and
 associativity are explicitly lossy and must be rejected by the capability gate until the adapter
@@ -603,7 +616,7 @@ hash and independent DXF/PDF read-back. PDF evidence cannot substitute for edita
    target, reopen and verify only the arrow-head vertex changed under the same leader handle.
 4. SOLID and ANSI31-like line HATCH: outer loop, hole, nested island, angle, scale, origin and
    boundary source handles; mutate a boundary and verify same hatch handle after update.
-5. TABLE: origin/rotation, row/column sizes and order, cell IDs and literal/field values, fallback,
+5. TABLE (F-069, outside this selected F-068 workstream): origin/rotation, row/column sizes and order, cell IDs and literal/field values, fallback,
    merges, alignment, format, style reference, insert/delete/resize and atomic Undo/Redo.
 6. BLOCK/INSERT: base point, member handles, insert handle, layer, rotation, positive/negative
    non-zero scales and nested acyclic block. Exercise both `preserve` and `recursive` EXPLODE and
@@ -623,8 +636,9 @@ Kuubik and the produced file is independently read back.
 ## Current file-output capability boundary
 
 This workstream supplies serialization contracts and exact capability declarations/receipts. The
-F-067 test writes and reopens the current bounded non-associative SOLID DXF subset in memory, but
-does not change either adapter and does not prove the missing HATCH fields or AutoCAD behavior.
+F-068 tests write and reopen the bounded non-associative SOLID DXF straight/bulge-loop subset in
+memory. They do not prove native association, source handles, pattern parameters, physical-file
+behavior or AutoCAD behavior.
 Session 4 must map MTEXT/LEADER/MLEADER, HATCH and dimension semantics at its adapter boundary, then
 fail closed for any field it cannot round-trip. Documents carrying dimension chain/style semantics
 derive explicit `dimension-chain` and `dimension-style-profile` requirements in addition to native
