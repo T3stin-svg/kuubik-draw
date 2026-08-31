@@ -4,6 +4,19 @@ Source baseline: `b09f4e1e0a661b06e5087e6cbb748220dbc48574`
 
 Branch: `work/reio-precision-layers`
 
+## Wave 10: F-080 transparency and F-086 draw order
+
+- Baseline: `c607df360f68714e87b475ffbbc1a889abf93306`
+- Branch: `work10/reio-precision-transparency-draworder`
+- Deterministic read-back: `transparency-draw-order-wave10-20260831.json`
+- Reproducer: `npx vite-node evidence/workstreams/precision-layers/transparency-draw-order-wave10.ts`
+- Golden/property/fuzz/mutation/wiring coverage: 16 targeted tests in 5 files.
+- 50,000 entities: a 100-entity stable front move planned in 60.692 ms with
+  200 minimal atomic changes; Undo/Redo and ByLayer transparency read-back pass.
+- AutoCAD and integrated Chromium live read-back were not run, so no F-score
+  changed. Canvas draw-order traversal remains a renderer-owner integration
+  blocker; print-SVG order and renderer/print opacity are wired.
+
 Scope file read: `C:\Users\Olav\Downloads\kuubik-draw-reio-scope-v1.json`
 
 ## Implemented candidate coverage

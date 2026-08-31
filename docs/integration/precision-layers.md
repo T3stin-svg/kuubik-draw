@@ -290,6 +290,54 @@ locked:
 Draw order is the model-space `entities` array order. `planDrawOrderChanges()`
 preserves entity values and handles and creates one atomic Undo step.
 
+### F-080 transparency contract
+
+`validateCadTransparency()` is the single domain predicate used by persisted
+appearance validation, layer/entity planners, renderer appearance and print
+appearance. A stored value must be a finite JavaScript number in the inclusive
+range `0..90`; fractional values remain exact and are never rounded. `0` is
+opaque and `90` produces opacity `0.1`. Strings, `NaN`, infinities and values
+outside the range fail closed before a revision is committed.
+
+Layer transparency is inherited when an entity has no transparency override.
+For `layers.entity-properties`, `{ transparency: null }` deletes only the
+entity override and restores ByLayer resolution; for `layers.transparency`, a
+`null` value deletes the layer value and restores the renderer/print default.
+The null transition must not write `0` into entity geometry or appearance.
+Changing an entity override is an edit: locked source layers and locked target
+layers reject the complete selection before history or document mutation.
+
+Renderer and print consumers must call the existing core appearance resolvers.
+The committed transparency value maps to opacity as `1 - transparency / 100`
+when plot transparency is enabled. The wave-10 wiring tests read back the same
+fractional value through core, canvas and SVG without UI-side normalization.
+
+### F-086 draw-order contract
+
+Model-space array index is the canonical persisted stack: index `0` is back and
+the last index is front. `front`/`back` reject a reference; `above`/`below`
+require one existing unselected reference. Selected entities always retain
+their source-array relative order, independent of selection input order or
+duplicate selection events. Missing/empty handles, invalid actions, duplicate
+persisted handles and malformed references fail closed.
+
+`planDrawOrderChanges()` deletes/reinserts only the stable moving group and
+commits it as one `DRAWORDER` operation/revision. One Undo restores every exact
+source index; one Redo restores the committed order. `readCadDrawOrderContract()`
+is the JSON reopen boundary and returns the complete ordered handle list plus
+the back/front handles. Selected entities on locked, off or frozen layers are
+not editable and reject the whole operation without notification or history.
+A locked/off/frozen reference is allowed because it is an unchanged anchor,
+not an edit target.
+
+Print output currently consumes `document.entities` directly and therefore
+preserves the canonical stack. The canvas renderer currently queries its
+spatial index in index-defined order, so its draw sequence is not guaranteed to
+match the document stack after a draw-order commit. The renderer integration
+owner must add an order-aware traversal (or stable order rank sort) using the
+same `readCadDrawOrderContract()` handle order before F-086 can receive live
+renderer evidence. This branch does not modify that separately owned adapter.
+
 ## Exact integrator touch points
 
 - Use `contract.commandAdapter` wherever the shell currently expects a
@@ -304,6 +352,12 @@ preserves entity values and handles and creates one atomic Undo step.
 - Bind Layer Manager fields to `LAYER_MANAGER_CAPABILITY`; use
   `layers.properties` for multi-selection property edits instead of issuing one
   command per layer.
+- Route layer transparency through `layers.transparency` and entity overrides
+  through `layers.entity-properties`; use `null` for the explicit ByLayer
+  transition and never pre-round the value.
+- Route draw-order actions only through `layers.draw-order`, then replace the
+  renderer input/read-back from the committed document order. Do not maintain
+  a UI-only z-order array.
 - Replace the open shell document only from `executeLayer()`, `undoLayer()` or
   `redoLayer()` read-back.
 - Use `select()`, `querySnap()` and `participates()` instead of independent
@@ -320,6 +374,8 @@ preserves entity values and handles and creates one atomic Undo step.
 - Connect Layer Manager fields/dialogs to typed layer commands and replace the
   open document only with the returned read-back document.
 - Draw-order commands and context menu actions.
+- Canvas draw traversal ordered by the committed model-space handle rank; the
+  current spatial-index traversal is not a validated F-086 renderer order.
 - IndexedDB read-back and real-browser workflows on the integration owner's
   selected dev port.
 
