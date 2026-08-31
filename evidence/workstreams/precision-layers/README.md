@@ -118,3 +118,37 @@ Repository-wide third-wave verification passed: 132 Vitest files / 719 tests,
 15 DXF files / 50 tests, typecheck, lint, production build, public-tree scan of
 1,404 files, license audit of 119 installed packages and `git diff --check`.
 The focused precision/layers matrix passed 18 files / 46 tests.
+
+## Integrated-base fourth wave
+
+- Integrated base: `cef8bb6edfdf706d92b289d325fb2de69c6af8ca`.
+- Branch: `work4/reio-precision-live`.
+- `LayerManagerShellAdapter` supplies DOM-independent typed capability commands
+  for create/current, on/off, freeze/thaw, lock/unlock, plot, color, linetype,
+  lineweight, transparency, combined property batches and draw order.
+- A multi-layer property batch is fully planned before one
+  `LAYER_BATCH_PROPERTIES` operation. A late invalid layer leaves the document,
+  revision, Undo stack and read-back callback unchanged.
+- One Undo and Redo restore exact layer collections for a batch. The composed
+  precision contract refreshes selection and snap indexes after typed execute,
+  Undo and Redo read-back.
+- Locked entities remain selectable, snappable and printable but not editable;
+  off and frozen entities are excluded from selection, snap, modify and print.
+  The contract is exercised through the real indexes and SVG printer.
+- Seeded property coverage executes 512 two-layer patches with exact Undo/Redo.
+- Both the renderer regression and the Layer Manager eligibility regression use
+  50,000 objects and 100 paired selection/snap queries. The repeatable profile
+  is recorded in `spatial-profile-wave4-20260831.json`.
+- F-086 is not routed by its row string. `layers.draw-order` is the runtime
+  capability; `F-086` remains conflict metadata because the shared shell owns
+  the same row for Block Create.
+
+This wave contains no `App.tsx`, shell, package, scope, parity-score, security
+evidence or deployment change. Chromium-integrated and AutoCAD live read-back
+were not run, so no assigned F-row is certified or scored by this evidence.
+
+Repository-wide fourth-wave verification passed: 143 Vitest files / 756 tests,
+16 DXF files / 51 tests, 7 PDF files / 22 tests, typecheck, lint, production
+build, public-tree scan of 1,423 files, license audit of 119 installed packages
+and `git diff --check`. The focused precision/layers/print matrix passed 29
+files / 74 tests.

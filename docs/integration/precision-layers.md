@@ -6,7 +6,7 @@ below. No new runtime dependency is required.
 
 ## Package exports
 
-The current integrated base `9af0b7b241ec28f6d5976ed69f79d973611f1c5b`
+The current integrated base `cef8bb6edfdf706d92b289d325fb2de69c6af8ca`
 already contains all required package exports. No shared `src/index.ts` file
 needs to change for this workstream.
 
@@ -45,6 +45,16 @@ The integrator should construct one `PrecisionLayersShellContract` per open
 document and replace duplicated React precision/layer state with that instance.
 This application feature is imported directly; it does not require a new
 shared-package export.
+
+The fourth-wave typed Layer Manager boundary is:
+
+- `apps/web/src/features/layers/shell-adapter.ts`
+
+It is available as `PrecisionLayersShellContract.layerManager`, or a caller may
+construct `LayerManagerShellAdapter` around an existing
+`LayerManagerController`. Runtime dispatch uses `LayerManagerCapability` values
+such as `layers.visibility`, `layers.properties` and `layers.draw-order`; F-row
+strings are metadata only.
 
 ## Typed shell adapter
 
@@ -103,6 +113,16 @@ It covers create, rename, delete, current, visible, frozen, locked, plottable,
 color, linetype, lineweight, transparency and draw order. A planner error occurs
 before the operation id/revision is committed and leaves the document unchanged.
 
+For new shell wiring, prefer `executeLayerCapability()` or
+`contract.layerManager.execute()` with a `LayerManagerShellCommand`. Visibility,
+freeze, lock, plot and appearance commands accept multiple layer ids. The
+`layers.properties` capability combines visible, frozen, locked, plottable,
+color, ACI/true-color method, linetype, lineweight and transparency changes.
+All layer ids and every property are validated against an isolated planning
+document before one `LAYER_BATCH_PROPERTIES` operation is committed. A failure
+on the last layer therefore cannot leave earlier layers changed. One Undo and
+one Redo restore the exact pre/post layer collections.
+
 Use `LayerFeatureModel.participates()` as the eligibility callback for the
 selection and snap indexes. Renderer and print already implement the same
 state matrix at the source commit; integration tests must keep the matrix
@@ -128,7 +148,11 @@ preserves entity values and handles and creates one atomic Undo step.
 - Use `preparePointer()` once per pointer frame; never separately reconstruct a
   precision request for commit.
 - Consume layer ribbon/menu requests with `takeLayerIntents()`, map each typed
-  intent to the relevant dialog/result and finish it through `executeLayer()`.
+  intent to the relevant dialog/result and finish it through
+  `executeLayerCapability()`.
+- Bind Layer Manager fields to `LAYER_MANAGER_CAPABILITY`; use
+  `layers.properties` for multi-selection property edits instead of issuing one
+  command per layer.
 - Replace the open shell document only from `executeLayer()`, `undoLayer()` or
   `redoLayer()` read-back.
 - Use `select()`, `querySnap()` and `participates()` instead of independent
@@ -144,11 +168,14 @@ preserves entity values and handles and creates one atomic Undo step.
 - IndexedDB read-back and real-browser workflows on the integration owner's
   selected dev port.
 
-The integrated base currently uses row `F-086` for a Block Create ribbon tool,
-while this assigned workstream contract uses `F-086` for draw order. The shared
-integration owner must resolve that row ownership before binding
-`LayerVisualShellCommandAdapter`; this branch does not edit `App.tsx` or scope
-data to guess the resolution.
+The integrated base uses row `F-086` for a Block Create ribbon tool, while this
+assigned workstream records `F-086` as draw-order parity metadata. The legacy
+`LayerVisualShellCommandAdapter` deliberately no longer claims the `F-086`
+string. Draw order is callable only through the typed capability
+`LAYER_MANAGER_CAPABILITY.drawOrder` (`layers.draw-order`). The integration
+owner must bind Block Create and draw order by their separate capability keys
+and resolve the duplicated parity-row ownership before changing scope data.
+This branch does not edit `App.tsx`, shell files or the scope manifest.
 
 Do not change parity scores until the required AutoCAD 2024.1.2 and Chromium
 live evidence is complete.
