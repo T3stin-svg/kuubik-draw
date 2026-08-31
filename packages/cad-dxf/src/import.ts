@@ -120,7 +120,21 @@ function decodeInput(input: string | Uint8Array): { text: string; byteLength: nu
   const byteLength = typeof input === "string" ? new TextEncoder().encode(input).byteLength : input.byteLength;
   if (byteLength === 0) throw new DxfImportError("DXF file is empty.");
   if (byteLength > MAX_DXF_IMPORT_BYTES) throw new DxfImportError(`DXF file exceeds the ${MAX_DXF_IMPORT_BYTES} byte import limit.`);
-  const text = typeof input === "string" ? input : new TextDecoder("windows-1252").decode(input);
+  let text: string;
+  if (typeof input === "string") {
+    text = input;
+  } else {
+    const headerProbe = new TextDecoder("windows-1252").decode(input);
+    const acadVersion = headerProbe.match(/(?:^|\r\n|\r|\n)\s*9\s*(?:\r\n|\r|\n)\$ACADVER\s*(?:\r\n|\r|\n)\s*1\s*(?:\r\n|\r|\n)(AC\d+)/u)?.[1];
+    const versionNumber = acadVersion ? Number(acadVersion.slice(2)) : 0;
+    try {
+      // Autodesk defines DXF R2007 (AC1021) and newer byte streams as UTF-8;
+      // earlier ASCII DXF revisions use the declared legacy code page.
+      text = new TextDecoder(versionNumber >= 1021 ? "utf-8" : "windows-1252", { fatal: versionNumber >= 1021 }).decode(input);
+    } catch {
+      throw new DxfImportError(`DXF ${acadVersion ?? "unknown version"} is not valid UTF-8.`);
+    }
+  }
   if (text.startsWith("AutoCAD Binary DXF")) throw new DxfImportError("Binary DXF is not supported by this audited ASCII import path.");
   if (text.includes("\0")) throw new DxfImportError("DXF contains a NUL byte.");
   return { text, byteLength };
@@ -635,6 +649,17 @@ function parseHatch(record: DxfRecord, base: ReturnType<typeof entityBase>): Cad
     if (!pair || pair.code !== code || Number(pair.value.trim()) !== value) throw new DxfImportError(`HATCH ${base.handle} pattern definition is outside the audited deterministic subset at group ${code}.`);
     index += 1;
   }
+  if (index < record.pairs.length) {
+    const autoCadNoGradientTail: Array<[number, string | number]> = [
+      [450, 0], [451, 0], [460, 0], [461, 0], [452, 0], [462, 0], [453, 0], [470, ""],
+    ];
+    for (const [code, value] of autoCadNoGradientTail) {
+      const pair = record.pairs[index];
+      const actual = typeof value === "number" ? Number(pair?.value.trim()) : pair?.value.trim();
+      if (!pair || pair.code !== code || actual !== value) throw new DxfImportError(`HATCH ${base.handle} gradient definition is outside the audited disabled-gradient subset at group ${code}.`);
+      index += 1;
+    }
+  }
   if (index !== record.pairs.length) throw new DxfImportError(`HATCH ${base.handle} contains unconsumed boundary or pattern data.`);
   return {
     kind: "hatch",
@@ -814,9 +839,15 @@ function parseEntity(
     case "MTEXT": {
       const label = `MTEXT ${base.handle}`;
       auditedPlanarConic(record.pairs, label, [{ x: 10, y: 20, z: 30, name: "insertion" }]);
-      if (firstPair(record.pairs, 11) || firstPair(record.pairs, 21)) {
-        throw new DxfImportError(`${label} direction-vector rotation is outside the audited group-50 subset.`);
-      }
+      const directionX = singletonNumberValue(record.pairs, 11, `${label} direction X`, false);
+      const directionY = singletonNumberValue(record.pairs, 21, `${label} direction Y`, false);
+      const directionZ = singletonNumberValue(record.pairs, 31, `${label} direction Z`, false) ?? 0;
+      const rotationDegrees = singletonNumberValue(record.pairs, 50, `${label} rotation`, false);
+      if ((directionX === undefined) !== (directionY === undefined)) throw new DxfImportError(`${label} direction vector requires both group 11 and group 21.`);
+      if (directionX !== undefined && rotationDegrees !== undefined) throw new DxfImportError(`${label} cannot combine group-50 and direction-vector rotation.`);
+      if (Math.abs(directionZ) > 1e-9) throw new DxfImportError(`${label} direction vector is outside the audited planar subset.`);
+      if (directionX !== undefined && !(Math.hypot(directionX, directionY!) > 1e-12)) throw new DxfImportError(`${label} direction vector must be non-zero.`);
+      const rotationRad = directionX === undefined ? (rotationDegrees ?? 0) * Math.PI / 180 : Math.atan2(directionY!, directionX);
       const styleName = textValue(record.pairs, 7, `${label} style`, false) ?? "Standard";
       const styleId = textStyleIds.get(normalizedName(styleName));
       if (!styleId) throw new DxfImportError(`${label} references missing style ${styleName}.`);
@@ -834,7 +865,7 @@ function parseEntity(
         position: pointValue(record.pairs, 10, 20, `${label} insertion`),
         text: unescapeDxfText(chunks.map((pair) => pair.value).join(""), true),
         height,
-        rotationRad: (singletonNumberValue(record.pairs, 50, `${label} rotation`, false) ?? 0) * Math.PI / 180,
+        rotationRad,
         styleId,
         extensionData: { "kuubik.dxf.mtext.v1": { width, attachment } },
       };
