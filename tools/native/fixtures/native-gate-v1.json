@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "benchmark": "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
+  "authorityRequired": ["oda-drawings-sdk", "autodesk-realdwg"],
+  "sourceFilesCheckedIn": false,
+  "reason": "Native fixtures must be produced only after a licensed SDK and an approved anonymized corpus are available.",
+  "fixtures": [
+    {
+      "id": "dwg-core-import",
+      "rowId": "F-112",
+      "sourceSha256": null,
+      "expected": {
+        "units": "mm",
+        "entityKinds": ["line", "circle", "polyline", "text", "dimension", "hatch"],
+        "resources": ["layers", "linetypes", "textStyles", "dimensionStyles", "layouts"],
+        "unknownObjects": "preserve-or-fail"
+      }
+    },
+    {
+      "id": "dwg-save-roundtrip",
+      "rowId": "F-113",
+      "sourceSha256": null,
+      "expected": {
+        "targetVersion": "AC1032",
+        "reopenInAutoCad": true,
+        "secondGenerationStable": true,
+        "unknownObjects": "byte-or-semantic-preservation-required"
+      }
+    },
+    {
+      "id": "dwt-template-new-drawing",
+      "rowId": "F-117",
+      "sourceSha256": null,
+      "expected": {
+        "units": "mm",
+        "namedPageSetups": true,
+        "layersAndStyles": true,
+        "layouts": true,
+        "templateGeometryPolicy": "fixture-defined"
+      }
+    },
+    {
+      "id": "xref-relative-overlay-unresolved",
+      "rowId": "F-121",
+      "sourceSha256": null,
+      "expected": {
+        "attachAndOverlay": true,
+        "relativePath": true,
+        "reloadUnloadDetach": true,
+        "unresolvedState": true,
+        "nestedCycleRefused": true,
+        "networkPathsBlockedByDefault": true
+      }
+    }
+  ]
+}
