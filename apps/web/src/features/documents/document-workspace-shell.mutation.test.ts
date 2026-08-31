@@ -31,7 +31,7 @@ describe("F-129/F-130 mutation ratchets", () => {
     await workspace.commit("mutated", 0, "L", [{ type: "put", entity: { kind: "line", handle: "10", layerId: "0", start: { x: 0, y: 0 }, end: { x: 1, y: 1 } } }]);
     database.close();
 
-    const raw = await requestResult(factory.open("history-mutation", 2));
+    const raw = await requestResult(factory.open("history-mutation"));
     const transaction = raw.transaction("operations", "readwrite");
     const store = transaction.objectStore("operations");
     const record = await requestResult<any>(store.get("workspace:mutated:1:LINE"));
