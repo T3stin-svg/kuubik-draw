@@ -85,3 +85,36 @@ The shell at `http://127.0.0.1:5212/` loaded as `Kuubik Draw` with zero browser
 console errors. Visible DOM read-back showed GRID enabled and ORTHO, OSNAP,
 OTRACK and DYN disabled, confirming this remains a shell smoke test rather than
 live evidence of the unintegrated feature adapters.
+
+## Integrated-base third wave
+
+- Integrated base: `9af0b7b241ec28f6d5976ed69f79d973611f1c5b`.
+- Branch: `work3/reio-precision-live`.
+- `PrecisionLayersShellContract` is the DOM-independent application boundary
+  combining typed precision command state, immutable pointer frames, OSNAP,
+  OTRACK, indexed selection and atomic layer/draw-order control.
+- A prepared pointer frame clones the shared `PrecisionRequest`; preview,
+  commit and Dynamic Input are therefore proven against the same inputs even
+  if shell mode state changes before commit.
+- OSNAP ordering and OSNAP-over-OTRACK precedence are exercised through real
+  renderer candidates. Locked entities remain renderable/selectable/snappable
+  but not editable; hidden and frozen entities participate in none of those
+  paths.
+- Layer create, invalid-command rollback, draw-order mutation, one-step Undo,
+  exact Redo and spatial reindex read-back are covered at the composed contract
+  boundary.
+- Seeded property coverage runs 2,000 finite double-precision pointer frames.
+- The 50,000-object regression runs 100 paired selection/snap queries and
+  records build, total, p95 and maximum query latency in
+  `spatial-profile-wave3-20260831.json`.
+
+The workstream still does not edit `App.tsx`, shell files, parity scores, scope
+data, security evidence or deployment files. It adds a live-ready integration
+contract, not Chromium or AutoCAD certification. All assigned F-rows remain
+uncertified until the integration owner wires the contract into the shared
+shell and captures the required AutoCAD/live read-back.
+
+Repository-wide third-wave verification passed: 132 Vitest files / 719 tests,
+15 DXF files / 50 tests, typecheck, lint, production build, public-tree scan of
+1,404 files, license audit of 119 installed packages and `git diff --check`.
+The focused precision/layers matrix passed 18 files / 46 tests.
