@@ -1,4 +1,4 @@
-import type { CreateTableArgs, StableEntityAnchor, TableEditOperation, TableStyle } from "@kuubik/cad-core";
+import type { CreateTableArgs, LeaderArrowType, LeaderEditPatch, MLeaderEditPatch, MTextContract, MTextEditPatch, StableEntityAnchor, TableEditOperation, TableStyle } from "@kuubik/cad-core";
 import type { CadDimensionStyle, CadPoint2, CadTextStyle, KDrawDocumentV1 } from "@kuubik/cad-schema";
 import type { AnnotationCommandInput } from "./command-adapter.js";
 import type { AnnotationCommandId } from "./model.js";
@@ -8,6 +8,7 @@ export interface AnnotationBlockPromptContext {
   activeLayerId?: string;
   selectedHandles?: readonly string[];
   dimensionAnchors?: readonly StableEntityAnchor[];
+  leaderAnchor?: StableEntityAnchor;
 }
 
 export function allocateDocumentHandles(document: KDrawDocumentV1, count: number): string[] {
@@ -44,6 +45,18 @@ function association(values: Readonly<Record<string, CommandPromptValue>>, conte
   const anchors = [...structuredClone(context.dimensionAnchors ?? [])];
   if (!anchors.length) throw new RangeError("Associative DIM requires stable anchors from the shell context.");
   return { anchors, targetHandles: [...new Set(anchors.map((anchor) => anchor.handle))] };
+}
+
+function leaderAssociation(values: Readonly<Record<string, CommandPromptValue>>, context: AnnotationBlockPromptContext): { anchor?: StableEntityAnchor; targetHandles?: string[] } {
+  if (!(optional<boolean>(values, "associative") ?? false)) return {};
+  if (!context.leaderAnchor) throw new RangeError("Associative LEADER/MLEADER requires a stable anchor from the shell context.");
+  return { anchor: structuredClone(context.leaderAnchor), targetHandles: [context.leaderAnchor.handle] };
+}
+
+function selectedOrPrompt(values: Readonly<Record<string, CommandPromptValue>>, context: AnnotationBlockPromptContext): string {
+  const selected = [...new Set(context.selectedHandles ?? [])];
+  if (selected.length > 1) throw new RangeError("Annotation edit requires exactly one selected handle.");
+  return selected[0] ?? required<string>(values, "targetHandle");
 }
 
 function common(document: KDrawDocumentV1, values: Readonly<Record<string, CommandPromptValue>>, context: AnnotationBlockPromptContext) {
@@ -104,21 +117,39 @@ export function buildAnnotationPromptInput(
       return { commandId, args: { handle: allocateDocumentHandles(document, 1)[0]!, layerId, position: required<CadPoint2>(values, "position"), text: required<string>(values, "text"), height: required<number>(values, "height"), ...(rotationRad === undefined ? {} : { rotationRad }), ...(styleId ? { styleId } : {}) } };
     }
     case "MTEXT": {
+      const mode = optional<"create" | "edit">(values, "mode") ?? "create";
+      if (mode === "edit") return { commandId, mode, handle: selectedOrPrompt(values, context), patch: required<MTextEditPatch>(values, "patch") };
       const rotationRad = optional<number>(values, "rotationRad");
       const styleId = optional<string>(values, "styleId");
       const attachment = optional<"top-left" | "top-center" | "top-right" | "middle-left" | "middle-center" | "middle-right" | "bottom-left" | "bottom-center" | "bottom-right">(values, "attachment");
       const lineSpacingFactor = optional<number>(values, "lineSpacingFactor");
-      return { commandId, args: { handle: allocateDocumentHandles(document, 1)[0]!, layerId, position: required<CadPoint2>(values, "position"), text: required<string>(values, "text"), height: required<number>(values, "height"), width: required<number>(values, "width"), ...(rotationRad === undefined ? {} : { rotationRad }), ...(styleId ? { styleId } : {}), ...(attachment ? { attachment } : {}), ...(lineSpacingFactor === undefined ? {} : { lineSpacingFactor }) } };
+      const wrapMode = optional<MTextContract["wrapMode"]>(values, "wrapMode");
+      const paragraphs = optional<MTextContract["paragraphs"]>(values, "paragraphs");
+      return { commandId, mode, args: { handle: allocateDocumentHandles(document, 1)[0]!, layerId, position: required<CadPoint2>(values, "position"), text: required<string>(values, "text"), height: required<number>(values, "height"), width: required<number>(values, "width"), ...(rotationRad === undefined ? {} : { rotationRad }), ...(styleId ? { styleId } : {}), ...(attachment ? { attachment } : {}), ...(lineSpacingFactor === undefined ? {} : { lineSpacingFactor }), ...(wrapMode ? { wrapMode } : {}), ...(paragraphs ? { paragraphs } : {}) } };
     }
-    case "STYLE": return { commandId, mode: required<"create" | "update">(values, "mode"), style: required<CadTextStyle>(values, "style") };
+    case "STYLE": {
+      const mode = required<"create" | "update" | "apply">(values, "mode");
+      if (mode === "apply") return { commandId, mode, styleId: required<string>(values, "styleId"), targetHandles: [...new Set(context.selectedHandles ?? [])] };
+      return { commandId, mode, style: required<CadTextStyle>(values, "style") };
+    }
     case "LEADER": {
+      const mode = optional<"create" | "edit">(values, "mode") ?? "create";
+      if (mode === "edit") return { commandId, mode, handle: selectedOrPrompt(values, context), patch: required<LeaderEditPatch>(values, "patch") };
       const text = optional<string>(values, "text");
-      return { commandId, args: { handle: allocateDocumentHandles(document, 1)[0]!, layerId, vertices: required<CadPoint2[]>(values, "vertices"), ...(text === undefined ? {} : { text }) } };
+      const link = leaderAssociation(values, context);
+      const contentPosition = optional<CadPoint2>(values, "contentPosition"); const textStyleId = optional<string>(values, "textStyleId");
+      const textHeight = optional<number>(values, "textHeight"); const arrowType = optional<LeaderArrowType>(values, "arrowType");
+      const arrowSize = optional<number>(values, "arrowSize"); const landingEnabled = optional<boolean>(values, "landingEnabled"); const landingLength = optional<number>(values, "landingLength");
+      return { commandId, mode, args: { handle: allocateDocumentHandles(document, 1)[0]!, layerId, vertices: required<CadPoint2[]>(values, "vertices"), ...(text === undefined ? {} : { text }), ...(contentPosition ? { contentPosition } : {}), ...(textStyleId ? { textStyleId } : {}), ...(textHeight === undefined ? {} : { textHeight }), ...(arrowType ? { arrowType } : {}), ...(arrowSize === undefined ? {} : { arrowSize }), ...(landingEnabled === undefined ? {} : { landingEnabled }), ...(landingLength === undefined ? {} : { landingLength }), ...(link.anchor ? { anchor: link.anchor } : {}) }, ...(link.targetHandles ? { targetHandles: link.targetHandles } : {}) };
     }
     case "MLEADER": {
+      const mode = optional<"create" | "edit">(values, "mode") ?? "create";
+      if (mode === "edit") return { commandId, mode, handle: selectedOrPrompt(values, context), patch: required<MLeaderEditPatch>(values, "patch") };
       const textStyleId = optional<string>(values, "textStyleId");
       const landingGap = optional<number>(values, "landingGap");
-      return { commandId, args: { handle: allocateDocumentHandles(document, 1)[0]!, layerId, vertices: required<CadPoint2[]>(values, "vertices"), text: required<string>(values, "text"), textPosition: required<CadPoint2>(values, "textPosition"), styleId: required<string>(values, "styleId"), textHeight: required<number>(values, "textHeight"), ...(textStyleId ? { textStyleId } : {}), ...(landingGap === undefined ? {} : { landingGap }) } };
+      const link = leaderAssociation(values, context); const arrowType = optional<LeaderArrowType>(values, "arrowType");
+      const arrowSize = optional<number>(values, "arrowSize"); const landingEnabled = optional<boolean>(values, "landingEnabled"); const landingLength = optional<number>(values, "landingLength");
+      return { commandId, mode, args: { handle: allocateDocumentHandles(document, 1)[0]!, layerId, vertices: required<CadPoint2[]>(values, "vertices"), text: required<string>(values, "text"), textPosition: required<CadPoint2>(values, "textPosition"), styleId: required<string>(values, "styleId"), textHeight: required<number>(values, "textHeight"), ...(textStyleId ? { textStyleId } : {}), ...(landingGap === undefined ? {} : { landingGap }), ...(arrowType ? { arrowType } : {}), ...(arrowSize === undefined ? {} : { arrowSize }), ...(landingEnabled === undefined ? {} : { landingEnabled }), ...(landingLength === undefined ? {} : { landingLength }), ...(link.anchor ? { anchor: link.anchor } : {}) }, ...(link.targetHandles ? { targetHandles: link.targetHandles } : {}) };
     }
     case "HATCH": {
       const boundaryHandles = required<string[]>(values, "boundaryHandles");

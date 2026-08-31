@@ -38,6 +38,40 @@
     "pattern": { "type": "line", "angleRad": 0.7853981633974483, "scale": 2, "origin": { "x": 5, "y": 5 } },
     "boundaryHandles": ["20", "21"]
   },
+  "mtextContract": {
+    "kind": "mtext",
+    "version": 2,
+    "width": 18,
+    "attachment": "middle-center",
+    "lineSpacingFactor": 1.2,
+    "wrapMode": "word",
+    "paragraphs": [
+      { "id": "TITLE", "alignment": "center" },
+      { "id": "BODY", "alignment": "justify" }
+    ]
+  },
+  "leaderContract": {
+    "kind": "leader",
+    "version": 1,
+    "arrow": { "type": "open", "size": 3 },
+    "landing": { "enabled": true, "length": 8 },
+    "content": { "position": { "x": 28, "y": 10 }, "textStyleId": "TXT-ISO", "textHeight": 2.5 },
+    "associative": true,
+    "anchor": { "handle": "10", "feature": "end", "fallback": { "x": 100, "y": 40 } }
+  },
+  "mleaderContract": {
+    "kind": "mleader",
+    "version": 2,
+    "styleId": "MLEADER-STD",
+    "textPosition": { "x": 28, "y": 10 },
+    "textStyleId": "TXT-ISO",
+    "textHeight": 2.5,
+    "landingGap": 1.25,
+    "arrow": { "type": "dot", "size": 3.5 },
+    "landing": { "enabled": true, "length": 8 },
+    "associative": true,
+    "anchor": { "handle": "10", "feature": "start", "fallback": { "x": 0, "y": 0 } }
+  },
   "tableContract": {
     "kind": "table",
     "version": 1,
