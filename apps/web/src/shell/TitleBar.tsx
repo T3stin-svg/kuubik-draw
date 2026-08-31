@@ -6,6 +6,7 @@ interface TitleBarProps {
   canUndo: boolean;
   canRedo: boolean;
   workspace: WorkspacePreset;
+  storageState: "loading" | "ready" | "recovered" | "recovery";
   onWorkspaceChange: (workspace: WorkspacePreset) => void;
   onOpenDxf: () => void;
   onSaveKDraw: () => void;
@@ -18,7 +19,7 @@ const iconButton = (label: string, icon: Parameters<typeof CadIcon>[0]["name"], 
   <button type="button" aria-label={label} disabled={disabled}><CadIcon name={icon} /></button>
 );
 
-export function TitleBar({ documentName, canUndo, canRedo, workspace, onWorkspaceChange, onOpenDxf, onSaveKDraw, onExportDxf, onUndo, onRedo }: TitleBarProps) {
+export function TitleBar({ documentName, canUndo, canRedo, workspace, storageState, onWorkspaceChange, onOpenDxf, onSaveKDraw, onExportDxf, onUndo, onRedo }: TitleBarProps) {
   return (
     <header className="titlebar" data-visual-zone="titlebar">
       <span className="application-mark" aria-label="Kuubik Draw rakenduse menüü"><CadIcon name="app" /></span>
@@ -47,6 +48,9 @@ export function TitleBar({ documentName, canUndo, canRedo, workspace, onWorkspac
         {iconButton("Vaate jagamine unavailable", "share")}
       </span>
       <strong className="document-title">{documentName} — Kuubik Draw</strong>
+      <span className="storage-state" data-storage-state={storageState} role="status" aria-live="polite">
+        {storageState === "loading" ? "Joonise laadimine…" : storageState === "recovered" ? "Automaatsalvestus taastatud" : storageState === "recovery" ? "Taastamine vajab tähelepanu" : "Salvestus valmis"}
+      </span>
       <span className="product-badge"><span>Kuubik Draw</span><span aria-hidden="true"> · GPL</span></span>
     </header>
   );

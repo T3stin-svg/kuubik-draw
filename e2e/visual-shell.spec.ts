@@ -660,3 +660,128 @@ test("AutoCAD-style shell keeps all eight primary zones visible at 1920x1080", a
   await expect(commandTextWindow).toBeHidden();
   expect(consoleErrors).toEqual([]);
 });
+
+test("scoped shell persists workspace and palette states and remains accessible", async ({ page }) => {
+  const consoleErrors: string[] = [];
+  page.on("console", (message) => { if (message.type() === "error") consoleErrors.push(message.text()); });
+  page.on("pageerror", (error) => consoleErrors.push(error.message));
+  await page.setViewportSize({ width: 1920, height: 1080 });
+  await page.goto("/d/local");
+
+  const shell = page.locator(".app-shell");
+  const palette = page.getByRole("complementary", { name: "Properties palette" });
+  await expect(shell).toHaveAttribute("data-workspace", "drafting");
+  await expect(shell).toHaveAttribute("data-scope-profile", "autocad-familiar-clean");
+  await expect(page.getByRole("status").filter({ hasText: "Salvestus valmis" })).toBeVisible();
+  await expect(palette).toHaveAttribute("data-dock", "docked");
+
+  const scopedTools = page.locator("[data-feature-row]");
+  const scopedIconCount = await scopedTools.locator(".ribbon-glyph > svg").count();
+  expect(scopedIconCount).toBe(await scopedTools.count());
+  await expect(page.getByRole("button", { name: "Ribbon Polyline command" })).toBeEnabled();
+  const unselected = page.getByRole("button", { name: "Ribbon Match properties unavailable" });
+  await expect(unselected).toBeDisabled();
+  await expect(unselected).toHaveAttribute("data-scope-selected", "false");
+  await expect(unselected).toHaveAttribute("title", "Match properties · Pole sinu töövoogu valitud");
+
+  await page.getByRole("button", { name: "Ujuta paletid" }).click();
+  await expect(palette).toHaveAttribute("data-dock", "floating");
+  const floating = await palette.evaluate((element) => {
+    const rect = element.getBoundingClientRect();
+    return { x: rect.x, y: rect.y, width: rect.width, height: rect.height };
+  });
+  expect(floating).toEqual({ x: 28, y: 211, width: 520, height: 780 });
+
+  await page.getByRole("button", { name: "Peida paletid automaatselt" }).click();
+  await expect(palette).toHaveAttribute("data-dock", "auto-hide");
+  await expect.poll(() => palette.evaluate((element) => element.getBoundingClientRect().width)).toBe(32);
+  await page.getByRole("button", { name: "Doki paletid" }).click();
+  await expect(palette).toHaveAttribute("data-dock", "docked");
+  await expect.poll(() => palette.evaluate((element) => element.getBoundingClientRect().width)).toBe(680);
+
+  const workspace = page.getByRole("combobox", { name: "Tööruum" });
+  await workspace.selectOption("focus");
+  await expect(shell).toHaveAttribute("data-workspace", "focus");
+  const focusedPaletteTransform = await palette.evaluate((element) => getComputedStyle(element).transform);
+  expect(focusedPaletteTransform).not.toBe("none");
+  await workspace.selectOption("review");
+  await expect(shell).toHaveAttribute("data-workspace", "review");
+  await page.reload();
+  await expect(page.getByRole("combobox", { name: "Tööruum" })).toHaveValue("review");
+  await expect(page.getByRole("complementary", { name: "Properties palette" })).toHaveAttribute("data-dock", "docked");
+
+  await page.locator("body").focus();
+  await page.keyboard.press("Tab");
+  await expect(page.getByRole("button", { name: "Kiirpääsu DXF avamine" })).toBeFocused();
+  await page.keyboard.press("Tab");
+  await expect(page.getByRole("button", { name: "Kiirpääsu KDraw salvestamine" })).toBeFocused();
+  const focusOutline = await page.getByRole("button", { name: "Kiirpääsu KDraw salvestamine" }).evaluate((element) => ({
+    width: getComputedStyle(element).outlineWidth,
+    style: getComputedStyle(element).outlineStyle,
+    color: getComputedStyle(element).outlineColor,
+  }));
+  expect(focusOutline).toMatchObject({ width: "2px", style: "solid", color: "rgb(112, 197, 244)" });
+
+  const contrast = await page.evaluate(() => {
+    const parse = (value: string) => value.match(/[\d.]+/gu)!.slice(0, 3).map(Number);
+    const luminance = ([red, green, blue]: number[]) => [red!, green!, blue!]
+      .map((channel) => channel / 255)
+      .map((channel) => channel <= 0.03928 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4)
+      .reduce((sum, channel, index) => sum + channel * [0.2126, 0.7152, 0.0722][index]!, 0);
+    const ratio = (foreground: string, background: string) => {
+      const first = luminance(parse(foreground));
+      const second = luminance(parse(background));
+      return (Math.max(first, second) + 0.05) / (Math.min(first, second) + 0.05);
+    };
+    const line = document.querySelector<HTMLElement>("[data-feature-row='F-001']")!;
+    const ribbon = document.querySelector<HTMLElement>(".ribbon")!;
+    const title = document.querySelector<HTMLElement>(".product-badge")!;
+    const titlebar = document.querySelector<HTMLElement>(".titlebar")!;
+    return {
+      ribbonText: ratio(getComputedStyle(line).color, getComputedStyle(ribbon).backgroundColor),
+      productText: ratio(getComputedStyle(title).color, getComputedStyle(titlebar).backgroundColor),
+    };
+  });
+  expect(contrast.ribbonText).toBeGreaterThanOrEqual(4.5);
+  expect(contrast.productText).toBeGreaterThanOrEqual(4.5);
+
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  const reducedMotion = await page.locator(".command-caret").evaluate((element) => ({
+    animationName: getComputedStyle(element).animationName,
+    transitionDuration: getComputedStyle(element).transitionDuration,
+  }));
+  expect(reducedMotion.animationName).toBe("none");
+
+  await page.setViewportSize({ width: 960, height: 540 });
+  await expect(page.getByRole("navigation", { name: "Ribbon vahelehed" })).toBeVisible();
+  await expect(page.getByRole("region", { name: "Käsurida" })).toBeVisible();
+  await expect(page.getByRole("navigation", { name: "Joonise vahelehed" })).toBeVisible();
+  const zoomAudit = await page.evaluate(() => ({
+    effectiveViewport: [window.innerWidth, window.innerHeight],
+    scrollWidth: document.documentElement.scrollWidth,
+    scrollHeight: document.documentElement.scrollHeight,
+    statusbarHidden: getComputedStyle(document.querySelector<HTMLElement>(".statusbar")!).display === "none",
+    ribbon: {
+      clientWidth: document.querySelector<HTMLElement>(".ribbon")!.clientWidth,
+      scrollWidth: document.querySelector<HTMLElement>(".ribbon")!.scrollWidth,
+      overflowX: getComputedStyle(document.querySelector<HTMLElement>(".ribbon")!).overflowX,
+    },
+  }));
+  expect(zoomAudit).toMatchObject({ effectiveViewport: [960, 540], scrollWidth: 960, scrollHeight: 540, statusbarHidden: true });
+  expect(zoomAudit.ribbon.scrollWidth).toBeGreaterThan(zoomAudit.ribbon.clientWidth);
+  expect(zoomAudit.ribbon.overflowX).toBe("auto");
+
+  if (captureRoot) {
+    await writeFile(resolve(captureRoot, "visual-shell-200-percent.png"), await page.screenshot());
+    await writeFile(resolve(captureRoot, "visual-shell-accessibility.json"), `${JSON.stringify({
+      viewport100: [1920, 1080],
+      effectiveViewport200: zoomAudit.effectiveViewport,
+      floating,
+      contrast,
+      focusOutline,
+      reducedMotion,
+      consoleErrors,
+    }, null, 2)}\n`, "utf8");
+  }
+  expect(consoleErrors).toEqual([]);
+});

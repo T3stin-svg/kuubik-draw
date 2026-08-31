@@ -20,7 +20,7 @@
 }
 
 * { box-sizing: border-box; }
-html, body, #root { width: 100%; height: 100%; margin: 0; }
+html, body, #root { width: 100%; height: 100%; margin: 0; overflow: hidden; }
 button { font: inherit; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 button:focus-visible, select:focus-visible, input:focus-visible, summary:focus-visible { outline: 2px solid #70c5f4; outline-offset: -2px; }
@@ -56,6 +56,10 @@ button:focus-visible, select:focus-visible, input:focus-visible, summary:focus-v
 .title-display-controls button { width: 28px; height: 22px; padding: 0; color: #aeb9c4; background: transparent; border: 0; }
 .title-display-controls button:disabled { opacity: .55; }
 .document-title { position: absolute; right: 10px; max-width: 190px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 10px; font-weight: 400; }
+.storage-state { position: absolute; right: 352px; color: #9eabb5; font-size: 9px; }
+.storage-state[data-storage-state="loading"] { color: #d8e6ef; }
+.storage-state[data-storage-state="recovered"] { color: #8ed0f3; }
+.storage-state[data-storage-state="recovery"] { color: #ffd28a; }
 .workspace-name { position: absolute; left: 574px; display: flex; width: 180px; height: 24px; padding: 0; align-items: center; color: #f1f4f6; background: var(--cad-ribbon-surface); border: 1px solid #546174; border-radius: 1px; }
 .workspace-name select { width: 100%; height: 22px; padding: 0 24px 0 7px; color: inherit; background: transparent; border: 0; font: inherit; }
 .workspace-name option { color: #eef2f5; background: #303945; }
@@ -505,6 +509,10 @@ button:focus-visible, select:focus-visible, input:focus-visible, summary:focus-v
 .layout-space { align-self: center; margin-left: auto; padding: 0 4px 0 12px; color: #9ba7b1; font-size: 10px; }
 
 @media (max-width: 1180px) {
+  .workspace-name { left: 290px; }
+  .title-display-controls, .product-badge, .storage-state { display: none; }
+  .ribbon { overflow-x: auto; overflow-y: hidden; scrollbar-width: none; }
+  .ribbon::-webkit-scrollbar { display: none; }
   .paper-space-sheet { transform: none; }
 }
 
