@@ -3354,7 +3354,7 @@ export function App() {
               <div className="ribbon-tool-grid ribbon-tool-grid-dense">
                 <RibbonTool rowId="F-087" label="Create" icon="add" available={runtime.canExecute("F-087")} pressed={activeCommandPrompt === "BLOCK"} onClick={() => beginBlock("BLOCK", selectedHandles)} disabled={!modelSpaceEditing || selectedHandles.length === 0} />
                 <RibbonTool rowId="F-090" label="Edit block" icon="edit" available={runtime.canExecute("F-090")} pressed={activeCommandPrompt === "BEDIT"} onClick={() => beginBlock("BEDIT", selectedHandles)} disabled={!modelSpaceEditing || selectedHandles.length !== 1} />
-                <RibbonTool rowId="F-091" label="Attributes" icon="attribute" available={runtime.canExecute("F-091")} pressed={activeCommandPrompt === "ATTEDIT"} onClick={() => beginBlock("ATTEDIT", selectedHandles)} disabled={!modelSpaceEditing || selectedHandles.length !== 1} />
+                <RibbonTool rowId="F-091" label="Attributes" icon="attribute" available={runtime.canExecute("F-091")} pressed={activeCommandPrompt === "ATTRIB"} onClick={() => beginBlock("ATTRIB", selectedHandles)} disabled={!modelSpaceEditing || selectedHandles.length !== 1} />
               </div>
             </div>
             <strong>Block</strong>
