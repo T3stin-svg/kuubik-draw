@@ -1,0 +1,732 @@
+{
+  "viewport": [
+    1920,
+    1080
+  ],
+  "states": {
+    "emptyWorkspace": true,
+    "activeDrawingCommand": true,
+    "topChrome": {
+      "title": {
+        "backgroundColor": "rgb(34, 41, 51)",
+        "applicationMark": {
+          "x": 15,
+          "y": 3,
+          "width": 24,
+          "height": 24
+        },
+        "quickAccess": {
+          "x": 47,
+          "y": 4,
+          "width": 207,
+          "height": 22
+        },
+        "workspace": {
+          "x": 574,
+          "y": 3,
+          "width": 180,
+          "height": 24
+        },
+        "displayControls": {
+          "x": 760,
+          "y": 3,
+          "width": 84,
+          "height": 24
+        }
+      },
+      "ribbonTabs": {
+        "home": {
+          "x": 0,
+          "width": 55,
+          "right": 55,
+          "height": 21,
+          "backgroundColor": "rgb(59, 68, 83)"
+        },
+        "insert": {
+          "x": 55,
+          "width": 52,
+          "right": 107,
+          "height": 21,
+          "backgroundColor": "rgba(0, 0, 0, 0)"
+        },
+        "annotate": {
+          "x": 107,
+          "width": 71,
+          "right": 178,
+          "height": 21,
+          "backgroundColor": "rgba(0, 0, 0, 0)"
+        },
+        "parametric": {
+          "x": 178,
+          "width": 86,
+          "right": 264,
+          "height": 21,
+          "backgroundColor": "rgba(0, 0, 0, 0)"
+        },
+        "view": {
+          "x": 264,
+          "width": 49,
+          "right": 313,
+          "height": 21,
+          "backgroundColor": "rgba(0, 0, 0, 0)"
+        },
+        "manage": {
+          "x": 313,
+          "width": 64,
+          "right": 377,
+          "height": 21,
+          "backgroundColor": "rgba(0, 0, 0, 0)"
+        },
+        "output": {
+          "x": 377,
+          "width": 62,
+          "right": 439,
+          "height": 21,
+          "backgroundColor": "rgba(0, 0, 0, 0)"
+        },
+        "add-ins": {
+          "x": 439,
+          "width": 63,
+          "right": 502,
+          "height": 21,
+          "backgroundColor": "rgba(0, 0, 0, 0)"
+        },
+        "collaborate": {
+          "x": 502,
+          "width": 85,
+          "right": 587,
+          "height": 21,
+          "backgroundColor": "rgba(0, 0, 0, 0)"
+        },
+        "express-tools": {
+          "x": 587,
+          "width": 87,
+          "right": 674,
+          "height": 21,
+          "backgroundColor": "rgba(0, 0, 0, 0)"
+        },
+        "featured-apps": {
+          "x": 674,
+          "width": 106,
+          "right": 780,
+          "height": 21,
+          "backgroundColor": "rgba(0, 0, 0, 0)"
+        },
+        "prodlib": {
+          "x": 780,
+          "width": 65,
+          "right": 845,
+          "height": 21,
+          "backgroundColor": "rgba(0, 0, 0, 0)"
+        }
+      },
+      "documentTabs": {
+        "menu": {
+          "x": 0,
+          "width": 42,
+          "right": 42,
+          "height": 26,
+          "backgroundColor": "rgba(0, 0, 0, 0)"
+        },
+        "start": {
+          "x": 42,
+          "width": 48,
+          "right": 90,
+          "height": 26,
+          "backgroundColor": "rgba(0, 0, 0, 0)"
+        },
+        "drawing": {
+          "x": 90,
+          "width": 95,
+          "right": 185,
+          "height": 26,
+          "backgroundColor": "rgb(59, 68, 83)"
+        },
+        "new": {
+          "x": 185,
+          "width": 47,
+          "right": 232,
+          "height": 26,
+          "backgroundColor": "rgba(0, 0, 0, 0)"
+        }
+      }
+    },
+    "bottomChrome": {
+      "layoutStatus": {
+        "x": 0,
+        "y": 1043,
+        "width": 1920,
+        "height": 37,
+        "right": 1920,
+        "bottom": 1080,
+        "backgroundColor": "rgb(34, 41, 51)",
+        "borderTopColor": "rgb(59, 68, 83)",
+        "borderTopWidth": "4px",
+        "borderBottomColor": "rgb(6, 150, 215)",
+        "borderBottomWidth": "1px"
+      },
+      "statusbar": {
+        "x": 1260,
+        "y": 1047,
+        "width": 660,
+        "height": 32,
+        "right": 1920,
+        "bottom": 1079,
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "borderTopColor": "rgb(17, 22, 27)",
+        "borderTopWidth": "0px",
+        "borderBottomColor": "rgb(6, 150, 215)",
+        "borderBottomWidth": "1px"
+      },
+      "commandLine": {
+        "x": 688,
+        "y": 985,
+        "width": 600,
+        "height": 50,
+        "right": 1288,
+        "bottom": 1035,
+        "backgroundColor": "rgba(34, 41, 51, 0.96)",
+        "borderTopColor": "rgb(78, 90, 104)",
+        "borderTopWidth": "1px",
+        "borderBottomColor": "rgb(78, 90, 104)",
+        "borderBottomWidth": "1px"
+      }
+    },
+    "statusControls": {
+      "grid": {
+        "x": 1618.375,
+        "width": 35.265625,
+        "height": 30,
+        "disabled": false,
+        "pressed": "true",
+        "color": "rgb(238, 244, 247)",
+        "backgroundColor": "rgb(23, 106, 153)"
+      },
+      "ortho": {
+        "x": 1653.640625,
+        "width": 44.65625,
+        "height": 30,
+        "disabled": true,
+        "pressed": null,
+        "color": "rgb(120, 130, 139)",
+        "backgroundColor": "rgba(0, 0, 0, 0)"
+      },
+      "osnap": {
+        "x": 1698.296875,
+        "width": 44.15625,
+        "height": 30,
+        "disabled": true,
+        "pressed": null,
+        "color": "rgb(120, 130, 139)",
+        "backgroundColor": "rgba(0, 0, 0, 0)"
+      },
+      "otrack": {
+        "x": 1742.453125,
+        "width": 47.90625,
+        "height": 30,
+        "disabled": true,
+        "pressed": null,
+        "color": "rgb(120, 130, 139)",
+        "backgroundColor": "rgba(0, 0, 0, 0)"
+      },
+      "dyn": {
+        "x": 1790.359375,
+        "width": 33.03125,
+        "height": 30,
+        "disabled": true,
+        "pressed": null,
+        "color": "rgb(120, 130, 139)",
+        "backgroundColor": "rgba(0, 0, 0, 0)"
+      }
+    },
+    "ribbon": {
+      "panels": {
+        "draw": {
+          "x": 0,
+          "width": 225,
+          "right": 225,
+          "height": 99,
+          "backgroundColor": "rgb(59, 68, 83)"
+        },
+        "modify": {
+          "x": 225,
+          "width": 250,
+          "right": 475,
+          "height": 99,
+          "backgroundColor": "rgb(59, 68, 83)"
+        },
+        "annotation": {
+          "x": 475,
+          "width": 189,
+          "right": 664,
+          "height": 99,
+          "backgroundColor": "rgb(59, 68, 83)"
+        },
+        "layers": {
+          "x": 664,
+          "width": 273,
+          "right": 937,
+          "height": 99,
+          "backgroundColor": "rgb(59, 68, 83)"
+        },
+        "block": {
+          "x": 937,
+          "width": 161,
+          "right": 1098,
+          "height": 99,
+          "backgroundColor": "rgb(59, 68, 83)"
+        },
+        "properties": {
+          "x": 1098,
+          "width": 262,
+          "right": 1360,
+          "height": 99,
+          "backgroundColor": "rgb(59, 68, 83)"
+        },
+        "groups": {
+          "x": 1360,
+          "width": 72,
+          "right": 1432,
+          "height": 99,
+          "backgroundColor": "rgb(59, 68, 83)"
+        },
+        "utilities": {
+          "x": 1432,
+          "width": 97,
+          "right": 1529,
+          "height": 99,
+          "backgroundColor": "rgb(59, 68, 83)"
+        },
+        "clipboard": {
+          "x": 1529,
+          "width": 91,
+          "right": 1620,
+          "height": 99,
+          "backgroundColor": "rgb(59, 68, 83)"
+        },
+        "view": {
+          "x": 1620,
+          "width": 53,
+          "right": 1673,
+          "height": 99,
+          "backgroundColor": "rgb(59, 68, 83)"
+        }
+      },
+      "commandPanel": {
+        "x": 1673,
+        "width": 247,
+        "right": 1920,
+        "height": 99,
+        "backgroundColor": "rgb(59, 68, 83)"
+      },
+      "disabled": {
+        "color": "rgb(126, 135, 142)",
+        "backgroundColor": "rgba(0, 0, 0, 0)"
+      },
+      "hover": {
+        "color": "rgb(255, 255, 255)",
+        "backgroundColor": "rgb(72, 81, 90)",
+        "borderColor": "rgb(112, 123, 133)"
+      },
+      "active": {
+        "color": "rgb(255, 255, 255)",
+        "backgroundColor": "rgb(23, 111, 159)",
+        "borderColor": "rgb(104, 180, 223)"
+      }
+    },
+    "modelNavigation": {
+      "gridInkPixels": 39648,
+      "gridPressed": "true",
+      "crosshairWorld": {
+        "x": "1907.944515",
+        "y": "1289.407314"
+      },
+      "coordinateReadout": "1907.9445, 1289.4073, 0.0000",
+      "viewIndicator": "Top view, world coordinate system"
+    },
+    "modelDisplayReadback": {
+      "cssBackground": "rgb(255, 255, 255)",
+      "verticalGridRuns": [
+        [
+          742,
+          743
+        ],
+        [
+          917,
+          918
+        ],
+        [
+          1092,
+          1093
+        ],
+        [
+          1267,
+          1268
+        ],
+        [
+          1442,
+          1443
+        ],
+        [
+          1617,
+          1618
+        ],
+        [
+          1793,
+          1793
+        ]
+      ],
+      "horizontalGridRuns": [
+        [
+          146,
+          147
+        ],
+        [
+          322,
+          322
+        ],
+        [
+          497,
+          497
+        ],
+        [
+          672,
+          673
+        ],
+        [
+          847,
+          848
+        ]
+      ],
+      "clearPixelRgba": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "majorGridPixelRgba": [
+        155,
+        159,
+        169,
+        230
+      ]
+    },
+    "selectedProperties": {
+      "visible": true,
+      "geometry": {
+        "palette": {
+          "x": 0,
+          "y": 181,
+          "width": 680,
+          "height": 862,
+          "right": 680,
+          "bottom": 1043
+        },
+        "layerManager": {
+          "x": 0,
+          "y": 181,
+          "width": 678,
+          "height": 513,
+          "right": 678,
+          "bottom": 694
+        },
+        "propertiesHeader": {
+          "x": 0,
+          "y": 694,
+          "width": 678,
+          "height": 20,
+          "right": 678,
+          "bottom": 714
+        },
+        "selectionSummary": {
+          "x": 20,
+          "y": 727,
+          "width": 638,
+          "height": 22,
+          "right": 658,
+          "bottom": 749
+        },
+        "generalHeader": {
+          "x": 0,
+          "y": 753,
+          "width": 678,
+          "height": 20,
+          "right": 678,
+          "bottom": 773
+        },
+        "generalRows": [
+          {
+            "x": 0,
+            "y": 773,
+            "width": 678,
+            "height": 19,
+            "right": 678,
+            "bottom": 792
+          },
+          {
+            "x": 0,
+            "y": 792,
+            "width": 678,
+            "height": 19,
+            "right": 678,
+            "bottom": 811
+          },
+          {
+            "x": 0,
+            "y": 811,
+            "width": 678,
+            "height": 19,
+            "right": 678,
+            "bottom": 830
+          },
+          {
+            "x": 0,
+            "y": 830,
+            "width": 678,
+            "height": 19,
+            "right": 678,
+            "bottom": 849
+          },
+          {
+            "x": 0,
+            "y": 849,
+            "width": 678,
+            "height": 19,
+            "right": 678,
+            "bottom": 868
+          },
+          {
+            "x": 0,
+            "y": 868,
+            "width": 678,
+            "height": 19,
+            "right": 678,
+            "bottom": 887
+          },
+          {
+            "x": 0,
+            "y": 887,
+            "width": 678,
+            "height": 19,
+            "right": 678,
+            "bottom": 906
+          },
+          {
+            "x": 0,
+            "y": 906,
+            "width": 678,
+            "height": 19,
+            "right": 678,
+            "bottom": 925
+          },
+          {
+            "x": 0,
+            "y": 925,
+            "width": 678,
+            "height": 19,
+            "right": 678,
+            "bottom": 944
+          }
+        ],
+        "threeDHeader": {
+          "x": 0,
+          "y": 944,
+          "width": 678,
+          "height": 20,
+          "right": 678,
+          "bottom": 964
+        },
+        "materialRow": {
+          "x": 0,
+          "y": 964,
+          "width": 678,
+          "height": 19,
+          "right": 678,
+          "bottom": 983
+        },
+        "plotStyleHeader": {
+          "x": 0,
+          "y": 983,
+          "width": 678,
+          "height": 20,
+          "right": 678,
+          "bottom": 1003
+        },
+        "viewHeader": {
+          "x": 0,
+          "y": 1003,
+          "width": 678,
+          "height": 20,
+          "right": 678,
+          "bottom": 1023
+        },
+        "dataHeader": {
+          "x": 0,
+          "y": 1023,
+          "width": 678,
+          "height": 20,
+          "right": 678,
+          "bottom": 1043
+        },
+        "surfaces": {
+          "palette": "rgb(59, 68, 83)",
+          "layerHeader": "rgb(46, 52, 64)",
+          "layerCurrent": "rgb(59, 68, 83)",
+          "layerToolbar": "rgb(59, 68, 83)",
+          "layerRail": "rgb(59, 68, 83)",
+          "layerGrid": "rgb(59, 68, 83)",
+          "layerGridHeader": "rgb(69, 79, 97)",
+          "layerActiveRow": "rgb(116, 135, 165)",
+          "layerSummary": "rgb(59, 68, 83)",
+          "propertiesHeader": "rgb(46, 52, 64)",
+          "selectionSummary": "rgb(78, 90, 110)",
+          "sectionHeader": "rgb(46, 52, 64)",
+          "propertyName": "rgba(0, 0, 0, 0)",
+          "propertyValue": "rgb(59, 68, 83)"
+        }
+      }
+    },
+    "selectedFixture": {
+      "entityKinds": [
+        "circle",
+        "polyline",
+        "text"
+      ],
+      "handles": [
+        "A1",
+        "A2",
+        "A3"
+      ],
+      "selectedHandles": [
+        "A1",
+        "A2",
+        "A3"
+      ],
+      "polyline": {
+        "closed": true,
+        "vertices": [
+          {
+            "x": 785.0000000000001,
+            "y": 195.00000000000082
+          },
+          {
+            "x": 1811.9999999999986,
+            "y": 195.00000000000082
+          },
+          {
+            "x": 1811.9999999999986,
+            "y": 811
+          },
+          {
+            "x": 785.0000000000001,
+            "y": 811
+          }
+        ]
+      },
+      "circle": {
+        "center": {
+          "x": 1297.9999999999989,
+          "y": 502.9999999999999
+        },
+        "radiusPx": 123.4999999999999
+      },
+      "text": {
+        "value": "KUUBIK AUDIT",
+        "insertion": {
+          "x": 1032.0000000000007,
+          "y": 134.00000000000108
+        },
+        "heightPx": 74.99999999999997
+      }
+    },
+    "selectionPixels": 9757,
+    "staleMovePreviewPixels": 0,
+    "contextMenu": {
+      "activeCommand": true,
+      "selectedObject": true,
+      "keyboardNavigation": true,
+      "escapeDismissalPreservesCommandAndSelection": true,
+      "cancelAction": true,
+      "countAction": true,
+      "geometry": {
+        "x": 1200,
+        "y": 501,
+        "width": 200,
+        "height": 371,
+        "itemHeight": 20.5,
+        "separatorHeight": 1,
+        "backgroundColor": "rgb(240, 240, 240)",
+        "borderColor": "rgb(160, 160, 160)",
+        "disabledColor": "rgb(160, 160, 160)"
+      }
+    },
+    "layerManagerRows": 3,
+    "layoutPaperSpace": true,
+    "layoutGeometry": {
+      "desk": {
+        "x": 0,
+        "y": 179,
+        "width": 1920,
+        "height": 793,
+        "right": 1920,
+        "bottom": 972
+      },
+      "sheet": {
+        "x": 700,
+        "y": 227,
+        "width": 985.75,
+        "height": 697,
+        "right": 1685.75,
+        "bottom": 924
+      },
+      "printable": {
+        "x": 734.109375,
+        "y": 261.09375,
+        "width": 917.53125,
+        "height": 628.8125,
+        "right": 1651.640625,
+        "bottom": 889.90625
+      },
+      "palette": {
+        "x": 0,
+        "y": 179,
+        "width": 678,
+        "height": 513,
+        "right": 678,
+        "bottom": 692
+      },
+      "layoutbar": {
+        "x": 0,
+        "y": 1041,
+        "width": 1920,
+        "height": 37,
+        "right": 1920,
+        "bottom": 1078
+      }
+    },
+    "layoutTools": {
+      "compactByDefault": true,
+      "openStateVerified": true,
+      "pageSetupStillReachable": true
+    },
+    "commandHistory": true,
+    "commandHistoryGeometry": {
+      "x": 0,
+      "y": 0,
+      "width": 1920,
+      "height": 1080,
+      "titlebarHeight": 30,
+      "menubarHeight": 22,
+      "promptHeight": 28,
+      "backgroundColor": "rgb(200, 200, 200)",
+      "contentTop": 53,
+      "contentBottom": 1051,
+      "promptTop": 1051,
+      "titlebarBackgroundColor": "rgb(255, 255, 255)",
+      "menubarBackgroundColor": "rgb(255, 255, 255)",
+      "contentBackgroundColor": "rgb(200, 200, 200)",
+      "promptBackgroundColor": "rgb(255, 255, 255)"
+    }
+  },
+  "consoleErrors": []
+}

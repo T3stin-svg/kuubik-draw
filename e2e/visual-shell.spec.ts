@@ -174,8 +174,12 @@ test("AutoCAD-style shell keeps all eight primary zones visible at 1920x1080", a
     return { x: rect.x, width: rect.width, right: rect.right, height: rect.height, backgroundColor: getComputedStyle(element).backgroundColor };
   });
   expect(commandPanel).toEqual({ x: 1673, width: 247, right: 1920, height: 99, backgroundColor: "rgb(59, 68, 83)" });
-  const disabledRibbonTool = page.getByRole("button", { name: "Ribbon Polyline unavailable" });
+  const disabledRibbonTool = page.getByRole("button", { name: "Ribbon Match properties unavailable" });
   await expect(disabledRibbonTool).toBeDisabled();
+  await expect(disabledRibbonTool).toHaveAttribute("data-scope-selected", "false");
+  await expect(disabledRibbonTool).toHaveAttribute("title", /Pole sinu töövoogu valitud/u);
+  await expect(page.getByRole("button", { name: "Ribbon Polyline command" })).toBeEnabled();
+  await expect(page.getByRole("button", { name: "Ribbon Polyline command" })).toHaveAttribute("data-feature-row", "F-002");
   const disabledRibbonState = await disabledRibbonTool.evaluate((element) => ({
     color: getComputedStyle(element).color,
     backgroundColor: getComputedStyle(element).backgroundColor,

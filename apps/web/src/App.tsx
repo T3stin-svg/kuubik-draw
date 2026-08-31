@@ -6,6 +6,12 @@ import { CadCanvasRenderer, pickCadEntity, pannedViewportWorldCenter, selectCadE
 import type { CadEntity, CadLayout, CadPageSetup, CadPaperRect, CadPlotStyle, CadViewport, KDrawDocumentV1 } from "@kuubik/cad-schema";
 import { clampCadContextMenuPosition } from "./context-menu.js";
 import { KDrawIndexedDb, StorageRevisionConflictError } from "./indexed-db.js";
+import { CadShell, DrawingViewport, type WorkspacePreset } from "./shell/CadShell.js";
+import { DocumentTabs } from "./shell/DocumentTabs.js";
+import { PaletteFrame, type PaletteMode } from "./shell/PaletteFrame.js";
+import { RibbonTabs } from "./shell/RibbonTabs.js";
+import { RibbonTool } from "./shell/RibbonTool.js";
+import { TitleBar } from "./shell/TitleBar.js";
 import { prepareAlign, prepareBreak, prepareChamfer, prepareCopy, prepareExtend, prepareFillet, prepareLengthen, prepareMatchProperties, prepareMirror, prepareMove, prepareOffset, prepareRotate, prepareScale, prepareStretch, prepareTrim, putEntities } from "./workflows/modify-command.js";
 import "./style.css";
 
@@ -270,6 +276,14 @@ export function App() {
   const committing = useRef(false);
   const [document, setDocument] = useState<KDrawDocumentV1>(session.current.document);
   const [status, setStatus] = useState("Uus kohalik dokument");
+  const [workspacePreset, setWorkspacePreset] = useState<WorkspacePreset>(() => {
+    const stored = window.localStorage.getItem("kuubik-draw-workspace");
+    return stored === "focus" || stored === "review" ? stored : "drafting";
+  });
+  const [paletteMode, setPaletteMode] = useState<PaletteMode>(() => {
+    const stored = window.localStorage.getItem("kuubik-draw-palette-mode");
+    return stored === "floating" || stored === "auto-hide" ? stored : "docked";
+  });
   const [activeCommandPrompt, setActiveCommandPrompt] = useState<string | null>(null);
   const [commandHistoryOpen, setCommandHistoryOpen] = useState(false);
   const [commandHistory, setCommandHistory] = useState<string[]>(["Uus kohalik dokument"]);
@@ -443,6 +457,14 @@ export function App() {
     ? document.layers.find((layer) => layer.id === primarySelectedEntity.layerId) ?? activeLayer
     : activeLayer;
   const visiblePaletteLayers = document.layers.filter((layer) => layer.name.toLocaleLowerCase().includes(layerFilterInput.trim().toLocaleLowerCase()));
+
+  useEffect(() => {
+    window.localStorage.setItem("kuubik-draw-workspace", workspacePreset);
+  }, [workspacePreset]);
+
+  useEffect(() => {
+    window.localStorage.setItem("kuubik-draw-palette-mode", paletteMode);
+  }, [paletteMode]);
 
   useEffect(() => {
     setCommandHistory((previous) => previous.at(-1) === status ? previous : [...previous.slice(-19), status]);
@@ -3021,81 +3043,60 @@ export function App() {
     setStatus(`KDraw eksporditud: revision ${document.revision}`);
   }
 
+  const documentName = `${document.metadata.title || document.documentId}.kdraw`;
+
   return (
-    <main className="app-shell">
-      <header className="titlebar" data-visual-zone="titlebar">
-        <span className="application-mark" aria-label="Kuubik Draw rakenduse menüü">K</span>
-        <span className="quick-access" aria-label="Kiirpääsuriba">
-          <button type="button" aria-label="Kiirpääsu uus joonis unavailable" disabled>＋</button>
-          <button type="button" aria-label="Kiirpääsu DXF avamine" onClick={() => dxfImportInput.current?.click()}>⌑</button>
-          <button type="button" aria-label="Kiirpääsu KDraw salvestamine" onClick={() => void downloadKDraw()}>▣</button>
-          <button type="button" aria-label="Kiirpääsu DXF-väljund" onClick={downloadDxf}>⇩</button>
-          <i aria-hidden="true" />
-          <button type="button" aria-label="Kiirpääsu Undo" onClick={() => void undoLast()} disabled={!canUndoInActiveLayout}>↶</button>
-          <button type="button" aria-label="Kiirpääsu Redo" onClick={() => void redoLast()} disabled={!canRedoInActiveLayout}>↷</button>
-          <button type="button" aria-label="Kiirpääsu printimine unavailable" disabled>▧</button>
-          <button type="button" aria-label="Kiirpääsuriba seaded unavailable" disabled>⌄</button>
-        </span>
-        <span className="title-display-controls" aria-label="Vaate kiirjuhtelemendid">
-          <button type="button" aria-label="Vaateaken unavailable" disabled>▣</button>
-          <button type="button" aria-label="Visuaalstiil unavailable" disabled>⌁</button>
-          <button type="button" aria-label="Vaate jagamine unavailable" disabled>↗</button>
-        </span>
-        <strong className="document-title">{document.metadata.title || document.documentId}.kdraw — Kuubik Draw</strong>
-        <span className="workspace-name">2D Drafting &amp; Annotation</span>
-        <span className="product-badge"><span>Kuubik Draw</span><span aria-hidden="true"> · GPL</span></span>
-      </header>
-      <nav className="ribbon-tabs" aria-label="Ribbon vahelehed" data-visual-zone="ribbon-tabs">
-        <button type="button" className="active tab-home" aria-current="page" data-ribbon-tab="home">Home</button>
-        <button type="button" className="tab-insert" data-ribbon-tab="insert" disabled>Insert</button>
-        <button type="button" className="tab-annotate" data-ribbon-tab="annotate" disabled>Annotate</button>
-        <button type="button" className="tab-parametric" data-ribbon-tab="parametric" disabled>Parametric</button>
-        <button type="button" className="tab-view" data-ribbon-tab="view" disabled>View</button>
-        <button type="button" className="tab-manage" data-ribbon-tab="manage" disabled>Manage</button>
-        <button type="button" className="tab-output" data-ribbon-tab="output" disabled>Output</button>
-        <button type="button" className="tab-addins" data-ribbon-tab="add-ins" disabled>Add-ins</button>
-        <button type="button" className="tab-collaborate" data-ribbon-tab="collaborate" disabled>Collaborate</button>
-        <button type="button" className="tab-express" data-ribbon-tab="express-tools" disabled>Express Tools</button>
-        <button type="button" className="tab-featured" data-ribbon-tab="featured-apps" disabled>Featured Apps</button>
-        <button type="button" className="tab-prodlib" data-ribbon-tab="prodlib" disabled>ProdLib</button>
-      </nav>
+    <CadShell workspace={workspacePreset}>
+      <TitleBar
+        documentName={documentName}
+        canUndo={canUndoInActiveLayout}
+        canRedo={canRedoInActiveLayout}
+        workspace={workspacePreset}
+        onWorkspaceChange={setWorkspacePreset}
+        onOpenDxf={() => dxfImportInput.current?.click()}
+        onSaveKDraw={() => void downloadKDraw()}
+        onExportDxf={downloadDxf}
+        onUndo={() => void undoLast()}
+        onRedo={() => void redoLast()}
+      />
+      <RibbonTabs />
       <section className="ribbon" aria-label="Joonestustööriistad" data-visual-zone="ribbon">
         <div className="ribbon-primary" aria-label="Home ribbon">
           <section className="ribbon-panel ribbon-panel-draw" aria-label="Draw panel" data-ribbon-panel="draw">
             <div className="ribbon-panel-tools">
-              <button type="button" className="ribbon-tool ribbon-tool-large" aria-label="Ribbon Line command" aria-pressed={activeCommandPrompt === "LINE"} onClick={() => { setActiveCommandPrompt("LINE"); setStatus("LINE Specify first point"); }} disabled={!modelSpaceEditing || activeLayer.locked}><span className="ribbon-glyph">╱</span><span>Line</span></button>
+              <RibbonTool rowId="F-001" label="Line" icon="line" large available pressed={activeCommandPrompt === "LINE"} onClick={() => { setActiveCommandPrompt("LINE"); setStatus("LINE Specify first point"); }} disabled={!modelSpaceEditing || activeLayer.locked} />
               <div className="ribbon-tool-grid ribbon-tool-grid-dense">
-                <button type="button" className="ribbon-tool" aria-label="Ribbon Rectangle command" aria-pressed={activeCommandPrompt === "RECTANGLE"} onClick={() => { setActiveCommandPrompt("RECTANGLE"); setStatus("RECTANGLE Specify first corner point"); }} disabled={!modelSpaceEditing || activeLayer.locked}><span className="ribbon-glyph">□</span><span>Rectangle</span></button>
-                <button type="button" className="ribbon-tool" aria-label="Ribbon Polyline unavailable" disabled><span className="ribbon-glyph">⌁</span><span>Polyline</span></button>
-                <button type="button" className="ribbon-tool" aria-label="Ribbon Circle unavailable" disabled><span className="ribbon-glyph">○</span><span>Circle</span></button>
-                <button type="button" className="ribbon-tool" aria-label="Ribbon Arc unavailable" disabled><span className="ribbon-glyph">◜</span><span>Arc</span></button>
-                <button type="button" className="ribbon-tool" aria-label="Ribbon Hatch unavailable" disabled><span className="ribbon-glyph">▧</span><span>Hatch</span></button>
-                <button type="button" className="ribbon-tool" aria-label="Ribbon Ellipse unavailable" disabled><span className="ribbon-glyph">⬭</span><span>Ellipse</span></button>
+                <RibbonTool rowId="F-003" label="Rectangle" icon="rectangle" available pressed={activeCommandPrompt === "RECTANGLE"} onClick={() => { setActiveCommandPrompt("RECTANGLE"); setStatus("RECTANGLE Specify first corner point"); }} disabled={!modelSpaceEditing || activeLayer.locked} />
+                <RibbonTool rowId="F-002" label="Polyline" icon="polyline" available onClick={() => { setActiveCommandPrompt("POLYLINE"); setStatus("POLYLINE Specify start point"); }} disabled={!modelSpaceEditing || activeLayer.locked} />
+                <RibbonTool rowId="F-004" label="Circle" icon="circle" available onClick={() => { setActiveCommandPrompt("CIRCLE"); setStatus("CIRCLE Specify center point"); }} disabled={!modelSpaceEditing || activeLayer.locked} />
+                <RibbonTool rowId="F-005" label="Arc" icon="arc" available onClick={() => { setActiveCommandPrompt("ARC"); setStatus("ARC Specify start point"); }} disabled={!modelSpaceEditing || activeLayer.locked} />
+                <RibbonTool rowId="F-067" label="Hatch" icon="hatch" available onClick={() => { setActiveCommandPrompt("HATCH"); setStatus("HATCH Pick internal point"); }} disabled={!modelSpaceEditing || activeLayer.locked} />
+                <RibbonTool rowId="F-007" label="Ellipse" icon="ellipse" available onClick={() => { setActiveCommandPrompt("ELLIPSE"); setStatus("ELLIPSE Specify axis endpoint"); }} disabled={!modelSpaceEditing || activeLayer.locked} />
               </div>
             </div>
             <strong>Draw</strong>
           </section>
           <section className="ribbon-panel ribbon-panel-modify" aria-label="Modify panel" data-ribbon-panel="modify">
             <div className="ribbon-panel-tools ribbon-tool-grid ribbon-tool-grid-dense">
-              <button type="button" className="ribbon-tool" aria-label="Ribbon Move command" aria-pressed={activeCommandPrompt === "MOVE"} onClick={() => { setActiveCommandPrompt("MOVE"); setPreviewCommand("MOVE"); setStatus("MOVE Select objects"); }} disabled={!modelSpaceEditing}><span className="ribbon-glyph">✥</span><span>Move</span></button>
-              <button type="button" className="ribbon-tool" aria-label="Ribbon Copy command" aria-pressed={activeCommandPrompt === "COPY"} onClick={() => { setActiveCommandPrompt("COPY"); setPreviewCommand("COPY"); setStatus("COPY Select objects"); }} disabled={!modelSpaceEditing}><span className="ribbon-glyph">▣</span><span>Copy</span></button>
-              <button type="button" className="ribbon-tool" aria-label="Ribbon Rotate command" aria-pressed={activeCommandPrompt === "ROTATE"} onClick={() => { setActiveCommandPrompt("ROTATE"); setPreviewCommand("ROTATE"); setStatus("ROTATE Select objects"); }} disabled={!modelSpaceEditing}><span className="ribbon-glyph">↻</span><span>Rotate</span></button>
-              <button type="button" className="ribbon-tool" aria-label="Ribbon Mirror command" aria-pressed={activeCommandPrompt === "MIRROR"} onClick={() => { setActiveCommandPrompt("MIRROR"); setPreviewCommand("MIRROR"); setStatus("MIRROR Select objects"); }} disabled={!modelSpaceEditing}><span className="ribbon-glyph">◫</span><span>Mirror</span></button>
-              <button type="button" className="ribbon-tool" aria-label="Ribbon Trim command" aria-pressed={activeCommandPrompt === "TRIM"} onClick={() => { setActiveCommandPrompt("TRIM"); setPreviewCommand("TRIM"); setStatus("TRIM Select cutting edges or objects to trim"); }} disabled={!modelSpaceEditing}><span className="ribbon-glyph">⌁</span><span>Trim</span></button>
-              <button type="button" className="ribbon-tool" aria-label="Ribbon Offset command" aria-pressed={activeCommandPrompt === "OFFSET"} onClick={() => { setActiveCommandPrompt("OFFSET"); setPreviewCommand("OFFSET"); setStatus("OFFSET Specify offset distance or Through"); }} disabled={!modelSpaceEditing}><span className="ribbon-glyph">≋</span><span>Offset</span></button>
-              <button type="button" className="ribbon-tool" aria-label="Ribbon Stretch unavailable" disabled><span className="ribbon-glyph">↗</span><span>Stretch</span></button>
-              <button type="button" className="ribbon-tool" aria-label="Ribbon Scale unavailable" disabled><span className="ribbon-glyph">⌗</span><span>Scale</span></button>
-              <button type="button" className="ribbon-tool" aria-label="Ribbon Fillet unavailable" disabled><span className="ribbon-glyph">◝</span><span>Fillet</span></button>
+              <RibbonTool rowId="F-016" label="Move" icon="move" available pressed={activeCommandPrompt === "MOVE"} onClick={() => { setActiveCommandPrompt("MOVE"); setPreviewCommand("MOVE"); setStatus("MOVE Select objects"); }} disabled={!modelSpaceEditing} />
+              <RibbonTool rowId="F-017" label="Copy" icon="copy" available pressed={activeCommandPrompt === "COPY"} onClick={() => { setActiveCommandPrompt("COPY"); setPreviewCommand("COPY"); setStatus("COPY Select objects"); }} disabled={!modelSpaceEditing} />
+              <RibbonTool rowId="F-018" label="Rotate" icon="rotate" available pressed={activeCommandPrompt === "ROTATE"} onClick={() => { setActiveCommandPrompt("ROTATE"); setPreviewCommand("ROTATE"); setStatus("ROTATE Select objects"); }} disabled={!modelSpaceEditing} />
+              <RibbonTool rowId="F-020" label="Mirror" icon="mirror" available pressed={activeCommandPrompt === "MIRROR"} onClick={() => { setActiveCommandPrompt("MIRROR"); setPreviewCommand("MIRROR"); setStatus("MIRROR Select objects"); }} disabled={!modelSpaceEditing} />
+              <RibbonTool rowId="F-022" label="Trim" icon="trim" available pressed={activeCommandPrompt === "TRIM"} onClick={() => { setActiveCommandPrompt("TRIM"); setPreviewCommand("TRIM"); setStatus("TRIM Select cutting edges or objects to trim"); }} disabled={!modelSpaceEditing} />
+              <RibbonTool rowId="F-021" label="Offset" icon="offset" available pressed={activeCommandPrompt === "OFFSET"} onClick={() => { setActiveCommandPrompt("OFFSET"); setPreviewCommand("OFFSET"); setStatus("OFFSET Specify offset distance or Through"); }} disabled={!modelSpaceEditing} />
+              <RibbonTool rowId="F-027" label="Stretch" icon="stretch" available pressed={activeCommandPrompt === "STRETCH"} onClick={() => { setActiveCommandPrompt("STRETCH"); setPreviewCommand("STRETCH"); setStatus("STRETCH Specify crossing window"); }} disabled={!modelSpaceEditing} />
+              <RibbonTool rowId="F-019" label="Scale" icon="scale" available pressed={activeCommandPrompt === "SCALE"} onClick={() => { setActiveCommandPrompt("SCALE"); setPreviewCommand("SCALE"); setStatus("SCALE Select objects"); }} disabled={!modelSpaceEditing} />
+              <RibbonTool rowId="F-024" label="Fillet" icon="fillet" available pressed={activeCommandPrompt === "FILLET"} onClick={() => { setActiveCommandPrompt("FILLET"); setPreviewCommand("FILLET"); setStatus("FILLET Select first object"); }} disabled={!modelSpaceEditing} />
             </div>
             <strong>Modify</strong>
           </section>
           <section className="ribbon-panel ribbon-panel-annotation" aria-label="Annotation panel" data-ribbon-panel="annotation">
             <div className="ribbon-panel-tools">
-              <button type="button" className="ribbon-tool ribbon-tool-large" aria-label="Ribbon Text unavailable" disabled><span className="ribbon-glyph ribbon-letter">A</span><span>Text</span></button>
+              <RibbonTool rowId="F-057" label="Text" icon="text" large available onClick={() => { setActiveCommandPrompt("TEXT"); setStatus("TEXT Specify insertion point"); }} disabled={!modelSpaceEditing || activeLayer.locked} />
               <div className="ribbon-tool-grid ribbon-tool-grid-dense">
-                <button type="button" className="ribbon-tool" aria-label="Ribbon Dimension unavailable" disabled><span className="ribbon-glyph">↔</span><span>Dimension</span></button>
-                <button type="button" className="ribbon-tool" aria-label="Ribbon Leader unavailable" disabled><span className="ribbon-glyph">⌁</span><span>Leader</span></button>
-                <button type="button" className="ribbon-tool" aria-label="Ribbon Table unavailable" disabled><span className="ribbon-glyph">▦</span><span>Table</span></button>
+                <RibbonTool rowId="F-061" label="Dimension" icon="dimension" available onClick={() => { setActiveCommandPrompt("DIM"); setStatus("DIM Select object"); }} disabled={!modelSpaceEditing || activeLayer.locked} />
+                <RibbonTool rowId="F-059" label="Leader" icon="leader" available onClick={() => { setActiveCommandPrompt("MLEADER"); setStatus("MLEADER Specify arrowhead location"); }} disabled={!modelSpaceEditing || activeLayer.locked} />
+                <RibbonTool rowId="F-068" label="Table" icon="table" available onClick={() => { setActiveCommandPrompt("TABLE"); setStatus("TABLE Specify insertion point"); }} disabled={!modelSpaceEditing || activeLayer.locked} />
               </div>
             </div>
             <strong>Annotation</strong>
@@ -3104,28 +3105,28 @@ export function App() {
             <div className="ribbon-layer-tools">
               <span className="ribbon-layer-current"><span aria-hidden="true">●</span>{activeLayer.name}</span>
               <div className="ribbon-layer-actions">
-                <button type="button" className="ribbon-tool" aria-label="Ribbon New layer command" onClick={() => void createLayer()}><span className="ribbon-glyph">▤</span><span>New Layer</span></button>
-                <button type="button" className="ribbon-tool" aria-label="Ribbon Layer lock command" onClick={() => void toggleActiveLayerLock()}><span className="ribbon-glyph">{activeLayer.locked ? "▣" : "□"}</span><span>{activeLayer.locked ? "Unlock" : "Lock"}</span></button>
-                <button type="button" className="ribbon-tool" aria-label="Ribbon Make current unavailable" disabled><span className="ribbon-glyph">✓</span><span>Make Current</span></button>
-                <button type="button" className="ribbon-tool" aria-label="Ribbon Match layer unavailable" disabled><span className="ribbon-glyph">≡</span><span>Match Layer</span></button>
+                <RibbonTool rowId="F-072" label="New layer" icon="layer" available onClick={() => void createLayer()} />
+                <RibbonTool rowId="F-074" label={activeLayer.locked ? "Unlock" : "Lock"} icon="lock" available onClick={() => void toggleActiveLayerLock()} />
+                <RibbonTool rowId="F-073" label="Make current" icon="current" available onClick={() => setStatus(`Current layer: ${activeLayer.name}`)} />
+                <RibbonTool rowId="F-081" label="Match layer" icon="match" />
               </div>
             </div>
             <strong>Layers</strong>
           </section>
           <section className="ribbon-panel ribbon-panel-block" aria-label="Block panel" data-ribbon-panel="block">
             <div className="ribbon-panel-tools">
-              <button type="button" className="ribbon-tool ribbon-tool-large" aria-label="Ribbon Insert block unavailable" disabled><span className="ribbon-glyph">◇</span><span>Insert</span></button>
+              <RibbonTool rowId="F-087" label="Insert block" icon="block" large available onClick={() => { setActiveCommandPrompt("INSERT"); setStatus("INSERT Select block definition"); }} disabled={!modelSpaceEditing || activeLayer.locked} />
               <div className="ribbon-tool-grid ribbon-tool-grid-dense">
-                <button type="button" className="ribbon-tool" aria-label="Ribbon Create block unavailable" disabled><span className="ribbon-glyph">＋</span><span>Create</span></button>
-                <button type="button" className="ribbon-tool" aria-label="Ribbon Edit block unavailable" disabled><span className="ribbon-glyph">✎</span><span>Edit</span></button>
-                <button type="button" className="ribbon-tool" aria-label="Ribbon Edit attributes unavailable" disabled><span className="ribbon-glyph">#</span><span>Attributes</span></button>
+                <RibbonTool rowId="F-086" label="Create" icon="add" available onClick={() => { setActiveCommandPrompt("BLOCK"); setStatus("BLOCK Select objects"); }} disabled={!modelSpaceEditing} />
+                <RibbonTool rowId="F-088" label="Edit block" icon="edit" available onClick={() => setStatus("BEDIT Select block reference")} disabled={!modelSpaceEditing} />
+                <RibbonTool rowId="F-090" label="Attributes" icon="attribute" available onClick={() => setStatus("ATTEDIT Select block reference")} disabled={!modelSpaceEditing} />
               </div>
             </div>
             <strong>Block</strong>
           </section>
           <section className="ribbon-panel ribbon-panel-properties" aria-label="Properties panel" data-ribbon-panel="properties">
             <div className="ribbon-panel-tools">
-              <button type="button" className="ribbon-tool ribbon-tool-large" aria-label="Ribbon Match properties unavailable" disabled><span className="ribbon-glyph">✎</span><span>Match</span></button>
+              <RibbonTool rowId="F-030" label="Match properties" icon="match" large />
               <div className="ribbon-property-stack">
                 <span><i className="property-swatch" />ByLayer</span>
                 <span>— ByLayer</span>
@@ -3136,27 +3137,27 @@ export function App() {
           </section>
           <section className="ribbon-panel ribbon-panel-groups" aria-label="Groups panel" data-ribbon-panel="groups">
             <div className="ribbon-panel-tools ribbon-tool-grid ribbon-tool-grid-dense">
-              <button type="button" className="ribbon-tool" aria-label="Ribbon Group unavailable" disabled><span className="ribbon-glyph">◈</span><span>Group</span></button>
-              <button type="button" className="ribbon-tool" aria-label="Ribbon Ungroup unavailable" disabled><span className="ribbon-glyph">◇</span><span>Ungroup</span></button>
+              <RibbonTool rowId="F-040" label="Group" icon="group" />
+              <RibbonTool rowId="F-040" label="Ungroup" icon="ungroup" />
             </div>
             <strong>Groups</strong>
           </section>
           <section className="ribbon-panel ribbon-panel-utilities" aria-label="Utilities panel" data-ribbon-panel="utilities">
             <div className="ribbon-panel-tools ribbon-tool-grid ribbon-tool-grid-dense">
-              <button type="button" className="ribbon-tool" aria-label="Ribbon Measure unavailable" disabled><span className="ribbon-glyph">⌁</span><span>Measure</span></button>
-              <button type="button" className="ribbon-tool" aria-label="Ribbon Count unavailable" disabled><span className="ribbon-glyph">#</span><span>Count</span></button>
+              <RibbonTool rowId="F-054" label="Measure" icon="measure" />
+              <RibbonTool rowId="F-120" label="Count" icon="count" />
             </div>
             <strong>Utilities</strong>
           </section>
           <section className="ribbon-panel ribbon-panel-clipboard" aria-label="Clipboard panel" data-ribbon-panel="clipboard">
             <div className="ribbon-panel-tools">
-              <button type="button" className="ribbon-tool ribbon-tool-large" aria-label="Ribbon Paste unavailable" disabled><span className="ribbon-glyph">▣</span><span>Paste</span></button>
+              <RibbonTool rowId="F-136" label="Paste" icon="paste" large />
             </div>
             <strong>Clipboard</strong>
           </section>
           <section className="ribbon-panel ribbon-panel-view" aria-label="View panel" data-ribbon-panel="view">
             <div className="ribbon-panel-tools">
-              <button type="button" className="ribbon-tool ribbon-tool-large" aria-label="Ribbon Base view unavailable" disabled><span className="ribbon-glyph">◩</span><span>Base</span></button>
+              <RibbonTool rowId="F-135" label="Base view" icon="view" large />
             </div>
             <strong>View</strong>
           </section>
@@ -3759,13 +3760,8 @@ export function App() {
         )}
         </div>
       </section>
-      <nav className="document-tabs" aria-label="Joonise vahelehed" data-visual-zone="document-tabs">
-        <button type="button" className="document-menu" aria-label="Jooniste menüü" data-document-tab="menu">☰</button>
-        <button type="button" className="start-tab" data-document-tab="start" disabled>Start</button>
-        <button type="button" className="drawing-tab active" data-document-tab="drawing" aria-current="page">{document.metadata.title || document.documentId}.kdraw<span aria-hidden="true">×</span></button>
-        <button type="button" className="new-drawing-tab" aria-label="Uus joonis" data-document-tab="new" disabled>＋</button>
-      </nav>
-      <section className={`drawing-area ${activePaper ? "paper-mode" : "model-mode"}`} data-mode={activePaper ? "paper" : "model"}>
+      <DocumentTabs documentName={documentName} />
+      <DrawingViewport paper={Boolean(activePaper)}>
         {activePaper ? (
           <div className="paper-space-desk" data-testid="paper-space-desk" ref={paperDesk}>
             <div
@@ -3909,7 +3905,7 @@ export function App() {
             />}
           </>
         )}
-        <aside className="properties-palette" aria-label="Properties palette" data-visual-zone="properties-palette" data-dock="left">
+        <PaletteFrame mode={paletteMode} onModeChange={setPaletteMode}>
           <section className="layer-manager" aria-label="Layer Properties Manager">
             <header><strong>LAYER PROPERTIES MANAGER</strong><span>×</span></header>
             <div className="layer-current"><span>Current layer: <strong>{activeLayer.name}</strong></span><label>Search for layer<input aria-label="Search for layer" value={layerFilterInput} onChange={(event) => setLayerFilterInput(event.target.value)} /></label></div>
@@ -3961,8 +3957,8 @@ export function App() {
           <section><h2>Plot style</h2></section>
           <section><h2>View</h2></section>
           <section><h2>Data</h2></section>
-        </aside>
-      </section>
+        </PaletteFrame>
+      </DrawingViewport>
       <section className="command-line" aria-label="Käsurida" data-visual-zone="command-line">
         {commandHistoryOpen && (
           <section className="command-history-window" role="dialog" aria-modal="true" aria-labelledby="command-text-window-title" data-testid="command-text-window">
@@ -4243,6 +4239,6 @@ export function App() {
           <span className="status-space">{activeSpace} · mm · SNAP</span>
         </span>
       </footer>
-    </main>
+    </CadShell>
   );
 }
