@@ -54,6 +54,10 @@ describe("F-128 document session coordinator", () => {
     expect(coordinator.document("first").entities.map((entity) => entity.handle)).toEqual(["10"]);
     expect(coordinator.document("second").entities.map((entity) => entity.handle)).toEqual(["20"]);
     expect(coordinator.readBack().documents[0]).toEqual(expect.objectContaining({ canRedo: true }));
+
+    coordinator.commit("second", operation("delete-20", 0), [{ type: "delete", handle: "20" }]);
+    expect(coordinator.readBack().documents[1]).toEqual(expect.objectContaining({ selectedHandles: [] }));
+    expect(coordinator.readBack().documents[0]).toEqual(expect.objectContaining({ selectedHandles: ["10"] }));
   });
 
   it("accepts a persisted candidate only after durable storage succeeds", async () => {
