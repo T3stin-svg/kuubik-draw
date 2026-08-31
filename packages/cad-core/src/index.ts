@@ -19,6 +19,7 @@ export * from "./draw-order.js";
 export * from "./geometry-commands.js";
 export * from "./array-commands.js";
 export * from "./pedit.js";
+export * from "./pline-command.js";
 export * from "./selection-query.js";
 export * from "./spline.js";
 export * from "./boundary-region.js";
