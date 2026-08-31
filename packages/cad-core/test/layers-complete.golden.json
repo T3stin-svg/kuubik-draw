@@ -1,0 +1,36 @@
+{
+  "byLayer": {
+    "layerId": "steel",
+    "color": "#336699",
+    "colorMethod": "trueColor",
+    "aciIndex": null,
+    "linetypeId": "dash",
+    "linetypeScale": 2,
+    "lineweightMm": 0.5,
+    "transparency": 25,
+    "sources": {
+      "color": "layer",
+      "linetype": "layer",
+      "linetypeScale": "layer",
+      "lineweight": "layer",
+      "transparency": "layer"
+    }
+  },
+  "overridden": {
+    "layerId": "steel",
+    "color": "#ff0000",
+    "colorMethod": "aci",
+    "aciIndex": 1,
+    "linetypeId": "continuous",
+    "linetypeScale": 0.5,
+    "lineweightMm": 0.7,
+    "transparency": 40,
+    "sources": {
+      "color": "entity",
+      "linetype": "entity",
+      "linetypeScale": "entity",
+      "lineweight": "entity",
+      "transparency": "entity"
+    }
+  }
+}

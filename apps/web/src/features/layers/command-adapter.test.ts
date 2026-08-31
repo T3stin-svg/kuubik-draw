@@ -11,9 +11,12 @@ describe("typed VisualShellCommandAdapter layer boundary", () => {
     expect(adapter.canExecute("F-086", "paper")).toBe(false);
     expect(adapter.canExecute("F-086", "model")).toBe(false);
     adapter.execute("F-072");
+    adapter.execute("F-073");
+    adapter.execute("F-075");
+    adapter.execute("F-079");
     adapter.execute("F-086");
     adapter.setPrecisionMode("F-045", true);
     expect(adapter.precisionMode("F-045")).toBe(true);
-    expect(actions).toEqual(["F-072:create"]);
+    expect(actions).toEqual(["F-072:create", "F-073:visibility", "F-075:freeze", "F-079:plot"]);
   });
 });
