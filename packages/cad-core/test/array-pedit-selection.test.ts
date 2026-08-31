@@ -110,6 +110,54 @@ describe("PEDIT", () => {
     expect(result.entity.vertices).toEqual([{ x: 0, y: 0 }, { x: 10, y: 2 }, { x: 15, y: 5 }]);
   });
 
+  it("joins a counter-clockwise ARC as one exact bulged polyline segment", () => {
+    const document = createEmptyDocument({ documentId: "pedit-arc" });
+    document.entities.push(
+      { kind: "line", handle: "10", layerId: "0", start: { x: 0, y: 0 }, end: { x: 10, y: 0 } },
+      { kind: "arc", handle: "11", layerId: "0", center: { x: 10, y: 10 }, radius: 10, startAngleRad: -Math.PI / 2, endAngleRad: 0, counterClockwise: true },
+    );
+    const result = preparePeditCommand(document, { handle: "10", actions: [{ type: "join", handles: ["11"], tolerance: 0 }] });
+    expect(result).toMatchObject({ joinedHandles: ["11"], rejectedJoins: [] });
+    expect(result.entity.vertices).toEqual([
+      { x: 0, y: 0 },
+      { x: 10, y: 0, bulge: expect.closeTo(Math.tan(Math.PI / 8), 12) },
+      { x: expect.closeTo(20, 12), y: expect.closeTo(10, 12) },
+    ]);
+    expect(result.changes).toMatchObject([{ type: "put" }, { type: "delete", handle: "11" }]);
+  });
+
+  it("reverses ARC direction with the correct signed bulge and honors Join tolerance", () => {
+    const document = createEmptyDocument({ documentId: "pedit-arc-reverse" });
+    document.entities.push(
+      { kind: "line", handle: "10", layerId: "0", start: { x: 30, y: 10 }, end: { x: 20.0005, y: 10 } },
+      { kind: "arc", handle: "11", layerId: "0", center: { x: 10, y: 10 }, radius: 10, startAngleRad: -Math.PI / 2, endAngleRad: 0, counterClockwise: true },
+    );
+    const rejected = preparePeditCommand(document, { handle: "10", actions: [{ type: "join", handles: ["11"], tolerance: 0.0001 }] });
+    expect(rejected.rejectedJoins).toEqual([{ handle: "11", reason: "not-contiguous" }]);
+    const joined = preparePeditCommand(document, { handle: "10", actions: [{ type: "join", handles: ["11"], tolerance: 0.001 }] });
+    expect(joined.entity.vertices).toEqual([
+      { x: 30, y: 10 },
+      { x: 20.0005, y: 10, bulge: expect.closeTo(-Math.tan(Math.PI / 8), 12) },
+      { x: expect.closeTo(10, 12), y: expect.closeTo(0, 12) },
+    ]);
+  });
+
+  it("rejects unsupported and degenerate arc Join targets without mutating the source", () => {
+    const document = createEmptyDocument({ documentId: "pedit-arc-reject" });
+    document.entities.push(
+      { kind: "line", handle: "10", layerId: "0", start: { x: 0, y: 0 }, end: { x: 10, y: 0 } },
+      { kind: "circle", handle: "11", layerId: "0", center: { x: 10, y: 10 }, radius: 10 },
+      { kind: "arc", handle: "12", layerId: "0", center: { x: 10, y: 0 }, radius: 0, startAngleRad: 0, endAngleRad: 1, counterClockwise: true },
+    );
+    const result = preparePeditCommand(document, { handle: "10", actions: [{ type: "join", handles: ["11", "12"], tolerance: 0 }] });
+    expect(result.rejectedJoins).toEqual([
+      { handle: "11", reason: "unsupported-entity" },
+      { handle: "12", reason: "degenerate-geometry" },
+    ]);
+    expect(result.entity.vertices).toEqual([{ x: 0, y: 0 }, { x: 10, y: 0 }]);
+    expect(result.changes).toEqual([{ type: "put", entity: result.entity }]);
+  });
+
   it("commits Join as one atomic Undo/Redo operation", () => {
     const document = createEmptyDocument({ documentId: "pedit-atomic" });
     document.entities.push(

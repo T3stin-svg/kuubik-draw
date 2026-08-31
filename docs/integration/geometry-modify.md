@@ -82,7 +82,9 @@ The host should adapt `prepareArrayCommand` and `preparePeditCommand` to
 `PreparedAtomicCommand` and supply that adapter to the generic feature workflow.
 ARRAYPATH currently creates non-associative copies because the v1 document schema
 has no associative-array entity. PEDIT supports lines and polylines; unsupported Join
-targets are explicitly rejected rather than silently approximated. Quick Select and
+targets are explicitly rejected rather than silently approximated. Open ARC targets
+are converted to an exact signed bulge, including reversed joins and Join tolerance.
+Quick Select and
 Select Similar update selection state only and therefore do not create document Undo
 records.
 
