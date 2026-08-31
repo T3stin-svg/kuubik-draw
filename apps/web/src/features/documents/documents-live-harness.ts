@@ -5,7 +5,7 @@ import { KDrawIndexedDb, StorageRevisionConflictError } from "../../indexed-db.j
 import { DocumentLiveOrchestrator, type DocumentLiveReadback } from "./document-live-orchestrator.js";
 
 const DATABASE_NAME = "kuubik-draw";
-const DATABASE_VERSION = 2;
+const DATABASE_VERSION = 3;
 
 export interface DocumentsLiveHarnessResult {
   ok: true;

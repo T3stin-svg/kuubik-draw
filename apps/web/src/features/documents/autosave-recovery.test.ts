@@ -28,7 +28,7 @@ describe("F-133 autosave recovery coordinator", () => {
     await crashed.commit(second, { opId: "op-2", baseRevision: 1, commandId: "CIRCLE", args: {}, targetHandles: [], resultHandles: [] });
 
     const raw = await new Promise<IDBDatabase>((resolve, reject) => {
-      const request = factory.open("kuubik-draw", 2);
+      const request = factory.open("kuubik-draw");
       request.onsuccess = () => resolve(request.result);
       request.onerror = () => reject(request.error);
     });

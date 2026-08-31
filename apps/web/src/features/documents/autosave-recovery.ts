@@ -1,6 +1,11 @@
 import type { CadSessionHistoryState } from "@kuubik/cad-core";
 import type { CadOperation, KDrawDocumentV1 } from "@kuubik/cad-schema";
-import { KDrawIndexedDb, type DocumentRecoveryResult } from "../../indexed-db.js";
+import {
+  KDrawIndexedDb,
+  type DocumentRecoveryResult,
+  type SnapshotCompactionPolicy,
+  type SnapshotCompactionResult,
+} from "../../indexed-db.js";
 
 export class DocumentAutosaveRecovery {
   readonly #openDocuments = new Set<string>();
@@ -35,6 +40,11 @@ export class DocumentAutosaveRecovery {
   ): Promise<void> {
     this.assertOpen(document.documentId);
     await this.database.commitRevision(document, operation, sessionHistory);
+  }
+
+  async compact(documentId: string, policy: SnapshotCompactionPolicy, recordedAt?: string): Promise<SnapshotCompactionResult> {
+    this.assertOpen(documentId);
+    return this.database.compactDocument(documentId, policy, recordedAt);
   }
 
   async close(documentId: string, revision: number, recordedAt?: string): Promise<void> {

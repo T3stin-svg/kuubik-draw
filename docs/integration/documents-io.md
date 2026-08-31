@@ -8,6 +8,8 @@ Fourth-wave layout/plot shell source: `work4/reio-documents-live` from integrato
 
 Fifth-wave document workspace source: `work5/reio-documents-live` from integrator base `dce6190f73d527b89d9f418a25f266243ebc2f41`.
 
+Sixth-wave recovery/compaction source: `work6/reio-documents-live` from integrator base `2bbec19176b8a17bc88f6b3ff962e8caf2fb444e`.
+
 This workstream deliberately does not modify `App.tsx`, `style.css`, package manifests, parity scores or security evidence. The integration owner must wire the following surfaces without weakening the existing F-097...F-107, F-109, F-111 and F-114 paths.
 
 ## Shared package exports
@@ -48,7 +50,8 @@ The transaction module also exports `put-attachment` and `delete-attachment` `Ca
 - `layout-plot-shell-harness.ts` and `.html`: deterministic real-Chromium layout, rectangular viewport, scale/pan/twist/lock, page setup, named setup, publish, Undo/Redo and crash/reload fixture
 - `document-workspace-shell.ts`: DOM-independent F-128/F-129/F-130 contract for document switching, per-document command context, persisted atomic history and PGP-like aliases
 - `document-workspace-harness.ts` and `.html`: deterministic real-Chromium two-document isolation, undo-mark, crash/reload, stale-revision and alias roundtrip fixture
-- `indexed-db.ts`: schema v2 attachment, append-only snapshot/operation and crash-event methods
+- `recovery-compaction-harness.ts` and `.html`: two-phase real-Chromium seed/reload fixture for multi-document compaction, interrupted session, incomplete operation tail and idempotent replay
+- `indexed-db.ts`: schema v3 attachment, append-only snapshot/operation/compaction and crash-event methods
 
 `KDrawIndexedDb(factory, databaseName?)` accepts an optional isolated database name for non-destructive browser fixtures. Production callers retain the default `kuubik-draw` name.
 
@@ -67,6 +70,10 @@ The shell capability map is intentionally not a parity score. F-096...F-107/F-11
 `PgpAliasMapping` accepts UTF-8 `ALIAS, *COMMAND` text up to 1 MiB. Canonical command names are reserved and always win. Imported aliases override built-ins; repeated imported aliases use the last valid declaration and report each changed mapping as `incoming-wins`. Unknown commands, malformed lines, canonical-name replacement and invalid alias tokens reject the entire import before replacing the active map. Export is uppercase, alias-sorted CRLF text with a final CRLF, so export -> import -> export is bit-identical.
 
 Each enhanced operation record stores the post-operation `CadSessionHistoryState` and its own SHA-256 beside the existing document SHA chain in the same IndexedDB transaction. Recovery accepts history only from the last valid operation-log record. A history-only mutation quarantines that operation tail even if document revision and document SHA remain valid. Legacy records without history remain readable but return `sessionHistory: null` and do not claim recoverable Undo/Redo.
+
+Schema v3 adds an append-only `compactions` store. `compactDocument` accepts only a non-degraded recovered head and a positive minimum-operation policy, atomically appends a SHA-bound snapshot plus compaction record, and independently reads both back. It never deletes operation or snapshot history. Recovery may use the newest valid compaction as a replay floor, restores its exact `CadSessionHistoryState`, and validates every later operation through the existing document/history SHA chains. A missing or mutated compact snapshot/record is reported and falls back to the complete operation log.
+
+Every recovery returns a deterministic `RecoveryReceipt` with a stable code, source, revision, ignored operation ids, corrupt snapshot/compaction keys, unclean session ids, selected compaction key and Estonian summary. `DocumentLiveOrchestrator.readBack` forwards this receipt without reducing the earlier F-128/F-129/F-130 session or alias data. `StoragePersistenceError` exposes stable quota, transaction-abort and generic request codes; an aborted append keeps document head, snapshots and operations unchanged.
 
 The fifth-wave browser fixture is available at `/src/features/documents/document-workspace-harness.html`. It proves two isolated document contexts, an explicit SCALE undo mark, LINE/CIRCLE history separation, crash recovery, two Undo steps plus Redo, stale-revision rejection and bit-identical PGP alias export/import. F-128/F-129/F-130 remain `candidate`: `App.tsx`, visible keyboard routing and the owned AutoCAD comparison are outside this worktree.
 
@@ -98,6 +105,10 @@ F-115 atomic persistence and crash/reload wiring now have real-Chromium read-bac
 ## Recovery boundary
 
 A corrupt operation tail is never deleted. `DocumentAutosaveRecovery.open` appends a `recover` event that records the ignored operation ids and rewinds only the mutable head to the last valid SHA-chained document. Later commits reuse that revision with unique append-only snapshot keys; replay filters only explicitly quarantined operation ids. Open/clean pairing is chronological, so an early or duplicate clean event cannot hide a later interrupted session.
+
+The sixth-wave fixture is available at `/src/features/documents/recovery-compaction-harness.html`. Load `?phase=seed`, then navigate or reload with `?phase=recover` against the same browser profile. The seed phase creates alpha revision 2 and beta revision 1, compacts alpha, appends an intentionally incomplete alpha revision-3 tail and closes without clean events. The recover phase must return alpha revision 2 from compaction with the incomplete tail named, beta revision 1 from the operation log, unchanged operation counts 3/1, `browser-crashed` on both receipts and a byte-identical repeated alpha document/receipt.
+
+Threat boundary: SHA-256 detects accidental/corruption-fixture mutation but is not a signature against an attacker able to rewrite both payload and digest. IndexedDB origin isolation, browser quota policy and physical process-kill durability remain browser/platform responsibilities. Compaction is a replay optimization and audit checkpoint, not destructive garbage collection. It refuses degraded recovery state, preserves every prior record and never upgrades a recovery result into certification evidence by itself.
 
 ## Native boundary
 

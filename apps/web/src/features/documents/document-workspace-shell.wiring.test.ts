@@ -14,7 +14,7 @@ describe("F-128/F-129/F-130 wiring ratchets", () => {
     expect(persisted.indexOf("await persist(candidate.document, operation, candidate.history)")).toBeLessThan(persisted.indexOf("this.acceptCandidate(entry, candidate)"));
     expect(indexedDb).toContain("sessionHistorySha256");
     expect(indexedDb).toContain("&& await validSessionHistory(record)");
-    expect(indexedDb).toContain('sessionHistory: source === "operation-log" ? replayedSessionHistory : null');
+    expect(indexedDb).toContain('source === "operation-log" || source === "compaction" ? replayedSessionHistory : null');
   });
 
   it("keeps command history on the document entry and applies explicit alias precedence", () => {

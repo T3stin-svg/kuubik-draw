@@ -49,7 +49,9 @@ export interface DocumentLiveReadback {
     recoveredRevision: number | null;
     ignoredOperationIds: string[];
     corruptSnapshotKeys: string[];
+    corruptCompactionKeys: string[];
     uncleanSessionIds: string[];
+    receipt: DocumentRecoveryResult["receipt"];
   }>;
 }
 
@@ -224,7 +226,9 @@ export class DocumentLiveOrchestrator {
         recoveredRevision: recovery.recoveredRevision,
         ignoredOperationIds: [...recovery.ignoredOperationIds],
         corruptSnapshotKeys: [...recovery.corruptSnapshotKeys],
+        corruptCompactionKeys: [...recovery.corruptCompactionKeys],
         uncleanSessionIds: [...recovery.uncleanSessionIds],
+        receipt: structuredClone(recovery.receipt),
       })),
     };
   }

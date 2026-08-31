@@ -11,6 +11,27 @@ function rawRequest<T>(request: IDBRequest<T>): Promise<T> {
 }
 
 describe("versioned IndexedDB persistence", () => {
+  it("migrates a schema-v2 document in place and adds the append-only compaction store", async () => {
+    const factory = new IDBFactory();
+    const legacyDocument = createEmptyDocument({ documentId: "legacy-v2" });
+    const upgradeRequest = factory.open("schema-v2-migration", 2);
+    upgradeRequest.onupgradeneeded = () => {
+      upgradeRequest.result.createObjectStore("documents", { keyPath: "documentId" }).add(legacyDocument);
+    };
+    const legacyDatabase = await rawRequest(upgradeRequest);
+    legacyDatabase.close();
+
+    const database = new KDrawIndexedDb(factory, "schema-v2-migration");
+    await database.open();
+    expect(await database.loadDocument("legacy-v2")).toEqual(legacyDocument);
+    expect(await database.compactions("legacy-v2")).toEqual([]);
+    const readBack = await rawRequest(factory.open("schema-v2-migration"));
+    expect([...readBack.objectStoreNames]).toContain("compactions");
+    expect(readBack.version).toBe(3);
+    readBack.close();
+    database.close();
+  });
+
   it("stores snapshots and an append-only operation log without localStorage", async () => {
     const database = new KDrawIndexedDb(new IDBFactory());
     const document = createEmptyDocument({ documentId: "local", now: "2026-08-28T00:00:00Z" });
@@ -98,8 +119,14 @@ describe("versioned IndexedDB persistence", () => {
       recoveredRevision: 2,
       ignoredOperationIds: [],
       corruptSnapshotKeys: [],
+      corruptCompactionKeys: [],
       uncleanSessionIds: ["session-crashed"],
       sessionHistory: null,
+      receipt: expect.objectContaining({
+        code: "RECOVERY_REPLAYED",
+        status: "recovered",
+        recoveredRevision: 2,
+      }),
     });
     await database.recordRecoveryClean("local", "session-crashed", 2, "2026-08-31T10:05:00Z");
     expect((await database.recoverDocument("local")).uncleanSessionIds).toEqual([]);
@@ -117,7 +144,7 @@ describe("versioned IndexedDB persistence", () => {
     const second = structuredClone(first); second.revision = 2;
     await database.commitRevision(second, { opId: "op-2", baseRevision: 1, commandId: "LINE", args: {}, targetHandles: [], resultHandles: [] });
 
-    const raw = await rawRequest(factory.open("kuubik-draw", 2));
+    const raw = await rawRequest(factory.open("kuubik-draw"));
     const transaction = raw.transaction("operations", "readwrite");
     const store = transaction.objectStore("operations");
     const corrupt = await rawRequest(store.get("op-2"));
@@ -136,7 +163,7 @@ describe("versioned IndexedDB persistence", () => {
       ignoredOperationIds: ["op-2"],
     }));
 
-    const rawAgain = await rawRequest(factory.open("kuubik-draw", 2));
+    const rawAgain = await rawRequest(factory.open("kuubik-draw"));
     const firstTransaction = rawAgain.transaction("operations", "readwrite");
     const firstStore = firstTransaction.objectStore("operations");
     const corruptFirst = await rawRequest(firstStore.get("op-1"));

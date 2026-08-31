@@ -66,7 +66,7 @@ describe("F-115 durable PDF underlay transaction", () => {
     await commitPdfUnderlayAttachment(database, coordinator, "pdf-readback", operation(), prepared, placement);
 
     const raw = await new Promise<IDBDatabase>((resolve, reject) => {
-      const request = factory.open("kuubik-draw", 2);
+      const request = factory.open("kuubik-draw");
       request.onsuccess = () => resolve(request.result);
       request.onerror = () => reject(request.error);
     });
