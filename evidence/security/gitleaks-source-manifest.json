@@ -10,8 +10,8 @@
   "ciArtifactsExcluded": [
     "results.sarif"
   ],
-  "fileCount": 1185,
-  "sourceTreeSha256": "40c74065438d84b6f8debb3347a734da6d69429ae42cca65c3b1629b53df81e1",
+  "fileCount": 1746,
+  "sourceTreeSha256": "5d3fa47423c839df902c7eb688215ca3309d1d55c93d64068edfe0919c99c999",
   "files": [
     {
       "path": ".gitattributes",
@@ -50,8 +50,8 @@
     },
     {
       "path": "apps/web/src/App.tsx",
-      "size": 252550,
-      "sha256": "37ea55f32aa3a28b83ea4cfe476ba7d15721326e29a32ebcfb6625bf84a4dd71"
+      "size": 295318,
+      "sha256": "3e777f724fda67148cd9932e3e1182f38f36f4960ddf37ff0a7eccc0ce1f36bc"
     },
     {
       "path": "apps/web/src/context-menu.test.ts",
@@ -64,14 +64,684 @@
       "sha256": "d7004dfba317042b45f344971e29ba8a36a8de4f6b4ed7a2e573d8a84aae9931"
     },
     {
+      "path": "apps/web/src/features/annotation/AnnotationPanel.tsx",
+      "size": 945,
+      "sha256": "2355f72b8d005e0a00efc92ad8434e33a06ce27584626616f44c018c43088411"
+    },
+    {
+      "path": "apps/web/src/features/annotation/association-workflow.ts",
+      "size": 3376,
+      "sha256": "dfd73143bf90fb022ce21c72f223d948a6338c1cae4b0b802953912557a8c291"
+    },
+    {
+      "path": "apps/web/src/features/annotation/command-adapter.test.ts",
+      "size": 7954,
+      "sha256": "df2441cceb6ce56bae92e660aa75cca1ac4a5f1982fa2ad988b588cf3ce95a87"
+    },
+    {
+      "path": "apps/web/src/features/annotation/command-adapter.ts",
+      "size": 8997,
+      "sha256": "c831e6985a181542f02ed755952d3e7caed5b5c08891c9ddf8f3d73c554cf566"
+    },
+    {
+      "path": "apps/web/src/features/annotation/command-definition.ts",
+      "size": 3823,
+      "sha256": "59e279447421e1c8cfc1dabd425d30cd679a592c8280dd4c4446045bbd50ea8c"
+    },
+    {
+      "path": "apps/web/src/features/annotation/command-read-back.ts",
+      "size": 4737,
+      "sha256": "85a7e0c592b148b121744147198d90f7afed4067f1a0288db91ad938337c59b1"
+    },
+    {
+      "path": "apps/web/src/features/annotation/dimensions-wave10.wiring.test.ts",
+      "size": 6270,
+      "sha256": "a49f3d7dcba6a479a1a2632c55c22e6329ac56765524ff4e61e45bd8cec2cd81"
+    },
+    {
+      "path": "apps/web/src/features/annotation/live-workflow.test.ts",
+      "size": 19490,
+      "sha256": "1e3ffe5b13f685597e4b069e010a9931ba1356dad57ece4cdfec4f04a6763184"
+    },
+    {
+      "path": "apps/web/src/features/annotation/model.test.ts",
+      "size": 1134,
+      "sha256": "10afd292e39a94e1b5417c8388d349f7167af5e14848a66e660d6c83a387bb7f"
+    },
+    {
+      "path": "apps/web/src/features/annotation/model.ts",
+      "size": 13451,
+      "sha256": "2243174c566eabbb4286bd6caecc09c60805a2c34fbba553f926e1147eab1a17"
+    },
+    {
+      "path": "apps/web/src/features/annotation/prompt-input.ts",
+      "size": 14282,
+      "sha256": "44fc28fc144c4415fc3b2af78310dcae6407b3e4b005821d1c05bb22a015549b"
+    },
+    {
+      "path": "apps/web/src/features/annotation/prompt-state-machine.test.ts",
+      "size": 1827,
+      "sha256": "27d9f036ab0746beeb6994a7e430632e6cab1327abb352ab54171fa0fb41a68c"
+    },
+    {
+      "path": "apps/web/src/features/annotation/prompt-state-machine.ts",
+      "size": 4111,
+      "sha256": "15b5ade19085650d9cd2905c50928b4e615fd8488adcd5a6aadf47870858ec9c"
+    },
+    {
+      "path": "apps/web/src/features/annotation/shell-adapter.test.ts",
+      "size": 5796,
+      "sha256": "70708a9a96a91a5b92673c1655f48c1f23f91cd1c220675412ea98c5e3823d4c"
+    },
+    {
+      "path": "apps/web/src/features/annotation/shell-adapter.ts",
+      "size": 10811,
+      "sha256": "a595b0d9ae0ff34376cc947386c58b84fdf65bd78021b928cb2d043a03177648"
+    },
+    {
+      "path": "apps/web/src/features/annotation/text-leaders-wave11.wiring.test.ts",
+      "size": 10016,
+      "sha256": "208d6a0c376a209e5b1861f9c3133482d964c3dc00365733978ba0862c0614aa"
+    },
+    {
+      "path": "apps/web/src/features/blocks/BlocksPanel.tsx",
+      "size": 934,
+      "sha256": "34dc35db6784204344ce1dbd69728819d8ecd8b2200fa1e56818fab42dea967f"
+    },
+    {
+      "path": "apps/web/src/features/blocks/command-adapter.test.ts",
+      "size": 4988,
+      "sha256": "6f0ef48bff0ade1a99ff566e0a72d17f48871448ff8404eba2bc8e535d03adb1"
+    },
+    {
+      "path": "apps/web/src/features/blocks/command-adapter.ts",
+      "size": 4813,
+      "sha256": "4735a2003e957ade692e8eb57c9e9f85d3e3d925ebda14f0d992ae591313d4bf"
+    },
+    {
+      "path": "apps/web/src/features/blocks/command-definition.test.ts",
+      "size": 2433,
+      "sha256": "bf7742235fbd3a1af32add000e637404646d749ee9ddd3a81bc061fd4116090a"
+    },
+    {
+      "path": "apps/web/src/features/blocks/command-definition.ts",
+      "size": 1571,
+      "sha256": "a34d08eb16ff647d3df1d153f66225f4600a3ddc20f8d8e8568c72d95ab672e4"
+    },
+    {
+      "path": "apps/web/src/features/blocks/model.test.ts",
+      "size": 808,
+      "sha256": "92c7a59354f0be3b57116e683a693b4b07cb89125467ec81441bded39e4a0ffc"
+    },
+    {
+      "path": "apps/web/src/features/blocks/model.ts",
+      "size": 4084,
+      "sha256": "baaf356014b70ca7a0a10785c916e45d549b15ebaf88f8b62820bcec1ad24771"
+    },
+    {
+      "path": "apps/web/src/features/blocks/prompt-input.ts",
+      "size": 3286,
+      "sha256": "940bf7bad32e64dfc0bb047bafbe9f4fc3f5c471e0f718af2b1e6f935c627fb7"
+    },
+    {
+      "path": "apps/web/src/features/command-system/command-engine.test.ts",
+      "size": 4621,
+      "sha256": "807d99de08efaa68e01a03fd579dff4f05978132add92a366e3c0134368757bf"
+    },
+    {
+      "path": "apps/web/src/features/command-system/command-engine.ts",
+      "size": 9183,
+      "sha256": "c998526754802be46386437c632cd06dabe01b0349a6a5357bbfe5cd54946c58"
+    },
+    {
+      "path": "apps/web/src/features/command-system/geometry-modify-adapters.test.ts",
+      "size": 7652,
+      "sha256": "baa969ed5e3ff184d6ab491b2281b629206c862b614f2d09dac9153acd236740"
+    },
+    {
+      "path": "apps/web/src/features/command-system/geometry-modify-adapters.ts",
+      "size": 11198,
+      "sha256": "b07c7b4b5358a0c526bda8490a91ff10f055bba29fb9cad08cdab994746ab24b"
+    },
+    {
+      "path": "apps/web/src/features/documents/autosave-recovery.test.ts",
+      "size": 4706,
+      "sha256": "5be60de753390ac75b99da39d6fd5c36f7b50c7e8962bc0dc3efcd7b3d933dbf"
+    },
+    {
+      "path": "apps/web/src/features/documents/autosave-recovery.ts",
+      "size": 2464,
+      "sha256": "ff331cd232f660bdf07a12e6b5d0b16185cce9a28380cda16f889eca68adec08"
+    },
+    {
+      "path": "apps/web/src/features/documents/document-layout-workspace-harness.html",
+      "size": 1513,
+      "sha256": "3d54181207e3d3ccbdd73c8cee3481cb1998e0d17948e7ee42f735836cf79ee6"
+    },
+    {
+      "path": "apps/web/src/features/documents/document-layout-workspace-harness.test.ts",
+      "size": 2586,
+      "sha256": "7d6ec258abe46017f3e110c2dbaae565a3be2c6386fc0e21ba346e7f78241220"
+    },
+    {
+      "path": "apps/web/src/features/documents/document-layout-workspace-harness.ts",
+      "size": 7590,
+      "sha256": "c12e9e61419aee02226376a48f3681241e8f977f506a98ce10543f395e55574a"
+    },
+    {
+      "path": "apps/web/src/features/documents/document-layout-workspace.golden.json",
+      "size": 654,
+      "sha256": "f9e6d4249401666309ae0262b7c6b70c4a4b20d270706834fc6cd95db5ab89d6"
+    },
+    {
+      "path": "apps/web/src/features/documents/document-layout-workspace.test.ts",
+      "size": 6488,
+      "sha256": "db8a0dd396e4487118724b51ea82319cc2e2054c38a6f69c1f22769b85f0a4cd"
+    },
+    {
+      "path": "apps/web/src/features/documents/document-layout-workspace.ts",
+      "size": 5595,
+      "sha256": "bee6556582758012fbc5b5ccf576338d0780385d82b90174906340e36f4cb34f"
+    },
+    {
+      "path": "apps/web/src/features/documents/document-layout-workspace.wiring.test.ts",
+      "size": 1679,
+      "sha256": "d1554704c67ad81f456acec0b8d95c654861bece6736e75140d2f8cd4db153d6"
+    },
+    {
+      "path": "apps/web/src/features/documents/document-live-orchestrator.test.ts",
+      "size": 5823,
+      "sha256": "b3ca4b5503027d52ce146e1debef6bebe7adb584189f9b1660532ed2f0f57918"
+    },
+    {
+      "path": "apps/web/src/features/documents/document-live-orchestrator.ts",
+      "size": 12958,
+      "sha256": "d9a55a92b630a7851a70a747bcb4eba57c927d81bd0364297e87544ed3186207"
+    },
+    {
+      "path": "apps/web/src/features/documents/document-paper-workspace-harness.html",
+      "size": 1499,
+      "sha256": "7a2ba17e0d053d67276916a84b63745f5a0bdcd2793845c97bbc23da40a966eb"
+    },
+    {
+      "path": "apps/web/src/features/documents/document-paper-workspace-harness.test.ts",
+      "size": 2367,
+      "sha256": "e5b0f9e5483372fbf863afb5d840ca34670d594176abe0cbb577e7dfa97e5247"
+    },
+    {
+      "path": "apps/web/src/features/documents/document-paper-workspace-harness.ts",
+      "size": 6881,
+      "sha256": "2f5f08795288c5c7c5dffd8a091c4efeb534c9b5daef67a87cffe1968252c880"
+    },
+    {
+      "path": "apps/web/src/features/documents/document-paper-workspace.golden.json",
+      "size": 1327,
+      "sha256": "8eecdecd07582f48e347d5be5c5ff943733a395eb34430c00406b22c88fcc568"
+    },
+    {
+      "path": "apps/web/src/features/documents/document-paper-workspace.test.ts",
+      "size": 6662,
+      "sha256": "585fb33cc0bfde4401fd2bcc4ce3083373d06bdcfec4c8cdc506016c7b37bf9f"
+    },
+    {
+      "path": "apps/web/src/features/documents/document-paper-workspace.ts",
+      "size": 4162,
+      "sha256": "b5bdcd19446eaa7470bea93575afdd4b67e618bc4edc3cc7e06b91dfb8ec061b"
+    },
+    {
+      "path": "apps/web/src/features/documents/document-paper-workspace.wiring.test.ts",
+      "size": 1592,
+      "sha256": "1f0eda9ded9bd063fc3b6f44a8a776e4f1fc17da8d12e82483518f4326f1da74"
+    },
+    {
+      "path": "apps/web/src/features/documents/document-session-coordinator.test.ts",
+      "size": 6841,
+      "sha256": "fbe1c42d78cf9ef43bc30c51dbe3e927569f954b144aa7d411fcb10d527677be"
+    },
+    {
+      "path": "apps/web/src/features/documents/document-session-coordinator.ts",
+      "size": 9902,
+      "sha256": "8e13e4ebd3238d29ab7f1ea8127b0dc3558fee95d6c5bf101fc70698537ef1d1"
+    },
+    {
+      "path": "apps/web/src/features/documents/document-tabs.test.ts",
+      "size": 4279,
+      "sha256": "33112be36de89f7d6e170eb2885f84f955280a05e49d59173b043c472e7230c7"
+    },
+    {
+      "path": "apps/web/src/features/documents/document-tabs.ts",
+      "size": 9125,
+      "sha256": "b7ef5dd090a7089ac1d749459320fea8e29df2e55c48553756c9ad416f15980f"
+    },
+    {
+      "path": "apps/web/src/features/documents/document-workspace-harness.html",
+      "size": 1081,
+      "sha256": "4966da55875a0f57cdbdc49fa1d9e37970a5f8d7627d4fd06b6f289cc96cbebf"
+    },
+    {
+      "path": "apps/web/src/features/documents/document-workspace-harness.test.ts",
+      "size": 2148,
+      "sha256": "2ab1705fa0e38f4c9cfa88864e720ecfece8a43a621b30d3adb555adf088bfef"
+    },
+    {
+      "path": "apps/web/src/features/documents/document-workspace-harness.ts",
+      "size": 7838,
+      "sha256": "4bae02650dd26365ee44cee20009547c3717c35eb421dd85e26db727565b2a3b"
+    },
+    {
+      "path": "apps/web/src/features/documents/document-workspace-shell.mutation.test.ts",
+      "size": 2827,
+      "sha256": "fbbc6455875bf86825225cd3e633965437d6360e14213103269bcfa47f9f0791"
+    },
+    {
+      "path": "apps/web/src/features/documents/document-workspace-shell.test.ts",
+      "size": 8267,
+      "sha256": "29ec3e2847090ae3270415d4baada3617493121c558c4801bf3f1f24bcd1d78c"
+    },
+    {
+      "path": "apps/web/src/features/documents/document-workspace-shell.ts",
+      "size": 10901,
+      "sha256": "2c79cea8a4f3e271dcea0a4273507e39a685228b7f6ee036d00bf8c735113cbb"
+    },
+    {
+      "path": "apps/web/src/features/documents/document-workspace-shell.wiring.test.ts",
+      "size": 1823,
+      "sha256": "013d42bee88b4469ce861feb9336e6c6c0143ecdb0d4d3680800f62c884e9b2c"
+    },
+    {
+      "path": "apps/web/src/features/documents/documents-live-harness.html",
+      "size": 1019,
+      "sha256": "21e2b45a047058bb0c9a6bc5b98ca054e6a8e019a8850894ec901dd282079546"
+    },
+    {
+      "path": "apps/web/src/features/documents/documents-live-harness.test.ts",
+      "size": 1630,
+      "sha256": "26d6db6e954fdcd38bc4e9ef5f7e5e38fec34b5abf99fc885d97bed361c62290"
+    },
+    {
+      "path": "apps/web/src/features/documents/documents-live-harness.ts",
+      "size": 7939,
+      "sha256": "28bbaca9db556e12e09043ba3a86ba3a1630b5b741acc0d0a15c34f48c0937d7"
+    },
+    {
+      "path": "apps/web/src/features/documents/DocumentTabs.tsx",
+      "size": 1466,
+      "sha256": "4f51e9caefe4474542353a31a7ca68d0a27240d6df16091cea876991e7d22edd"
+    },
+    {
+      "path": "apps/web/src/features/documents/dxf-import-harness.golden.json",
+      "size": 356,
+      "sha256": "59b4d5bca529a0271913d495d1a6df491b512437667e3d26d87ce2a551a868a5"
+    },
+    {
+      "path": "apps/web/src/features/documents/dxf-import-harness.html",
+      "size": 356,
+      "sha256": "03d592b469961715d55c39bbb32361d4ea82156ed9e2db15d1af555b54e43f09"
+    },
+    {
+      "path": "apps/web/src/features/documents/dxf-import-harness.test.ts",
+      "size": 1111,
+      "sha256": "42c9c76d7ca1962d6542b0c69d8d19af18310ede0eb9c9982b2803e6625c8f5c"
+    },
+    {
+      "path": "apps/web/src/features/documents/dxf-import-harness.ts",
+      "size": 4063,
+      "sha256": "d02229f1e57ba4cc34d4ff70e918b7fce6a6b05a6463751959b48389785888e9"
+    },
+    {
+      "path": "apps/web/src/features/documents/dxf-import-transaction.test.ts",
+      "size": 5824,
+      "sha256": "700e9cd8b9539c1878bf172f679544c00c36932c1abd91e9c1a51392b16be0e0"
+    },
+    {
+      "path": "apps/web/src/features/documents/dxf-import-transaction.ts",
+      "size": 5036,
+      "sha256": "b07d37168c9a09db94bdad9038afc629b7f754a27deb574d31d15282dbab1fa6"
+    },
+    {
+      "path": "apps/web/src/features/documents/dxf-import-transaction.wiring.test.ts",
+      "size": 1335,
+      "sha256": "1240767a84df61b67c3cbe8aa17273ebc0506be8673794281792c9d0cf800011"
+    },
+    {
+      "path": "apps/web/src/features/documents/layout-plot-shell-harness.html",
+      "size": 1029,
+      "sha256": "0716c6deb8a369875a67e9bd43f5e8b8f568091ed76e6920c8af28d63466cfad"
+    },
+    {
+      "path": "apps/web/src/features/documents/layout-plot-shell-harness.test.ts",
+      "size": 1745,
+      "sha256": "9917c5b75ea5820062a13fa126e505e75f2410dcd7e9aff81b7ab153b9f7d8d2"
+    },
+    {
+      "path": "apps/web/src/features/documents/layout-plot-shell-harness.ts",
+      "size": 8266,
+      "sha256": "a83e139616e82f6c21e2094953d47981e5025e7da5744f6e4e3fe115bc755b06"
+    },
+    {
+      "path": "apps/web/src/features/documents/layout-plot-shell.golden.json",
+      "size": 4230,
+      "sha256": "2d87950f21caeb6277bd483ab47b8c34631c1292948b35e1d457942309f567e2"
+    },
+    {
+      "path": "apps/web/src/features/documents/layout-plot-shell.test.ts",
+      "size": 8602,
+      "sha256": "19657c5c96557a84e7c888d1e8de281a55c8a9114ce822349bbc4e7470ae9e5a"
+    },
+    {
+      "path": "apps/web/src/features/documents/layout-plot-shell.ts",
+      "size": 12306,
+      "sha256": "2de8d4a6abe8cb8a8fec1ce592dea22fff2c47dc7ba472270f1c1fab5e667b89"
+    },
+    {
+      "path": "apps/web/src/features/documents/layout-plot-shell.wiring.test.ts",
+      "size": 1677,
+      "sha256": "abc5e5e76624578aaf676274453ab2a4d212dea0a2bb9d595f941512d1127ae6"
+    },
+    {
+      "path": "apps/web/src/features/documents/model-space.test.ts",
+      "size": 1766,
+      "sha256": "c9ae88b9d51b8e357b85133c472c92c4e757a2301424b945d2ca56d93bba0c27"
+    },
+    {
+      "path": "apps/web/src/features/documents/model-space.ts",
+      "size": 2604,
+      "sha256": "3e159a0402dedc45efb9510daae9d35d76425cd30ecc45bcd6df89e15bceb52d"
+    },
+    {
+      "path": "apps/web/src/features/documents/pdf-underlay-transaction.test.ts",
+      "size": 5987,
+      "sha256": "ee4ab3833b72afba7d073ae0d5694cfbea6fed6f7d906ef587d15bab15c723b3"
+    },
+    {
+      "path": "apps/web/src/features/documents/pdf-underlay-transaction.ts",
+      "size": 3299,
+      "sha256": "a21becee812753d9215eb9a0589aa12e0f54850a123235d7609f203f16b1fb2e"
+    },
+    {
+      "path": "apps/web/src/features/documents/PdfUnderlayView.tsx",
+      "size": 1326,
+      "sha256": "3a42250102db8d45a50c54056332701dd83d34dc5a0319e8456d5ca3a61524ad"
+    },
+    {
+      "path": "apps/web/src/features/documents/recovery-compaction-harness.html",
+      "size": 1343,
+      "sha256": "45126eeee0366d4b770b005e1e9060ba3894cfc1071b6976b480e0f1ec21255c"
+    },
+    {
+      "path": "apps/web/src/features/documents/recovery-compaction-harness.test.ts",
+      "size": 1562,
+      "sha256": "ec044b20946dc39f6c9919c8ab300b26be223d8d6f69af82a18e8f293a753e4e"
+    },
+    {
+      "path": "apps/web/src/features/documents/recovery-compaction-harness.ts",
+      "size": 5115,
+      "sha256": "244c106f0ea70fb18e0448f27e08ed026fc8b190700ea46b7ae4307a2942ec18"
+    },
+    {
+      "path": "apps/web/src/features/documents/recovery-compaction.mutation.test.ts",
+      "size": 2137,
+      "sha256": "0f743447d65d2c005cae95e5511e64c6236b00c637f99062ece9372063713a81"
+    },
+    {
+      "path": "apps/web/src/features/documents/recovery-compaction.test.ts",
+      "size": 8694,
+      "sha256": "adeafc6d2795b6a1c9e1c2741a3ec4af050056722d6888de58f6376b802e552d"
+    },
+    {
+      "path": "apps/web/src/features/draw-modify/array-command-adapter.ts",
+      "size": 2156,
+      "sha256": "1d77a463091782ec1429718203a4b8edacae850b19b2e4eb87566a732517075c"
+    },
+    {
+      "path": "apps/web/src/features/draw-modify/atomic-command-workflow.test.ts",
+      "size": 1400,
+      "sha256": "97e7333f52183c4f92297376354f92b0d19ee34d49c2261efa4f4c5f9f461bf2"
+    },
+    {
+      "path": "apps/web/src/features/draw-modify/atomic-command-workflow.ts",
+      "size": 1551,
+      "sha256": "e9ffe73e80412ddfb232b93cec17e8bfec5b29ddca6624967f5a6e70882840a6"
+    },
+    {
+      "path": "apps/web/src/features/draw-modify/f011-revcloud-command-adapter.test.ts",
+      "size": 2174,
+      "sha256": "e427d375071100c7cb996497d2d4d56a4b21efcaa7c55abd057c7a629d205d64"
+    },
+    {
+      "path": "apps/web/src/features/draw-modify/f031-f032-array-command-adapter.test.ts",
+      "size": 5542,
+      "sha256": "bf780aa93abebe41a1db5e6df6fc5b54edf9d455bf9176e5277a3602de402f7d"
+    },
+    {
+      "path": "apps/web/src/features/draw-modify/geometry-workflow.test.ts",
+      "size": 1625,
+      "sha256": "c22098050611686dae296e321a2b3bd2c520bc68dab44fb3823d6e67a53288a7"
+    },
+    {
+      "path": "apps/web/src/features/draw-modify/geometry-workflow.ts",
+      "size": 1886,
+      "sha256": "25417fdc6d665a01a64cdc069ee564cc9fcca20152476bb310bc5c88e016e173"
+    },
+    {
+      "path": "apps/web/src/features/draw-modify/modify-command-matrix.test.ts",
+      "size": 4092,
+      "sha256": "8827e3c4c6805b2f75e24179c9186652e93a3fb4d8c34453a8c5f8918671e660"
+    },
+    {
+      "path": "apps/web/src/features/draw-modify/modify-command-matrix.ts",
+      "size": 6170,
+      "sha256": "064fdede489d71f04cb9b2848b3ffa084f68ed277f550c7c1c8e3644855b39f2"
+    },
+    {
+      "path": "apps/web/src/features/draw-modify/revcloud-command-adapter.ts",
+      "size": 769,
+      "sha256": "0d2e280a8e12798086d902d11f23a2aeb67d38ab99a7ce75242947705b16f3d9"
+    },
+    {
+      "path": "apps/web/src/features/layers/bylayer-performance.test.ts",
+      "size": 1767,
+      "sha256": "bbebb56ad822fb82fba876a351a1e2bf76cb7bf4cc7450d4d15e84fc0944bcb6"
+    },
+    {
+      "path": "apps/web/src/features/layers/bylayer-renderer.wiring.test.ts",
+      "size": 2607,
+      "sha256": "e550dfe422c463aaae0e4d48ee84fb7849ef72fb8530efb7878be79dbb2bb84d"
+    },
+    {
+      "path": "apps/web/src/features/layers/command-adapter.test.ts",
+      "size": 1137,
+      "sha256": "fbb33509a6bca59873c7be1bd4792d9ee53537571301836b0709bf815d7e7b36"
+    },
+    {
+      "path": "apps/web/src/features/layers/command-adapter.ts",
+      "size": 1632,
+      "sha256": "159a07bced702c8d0ec7bc9b5956d94188b32e1d879a4bc2f32848a228fedc10"
+    },
+    {
+      "path": "apps/web/src/features/layers/complete-wiring.test.ts",
+      "size": 4537,
+      "sha256": "8edef1d1fa2c74fbfce53b1f12ed7fc39504438d67e8af454499666d5a89fbdf"
+    },
+    {
+      "path": "apps/web/src/features/layers/controller.mutation.test.ts",
+      "size": 1083,
+      "sha256": "a85cc925d6b208c07052d8337fcfc83d1aca15a351ff8aaadcebde5deb5aa18b"
+    },
+    {
+      "path": "apps/web/src/features/layers/controller.test.ts",
+      "size": 3771,
+      "sha256": "422ea04a570eb480da0d8d9308c9ec5739e79fa9ce8732bf5dc6d5e1298d1a56"
+    },
+    {
+      "path": "apps/web/src/features/layers/controller.ts",
+      "size": 8785,
+      "sha256": "ee311b76e448878c9c2acfc1630c0ed3be915fb44e919c58ddab60f870b4b521"
+    },
+    {
+      "path": "apps/web/src/features/layers/model.test.ts",
+      "size": 1322,
+      "sha256": "e35d23d73ac93d3442b4ffc1d8521006e2b804b15a63b8c3243d25d637760825"
+    },
+    {
+      "path": "apps/web/src/features/layers/model.ts",
+      "size": 2225,
+      "sha256": "116e68d977801f315aefc7fa47aaf4f2bca114daa8d787bc7deed1f89ccd3c56"
+    },
+    {
+      "path": "apps/web/src/features/layers/participation-wiring.test.ts",
+      "size": 3923,
+      "sha256": "e3683f74586e1c09112541cb7f909d19359ab2475294b4ef360ca3d8d7fa1459"
+    },
+    {
+      "path": "apps/web/src/features/layers/shell-adapter.mutation.test.ts",
+      "size": 3231,
+      "sha256": "a5c848d8bf93d7f7bb56fd80f215cb719df2539e5b0b21556cb7df1f69195a64"
+    },
+    {
+      "path": "apps/web/src/features/layers/shell-adapter.performance.test.ts",
+      "size": 2267,
+      "sha256": "0d3fe4958e855c1d0bfc300aab8b5c2408857d2946effe465b7c973919597998"
+    },
+    {
+      "path": "apps/web/src/features/layers/shell-adapter.property.test.ts",
+      "size": 2527,
+      "sha256": "be111e121043e093946fa521498b19eb4408be70a48c5e434558719f5af46e72"
+    },
+    {
+      "path": "apps/web/src/features/layers/shell-adapter.test.ts",
+      "size": 4715,
+      "sha256": "42e1dd5afa52d46f40abe313d17a6434c1998ed3658d5a6aaef28629903e87d7"
+    },
+    {
+      "path": "apps/web/src/features/layers/shell-adapter.ts",
+      "size": 10236,
+      "sha256": "06af6e357cc72c29b7a1ce48375d78ebd74c95041da3228428ac866d43e06c36"
+    },
+    {
+      "path": "apps/web/src/features/layers/shell-adapter.wiring.test.ts",
+      "size": 4141,
+      "sha256": "db218108378f2815606bf97cbf4f6b3377a18e3b2877d7d5e0354b67f08d8ca7"
+    },
+    {
+      "path": "apps/web/src/features/layers/transparency-draw-order.performance.test.ts",
+      "size": 1816,
+      "sha256": "d2d8424c951bde6ca86d88d5046e8e1ed18f76659c125b8c72a26f6da14cf006"
+    },
+    {
+      "path": "apps/web/src/features/layers/transparency-draw-order.wiring.test.ts",
+      "size": 6675,
+      "sha256": "42cdec9bd5736a5fce18489e1eccafb48d35f18e7e5b711ee837488a9f9a85ec"
+    },
+    {
+      "path": "apps/web/src/features/precision/command-adapter.property.test.ts",
+      "size": 2330,
+      "sha256": "b1cdcecc9e450ff0f4ab6bc189beccc96dcb6ab040870422921a894a4035a59a"
+    },
+    {
+      "path": "apps/web/src/features/precision/command-adapter.test.ts",
+      "size": 5833,
+      "sha256": "720b34836115cb8dec84c69131d2c2406b7eaa926c8cfe231c2ace454cc35ca5"
+    },
+    {
+      "path": "apps/web/src/features/precision/command-adapter.ts",
+      "size": 12473,
+      "sha256": "1ac1b3d8c5ba0d06c76fe96c08b0ef2b80d4b946851cfcc86073c9dbe9450b59"
+    },
+    {
+      "path": "apps/web/src/features/precision/coordinate-entry-adapter.mutation.test.ts",
+      "size": 2406,
+      "sha256": "094de34527902d0538db197ee3f7925c542ea70635429ee2a6ac5b082836055a"
+    },
+    {
+      "path": "apps/web/src/features/precision/coordinate-entry-adapter.test.ts",
+      "size": 4218,
+      "sha256": "8da019519df1c7eb65aebca8a25966c408af85d11e9f69825e8c1b6e72973422"
+    },
+    {
+      "path": "apps/web/src/features/precision/coordinate-entry-adapter.ts",
+      "size": 6602,
+      "sha256": "69ebfedd640377c63fb74362f88b9b2e1426e609f1e54d0444df81bad4363b5d"
+    },
+    {
+      "path": "apps/web/src/features/precision/model-readback.test.ts",
+      "size": 2372,
+      "sha256": "c7e04e45c7042239607266f7c6f3d609cc7bd6ddea735d72f62435fbc8630e8e"
+    },
+    {
+      "path": "apps/web/src/features/precision/model.test.ts",
+      "size": 992,
+      "sha256": "dc86a8e41a25fdd48e89bd2a0e6c8274f396908e5f219bdbe46f981c1f7db216"
+    },
+    {
+      "path": "apps/web/src/features/precision/model.ts",
+      "size": 3662,
+      "sha256": "8789f0d72d5126759e7e62c79c7466e3aaac989de95efcf4c5ae0ee40db56801"
+    },
+    {
+      "path": "apps/web/src/features/precision/pointer-pipeline.performance.test.ts",
+      "size": 2223,
+      "sha256": "b52eef8dc7de56109e0afc3a6ab4cfd5fa14b2446a406f4f995f77884dbd30bd"
+    },
+    {
+      "path": "apps/web/src/features/precision/shell-contract.mutation.test.ts",
+      "size": 2367,
+      "sha256": "f5320bb0ed88d85e8806f80b72ac37a61cdd101ec2a8c03c4723098588222e93"
+    },
+    {
+      "path": "apps/web/src/features/precision/shell-contract.property.test.ts",
+      "size": 2066,
+      "sha256": "ef2a5bd9ebf48e53e0a96bf9c5c5fd47512b164d798f8962342703d89c8bd7af"
+    },
+    {
+      "path": "apps/web/src/features/precision/shell-contract.test.ts",
+      "size": 6929,
+      "sha256": "bcfeb70470928b7ec22a4f960f6d568678f39c8e490ec99c34b5925e1227250b"
+    },
+    {
+      "path": "apps/web/src/features/precision/shell-contract.ts",
+      "size": 18118,
+      "sha256": "c0cc18febc9b4ab5b7c273caa3fbfc5b8bce3ac4a8f9de42c9cc18740a062634"
+    },
+    {
+      "path": "apps/web/src/features/precision/shell-contract.wiring.test.ts",
+      "size": 1628,
+      "sha256": "6d3e369a9695e115fce9efb1ad0ea244b130b35984ec884619872a67e3021125"
+    },
+    {
+      "path": "apps/web/src/features/precision/snap-tracking-shell.test.ts",
+      "size": 3293,
+      "sha256": "1494317109ae70a5b404b5122bf502af4f9bc83f4b9072b2a37970faf7c565cd"
+    },
+    {
+      "path": "apps/web/src/features/precision/typed-input-pipeline.test.ts",
+      "size": 3601,
+      "sha256": "c84f285ce98eba9aab2c2877914871c346cf410228b1986eaa03930bd448f643"
+    },
+    {
+      "path": "apps/web/src/features/precision/units-contract.ts",
+      "size": 1025,
+      "sha256": "1126d188a89fec394ec1f046dc26778e3e5bfd25cec45be78be6ba9eef85de95"
+    },
+    {
+      "path": "apps/web/src/features/precision/units-contract.wiring.test.ts",
+      "size": 2669,
+      "sha256": "674a0778a025deb756c513745d7963c8bd529c81d1cdbffff76831cb04ba1fbe"
+    },
+    {
+      "path": "apps/web/src/icons/CadIcon.tsx",
+      "size": 5937,
+      "sha256": "1c24b41ea33c190029609c635371d53c0e946e6e72e64f125b3eb6639123e008"
+    },
+    {
       "path": "apps/web/src/indexed-db.test.ts",
-      "size": 3007,
-      "sha256": "3ccf01a45fb36e4c2d2390f3d779d4503a9b0647c63b4220be94f81216157eda"
+      "size": 9244,
+      "sha256": "776f4f8d398ec030e607a8101477576c49a205530e37fcf65abb1776b36d619c"
     },
     {
       "path": "apps/web/src/indexed-db.ts",
-      "size": 5646,
-      "sha256": "257405697d79c2319ef1a25cbb48e98568758f21908fd2d69e98c5b63ff84232"
+      "size": 36372,
+      "sha256": "fb972f0a9e5e716467042a903d25275de024aee9cf701cc2928b9a64f1eef94b"
     },
     {
       "path": "apps/web/src/main.tsx",
@@ -114,9 +784,104 @@
       "sha256": "a3a9ad3a7f059648342501fe6dca3b9587a312af34338af568e2b671096615ad"
     },
     {
+      "path": "apps/web/src/shell/CadShell.tsx",
+      "size": 582,
+      "sha256": "1e26897ce3d27ad473cf4a4f9991f227dd2cecc30027bfee58b72e959c6e82b6"
+    },
+    {
+      "path": "apps/web/src/shell/CommandLine.tsx",
+      "size": 3921,
+      "sha256": "4840647beb0f133b264a4de89e87607cdae665cce303e9b0bb44ae4f1e5a5c7d"
+    },
+    {
+      "path": "apps/web/src/shell/DimensionMenu.tsx",
+      "size": 3562,
+      "sha256": "89dfc558f6300705123ed8d973d0c0d80d46fc731926c7f329b39ea581ae9e4b"
+    },
+    {
+      "path": "apps/web/src/shell/DocumentTabs.tsx",
+      "size": 1625,
+      "sha256": "ad0a9849aa3af42c914de7980733eeebc7499cfd7ffb898888d1a19d7eec051c"
+    },
+    {
+      "path": "apps/web/src/shell/EllipsePrompt.tsx",
+      "size": 4115,
+      "sha256": "3c9c0cdf55ad9f3dcf8d6e7e3cd6f9606d21cc252e427ca00b521b24994cc3c6"
+    },
+    {
+      "path": "apps/web/src/shell/LayerPropertiesPanel.tsx",
+      "size": 17530,
+      "sha256": "dd3a6a368e50a29e2795ac8dcd64fcc304682f5f03034be68a248a032a311495"
+    },
+    {
+      "path": "apps/web/src/shell/LayoutBar.tsx",
+      "size": 2413,
+      "sha256": "89df43af46a3fb69b940cbdd7d697124406fcdd82548eab330d4b4759114e874"
+    },
+    {
+      "path": "apps/web/src/shell/LiveCommandPrompt.tsx",
+      "size": 2129,
+      "sha256": "8cf6da5d6d262f3000ad58e1427a2f55de6f80fa5325c1f32517a57e2d6ea5fe"
+    },
+    {
+      "path": "apps/web/src/shell/PaletteFrame.tsx",
+      "size": 3093,
+      "sha256": "e5a88875e12d6f89572ebe860594ce9a2de59ae8447dea4fe8aeafa8d50ac1fe"
+    },
+    {
+      "path": "apps/web/src/shell/PolygonPrompt.tsx",
+      "size": 3873,
+      "sha256": "c04a96270e25d25d6880ffb0d6fc23009879c7678dc747b5568ee8ec84a4ad57"
+    },
+    {
+      "path": "apps/web/src/shell/RecoveryPanel.tsx",
+      "size": 2874,
+      "sha256": "390926616a62fa152535d3d24557f521ae8d38ed639d673847c09c1171a27c59"
+    },
+    {
+      "path": "apps/web/src/shell/reio-scope.ts",
+      "size": 1371,
+      "sha256": "2ad43f17e0825241a3d46d680fbf80cc58bae8b3736f025c094940e604fab896"
+    },
+    {
+      "path": "apps/web/src/shell/Ribbon.tsx",
+      "size": 227,
+      "sha256": "aeb2b06c1095a32472be9bfc4ae43ce61a222d4bcc0d32ad8070eab08ed1fa9f"
+    },
+    {
+      "path": "apps/web/src/shell/RibbonTabs.tsx",
+      "size": 885,
+      "sha256": "5744ccab80fae3236a3ea7be3fd0f127b65179cb7be0e6f346b48b36e4814f3e"
+    },
+    {
+      "path": "apps/web/src/shell/RibbonTool.tsx",
+      "size": 1539,
+      "sha256": "98cf0acc1791420f2c52dcf25d4780f53e26b5c3ff6f378739b443c0e2086369"
+    },
+    {
+      "path": "apps/web/src/shell/runtime-adapter.ts",
+      "size": 34093,
+      "sha256": "5b73a33c9a4aeee2ce4ac8fbb0528585692fd74ae0d3d3cf325fbb2111a487ec"
+    },
+    {
+      "path": "apps/web/src/shell/StatusBar.tsx",
+      "size": 1657,
+      "sha256": "7d362978225ac77cb072d41b2522fb60e14862dee37f6a7ea9179befb889576b"
+    },
+    {
+      "path": "apps/web/src/shell/TitleBar.tsx",
+      "size": 3259,
+      "sha256": "a5bf63ecef94a371c50ce2988fda46818854fa621946e5d2904fda95f879b8df"
+    },
+    {
+      "path": "apps/web/src/shell/UnitsPanel.tsx",
+      "size": 5002,
+      "sha256": "230e13a7ae68a67e2495b01c332983b0d8640267d55f7c92e3ebf0b944737d1f"
+    },
+    {
       "path": "apps/web/src/style.css",
-      "size": 30689,
-      "sha256": "f4543a27eb6bae5858da62a5b0ddd64b858a8ad3c0badf62cbf3393d66e65f51"
+      "size": 54609,
+      "sha256": "1886b399b335916d572287724013243758cc51183b2e6c6cc9d94b368322e228"
     },
     {
       "path": "apps/web/src/workflows/modify-command.test.ts",
@@ -172,6 +937,31 @@
       "path": "docs/adr/0005-native-dwg-boundary.md",
       "size": 799,
       "sha256": "870e8afaa32ed79c42ae7cb10c675b789a27abc047a8b289c2ba0b66b0f57aa9"
+    },
+    {
+      "path": "docs/integration/annotation-blocks.md",
+      "size": 34838,
+      "sha256": "d1462b0447cb3e11a7196097ac69bac23d55d85b87ee8483a3099505f7c41759"
+    },
+    {
+      "path": "docs/integration/documents-io.md",
+      "size": 20723,
+      "sha256": "b8199ce70592473956d2883476b77a1d2c3fb344f9c98b3f55309930e254d61f"
+    },
+    {
+      "path": "docs/integration/geometry-modify.md",
+      "size": 22310,
+      "sha256": "4201ad60b27feff56b963e6cb9e5551e419cc95589847c334d38e22053c5ecc1"
+    },
+    {
+      "path": "docs/integration/precision-layers.md",
+      "size": 24768,
+      "sha256": "2ebcdf934a5f8806e15c7656eb9da9288cd028b5a23fac67c4231e6346849cbb"
+    },
+    {
+      "path": "docs/integration/visual-shell.md",
+      "size": 6695,
+      "sha256": "ac8cdc5c9e18fb8ac8a7756c3cfc0ea4cdf390eaa6ac9c546580264f06a4827b"
     },
     {
       "path": "docs/REIO_SCOPE_SELECTOR.md",
@@ -354,9 +1144,19 @@
       "sha256": "a4bb55b1ea0cb08bb5a15d2f7aed6de0238d2b477af81c46ac298a4a912afe7c"
     },
     {
+      "path": "e2e/visual-shell.config.ts",
+      "size": 606,
+      "sha256": "30fe4e12b2d636a3f58be94c598007a542f049a61e2e819f6a933538d751518f"
+    },
+    {
+      "path": "e2e/visual-shell.playwright.config.ts",
+      "size": 609,
+      "sha256": "66bcec7c41d131f18f1597295ce78e5bf41365e725b34ac98d2a1efc5a73e184"
+    },
+    {
       "path": "e2e/visual-shell.spec.ts",
-      "size": 38066,
-      "sha256": "a91f8c80e1b3d7acdb3ffe88d3634ba724d9e2bcff5ad6fba8138533302a507f"
+      "size": 102502,
+      "sha256": "558d0dc3bdcdbb969c6ef0fec91881e3fc34debd7006967d0634442257a8adc0"
     },
     {
       "path": "evidence/artifacts/F-003-autocad-readback.json",
@@ -3639,6 +4439,1331 @@
       "sha256": "28e2073c9e02d372041f1d7f0aa359e368514a26106c4dbc6c8edfeb91318eb2"
     },
     {
+      "path": "evidence/workstreams/annotation-blocks/dxf-readback-fixture.json",
+      "size": 4833,
+      "sha256": "6fb86d6c34ee172772053a1ebc40aa0dbea11123f129d92e777ced037c523294"
+    },
+    {
+      "path": "evidence/workstreams/annotation-blocks/README.md",
+      "size": 12605,
+      "sha256": "2ba4375252a9d12e648fb3046d40940ea72df9cefaf25e01c431570d53e6a5b8"
+    },
+    {
+      "path": "evidence/workstreams/documents-io/eighth-wave-paper-workspace.md",
+      "size": 3727,
+      "sha256": "71c7c0f2459dda9173d07170c838a55e7ed7fd477fca8352acbc28928c0d99df"
+    },
+    {
+      "path": "evidence/workstreams/documents-io/f096-f110-wave.md",
+      "size": 733,
+      "sha256": "6dd51e3b2fd497441942b28815dc3ce39b5405bbcd95b14cb54befbce1aea5d0"
+    },
+    {
+      "path": "evidence/workstreams/documents-io/f110-coreconsole.scr",
+      "size": 41,
+      "sha256": "83066ed6a3d6a4cb31a475ad6c1d0c3f5f0b46d39c07461ae80f66230f59489c"
+    },
+    {
+      "path": "evidence/workstreams/documents-io/f110-dimension-block-audit.md",
+      "size": 4045,
+      "sha256": "9525e06b1a2671a67e59c5195572c5b633fa7c12395cdcbdb51a754c2c380054"
+    },
+    {
+      "path": "evidence/workstreams/documents-io/f110-dxf-import.md",
+      "size": 5064,
+      "sha256": "470f5fee386d95a7b587ae9f0b38886ae7168f9bd079b7ec6329d757a235e553"
+    },
+    {
+      "path": "evidence/workstreams/documents-io/f110-write-audit-fixture.ts",
+      "size": 1028,
+      "sha256": "6c52105e32431f791fe84a1bb763ad41a9c9bcdc4318d57439c995c46e5af7d3"
+    },
+    {
+      "path": "evidence/workstreams/documents-io/f115-pdf-underlay-wave.md",
+      "size": 1675,
+      "sha256": "81c1ea12630d38d29f991a04af1618e5448b885f7f55c1e6052b53e241343c0c"
+    },
+    {
+      "path": "evidence/workstreams/documents-io/f128-document-tabs-wave.md",
+      "size": 809,
+      "sha256": "dde29e32bb4bb88ade7a24c62bf0f63d1c11a13c025051eaeca48200f6b04da9"
+    },
+    {
+      "path": "evidence/workstreams/documents-io/f133-autosave-recovery-wave.md",
+      "size": 1510,
+      "sha256": "25f0e2a2070a0252c7701af8d3f721d43d074e535077224a271d0cdc8c8790d3"
+    },
+    {
+      "path": "evidence/workstreams/documents-io/fifth-wave-document-workspace.md",
+      "size": 3628,
+      "sha256": "ce177d06b1a6583ecaf325ecb607dc3ac411bda92b19d7591a73d894ee0fbd71"
+    },
+    {
+      "path": "evidence/workstreams/documents-io/fourth-wave-layout-plot.md",
+      "size": 3961,
+      "sha256": "87c77ee5f2c62bf942e5a989d6a8e007c2f67cf29c3b503928ccb7540233a6d4"
+    },
+    {
+      "path": "evidence/workstreams/documents-io/native-blocker.md",
+      "size": 1295,
+      "sha256": "8791cee66c5c5e2e21d9e036a742800e0c68faefc5044a64c642133c7c0c55c5"
+    },
+    {
+      "path": "evidence/workstreams/documents-io/second-wave.md",
+      "size": 2704,
+      "sha256": "e23c8a1c13608395e724ac4dde8f5f1481828f95af3fe9a6ab9a622da2197f38"
+    },
+    {
+      "path": "evidence/workstreams/documents-io/seventh-wave-layout-workspace.md",
+      "size": 3834,
+      "sha256": "cddcc5ab6696c38a4694a72672c91b57d4b93f1fb16c4159bbdf46eb2bec5e14"
+    },
+    {
+      "path": "evidence/workstreams/documents-io/sixth-wave-recovery-compaction.md",
+      "size": 4387,
+      "sha256": "25f56ebb0a65a25a92594b5181d2581acfda4471b977688fbaa9999b9066a444"
+    },
+    {
+      "path": "evidence/workstreams/documents-io/third-wave-live.md",
+      "size": 3933,
+      "sha256": "64fa44682b37c5ae710dac577b3edc0e15df7f50a6f61c8aa94c992bbff13b41"
+    },
+    {
+      "path": "evidence/workstreams/geometry-modify/wave-01-geometry.json",
+      "size": 1114,
+      "sha256": "1fdbcd8217ea1f79c7d72f5b2680d92772b3f6f72fcf014fb78fc38b8c0662d5"
+    },
+    {
+      "path": "evidence/workstreams/geometry-modify/wave-02-modify-matrix.json",
+      "size": 1378,
+      "sha256": "0f8b2f5cc5a35b479cfa8b3d4e914f0e63941522a15ef9a5b94ecf1aa93e1e9a"
+    },
+    {
+      "path": "evidence/workstreams/geometry-modify/wave-03-array-pedit-selection.json",
+      "size": 1725,
+      "sha256": "ed694df4703b76627292864e47bc21bd7ad2ecbf0e0f239ddf6ba414814c4f8f"
+    },
+    {
+      "path": "evidence/workstreams/geometry-modify/wave-04-f012-spline.json",
+      "size": 1557,
+      "sha256": "cf95faf8f6b120fcf75840c4db84bfc455ff975faa66eb982975fef92106c0b1"
+    },
+    {
+      "path": "evidence/workstreams/geometry-modify/wave-05-boundary-region.json",
+      "size": 1277,
+      "sha256": "fdc2e1476c4ff3cdeb57a91d1e55cae935fb69f8ef4c315d24426df893736b52"
+    },
+    {
+      "path": "evidence/workstreams/geometry-modify/wave-06-command-system.json",
+      "size": 1882,
+      "sha256": "a6f1520d3908cdc7054408c3818b5a3ba7622ff7a70649a57a48aeb9e0d5a20b"
+    },
+    {
+      "path": "evidence/workstreams/geometry-modify/wave-07-f002-pline.json",
+      "size": 2111,
+      "sha256": "062e5c03371950cc0118c3e581cdc8287e83b3ca4134af659cf8806fbf8c92f9"
+    },
+    {
+      "path": "evidence/workstreams/geometry-modify/wave-08-f003-rectangle.json",
+      "size": 2701,
+      "sha256": "ddfcbea7a24bf1408993b39e060e04cc623809e8e2f4e2b2f704baa996b184bf"
+    },
+    {
+      "path": "evidence/workstreams/geometry-modify/wave-09-f004-circle.json",
+      "size": 2751,
+      "sha256": "1a0362c1f05190ed36a5b8a773f4c46ed35170329d97407c6dbaa90a84127e9d"
+    },
+    {
+      "path": "evidence/workstreams/geometry-modify/wave-10-f005-arc.json",
+      "size": 2822,
+      "sha256": "7186e4d5cfc923dd942692569c5c928a7db6a8f622d5f10e847c361784121697"
+    },
+    {
+      "path": "evidence/workstreams/geometry-modify/wave-11-f006-polygon.json",
+      "size": 3192,
+      "sha256": "fb215cd17b666f8ee7b3baeecb12e25edee101ee89237903651455eefbb3d804"
+    },
+    {
+      "path": "evidence/workstreams/geometry-modify/wave-12-f007-ellipse.json",
+      "size": 3436,
+      "sha256": "344ea9c69d01bae494354b1f01e1febfdb08c3ac59fa3d452878c0a59c467b30"
+    },
+    {
+      "path": "evidence/workstreams/geometry-modify/wave-13-f011-revcloud.json",
+      "size": 4607,
+      "sha256": "1d741576f0a6cc12dba4198fcd23c6dbd328e7c29c9bd22458d7fdad8d160258"
+    },
+    {
+      "path": "evidence/workstreams/geometry-modify/wave-14-f031-f032-arrays.json",
+      "size": 4364,
+      "sha256": "602750ce705838a627a52c46d1c13636b32513fae02b97037c30a7fdca40d264"
+    },
+    {
+      "path": "evidence/workstreams/precision-layers/coordinate-entry-wave11-20260831.json",
+      "size": 730,
+      "sha256": "212847ad73a226573b08d8e21ef9e24225e308703040b77c757f0f7c825c4b5c"
+    },
+    {
+      "path": "evidence/workstreams/precision-layers/coordinate-entry-wave11.ts",
+      "size": 3840,
+      "sha256": "aefb232396835cb7cacad7b33fe1a72a3b75c7bbe1a17d100f4acdcee62cb622"
+    },
+    {
+      "path": "evidence/workstreams/precision-layers/layers-readback-wave8-20260831.json",
+      "size": 4706,
+      "sha256": "b60fec542dfce3cae5bfb95b755b8211ad57f34d17482f1cdc1d6fafb524a40a"
+    },
+    {
+      "path": "evidence/workstreams/precision-layers/layers-readback-wave8.ts",
+      "size": 7942,
+      "sha256": "2d641dab059da0d4b1250dab928fb21eb8226679ba22d85f1250f818fd40346e"
+    },
+    {
+      "path": "evidence/workstreams/precision-layers/precision-profile-wave6-20260831.json",
+      "size": 815,
+      "sha256": "68bf30e5928782b33aaa770cb47e8e145d669ea698361554ec896704fa0818c8"
+    },
+    {
+      "path": "evidence/workstreams/precision-layers/precision-profile-wave6.ts",
+      "size": 2719,
+      "sha256": "11112dd691c8bf3366e1ff221456da1ba7675b9cfa97d180d7693ea4460b38c1"
+    },
+    {
+      "path": "evidence/workstreams/precision-layers/precision-snaps-wave12-20260831.json",
+      "size": 1085,
+      "sha256": "bcc5c3a9f384e6be6675dd5a78462b865346cf60b0152f2d62b574148ebdfb10"
+    },
+    {
+      "path": "evidence/workstreams/precision-layers/precision-snaps-wave12.ts",
+      "size": 3139,
+      "sha256": "79b6f34ba0b789ef27b7399e575e5cfe619b5cc223e8b7db4567cec11442c149"
+    },
+    {
+      "path": "evidence/workstreams/precision-layers/README.md",
+      "size": 19734,
+      "sha256": "e377d5231338d7a6a81a98c76466cda76b1e8cac56800030e01d91e6d7fa8096"
+    },
+    {
+      "path": "evidence/workstreams/precision-layers/spatial-profile-20260831.json",
+      "size": 418,
+      "sha256": "adbc02a8acd8a5e9652eae06976f4a4a2f3519091d15a773ce78487d626335ae"
+    },
+    {
+      "path": "evidence/workstreams/precision-layers/spatial-profile-wave3-20260831.json",
+      "size": 522,
+      "sha256": "3d8ab7ca2ed11b0c12cc0cf24f862260be3123493420325faa9ef0f724fd2dae"
+    },
+    {
+      "path": "evidence/workstreams/precision-layers/spatial-profile-wave4-20260831.json",
+      "size": 524,
+      "sha256": "9923dab9e38edac44b0f03b2b778712a65cda7464c2812541c4fc9924588f18e"
+    },
+    {
+      "path": "evidence/workstreams/precision-layers/spatial-profile-wave5-20260831.json",
+      "size": 522,
+      "sha256": "04328b942e418e06bd28d94f7000b779a02b47ee268d480e594baed5a4383bf4"
+    },
+    {
+      "path": "evidence/workstreams/precision-layers/spatial-profile.ts",
+      "size": 1664,
+      "sha256": "5a6fdba32e6ebd0d75098d7d371f8d6789a6227db42c9e7c2668e1a2e42583d0"
+    },
+    {
+      "path": "evidence/workstreams/precision-layers/test-matrix.json",
+      "size": 11237,
+      "sha256": "6b01edc56e9bf4bcd6d07fe8096a2a38b05373aac0e271846734ff9399be8a30"
+    },
+    {
+      "path": "evidence/workstreams/precision-layers/transparency-draw-order-wave10-20260831.json",
+      "size": 725,
+      "sha256": "5f9e3d7d560e61f6abbeef3de3470d535c73046b248ff41ad58667aa258a3109"
+    },
+    {
+      "path": "evidence/workstreams/precision-layers/transparency-draw-order-wave10.ts",
+      "size": 3437,
+      "sha256": "625f95ce43f5fbeb1a7a0566fdc89051105ebee17c357ebbb64c87befdf8cdb0"
+    },
+    {
+      "path": "evidence/workstreams/precision-layers/units-readback-wave7-20260831.json",
+      "size": 1929,
+      "sha256": "1c607f88e44d1f88cb7a2651fdafa486e6ec4308271a25c98b5bb0e03af7a4dd"
+    },
+    {
+      "path": "evidence/workstreams/precision-layers/units-readback-wave7.ts",
+      "size": 3785,
+      "sha256": "010715e01e3a86648347ad4bad362735e5fc9e046f01e88451df5dc10f114070"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/AUDIT.md",
+      "size": 5727,
+      "sha256": "54caba8b3683979bcde5a393b034fc75825763abb793d8fdc8eeac79a368c8e7"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/before/visual-shell-active-command.png",
+      "size": 76346,
+      "sha256": "425360d4ae5792dc135363e3288e6d175bdf7583a169f05fd58a26ebebef10c8"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/before/visual-shell-command-history.png",
+      "size": 19556,
+      "sha256": "456e9eafc635532873a3018a9bcd896059a661850d6ac9260332480fdb16439d"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/before/visual-shell-context-menu.png",
+      "size": 103411,
+      "sha256": "6e102f614990a2e64ebb52e81053f4fb042b169cf48ce5bdbefc46a1de1ef698"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/before/visual-shell-empty-workspace.png",
+      "size": 75907,
+      "sha256": "3edeee47dc4e8f26e749db146682c592910e8cbfb4ea414b4bf38062ed531051"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/before/visual-shell-layer-manager.png",
+      "size": 96533,
+      "sha256": "b139310668ee08947dd4dbe9ddc4b36062746781ceefb2fb4701b668d2dce8a5"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/before/visual-shell-layout-paper-space.png",
+      "size": 83682,
+      "sha256": "92c5ac2dd07d64b505f71b598fb78b7c4b673b747bb5d5fc0e9278ef998788f3"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/before/visual-shell-layout-tools-open.png",
+      "size": 89241,
+      "sha256": "be3d8f0b8f03464e087c9e1698ffc881ac43aab3cf1e5d3706b4169c43318f26"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/before/visual-shell-selected-properties.png",
+      "size": 95647,
+      "sha256": "47a6b94fede2c59bfb6adb7b3d53fc4d9f290df09df8e5aeb4473b48edb5b2b5"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/before/visual-shell-states.json",
+      "size": 16765,
+      "sha256": "a9deaea09c36ba346a9fac91931ae93310a6daf86424e1482bb251d71c903a5e"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/before/visual-shell-zones.json",
+      "size": 870,
+      "sha256": "b48a2d2ce58b75bdc54d9581294d3a70e157b76e9427200571a41161b92209c8"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/integration-wave/visual-shell-200-percent.png",
+      "size": 47531,
+      "sha256": "d4a2640639e62f9cc8d41313a4b5e29156b518d64934288dcc0193bf38578931"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/integration-wave/visual-shell-accessibility.json",
+      "size": 490,
+      "sha256": "b166af5d7f7044ebcd1f9692c007848e41c3505f32d524b03110bbff8dc810f9"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/integration-wave/visual-shell-active-command.png",
+      "size": 94761,
+      "sha256": "9b98e12ef64a5fb5ff69d974819df6894a002b3fc38b5a0515d7d8a7aa36de51"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/integration-wave/visual-shell-command-history.png",
+      "size": 19893,
+      "sha256": "bde2c2f5a0b152f24128ae1c0400447bf0c34cc197839a61e4b6f52cceb0f828"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/integration-wave/visual-shell-context-menu.png",
+      "size": 120536,
+      "sha256": "128be71ec0126c94712c05c974f039ea24c4d23dc5aa8d5c4e24d21f0f72e990"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/integration-wave/visual-shell-empty-workspace.png",
+      "size": 93778,
+      "sha256": "6bc991b849a0a6496bee912f962a8a328bd274541640c09af2bbee034842a120"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/integration-wave/visual-shell-layer-manager.png",
+      "size": 117533,
+      "sha256": "20c100ee9beb78488d03ac51bdc7c1678714b26341d9eb9194015ef38fecb702"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/integration-wave/visual-shell-layout-paper-space.png",
+      "size": 105388,
+      "sha256": "578d0e3aebfc3ac3890f8d00d54ada9571ab9cf21edc8cdbd9770114d2f76564"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/integration-wave/visual-shell-layout-tools-open.png",
+      "size": 110640,
+      "sha256": "e7bce1e8376090c9c3b81e7c1ddd7db4351d0cf9848a8ddea9fc99f5a23e1180"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/integration-wave/visual-shell-runtime-integration.json",
+      "size": 799,
+      "sha256": "20cafd19fe4bade6f7e8801bb9148950948558f1052aa81d0a1197bfc4a5c16d"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/integration-wave/visual-shell-runtime-integration.png",
+      "size": 91667,
+      "sha256": "860ae45ecd20c24ec71b3196e56bb7b14e2a1c4718221369c3529d0d6194288e"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/integration-wave/visual-shell-selected-properties.png",
+      "size": 112152,
+      "sha256": "25bc6c68f60a8842b2b62e69616daddb09f93d0e585ca3e30c14807490bafcba"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/integration-wave/visual-shell-states.json",
+      "size": 16769,
+      "sha256": "56fd7a8d9ac675a057b902a129acd6574803a9e0c1ede12e6cf588228f87d33b"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/integration-wave/visual-shell-zones.json",
+      "size": 870,
+      "sha256": "b48a2d2ce58b75bdc54d9581294d3a70e157b76e9427200571a41161b92209c8"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-20260831/REPORT.md",
+      "size": 2780,
+      "sha256": "382a192c6b72482bfd3d3d1882df1e6648594271b5034ae3edcf13d7d0a62bdb"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-20260831/visual-live-snap-cycle.json",
+      "size": 286,
+      "sha256": "47eefc1ccbb4f94b87d71c82b29d864ed55491a3a9fc9edd7e97ec592babf0d6"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-20260831/visual-live-snap-cycle.png",
+      "size": 95133,
+      "sha256": "e4de166f578cfac1dc0171c4c818387928c796601d6ec449d981bfc01dcbfc01"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-20260831/visual-live-table-dimensions.json",
+      "size": 251,
+      "sha256": "93f604da6ba1cc9fee20573e8bcf96171e6cdd815c4de0e2db7f2ee631a7f002"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-20260831/visual-live-table-dimensions.png",
+      "size": 109335,
+      "sha256": "eeb2a7f0a8638e47893b06299a221eb2505523b66410f4b41e62684fbb8c0c8c"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-20260831/visual-live-workspace-history.json",
+      "size": 216,
+      "sha256": "178512d62a5e25684382049767d9a6719762e468cf916fa0f4b30046ebc1bda8"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-20260831/visual-live-workspace-history.png",
+      "size": 95246,
+      "sha256": "a02bd8b6372f4c143af5a8793691ba21edbaaae1dd7403b84fe47e05d6b7141b"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-20260831/visual-shell-200-percent.png",
+      "size": 48387,
+      "sha256": "08be4c88ea9b4edfced95d27392eb478af036e34280ff413c787a9ecf9bb0c94"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-20260831/visual-shell-accessibility.json",
+      "size": 490,
+      "sha256": "b166af5d7f7044ebcd1f9692c007848e41c3505f32d524b03110bbff8dc810f9"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-20260831/visual-shell-active-command.png",
+      "size": 95740,
+      "sha256": "68efec9716b7dc5a565e16485d4a0b3d43fdfd2622b4ce1e7eaf3b8c6afe9c11"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-20260831/visual-shell-command-history.png",
+      "size": 16068,
+      "sha256": "0b7637dc193219b452c7066e8e1efa3eef8a318a1da7670a82630018a93d4572"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-20260831/visual-shell-context-menu.png",
+      "size": 121623,
+      "sha256": "205f74562f6265a7ce297f043ae01324725fed87f75a2f0e86b776200541daad"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-20260831/visual-shell-empty-workspace.png",
+      "size": 94631,
+      "sha256": "a761e3aac345368e654a99f5ab5236d14f79fc49bc301681491bb4724e102b2b"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-20260831/visual-shell-layer-manager.png",
+      "size": 118830,
+      "sha256": "aa1950392586b87c25ee348c86d5135212e12c968d4075b3b00ef0afb1290519"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-20260831/visual-shell-layout-paper-space.png",
+      "size": 106360,
+      "sha256": "5622e468cdcb6f5ac232fce28820ec69990cea14a4930fde233b2a076b049a7b"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-20260831/visual-shell-layout-tools-open.png",
+      "size": 111683,
+      "sha256": "7e13d43c19704631c4a6e3aed503a882e3b90200eb6a43994abd2432f297e7ce"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-20260831/visual-shell-runtime-integration.json",
+      "size": 826,
+      "sha256": "9eda611d51ef8b9ad403a349b9189675aa890663d77f8819882f122d66d25cad"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-20260831/visual-shell-runtime-integration.png",
+      "size": 97248,
+      "sha256": "3ad92f72259af70fbdcfbc0f2fb816bf1217dd6b144c50d4119da6f1f2c3ec4f"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-20260831/visual-shell-selected-properties.png",
+      "size": 113730,
+      "sha256": "8fc0a5a8db48b790a044adc02069825a16ac95f459010af38dfbebe317217d53"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-20260831/visual-shell-states.json",
+      "size": 16783,
+      "sha256": "63b2f4c1481c7f53f745aefd72fdd995182017907e85e782b0309329b8df97b4"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-20260831/visual-shell-zones.json",
+      "size": 870,
+      "sha256": "b48a2d2ce58b75bdc54d9581294d3a70e157b76e9427200571a41161b92209c8"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-10/REPORT.md",
+      "size": 5170,
+      "sha256": "7dd848f9b27edb3615ba27daea2d674ff05094d2c340912858599fe272f252a2"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-10/visual-layer-core-after.png",
+      "size": 145596,
+      "sha256": "540aedb2ff56e36836bb8bcf9e44b1d7f5623a2bced9e670a93757d77702c9ea"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-10/visual-layer-core-readback.json",
+      "size": 976,
+      "sha256": "1260988189b592c9dba38fa8a689336019f7742bbf2e4c8c72223985630fd84b"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-10/visual-live-ellipse-after.png",
+      "size": 144092,
+      "sha256": "9afa1c9fe1104962d8ff2fde67100e3838e2ccb73418bd51b1fdfaa6903efd65"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-10/visual-live-ellipse-before.json",
+      "size": 523,
+      "sha256": "0403f326805880cbf866e110b62c2dc956ac365e180eba3c31a26f3b5e257fb4"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-10/visual-live-ellipse-before.png",
+      "size": 129370,
+      "sha256": "adc6d55e6b0e5bb7fd3cda3d1aef497488cc67f91078981c3f26fa6520c8b332"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-10/visual-live-layout-workspace.json",
+      "size": 712,
+      "sha256": "22f43c50de313c0a1bd7272ef2d0de8b08b6d12c19093d7c0844df41ed138d4a"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-10/visual-live-layout-workspace.png",
+      "size": 120069,
+      "sha256": "279c98f2cda88d88868ba17cc6ffad3124c5891187352e305b5d0c4f50a0ccfe"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-10/visual-live-polygon-preview.json",
+      "size": 689,
+      "sha256": "49e27d9205bc89f7bacc4a828050e3bf258a89c6810d157ab37e7e0792f4589f"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-10/visual-live-polygon-preview.png",
+      "size": 129169,
+      "sha256": "d0f1b066acadf8b21498a8b24f5b3e16620eb246474e6ea058c08468e1cdcaf3"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-10/visual-live-recovery-panel.json",
+      "size": 352,
+      "sha256": "9c5f88f7f466cc0b8f9959819df0d4a6d5cb6554bc74158f1cc5d192a0164ca3"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-10/visual-live-recovery-panel.png",
+      "size": 151607,
+      "sha256": "c1169b522bcd5a794e77d82e0cb9a41fea8a469b0cb80163d7f88f07080d836a"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-10/visual-live-snap-cycle.json",
+      "size": 286,
+      "sha256": "47eefc1ccbb4f94b87d71c82b29d864ed55491a3a9fc9edd7e97ec592babf0d6"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-10/visual-live-snap-cycle.png",
+      "size": 109297,
+      "sha256": "24b877228ac3282cfdef2f04c413535510d9a400d12b44f6e228df5ac38c6ed0"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-10/visual-live-table-dimensions.json",
+      "size": 251,
+      "sha256": "93f604da6ba1cc9fee20573e8bcf96171e6cdd815c4de0e2db7f2ee631a7f002"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-10/visual-live-table-dimensions.png",
+      "size": 118154,
+      "sha256": "38da98c9f05aaaef18e51478110aa4cb82848629ccb4ddc4fd63c4fb2acfa8f8"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-10/visual-live-units-confirmation.json",
+      "size": 292,
+      "sha256": "87c46fa997cbb40f612b94908209c684afbdc9f8dc54445f0a329320d59b1a0f"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-10/visual-live-units-confirmation.png",
+      "size": 140049,
+      "sha256": "9ca8d61f0c86f2851bdfe159b000a9cd1a0699ed966f21f71ba3883be55c1455"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-10/visual-live-workspace-history.json",
+      "size": 216,
+      "sha256": "178512d62a5e25684382049767d9a6719762e468cf916fa0f4b30046ebc1bda8"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-10/visual-live-workspace-history.png",
+      "size": 112726,
+      "sha256": "132df624defe7e8690fadd0e4ab65c46c891a7d3068464d3e92c2eb53e519c3c"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-10/visual-shell-200-percent.png",
+      "size": 73750,
+      "sha256": "c8c4253b293dcb160b91c647824de0a2ed3b041e82fa3ac60f37bf6575b9e8f4"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-10/visual-shell-accessibility.json",
+      "size": 490,
+      "sha256": "b166af5d7f7044ebcd1f9692c007848e41c3505f32d524b03110bbff8dc810f9"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-10/visual-shell-active-command.png",
+      "size": 113098,
+      "sha256": "6861d67eca46740f8c78d2c9927b4c707fb34865bfd071b8b91c84f1868fe06c"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-10/visual-shell-command-history.png",
+      "size": 44724,
+      "sha256": "3bbdfd309f253c36fc1106857789ec11b9a9efe7c5be06c33edd89c1a342c2c8"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-10/visual-shell-context-menu.png",
+      "size": 163711,
+      "sha256": "8571ade09eb545a9c86192352d8911d8e0ed1bd19482f655152a5ce721f4394f"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-10/visual-shell-empty-workspace.png",
+      "size": 112121,
+      "sha256": "d730c6f292fc4c51dafb90442ad338bc2e676822e30f4ed7b1fe0c07ac1e62c3"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-10/visual-shell-layer-manager.png",
+      "size": 158457,
+      "sha256": "da3f944327bce8c551d26204e447c092d9cb3bda8facff335103011aec7247d6"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-10/visual-shell-layout-paper-space.png",
+      "size": 150648,
+      "sha256": "e7bce47420d3616094c9bd5a69e9905f857aa6badb56a4fabf173c0a2172577e"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-10/visual-shell-layout-tools-open.png",
+      "size": 141921,
+      "sha256": "908ef8f8eb1b14802be669ffbc27fb0d030d383b2ada6bc90cfca5e6b7425565"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-10/visual-shell-runtime-integration.json",
+      "size": 811,
+      "sha256": "4681bdb40546e77d5c10b8abb57edb1915f88b95f72e04eb23bedf55e285028d"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-10/visual-shell-runtime-integration.png",
+      "size": 108180,
+      "sha256": "860f5e8045f1a33acfb104f694191cddd755b8a0dbb19ed40a47dea9470d5e7b"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-10/visual-shell-selected-properties.png",
+      "size": 155967,
+      "sha256": "893d281ff6a58639459d980fbd3a1645d5c30f99307a0be052d9a1a6d579c35d"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-10/visual-shell-states.json",
+      "size": 16777,
+      "sha256": "0fe98b66c7d7dc17313e2f345fcc677efaaae8942db1bd362a653e16cbdd7054"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-10/visual-shell-zones.json",
+      "size": 870,
+      "sha256": "395655ff05264ee0959e46ea7762217ebca4c9f67c19aa0d33b9a518f3bc0e3f"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-4/browser-live-readback.json",
+      "size": 708,
+      "sha256": "740863a30f45c20d1dbbfe0b5c1bead32ca6b19928261e4b0088c0be85d757b3"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-4/README.md",
+      "size": 1673,
+      "sha256": "9efd58e4d37e5b7c1adf07be9d3641d989aff96605e80d359e06a22c86155b48"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-4/visual-shell-200-percent.png",
+      "size": 48456,
+      "sha256": "61a80c4692b4a2b39dd77515102c198f7d08d1fe070c2be7ff8a33c746d16317"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-4/visual-shell-accessibility.json",
+      "size": 490,
+      "sha256": "b166af5d7f7044ebcd1f9692c007848e41c3505f32d524b03110bbff8dc810f9"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-4/visual-shell-active-command.png",
+      "size": 95776,
+      "sha256": "b0fd157cf8c7c212526ac09e857e678d1bd975b9db989c80e9ecde41f71764cf"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-4/visual-shell-command-history.png",
+      "size": 21468,
+      "sha256": "14e0a06881182cd0a11207ba60d5cdafe3ad3dd3010e44ae0f70db35fc99b576"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-4/visual-shell-context-menu.png",
+      "size": 121565,
+      "sha256": "ac37acd9bc9c2e36f0f7229870c357dcc98dd11e23c5818da63480b1dd581d1f"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-4/visual-shell-empty-workspace.png",
+      "size": 94677,
+      "sha256": "fed5980e503b657f9f0df03fbc9f81431ec5512e8a7ea400ac191ffa22989d13"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-4/visual-shell-layer-manager.png",
+      "size": 118776,
+      "sha256": "4662f5023e0e5f0761b9aff6f0430f4e7ea79bf6fc7f0f22ac56ddbdfd6beaaf"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-4/visual-shell-layout-paper-space.png",
+      "size": 106352,
+      "sha256": "a659260fa5ad86540c4e78315d3aa9df58d720d2e1a54e50f231938e1b14997e"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-4/visual-shell-layout-tools-open.png",
+      "size": 111649,
+      "sha256": "0a8e854f00974c63df5128dfe3d15a99dc0e196f33db33f9b3ae7b8136f40726"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-4/visual-shell-runtime-integration.json",
+      "size": 901,
+      "sha256": "32c86583b4dc82cf9852af49800a7d1293062d954a7949e7d02f6513a75cf57c"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-4/visual-shell-runtime-integration.png",
+      "size": 102383,
+      "sha256": "e73caa73b79048c223af7d4a9d0e51858aba35a350b1be9e289d12bf7348bd05"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-4/visual-shell-selected-properties.png",
+      "size": 113675,
+      "sha256": "3f47ad5eac7082e2497c388cffdb663ca20c7fb08fd809ff66cf09a52e1ecedf"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-4/visual-shell-states.json",
+      "size": 16783,
+      "sha256": "63b2f4c1481c7f53f745aefd72fdd995182017907e85e782b0309329b8df97b4"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-4/visual-shell-zones.json",
+      "size": 870,
+      "sha256": "b48a2d2ce58b75bdc54d9581294d3a70e157b76e9427200571a41161b92209c8"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-7/REPORT.md",
+      "size": 3697,
+      "sha256": "d177a39c5a2ebf18a447987aaa3416bf9feb79c1011b540c7a944075a210001e"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-7/visual-live-polygon-preview.json",
+      "size": 689,
+      "sha256": "49e27d9205bc89f7bacc4a828050e3bf258a89c6810d157ab37e7e0792f4589f"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-7/visual-live-polygon-preview.png",
+      "size": 129523,
+      "sha256": "9403f2203186b3faeffeeb31aac1897f245af514f9e20aa07179cdbe945ad34d"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-7/visual-live-recovery-panel.json",
+      "size": 352,
+      "sha256": "dd50d865e901bb8fbe67b7150bd4990ac3312f8e7173d7760d559d5aa59adfca"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-7/visual-live-recovery-panel.png",
+      "size": 151413,
+      "sha256": "68eaaa7d2806ad9338321c47f26dd28934461f52842a770ca7935a32918cf0af"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-7/visual-live-snap-cycle.json",
+      "size": 286,
+      "sha256": "47eefc1ccbb4f94b87d71c82b29d864ed55491a3a9fc9edd7e97ec592babf0d6"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-7/visual-live-snap-cycle.png",
+      "size": 107583,
+      "sha256": "5d7ff8e4c5784b815e16dea3e6060338a5ef933d591150f0ea68d5804de3fc62"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-7/visual-live-table-dimensions.json",
+      "size": 251,
+      "sha256": "93f604da6ba1cc9fee20573e8bcf96171e6cdd815c4de0e2db7f2ee631a7f002"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-7/visual-live-table-dimensions.png",
+      "size": 116907,
+      "sha256": "05f2c46866a1f382cbb88972571915afa6b3801be96fe8990e1321fa0bc3720f"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-7/visual-live-workspace-history.json",
+      "size": 216,
+      "sha256": "178512d62a5e25684382049767d9a6719762e468cf916fa0f4b30046ebc1bda8"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-7/visual-live-workspace-history.png",
+      "size": 113106,
+      "sha256": "9d01886b5047833b0518bf1c34f197ec34b7f33860ae26344e6dc9d68592d2bb"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-7/visual-shell-200-percent.png",
+      "size": 75208,
+      "sha256": "402c95d93866b3ed914e677dd44b90ca770aac20048f03c72be8de5ad13ea5d2"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-7/visual-shell-accessibility.json",
+      "size": 490,
+      "sha256": "b166af5d7f7044ebcd1f9692c007848e41c3505f32d524b03110bbff8dc810f9"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-7/visual-shell-active-command.png",
+      "size": 113448,
+      "sha256": "25b8547fca83c44a69b51488ed3b03be938bfb986c731dfd7f649f61877787fe"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-7/visual-shell-command-history.png",
+      "size": 43666,
+      "sha256": "ff6b8fdb59af3428dc753a12e594a7c260270dda837425b7f39a83e2ddaaf9a8"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-7/visual-shell-context-menu.png",
+      "size": 164315,
+      "sha256": "848ce9417efb2e5fbbb043ea979f4e42bfee2620fdecbc8aa621e308bc16d172"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-7/visual-shell-empty-workspace.png",
+      "size": 112475,
+      "sha256": "3b3ec2cb2c17127f17009cfaa3021620bc5ede6859e4067982c23350850593ba"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-7/visual-shell-layer-manager.png",
+      "size": 160367,
+      "sha256": "50867becef5bac061985472a5c5798d5e0aac659f0d90959338e77c8e2c77d25"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-7/visual-shell-layout-paper-space.png",
+      "size": 151103,
+      "sha256": "cfcab95b2a860c1746bc7314bf312bbb171b5a638f7f7d82fad98f1a3527af3d"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-7/visual-shell-layout-tools-open.png",
+      "size": 159055,
+      "sha256": "120e7920d983dca5e361ddb9a9bce22763f3bcd82086f3c5b3954bb0779caff2"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-7/visual-shell-runtime-integration.json",
+      "size": 826,
+      "sha256": "9eda611d51ef8b9ad403a349b9189675aa890663d77f8819882f122d66d25cad"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-7/visual-shell-runtime-integration.png",
+      "size": 108246,
+      "sha256": "e2037e627bdf618208edfd3e79c097e8150ea6598cf4d024da3dd4978aa9f347"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-7/visual-shell-selected-properties.png",
+      "size": 156434,
+      "sha256": "747e70c16265b3377b5f7f55fd02ef74b3b3c44d9ddd2eab8f56c1c190dafdf6"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-7/visual-shell-states.json",
+      "size": 16777,
+      "sha256": "0fe98b66c7d7dc17313e2f345fcc677efaaae8942db1bd362a653e16cbdd7054"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-7/visual-shell-zones.json",
+      "size": 870,
+      "sha256": "395655ff05264ee0959e46ea7762217ebca4c9f67c19aa0d33b9a518f3bc0e3f"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-8/REPORT.md",
+      "size": 4274,
+      "sha256": "45462530c13086a035a9931e45513a0e7b40282b5df1311803d7273fdd628a90"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-8/visual-live-ellipse-after.png",
+      "size": 145505,
+      "sha256": "c87f467350b2caa34f44fd0e3c281c3bc6a4f34852e700f60a8e5ffd638e7c16"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-8/visual-live-ellipse-before.json",
+      "size": 523,
+      "sha256": "0403f326805880cbf866e110b62c2dc956ac365e180eba3c31a26f3b5e257fb4"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-8/visual-live-ellipse-before.png",
+      "size": 130781,
+      "sha256": "9e3226f7496e89814da12d94719f8a5e0bf6cdf37f565bfad0c7f8df424a6328"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-8/visual-live-layout-workspace.json",
+      "size": 712,
+      "sha256": "22f43c50de313c0a1bd7272ef2d0de8b08b6d12c19093d7c0844df41ed138d4a"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-8/visual-live-layout-workspace.png",
+      "size": 121638,
+      "sha256": "fadac1edbbb78dac9325f6d60b1ab9ba8984a5688bc81dc13a15ef4646f85c2c"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-8/visual-live-polygon-preview.json",
+      "size": 689,
+      "sha256": "49e27d9205bc89f7bacc4a828050e3bf258a89c6810d157ab37e7e0792f4589f"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-8/visual-live-polygon-preview.png",
+      "size": 130561,
+      "sha256": "19f55a398cbb5bb7f7bc8ed84c4ff8afd61ba68f75e265503719ec87f8364513"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-8/visual-live-recovery-panel.json",
+      "size": 352,
+      "sha256": "1cd54edbc6df552684597244347abca0a7bf4016bc7b92bc69bd990adcafbefd"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-8/visual-live-recovery-panel.png",
+      "size": 153130,
+      "sha256": "a4af05316ffd4cfb393d308f99d6b5b7389119f679c2d22a7730fdd9a0216dc2"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-8/visual-live-snap-cycle.json",
+      "size": 286,
+      "sha256": "47eefc1ccbb4f94b87d71c82b29d864ed55491a3a9fc9edd7e97ec592babf0d6"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-8/visual-live-snap-cycle.png",
+      "size": 108494,
+      "sha256": "d17776229002994ff0b3600dfcd900200cddf95c31d5c00710e99677d2eb859a"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-8/visual-live-table-dimensions.json",
+      "size": 251,
+      "sha256": "93f604da6ba1cc9fee20573e8bcf96171e6cdd815c4de0e2db7f2ee631a7f002"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-8/visual-live-table-dimensions.png",
+      "size": 117701,
+      "sha256": "330f75f798e8aa74334070ff8e91fa81cbcc3ddeca1df0735991371a4707a583"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-8/visual-live-units-confirmation.json",
+      "size": 292,
+      "sha256": "87c46fa997cbb40f612b94908209c684afbdc9f8dc54445f0a329320d59b1a0f"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-8/visual-live-units-confirmation.png",
+      "size": 139491,
+      "sha256": "18fe9f92207e445a8bb48868fbc6878d2f1661bb5b9c87b4a9cc07d2f5dfed74"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-8/visual-live-workspace-history.json",
+      "size": 216,
+      "sha256": "178512d62a5e25684382049767d9a6719762e468cf916fa0f4b30046ebc1bda8"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-8/visual-live-workspace-history.png",
+      "size": 114113,
+      "sha256": "a1a84dc6aec603fddd38bcdc18271d268df994075faab870620f74f115cb4b92"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-8/visual-shell-200-percent.png",
+      "size": 76133,
+      "sha256": "6663466ef58b59fff45984fd3dd37cf3d23a4c86690bfd9e853b3db18cea097a"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-8/visual-shell-accessibility.json",
+      "size": 490,
+      "sha256": "b166af5d7f7044ebcd1f9692c007848e41c3505f32d524b03110bbff8dc810f9"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-8/visual-shell-active-command.png",
+      "size": 114474,
+      "sha256": "b201e7aabcbeb3911b2ddb1f9591c8854221d7d0688ca7e0bb83a9097dc62a58"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-8/visual-shell-command-history.png",
+      "size": 44510,
+      "sha256": "f60b870632643b79b6958e06ee614d1bb6302cd26ece84d6be734acc051abc98"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-8/visual-shell-context-menu.png",
+      "size": 165137,
+      "sha256": "59acfe86d5bd1eacd12b21536c6618d4bc77bcc406ead080ccff4d0501aa7c68"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-8/visual-shell-empty-workspace.png",
+      "size": 113497,
+      "sha256": "bfb383524c9df14bc22393dfb1e6218ae9ecc97742c5f0d15c9e71a7160820ae"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-8/visual-shell-layer-manager.png",
+      "size": 161169,
+      "sha256": "07218393a1c972aaa2e046078c6bf139baec75067b14dccc24e88cef8ce38d3a"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-8/visual-shell-layout-paper-space.png",
+      "size": 153062,
+      "sha256": "b7c3eefd02261cd2c6ac6adca63bab65dba4f7b2d97b7123c2f705a01483d20c"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-8/visual-shell-layout-tools-open.png",
+      "size": 144352,
+      "sha256": "3cb7edee043180b9726eafda981cd0b605c0e062f61b71a07f1f7bf8f433c07a"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-8/visual-shell-runtime-integration.json",
+      "size": 811,
+      "sha256": "4681bdb40546e77d5c10b8abb57edb1915f88b95f72e04eb23bedf55e285028d"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-8/visual-shell-runtime-integration.png",
+      "size": 109182,
+      "sha256": "b642a0e8554afdcd0bf610f1db63dfff1f7164b069399d8a0ba7a464121da4f3"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-8/visual-shell-selected-properties.png",
+      "size": 157225,
+      "sha256": "764fca2a0579e8048a1689e30e86e94ce4cde2f301cc9306bea488e5ab0616ae"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-8/visual-shell-states.json",
+      "size": 16777,
+      "sha256": "0fe98b66c7d7dc17313e2f345fcc677efaaae8942db1bd362a653e16cbdd7054"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave-8/visual-shell-zones.json",
+      "size": 870,
+      "sha256": "395655ff05264ee0959e46ea7762217ebca4c9f67c19aa0d33b9a518f3bc0e3f"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave/browser-live-readback.json",
+      "size": 529,
+      "sha256": "7fa56f474dd35e93a43bd25eec554d2e21ea4ee7b43124c3aef39b99811d4c6c"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave/visual-shell-200-percent.png",
+      "size": 47416,
+      "sha256": "90b8f60dfaf6b661a34239f8e3caa02be0cfa1d10b8ff1802ba211dd2ac767b5"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave/visual-shell-accessibility.json",
+      "size": 490,
+      "sha256": "b166af5d7f7044ebcd1f9692c007848e41c3505f32d524b03110bbff8dc810f9"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave/visual-shell-active-command.png",
+      "size": 94879,
+      "sha256": "1a13b0f43f5cfc11efdda296f441181c1cfb65a3fd34210b7741d4d6499156cc"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave/visual-shell-command-history.png",
+      "size": 19823,
+      "sha256": "6a876e729ccba946f80c3c62d5dcfab405d591fa5fb30b86b3d2daee97b43853"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave/visual-shell-context-menu.png",
+      "size": 120802,
+      "sha256": "c28b8922b34689ce55276a3e99b251da06280caef4fbdb15b854af8f4699c7fc"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave/visual-shell-empty-workspace.png",
+      "size": 93879,
+      "sha256": "b278495ef0dc96224cb42405255d73cad3545ce0bda063aacdb632ae0bba6ee0"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave/visual-shell-layer-manager.png",
+      "size": 117962,
+      "sha256": "e0a0837b25c4a02dde8b38ba7afbde63d379630526903b9a002cf72b44c58a4e"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave/visual-shell-layout-paper-space.png",
+      "size": 105448,
+      "sha256": "c78181f681eb2b2829b13b0b75b41312aa63b21e9177d44ab9cebddb9b90f1b2"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave/visual-shell-layout-tools-open.png",
+      "size": 110758,
+      "sha256": "fe3d5f69ee3dd34e5e943efe4c6cab797224d653386aced9c8241c8cd9b9ea8b"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave/visual-shell-runtime-integration.json",
+      "size": 916,
+      "sha256": "3287b0c183c9e3fb7cb16056c17707d879ceb867f228164e0730f01fbf63300d"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave/visual-shell-runtime-integration.png",
+      "size": 95514,
+      "sha256": "3f052c551ed5aba76b235a1a7b6bf608e4acf2a99ea7b495064aa9cc6299d27c"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave/visual-shell-selected-properties.png",
+      "size": 112912,
+      "sha256": "c88ad04b8cfb9956bb75f578f3039f2f61653eb5fbc4de636b9851d59865631b"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave/visual-shell-states.json",
+      "size": 16783,
+      "sha256": "63b2f4c1481c7f53f745aefd72fdd995182017907e85e782b0309329b8df97b4"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/live-wave/visual-shell-zones.json",
+      "size": 870,
+      "sha256": "b48a2d2ce58b75bdc54d9581294d3a70e157b76e9427200571a41161b92209c8"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/wave-1-after/visual-shell-active-command.png",
+      "size": 87644,
+      "sha256": "f6329e0d08514752367df995e9c4bf853c9aedd2b5fbf77fc2a517f6b41c44b4"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/wave-1-after/visual-shell-command-history.png",
+      "size": 19556,
+      "sha256": "456e9eafc635532873a3018a9bcd896059a661850d6ac9260332480fdb16439d"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/wave-1-after/visual-shell-context-menu.png",
+      "size": 114582,
+      "sha256": "ab28ebd1fa419c62ab51d743478d5c9e9522e7166b8f64b73d4ed3452be2fd51"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/wave-1-after/visual-shell-empty-workspace.png",
+      "size": 87192,
+      "sha256": "c195c92c086a433d533ea4cabdbdbd9eb32fae95ff1423e7a264cd15aac6de37"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/wave-1-after/visual-shell-layer-manager.png",
+      "size": 107630,
+      "sha256": "4f58a0deb4f74de7ca78338261270787eabdaff0a020004313aa4e2f47117d03"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/wave-1-after/visual-shell-layout-paper-space.png",
+      "size": 96156,
+      "sha256": "30ab5cf2344849b49e2a8e3695a69193584a585510569c788c0890dc6d68cc46"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/wave-1-after/visual-shell-layout-tools-open.png",
+      "size": 101677,
+      "sha256": "e9fbaa009f15e248c62ac6ea8a5c5527272d9c0ed263a9016bc2bc1db948af11"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/wave-1-after/visual-shell-selected-properties.png",
+      "size": 106761,
+      "sha256": "8a2182751414bb9f402d9b56df336bf36ab14f2460648deb0208590c950fbfcd"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/wave-1-after/visual-shell-states.json",
+      "size": 16764,
+      "sha256": "667b304fe9fbbc6743725c70d05c10ce45ffa21e193976e4031b84a56c992466"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/wave-1-after/visual-shell-zones.json",
+      "size": 870,
+      "sha256": "b48a2d2ce58b75bdc54d9581294d3a70e157b76e9427200571a41161b92209c8"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/wave-2-after/visual-shell-200-percent.png",
+      "size": 43054,
+      "sha256": "5d218909c5f0b20eb5957e7f28352a00b8c62d5bac7947b40c55d9d483c7d76a"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/wave-2-after/visual-shell-accessibility.json",
+      "size": 490,
+      "sha256": "b166af5d7f7044ebcd1f9692c007848e41c3505f32d524b03110bbff8dc810f9"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/wave-2-after/visual-shell-active-command.png",
+      "size": 88323,
+      "sha256": "801b409e07706792af90bba4c273b02f1e259f4b450fa3c66b0caa7d651161d1"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/wave-2-after/visual-shell-command-history.png",
+      "size": 19556,
+      "sha256": "456e9eafc635532873a3018a9bcd896059a661850d6ac9260332480fdb16439d"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/wave-2-after/visual-shell-context-menu.png",
+      "size": 115282,
+      "sha256": "9741fbfff57bd2cc4dcbae729e8b797233966f4832ea972ec92fea02c0a3ef23"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/wave-2-after/visual-shell-empty-workspace.png",
+      "size": 87854,
+      "sha256": "37cf944408a5a476bcbcd99837ef1a96a542a9f7e2a1f4a3be208459348ab6df"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/wave-2-after/visual-shell-layer-manager.png",
+      "size": 108294,
+      "sha256": "62808787ca02e0c857552634a654d417114279e311a306ddb389ceb18f487a02"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/wave-2-after/visual-shell-layout-paper-space.png",
+      "size": 96809,
+      "sha256": "a34c48946ff061c2fd1edfbb55c3cd0341113cd91faa736ccccc09ea6996dba2"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/wave-2-after/visual-shell-layout-tools-open.png",
+      "size": 102268,
+      "sha256": "46429b02f83cbb2bd73c67e4922fdd024c821ce9d52b8feb943b3c2ebdaa692c"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/wave-2-after/visual-shell-selected-properties.png",
+      "size": 107383,
+      "sha256": "02c2217ca644b3a3c82b6f3df05120fc10f291a5365e0827262fbf9e97eee7d9"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/wave-2-after/visual-shell-states.json",
+      "size": 16764,
+      "sha256": "667b304fe9fbbc6743725c70d05c10ce45ffa21e193976e4031b84a56c992466"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/wave-2-after/visual-shell-zones.json",
+      "size": 870,
+      "sha256": "b48a2d2ce58b75bdc54d9581294d3a70e157b76e9427200571a41161b92209c8"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/wave-3-after/visual-shell-200-percent.png",
+      "size": 43101,
+      "sha256": "63102003caab359185c21cf0bdde3be7c1496bef5dd453ce50fb8144daad5e7a"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/wave-3-after/visual-shell-accessibility.json",
+      "size": 490,
+      "sha256": "b166af5d7f7044ebcd1f9692c007848e41c3505f32d524b03110bbff8dc810f9"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/wave-3-after/visual-shell-active-command.png",
+      "size": 88403,
+      "sha256": "6705939e7721116b21fb55a0ab95261816fdd6959b0812bab5d47271404b0946"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/wave-3-after/visual-shell-command-history.png",
+      "size": 19482,
+      "sha256": "77a347d4d33452c6026d177eb2da95b256b0ea44df0b251351beb89e5619f4d8"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/wave-3-after/visual-shell-context-menu.png",
+      "size": 115318,
+      "sha256": "6d41d6ab90645fdfa47dcb5fc39fc76185c35a5e64b602056bc1f0d8d6889946"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/wave-3-after/visual-shell-empty-workspace.png",
+      "size": 87924,
+      "sha256": "261cfe8ed2fb97fe05c633347e77b71165980f42668a73c9773c9c8a1e8d8473"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/wave-3-after/visual-shell-layer-manager.png",
+      "size": 108355,
+      "sha256": "d30f29d25efb53d2625a3803abda6332902f8554c0915ec349576ea410f8f547"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/wave-3-after/visual-shell-layout-paper-space.png",
+      "size": 96838,
+      "sha256": "0afa243c4e0926b5e4ee9dc230db2a1e5b7bc06b5fc3ff7809fc7bcfb077889e"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/wave-3-after/visual-shell-layout-tools-open.png",
+      "size": 102374,
+      "sha256": "7146197bcf258f5dc029312a221cb341f5e8b80cc89585561eb6c7c8b325c794"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/wave-3-after/visual-shell-selected-properties.png",
+      "size": 107483,
+      "sha256": "e09091eecaa484eef3d3fabb47f7f9a580dd86eda96940afc396d0c8f0f2613a"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/wave-3-after/visual-shell-states.json",
+      "size": 16764,
+      "sha256": "667b304fe9fbbc6743725c70d05c10ce45ffa21e193976e4031b84a56c992466"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/wave-3-after/visual-shell-zones.json",
+      "size": 870,
+      "sha256": "b48a2d2ce58b75bdc54d9581294d3a70e157b76e9427200571a41161b92209c8"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/wave-4-after/visual-shell-200-percent.png",
+      "size": 44587,
+      "sha256": "9b13956404a2a0b1dc316bb202cb62acfb6ad19f49ac40ac0d6b2413215efc95"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/wave-4-after/visual-shell-accessibility.json",
+      "size": 490,
+      "sha256": "b166af5d7f7044ebcd1f9692c007848e41c3505f32d524b03110bbff8dc810f9"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/wave-4-after/visual-shell-active-command.png",
+      "size": 90227,
+      "sha256": "715be4a8a95e9f64aa752391d201d099130ef969fe2194be69c6304824ae568d"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/wave-4-after/visual-shell-command-history.png",
+      "size": 19482,
+      "sha256": "77a347d4d33452c6026d177eb2da95b256b0ea44df0b251351beb89e5619f4d8"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/wave-4-after/visual-shell-context-menu.png",
+      "size": 117116,
+      "sha256": "43bb2293ecfd32c2b9b0df00885a21c165fd378b7018029a8eee76808dd3db22"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/wave-4-after/visual-shell-empty-workspace.png",
+      "size": 89775,
+      "sha256": "0980ce1d3e52ce146954b6965a52b75307edb42bfaa13febacdbc54d640cbc89"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/wave-4-after/visual-shell-layer-manager.png",
+      "size": 110663,
+      "sha256": "b4adeb9f096aa7e4cfff1b64d80ca032a5257f7101bfcc6d61634c1cbc924189"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/wave-4-after/visual-shell-layout-paper-space.png",
+      "size": 99198,
+      "sha256": "6e973bfc11401cc4bb7cd4ca28ddd786249594fe8acb81c2ba2d9af474d26de8"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/wave-4-after/visual-shell-layout-tools-open.png",
+      "size": 104676,
+      "sha256": "05292f117ac32dd8bb64567a922813b5d562aae391a1fb275491c747c116dc3c"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/wave-4-after/visual-shell-selected-properties.png",
+      "size": 109197,
+      "sha256": "716e4f61ec96d50487bc805bb769e53985e46bed6a5a8cf9e6a0a398d31af1a0"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/wave-4-after/visual-shell-states.json",
+      "size": 16764,
+      "sha256": "667b304fe9fbbc6743725c70d05c10ce45ffa21e193976e4031b84a56c992466"
+    },
+    {
+      "path": "evidence/workstreams/visual-shell/wave-4-after/visual-shell-zones.json",
+      "size": 870,
+      "sha256": "b48a2d2ce58b75bdc54d9581294d3a70e157b76e9427200571a41161b92209c8"
+    },
+    {
       "path": "IMPLEMENTATION_STATUS.md",
       "size": 28493,
       "sha256": "ac342737f2ff858db5bb2a1122ba6ac540bc2ac11f9fb54547fb7494e43f858c"
@@ -3689,6 +5814,151 @@
       "sha256": "a36541fb69f48c92f8e35ce4dfbd961ff870b18241e4a05712a08484bc03553e"
     },
     {
+      "path": "packages/cad-core/src/annotation/annotation.golden.json",
+      "size": 4706,
+      "sha256": "765d5a62216a2233cc2d7eb9df0454060e4da39e5451ba0a490dcd73f5f15e4c"
+    },
+    {
+      "path": "packages/cad-core/src/annotation/annotation.mutation.test.ts",
+      "size": 7351,
+      "sha256": "776e80af625e598336092817cab2ed1eedc284e54a03a3d24c36cdab76b58edb"
+    },
+    {
+      "path": "packages/cad-core/src/annotation/annotation.test.ts",
+      "size": 11951,
+      "sha256": "f9d0b72ba93180c3e8a2b9bb81b57af858e47e4c75b0fb91777abd4f0dd07ed6"
+    },
+    {
+      "path": "packages/cad-core/src/annotation/contracts.ts",
+      "size": 16543,
+      "sha256": "9fd9a6d2755d5d1cc499e659a20392e59993440f4eb6e7b1c7aae4539deba321"
+    },
+    {
+      "path": "packages/cad-core/src/annotation/dimensions.ts",
+      "size": 34631,
+      "sha256": "33479d1a864450e5405099dfb2c273544178d079a2e24b357eeceb2b1d791ef2"
+    },
+    {
+      "path": "packages/cad-core/src/annotation/dimensions.wave10.mutation.test.ts",
+      "size": 2563,
+      "sha256": "3edcb6ce67e6ad7f50b152a1bfbe52dbb3f3e5c677de31e32c60fe822374093e"
+    },
+    {
+      "path": "packages/cad-core/src/annotation/dimensions.wave10.test.ts",
+      "size": 10942,
+      "sha256": "fa69ffe87a0d65630af79837be350a5498e0f6f508f06fa1dbe17c34f3cdbdf9"
+    },
+    {
+      "path": "packages/cad-core/src/annotation/dimensions.wave5.test.ts",
+      "size": 9263,
+      "sha256": "6ba406c070e8782e0a63e63c9a9cfca3a90eaa09a9fddf8edd661e8c2a3d5294"
+    },
+    {
+      "path": "packages/cad-core/src/annotation/dxf-capability.test.ts",
+      "size": 7411,
+      "sha256": "cf330e6117bdcbb79812a3b9801c5b57741253067cb4febb107b5aa3a226d4c2"
+    },
+    {
+      "path": "packages/cad-core/src/annotation/dxf-capability.ts",
+      "size": 9868,
+      "sha256": "35ed7c05999b26c574f0e9e73362f07d2f29534434ea94a9e75dfab8117f97c4"
+    },
+    {
+      "path": "packages/cad-core/src/annotation/hatch-table.wave6.test.ts",
+      "size": 12869,
+      "sha256": "3f699bd4a7dddd1025e2bed18dc4c48e8dc43eced0badf170921157e2d1744bf"
+    },
+    {
+      "path": "packages/cad-core/src/annotation/hatch.ts",
+      "size": 7256,
+      "sha256": "2b9401e25e625e9714c6a11a9f108ba4b042b69b8d6849d06c22c46da80f8c51"
+    },
+    {
+      "path": "packages/cad-core/src/annotation/table.ts",
+      "size": 20940,
+      "sha256": "f09e75124eb8492894979738ab8356468bdb523ed5320f5ef217e90e21d79550"
+    },
+    {
+      "path": "packages/cad-core/src/annotation/text-leader.wave11.mutation.test.ts",
+      "size": 2866,
+      "sha256": "9fe8e9d4d4b13c27478087f1c7e60fea49d0c697f55c400639febb74b6ae8a1f"
+    },
+    {
+      "path": "packages/cad-core/src/annotation/text-leader.wave11.property.test.ts",
+      "size": 2268,
+      "sha256": "91d75768db78520632b2b336129a90215072c2bc7835b44757c63dacb7966873"
+    },
+    {
+      "path": "packages/cad-core/src/annotation/text-leader.wave11.test.ts",
+      "size": 5731,
+      "sha256": "ef15806877ff61b8b37b7138f33a3ff2475a574f36b8deaa0a4c6e04b3a98516"
+    },
+    {
+      "path": "packages/cad-core/src/annotation/text-leader.wave7.test.ts",
+      "size": 12536,
+      "sha256": "a541ca4f4f83eeb93f9b3ce8a4e35452c0daf560ab0ca3083e9887a3c25ed3f8"
+    },
+    {
+      "path": "packages/cad-core/src/annotation/text.ts",
+      "size": 23801,
+      "sha256": "06385f4d0039d0700228758bc9880c4501501f7b0e061d2e81d07da725a2445c"
+    },
+    {
+      "path": "packages/cad-core/src/annotation/update.ts",
+      "size": 1670,
+      "sha256": "99564d5a84eef1460367194cb39279253656bb4cfd7bd724cb697b4e8a310715"
+    },
+    {
+      "path": "packages/cad-core/src/arc-command.ts",
+      "size": 21771,
+      "sha256": "dbb4e2587724b5b6bef9ad2144f5619b16cdeb7ef4092a0c6dcd482201db137c"
+    },
+    {
+      "path": "packages/cad-core/src/array-commands.ts",
+      "size": 29650,
+      "sha256": "1330a64186df3b899d651c514875155badb44addc71b848095cf807f7f4900c7"
+    },
+    {
+      "path": "packages/cad-core/src/blocks/blocks.golden.json",
+      "size": 1015,
+      "sha256": "967c42ec6e95f04f324d1ca292937fd417e2824793af32a6bb9ae2a270fd7ce2"
+    },
+    {
+      "path": "packages/cad-core/src/blocks/blocks.mutation.test.ts",
+      "size": 5498,
+      "sha256": "45ee9707d7f4566cd5f6c004e39a97e78812d9548faa9afb5d015bbd2eabae26"
+    },
+    {
+      "path": "packages/cad-core/src/blocks/blocks.test.ts",
+      "size": 7646,
+      "sha256": "64240c75966f9915e0c9ae317c865c53db65e866888c6fb7729ee32a6eb846b5"
+    },
+    {
+      "path": "packages/cad-core/src/blocks/blocks.wave8.test.ts",
+      "size": 14111,
+      "sha256": "b6079151e9be22589f98ef86fca9844b3efdf782760d9e43737d436281013ee0"
+    },
+    {
+      "path": "packages/cad-core/src/blocks/contracts.ts",
+      "size": 2990,
+      "sha256": "93cb7cbb255c35486d39b30edc6862ec95c2403267e6245adb735c994c50f376"
+    },
+    {
+      "path": "packages/cad-core/src/blocks/operations.ts",
+      "size": 18428,
+      "sha256": "ee16f36866d4aa252b93f5a0315f2c727e4a078674f69988a8e548b751b96f0a"
+    },
+    {
+      "path": "packages/cad-core/src/blocks/transform.ts",
+      "size": 6076,
+      "sha256": "e69855c93cde12ec3e3545aba11182daab3248bfca6daa40cf43f9cd4ab27006"
+    },
+    {
+      "path": "packages/cad-core/src/boundary-region.ts",
+      "size": 10596,
+      "sha256": "16933fd3a9d9bc3a9ecd105ebe8403aeb155da5141f73e325bf4c0e3184c7b38"
+    },
+    {
       "path": "packages/cad-core/src/break.ts",
       "size": 6406,
       "sha256": "1d51abb8c5600efcea5a128754007ae9d39a7f5e42dd2bffda0aff3251750900"
@@ -3697,6 +5967,11 @@
       "path": "packages/cad-core/src/chamfer.ts",
       "size": 25340,
       "sha256": "0142afb06c0d468a7f1b5e1b1bc45a3319a271cf75c12b302d6e155c0494e6bc"
+    },
+    {
+      "path": "packages/cad-core/src/circle-command.ts",
+      "size": 24226,
+      "sha256": "5143ba371c902c1326a6527d670731e6beb00412b9158edf140bbb8e85daddb7"
     },
     {
       "path": "packages/cad-core/src/commands.ts",
@@ -3714,19 +5989,44 @@
       "sha256": "237a15e6bcec089c0dcba2b2aaf754be502c620fb39a38327c5cacbc6bcc26c4"
     },
     {
+      "path": "packages/cad-core/src/draw-order.ts",
+      "size": 5770,
+      "sha256": "859927e27f4b9eb35d785ddd8b8735128d0c21c7e6aee17931e8b0c471bf5b56"
+    },
+    {
+      "path": "packages/cad-core/src/ellipse-command.ts",
+      "size": 12329,
+      "sha256": "d09df462a295e144c9cdbc4fd0e5572a8646098e9c3b0a2f4d1822659e698ada"
+    },
+    {
       "path": "packages/cad-core/src/fillet.ts",
       "size": 54282,
       "sha256": "96c5f6f3d8a54c085d46e84aa06047552c7187b3364ba6985efa2e7cb195c022"
     },
     {
+      "path": "packages/cad-core/src/geometry-commands.ts",
+      "size": 20142,
+      "sha256": "44dec14538264fb335c7fde124ce6a4263ac300af7dd012c74e116a481a2b1bd"
+    },
+    {
       "path": "packages/cad-core/src/index.ts",
-      "size": 568,
-      "sha256": "681d425d328d1938f98e2821886e13b68097a86ee26de483efd7ba31dfc362fc"
+      "size": 2164,
+      "sha256": "48c2d1f7e804596ee76e92f6b1f29d68575163b650494f9196fb5998d37a937c"
+    },
+    {
+      "path": "packages/cad-core/src/layer-policy.ts",
+      "size": 5505,
+      "sha256": "324c9951b7e75d8c6e2166907f25bb0d99c9c722f93d9c3580b60e26823e5911"
+    },
+    {
+      "path": "packages/cad-core/src/layers.ts",
+      "size": 13917,
+      "sha256": "af1bb56dc3774c018ba442ff2586da7a6c4d8184ca7bb67879a9584bbf8dcb9e"
     },
     {
       "path": "packages/cad-core/src/layouts.ts",
-      "size": 33632,
-      "sha256": "0ea7b5f9bdbcfb1236eb3e6d5405c338ce85e4d05d699259e4e60dc84c0804d6"
+      "size": 58962,
+      "sha256": "fcb4f072638bf838ef11d80a509e656d85170a5ecc174d744b611325e7b421be"
     },
     {
       "path": "packages/cad-core/src/legacy-import.ts",
@@ -3754,14 +6054,64 @@
       "sha256": "7bd66964772875fd53fc3d74501616ab7a3e213142cea7e1165f16c89fe41458"
     },
     {
+      "path": "packages/cad-core/src/pdf-underlays.ts",
+      "size": 5634,
+      "sha256": "7cb13896b72fddec9cdc6c62159143c7d47fcde95ac24366f3242d3e5a51b837"
+    },
+    {
+      "path": "packages/cad-core/src/pedit.ts",
+      "size": 11475,
+      "sha256": "814640505eb3fc9f022c781d3377730931221baa28ccad4793b49406e270a8b9"
+    },
+    {
+      "path": "packages/cad-core/src/pline-command.ts",
+      "size": 12630,
+      "sha256": "67a34855b7cd57801d5ee16ec0678bf490303525d603425f16519d6757d39b8c"
+    },
+    {
       "path": "packages/cad-core/src/plot-style.ts",
-      "size": 8479,
-      "sha256": "333f795ff84d86223f6ce76ddf764b59e504fd15c92e2648624a9c2565eae1b9"
+      "size": 8538,
+      "sha256": "43ac376b7631cdc02cfd5ccb74bb3d3a405ee0cb40884efa30c261d0f0c1864f"
+    },
+    {
+      "path": "packages/cad-core/src/polygon-command.ts",
+      "size": 10341,
+      "sha256": "08d8445020da0930c0377406ee726b4478f524c706c1a60a36ae4b247ba338b9"
+    },
+    {
+      "path": "packages/cad-core/src/precision-input.ts",
+      "size": 8790,
+      "sha256": "4fea0723dd4cb14bd4093f59df5c3a481ce7ecde362ba5fb091573d95a392f8a"
+    },
+    {
+      "path": "packages/cad-core/src/precision.ts",
+      "size": 6992,
+      "sha256": "64d39f6424eac8447841ab6eec6cbc6dcd7db155d18f4f52cc6b73350e58958e"
     },
     {
       "path": "packages/cad-core/src/publish.ts",
       "size": 8309,
       "sha256": "b90890bbcbe114dd4847ef5dcfc4c16dede0d7b6e98c388b2ba5ce4ca2be13c5"
+    },
+    {
+      "path": "packages/cad-core/src/rectangle-command.ts",
+      "size": 12190,
+      "sha256": "2c551e9fff47825c3a832c78de1784642c826229e2ec733f9dc06d03ee2e0126"
+    },
+    {
+      "path": "packages/cad-core/src/revcloud-command.ts",
+      "size": 22557,
+      "sha256": "d69363de7e9cda86d65395286d62a1cba9738d2ff35e0057b6d93b651b77152e"
+    },
+    {
+      "path": "packages/cad-core/src/selection-query.ts",
+      "size": 3885,
+      "sha256": "ea2b24b44b329cac27a61e7673e2ef6956ad2c32d247acd3dd106ab95f6190b6"
+    },
+    {
+      "path": "packages/cad-core/src/spline.ts",
+      "size": 24873,
+      "sha256": "c3567a9c91bbca5e24e6c4705c8bab961ad1c1d13a511d2976afc4743b589e46"
     },
     {
       "path": "packages/cad-core/src/stretch.ts",
@@ -3770,8 +6120,8 @@
     },
     {
       "path": "packages/cad-core/src/transaction.ts",
-      "size": 23985,
-      "sha256": "ab5734699108451ed63290424d56f69b8b0031efb22969f9fef5bd2dd20ac388"
+      "size": 28090,
+      "sha256": "e5c168d1dc6e5d5e138b58085f8a8bc16b2baf5b315a45c04dbb12274ca04a1e"
     },
     {
       "path": "packages/cad-core/src/trim.ts",
@@ -3779,9 +6129,24 @@
       "sha256": "e94ff7d5cece029f142e17ec4303edc3487513547df4ed63512a74f8b81359b9"
     },
     {
+      "path": "packages/cad-core/src/units.ts",
+      "size": 20830,
+      "sha256": "78cb632f0a5784f784229d0a43b3f8cb3c013518deefbb7ddd8247064dc885b9"
+    },
+    {
       "path": "packages/cad-core/test/align.test.ts",
       "size": 5368,
       "sha256": "c500851f190899a6e9ccfb66a5f5c372f791226071ebc972cfa9d6dfd5a561ef"
+    },
+    {
+      "path": "packages/cad-core/test/array-pedit-selection.test.ts",
+      "size": 14913,
+      "sha256": "32f1cd2c5229fede28e4d6d062a00ff7d570494f245d70bf47dddcd7055db882"
+    },
+    {
+      "path": "packages/cad-core/test/boundary-region.test.ts",
+      "size": 5036,
+      "sha256": "c4bab3a12b0644a12125baca6ab30ea4e8ae0bdbfba1c25954f7ef9fd0606fc8"
     },
     {
       "path": "packages/cad-core/test/break.test.ts",
@@ -3807,6 +6172,111 @@
       "path": "packages/cad-core/test/extend.test.ts",
       "size": 12891,
       "sha256": "61dfff95ea8f8079e3720520aa2e9781fa0de60215ab48582ab09c8b1f457bd2"
+    },
+    {
+      "path": "packages/cad-core/test/f002-pline-command.test.ts",
+      "size": 6997,
+      "sha256": "a70a3b64ede6b41e160a7df87b38e24d54f08c2f3f0b9cdbaec9f74d1ca569a6"
+    },
+    {
+      "path": "packages/cad-core/test/f002-pline-mutation-proven.test.ts",
+      "size": 3300,
+      "sha256": "2486a239ec327e51d21ec81612c60f150377a3751dbadb81e3dc76a9e161531a"
+    },
+    {
+      "path": "packages/cad-core/test/f003-rectangle-command.test.ts",
+      "size": 8307,
+      "sha256": "fb0bf89befdea5a7e82d02e0dff12c766f5f513df59bb58317363574adbce597"
+    },
+    {
+      "path": "packages/cad-core/test/f003-rectangle-mutation-proven.test.ts",
+      "size": 3771,
+      "sha256": "98ce2ddf5efa771d04935d91fb8d75b1e72cabdc9985007b8ddb92da107389b7"
+    },
+    {
+      "path": "packages/cad-core/test/f004-circle-command.test.ts",
+      "size": 11320,
+      "sha256": "29c4071c722efc178a3d844c5e739b51d4ddbecc07e506e560019cc1db96590c"
+    },
+    {
+      "path": "packages/cad-core/test/f004-circle-mutation-proven.test.ts",
+      "size": 4001,
+      "sha256": "7ac268cfca2fd5b5d4e2b8be476784c12f49deb2cd5c24755927c683c5d61bc0"
+    },
+    {
+      "path": "packages/cad-core/test/f005-arc-command.test.ts",
+      "size": 9707,
+      "sha256": "69d33813e758d1060662c7fa8f69f7a5c70b72fecbf29bd2a594a5def009c1fb"
+    },
+    {
+      "path": "packages/cad-core/test/f005-arc-mutation-proven.test.ts",
+      "size": 4177,
+      "sha256": "41cf5a260f897cc08d5c4fde4b2ce66663ca8a9dcc894a36573969c1022f72da"
+    },
+    {
+      "path": "packages/cad-core/test/f006-polygon-command.test.ts",
+      "size": 6859,
+      "sha256": "9d1cb44570b83181b457d8e677bc2c300a8e535ee0fb7613a1c43a350a3225af"
+    },
+    {
+      "path": "packages/cad-core/test/f006-polygon-mutation-proven.test.ts",
+      "size": 3705,
+      "sha256": "ab7af4bbc1f31f9106517ab682eec63ee56ac3142e0841e22f162a8eff871fb4"
+    },
+    {
+      "path": "packages/cad-core/test/f006-polygon-wiring.test.ts",
+      "size": 2622,
+      "sha256": "51179d8cdeb5582fa0697b15dc707d29e49937f696b2b1eafa71d8cba9066126"
+    },
+    {
+      "path": "packages/cad-core/test/f007-ellipse-command.test.ts",
+      "size": 6367,
+      "sha256": "23d125b1af62f5af190538d21aeae86c334110770fef1ab1aa05fa6498eed52f"
+    },
+    {
+      "path": "packages/cad-core/test/f007-ellipse-fuzz.test.ts",
+      "size": 3263,
+      "sha256": "fa2159ba452d463c0d2e41a015a99373a90fac6640ce55a5546ce5ab8f661a49"
+    },
+    {
+      "path": "packages/cad-core/test/f007-ellipse-mutation-proven.test.ts",
+      "size": 4524,
+      "sha256": "61a6e2c7d7bc1f64f122d7601b21681fd9114a455143400f159deea75368defd"
+    },
+    {
+      "path": "packages/cad-core/test/f007-ellipse-wiring.test.ts",
+      "size": 2630,
+      "sha256": "c7b659804ead9b13ea812e1c2748d9f8a208a2a33fdaef95ff80fe7ba1cfa69d"
+    },
+    {
+      "path": "packages/cad-core/test/f011-revcloud-command.test.ts",
+      "size": 7302,
+      "sha256": "4842d96454885c046c9cc01967dec8be19c4cffb4a337aab2ff6c38428870b78"
+    },
+    {
+      "path": "packages/cad-core/test/f011-revcloud-golden.test.ts",
+      "size": 1373,
+      "sha256": "1b2c55238f8cd8cb160ddd88587d3933485e83e6159c9e19db07f45b561eb3e7"
+    },
+    {
+      "path": "packages/cad-core/test/f011-revcloud-mutation-proven.test.ts",
+      "size": 2202,
+      "sha256": "8c8e0b6900e85735a8bd6a4a1af015a1ce12cf0522ceb7f26f9bbfd8e1781e11"
+    },
+    {
+      "path": "packages/cad-core/test/f011-revcloud-property.test.ts",
+      "size": 1733,
+      "sha256": "db2483d9abc105e934fcf735fd5739ab813cad8099c663de5503accf3c4ed9fc"
+    },
+    {
+      "path": "packages/cad-core/test/f011-revcloud-wiring.test.ts",
+      "size": 1956,
+      "sha256": "6b18b1e9e9e5d89370ca1b92031d105081f2cc40393465e4ccc2cf12671333d2"
+    },
+    {
+      "path": "packages/cad-core/test/f011-revcloud.golden.json",
+      "size": 540,
+      "sha256": "e208b16a6fe7f6d3fbcc019eecd229808c4ad3ea37e80c9235c60a1cc9934f5f"
     },
     {
       "path": "packages/cad-core/test/f022-mutation-proven.test.ts",
@@ -3854,6 +6324,36 @@
       "sha256": "9e2078a65c705dc875a485a170537af48f8b13625a287f1d4da2e9099febca75"
     },
     {
+      "path": "packages/cad-core/test/f031-array-command.test.ts",
+      "size": 4398,
+      "sha256": "b929c34b4fb54c38002bef900c61bd1c31aa750a855991f19a7564104d21cc06"
+    },
+    {
+      "path": "packages/cad-core/test/f031-array.golden.json",
+      "size": 187,
+      "sha256": "5e4a2f69fd0c43199411cc9dee6e1eaedcbbfa508ab0f0f4169d19d7f03fde9f"
+    },
+    {
+      "path": "packages/cad-core/test/f031-f032-mutation-proven.test.ts",
+      "size": 2043,
+      "sha256": "b0ae90bf0e59cc03fffefbca3ba7f410f4ae4a71a33afb6cc9f34cba43185f3d"
+    },
+    {
+      "path": "packages/cad-core/test/f032-arraypath-command.test.ts",
+      "size": 8956,
+      "sha256": "c866c5efc42787e4dec59c03e57c7a5eb1ace42a24706c784279eeccee3dfb7a"
+    },
+    {
+      "path": "packages/cad-core/test/f032-arraypath.golden.json",
+      "size": 171,
+      "sha256": "2097c75ca3cb67aaf1f6df7d83afb3e459ba1aae38c4b81949bb5d0e55c6a983"
+    },
+    {
+      "path": "packages/cad-core/test/f041-f086-mutation-proven.test.ts",
+      "size": 1277,
+      "sha256": "6014f46f38e37693e6b6acf950ead2ce273cd5a491e1598707ee35bedc861536"
+    },
+    {
       "path": "packages/cad-core/test/f107-mutation-proven.test.ts",
       "size": 3303,
       "sha256": "cdd77307eb6cdc66833a1f027210046390dcfe332cddfe6a27757e9867d75fa6"
@@ -3862,6 +6362,46 @@
       "path": "packages/cad-core/test/fillet.test.ts",
       "size": 38355,
       "sha256": "1a3c2cd771b6b8ce86c8197bb2e5962dec03ba6ceda1b3b11d06deec0e8a57e2"
+    },
+    {
+      "path": "packages/cad-core/test/geometry-commands.test.ts",
+      "size": 8880,
+      "sha256": "ecdbb419f20b57546ddca8660f216bdab7a9a8582b3c3936dcd05c07e8c31008"
+    },
+    {
+      "path": "packages/cad-core/test/layers-complete.golden.json",
+      "size": 782,
+      "sha256": "9ce57fa08b6007c87cbfb9d6177e270e1b4a32ac85ca97d3638adf33eb8b37ce"
+    },
+    {
+      "path": "packages/cad-core/test/layers-complete.mutation.test.ts",
+      "size": 2296,
+      "sha256": "84aea4de8ccc385ef15b916a0a43508cb4984aad43472c7e9a750f4a0f8c8ad9"
+    },
+    {
+      "path": "packages/cad-core/test/layers-complete.property.test.ts",
+      "size": 2374,
+      "sha256": "71ae18f3ed81a865538de0dd1e83f369a8c07f8820b552a59f8bdabf15109a63"
+    },
+    {
+      "path": "packages/cad-core/test/layers-complete.test.ts",
+      "size": 6967,
+      "sha256": "5912c7827fc21df9bd53040a3198ad0368f6dfc683ff9bd7b278d1799505cd14"
+    },
+    {
+      "path": "packages/cad-core/test/layers.test.ts",
+      "size": 5910,
+      "sha256": "969427492f9e97e33ecc67c3cdfc2e4e140fa502c303d1ec1e660dc1eadf5675"
+    },
+    {
+      "path": "packages/cad-core/test/layout-workspace.mutation.test.ts",
+      "size": 1538,
+      "sha256": "0b280a7b839f2b89987a73d8f581564c9d20e2536eda800e6b48a50527d0691f"
+    },
+    {
+      "path": "packages/cad-core/test/layout-workspace.test.ts",
+      "size": 6670,
+      "sha256": "319768806b9558d8f314300833b009b61b446b48f73b076acb7dd3ab54d76f51"
     },
     {
       "path": "packages/cad-core/test/layouts.test.ts",
@@ -3899,14 +6439,49 @@
       "sha256": "b64470e2cc6a977ed117935e6e1758697863d8f494345119094680cf1a6d0f21"
     },
     {
+      "path": "packages/cad-core/test/paper-workspace.mutation.test.ts",
+      "size": 2402,
+      "sha256": "347b76c92b358886ae24894e5c1f13240f4a4e18657a5ba77eaa59a8dd87bbeb"
+    },
+    {
+      "path": "packages/cad-core/test/paper-workspace.test.ts",
+      "size": 6684,
+      "sha256": "b36519a721b90e88919f5546d8ebf2fbf3f1ba6d919ce2f750a77f8d820ef0c6"
+    },
+    {
+      "path": "packages/cad-core/test/pdf-underlays-transaction.test.ts",
+      "size": 3568,
+      "sha256": "66b21c91a83a2ce5358c396ffaa8bbf3b1572036da7ec15593e88bb285b60a44"
+    },
+    {
       "path": "packages/cad-core/test/plot-style.test.ts",
       "size": 5977,
       "sha256": "ca693f7cbf9e8791c634f4f52111b8b3c4bbf53167d5138dab61c76749a7e3f5"
     },
     {
+      "path": "packages/cad-core/test/precision-input-wave6.test.ts",
+      "size": 4057,
+      "sha256": "f4fb1d56c2e16fb29f0bd6e5d73e34389eca412acdfbcd99bdcd0c59bfb7c848"
+    },
+    {
+      "path": "packages/cad-core/test/precision-wave6.mutation.test.ts",
+      "size": 2377,
+      "sha256": "fd2bf13a3ee8570645446f5751074d79789909412a99817956c9cda2a5e45e52"
+    },
+    {
+      "path": "packages/cad-core/test/precision.test.ts",
+      "size": 5614,
+      "sha256": "c1d12e80b0c02225e00c2b742679181feaaf9cc6110183bcbeca558f5402c2db"
+    },
+    {
       "path": "packages/cad-core/test/publish.test.ts",
       "size": 5290,
       "sha256": "ce4505d983d82ba2e8c61738608e57a6ff3623b48a3686442793452f335b6067"
+    },
+    {
+      "path": "packages/cad-core/test/spline.test.ts",
+      "size": 9143,
+      "sha256": "4a4c404219530dae06d920ae7d47f466a72156b8fdc62a35e2c6167e4438f759"
     },
     {
       "path": "packages/cad-core/test/stretch.test.ts",
@@ -3915,13 +6490,48 @@
     },
     {
       "path": "packages/cad-core/test/transaction.test.ts",
-      "size": 20397,
-      "sha256": "4c809f87a11a6fadea8524fe2d2023383109d353923072d4d7fbb6ee525bc953"
+      "size": 21239,
+      "sha256": "dd855336efb94715c5beaef30db52ed274c479958340c17837f9afefe2ee2f09"
+    },
+    {
+      "path": "packages/cad-core/test/transparency-draw-order.golden.json",
+      "size": 728,
+      "sha256": "19c018be77389d3d141c7197e8fced71083514d2b48ddeec9cad1385ff853d37"
+    },
+    {
+      "path": "packages/cad-core/test/transparency-draw-order.mutation.test.ts",
+      "size": 3828,
+      "sha256": "a6a754252378d3c7e18848eeb7314a727d6b943bb58ab3c5b86e9e509c983a9c"
+    },
+    {
+      "path": "packages/cad-core/test/transparency-draw-order.property.test.ts",
+      "size": 3687,
+      "sha256": "81a38e4aed30877d5309e84d7e8b3349713dc0403c2f119590daf8d0ecb98763"
+    },
+    {
+      "path": "packages/cad-core/test/transparency-draw-order.test.ts",
+      "size": 5089,
+      "sha256": "15bbda5ca5319e08b4b586c03c5c67919d64e85f2c0d4d310288cddbad3dc01a"
     },
     {
       "path": "packages/cad-core/test/trim.test.ts",
       "size": 29536,
       "sha256": "f90cb6c1f62d19d157c6f07ba4c37c55533d6523cf9445f5e4e6a6f566ed58ed"
+    },
+    {
+      "path": "packages/cad-core/test/units-complete.mutation.test.ts",
+      "size": 1580,
+      "sha256": "ced2f5b68bfa6f91c2a48bc7abcdde3908ff224fe21b459918f1291e02c0d805"
+    },
+    {
+      "path": "packages/cad-core/test/units-complete.property.test.ts",
+      "size": 3649,
+      "sha256": "ad557e7797e7c329c269111042ead4b1e75ba7da03cb4bcf4c9a90e374e56ac3"
+    },
+    {
+      "path": "packages/cad-core/test/units-complete.test.ts",
+      "size": 7893,
+      "sha256": "610fa55b52a35bfd9ed7c721ca6ef579bbd265adb379566e705f9819f6232200"
     },
     {
       "path": "packages/cad-core/tsconfig.json",
@@ -3935,13 +6545,53 @@
     },
     {
       "path": "packages/cad-dxf/src/import.ts",
-      "size": 43799,
-      "sha256": "2f375b882304f0d3f9461b84b69d97e09bec8326863b6253f100e42cd9214a59"
+      "size": 56356,
+      "sha256": "140d17dd21a6e7c2b585786a8087654637e51ba8dbbfc866bfbac795abe15ec2"
     },
     {
       "path": "packages/cad-dxf/src/index.ts",
-      "size": 40230,
-      "sha256": "e01ff7bd77cf6dfef6da8d86f00c13d87dc847bb0135dbd1d79ece80717edc13"
+      "size": 44412,
+      "sha256": "c121f9ad478ad4c63d79a370e72c5ce766accd40c5c865e0d26d42bf2f14cbe5"
+    },
+    {
+      "path": "packages/cad-dxf/src/open.ts",
+      "size": 3673,
+      "sha256": "9effc4ac59cfc31b269bf1d0c274be6a9909a728eac053cbdffcc79e7ed311f0"
+    },
+    {
+      "path": "packages/cad-dxf/test/f002-pline-roundtrip.test.ts",
+      "size": 2953,
+      "sha256": "4e3f2dbb020ed7a6b29fa45e37355423b3620c3763fefb84be8e21e795483682"
+    },
+    {
+      "path": "packages/cad-dxf/test/f003-rectangle-options-roundtrip.test.ts",
+      "size": 3217,
+      "sha256": "b0259e155ddbbfce10cd1df1922ff3c582d4fb03d8b2efc3ab92a649faecf4d7"
+    },
+    {
+      "path": "packages/cad-dxf/test/f004-circle-tangent-roundtrip.test.ts",
+      "size": 2671,
+      "sha256": "2c4a3f42fb104eb742639cedbd63d738423a81c0e9603097dd4e7b2f865f54ec"
+    },
+    {
+      "path": "packages/cad-dxf/test/f005-arc-roundtrip.test.ts",
+      "size": 2593,
+      "sha256": "2aff3d4f9ef737ad74ba6e8c8dee45885bfd0e231ce15753d1416ca809ac8d88"
+    },
+    {
+      "path": "packages/cad-dxf/test/f006-polygon-roundtrip.test.ts",
+      "size": 3009,
+      "sha256": "862800d6a96edbcbb2cdc9211b78b424441efa82c33027e7b40b2b4bd511bae6"
+    },
+    {
+      "path": "packages/cad-dxf/test/f007-ellipse-roundtrip.test.ts",
+      "size": 2925,
+      "sha256": "abfc4a1d75f16ef136c691e1507d2bcbc7d2293de80fd5f0748c1e3a69703aa7"
+    },
+    {
+      "path": "packages/cad-dxf/test/f011-revcloud-roundtrip.test.ts",
+      "size": 2434,
+      "sha256": "933d28d81be846d48bedb6eab56222dc984699d93ea9a1c9d462b22a1cf67878"
     },
     {
       "path": "packages/cad-dxf/test/f022-trim-roundtrip.test.ts",
@@ -3989,6 +6639,11 @@
       "sha256": "a8f3d007bd1daa1a03aca6234b294932a9ad4a8a38eb92b269db9d577d11f4a9"
     },
     {
+      "path": "packages/cad-dxf/test/f031-f032-array-roundtrip.test.ts",
+      "size": 2990,
+      "sha256": "a1d7141d168a7b6525e6d3cbbeaaebe9fc94b5f2fa525639069041987d50d5f0"
+    },
+    {
       "path": "packages/cad-dxf/test/f109-export.test.ts",
       "size": 10231,
       "sha256": "fcf4c1064784be2ed12848a1ff4993261867f621176f69fe219216e0d6569cda"
@@ -3997,6 +6652,41 @@
       "path": "packages/cad-dxf/test/f109-mutation-proven.test.ts",
       "size": 3225,
       "sha256": "88365454bb14f55c5de52bcf29df51ec8eb5da72871d83da1b4e16a6a3d7bf43"
+    },
+    {
+      "path": "packages/cad-dxf/test/f110-core.golden.json",
+      "size": 550,
+      "sha256": "b3be21e9dd2eaec1d1e71ea84dd114b4b3c0f6f883064361b720b20c41d88038"
+    },
+    {
+      "path": "packages/cad-dxf/test/f110-dimension-block-audit.test.ts",
+      "size": 2392,
+      "sha256": "ba99f3608be3756d7c23cafdf4faa78e9d99496d4cd656b5e4736350c6ebf3bc"
+    },
+    {
+      "path": "packages/cad-dxf/test/f110-file-readback.test.ts",
+      "size": 1704,
+      "sha256": "fcc3be6a40e858353bf5a2f97f2fb3e77bd8be84d6dcc4f3e74fa11b588be897"
+    },
+    {
+      "path": "packages/cad-dxf/test/f110-fixture.ts",
+      "size": 3450,
+      "sha256": "c9d944482f3cd02a27407c665fdd86139d096900d92ea3f6d16ba6b3516d90f7"
+    },
+    {
+      "path": "packages/cad-dxf/test/f110-import-core.test.ts",
+      "size": 7534,
+      "sha256": "63fa5edbdc5d863420eb788d56c04208270964d3a4f5850f30875aeb99ea091c"
+    },
+    {
+      "path": "packages/cad-dxf/test/f110-import-hardening.test.ts",
+      "size": 3929,
+      "sha256": "e0df717491e2acc4d6fbcb159389fe2f92b47e71b5757a80d687ac84f5d1a631"
+    },
+    {
+      "path": "packages/cad-dxf/test/f110-open.test.ts",
+      "size": 2623,
+      "sha256": "3631f4503ea418f07b8bc9b167159dec118d11d811a9219ca765ab3ce78df8f8"
     },
     {
       "path": "packages/cad-dxf/test/f111-mutation-proven.test.ts",
@@ -4025,8 +6715,13 @@
     },
     {
       "path": "packages/cad-print/src/index.ts",
-      "size": 36415,
-      "sha256": "226ab080d3be67f425b908e9fbc0055843287388cd89640098e01a745a2ac936"
+      "size": 36451,
+      "sha256": "d6b43c8779ecfcc9e40a3e9c4dd12d7f76829a2d090b27c53ba3a3e5bc3a05f4"
+    },
+    {
+      "path": "packages/cad-print/src/pdf-underlay.ts",
+      "size": 6088,
+      "sha256": "00c972584164ac1a4fc7a4b480e5b17f404cfdc0e2b186f3eca55a1d66cb6dc9"
     },
     {
       "path": "packages/cad-print/test/f104-mutation-proven.test.ts",
@@ -4054,6 +6749,11 @@
       "sha256": "c9bfd74c7398aa50aa089cd7e402298dac69d9fd1135e5124f50e6269cf0c2d4"
     },
     {
+      "path": "packages/cad-print/test/f115-underlay.test.ts",
+      "size": 2919,
+      "sha256": "c6f661c61c2ce4665f3d2ceba0918d2584c9dc2328666738b11002ad7396ef9c"
+    },
+    {
       "path": "packages/cad-print/test/vector-output.test.ts",
       "size": 23723,
       "sha256": "06ca073a1f61d7355ae359da5e96778e93e7f0ffa985fa55a84cb19db60b66bb"
@@ -4074,9 +6774,14 @@
       "sha256": "c2e589c3c8be0642582eaa95ffba295dccf377fa8cfefc835a16e6d2e7c68c06"
     },
     {
+      "path": "packages/cad-renderer/src/geometry-preview.ts",
+      "size": 1138,
+      "sha256": "b13b4ca5041906fa58331cd69a74a6e0824757bea9d4863c44160ba5270c4f06"
+    },
+    {
       "path": "packages/cad-renderer/src/index.ts",
-      "size": 120,
-      "sha256": "5563e5e6cdd66b652248e90d4ed237b145fd828da715c64375d2d05169a61888"
+      "size": 255,
+      "sha256": "81eb529ee8e8c8eb4df0991fcab073caf00504c1e881aa72661d397f285a6bbe"
     },
     {
       "path": "packages/cad-renderer/src/renderer.ts",
@@ -4089,9 +6794,29 @@
       "sha256": "1ee440db21555f018500dae5c5302c38c27a809a291bcd521702f94aa07068be"
     },
     {
+      "path": "packages/cad-renderer/src/selection-index.ts",
+      "size": 4470,
+      "sha256": "21233c5f750ec7dab1b94ba81bc6e473f4a9156b38361b228f0e9e6d112a8d9b"
+    },
+    {
       "path": "packages/cad-renderer/src/selection.ts",
       "size": 5880,
       "sha256": "7f39e9d073fc4c36aa4507c4eea1ff96e6990532652fdd5b16c5a81c84c9fbc3"
+    },
+    {
+      "path": "packages/cad-renderer/src/snap.ts",
+      "size": 25030,
+      "sha256": "db05693e8865bdd90c0f019f02d83437041363f8e6090aaa4a9c3a765bf7a340"
+    },
+    {
+      "path": "packages/cad-renderer/src/tracking.ts",
+      "size": 4797,
+      "sha256": "d91a3bc87565c80461b44f25b336fd505a326afc061cb6f3728d3b2cb4f131e3"
+    },
+    {
+      "path": "packages/cad-renderer/test/geometry-preview.test.ts",
+      "size": 1038,
+      "sha256": "9ca292ed4aee19a4db50fcd628f7fa7f48baba1dc400190ab84610cfcf81e003"
     },
     {
       "path": "packages/cad-renderer/test/renderer.test.ts",
@@ -4107,6 +6832,51 @@
       "path": "packages/cad-renderer/test/selection.test.ts",
       "size": 4494,
       "sha256": "d907d9c125eb225cb273b2d5bd58446e3aa5fbe8cae03eda6baa639c63900050"
+    },
+    {
+      "path": "packages/cad-renderer/test/snap-complete.mutation.test.ts",
+      "size": 1840,
+      "sha256": "690f7d6f0683d3b227df2f5dff4f69e18eb56ddaadcae2b387ab2bd3bf642198"
+    },
+    {
+      "path": "packages/cad-renderer/test/snap-complete.property.test.ts",
+      "size": 2196,
+      "sha256": "141528eb6473f8510a39c47822d2cf7baf9d468adc7a313e78bea1b0be0574b6"
+    },
+    {
+      "path": "packages/cad-renderer/test/snap-complete.test.ts",
+      "size": 7132,
+      "sha256": "2a34d097cd3c7658e827f01d56cdbc27b57826069649cd0399b9a9981baf650c"
+    },
+    {
+      "path": "packages/cad-renderer/test/snap.mutation.test.ts",
+      "size": 1149,
+      "sha256": "d5b69416ca01d0f4ee806f3b371902263a6b37b2f06a846fc18564ceba4be2df"
+    },
+    {
+      "path": "packages/cad-renderer/test/snap.test.ts",
+      "size": 6098,
+      "sha256": "5e2a6a6f3d33bf1e06dbb597db7bb7a06cb876483b1c8794fd95fba898d6d3d5"
+    },
+    {
+      "path": "packages/cad-renderer/test/tracking-complete.mutation.test.ts",
+      "size": 829,
+      "sha256": "dca9850f53edac4ece6f005e3bec3d1bc9e0455dbaa4a7cf763651dfd9c36b4b"
+    },
+    {
+      "path": "packages/cad-renderer/test/tracking-complete.property.test.ts",
+      "size": 1159,
+      "sha256": "4211d1cd6b70609970d1957ee92cc23c14d2eadf0b4bcd99172985cd5d68f918"
+    },
+    {
+      "path": "packages/cad-renderer/test/tracking-complete.test.ts",
+      "size": 2245,
+      "sha256": "7ea94a023c0b3e3c9d038abce64edf63796c169050a80e8e88bd8ef58ae47995"
+    },
+    {
+      "path": "packages/cad-renderer/test/tracking-selection-performance.test.ts",
+      "size": 2245,
+      "sha256": "24675d25109fc723970d925f1a653bb392861eb36330f436cbc3a8a932a97aa0"
     },
     {
       "path": "packages/cad-renderer/tsconfig.json",
@@ -4557,6 +7327,16 @@
       "path": "RIGHTS.md",
       "size": 473,
       "sha256": "057b17a4fb4778b239e79a16ad2c007e46b4d4580fd118fa2509eba240e0359e"
+    },
+    {
+      "path": "scope/README.md",
+      "size": 874,
+      "sha256": "73dbb11d64a903c15f687758e9222f5b9c7dfd5e00bd8db519b280ccf7d7ad02"
+    },
+    {
+      "path": "scope/reio-minimal-scope-v1.json",
+      "size": 1527,
+      "sha256": "554064623123ece162598542c49ba9c2f7f57faf0bf9e97bc554af851caf14bb"
     },
     {
       "path": "SECURITY.md",
@@ -5057,6 +7837,31 @@
       "path": "tools/autocad/send-escape.ps1",
       "size": 1907,
       "sha256": "e86d024998ce09c5c0d14a7dde9be1ce5bc3caa0fde4021e2f8d38c594e358b6"
+    },
+    {
+      "path": "tools/native/contracts.test.ts",
+      "size": 2553,
+      "sha256": "acb229515df376b0d1c3b52fb3ec5cf3ac70d65f97984aff1d7f2a52abf027e2"
+    },
+    {
+      "path": "tools/native/contracts.ts",
+      "size": 3548,
+      "sha256": "4d45e791f6b76d1308fa8477cf01d12ccffbb2e9ec54e55dfb099d6a5fa7b75a"
+    },
+    {
+      "path": "tools/native/fixtures/native-gate-v1.json",
+      "size": 1661,
+      "sha256": "c5a79910ee37a02326af6e11ba92f7fd63ca40fbd15ee6a183da1c751fde8428"
+    },
+    {
+      "path": "tools/native/README.md",
+      "size": 649,
+      "sha256": "5c1ecd3122dc97e5303c2a44fc92d8560662bebb52830892c4ca353582822222"
+    },
+    {
+      "path": "tools/native/THREAT_MODEL.md",
+      "size": 2148,
+      "sha256": "de4db5b8b62aee86bee50f92b7ea2c85757f03a66b074b9dda95f18552279b23"
     },
     {
       "path": "tools/oracles/fixtures/librecad-line-circle.dxf",
