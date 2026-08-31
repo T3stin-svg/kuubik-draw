@@ -6,6 +6,14 @@ import {
   type CadPrecisionInputOptions,
 } from "../../../../../packages/cad-core/src/precision-input.js";
 import type { PrecisionRequest, PrecisionResult } from "../../../../../packages/cad-core/src/precision.js";
+import {
+  CAD_UNITS_CONTRACT_EXTENSION_KEY,
+  createCadUnitsContract,
+  normalizeCadUnitsContract,
+  readCadUnitsContract,
+  type CadAngleFormat,
+  type CadUnitsContractV1,
+} from "../../../../../packages/cad-core/src/units.js";
 import { CadSelectionIndex } from "../../../../../packages/cad-renderer/src/selection-index.js";
 import type { CadPickHit } from "../../../../../packages/cad-renderer/src/selection.js";
 import {
@@ -42,6 +50,7 @@ import {
   type VisualShellCommandAdapter,
 } from "./command-adapter.js";
 import { normalizePrecisionUnits, PrecisionFeatureModel, type DynamicInputModel } from "./model.js";
+import { PrecisionUnitsFeatureModel } from "./units-contract.js";
 
 export interface PrecisionPointerInput {
   basePoint: CadPoint2;
@@ -70,6 +79,7 @@ export interface LayerShellIntent {
 export interface PrecisionLayersShellContractOptions {
   settings: PrecisionSettings;
   units: CadUnits;
+  unitsContract?: CadUnitsContractV1;
   inputFormat?: Omit<CadPrecisionInputOptions, "documentUnit">;
   initialPrecision?: Partial<PrecisionState>;
   layerController?: LayerManagerControllerOptions;
@@ -88,26 +98,30 @@ function cloneInputFormat(format: Omit<CadPrecisionInputOptions, "documentUnit">
   return { ...format };
 }
 
+function typedAngleUnit(format: CadAngleFormat): NonNullable<CadPrecisionInputOptions["defaultAngleUnit"]> {
+  return format === "radians" ? "rad" : format === "grads" ? "grad" : "deg";
+}
+
 /**
  * Immutable pointer frame. Preview, point commit and Dynamic Input all consume
  * the same private request snapshot, even if shell state changes afterwards.
  */
 export class PreparedPrecisionPointer {
   readonly #request: PrecisionRequest;
-  readonly #units: CadUnits;
+  readonly #unitsContract: CadUnitsContractV1;
   readonly #model: PrecisionFeatureModel;
   readonly #snapCandidateIds: string[];
   readonly #selectedSnapCandidateId: string | null;
 
   constructor(
     request: PrecisionRequest,
-    units: CadUnits,
+    units: CadUnitsContractV1,
     model: PrecisionFeatureModel,
     snapCandidateIds: readonly string[] = [],
     selectedSnapCandidateId: string | null = null,
   ) {
     this.#request = structuredClone(request);
-    this.#units = structuredClone(units);
+    this.#unitsContract = normalizeCadUnitsContract(units);
     this.#model = model;
     this.#snapCandidateIds = [...snapCandidateIds];
     this.#selectedSnapCandidateId = selectedSnapCandidateId;
@@ -126,7 +140,7 @@ export class PreparedPrecisionPointer {
   }
 
   dynamicInput(): DynamicInputModel {
-    return this.#model.dynamicInput(this.#request, this.#units);
+    return this.#model.dynamicInput(this.#request, this.#unitsContract);
   }
 
   resolve(): PrecisionPointerResolution {
@@ -144,6 +158,7 @@ export class PreparedPrecisionPointer {
  */
 export class PrecisionLayersShellContract {
   readonly precision: PrecisionCommandState;
+  readonly unitsModel = new PrecisionUnitsFeatureModel();
   readonly tracking = new CadObjectTrack();
   readonly snapCycle = new CadSnapSelectionCycle();
   readonly layerManager: LayerManagerShellAdapter;
@@ -153,7 +168,7 @@ export class PrecisionLayersShellContract {
   readonly #layers: LayerManagerController;
   readonly #adapter: VisualShellCommandAdapter;
   readonly #layerIntents: LayerShellIntent[] = [];
-  readonly #units: CadUnits;
+  readonly #unitsContract: CadUnitsContractV1;
   readonly #inputFormat: Omit<CadPrecisionInputOptions, "documentUnit">;
   #layerSnapshot: KDrawDocumentV1["layers"] = [];
   #settings: PrecisionSettings;
@@ -161,7 +176,18 @@ export class PrecisionLayersShellContract {
   constructor(document: KDrawDocumentV1, options: PrecisionLayersShellContractOptions) {
     this.precision = new PrecisionCommandState(options.initialPrecision ?? {});
     this.#settings = cloneSettings(options.settings);
-    this.#units = normalizePrecisionUnits(options.units);
+    const normalizedUnits = normalizePrecisionUnits(options.units);
+    const hasStoredContract = document.metadata.extensions?.[CAD_UNITS_CONTRACT_EXTENSION_KEY] !== undefined;
+    this.#unitsContract = options.unitsContract
+      ? normalizeCadUnitsContract(options.unitsContract)
+      : hasStoredContract
+        ? readCadUnitsContract(document)
+        : createCadUnitsContract(normalizedUnits);
+    if (this.#unitsContract.drawingUnit !== normalizedUnits.linear
+      || this.#unitsContract.lengthPrecision !== normalizedUnits.displayPrecision
+      || this.#unitsContract.anglePrecision !== normalizedUnits.angularPrecision) {
+      throw new TypeError("Precision shell units disagree with the document units contract.");
+    }
     this.#inputFormat = cloneInputFormat(options.inputFormat);
     this.#layers = options.layerController
       ? new LayerManagerController(document, options.layerController)
@@ -194,6 +220,10 @@ export class PrecisionLayersShellContract {
     return cloneInputFormat(this.#inputFormat);
   }
 
+  get precisionUnitsContract(): CadUnitsContractV1 {
+    return structuredClone(this.#unitsContract);
+  }
+
   setPrecisionSettings(settings: PrecisionSettings): void {
     this.precision.precisionModes(settings);
     this.#settings = cloneSettings(settings);
@@ -217,7 +247,13 @@ export class PrecisionLayersShellContract {
     const normalizedInput = input.input === undefined
       ? undefined
       : typeof input.input === "string"
-        ? parseCadPrecisionInput(input.input, { ...this.#inputFormat, documentUnit: this.#units.linear })
+        ? parseCadPrecisionInput(input.input, {
+            decimalSeparator: this.#unitsContract.decimalSeparator,
+            defaultInputUnit: this.#unitsContract.drawingUnit,
+            defaultAngleUnit: typedAngleUnit(this.#unitsContract.angleFormat),
+            ...this.#inputFormat,
+            documentUnit: this.#unitsContract.drawingUnit,
+          })
         : structuredClone(input.input);
     const explicitCoordinate = normalizedInput !== undefined && normalizedInput.kind !== "direct-distance";
     const candidateRequest = this.precision.prepareRequest({
@@ -260,7 +296,7 @@ export class PrecisionLayersShellContract {
       })),
     }, this.#settings);
     return new PreparedPrecisionPointer(
-      request, this.#units, this.#precisionModel,
+      request, this.#unitsContract, this.#precisionModel,
       objectSnapCandidates.map((candidate) => candidate.id), selectedCandidate?.id ?? null,
     );
   }

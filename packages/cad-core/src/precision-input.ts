@@ -19,7 +19,7 @@ export interface CadPrecisionInputOptions {
   /** Comma decimals require semicolon between Cartesian coordinates. */
   decimalSeparator?: "." | ",";
   /** Unsuffixed polar angles use degrees by default, matching CAD command input. */
-  defaultAngleUnit?: "deg" | "rad";
+  defaultAngleUnit?: "deg" | "grad" | "rad";
 }
 
 export class CadPrecisionInputError extends TypeError {
@@ -44,8 +44,8 @@ function validateOptions(options: CadPrecisionInputOptions): Required<CadPrecisi
     throw new CadPrecisionInputError("Decimal separator must be '.' or ','.");
   }
   const defaultAngleUnit = options.defaultAngleUnit ?? "deg";
-  if (defaultAngleUnit !== "deg" && defaultAngleUnit !== "rad") {
-    throw new CadPrecisionInputError("Angle input unit must be deg or rad.");
+  if (defaultAngleUnit !== "deg" && defaultAngleUnit !== "grad" && defaultAngleUnit !== "rad") {
+    throw new CadPrecisionInputError("Angle input unit must be deg, grad or rad.");
   }
   return { documentUnit, defaultInputUnit, decimalSeparator, defaultAngleUnit };
 }
@@ -79,11 +79,12 @@ function parseLengthToken(source: string, options: Required<CadPrecisionInputOpt
 }
 
 function parseAngleToken(source: string, options: Required<CadPrecisionInputOptions>): number {
-  const match = new RegExp(`^(${numberSource(options.decimalSeparator)})\\s*(deg|rad|°)?$`, "i").exec(source.trim());
-  if (!match) throw new CadPrecisionInputError("Angle must be a finite number with optional deg, ° or rad suffix.");
+  const match = new RegExp(`^(${numberSource(options.decimalSeparator)})\\s*(deg|grad|g|rad|°)?$`, "i").exec(source.trim());
+  if (!match) throw new CadPrecisionInputError("Angle must be a finite number with optional deg, °, grad, g or rad suffix.");
   const value = finiteNumber(match[1]!, options.decimalSeparator, "Angle");
-  const unit = match[2]?.toLowerCase() === "rad" ? "rad" : match[2] ? "deg" : options.defaultAngleUnit;
-  return canonicalNumber(unit === "rad" ? value : value * Math.PI / 180);
+  const suffix = match[2]?.toLowerCase();
+  const unit = suffix === "rad" ? "rad" : suffix === "grad" || suffix === "g" ? "grad" : suffix ? "deg" : options.defaultAngleUnit;
+  return canonicalNumber(unit === "rad" ? value : unit === "grad" ? value * Math.PI / 200 : value * Math.PI / 180);
 }
 
 function cartesianParts(source: string, decimalSeparator: "." | ","): [string, string] | null {

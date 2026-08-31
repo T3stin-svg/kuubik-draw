@@ -14,7 +14,14 @@ describe("Dynamic Input exact coordinate/distance/angle read-back", () => {
       delta: { x: -5.12345679, y: -5.87654321 },
       distanceValue: distance, angleRad: angle,
       units: { linear: "mm", displayPrecision: 3, angularPrecision: 4 },
+      unitsContract: {
+        schemaVersion: 1, drawingUnit: "mm", insertionUnit: "mm",
+        lengthFormat: "decimal", lengthPrecision: 3,
+        angleFormat: "decimal-degrees", anglePrecision: 4,
+        decimalSeparator: ".", clockwise: false, baseAngleRad: 0,
+      },
       x: "4.877", y: "4.123", distance: distance.toFixed(3),
+      angle: (angle * 180 / Math.PI).toFixed(4),
       angleDeg: (angle * 180 / Math.PI).toFixed(4), source: "cursor",
     });
     expect(readback.angleRad).toBeGreaterThan(Math.PI);
