@@ -233,9 +233,14 @@ height and text-style width factor. It is not a native font-shaping or AutoCAD l
 
 `MTEXT edit` replaces one immutable entity value under the same handle. It may change content,
 position, height, width, rotation, style, attachment, spacing, wrap and paragraph settings in one
-command/Undo step. A changed paragraph count without a matching paragraph contract regenerates
-deterministic `P1..Pn` IDs. Import must reject mismatched counts, duplicate paragraph IDs,
+command/Undo step. When text gains or loses newline-delimited paragraphs without an explicit
+paragraph contract, surviving paragraph IDs/alignment are retained by index and only new rows get
+the first free deterministic `P1..Pn` ID. `styleId: null` explicitly removes the text-style
+reference; omission preserves it. Import must reject mismatched counts, duplicate paragraph IDs,
 unsupported alignment/wrap values, non-finite geometry and missing text-style references.
+Known enum fields are runtime-validated at the planner boundary, so a JSON payload cannot bypass
+TypeScript and persist an unknown attachment, wrap mode or leader arrow type. Character wrapping
+splits Unicode by complete code points and never emits half of a UTF-16 surrogate pair.
 
 Plain `LEADER` is a native `CadLeader` with two or more model-coordinate vertices and optional
 text. Its extension stores the parts not present in the public schema:
@@ -293,6 +298,11 @@ and MLEADER together; all entity replacements and the style target/result handle
 atomic command. Updating a `CadTextStyle` replaces only the resource with the same style ID, so
 every existing reference remains valid without rewriting the annotations.
 
+For edit payloads, omission means preserve. `textStyleId: null` removes only the referenced text
+style, `anchor: null` deliberately changes the leader to `associative:false`, and plain
+`LEADER.text: null` removes optional content. Those changes still replace one immutable entity
+under the same handle. MLEADER content and its independent `styleId` remain required.
+
 `updateAssociativeLeaders` runs against the staged post-geometry document and replaces only the
 first vertex under the existing annotation handle. It is appended to the geometry command beside
 dimension/hatch refreshes and committed once. A missing/incompatible anchor records a broken
@@ -303,6 +313,28 @@ orphan style or orphan association without fallback execution.
 R2004/AC1018 predates native MLEADER. Session 4 must either select a format/version that supports
 MLEADER, or fail closed for native MLEADER export. A LEADER+MTEXT surrogate may be offered only
 as an explicitly lossy conversion and cannot prove F-060 round-trip parity.
+
+#### DXF/PDF serialization boundary for F-057..F-060
+
+DXF must emit referenced TEXTSTYLE table entries before TEXT/MTEXT/LEADER/MLEADER entities and
+must preserve the canonical style ID on import. MTEXT requires model-space insertion, rotation,
+height, reference width, attachment, line-spacing factor, newline paragraph order and supported
+paragraph alignment. If the selected DXF version cannot encode stable paragraph IDs or exact
+formatting, the adapter must retain the KDraw namespaced payload or report the export as lossy; it
+must not claim exact F-057 round-trip from visible glyphs alone.
+
+LEADER output must preserve ordered vertices, arrow type/size, landing state/length, optional
+content placement and text-style reference. Native MLEADER additionally preserves its independent
+`styleId`, text position/height, landing gap and requires AC1021 or newer. An associative output
+must bind the exact source handle/feature. A proxy or visually similar exploded surrogate is
+explicitly lossy for F-059/F-060 because it cannot prove handle-based update behavior.
+
+PDF is a presentation output, not an editable annotation serialization format. The PDF adapter
+must render the same deterministic MTEXT line order/alignment and leader geometry from model
+coordinates, including rotation, arrow, landing and content placement. It may flatten these to
+vector paths/text operators, but must never claim preservation of entity handles, paragraph IDs,
+style-table identity, MLEADER style identity or associativity after PDF reopen. Searchable Unicode,
+vector geometry, page placement and zero unintended raster fallback are the PDF read-back fields.
 
 ### HATCH
 
@@ -521,6 +553,22 @@ For each row record AutoCAD command line/options, before/after entity handles, P
 Undo/Redo behavior, Kuubik preview-versus-commit equality, output hash, and independent reopen
 results. Screenshots alone cannot prove handle identity, association or serialization.
 
+### AutoCAD 2024.1.2 behavior matrix for F-057..F-060
+
+This is also a test plan rather than parity evidence. Core, golden, property, mutation and browser-
+ready adapter tests do not promote a row without the matching live applications and file read-back.
+
+| F-row | Kuubik command/contract | AutoCAD comparison | Required exact read-back | Current evidence |
+| --- | --- | --- | --- | --- |
+| F-057 | `MTEXT` create/edit, width/wrap/attachment/paragraph IDs | `MTEXT` plus Properties/in-place edit | same handle; Unicode/newlines; insertion, height, width, rotation, attachment, spacing and alignment | core/golden/property/wiring only |
+| F-058 | `STYLE` create/update/apply with stable ID | `STYLE`, current/object style assignment | style name/font/width/oblique values, referenced IDs and unchanged annotation handles | unit/mutation/wiring only |
+| F-059 | `LEADER` create/edit and stable source anchor | `LEADER` with annotation/landing options | ordered vertices, arrow, landing, content/style reference, source handle and atomic Undo/Redo | unit/associative/wiring only |
+| F-060 | AC1021+ native `MLEADER` create/edit | `MLEADER` and MLEADERSTYLE behavior | independent style ID, text position/style/height, landing gap, arrow, source handle and same entity handle | unit/associative/wiring only |
+
+For each row capture the AutoCAD command/options, Properties values, before/after handles,
+association response after source movement, Undo/Redo, Kuubik preview-versus-commit result, output
+hash and independent DXF/PDF read-back. PDF evidence cannot substitute for editable DXF identity.
+
 1. Linear/aligned/angular/radius/diameter/continued/baseline dimensions: type, definition points,
    style, chain mode and all association target handles. Compare derived text, tolerance,
    arrows, extension geometry, units, precision and annotation scale after reopen.
@@ -553,9 +601,9 @@ Kuubik and the produced file is independently read back.
 
 This workstream supplies the serialization contract, exact capability declaration/receipt and
 read-back fixture only. It does not call a DXF/PDF writer, does not alter either adapter and has not
-produced or reopened a dimension file. Session 4 must map baseline/continued chain semantics and
-the namespaced style profile at its adapter boundary, then fail closed for any field it cannot
-round-trip. Documents carrying those semantics derive explicit `dimension-chain` and
-`dimension-style-profile` requirements in addition to the native dimension requirements. A
-passing core receipt or `gate:dxf` regression is necessary integration evidence, but
-is not AutoCAD or generated-file evidence and cannot promote F-061..F-068 to `1.00`.
+produced or reopened an annotation file. Session 4 must map MTEXT/LEADER/MLEADER and dimension
+semantics at its adapter boundary, then fail closed for any field it cannot round-trip. Documents
+carrying dimension chain/style semantics derive explicit `dimension-chain` and
+`dimension-style-profile` requirements in addition to native requirements. A passing core receipt,
+PDF rendering regression or `gate:dxf` regression is necessary integration evidence, but is not
+AutoCAD or generated-file evidence and cannot promote F-057..F-068 to `1.00`.
