@@ -51,6 +51,19 @@ UI state. AC1018 removes MLEADER from the executable registry and reports
 `unsupported-dxf-version`; AC1021 or newer is required. The adapter is intentionally not wired
 through `App.tsx` or `shell/**` in this workstream.
 
+The live-ready path is `createPrompt → answer/skip → previewPrompt → executePrompt`. Prompt context
+contains only active layer, selected stable handles and optional dimension anchors. Entity handles
+are allocated deterministically from the active document immediately before preview; repeat thus
+gets a new free handle instead of reusing a committed one. The prompt builders produce the exact
+`AnnotationCommandInput` or `BlockCommandInput` consumed by the existing planner.
+
+`executePrompt` requires a ready prompt, reuses the same typed input for engine execution and
+returns an `AnnotationBlockPromptCommit`. Its read-back checks committed changes against preview,
+then independently checks every created/deleted entity, style table or complete block drawing
+replacement in the active `CadSession`. A read-back mismatch throws instead of returning success.
+The visual integrator should render success only from this returned read-back, not from a click or
+from `CommandExecutionResult.kind` alone.
+
 ## Common invariants
 
 1. All points are finite double-precision model coordinates. View, zoom and paper coordinates
@@ -255,6 +268,13 @@ Session 4 must add the adapter-specific declaration at its output boundary and i
 read back the fixture described in
 `evidence/workstreams/annotation-blocks/dxf-readback-fixture.json`. That JSON is a test contract,
 not evidence that a DXF adapter or AutoCAD round trip has passed.
+
+For adapter-independent contract testing, core also exposes
+`createAnnotationBlockDxfCapabilityReceipt` and
+`readBackAnnotationBlockDxfCapabilityReceipt`. The serialized receipt binds the exact derived
+capability requirements, handle list, adapter declaration and DXF version to the current document.
+A changed handle, requirement or AC1018 downgrade for native MLEADER fails read-back. This proves
+only the capability contract; it does not prove that a DXF file was written or reopened.
 
 ## Deterministic ordering and failure behavior
 
