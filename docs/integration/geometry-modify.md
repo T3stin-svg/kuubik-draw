@@ -125,3 +125,24 @@ schema has no native region entity, so integration must display the proxy limita
 and must not present the result as native ACDBREGION/DXF round-trip parity. Straight
 line/open-polyline loops, closed polylines, circles, and full ellipses are supported;
 stitched arc/bulge loops are not yet supported.
+
+## Wave 6 exports
+
+From `apps/web/src/features/command-system/command-engine.ts`:
+
+- `CommandLineEngine`
+- `CommandRegistry`
+- `parseAliasFile`
+- `CommandEngineInputError`
+- command definition, invocation, preparation, option, and result types
+
+The integration owner should register adapters for every exported geometry/modify
+preparation function, then mount one `CommandLineEngine` beside the application-owned
+`CadSession`. The engine resolves canonical names and aliases, canonicalizes `/Option`
+keywords, supports quoted arguments, history navigation, Escape, Enter/Space repeat,
+and built-in atomic `U`/`UNDO`/`REDO`. PGP-style alias text uses
+`ALIAS, *COMMAND` lines.
+
+The engine does not provide a React command palette or mutate application CSS. That
+UI and command-specific prompt orchestration remain integration work because
+`App.tsx` and `style.css` are outside this workstream's file ownership.
