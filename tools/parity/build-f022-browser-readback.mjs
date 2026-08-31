@@ -18,6 +18,7 @@ const sourcePaths = [
   "packages/cad-renderer/src/selection.ts",
   "packages/cad-renderer/test/selection.test.ts",
   "e2e/f022-trim.spec.ts",
+  "e2e/helpers/model-space.ts",
   "tools/parity/capture-f022-browser.mjs",
   "tools/parity/build-f022-browser-readback.mjs",
   "package-lock.json",

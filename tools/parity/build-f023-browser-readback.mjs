@@ -19,6 +19,7 @@ const sourcePaths = [
   "packages/cad-renderer/src/index.ts",
   "packages/cad-renderer/src/selection.ts",
   "e2e/f023-extend.spec.ts",
+  "e2e/helpers/model-space.ts",
   "tools/parity/capture-f023-browser.mjs",
   "tools/parity/build-f023-browser-readback.mjs",
 ];

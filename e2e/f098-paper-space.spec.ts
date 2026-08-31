@@ -112,7 +112,8 @@ test("F-098 shows a positive A3 paper sheet in the workspace and restores it fro
   expect(beforeReload.viewport).toMatchObject({ width: 1920, height: 1080 });
   expect(beforeReload.area.width).toBeGreaterThan(1500);
   expect(beforeReload.area.height).toBeGreaterThan(700);
-  expect(beforeReload.desk).toEqual(beforeReload.area);
+  expect(beforeReload.desk).toMatchObject({ x: beforeReload.area.x, y: beforeReload.area.y, width: beforeReload.area.width });
+  expect(beforeReload.area.height - beforeReload.desk.height).toBe(69);
   expect(beforeReload.sheet.width).toBeGreaterThan(700);
   expect(beforeReload.sheet.height).toBeGreaterThan(500);
   expect(beforeReload.sheet.x).toBeGreaterThanOrEqual(beforeReload.desk.x + 20);

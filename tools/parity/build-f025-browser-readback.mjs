@@ -23,6 +23,7 @@ const sourcePaths = [
   "packages/cad-dxf/src/index.ts",
   "packages/cad-dxf/test/f025-chamfer-roundtrip.test.ts",
   "e2e/f025-chamfer.spec.ts",
+  "e2e/helpers/model-space.ts",
   "tools/parity/capture-f025-browser.mjs",
   "tools/parity/build-f025-browser-readback.mjs",
 ];

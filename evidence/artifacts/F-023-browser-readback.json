@@ -2,9 +2,9 @@
   "schemaVersion": 1,
   "rowId": "F-023",
   "source": "Chromium 1920x1080 visible controls, physical Shift-click, IndexedDB and production DXF/KDRAW1 downloads",
-  "observedAt": "2026-08-30T23:51:43.578Z",
+  "observedAt": "2026-08-31T00:55:20.035Z",
   "implementationSha256": {
-    "apps/web/src/App.tsx": "cb6be3db4a8f0cd038806c86ff2fdda091c4cd15c0c98d7b254b4b89e78bfd2a",
+    "apps/web/src/App.tsx": "3a5e7091456139ed2735bc46804526c25627b2c85ed67ee0426eae96e7f80041",
     "apps/web/src/workflows/modify-command.ts": "9d1f7d0b1d3e308eac2a5d4055436626e3a497cbaaf116c05957e1fde15616c7",
     "apps/web/src/workflows/modify-command.test.ts": "aac0694d3a93a08ed5c6b98ea5456e62ba7c0f05777780a47d99dcabdf2e12b9",
     "packages/cad-core/src/commands.ts": "540e6f79dafb8d71f0e3ba5d43a1dcd39bd9f5809c03ea383c070de3636609fc",
@@ -13,9 +13,10 @@
     "packages/cad-core/src/trim.ts": "e94ff7d5cece029f142e17ec4303edc3487513547df4ed63512a74f8b81359b9",
     "packages/cad-renderer/src/index.ts": "5563e5e6cdd66b652248e90d4ed237b145fd828da715c64375d2d05169a61888",
     "packages/cad-renderer/src/selection.ts": "7f39e9d073fc4c36aa4507c4eea1ff96e6990532652fdd5b16c5a81c84c9fbc3",
-    "e2e/f023-extend.spec.ts": "2ad2f85f8a65a3c3d533684eb93c7cc73c57068fb0cfa362f546df6fda6196bb",
+    "e2e/f023-extend.spec.ts": "8660d85fa6954bb84986d029807de0023e86e765259d04948396f18fe4a39e6b",
+    "e2e/helpers/model-space.ts": "1a69210e5248af4d572c8809943cfe414fa06bcfd0b4643f652f21d1858f8381",
     "tools/parity/capture-f023-browser.mjs": "da1954b736fe827f8342d319892d9782041490c937c62064eb52d83871812104",
-    "tools/parity/build-f023-browser-readback.mjs": "031fe696f6232e7dc38c979bea85d9bf8059272e8a79aeacc98873a64c9c8f1b"
+    "tools/parity/build-f023-browser-readback.mjs": "d8ba36d4d76759f5538ea65466dbb5ca4e34302c8a20bb6f84941c14b4041599"
   },
   "standard": {
     "rowId": "F-023",
@@ -104,11 +105,11 @@
       "attachments": [],
       "metadata": {
         "createdAt": "2026-08-29T12:00:00.000Z",
-        "updatedAt": "2026-08-30T23:51:20.000Z"
+        "updatedAt": "2026-08-31T00:43:03.178Z"
       }
     },
     "operation": {
-      "opId": "35b4823a-483b-4779-b9c4-6f828aea7543",
+      "opId": "91c2cf56-1516-4d8d-a8a7-40c559930403",
       "baseRevision": 0,
       "commandId": "EXTEND",
       "args": {
@@ -260,7 +261,7 @@
       "attachments": [],
       "metadata": {
         "createdAt": "2026-08-29T12:00:00.000Z",
-        "updatedAt": "2026-08-30T23:51:20.665Z"
+        "updatedAt": "2026-08-31T00:43:03.695Z"
       }
     },
     "redone": {
@@ -347,7 +348,7 @@
       "attachments": [],
       "metadata": {
         "createdAt": "2026-08-29T12:00:00.000Z",
-        "updatedAt": "2026-08-30T23:51:20.967Z"
+        "updatedAt": "2026-08-31T00:43:04.062Z"
       }
     },
     "consoleErrors": [],
@@ -441,11 +442,11 @@
         "attachments": [],
         "metadata": {
           "createdAt": "2026-08-29T12:00:00.000Z",
-          "updatedAt": "2026-08-30T23:51:22.518Z"
+          "updatedAt": "2026-08-31T00:43:05.945Z"
         }
       },
       "operation": {
-        "opId": "6a4ef27f-2784-4f4f-8e74-85b33e268383",
+        "opId": "80b73235-b08c-411f-b066-12cfc5c4fabb",
         "baseRevision": 0,
         "commandId": "EXTEND",
         "args": {
@@ -659,11 +660,11 @@
         "attachments": [],
         "metadata": {
           "createdAt": "2026-08-29T12:10:00.000Z",
-          "updatedAt": "2026-08-30T23:51:24.933Z"
+          "updatedAt": "2026-08-31T00:43:08.827Z"
         }
       },
       "operation": {
-        "opId": "ff035fbc-0699-4cfa-91b9-a5ad91abfc7b",
+        "opId": "8705d9a8-f139-47b2-ac54-72e487e7884d",
         "baseRevision": 0,
         "commandId": "EXTEND",
         "args": {
@@ -676,7 +677,7 @@
             {
               "handle": "10",
               "pickPoint": {
-                "x": 499.999859,
+                "x": 499.999878,
                 "y": 0
               },
               "action": "trim"
@@ -719,8 +720,8 @@
       "modifier": "Shift",
       "action": "trim",
       "pointer": {
-        "x": 567.8333333333334,
-        "y": 541.8333333333334
+        "x": 556.3333333333334,
+        "y": 599.3333333333334
       }
     },
     "consoleErrors": [],
@@ -814,11 +815,11 @@
         "attachments": [],
         "metadata": {
           "createdAt": "2026-08-29T12:00:00.000Z",
-          "updatedAt": "2026-08-30T23:51:26.867Z"
+          "updatedAt": "2026-08-31T00:43:11.478Z"
         }
       },
       "operation": {
-        "opId": "85f61073-c1ec-4fc2-a012-17c54007907c",
+        "opId": "ecdfee35-b919-4373-9a7d-14788105a453",
         "baseRevision": 0,
         "commandId": "EXTEND",
         "args": {
@@ -1020,11 +1021,11 @@
           "attachments": [],
           "metadata": {
             "createdAt": "2026-08-29T12:20:00.000Z",
-            "updatedAt": "2026-08-30T23:51:29.516Z"
+            "updatedAt": "2026-08-31T00:43:14.674Z"
           }
         },
         "operation": {
-          "opId": "d7a306aa-7919-4072-a9b7-e3a3d1768b8a",
+          "opId": "be07d8d9-6a2c-4951-ba51-30929ed9039f",
           "baseRevision": 0,
           "commandId": "EXTEND",
           "args": {
@@ -1133,7 +1134,7 @@
         "attachments": [],
         "metadata": {
           "createdAt": "2026-08-29T12:20:00.000Z",
-          "updatedAt": "2026-08-30T23:51:30.132Z"
+          "updatedAt": "2026-08-31T00:43:15.211Z"
         }
       }
     },
@@ -1223,11 +1224,11 @@
           "attachments": [],
           "metadata": {
             "createdAt": "2026-08-29T12:00:00.000Z",
-            "updatedAt": "2026-08-30T23:51:32.416Z"
+            "updatedAt": "2026-08-31T00:43:17.996Z"
           }
         },
         "operation": {
-          "opId": "4b4cb920-3548-4909-b085-7c71078977c5",
+          "opId": "94916e32-133d-48f3-b3bd-1481e94cc45d",
           "baseRevision": 0,
           "commandId": "EXTEND",
           "args": {
@@ -1357,11 +1358,11 @@
           "attachments": [],
           "metadata": {
             "createdAt": "2026-08-29T12:00:00.000Z",
-            "updatedAt": "2026-08-30T23:51:34.815Z"
+            "updatedAt": "2026-08-31T00:43:20.878Z"
           }
         },
         "operation": {
-          "opId": "cb84e8bb-6448-43c4-9670-b88f46221931",
+          "opId": "60e57382-9c1a-46f1-ab02-c552a0fa157f",
           "baseRevision": 0,
           "commandId": "EXTEND",
           "args": {
@@ -1491,11 +1492,11 @@
           "attachments": [],
           "metadata": {
             "createdAt": "2026-08-29T12:00:00.000Z",
-            "updatedAt": "2026-08-30T23:51:37.232Z"
+            "updatedAt": "2026-08-31T00:43:23.743Z"
           }
         },
         "operation": {
-          "opId": "2eede2d0-c78f-418f-8b2b-0af42489e9d3",
+          "opId": "51288290-51dc-40d8-97d2-fd1c9e86536d",
           "baseRevision": 0,
           "commandId": "EXTEND",
           "args": {
@@ -1911,7 +1912,7 @@
       ]
     },
     "kdraw": {
-      "sha256": "8d1b165168128f9aee99d71466bae9c7182f7ed8dbe5ff91d8ad2059ebd01900",
+      "sha256": "05e7b885f4f194981fbce3a42e5bb437fabada2cc2abb17531b564db5f430703",
       "byteLength": 1789
     }
   },

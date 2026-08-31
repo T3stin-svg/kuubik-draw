@@ -44,6 +44,7 @@ const sourcePaths = [
   "packages/cad-print/test/vector-output.test.ts",
   "package-lock.json",
   "e2e/f024-fillet.spec.ts",
+  "e2e/helpers/model-space.ts",
   "evidence/artifacts/F-024-browser-parametric-source.dxf",
   "tools/autocad/f024-runner.test.mjs",
   "tools/autocad/f024-dxf-verifier.mjs",

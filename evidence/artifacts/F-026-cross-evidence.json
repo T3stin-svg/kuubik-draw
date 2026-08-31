@@ -27,28 +27,28 @@
     "atPointCapabilityExact": true
   },
   "evidenceSha256": {
-    "evidence/artifacts/F-026-browser-readback.json": "e154a44c87a107c79002e097929cfa6a16189f792a7c51fd7ab48739c016592c",
-    "evidence/artifacts/F-026-browser-matrix.json": "6af7e439188db8c56bcce7efce0ef57a96bfbc640e7c1345b0c915e18e875e9b",
-    "evidence/artifacts/F-026-independent-readback.json": "57ebfc0603ea4e0dfe93aa351c70e2e7fe707433f014d02593edfc7074c00aa3",
+    "evidence/artifacts/F-026-browser-readback.json": "21148ef87ef493f483caa44a225aa2ea64b299832ae97e79e2a11c8870fa84ac",
+    "evidence/artifacts/F-026-browser-matrix.json": "7f93ebfbc6d3eb1b16fffea1c85372de421867bc98665e7a06d36ae718049083",
+    "evidence/artifacts/F-026-independent-readback.json": "ee698fc5e1c9e33ed7acbec1f9cb62042eaa1cd35165e892e43ae8aaa67c471e",
     "evidence/artifacts/F-026-autocad-readback.json": "879be7531123b0aec5dbf544bd7bdf4611c8d34c4e1bcec63f4f6215abe1db09",
     "evidence/artifacts/F-026-autocad-core.json": "39de05789a2aac5cdf9eac093053877d0b9dfe07a7e81c8d343ff85314c80c4a",
-    "evidence/artifacts/F-026-oracles.json": "bd717fccd4694c50f45da71af4082415847e7fe6f3dcd864f4fa735c35f07263"
+    "evidence/artifacts/F-026-oracles.json": "6d115901135d6e09be37be6f3151a318c4d337f31ddfeff3338becdc67c26481"
   },
   "nestedReceipts": {
     "browserArtifacts": {
       "evidence/artifacts/F-026-browser-matrix.json": {
-        "expected": "6af7e439188db8c56bcce7efce0ef57a96bfbc640e7c1345b0c915e18e875e9b",
-        "actual": "6af7e439188db8c56bcce7efce0ef57a96bfbc640e7c1345b0c915e18e875e9b",
+        "expected": "7f93ebfbc6d3eb1b16fffea1c85372de421867bc98665e7a06d36ae718049083",
+        "actual": "7f93ebfbc6d3eb1b16fffea1c85372de421867bc98665e7a06d36ae718049083",
         "byteLength": 10034
       },
       "evidence/artifacts/F-026-browser-canvas.json": {
-        "expected": "403b7cd86cccdec3d5318fd03798d44261b6840912cc21882772a8f1030394a9",
-        "actual": "403b7cd86cccdec3d5318fd03798d44261b6840912cc21882772a8f1030394a9",
+        "expected": "7f8b0872cdfa7ff4ed39939c1805aaccc29a8b63b1e345c874eeaf99c1112853",
+        "actual": "7f8b0872cdfa7ff4ed39939c1805aaccc29a8b63b1e345c874eeaf99c1112853",
         "byteLength": 3438
       },
       "evidence/artifacts/F-026-browser-at-point.json": {
-        "expected": "c5e1a410b99421d4e7954ca53e846e8bc6a8eb8d70d45b4e48c955e93e323a48",
-        "actual": "c5e1a410b99421d4e7954ca53e846e8bc6a8eb8d70d45b4e48c955e93e323a48",
+        "expected": "bab43a55d835348b3eaae6ba302cfeb67ef6539b78bb8b9f1f190d0bc489da00",
+        "actual": "bab43a55d835348b3eaae6ba302cfeb67ef6539b78bb8b9f1f190d0bc489da00",
         "byteLength": 9938
       },
       "evidence/artifacts/F-026-browser.dxf": {
@@ -57,16 +57,16 @@
         "byteLength": 4160
       },
       "evidence/artifacts/F-026-browser.kdraw": {
-        "expected": "9250d697eb7b676ce6315fe3569c4440bda5b67c0099fe3e55915ef7f3e01e94",
-        "actual": "9250d697eb7b676ce6315fe3569c4440bda5b67c0099fe3e55915ef7f3e01e94",
+        "expected": "e56441a411499c2d7cdfd674c6ba91f3c5c3f12acc1dfd16751ad2239f22130a",
+        "actual": "e56441a411499c2d7cdfd674c6ba91f3c5c3f12acc1dfd16751ad2239f22130a",
         "byteLength": 1717
       }
     },
     "browserSources": {
       "apps/web/src/App.tsx": {
-        "expected": "cb6be3db4a8f0cd038806c86ff2fdda091c4cd15c0c98d7b254b4b89e78bfd2a",
-        "actual": "cb6be3db4a8f0cd038806c86ff2fdda091c4cd15c0c98d7b254b4b89e78bfd2a",
-        "byteLength": 251223
+        "expected": "3a5e7091456139ed2735bc46804526c25627b2c85ed67ee0426eae96e7f80041",
+        "actual": "3a5e7091456139ed2735bc46804526c25627b2c85ed67ee0426eae96e7f80041",
+        "byteLength": 252554
       },
       "apps/web/src/workflows/modify-command.ts": {
         "expected": "9d1f7d0b1d3e308eac2a5d4055436626e3a497cbaaf116c05957e1fde15616c7",
@@ -134,9 +134,14 @@
         "byteLength": 5317
       },
       "e2e/f026-break.spec.ts": {
-        "expected": "35662f535b32c3cb0fa4d2eb866bf5a040fd3f2cdedab0bc6ba0b001f348126f",
-        "actual": "35662f535b32c3cb0fa4d2eb866bf5a040fd3f2cdedab0bc6ba0b001f348126f",
-        "byteLength": 14360
+        "expected": "4a858ea1f43946e906f7764bf26f32a22d3197c2d55fada973c2ca40c54fd846",
+        "actual": "4a858ea1f43946e906f7764bf26f32a22d3197c2d55fada973c2ca40c54fd846",
+        "byteLength": 14016
+      },
+      "e2e/helpers/model-space.ts": {
+        "expected": "1a69210e5248af4d572c8809943cfe414fa06bcfd0b4643f652f21d1858f8381",
+        "actual": "1a69210e5248af4d572c8809943cfe414fa06bcfd0b4643f652f21d1858f8381",
+        "byteLength": 1944
       },
       "tools/parity/capture-f026-browser.mjs": {
         "expected": "0e70939019d35d577fa52ef727af6acf9f0c141d97d410d8c4ffc5807e941f37",
@@ -144,9 +149,9 @@
         "byteLength": 852
       },
       "tools/parity/build-f026-browser-readback.mjs": {
-        "expected": "e67a02ccf1b81887667dd5894c0f1c96d52775b79d03237bcef88724a46bc14a",
-        "actual": "e67a02ccf1b81887667dd5894c0f1c96d52775b79d03237bcef88724a46bc14a",
-        "byteLength": 6614
+        "expected": "34c8c2993e28d49d2883a0e586192705639d5c5cbeb277aa5c8fc522b7850482",
+        "actual": "34c8c2993e28d49d2883a0e586192705639d5c5cbeb277aa5c8fc522b7850482",
+        "byteLength": 6646
       }
     },
     "productionSources": {
@@ -262,8 +267,8 @@
         "byteLength": 5494
       },
       "evidence/artifacts/F-026-independent-readback.json": {
-        "expected": "57ebfc0603ea4e0dfe93aa351c70e2e7fe707433f014d02593edfc7074c00aa3",
-        "actual": "57ebfc0603ea4e0dfe93aa351c70e2e7fe707433f014d02593edfc7074c00aa3",
+        "expected": "ee698fc5e1c9e33ed7acbec1f9cb62042eaa1cd35165e892e43ae8aaa67c471e",
+        "actual": "ee698fc5e1c9e33ed7acbec1f9cb62042eaa1cd35165e892e43ae8aaa67c471e",
         "byteLength": 27199
       },
       "tools/oracles/freecad-f026-headless.py": {
@@ -294,7 +299,7 @@
     }
   },
   "browserDxfSha256": "28651cb1560005165e4b83f1b8730cffb4327e0dced7b0f2424a287712dc45e5",
-  "browserKdrawSha256": "9250d697eb7b676ce6315fe3569c4440bda5b67c0099fe3e55915ef7f3e01e94",
+  "browserKdrawSha256": "e56441a411499c2d7cdfd674c6ba91f3c5c3f12acc1dfd16751ad2239f22130a",
   "productionDxfSha256": "c3e8b4e15a5ad9e6e65bd8bc64916e7c5671f12f6e97f6f4ae8dde5b80a90085",
   "productionKdrawSha256": "4d7259927f1815d144d949e49f609aa89b397ba01784ef787201c229d3e456a6",
   "certificationAuthorities": {

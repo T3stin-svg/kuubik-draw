@@ -4,6 +4,7 @@ import { expect, test, type Page } from "@playwright/test";
 import DxfParser from "dxf-parser";
 import { createEmptyDocument, deserializeKDraw, lengthenEntityLength } from "@kuubik/cad-core";
 import type { KDrawDocumentV1 } from "@kuubik/cad-schema";
+import { modelWorldToScreen } from "./helpers/model-space.js";
 
 type RecordedOperation = { commandId: string; targetHandles: string[]; resultHandles: string[]; args: Record<string, unknown> };
 const captureRoot = process.env.PARITY_CAPTURE_DIR;
@@ -142,14 +143,8 @@ test("F-028 LENGTHEN uses physical canvas endpoint and Dynamic destination picks
   await page.getByLabel("LENGTHEN režiim").selectOption("dynamic");
   await page.getByLabel("LENGTHEN sihid").fill("");
   const canvas = page.getByLabel("Kuubik Draw joonestusala");
-  const box = await canvas.boundingBox();
-  if (!box) throw new Error("F-028 drawing canvas has no browser bounding box.");
-  const scale = Math.min(box.width / 3000, box.height / 3000);
-  const screen = (x: number, y: number) => ({
-    x: box.x + box.width / 2 + (x - 1000) * scale,
-    y: box.y + box.height / 2 - (y - 1000) * scale,
-  });
-  const endpoint = screen(1000, 0); const destination = screen(1500, 50);
+  const endpoint = await modelWorldToScreen(canvas, { x: 1000, y: 0 });
+  const destination = await modelWorldToScreen(canvas, { x: 1500, y: 50 });
   await page.mouse.click(endpoint.x, endpoint.y);
   await expect(page.getByText("LENGTHEN Dynamic objekt 10 ja muudetav ots valitud; määra uus otsapunkt")).toBeVisible();
   await page.mouse.click(destination.x, destination.y);

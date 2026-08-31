@@ -4,8 +4,8 @@
   "kind": "readback",
   "authority": "independent-parser",
   "status": "PASS",
-  "artifactSha256": "5466144219c80ffb1ddca147ef310ed774ef6e52b74be0d27a2bb469e5e4977b",
-  "observedAt": "2026-08-30T23:57:19.151Z",
+  "artifactSha256": "dfb0348bdbe2f0e27b38cd77fbae34f69ebe4b15fd33be0e440d86937d4cc326",
+  "observedAt": "2026-08-31T00:46:42.209Z",
   "workflow": "Production cad-core creates an A3 paper layout and serializes a KDRAW1 container. A separate reader validates the magic, envelope, payload length, document SHA-256 and manifest checksum before reading document.json without calling deserializeKDraw.",
   "result": "The independent reader recovered the exact 420 x 297 mm paper, 10 mm margins, paper world 0,0 through 420,297, one viewport and one paper-space circle with stable handle 20 from the 1584-byte checksummed container.",
   "artifact": "evidence/artifacts/F-098-independent-readback.json"

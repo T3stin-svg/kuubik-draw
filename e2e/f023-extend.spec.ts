@@ -4,6 +4,7 @@ import { expect, test, type Page } from "@playwright/test";
 import DxfParser from "dxf-parser";
 import { createEmptyDocument } from "@kuubik/cad-core";
 import type { KDrawDocumentV1 } from "@kuubik/cad-schema";
+import { modelWorldToScreen } from "./helpers/model-space.js";
 
 type RecordedOperation = { commandId: string; targetHandles: string[]; resultHandles: string[]; args: Record<string, unknown> };
 
@@ -208,13 +209,7 @@ test("F-023 EXTEND Quick uses all objects and Shift-Trim uses the same preview/c
   await page.getByLabel("EXTEND boundary edges").fill("20,21");
   await page.getByLabel("EXTEND sihid").focus();
   const canvas = page.getByLabel("Kuubik Draw joonestusala");
-  const box = await canvas.boundingBox();
-  expect(box).not.toBeNull();
-  const pixelsPerWorldUnit = Math.min(box!.width / 3000, box!.height / 3000);
-  const pointer = {
-    x: box!.x + box!.width / 2 + (500 - 1000) * pixelsPerWorldUnit,
-    y: box!.y + box!.height / 2 - (0 - 1000) * pixelsPerWorldUnit,
-  };
+  const pointer = await modelWorldToScreen(canvas, { x: 500, y: 0 });
   await page.keyboard.down("Shift");
   await page.mouse.click(pointer.x, pointer.y);
   await page.keyboard.up("Shift");

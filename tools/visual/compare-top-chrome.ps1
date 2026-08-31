@@ -32,6 +32,7 @@ try {
   if ($reference.Width -ne 1920 -or $reference.Height -ne 1080) { throw 'Top-chrome comparison requires a 1920x1080 AutoCAD reference.' }
   $zones = Get-Content -Raw -LiteralPath $KuubikZonesJson | ConvertFrom-Json
   $state = Get-Content -Raw -LiteralPath $KuubikStateJson | ConvertFrom-Json
+  $waveName = Split-Path -Leaf (Split-Path -Parent $KuubikStateJson)
   if (@($zones.viewport)[0] -ne 1920 -or @($zones.viewport)[1] -ne 1080) { throw 'Top-chrome comparison requires a 1920x1080 Kuubik read-back.' }
 
   $expectedZones = [ordered]@{
@@ -82,9 +83,9 @@ try {
       redistributablePixelsIncluded = $false
     }
     kuubik = [ordered]@{
-      zonesArtifact = 'evidence/artifacts/visual-shell-wave-10/visual-shell-zones.json'
-      stateArtifact = 'evidence/artifacts/visual-shell-wave-10/visual-shell-states.json'
-      screenshot = 'evidence/artifacts/visual-shell-wave-10/visual-shell-empty-workspace.png'
+      zonesArtifact = "evidence/artifacts/$waveName/visual-shell-zones.json"
+      stateArtifact = "evidence/artifacts/$waveName/visual-shell-states.json"
+      screenshot = "evidence/artifacts/$waveName/visual-shell-empty-workspace.png"
     }
     viewport = @(1920, 1080)
     browserZoomPercent = 100

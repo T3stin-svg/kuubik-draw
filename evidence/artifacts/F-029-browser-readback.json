@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "rowId": "F-029",
   "status": "PASS",
-  "observedAt": "2026-08-30T23:53:22.024Z",
+  "observedAt": "2026-08-31T00:55:24.051Z",
   "checks": {
     "browserWorkflowPassedWithoutErrors": true,
     "exactCommittedGeometry": true,
@@ -14,7 +14,7 @@
   },
   "artifacts": {
     "evidence/artifacts/F-029-browser-matrix.json": {
-      "sha256": "810e415f345ab4425ebf8bcdab42b611acc727bfde4daab29b6390969d52dceb",
+      "sha256": "c491f04c0bdcc866eec3715b6f2ece286ddcb22ee3ae02f92388a1239772260e",
       "byteLength": 8949
     },
     "evidence/artifacts/F-029-browser.dxf": {
@@ -22,13 +22,13 @@
       "byteLength": 4309
     },
     "evidence/artifacts/F-029-browser.kdraw": {
-      "sha256": "b2489e54e362c77644e535fa1907830a88438dbe5485dad78d4a0733dd9f9193",
+      "sha256": "393f5160662a2fdd1416017dc8990211f50d3b87e553d8ed143806b36c589086",
       "byteLength": 1749
     }
   },
   "sourceSha256": {
-    "apps/web/src/App.tsx": "cb6be3db4a8f0cd038806c86ff2fdda091c4cd15c0c98d7b254b4b89e78bfd2a",
-    "apps/web/src/style.css": "c79397f56dc2c1d50ef322df51194e604924eb521cf29e3ba344b39f6da614cd",
+    "apps/web/src/App.tsx": "3a5e7091456139ed2735bc46804526c25627b2c85ed67ee0426eae96e7f80041",
+    "apps/web/src/style.css": "90133880286e25d777020272faeb819f7a92520e50395c46c59e0edfce48b6d6",
     "apps/web/src/workflows/modify-command.ts": "9d1f7d0b1d3e308eac2a5d4055436626e3a497cbaaf116c05957e1fde15616c7",
     "apps/web/src/workflows/modify-command.test.ts": "aac0694d3a93a08ed5c6b98ea5456e62ba7c0f05777780a47d99dcabdf2e12b9",
     "packages/cad-core/src/commands.ts": "540e6f79dafb8d71f0e3ba5d43a1dcd39bd9f5809c03ea383c070de3636609fc",
@@ -40,9 +40,10 @@
     "packages/cad-dxf/src/import.ts": "2f375b882304f0d3f9461b84b69d97e09bec8326863b6253f100e42cd9214a59",
     "packages/cad-dxf/src/index.ts": "e01ff7bd77cf6dfef6da8d86f00c13d87dc847bb0135dbd1d79ece80717edc13",
     "packages/cad-dxf/test/f029-align-roundtrip.test.ts": "82a3e942e0ae4498d0d4ac1dbc3e5b0f3919b8403af47e3d44e4d85f262684d3",
-    "e2e/f029-align.spec.ts": "bf8416214567ffb44ec6e1711c4456de0c516b74afb0c927cbcd9e7436b9e042",
+    "e2e/f029-align.spec.ts": "ece07640d932d5643c7d02e7355989ec4a71fbfed2d1a164e51a82369a54e6a1",
+    "e2e/helpers/model-space.ts": "1a69210e5248af4d572c8809943cfe414fa06bcfd0b4643f652f21d1858f8381",
     "tools/parity/run-f029-readback.mjs": "68149c75d71165be916407d814e489e0c271f12eacccc2fd298b5c303316ddb3",
     "tools/parity/capture-f029-browser.mjs": "262faa553f128d953f634d4dde2b569ab0c56039317c497613bd3a8a4a402055",
-    "tools/parity/build-f029-browser-readback.mjs": "2db1781331e54f3807d08a8a3571ab3fda71ff1b91a29f50c769f341cc536872"
+    "tools/parity/build-f029-browser-readback.mjs": "0fe6acfcfef2b748f675e4c090027cc690444740e39a1e3c8a60c2f38b06bc19"
   }
 }

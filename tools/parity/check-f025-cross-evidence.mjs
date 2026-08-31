@@ -53,6 +53,7 @@ const sourcePaths = [
   "packages/cad-dxf/src/index.ts",
   "packages/cad-dxf/test/f025-chamfer-roundtrip.test.ts",
   "e2e/f025-chamfer.spec.ts",
+  "e2e/helpers/model-space.ts",
   "tools/autocad/f025-standard-matrix.ps1",
   "tools/autocad/f025-runner.test.mjs",
   "tools/autocad/process-ownership.mjs",

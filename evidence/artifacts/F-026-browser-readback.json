@@ -16,15 +16,15 @@
   },
   "artifacts": {
     "evidence/artifacts/F-026-browser-matrix.json": {
-      "sha256": "6af7e439188db8c56bcce7efce0ef57a96bfbc640e7c1345b0c915e18e875e9b",
+      "sha256": "7f93ebfbc6d3eb1b16fffea1c85372de421867bc98665e7a06d36ae718049083",
       "byteLength": 10034
     },
     "evidence/artifacts/F-026-browser-canvas.json": {
-      "sha256": "403b7cd86cccdec3d5318fd03798d44261b6840912cc21882772a8f1030394a9",
+      "sha256": "7f8b0872cdfa7ff4ed39939c1805aaccc29a8b63b1e345c874eeaf99c1112853",
       "byteLength": 3438
     },
     "evidence/artifacts/F-026-browser-at-point.json": {
-      "sha256": "c5e1a410b99421d4e7954ca53e846e8bc6a8eb8d70d45b4e48c955e93e323a48",
+      "sha256": "bab43a55d835348b3eaae6ba302cfeb67ef6539b78bb8b9f1f190d0bc489da00",
       "byteLength": 9938
     },
     "evidence/artifacts/F-026-browser.dxf": {
@@ -32,12 +32,12 @@
       "byteLength": 4160
     },
     "evidence/artifacts/F-026-browser.kdraw": {
-      "sha256": "9250d697eb7b676ce6315fe3569c4440bda5b67c0099fe3e55915ef7f3e01e94",
+      "sha256": "e56441a411499c2d7cdfd674c6ba91f3c5c3f12acc1dfd16751ad2239f22130a",
       "byteLength": 1717
     }
   },
   "sourceSha256": {
-    "apps/web/src/App.tsx": "cb6be3db4a8f0cd038806c86ff2fdda091c4cd15c0c98d7b254b4b89e78bfd2a",
+    "apps/web/src/App.tsx": "3a5e7091456139ed2735bc46804526c25627b2c85ed67ee0426eae96e7f80041",
     "apps/web/src/workflows/modify-command.ts": "9d1f7d0b1d3e308eac2a5d4055436626e3a497cbaaf116c05957e1fde15616c7",
     "apps/web/src/workflows/modify-command.test.ts": "aac0694d3a93a08ed5c6b98ea5456e62ba7c0f05777780a47d99dcabdf2e12b9",
     "packages/cad-core/src/break.ts": "1d51abb8c5600efcea5a128754007ae9d39a7f5e42dd2bffda0aff3251750900",
@@ -51,8 +51,9 @@
     "packages/cad-dxf/src/import.ts": "2f375b882304f0d3f9461b84b69d97e09bec8326863b6253f100e42cd9214a59",
     "packages/cad-dxf/src/index.ts": "e01ff7bd77cf6dfef6da8d86f00c13d87dc847bb0135dbd1d79ece80717edc13",
     "packages/cad-dxf/test/f026-break-roundtrip.test.ts": "d563ca09c1f6c59199d738b1de085d11892e9438c197a8558133325b7f1883e8",
-    "e2e/f026-break.spec.ts": "35662f535b32c3cb0fa4d2eb866bf5a040fd3f2cdedab0bc6ba0b001f348126f",
+    "e2e/f026-break.spec.ts": "4a858ea1f43946e906f7764bf26f32a22d3197c2d55fada973c2ca40c54fd846",
+    "e2e/helpers/model-space.ts": "1a69210e5248af4d572c8809943cfe414fa06bcfd0b4643f652f21d1858f8381",
     "tools/parity/capture-f026-browser.mjs": "0e70939019d35d577fa52ef727af6acf9f0c141d97d410d8c4ffc5807e941f37",
-    "tools/parity/build-f026-browser-readback.mjs": "e67a02ccf1b81887667dd5894c0f1c96d52775b79d03237bcef88724a46bc14a"
+    "tools/parity/build-f026-browser-readback.mjs": "34c8c2993e28d49d2883a0e586192705639d5c5cbeb277aa5c8fc522b7850482"
   }
 }

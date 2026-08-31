@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "rowId": "F-027",
   "status": "PASS",
-  "observedAt": "2026-08-30T23:53:12.785Z",
+  "observedAt": "2026-08-31T00:55:23.253Z",
   "checks": {
     "browserWorkflowPassedWithoutErrors": true,
     "exactPartialAndWholeGeometry": true,
@@ -20,11 +20,11 @@
   },
   "artifacts": {
     "evidence/artifacts/F-027-browser-matrix.json": {
-      "sha256": "43ae0a08cd577fc7d76d552a8d1c76093d3c3f9b157192a3819c94783560609d",
+      "sha256": "21b2ba26cc529c84ff20b09b6d2a10e22537abf270035da872cf53fd56429cc3",
       "byteLength": 12528
     },
     "evidence/artifacts/F-027-browser-native-edge-matrix.json": {
-      "sha256": "0a31b56a04c43479595dd90b96ee30c088c398eac150c6a0eb57a7b3487eab6f",
+      "sha256": "5c2500b13a52712b1c59cf1d9dfd8daf5e24704c1f00ac620714a291dca3905d",
       "byteLength": 4671
     },
     "evidence/artifacts/F-027-browser-locked.json": {
@@ -32,15 +32,15 @@
       "byteLength": 2479
     },
     "evidence/artifacts/F-027-browser-drag.json": {
-      "sha256": "419df5b0fa2e7c88080c7b0a1a0f96d759d55659a3f2db5b00ae014b6de6f40c",
-      "byteLength": 221
+      "sha256": "d434fb3419c54d7325020dd054eef11c5b41a8a435a372233fe43db9e4586871",
+      "byteLength": 223
     },
     "evidence/artifacts/F-027-browser-polygon.json": {
-      "sha256": "02a7559b7e71c1ec466d07bf91676af42ab6a452272bdd12f1c3a43f6c95a34f",
-      "byteLength": 319
+      "sha256": "5ed8e5257a061e7086ab80b4cd54739effe88a903c2664feb025ea05d7dbc49f",
+      "byteLength": 295
     },
     "evidence/artifacts/F-027-browser-ellipse.json": {
-      "sha256": "f916dfafa45587d7231da91399d75f6036598f564f77ca77147ffd534723ab5c",
+      "sha256": "11ba76ace8ad7949a4e12232db40db8a767f42d16a69436c15f77c3d40214c56",
       "byteLength": 4345
     },
     "evidence/artifacts/F-027-browser-ellipse.dxf": {
@@ -48,7 +48,7 @@
       "byteLength": 3966
     },
     "evidence/artifacts/F-027-browser-ellipse.kdraw": {
-      "sha256": "12a504db7a6a3586d175f8b990a0fff031f40c1dd8286b7e8085eaa03fe8889e",
+      "sha256": "baee3d8f57d8ad529c8e8439363e736cd81964b48e65e30560b7a1dbe0fa072c",
       "byteLength": 1440
     },
     "evidence/artifacts/F-027-browser.dxf": {
@@ -56,13 +56,13 @@
       "byteLength": 4319
     },
     "evidence/artifacts/F-027-browser.kdraw": {
-      "sha256": "10b8fe81109157173d4d4c42d60d134bd268402438e374be01dba37699855a26",
+      "sha256": "4e3527d404b9dd86df56785c665dc11f6bdb42132b90d96956e62c921d1696e9",
       "byteLength": 1849
     }
   },
   "sourceSha256": {
-    "apps/web/src/App.tsx": "cb6be3db4a8f0cd038806c86ff2fdda091c4cd15c0c98d7b254b4b89e78bfd2a",
-    "apps/web/src/style.css": "c79397f56dc2c1d50ef322df51194e604924eb521cf29e3ba344b39f6da614cd",
+    "apps/web/src/App.tsx": "3a5e7091456139ed2735bc46804526c25627b2c85ed67ee0426eae96e7f80041",
+    "apps/web/src/style.css": "90133880286e25d777020272faeb819f7a92520e50395c46c59e0edfce48b6d6",
     "apps/web/src/workflows/modify-command.ts": "9d1f7d0b1d3e308eac2a5d4055436626e3a497cbaaf116c05957e1fde15616c7",
     "apps/web/src/workflows/modify-command.test.ts": "aac0694d3a93a08ed5c6b98ea5456e62ba7c0f05777780a47d99dcabdf2e12b9",
     "packages/cad-core/src/stretch.ts": "5e76f375057f553ef91c38df96b28686d1e56cf57e1debd51b71bae8a2739944",
@@ -76,9 +76,10 @@
     "packages/cad-dxf/src/import.ts": "2f375b882304f0d3f9461b84b69d97e09bec8326863b6253f100e42cd9214a59",
     "packages/cad-dxf/src/index.ts": "e01ff7bd77cf6dfef6da8d86f00c13d87dc847bb0135dbd1d79ece80717edc13",
     "packages/cad-dxf/test/f027-stretch-roundtrip.test.ts": "0dccba7b27894300f8f4479ac0350bcabfcb0f78c0b06133813dd2d6d55d1fd6",
-    "e2e/f027-stretch.spec.ts": "c778850d06d25227d8e782acc3f584e9dc37d6a76cbcc3a2e2a1e860a9c27011",
+    "e2e/f027-stretch.spec.ts": "e5daf2b2b2115b61ad741900321f5ad3c496a0503fd1ebbffc90b98ff268e8cf",
+    "e2e/helpers/model-space.ts": "1a69210e5248af4d572c8809943cfe414fa06bcfd0b4643f652f21d1858f8381",
     "tools/autocad/f027-runner.test.mjs": "8fc74c7157285b12498f96361c3536cb459c1141285bd76c505c534ea464170f",
     "tools/parity/capture-f027-browser.mjs": "c8f8f50af7a29f76706c323277fb869cf51b05d6ac66eee48e7312ac2e75858c",
-    "tools/parity/build-f027-browser-readback.mjs": "1920aa3a714943e187b13f858f2e46a0efd8fe40bdecdf8d776e399d561bd2e2"
+    "tools/parity/build-f027-browser-readback.mjs": "0b3f50518607a3f1904ab02a0e6a8a2b1a7560c52be1b32d46f8cd1920286f96"
   }
 }

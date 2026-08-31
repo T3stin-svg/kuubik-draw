@@ -4,6 +4,7 @@ import { expect, test, type Page } from "@playwright/test";
 import DxfParser from "dxf-parser";
 import { createEmptyDocument, deserializeKDraw } from "@kuubik/cad-core";
 import type { KDrawDocumentV1 } from "@kuubik/cad-schema";
+import { modelWorldToScreen } from "./helpers/model-space.js";
 
 type RecordedOperation = { commandId: string; targetHandles: string[]; resultHandles: string[]; args: Record<string, unknown> };
 
@@ -146,15 +147,8 @@ test("F-026 BREAK physical two-click canvas accepts a free second point and comm
   await seedLocalDocument(page, source);
   await page.getByLabel("BREAK režiim").selectOption("two-point");
   const canvas = page.getByLabel("Kuubik Draw joonestusala");
-  const box = await canvas.boundingBox();
-  expect(box).not.toBeNull();
-  const pixelsPerWorldUnit = Math.min(box!.width / 3000, box!.height / 3000);
-  const screenPoint = (x: number, y: number) => ({
-    x: box!.x + box!.width / 2 + (x - 1000) * pixelsPerWorldUnit,
-    y: box!.y + box!.height / 2 - (y - 1000) * pixelsPerWorldUnit,
-  });
-  const first = screenPoint(250, 1000);
-  const second = screenPoint(750, 1200);
+  const first = await modelWorldToScreen(canvas, { x: 250, y: 1000 });
+  const second = await modelWorldToScreen(canvas, { x: 750, y: 1200 });
   await page.mouse.click(first.x, first.y);
   await expect(page.getByText("BREAK objekt 10 ja esimene punkt valitud; vali teine katkestuspunkt")).toBeVisible();
   await expect(page.getByRole("button", { name: "BREAK", exact: true })).toBeDisabled();
@@ -186,10 +180,8 @@ test("F-026 BREAK at point canvas creates an explicit at-point target and locked
   await seedLocalDocument(page, source);
   await page.getByLabel("BREAK režiim").selectOption("at-point");
   const canvas = page.getByLabel("Kuubik Draw joonestusala");
-  const box = await canvas.boundingBox();
-  expect(box).not.toBeNull();
-  const pixelsPerWorldUnit = Math.min(box!.width / 3000, box!.height / 3000);
-  await page.mouse.click(box!.x + box!.width / 2, box!.y + box!.height / 2 - 400 * pixelsPerWorldUnit);
+  const arcPoint = await modelWorldToScreen(canvas, { x: 1000, y: 1400 });
+  await page.mouse.click(arcPoint.x, arcPoint.y);
   await expect(page.getByLabel("BREAK sihid")).toHaveValue(/10@.*>@$/u);
   await page.getByRole("button", { name: "BREAK", exact: true }).click();
   const opened = await readDocument(page);

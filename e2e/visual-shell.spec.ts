@@ -25,8 +25,9 @@ test("AutoCAD-style shell keeps all eight primary zones visible at 1920x1080", a
     "ribbon-tabs": { x: 0, y: 30, width: 1920, height: 22 },
     ribbon: { x: 0, y: 52, width: 1920, height: 99 },
     "document-tabs": { x: 0, y: 151, width: 1920, height: 30 },
-    "command-line": { x: 0, width: 1920, height: 52 },
-    statusbar: { x: 0, width: 1920, height: 24 },
+    "command-line": { x: 688, y: 985, width: 600, height: 50 },
+    "layout-status": { x: 0, y: 1043, width: 1920, height: 37 },
+    statusbar: { x: 1260, y: 1047, width: 660, height: 32 },
   });
   expect((zones as Record<string, { x: number; width: number; height: number }>)["properties-palette"]).toMatchObject({ x: 0, width: 680 });
   const ribbonTabs = await page.locator("[data-ribbon-tab]").evaluateAll((elements) => Object.fromEntries(elements.map((element) => {
@@ -83,6 +84,56 @@ test("AutoCAD-style shell keeps all eight primary zones visible at 1920x1080", a
     workspace: { x: 574, y: 3, width: 180, height: 24 },
     displayControls: { x: 760, y: 3, width: 84, height: 24 },
   });
+  const bottomChrome = await page.evaluate(() => {
+    const measure = (selector: string) => {
+      const element = document.querySelector<HTMLElement>(selector)!;
+      const rect = element.getBoundingClientRect();
+      const style = getComputedStyle(element);
+      return {
+        x: rect.x, y: rect.y, width: rect.width, height: rect.height, right: rect.right, bottom: rect.bottom,
+        backgroundColor: style.backgroundColor,
+        borderTopColor: style.borderTopColor,
+        borderTopWidth: style.borderTopWidth,
+        borderBottomColor: style.borderBottomColor,
+        borderBottomWidth: style.borderBottomWidth,
+      };
+    };
+    return {
+      layoutStatus: measure(".layoutbar"),
+      statusbar: measure(".statusbar"),
+      commandLine: measure(".command-line"),
+    };
+  });
+  expect(bottomChrome).toEqual({
+    layoutStatus: {
+      x: 0, y: 1043, width: 1920, height: 37, right: 1920, bottom: 1080,
+      backgroundColor: "rgb(34, 41, 51)", borderTopColor: "rgb(59, 68, 83)", borderTopWidth: "4px",
+      borderBottomColor: "rgb(6, 150, 215)", borderBottomWidth: "1px",
+    },
+    statusbar: {
+      x: 1260, y: 1047, width: 660, height: 32, right: 1920, bottom: 1079,
+      backgroundColor: "rgba(0, 0, 0, 0)", borderTopColor: "rgb(17, 22, 27)", borderTopWidth: "0px",
+      borderBottomColor: "rgb(6, 150, 215)", borderBottomWidth: "1px",
+    },
+    commandLine: {
+      x: 688, y: 985, width: 600, height: 50, right: 1288, bottom: 1035,
+      backgroundColor: "rgba(34, 41, 51, 0.96)", borderTopColor: "rgb(78, 90, 104)", borderTopWidth: "1px",
+      borderBottomColor: "rgb(78, 90, 104)", borderBottomWidth: "1px",
+    },
+  });
+  const statusControls = await page.locator("[data-status-control]").evaluateAll((elements) => Object.fromEntries(elements.map((element) => {
+    const control = element as HTMLButtonElement;
+    const rect = control.getBoundingClientRect();
+    return [element.getAttribute("data-status-control"), {
+      x: rect.x, width: rect.width, height: rect.height, disabled: control.disabled,
+      pressed: element.getAttribute("aria-pressed"), color: getComputedStyle(element).color,
+      backgroundColor: getComputedStyle(element).backgroundColor,
+    }];
+  })));
+  expect(statusControls.grid).toMatchObject({ disabled: false, pressed: "true", height: 30, backgroundColor: "rgb(23, 106, 153)" });
+  for (const name of ["ortho", "osnap", "otrack", "dyn"]) {
+    expect(statusControls[name]).toMatchObject({ disabled: true, pressed: null, height: 30, color: "rgb(120, 130, 139)", backgroundColor: "rgba(0, 0, 0, 0)" });
+  }
   await expect(page.getByRole("button", { name: "Kiirpääsu DXF avamine" })).toBeEnabled();
   await expect(page.getByRole("button", { name: "Kiirpääsu KDraw salvestamine" })).toBeEnabled();
   await expect(page.getByRole("button", { name: "Kiirpääsu DXF-väljund" })).toBeEnabled();
@@ -204,9 +255,9 @@ test("AutoCAD-style shell keeps all eight primary zones visible at 1920x1080", a
   modelDisplayReadback.verticalGridRuns.map(([start, end]) => Math.round((start + end) / 2)).forEach((center, index) => {
     expect(Math.abs(center - [743, 918, 1093, 1268, 1444, 1619, 1794][index]!)).toBeLessThanOrEqual(1);
   });
-  expect(modelDisplayReadback.horizontalGridRuns).toHaveLength(4);
+  expect(modelDisplayReadback.horizontalGridRuns).toHaveLength(5);
   modelDisplayReadback.horizontalGridRuns.map(([start, end]) => Math.round((start + end) / 2)).forEach((center, index) => {
-    expect(Math.abs(center - [147, 322, 498, 673][index]!)).toBeLessThanOrEqual(1);
+    expect(Math.abs(center - [147, 322, 498, 673, 848][index]!)).toBeLessThanOrEqual(1);
   });
   expect(modelDisplayReadback.clearPixelRgba[3]).toBe(0);
   expect(modelDisplayReadback.majorGridPixelRgba[3]).toBeGreaterThan(200);
@@ -342,7 +393,7 @@ test("AutoCAD-style shell keeps all eight primary zones visible at 1920x1080", a
   expect(layoutGeometry.printable.right).toBeLessThan(layoutGeometry.sheet.right);
   expect(layoutGeometry.printable.y).toBeGreaterThan(layoutGeometry.sheet.y);
   expect(layoutGeometry.printable.bottom).toBeLessThan(layoutGeometry.sheet.bottom);
-  expect(layoutGeometry.layoutbar.height).toBe(30);
+  expect(layoutGeometry.layoutbar.height).toBe(37);
   if (captureRoot) await writeFile(resolve(captureRoot, "visual-shell-layout-paper-space.png"), await page.screenshot());
   await page.getByLabel("Layout tools").click();
   await expect(layoutTools).toHaveAttribute("open", "");
@@ -399,6 +450,8 @@ test("AutoCAD-style shell keeps all eight primary zones visible at 1920x1080", a
           ribbonTabs,
           documentTabs,
         },
+        bottomChrome,
+        statusControls,
         ribbon: {
           panels: ribbonPanels,
           commandPanel,

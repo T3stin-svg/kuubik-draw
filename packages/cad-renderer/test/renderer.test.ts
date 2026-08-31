@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { CadCanvasRenderer, displayColor, entityGripPoints, pannedViewportWorldCenter, viewportGridSpacing, viewportScreenToWorld, viewportWorldToScreen, type Canvas2DContext } from "../src/index.js";
+import { CadCanvasRenderer, displayColor, entityGripPoints, pannedViewportWorldCenter, viewportGridSpacing, viewportScreenToWorld, viewportVisibleWorldBounds, viewportWorldToScreen, type Canvas2DContext } from "../src/index.js";
 
 function fakeContext() {
   const calls: Array<[string, ...number[]]> = [];
@@ -35,6 +35,15 @@ describe("Canvas2D parity invariants", () => {
     expect(viewportGridSpacing(viewport, 20)).toBe(2);
     expect(viewportGridSpacing({ ...viewport, widthPx: 400 }, 20)).toBe(5);
     expect(() => viewportGridSpacing(viewport, 0)).toThrow("positive");
+  });
+
+  it("keeps explicit CAD zoom stable while a taller viewport reveals more world", () => {
+    const short = { world: { minX: -50, minY: -50, maxX: 50, maxY: 50 }, widthPx: 200, heightPx: 100, devicePixelRatio: 1, worldUnitsPerPixel: 0.5 };
+    const tall = { ...short, heightPx: 160, world: { ...short.world, minY: -65, maxY: 35 } };
+    expect(viewportWorldToScreen(short, { x: 0, y: 25 })).toEqual({ x: 100, y: 0 });
+    expect(viewportWorldToScreen(tall, { x: 0, y: 25 })).toEqual({ x: 100, y: 0 });
+    expect(viewportVisibleWorldBounds(tall)).toEqual({ minX: -50, minY: -55, maxX: 50, maxY: 25 });
+    expect(() => viewportScreenToWorld({ ...short, worldUnitsPerPixel: 0 }, { x: 0, y: 0 })).toThrow("finite and positive");
   });
 
   it("maps only indexed ACI 7 to the active model-space foreground", () => {

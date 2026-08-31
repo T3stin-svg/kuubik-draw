@@ -33,6 +33,8 @@ export interface Viewport2D {
   widthPx: number;
   heightPx: number;
   devicePixelRatio: number;
+  /** Optional persistent CAD zoom. When set, resizing reveals more world instead of zooming the drawing. */
+  worldUnitsPerPixel?: number;
   /** Positive AutoCAD view twist in radians; rendered model geometry turns counter-clockwise on screen. */
   rotationRad?: number;
 }
@@ -277,12 +279,31 @@ export function viewportScreenTransform(viewport: Viewport2D): ViewportScreenTra
     !Number.isFinite(viewport.widthPx) || !Number.isFinite(viewport.heightPx) ||
     worldWidth <= 0 || worldHeight <= 0 || viewport.widthPx <= 0 || viewport.heightPx <= 0
   ) throw new Error("Viewport screen transform requires finite positive world and pixel dimensions.");
-  const pixelsPerWorldUnit = Math.min(viewport.widthPx / worldWidth, viewport.heightPx / worldHeight);
+  if (viewport.worldUnitsPerPixel !== undefined && (!Number.isFinite(viewport.worldUnitsPerPixel) || viewport.worldUnitsPerPixel <= 0)) {
+    throw new Error("Viewport worldUnitsPerPixel must be finite and positive.");
+  }
+  const worldUnitsPerPixel = viewport.worldUnitsPerPixel ?? 1 / Math.min(viewport.widthPx / worldWidth, viewport.heightPx / worldHeight);
   return {
     worldCenter: { x: (viewport.world.minX + viewport.world.maxX) / 2, y: (viewport.world.minY + viewport.world.maxY) / 2 },
     screenCenter: { x: viewport.widthPx / 2, y: viewport.heightPx / 2 },
-    worldUnitsPerPixel: 1 / pixelsPerWorldUnit,
+    worldUnitsPerPixel,
     rotationRad,
+  };
+}
+
+/** Axis-aligned world bounds of the pixels that are actually visible at the current zoom and twist. */
+export function viewportVisibleWorldBounds(viewport: Viewport2D): Bounds2 {
+  const corners = [
+    viewportScreenToWorld(viewport, { x: 0, y: 0 }),
+    viewportScreenToWorld(viewport, { x: viewport.widthPx, y: 0 }),
+    viewportScreenToWorld(viewport, { x: viewport.widthPx, y: viewport.heightPx }),
+    viewportScreenToWorld(viewport, { x: 0, y: viewport.heightPx }),
+  ];
+  return {
+    minX: Math.min(...corners.map(({ x }) => x)),
+    minY: Math.min(...corners.map(({ y }) => y)),
+    maxX: Math.max(...corners.map(({ x }) => x)),
+    maxY: Math.max(...corners.map(({ y }) => y)),
   };
 }
 
@@ -610,7 +631,7 @@ export class CadCanvasRenderer {
     const rotationRad = transform.rotationRad;
     const hidden = new Set(layers.filter((layer) => !layer.visible || layer.frozen).map((layer) => layer.id));
     const hiddenSources = new Set(hiddenSourceHandles);
-    const clipBounds = rotatedWorldBounds(viewport.world, -rotationRad);
+    const clipBounds = viewportVisibleWorldBounds(viewport);
     const candidateHandles = [...new Set([
       ...this.#index.search(clipBounds).map((candidate) => candidate.handle),
       ...this.#unboundedHandles,

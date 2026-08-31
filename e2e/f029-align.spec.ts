@@ -4,6 +4,7 @@ import { expect, test, type Page } from "@playwright/test";
 import DxfParser from "dxf-parser";
 import { createEmptyDocument, deserializeKDraw } from "@kuubik/cad-core";
 import type { KDrawDocumentV1 } from "@kuubik/cad-schema";
+import { modelWorldToScreen } from "./helpers/model-space.js";
 
 type RecordedOperation = { commandId: string; targetHandles: string[]; resultHandles: string[]; args: Record<string, unknown> };
 const captureRoot = process.env.PARITY_CAPTURE_DIR;
@@ -142,15 +143,8 @@ test("F-029 ALIGN captures four physical canvas points for two-pair rotation", a
   await page.getByLabel("ALIGN punktipaaride arv").selectOption("2");
   await page.getByLabel("ALIGN source 1").focus();
   const canvas = page.getByLabel("Kuubik Draw joonestusala");
-  const box = await canvas.boundingBox();
-  if (!box) throw new Error("F-029 drawing canvas has no browser bounding box.");
-  const scale = Math.min(box.width / 3000, box.height / 3000);
-  const screen = (x: number, y: number) => ({
-    x: box.x + box.width / 2 + (x - 1000) * scale,
-    y: box.y + box.height / 2 - (y - 1000) * scale,
-  });
   for (const point of [[0, 0], [500, 500], [1000, 0], [500, 1500]] as const) {
-    const pixel = screen(point[0], point[1]);
+    const pixel = await modelWorldToScreen(canvas, { x: point[0], y: point[1] });
     await page.mouse.click(pixel.x, pixel.y);
   }
   const values = await Promise.all(["ALIGN source 1", "ALIGN destination 1", "ALIGN source 2", "ALIGN destination 2"].map((label) => page.getByLabel(label).inputValue()));

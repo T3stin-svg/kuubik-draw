@@ -4,7 +4,7 @@
   "kind": "browser",
   "authority": "kuubik-draw-browser",
   "status": "PASS",
-  "artifactSha256": "3216bc647285efd8c72e667dad5e1d8224038af8517cf3c75583b8553bf66130",
+  "artifactSha256": "0d803e9c95a3cc2a14be283d9d97d79e2aefd678c964f52c962949711786f054",
   "observedAt": "2026-08-29T10:44:21.433Z",
   "workflow": "Chromium at 1920x1080 opens a persisted A3 paper layout with locked 1:50 rectangular and 1:100 polygon-clipped viewports, downloads SVG, PDF and KDRAW1, reloads IndexedDB and downloads SVG/PDF again.",
   "result": "Both live viewport canvases contained their independent red and blue model targets. SVG and PDF preserved A3 physical size, two clips, two scales, paper title, lineweights and alpha without image elements; reload output was byte-identical. Chromium raster-read-back of the actual SVG proved both clipped viewport contents, while strict pypdf, pdfplumber, Poppler pixels and KDRAW1 read-back passed with zero console/page errors.",

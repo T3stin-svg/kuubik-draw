@@ -107,6 +107,7 @@ const sourcePaths = [
   "packages/cad-dxf/src/index.ts",
   "packages/cad-dxf/test/f027-stretch-roundtrip.test.ts",
   "e2e/f027-stretch.spec.ts",
+  "e2e/helpers/model-space.ts",
   "parity/autocad/F-027-core-measure.scr",
   "tools/autocad/F027StretchPoints.cs",
   "tools/autocad/run-f027-core.mjs",

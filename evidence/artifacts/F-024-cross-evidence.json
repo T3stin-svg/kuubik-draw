@@ -4,12 +4,12 @@
   "source": "AutoCAD 2024.1.2 live COM/raw DXF + Chromium physical workflow + production DXF/KDRAW1 read-back + secondary LibreCAD/FreeCAD reports",
   "sourceSha256": {
     "autocad": "6ebdf044b06bc7314e030f963d2d04b1f783fe0604f217e3212904c66a5e13c9",
-    "browser": "2126963b381731e114bcdc2a20b8fc46af9da9473550c351414147c013a0b59c",
-    "readback": "c7d9c9b34e29c02d3a539bcc64acd44b9e246f4f7fceef847ea5e689545672c4",
-    "oracles": "7bf8e2ab2f212d707b4a3b935efadd3f3e2b45bf85a8a21c39ef2693506aea7d"
+    "browser": "33e061bfd94eb6ea18354f41c19f543d75cdfb4e18127191d1616576effbf2c2",
+    "readback": "62db613c8d91da318ca15054bc03193f826e1d7a967b7f5d3ff66bc94c81b052",
+    "oracles": "1352f231561ab01933c9ff5487c6c4aac56363b7720c11539bbc6bd39cc4c61d"
   },
   "implementationSha256": {
-    "apps/web/src/App.tsx": "cb6be3db4a8f0cd038806c86ff2fdda091c4cd15c0c98d7b254b4b89e78bfd2a",
+    "apps/web/src/App.tsx": "3a5e7091456139ed2735bc46804526c25627b2c85ed67ee0426eae96e7f80041",
     "apps/web/src/workflows/modify-command.ts": "9d1f7d0b1d3e308eac2a5d4055436626e3a497cbaaf116c05957e1fde15616c7",
     "apps/web/src/workflows/modify-command.test.ts": "aac0694d3a93a08ed5c6b98ea5456e62ba7c0f05777780a47d99dcabdf2e12b9",
     "packages/cad-core/src/commands.ts": "540e6f79dafb8d71f0e3ba5d43a1dcd39bd9f5809c03ea383c070de3636609fc",
@@ -20,9 +20,9 @@
     "packages/cad-core/test/f024-mutation-proven.test.ts": "f979c8ae43f7da990d9a64ae73e94c2738e1b4428bb8aae49fb55a2219e54143",
     "packages/cad-core/test/fillet.test.ts": "1a3c2cd771b6b8ce86c8197bb2e5962dec03ba6ceda1b3b11d06deec0e8a57e2",
     "packages/cad-renderer/src/bounds.ts": "c2e589c3c8be0642582eaa95ffba295dccf377fa8cfefc835a16e6d2e7c68c06",
-    "packages/cad-renderer/src/renderer.ts": "e808a8ad570cfd84c5461f895dd5165691d422f3fd225424f2c1117dfe822f28",
+    "packages/cad-renderer/src/renderer.ts": "55eadfec98379878d8488a2fca1624d49cfa1a9d686b55ecf294f1ef20ce4b79",
     "packages/cad-renderer/src/selection.ts": "7f39e9d073fc4c36aa4507c4eea1ff96e6990532652fdd5b16c5a81c84c9fbc3",
-    "packages/cad-renderer/test/renderer.test.ts": "7d370cea03c5b787419115f065fdec29bc6b07bf483bf8549bc7715c51583ee1",
+    "packages/cad-renderer/test/renderer.test.ts": "e45a3797b2a8c32e9c21929c92a3c8a7564bf384e6275d52c5d0ab6a240c4da6",
     "packages/cad-renderer/test/selection.test.ts": "d907d9c125eb225cb273b2d5bd58446e3aa5fbe8cae03eda6baa639c63900050",
     "packages/cad-dxf/src/import.ts": "2f375b882304f0d3f9461b84b69d97e09bec8326863b6253f100e42cd9214a59",
     "packages/cad-dxf/src/index.ts": "e01ff7bd77cf6dfef6da8d86f00c13d87dc847bb0135dbd1d79ece80717edc13",
@@ -30,7 +30,8 @@
     "packages/cad-print/src/index.ts": "226ab080d3be67f425b908e9fbc0055843287388cd89640098e01a745a2ac936",
     "packages/cad-print/test/vector-output.test.ts": "06ca073a1f61d7355ae359da5e96778e93e7f0ffa985fa55a84cb19db60b66bb",
     "package-lock.json": "da1dcf889d8fbf35f6a8e4403b29ed34666b13176a2b98307a0c23e25fa06a53",
-    "e2e/f024-fillet.spec.ts": "c81f30fd35c7f1ffc452129b71c6930b745ddd67172047986a8ef13a904ed386",
+    "e2e/f024-fillet.spec.ts": "96456af141420408b521f2ff2cdd6af868ce0a0ebe4785b0b0f031746dff0ca0",
+    "e2e/helpers/model-space.ts": "1a69210e5248af4d572c8809943cfe414fa06bcfd0b4643f652f21d1858f8381",
     "evidence/artifacts/F-024-browser-parametric-source.dxf": "d5631f54ab864a5d08487f09e436dd5471355178da5085ac7e3f7c897f7602a5",
     "tools/autocad/f024-runner.test.mjs": "32b2746eecc3b39cc4a5c62879df158aad61d8a2d7ef37303e79a0ac85871311",
     "tools/autocad/f024-dxf-verifier.mjs": "ed79dd10a982a296561a2afacd58b3219665ab49e344d20a8518c6b3af4f6a38",
@@ -39,7 +40,7 @@
     "tools/autocad/run-f024.mjs": "6eb484b4664661fbe81a6e4635b7985179106883b3b43f17bc22f58110f890b0",
     "tools/parity/run-f024-readback.mjs": "3c28cd4014db3f6dbc10a26bd3811c889125923c683081a13082853041d71b9f",
     "tools/parity/capture-f024-browser.mjs": "6ebafc23604413b21988e1fa42cff54048813a3fcfb86faa2012989a9ec437a5",
-    "tools/parity/build-f024-browser-readback.mjs": "ff7de2a6392068d7a7df97904b54cd304f4978b311ddee217bcfba85c4d0d57c",
+    "tools/parity/build-f024-browser-readback.mjs": "2795ce62a51301173ff280d3bc79afbde4396743ba816624044b2119750f7390",
     "tools/oracles/freecad-f024-headless.py": "906a1c5e3311e5fb46d6e5b1e0e20ded5b91cda02e1cda71525d7e81929234a2",
     "tools/oracles/network-isolation.mjs": "3fb18e9ad145b76e53ed241a0a529bb2ccd4eabe784b04e915d77cdd9203d415",
     "tools/oracles/probe-tools.mjs": "86b118cdf03da095214901d4f5f3b4460d9994b1280ae991904aedb0b992883e",
@@ -47,7 +48,7 @@
     "tools/oracles/run-f024-oracles.mjs": "6511f1f097f19190a8629d1c146000a9188302ea39660288fc49809f4ab553e7",
     "parity/F-024-scope.md": "01f6fc47bc3bea89a62f38554d456203c79e0af1cfb5041043533b234982910b",
     "parity/expected/F-024.json": "7bc2bb43880bade362a6e284e357f0b8a4cf35aa6d7baa8842fe341b23c3f2b2",
-    "tools/parity/check-f024-cross-evidence.mjs": "303606378c90348451214b569e6029511a85554c565354a1677254d9b6771d8a"
+    "tools/parity/check-f024-cross-evidence.mjs": "78f19a2f17ab5ff63831c57c0bdc11ae3c24204ba6e660ab56e35972e44d07f1"
   },
   "checks": {
     "exactAuthoritiesPassed": true,

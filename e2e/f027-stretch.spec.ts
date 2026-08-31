@@ -4,6 +4,7 @@ import { expect, test, type Page } from "@playwright/test";
 import DxfParser from "dxf-parser";
 import { createEmptyDocument, deserializeKDraw } from "@kuubik/cad-core";
 import type { KDrawDocumentV1 } from "@kuubik/cad-schema";
+import { modelWorldToScreen } from "./helpers/model-space.js";
 
 type RecordedOperation = { commandId: string; targetHandles: string[]; resultHandles: string[]; args: Record<string, unknown> };
 
@@ -259,15 +260,8 @@ test("F-027 STRETCH creates a real crossing window by dragging on the canvas", a
   await seedLocalDocument(page, source);
   await page.getByLabel("STRETCH crossing").fill("");
   const canvas = page.getByLabel("Kuubik Draw joonestusala");
-  const box = await canvas.boundingBox();
-  if (!box) throw new Error("F-027 drawing canvas has no browser bounding box.");
-  const pixelsPerWorldUnit = Math.min(box.width / 3000, box.height / 3000);
-  const screen = (worldX: number, worldY: number) => ({
-    x: box.x + box.width / 2 + (worldX - 1000) * pixelsPerWorldUnit,
-    y: box.y + box.height / 2 - (worldY - 1000) * pixelsPerWorldUnit,
-  });
-  const start = screen(400, -100);
-  const end = screen(1100, 100);
+  const start = await modelWorldToScreen(canvas, { x: 400, y: -100 });
+  const end = await modelWorldToScreen(canvas, { x: 1100, y: 100 });
   await page.mouse.move(start.x, start.y);
   await page.mouse.down();
   await page.mouse.move(end.x, end.y, { steps: 4 });
@@ -294,22 +288,15 @@ test("F-027 STRETCH creates and edits a physical crossing polygon on the canvas"
   await page.getByLabel("STRETCH crossing").fill("");
   await page.getByLabel("STRETCH valikuviis").selectOption("crossing-polygon");
   const canvas = page.getByLabel("Kuubik Draw joonestusala");
-  const box = await canvas.boundingBox();
-  if (!box) throw new Error("F-027 drawing canvas has no browser bounding box.");
-  const pixelsPerWorldUnit = Math.min(box.width / 3000, box.height / 3000);
-  const screen = (worldX: number, worldY: number) => ({
-    x: box.x + box.width / 2 + (worldX - 1000) * pixelsPerWorldUnit,
-    y: box.y + box.height / 2 - (worldY - 1000) * pixelsPerWorldUnit,
-  });
   for (const point of [[400, -100], [1100, -100], [1100, 100]] as const) {
-    const pixel = screen(point[0], point[1]);
+    const pixel = await modelWorldToScreen(canvas, { x: point[0], y: point[1] });
     await page.mouse.click(pixel.x, pixel.y);
   }
   await expect(page.getByTestId("stretch-polygon-draft").locator("circle")).toHaveCount(3);
   await page.getByRole("button", { name: "STRETCH Undo" }).click();
   await expect(page.getByTestId("stretch-polygon-draft").locator("circle")).toHaveCount(2);
   for (const point of [[1100, 100], [400, 100]] as const) {
-    const pixel = screen(point[0], point[1]);
+    const pixel = await modelWorldToScreen(canvas, { x: point[0], y: point[1] });
     await page.mouse.click(pixel.x, pixel.y);
   }
   await page.getByRole("button", { name: "Lõpeta STRETCH Polygon" }).click();

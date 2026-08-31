@@ -28,6 +28,7 @@ const sourcePaths = [
   "packages/cad-dxf/src/index.ts",
   "packages/cad-dxf/test/f027-stretch-roundtrip.test.ts",
   "e2e/f027-stretch.spec.ts",
+  "e2e/helpers/model-space.ts",
   "tools/autocad/f027-runner.test.mjs",
   "tools/parity/capture-f027-browser.mjs",
   "tools/parity/build-f027-browser-readback.mjs",

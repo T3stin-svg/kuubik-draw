@@ -13,8 +13,10 @@
   --cad-document-tabs-height: 30px;
   --cad-palette-width: 680px;
   --cad-paper-center-span: calc(100vw - 1400px);
-  --cad-layoutbar-height: 30px;
-  --cad-statusbar-height: 24px;
+  --cad-bottom-bar-height: 37px;
+  --cad-bottom-content-height: 32px;
+  --cad-command-width: 600px;
+  --cad-command-clearance: 69px;
 }
 
 * { box-sizing: border-box; }
@@ -22,8 +24,9 @@ html, body, #root { width: 100%; height: 100%; margin: 0; }
 button { font: inherit; }
 
 .app-shell {
+  position: relative;
   display: grid;
-  grid-template-rows: var(--cad-titlebar-height) var(--cad-ribbon-tabs-height) var(--cad-ribbon-height) var(--cad-document-tabs-height) minmax(0, 1fr) 52px 30px 24px;
+  grid-template-rows: var(--cad-titlebar-height) var(--cad-ribbon-tabs-height) var(--cad-ribbon-height) var(--cad-document-tabs-height) minmax(0, 1fr) var(--cad-bottom-bar-height);
   width: 100%;
   height: 100%;
   background: var(--cad-shell-surface);
@@ -35,6 +38,8 @@ button { font: inherit; }
   padding: 0 8px;
   border-color: #11161b;
 }
+
+.titlebar, .ribbon-tabs, .ribbon, .document-tabs, .drawing-area, .layoutbar, .statusbar { grid-column: 1; }
 
 .titlebar { position: relative; gap: 8px; padding: 0 15px; color: #dce2e7; background: var(--cad-shell-surface); border-bottom: 0; font-size: 11px; }
 .application-mark { display: grid; width: 24px; height: 24px; flex: 0 0 24px; place-items: center; color: #fff; background: #1b74a8; border-radius: 1px; font-size: 15px; font-weight: 700; }
@@ -263,7 +268,7 @@ button { font: inherit; }
 .properties-palette dt, .properties-palette dd { margin: 0; padding: 4px 6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .properties-palette dt { color: #b4bdc4; border-right: 1px solid #474e54; }
 .properties-palette dd { color: #eef1f3; background: #282d31; }
-.command-line { position: relative; display: grid; grid-template-rows: 26px 25px; min-width: 0; color: #dce2e7; background: #252a2e; border-top: 1px solid #0f1214; border-bottom: 1px solid #111416; font: 11px Consolas, "Courier New", monospace; }
+.command-line { position: absolute; z-index: 12; bottom: calc(var(--cad-bottom-bar-height) + 8px); left: calc(var(--cad-palette-width) + 8px); display: grid; width: var(--cad-command-width); height: 50px; grid-template-rows: 25px 24px; min-width: 0; overflow: hidden; color: #dce2e7; background: rgb(34 41 51 / 96%); border: 1px solid #4e5a68; box-shadow: 0 2px 10px rgb(0 0 0 / 38%); font: 11px Consolas, "Courier New", monospace; }
 .command-history { padding: 5px 10px 2px; overflow: hidden; color: #c6ced4; text-overflow: ellipsis; white-space: nowrap; }
 .command-prompt { display: flex; align-items: center; gap: 7px; padding: 0 10px 3px; color: #f1f3f4; }
 .command-prompt strong { color: #fff; font-weight: 400; }
@@ -287,7 +292,7 @@ button { font: inherit; }
 .stretch-polygon-draft { position: absolute; inset: 0; z-index: 4; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
 .stretch-polygon-draft polyline { fill: rgb(53 180 103 / 14%); stroke: #5cd68b; stroke-width: 1; stroke-dasharray: 5 4; }
 .stretch-polygon-draft circle { fill: #5cd68b; stroke: #17201a; stroke-width: 1; }
-.drawing-area.paper-mode { padding: 0; background: #343a40; }
+.drawing-area.paper-mode { padding: 0 0 var(--cad-command-clearance); background: #343a40; }
 .paper-space-desk {
   display: flex;
   align-items: center;
@@ -340,8 +345,8 @@ button { font: inherit; }
   font-size: 9px;
   pointer-events: none;
 }
-.layoutbar { position: relative; display: flex; align-items: stretch; min-width: 0; gap: 1px; padding: 2px 8px 0; overflow: visible; background: #1d2226; border-top: 1px solid #0d1115; }
-.layoutbar button, .layoutbar input, .layoutbar select { min-height: 27px; color: #dce3e9; background: #2a323a; border: 1px solid #46515c; font-size: 11px; }
+.layoutbar { position: relative; z-index: 1; display: flex; height: var(--cad-bottom-bar-height); grid-row: 6; align-items: stretch; min-width: 0; gap: 1px; padding: 6px 670px 1px 8px; overflow: visible; background: var(--cad-shell-surface); border-top: 4px solid var(--cad-ribbon-surface); border-bottom: 1px solid #0696d7; }
+.layoutbar button, .layoutbar input, .layoutbar select { min-height: 29px; color: #dce3e9; background: #2a323a; border: 1px solid #46515c; font-size: 11px; }
 .layout-tab { padding: 0 12px; border-bottom: 0 !important; }
 .layout-tab.active { color: #fff; background: #3b4651; box-shadow: inset 0 2px #57a7df; }
 .layout-action { padding: 0 8px; }
@@ -375,7 +380,7 @@ button { font: inherit; }
   position: fixed;
   z-index: 39;
   left: 8px;
-  bottom: calc(var(--cad-layoutbar-height) + var(--cad-statusbar-height));
+  bottom: var(--cad-bottom-bar-height);
   display: grid;
   width: min(920px, calc(100vw - 16px));
   max-height: min(440px, calc(100vh - 180px));
@@ -408,7 +413,7 @@ button { font: inherit; }
 .publish-options-grid {
   position: fixed;
   z-index: 40;
-  bottom: calc(var(--cad-layoutbar-height) + var(--cad-statusbar-height));
+  bottom: var(--cad-bottom-bar-height);
   left: 172px;
   display: grid;
   width: min(430px, calc(100vw - 24px));
@@ -448,7 +453,7 @@ button { font: inherit; }
   position: fixed;
   z-index: 41;
   right: 12px;
-  bottom: calc(var(--cad-layoutbar-height) + var(--cad-statusbar-height));
+  bottom: var(--cad-bottom-bar-height);
   display: grid;
   grid-template-columns: minmax(170px, 1fr) auto;
   width: min(430px, calc(100vw - 24px));
@@ -475,11 +480,18 @@ button { font: inherit; }
 @media (max-width: 1180px) {
   .paper-space-sheet { transform: none; }
 }
-.statusbar { justify-content: space-between; gap: 10px; background: #1f2529; border-top: 1px solid #0d1115; font-size: 10px; }
+.statusbar { position: relative; z-index: 3; width: 660px; height: var(--cad-bottom-content-height); margin-top: 4px; grid-row: 6; justify-self: end; align-self: start; justify-content: space-between; gap: 4px; padding: 0 0 1px 8px; background: transparent; border: 0; border-top-color: #11161b; border-bottom: 1px solid #0696d7; font-size: 9px; }
 .coordinate-readout { min-width: 170px; color: #b9c2c9; font-family: Consolas, "Courier New", monospace; }
 .status-toggles { display: flex; align-items: stretch; height: 100%; margin-left: auto; }
-.status-toggle, .status-space { display: flex; align-items: center; padding: 0 8px; color: #a7b0b7; border-left: 1px solid #30373c; }
+.status-toggle, .status-space { display: flex; align-items: center; padding: 0 7px; color: #a7b0b7; border-left: 1px solid #30373c; }
 .status-toggles button.status-toggle { min-width: 0; min-height: 0; margin: 0; border: 0; border-left: 1px solid #30373c; border-radius: 0; background: transparent; font: inherit; cursor: pointer; }
 .status-toggles button.status-toggle:hover { color: #eef4f7; background: #30383e; }
+.status-toggles button.status-toggle:disabled { color: #78828b; background: transparent; cursor: default; opacity: 1; }
 .status-toggle.active { color: #eef4f7; background: #176a99; }
 .status-toggles button.status-toggle.active { background: #176a99; }
+
+@media (max-width: 1180px) {
+  .command-line { right: 12px; left: 12px; width: auto; }
+  .layoutbar { padding-right: 8px; }
+  .statusbar { display: none; }
+}

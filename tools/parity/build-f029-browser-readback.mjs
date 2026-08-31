@@ -34,6 +34,7 @@ const sourcePaths = [
   "packages/cad-dxf/src/index.ts",
   "packages/cad-dxf/test/f029-align-roundtrip.test.ts",
   "e2e/f029-align.spec.ts",
+  "e2e/helpers/model-space.ts",
   "tools/parity/run-f029-readback.mjs",
   "tools/parity/capture-f029-browser.mjs",
   "tools/parity/build-f029-browser-readback.mjs",

@@ -4,6 +4,7 @@ import { expect, test, type Page } from "@playwright/test";
 import DxfParser from "dxf-parser";
 import { createEmptyDocument, deserializeKDraw } from "@kuubik/cad-core";
 import type { KDrawDocumentV1 } from "@kuubik/cad-schema";
+import { modelWorldToScreen } from "./helpers/model-space.js";
 
 type RecordedOperation = { commandId: string; targetHandles: string[]; resultHandles: string[]; args: Record<string, unknown> };
 
@@ -250,15 +251,8 @@ test("F-024 FILLET physical two-click canvas selection previews, commits and und
   await seedLocalDocument(page, document);
   await page.getByLabel("FILLET radius").fill("100");
   const canvas = page.getByLabel("Kuubik Draw joonestusala");
-  const box = await canvas.boundingBox();
-  expect(box).not.toBeNull();
-  const pixelsPerWorldUnit = Math.min(box!.width / 3000, box!.height / 3000);
-  const screenPoint = (x: number, y: number) => ({
-    x: box!.x + box!.width / 2 + (x - 1000) * pixelsPerWorldUnit,
-    y: box!.y + box!.height / 2 - (y - 1000) * pixelsPerWorldUnit,
-  });
-  const first = screenPoint(500, 1000);
-  const second = screenPoint(1000, 1500);
+  const first = await modelWorldToScreen(canvas, { x: 500, y: 1000 });
+  const second = await modelWorldToScreen(canvas, { x: 1000, y: 1500 });
   await page.mouse.click(first.x, first.y);
   await expect(page.getByText("FILLET esimene objekt: 10; vali teine objekt")).toBeVisible();
   await page.mouse.click(second.x, second.y);
@@ -292,15 +286,8 @@ test("F-024 FILLET physically picks a RAY and XLINE and commits AutoCAD construc
   await seedLocalDocument(page, document);
   await page.getByLabel("FILLET radius").fill("100");
   const canvas = page.getByLabel("Kuubik Draw joonestusala");
-  const box = await canvas.boundingBox();
-  expect(box).not.toBeNull();
-  const pixelsPerWorldUnit = Math.min(box!.width / 3000, box!.height / 3000);
-  const screenPoint = (x: number, y: number) => ({
-    x: box!.x + box!.width / 2 + (x - 1000) * pixelsPerWorldUnit,
-    y: box!.y + box!.height / 2 - (y - 1000) * pixelsPerWorldUnit,
-  });
-  const first = screenPoint(500, 1000);
-  const second = screenPoint(1000, 1500);
+  const first = await modelWorldToScreen(canvas, { x: 500, y: 1000 });
+  const second = await modelWorldToScreen(canvas, { x: 1000, y: 1500 });
   await page.mouse.click(first.x, first.y);
   await expect(page.getByText("FILLET esimene objekt: 10; vali teine objekt")).toBeVisible();
   await page.mouse.click(second.x, second.y);
@@ -329,11 +316,8 @@ test("F-024 FILLET Shift on the second canvas pick uses radius zero once and pre
   await seedLocalDocument(page, document);
   await page.getByLabel("FILLET radius").fill("100");
   const canvas = page.getByLabel("Kuubik Draw joonestusala");
-  const box = await canvas.boundingBox();
-  expect(box).not.toBeNull();
-  const pixelsPerWorldUnit = Math.min(box!.width / 3000, box!.height / 3000);
-  const first = { x: box!.x + box!.width / 2 - 500 * pixelsPerWorldUnit, y: box!.y + box!.height / 2 };
-  const second = { x: box!.x + box!.width / 2, y: box!.y + box!.height / 2 - 500 * pixelsPerWorldUnit };
+  const first = await modelWorldToScreen(canvas, { x: 500, y: 1000 });
+  const second = await modelWorldToScreen(canvas, { x: 1000, y: 1500 });
   await page.mouse.click(first.x, first.y);
   await page.keyboard.down("Shift");
   await page.mouse.click(second.x, second.y);
@@ -368,15 +352,8 @@ test("F-024 FILLET physical polyline segment picks carry stable segment ids into
   await seedLocalDocument(page, document);
   await page.getByLabel("FILLET radius").fill("100");
   const canvas = page.getByLabel("Kuubik Draw joonestusala");
-  const box = await canvas.boundingBox();
-  expect(box).not.toBeNull();
-  const pixelsPerWorldUnit = Math.min(box!.width / 3000, box!.height / 3000);
-  const screenPoint = (x: number, y: number) => ({
-    x: box!.x + box!.width / 2 + (x - 1000) * pixelsPerWorldUnit,
-    y: box!.y + box!.height / 2 - (y - 1000) * pixelsPerWorldUnit,
-  });
-  const first = screenPoint(500, 1000);
-  const second = screenPoint(1000, 1500);
+  const first = await modelWorldToScreen(canvas, { x: 500, y: 1000 });
+  const second = await modelWorldToScreen(canvas, { x: 1000, y: 1500 });
   await page.mouse.click(first.x, first.y);
   await expect(page.getByText("FILLET esimene objekt: 10 segment 0; vali teine objekt")).toBeVisible();
   await page.mouse.click(second.x, second.y);

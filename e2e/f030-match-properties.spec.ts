@@ -3,6 +3,7 @@ import { expect, test, type Page } from "@playwright/test";
 import DxfParser from "dxf-parser";
 import { createEmptyDocument, deserializeKDraw } from "@kuubik/cad-core";
 import type { KDrawDocumentV1 } from "@kuubik/cad-schema";
+import { modelWorldToScreen } from "./helpers/model-space.js";
 import { openLayoutTools } from "./helpers/layout-tools.js";
 
 type RecordedOperation = { commandId: string; targetHandles: string[]; resultHandles: string[]; args: Record<string, unknown> };
@@ -140,15 +141,8 @@ test("F-030 MATCHPROP physically picks source and multiple destinations on the c
   await seedLocalDocument(page, source);
   await page.getByRole("button", { name: "MATCHPROP vali lähteobjekt" }).click();
   const canvas = page.getByLabel("Kuubik Draw joonestusala");
-  const box = await canvas.boundingBox();
-  if (!box) throw new Error("F-030 drawing canvas has no browser bounding box.");
-  const pixelsPerWorldUnit = Math.min(box.width / 3000, box.height / 3000);
-  const screen = (worldX: number, worldY: number) => ({
-    x: box.x + box.width / 2 + (worldX - 1000) * pixelsPerWorldUnit,
-    y: box.y + box.height / 2 - (worldY - 1000) * pixelsPerWorldUnit,
-  });
   for (const point of [[500, 0], [500, 200], [600, 500]] as const) {
-    const pixel = screen(point[0], point[1]);
+    const pixel = await modelWorldToScreen(canvas, { x: point[0], y: point[1] });
     await page.mouse.click(pixel.x, pixel.y);
   }
   await expect(page.getByLabel("MATCHPROP lähteobjekt")).toHaveValue("10");

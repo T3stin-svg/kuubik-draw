@@ -3,6 +3,7 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { expect, test, type Download, type Page } from "@playwright/test";
 import type { CadPageSetup, KDrawDocumentV1 } from "@kuubik/cad-schema";
+import { modelVisibleWorldRect } from "./helpers/model-space.js";
 import { createF106Document } from "../parity/fixtures/f106-document.js";
 import { openLayoutTools } from "./helpers/layout-tools.js";
 
@@ -127,13 +128,7 @@ async function applySetup(page: Page, setup: {
 }
 
 async function measuredDisplayWindow(page: Page): Promise<Rect> {
-  return page.getByLabel("Kuubik Draw joonestusala").evaluate((element) => {
-    const canvas = element as HTMLCanvasElement;
-    const pixelsPerUnit = Math.min(canvas.clientWidth / 3000, canvas.clientHeight / 3000);
-    const width = canvas.clientWidth / pixelsPerUnit; const height = canvas.clientHeight / pixelsPerUnit;
-    const round = (value: number) => Number(value.toFixed(6));
-    return { x: round(1000 - width / 2), y: round(1000 - height / 2), width: round(width), height: round(height) };
-  });
+  return modelVisibleWorldRect(page.getByLabel("Kuubik Draw joonestusala"));
 }
 
 test("F-106 persists and plots Model Extents, Window and Display as physical vector outputs", async ({ page }) => {

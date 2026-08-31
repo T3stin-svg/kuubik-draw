@@ -1,0 +1,125 @@
+{
+  "reference": {
+    "product": "AutoCAD 2024.1.2",
+    "workspace": "Drafting & Annotation",
+    "ref": "private://autocad-2024/idle",
+    "sha256": "0e014882f8fa7231800f02702c30f4a8697d7fd49ef860b487d0768dbda48640",
+    "redistributablePixelsIncluded": false
+  },
+  "kuubik": {
+    "zonesArtifact": "evidence/artifacts/visual-shell-wave-11/visual-shell-zones.json",
+    "stateArtifact": "evidence/artifacts/visual-shell-wave-11/visual-shell-states.json",
+    "screenshot": "evidence/artifacts/visual-shell-wave-11/visual-shell-empty-workspace.png"
+  },
+  "viewport": [
+    1920,
+    1080
+  ],
+  "browserZoomPercent": 100,
+  "windowsDpiScalePercent": 100,
+  "expectedZones": {
+    "titlebar": {
+      "y": 0,
+      "height": 30
+    },
+    "ribbonTabs": {
+      "y": 30,
+      "height": 22
+    },
+    "ribbon": {
+      "y": 52,
+      "height": 99
+    },
+    "documentTabs": {
+      "y": 151,
+      "height": 30
+    }
+  },
+  "actualZones": {
+    "titlebar": {
+      "x": 0,
+      "y": 0,
+      "width": 1920,
+      "height": 30
+    },
+    "ribbonTabs": {
+      "x": 0,
+      "y": 30,
+      "width": 1920,
+      "height": 22
+    },
+    "ribbon": {
+      "x": 0,
+      "y": 52,
+      "width": 1920,
+      "height": 99
+    },
+    "documentTabs": {
+      "x": 0,
+      "y": 151,
+      "width": 1920,
+      "height": 30
+    }
+  },
+  "surfaces": {
+    "titlebar": {
+      "autoCad": "#222933",
+      "kuubik": "rgb(34, 41, 51)"
+    },
+    "ribbonTabs": {
+      "autoCad": "#222933",
+      "kuubik": "#222933"
+    },
+    "ribbon": {
+      "autoCad": "#3b4453",
+      "kuubik": "rgb(59, 68, 83)"
+    },
+    "documentTabs": {
+      "autoCad": "#222933",
+      "kuubik": "#222933"
+    }
+  },
+  "measuredControls": {
+    "applicationMark": {
+      "x": 15,
+      "y": 3,
+      "width": 24,
+      "height": 24
+    },
+    "quickAccess": {
+      "x": 47,
+      "y": 4,
+      "width": 207,
+      "height": 22
+    },
+    "workspace": {
+      "x": 574,
+      "y": 3,
+      "width": 180,
+      "height": 24
+    },
+    "displayControls": {
+      "x": 760,
+      "y": 3,
+      "width": 84,
+      "height": 24
+    },
+    "homeTab": {
+      "x": 0,
+      "width": 55,
+      "right": 55,
+      "height": 21,
+      "backgroundColor": "rgb(59, 68, 83)"
+    },
+    "drawingTab": {
+      "x": 90,
+      "width": 95,
+      "right": 185,
+      "height": 26,
+      "backgroundColor": "rgb(59, 68, 83)"
+    }
+  },
+  "tolerancePx": 2,
+  "scope": "Top application chrome zone heights, surfaces, active Home/drawing tab bounds and title controls only; this does not authorize a five-category score increase.",
+  "status": "PASS"
+}

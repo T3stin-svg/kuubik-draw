@@ -4,12 +4,12 @@
   "source": "AutoCAD 2024.1.2 physical desktop workflow + Chromium physical Shift-click workflow + production DXF/KDRAW1 read-back + secondary LibreCAD/FreeCAD reports",
   "sourceSha256": {
     "autocad": "d9e1db9f515dbd6304b91c5d4f0e613ef2486caac39fdee14dd800aeb73ce34c",
-    "browser": "b9d6f5e4902eeca0dfbe150d4ecb8a10cf326519885d327d65c09b3472612e4e",
-    "readback": "f8c2b34738cdbb81cd5cd6350d11eb8c34345bf6a03e573c1dd529e83227fc0a",
-    "oracles": "bdbc57927ae4f25023369c7911b46e6670ddc71c517cb7ed7e5b9421ba6ad22c"
+    "browser": "184d7f3639b5f44074139926167496eda5cfe9dfea3902c16a5a4aa3c3a99157",
+    "readback": "823feec8135cfd761553537f1c7dc3f793d9806ee7335230b0d16615ce0b8fea",
+    "oracles": "d152b3783e7e00a09d5683683d7185c81e696659a0546f8894a298f69b509491"
   },
   "implementationSha256": {
-    "apps/web/src/App.tsx": "cb6be3db4a8f0cd038806c86ff2fdda091c4cd15c0c98d7b254b4b89e78bfd2a",
+    "apps/web/src/App.tsx": "3a5e7091456139ed2735bc46804526c25627b2c85ed67ee0426eae96e7f80041",
     "apps/web/src/workflows/modify-command.ts": "9d1f7d0b1d3e308eac2a5d4055436626e3a497cbaaf116c05957e1fde15616c7",
     "apps/web/src/workflows/modify-command.test.ts": "aac0694d3a93a08ed5c6b98ea5456e62ba7c0f05777780a47d99dcabdf2e12b9",
     "packages/cad-core/src/commands.ts": "540e6f79dafb8d71f0e3ba5d43a1dcd39bd9f5809c03ea383c070de3636609fc",
@@ -23,7 +23,8 @@
     "packages/cad-core/test/extend.test.ts": "61dfff95ea8f8079e3720520aa2e9781fa0de60215ab48582ab09c8b1f457bd2",
     "packages/cad-core/test/f023-mutation-proven.test.ts": "2043da18829f3898b364876a319e4fd82b767347cf44d5334d45250f42d5c63f",
     "packages/cad-dxf/test/f023-extend-roundtrip.test.ts": "29296c30ab2a0d4cfc71e7efbaafecc7d8acc1cca6b3730cb6123b9425772560",
-    "e2e/f023-extend.spec.ts": "2ad2f85f8a65a3c3d533684eb93c7cc73c57068fb0cfa362f546df6fda6196bb",
+    "e2e/f023-extend.spec.ts": "8660d85fa6954bb84986d029807de0023e86e765259d04948396f18fe4a39e6b",
+    "e2e/helpers/model-space.ts": "1a69210e5248af4d572c8809943cfe414fa06bcfd0b4643f652f21d1858f8381",
     "tools/autocad/f023-standard-matrix.ps1": "ed80b5faeae6b395e82ffe9223416be355c79616e7874384854fba7bc12742c3",
     "tools/autocad/f022-shift-click.ps1": "832a0fd648c8ba1c4918fad404d4d51d1abf4b61cb0c7dd7ef93a6c308795c99",
     "tools/autocad/run-f023.mjs": "9bc2197cce12a975d669e942b5490e0240baa470150dc06a968022a81ff030dc",
@@ -32,7 +33,7 @@
     "tools/autocad/f023-runner.test.mjs": "93489536adf5f329cf69251ab2a05ff271032e48248aee479d1cf7a655a83912",
     "tools/autocad/process-ownership.test.mjs": "967311b5caa954585c7fce1494afb5322ead5ce99df83c2f2bad14fd178e3050",
     "tools/parity/capture-f023-browser.mjs": "da1954b736fe827f8342d319892d9782041490c937c62064eb52d83871812104",
-    "tools/parity/build-f023-browser-readback.mjs": "031fe696f6232e7dc38c979bea85d9bf8059272e8a79aeacc98873a64c9c8f1b",
+    "tools/parity/build-f023-browser-readback.mjs": "d8ba36d4d76759f5538ea65466dbb5ca4e34302c8a20bb6f84941c14b4041599",
     "tools/parity/run-f023-readback.mjs": "30dc12751df064323ea5dc3daa44a6d32d1a9eb8cede4d8b23dcb2ce82392b0a",
     "tools/oracles/freecad-headless.py": "1177b9a6342d7863e40c358dfea8cbd0b2530c11b9b8a4835cff918f6b53caa6",
     "tools/oracles/network-isolation.mjs": "3fb18e9ad145b76e53ed241a0a529bb2ccd4eabe784b04e915d77cdd9203d415",
@@ -41,7 +42,7 @@
     "tools/oracles/run-f023-oracles.mjs": "a0eb43b28b3fca0d5e4c60660652d72d4210489519d27103e5c742fb27974472",
     "parity/F-023-scope.md": "ef48b01c658dd7ce10a04f5a89c18b50a0686b484c527f951593c537fd110b38",
     "parity/expected/F-023.json": "a69e4a0c293ea1fe815f438cba10c6f9b1ef97f181c48f4ca70bf544d032cd53",
-    "tools/parity/check-f023-cross-evidence.mjs": "ab0751222ec9d987072ea6850643676dbbd63b8489aba5e0c562afc84afa1bb2"
+    "tools/parity/check-f023-cross-evidence.mjs": "feec85a80056c8073615d3baa969a74f1bfbbff85bc74324247076b799472104"
   },
   "checks": {
     "exactAuthoritiesPassed": true,

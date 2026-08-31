@@ -4,6 +4,7 @@ import { expect, test, type Page } from "@playwright/test";
 import DxfParser from "dxf-parser";
 import { createEmptyDocument } from "@kuubik/cad-core";
 import type { KDrawDocumentV1 } from "@kuubik/cad-schema";
+import { modelWorldToScreen } from "./helpers/model-space.js";
 
 type RecordedOperation = { commandId: string; targetHandles: string[]; resultHandles: string[]; args: Record<string, unknown> };
 
@@ -206,13 +207,7 @@ test("F-022 TRIM physical Shift-click uses the same preview and atomic commit pr
   await page.getByLabel("TRIM cutting edges").fill("20");
   await page.getByLabel("TRIM sihid").focus();
   const canvas = page.getByLabel("Kuubik Draw joonestusala");
-  const box = await canvas.boundingBox();
-  expect(box).not.toBeNull();
-  const pixelsPerWorldUnit = Math.min(box!.width / 3000, box!.height / 3000);
-  const screen = {
-    x: box!.x + box!.width / 2 + (80 - 1000) * pixelsPerWorldUnit,
-    y: box!.y + box!.height / 2 - (0 - 1000) * pixelsPerWorldUnit,
-  };
+  const screen = await modelWorldToScreen(canvas, { x: 80, y: 0 });
   await page.keyboard.down("Shift");
   await page.mouse.click(screen.x, screen.y);
   await page.keyboard.up("Shift");

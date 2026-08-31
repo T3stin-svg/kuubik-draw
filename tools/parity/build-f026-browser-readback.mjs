@@ -27,6 +27,7 @@ const sourcePaths = [
   "packages/cad-dxf/src/index.ts",
   "packages/cad-dxf/test/f026-break-roundtrip.test.ts",
   "e2e/f026-break.spec.ts",
+  "e2e/helpers/model-space.ts",
   "tools/parity/capture-f026-browser.mjs",
   "tools/parity/build-f026-browser-readback.mjs",
 ];

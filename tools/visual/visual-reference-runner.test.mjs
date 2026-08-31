@@ -38,7 +38,7 @@ describe("AutoCAD visual-reference runner ratchet", () => {
 
   it("keeps the light-model comparison content-addressed and pixel-private", async () => {
     const source = await readFile(new URL("compare-light-model-surface.ps1", import.meta.url), "utf8");
-    const evidence = JSON.parse(await readFile(new URL("../../evidence/artifacts/visual-shell-wave-8/autocad-light-model-readback.json", import.meta.url), "utf8"));
+    const evidence = JSON.parse(await readFile(new URL("../../evidence/artifacts/visual-shell-wave-11/autocad-light-model-readback.json", import.meta.url), "utf8"));
     expect(source).toContain("Private AutoCAD reference SHA-256 mismatch");
     expect(source).toContain("redistributablePixelsIncluded = $false");
     expect(source).toContain("fixed +/-1 px tolerance");
@@ -50,7 +50,7 @@ describe("AutoCAD visual-reference runner ratchet", () => {
 
   it("keeps the Home ribbon comparison content-addressed and pixel-private", async () => {
     const source = await readFile(new URL("compare-ribbon-surface.ps1", import.meta.url), "utf8");
-    const evidence = JSON.parse(await readFile(new URL("../../evidence/artifacts/visual-shell-wave-10/autocad-ribbon-readback.json", import.meta.url), "utf8"));
+    const evidence = JSON.parse(await readFile(new URL("../../evidence/artifacts/visual-shell-wave-11/autocad-ribbon-readback.json", import.meta.url), "utf8"));
     expect(source).toContain("Private AutoCAD reference SHA-256 mismatch");
     expect(source).toContain("redistributablePixelsIncluded = $false");
     expect(source).toContain("fixed +/-2 px boundary tolerance");
@@ -64,7 +64,7 @@ describe("AutoCAD visual-reference runner ratchet", () => {
 
   it("keeps the top application chrome comparison content-addressed and pixel-private", async () => {
     const source = await readFile(new URL("compare-top-chrome.ps1", import.meta.url), "utf8");
-    const evidence = JSON.parse(await readFile(new URL("../../evidence/artifacts/visual-shell-wave-10/autocad-top-chrome-readback.json", import.meta.url), "utf8"));
+    const evidence = JSON.parse(await readFile(new URL("../../evidence/artifacts/visual-shell-wave-11/autocad-top-chrome-readback.json", import.meta.url), "utf8"));
     expect(source).toContain("Private AutoCAD reference SHA-256 mismatch");
     expect(source).toContain("redistributablePixelsIncluded = $false");
     expect(source).toContain("fixed +/-$Tolerance px tolerance");
@@ -83,6 +83,28 @@ describe("AutoCAD visual-reference runner ratchet", () => {
       ribbon: { autoCad: "#3b4453", kuubik: "rgb(59, 68, 83)" },
       documentTabs: { autoCad: "#222933", kuubik: "#222933" },
     });
+    expect(evidence.status).toBe("PASS");
+  });
+
+  it("keeps the shared bottom chrome comparison content-addressed and pixel-private", async () => {
+    const source = await readFile(new URL("compare-bottom-chrome.ps1", import.meta.url), "utf8");
+    const evidence = JSON.parse(await readFile(new URL("../../evidence/artifacts/visual-shell-wave-11/autocad-bottom-chrome-readback.json", import.meta.url), "utf8"));
+    expect(source).toContain("Private AutoCAD reference SHA-256 mismatch");
+    expect(source).toContain("redistributablePixelsIncluded = $false");
+    expect(source).toContain("fixed +/-$Tolerance px tolerance");
+    expect(evidence.reference.sha256).toBe("08505f04ee81f68e2adf76aa2cd06a0d5f9d12778ff1391bcd167ddb4cbaf4bc");
+    expect(evidence.reference.redistributablePixelsIncluded).toBe(false);
+    expect(evidence.expectedGeometry).toEqual({
+      layoutStatus: { x: 0, y: 1043, width: 1920, height: 37 },
+      statusbar: { y: 1047, height: 32, bottom: 1079 },
+    });
+    expect(evidence.surfaces).toEqual({
+      separator: { autoCad: "#3b4453", kuubik: "rgb(59, 68, 83)", thicknessPx: 4 },
+      content: { autoCad: "#222933", kuubik: "rgb(34, 41, 51)", heightPx: 32 },
+      accent: { autoCad: "#0696d7", kuubik: "rgb(6, 150, 215)", thicknessPx: 1 },
+    });
+    expect(evidence.statusControls.grid).toMatchObject({ disabled: false, pressed: "true" });
+    expect(["ortho", "osnap", "otrack", "dyn"].every((name) => evidence.statusControls[name].disabled)).toBe(true);
     expect(evidence.status).toBe("PASS");
   });
 });

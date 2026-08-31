@@ -36,6 +36,7 @@ const sourcePaths = [
   "packages/cad-core/test/f022-mutation-proven.test.ts",
   "packages/cad-dxf/test/f022-trim-roundtrip.test.ts",
   "e2e/f022-trim.spec.ts",
+  "e2e/helpers/model-space.ts",
   "tools/autocad/f022-standard-matrix.ps1",
   "tools/autocad/f022-shift-click.ps1",
   "tools/autocad/f022-runner.test.mjs",

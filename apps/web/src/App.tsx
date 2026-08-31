@@ -32,7 +32,29 @@ const MATCH_PROPERTY_LABELS: Readonly<Record<keyof MatchPropertiesSettings, stri
 });
 const MODEL_SPACE_COMMANDS = new Set(["LINE", "RECTANGLE", "MOVE", "COPY", "ROTATE", "SCALE", "MIRROR", "OFFSET", "TRIM", "EXTEND", "FILLET", "CHAMFER", "BREAK", "STRETCH", "LENGTHEN", "ALIGN", "MATCHPROP", "ERASE"]);
 const MODEL_VIEW_WORLD = Object.freeze({ minX: -500, minY: -500, maxX: 2500, maxY: 2500 });
+const MODEL_VIEW_REFERENCE_HEIGHT_PX = 793;
+const MODEL_VIEW_WORLD_UNITS_PER_PIXEL = (MODEL_VIEW_WORLD.maxY - MODEL_VIEW_WORLD.minY) / MODEL_VIEW_REFERENCE_HEIGHT_PX;
 const DRAWING_CONTEXT_MENU_SIZE = Object.freeze({ width: 200, height: 371 });
+
+function modelViewport(widthPx: number, heightPx: number, devicePixelRatio: number): Viewport2D {
+  if (heightPx <= MODEL_VIEW_REFERENCE_HEIGHT_PX) {
+    return {
+      world: { ...MODEL_VIEW_WORLD },
+      widthPx,
+      heightPx,
+      devicePixelRatio,
+    };
+  }
+  const halfNominalHeight = (MODEL_VIEW_WORLD.maxY - MODEL_VIEW_WORLD.minY) / 2;
+  const centerY = MODEL_VIEW_WORLD.maxY - heightPx * MODEL_VIEW_WORLD_UNITS_PER_PIXEL / 2;
+  return {
+    world: { ...MODEL_VIEW_WORLD, minY: centerY - halfNominalHeight, maxY: centerY + halfNominalHeight },
+    widthPx,
+    heightPx,
+    devicePixelRatio,
+    worldUnitsPerPixel: MODEL_VIEW_WORLD_UNITS_PER_PIXEL,
+  };
+}
 
 function loadMatchPropertiesSettings(): MatchPropertiesSettings {
   if (typeof window === "undefined") return { ...DEFAULT_MATCH_PROPERTIES_SETTINGS };
@@ -885,14 +907,23 @@ export function App() {
       if (widthPx <= 0 || heightPx <= 0) return;
       element.width = Math.round(widthPx * ratio);
       element.height = Math.round(heightPx * ratio);
-      renderer.render(context, {
-        world: activePaper
-          ? { minX: 0, minY: 0, maxX: activePaper.widthMm, maxY: activePaper.heightMm }
-          : MODEL_VIEW_WORLD,
+      const viewport = activePaper ? {
+        world: { minX: 0, minY: 0, maxX: activePaper.widthMm, maxY: activePaper.heightMm },
         widthPx,
         heightPx,
         devicePixelRatio: ratio,
-      }, document.layers, activeLayout.kind === "model" ? [...(movePreview?.entities ?? []), ...(copyPreview?.entities ?? []), ...(rotatePreview?.entities ?? []), ...(scalePreview?.entities ?? []), ...(mirrorPreview?.entities ?? []), ...(offsetPreview?.entities ?? []), ...(trimPreview?.entities ?? []), ...(extendPreview?.entities ?? []), ...(filletPreview?.entities ?? []), ...(chamferPreview?.entities ?? []), ...(breakPreview?.entities ?? []), ...(stretchPreview?.entities ?? []), ...(lengthenPreview?.entities ?? []), ...(alignPreview?.entities ?? []), ...(matchPropertiesPreview?.entities ?? [])] : [], [
+      } : modelViewport(widthPx, heightPx, ratio);
+      if (!activePaper) {
+        const transform = viewportScreenTransform(viewport);
+        element.dataset.worldCenterX = String(transform.worldCenter.x);
+        element.dataset.worldCenterY = String(transform.worldCenter.y);
+        element.dataset.worldUnitsPerPixel = String(transform.worldUnitsPerPixel);
+      } else {
+        delete element.dataset.worldCenterX;
+        delete element.dataset.worldCenterY;
+        delete element.dataset.worldUnitsPerPixel;
+      }
+      renderer.render(context, viewport, document.layers, activeLayout.kind === "model" ? [...(movePreview?.entities ?? []), ...(copyPreview?.entities ?? []), ...(rotatePreview?.entities ?? []), ...(scalePreview?.entities ?? []), ...(mirrorPreview?.entities ?? []), ...(offsetPreview?.entities ?? []), ...(trimPreview?.entities ?? []), ...(extendPreview?.entities ?? []), ...(filletPreview?.entities ?? []), ...(chamferPreview?.entities ?? []), ...(breakPreview?.entities ?? []), ...(stretchPreview?.entities ?? []), ...(lengthenPreview?.entities ?? []), ...(alignPreview?.entities ?? []), ...(matchPropertiesPreview?.entities ?? [])] : [], [
         ...(mirrorPreview?.eraseSource ? mirrorPreview.sourceHandles : []),
         ...(offsetPreview?.eraseSource ? offsetPreview.sourceHandles : []),
         ...(trimPreview?.sourceHandles ?? []),
@@ -1376,12 +1407,7 @@ export function App() {
     const element = event.currentTarget;
     const rect = element.getBoundingClientRect();
     if (!(rect.width > 0 && rect.height > 0)) return;
-    const viewport: Viewport2D = {
-      world: MODEL_VIEW_WORLD,
-      widthPx: rect.width,
-      heightPx: rect.height,
-      devicePixelRatio: window.devicePixelRatio || 1,
-    };
+    const viewport = modelViewport(rect.width, rect.height, window.devicePixelRatio || 1);
     const point = viewportScreenToWorld(viewport, { x: event.clientX - rect.left, y: event.clientY - rect.top });
     const cleanCoordinate = (value: number): number => {
       const integer = Math.round(value);
@@ -1551,12 +1577,7 @@ export function App() {
     if (!modelSpaceEditing || commandHistoryOpen) return;
     const rect = event.currentTarget.getBoundingClientRect();
     if (!(rect.width > 0 && rect.height > 0)) return;
-    const viewport: Viewport2D = {
-      world: MODEL_VIEW_WORLD,
-      widthPx: rect.width,
-      heightPx: rect.height,
-      devicePixelRatio: window.devicePixelRatio || 1,
-    };
+    const viewport = modelViewport(rect.width, rect.height, window.devicePixelRatio || 1);
     const anchor = { x: event.clientX - rect.left, y: event.clientY - rect.top };
     const position = clampCadContextMenuPosition(anchor, DRAWING_CONTEXT_MENU_SIZE, { width: rect.width, height: rect.height });
     const world = viewportScreenToWorld(viewport, anchor);
@@ -1598,12 +1619,7 @@ export function App() {
   function updateModelPointer(event: React.PointerEvent<HTMLCanvasElement>): void {
     const rect = event.currentTarget.getBoundingClientRect();
     const pixel = { x: event.clientX - rect.left, y: event.clientY - rect.top };
-    const world = viewportScreenToWorld({
-      world: MODEL_VIEW_WORLD,
-      widthPx: rect.width,
-      heightPx: rect.height,
-      devicePixelRatio: window.devicePixelRatio || 1,
-    }, pixel);
+    const world = viewportScreenToWorld(modelViewport(rect.width, rect.height, window.devicePixelRatio || 1), pixel);
     setCursorReadout({
       pixel,
       world: { x: Number(world.x.toFixed(6)), y: Number(world.y.toFixed(6)) },
@@ -1623,7 +1639,7 @@ export function App() {
       setStatus("STRETCH Crossing: lohista vähemalt 3 px suurune crossing-aken");
       return;
     }
-    const viewport: Viewport2D = { world: MODEL_VIEW_WORLD, widthPx: rect.width, heightPx: rect.height, devicePixelRatio: window.devicePixelRatio || 1 };
+    const viewport = modelViewport(rect.width, rect.height, window.devicePixelRatio || 1);
     const point = viewportScreenToWorld(viewport, currentPx);
     const endWorld = { x: Number(point.x.toFixed(6)), y: Number(point.y.toFixed(6)) };
     const region = `${stretchDrag.startWorld.x},${stretchDrag.startWorld.y}; ${endWorld.x},${endWorld.y}`;
@@ -2752,12 +2768,7 @@ export function App() {
     if (activeLayout.kind !== "model" || !element || element.clientWidth <= 0 || element.clientHeight <= 0) {
       throw new LayoutCommandError("INVALID_PAPER", "Aktiivne mudelivaade puudub.");
     }
-    const viewport: Viewport2D = {
-      world: MODEL_VIEW_WORLD,
-      widthPx: element.clientWidth,
-      heightPx: element.clientHeight,
-      devicePixelRatio: window.devicePixelRatio || 1,
-    };
+    const viewport = modelViewport(element.clientWidth, element.clientHeight, window.devicePixelRatio || 1);
     const bottomLeft = viewportScreenToWorld(viewport, { x: 0, y: element.clientHeight });
     const topRight = viewportScreenToWorld(viewport, { x: element.clientWidth, y: 0 });
     const round = (value: number) => Number(value.toFixed(6));
@@ -3974,7 +3985,7 @@ export function App() {
           <span className="command-caret" aria-hidden="true" />
         </div>
       </section>
-      <section className="layoutbar" aria-label="Model ja Layout vahelehed">
+      <section className="layoutbar" aria-label="Model ja Layout vahelehed" data-visual-zone="layout-status">
         {document.layouts.map((layout) => (
           <button
             key={layout.id}
@@ -4222,11 +4233,11 @@ export function App() {
       <footer className="statusbar" data-visual-zone="statusbar">
         <span className="coordinate-readout" data-testid="coordinate-readout">{cursorReadout ? `${cursorReadout.world.x.toFixed(4)}, ${cursorReadout.world.y.toFixed(4)}, 0.0000` : "0.0000, 0.0000, 0.0000"}</span>
         <span className="status-toggles">
-          <button type="button" className={`status-toggle${gridEnabled ? " active" : ""}`} aria-label="Grid display" aria-pressed={gridEnabled} onClick={() => setGridEnabled((current) => !current)}>GRID</button>
-          <span className="status-toggle active">ORTHO</span>
-          <span className="status-toggle active">OSNAP</span>
-          <span className="status-toggle">OTRACK</span>
-          <span className="status-toggle">DYN</span>
+          <button type="button" className={`status-toggle${gridEnabled ? " active" : ""}`} data-status-control="grid" aria-label="Grid display" aria-pressed={gridEnabled} onClick={() => setGridEnabled((current) => !current)}>GRID</button>
+          <button type="button" className="status-toggle" data-status-control="ortho" aria-label="ORTHO unavailable" disabled>ORTHO</button>
+          <button type="button" className="status-toggle" data-status-control="osnap" aria-label="OSNAP unavailable" disabled>OSNAP</button>
+          <button type="button" className="status-toggle" data-status-control="otrack" aria-label="OTRACK unavailable" disabled>OTRACK</button>
+          <button type="button" className="status-toggle" data-status-control="dyn" aria-label="Dynamic Input unavailable" disabled>DYN</button>
           <span className="status-space">{activeSpace} · mm · SNAP</span>
         </span>
       </footer>

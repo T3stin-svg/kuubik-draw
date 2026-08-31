@@ -36,6 +36,7 @@ const sourcePaths = [
   "packages/cad-print/test/vector-output.test.ts",
   "package-lock.json",
   "e2e/f024-fillet.spec.ts",
+  "e2e/helpers/model-space.ts",
   "tools/parity/capture-f024-browser.mjs",
   "tools/parity/build-f024-browser-readback.mjs",
 ];

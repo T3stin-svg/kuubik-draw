@@ -69,6 +69,7 @@ const sourcePaths = [
   "packages/cad-dxf/src/index.ts",
   "packages/cad-dxf/test/f029-align-roundtrip.test.ts",
   "e2e/f029-align.spec.ts",
+  "e2e/helpers/model-space.ts",
   "tools/autocad/f029-runner.test.mjs",
   "tools/autocad/f029-standard-matrix.ps1",
   "tools/autocad/process-ownership.mjs",

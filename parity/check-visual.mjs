@@ -32,7 +32,7 @@ if (VISUAL_BASELINE.claimedScore > VISUAL_BASELINE.baselineScore && !allStatesPa
 }
 
 for (const state of VISUAL_STATES) {
-  for (const evidencePath of [state.kuubikEvidence, state.supplementalKuubikEvidence, state.measuredReadback, state.supplementalMeasuredReadback, state.comparisonReadback, state.supplementalComparisonReadback, state.chromeComparisonReadback]) {
+  for (const evidencePath of [state.kuubikEvidence, state.supplementalKuubikEvidence, state.measuredReadback, state.supplementalMeasuredReadback, state.comparisonReadback, state.supplementalComparisonReadback, state.chromeComparisonReadback, state.bottomComparisonReadback]) {
     if (evidencePath) await access(resolve(evidencePath));
   }
 }
@@ -90,6 +90,30 @@ if (shellState.chromeComparisonReadback && shellState.supplementalMeasuredReadba
     && Math.abs(chrome.documentTabs.drawing.right - 185) <= VISUAL_ACCEPTANCE.zoneTolerancePx;
   if (!zonesBounded || !surfacesExact || !controlsBounded || chromeComparison.status !== "PASS") {
     throw new Error("Top application chrome supplement is outside the measured AutoCAD reference tolerance");
+  }
+}
+
+if (shellState.bottomComparisonReadback && shellState.supplementalMeasuredReadback) {
+  const browserReadback = JSON.parse(await readFile(resolve(shellState.supplementalMeasuredReadback), "utf8"));
+  const bottomComparison = JSON.parse(await readFile(resolve(shellState.bottomComparisonReadback), "utf8"));
+  const bottom = browserReadback.states.bottomChrome;
+  const geometryBounded = Math.abs(bottom.layoutStatus.y - 1043) <= VISUAL_ACCEPTANCE.repeatedControlTolerancePx
+    && Math.abs(bottom.layoutStatus.height - 37) <= VISUAL_ACCEPTANCE.repeatedControlTolerancePx
+    && Math.abs(bottom.statusbar.y - 1047) <= VISUAL_ACCEPTANCE.repeatedControlTolerancePx
+    && Math.abs(bottom.statusbar.height - 32) <= VISUAL_ACCEPTANCE.repeatedControlTolerancePx
+    && Math.abs(bottom.statusbar.bottom - 1079) <= VISUAL_ACCEPTANCE.repeatedControlTolerancePx;
+  const surfacesExact = bottomComparison.surfaces.separator.autoCad === "#3b4453"
+    && bottomComparison.surfaces.separator.kuubik === "rgb(59, 68, 83)"
+    && bottomComparison.surfaces.content.autoCad === "#222933"
+    && bottomComparison.surfaces.content.kuubik === "rgb(34, 41, 51)"
+    && bottomComparison.surfaces.accent.autoCad === "#0696d7"
+    && bottomComparison.surfaces.accent.kuubik === "rgb(6, 150, 215)";
+  const controlsHonest = bottomComparison.statusControls.grid.disabled === false
+    && bottomComparison.statusControls.grid.pressed === "true"
+    && ["ortho", "osnap", "otrack", "dyn"].every((name) => bottomComparison.statusControls[name].disabled === true
+      && bottomComparison.statusControls[name].pressed === null);
+  if (!geometryBounded || !surfacesExact || !controlsHonest || bottomComparison.status !== "PASS") {
+    throw new Error("Shared bottom chrome is outside the measured AutoCAD reference tolerance");
   }
 }
 

@@ -2,9 +2,9 @@
   "schemaVersion": 1,
   "rowId": "F-022",
   "source": "Chromium 1920x1080 visible controls, IndexedDB and downloaded production DXF",
-  "observedAt": "2026-08-30T23:51:15.379Z",
+  "observedAt": "2026-08-31T00:55:19.260Z",
   "implementationSha256": {
-    "apps/web/src/App.tsx": "cb6be3db4a8f0cd038806c86ff2fdda091c4cd15c0c98d7b254b4b89e78bfd2a",
+    "apps/web/src/App.tsx": "3a5e7091456139ed2735bc46804526c25627b2c85ed67ee0426eae96e7f80041",
     "apps/web/src/workflows/modify-command.ts": "9d1f7d0b1d3e308eac2a5d4055436626e3a497cbaaf116c05957e1fde15616c7",
     "packages/cad-core/src/commands.ts": "540e6f79dafb8d71f0e3ba5d43a1dcd39bd9f5809c03ea383c070de3636609fc",
     "packages/cad-core/src/index.ts": "681d425d328d1938f98e2821886e13b68097a86ee26de483efd7ba31dfc362fc",
@@ -13,9 +13,10 @@
     "packages/cad-renderer/src/index.ts": "5563e5e6cdd66b652248e90d4ed237b145fd828da715c64375d2d05169a61888",
     "packages/cad-renderer/src/selection.ts": "7f39e9d073fc4c36aa4507c4eea1ff96e6990532652fdd5b16c5a81c84c9fbc3",
     "packages/cad-renderer/test/selection.test.ts": "d907d9c125eb225cb273b2d5bd58446e3aa5fbe8cae03eda6baa639c63900050",
-    "e2e/f022-trim.spec.ts": "5e66ea71029c584e8a1608a71b496f9db52cd68049b46fa326ad45c8b572065b",
+    "e2e/f022-trim.spec.ts": "d9e6f64e702005ad86e0de2b06287c0af2eacd9e21425302809ab7835fd3d660",
+    "e2e/helpers/model-space.ts": "1a69210e5248af4d572c8809943cfe414fa06bcfd0b4643f652f21d1858f8381",
     "tools/parity/capture-f022-browser.mjs": "a394553b2a5422b0dc4a8c7b2237bd6def10617f9201654678e3a937a1fa4fda",
-    "tools/parity/build-f022-browser-readback.mjs": "7cb5b9675bea593c19d696f79fec49feca902769cb5d351853d9252e0f2de52a",
+    "tools/parity/build-f022-browser-readback.mjs": "dadb04f9a0f0f23a3d73ac6d1fe24f461ebed0b63f941768c3bd29ce3d51b7ab",
     "package-lock.json": "da1dcf889d8fbf35f6a8e4403b29ed34666b13176a2b98307a0c23e25fa06a53"
   },
   "standard": {
@@ -125,11 +126,11 @@
       "attachments": [],
       "metadata": {
         "createdAt": "2026-08-29T09:00:00.000Z",
-        "updatedAt": "2026-08-30T23:50:38.634Z"
+        "updatedAt": "2026-08-31T00:43:03.593Z"
       }
     },
     "operation": {
-      "opId": "28ee7154-f596-46ef-844b-02c4c787a9da",
+      "opId": "29aef599-376b-4ae7-8bca-037004ed41f8",
       "baseRevision": 0,
       "commandId": "TRIM",
       "args": {
@@ -264,7 +265,7 @@
       "attachments": [],
       "metadata": {
         "createdAt": "2026-08-29T09:00:00.000Z",
-        "updatedAt": "2026-08-30T23:50:39.817Z"
+        "updatedAt": "2026-08-31T00:43:04.525Z"
       }
     },
     "consoleErrors": [],
@@ -377,11 +378,11 @@
       "attachments": [],
       "metadata": {
         "createdAt": "2026-08-29T09:00:00.000Z",
-        "updatedAt": "2026-08-30T23:50:41.135Z"
+        "updatedAt": "2026-08-31T00:43:06.314Z"
       }
     },
     "trimOperation": {
-      "opId": "7b4341bc-a82c-4945-9f74-d439ac5c4bf2",
+      "opId": "ee15644b-31dd-486b-884a-80f9bceee361",
       "baseRevision": 0,
       "commandId": "TRIM",
       "args": {
@@ -480,7 +481,7 @@
       "attachments": [],
       "metadata": {
         "createdAt": "2026-08-29T09:00:00.000Z",
-        "updatedAt": "2026-08-30T23:50:42.751Z"
+        "updatedAt": "2026-08-31T00:43:08.358Z"
       }
     },
     "restored": {
@@ -554,7 +555,7 @@
       "attachments": [],
       "metadata": {
         "createdAt": "2026-08-29T09:00:00.000Z",
-        "updatedAt": "2026-08-30T23:50:43.383Z"
+        "updatedAt": "2026-08-31T00:43:08.943Z"
       }
     },
     "status": "PASS",
@@ -566,8 +567,8 @@
     "physicalInput": {
       "modifier": "Shift",
       "pointer": {
-        "x": 507.21333333333337,
-        "y": 541.8333333333334
+        "x": 486.05333333333334,
+        "y": 599.3333333333334
       }
     },
     "committed": {
@@ -634,11 +635,11 @@
       "attachments": [],
       "metadata": {
         "createdAt": "2026-08-29T09:00:00.000Z",
-        "updatedAt": "2026-08-30T23:50:44.734Z"
+        "updatedAt": "2026-08-31T00:43:10.887Z"
       }
     },
     "operation": {
-      "opId": "de70d26a-3626-49bc-81b9-916327d466f2",
+      "opId": "c232f527-5984-4b7d-b020-918cbcb545f2",
       "baseRevision": 0,
       "commandId": "TRIM",
       "args": {
@@ -746,7 +747,7 @@
       "attachments": [],
       "metadata": {
         "createdAt": "2026-08-29T09:00:00.000Z",
-        "updatedAt": "2026-08-30T23:50:45.034Z"
+        "updatedAt": "2026-08-31T00:43:11.510Z"
       }
     },
     "status": "PASS",
@@ -821,7 +822,7 @@
         "attachments": [],
         "metadata": {
           "createdAt": "2026-08-29T09:00:00.000Z",
-          "updatedAt": "2026-08-30T23:50:48.151Z"
+          "updatedAt": "2026-08-31T00:43:16.490Z"
         }
       },
       "ucs": {
@@ -888,7 +889,7 @@
         "attachments": [],
         "metadata": {
           "createdAt": "2026-08-29T09:00:00.000Z",
-          "updatedAt": "2026-08-30T23:50:50.616Z"
+          "updatedAt": "2026-08-31T00:43:19.564Z"
         }
       },
       "view": {
@@ -955,7 +956,7 @@
         "attachments": [],
         "metadata": {
           "createdAt": "2026-08-29T09:00:00.000Z",
-          "updatedAt": "2026-08-30T23:50:52.901Z"
+          "updatedAt": "2026-08-31T00:43:22.729Z"
         }
       }
     },
@@ -1010,7 +1011,7 @@
       "attachments": [],
       "metadata": {
         "createdAt": "2026-08-29T09:00:00.000Z",
-        "updatedAt": "2026-08-30T23:50:55.067Z"
+        "updatedAt": "2026-08-31T00:43:25.685Z"
       }
     },
     "refused": {
@@ -1232,7 +1233,7 @@
       "attachments": [],
       "metadata": {
         "createdAt": "2026-08-29T09:00:00.000Z",
-        "updatedAt": "2026-08-30T23:50:58.534Z"
+        "updatedAt": "2026-08-31T00:43:30.361Z"
       }
     },
     "hatch": {
@@ -1474,7 +1475,7 @@
       "attachments": [],
       "metadata": {
         "createdAt": "2026-08-29T09:00:00.000Z",
-        "updatedAt": "2026-08-30T23:51:02.233Z"
+        "updatedAt": "2026-08-31T00:43:35.175Z"
       }
     },
     "cycle": {
@@ -1786,7 +1787,7 @@
       "attachments": [],
       "metadata": {
         "createdAt": "2026-08-29T09:00:00.000Z",
-        "updatedAt": "2026-08-30T23:51:06.101Z"
+        "updatedAt": "2026-08-31T00:43:40.445Z"
       }
     },
     "status": "PASS",
@@ -2006,7 +2007,7 @@
       "attachments": [],
       "metadata": {
         "createdAt": "2026-08-29T09:00:00.000Z",
-        "updatedAt": "2026-08-30T23:51:11.952Z"
+        "updatedAt": "2026-08-31T00:43:47.703Z"
       }
     },
     "tangentCommitted": {
@@ -2090,7 +2091,7 @@
       "attachments": [],
       "metadata": {
         "createdAt": "2026-08-29T09:00:00.000Z",
-        "updatedAt": "2026-08-30T23:51:14.717Z"
+        "updatedAt": "2026-08-31T00:43:51.196Z"
       }
     },
     "consoleErrors": [],

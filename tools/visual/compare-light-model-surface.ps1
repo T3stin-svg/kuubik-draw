@@ -41,6 +41,7 @@ if ($actualReferenceSha -ne $expected) { throw "Private AutoCAD reference SHA-25
 $reference = [System.Drawing.Bitmap]::FromFile((Resolve-Path -LiteralPath $ReferenceImage))
 $kuubik = [System.Drawing.Bitmap]::FromFile((Resolve-Path -LiteralPath $KuubikImage))
 try {
+  $waveName = Split-Path -Leaf (Split-Path -Parent $KuubikImage)
   if ($reference.Width -ne 1920 -or $reference.Height -ne 1080 -or $kuubik.Width -ne 1920 -or $kuubik.Height -ne 1080) {
     throw 'Light-model comparison requires paired 1920x1080 images.'
   }
@@ -73,7 +74,7 @@ try {
       redistributablePixelsIncluded = $false
     }
     kuubik = [ordered]@{
-      artifact = 'evidence/artifacts/visual-shell-wave-8/visual-shell-empty-workspace.png'
+      artifact = "evidence/artifacts/$waveName/visual-shell-empty-workspace.png"
       sha256 = Get-ImageSha256 $KuubikImage
     }
     viewport = @(1920, 1080)
