@@ -1,0 +1,13 @@
+{
+  "drawOrder": [
+    { "action": "front", "handles": ["D", "B"], "expected": ["A", "C", "E", "B", "D"] },
+    { "action": "back", "handles": ["D", "B"], "expected": ["B", "D", "A", "C", "E"] },
+    { "action": "above", "handles": ["D", "B"], "referenceHandle": "C", "expected": ["A", "C", "B", "D", "E"] },
+    { "action": "below", "handles": ["D", "B"], "referenceHandle": "C", "expected": ["A", "B", "D", "C", "E"] }
+  ],
+  "transparency": [
+    { "layer": 0, "entity": null, "expected": 0, "source": "layer", "opacity": 1 },
+    { "layer": 37.125, "entity": null, "expected": 37.125, "source": "layer", "opacity": 0.62875 },
+    { "layer": 90, "entity": 12.5, "expected": 12.5, "source": "entity", "opacity": 0.875 }
+  ]
+}

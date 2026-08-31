@@ -20,6 +20,14 @@ export interface ResolvedPlotAppearance extends ResolvedCadAppearance {
   opacity: number;
 }
 
+/** Canonical persisted/render/print validation for F-080 transparency. */
+export function validateCadTransparency(value: number, label = "CAD transparency"): number {
+  if (!Number.isFinite(value) || value < 0 || value > 90) {
+    throw new TypeError(`${label} must be a percentage from 0 to 90.`);
+  }
+  return value;
+}
+
 function normalizedHex(color: string): string {
   const short = /^#([0-9a-f])([0-9a-f])([0-9a-f])$/iu.exec(color);
   if (short) return `#${short[1]}${short[1]}${short[2]}${short[2]}${short[3]}${short[3]}`.toLowerCase();
@@ -70,9 +78,7 @@ export function assertCadAppearance(appearance: CadAppearance | undefined, label
   if (appearance.lineweightMm !== undefined && (!Number.isFinite(appearance.lineweightMm) || appearance.lineweightMm < 0)) {
     throw new TypeError(`${label} lineweight must be finite and non-negative.`);
   }
-  if (appearance.transparency !== undefined && (!Number.isFinite(appearance.transparency) || appearance.transparency < 0 || appearance.transparency > 90)) {
-    throw new TypeError(`${label} transparency must be a percentage from 0 to 90.`);
-  }
+  if (appearance.transparency !== undefined) validateCadTransparency(appearance.transparency, `${label} transparency`);
   if (appearance.thickness !== undefined && !Number.isFinite(appearance.thickness)) {
     throw new TypeError(`${label} thickness must be finite.`);
   }
@@ -137,9 +143,7 @@ export function resolveCadAppearance(
   const lineweightMm = entity.appearance?.lineweightMm ?? layer.appearance?.lineweightMm ?? 0.25;
   const transparencyPercent = entity.appearance?.transparency ?? layer.appearance?.transparency ?? 0;
   if (!Number.isFinite(lineweightMm) || lineweightMm < 0) throw new TypeError("CAD lineweight must be finite and non-negative.");
-  if (!Number.isFinite(transparencyPercent) || transparencyPercent < 0 || transparencyPercent > 90) {
-    throw new TypeError("CAD transparency must be a percentage from 0 to 90.");
-  }
+  validateCadTransparency(transparencyPercent);
   return { color, colorMethod, ...(aciIndex === undefined ? {} : { aciIndex }), lineweightMm, transparencyPercent };
 }
 
