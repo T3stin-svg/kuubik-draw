@@ -344,6 +344,7 @@ finite polygon vertices and `isHole`. The extension is:
 ```json
 {
   "kind": "hatch",
+  "islandDetection": "normal|outer|ignore",
   "pattern": {
     "type": "solid|line",
     "angleRad": 0.7853981633974483,
@@ -354,20 +355,42 @@ finite polygon vertices and `isHole`. The extension is:
 }
 ```
 
-`boundaryHandles[i]` is the stable source for `loops[i]`. Islands use even/odd nesting depth:
-outer depth 0 is filled, depth 1 is a hole, depth 2 is an island, and so on. Preserve array order
-because it binds handles to loops. Association updates replace loop coordinates in place while
-retaining hatch handle, layer, appearance, pattern and extension payload. Missing/open/degenerate
-boundaries report a broken association and cause no partial hatch mutation.
+`boundaryHandles` retain the canonical stable sources even when an island style filters a loop from
+the rendered `loops[]`. `normal` uses even/odd nesting depth (`filled, hole, filled`); `outer` keeps
+only depth 0 and direct depth-1 holes; `ignore` keeps only outer depth-0 loops and fills through all
+internal objects. This matches AutoCAD's Normal/Outer/Ignore distinction documented in
+[Hatch Creation](https://help.autodesk.com/cloudhelp/2023/ENU/AutoCAD-Core/files/GUID-CF9C88AB-CD49-44A4-8A85-C26F60B828DA.htm)
+and [About Hatch Islands](https://help.autodesk.com/cloudhelp/2022/ENU/AutoCAD-Core/files/GUID-981679AC-7097-4724-A30D-33F1CAFDD81D.htm).
 
-Creation and association propagation reject a locked hatch layer before mutation.
-`evaluateHatchCapability` reports `missing-hatch`, `locked-layer` or `orphan-boundary`; it never
-substitutes a nearby boundary for a missing handle. Nested loops use deterministic even/odd depth,
-so outer/hole/island roles remain `[filled, hole, filled]` under model-coordinate translation.
+`HATCH create` and `edit` share the same core constructor. Editing pattern, angle, scale, origin,
+island style, boundary set or associativity replaces one immutable entity under the same handle and
+one Undo/Redo step. Omitted edit fields retain their values. Association updates replace loop
+coordinates in the geometry command while retaining hatch handle, layer, appearance, pattern and
+all non-HATCH extension payloads. Missing/open/degenerate boundaries report a broken association
+and cause no partial command mutation. AutoCAD likewise makes bounded hatches associative by
+default and updates them when boundary objects change; non-associative hatches remain unchanged
+([About Hatch Patterns and Fills](https://help.autodesk.com/cloudhelp/2024/ENU/AutoCAD-Core/files/GUID-F943F802-18F1-423C-B2B8-42C797CDF5E2.htm)).
 
-DXF guidance: emit HATCH loop source handles where the format permits them, plus pattern name,
-solid flag, angle, scale and origin. Read-back must compare loop count, hole/island parity,
-source handles and pattern fields, not only rendered fill pixels.
+Creation, edit and association propagation reject locked, off or frozen hatch and boundary layers
+before mutation. `evaluateHatchCapability` reports `missing-hatch`, `locked-layer`, `off-layer`,
+`frozen-layer` or `orphan-boundary`; it never substitutes a nearby boundary for a missing stable
+handle. Handle matching and duplicate detection are case-insensitive while stored handles retain
+their canonical spelling.
+
+DXF group-code contract: group 2 is pattern name, 70 solid flag, 71 associativity, 75 island style
+(`0=normal`, `1=outer`, `2=ignore`), 52 pattern angle, 41 pattern scale, 91 loop count and each path's
+97-group source handles. These fields come from Autodesk's
+[HATCH DXF reference](https://help.autodesk.com/cloudhelp/2020/ENU/AutoCAD-DXF/files/GUID-C6C71CED-CE0F-4184-82A5-07AD6241F15B.htm).
+Read-back must compare handle, loop geometry/count, island style, source handles, pattern name/type,
+angle, scale, origin and associativity, not only rendered fill pixels.
+
+The current `cad-dxf` source adapter is intentionally unchanged in this worktree. Its tested exact
+subset is non-associative SOLID with Outer-style straight closed loops: export→import→export is
+byte-identical and preserves entity/boundary handles and outer/hole geometry. For line patterns it
+currently writes fixed `71=0`, `75=1`, `52=0`, `41=1` and no group-97 source handles; import also
+drops the Kuubik HATCH extension. Therefore non-default angle/scale/origin, Normal/Ignore style and
+associativity are explicitly lossy and must be rejected by the capability gate until the adapter
+owner implements and independently reopens them.
 
 ### TABLE
 
@@ -599,11 +622,12 @@ Kuubik and the produced file is independently read back.
 
 ## Current file-output capability boundary
 
-This workstream supplies the serialization contract, exact capability declaration/receipt and
-read-back fixture only. It does not call a DXF/PDF writer, does not alter either adapter and has not
-produced or reopened an annotation file. Session 4 must map MTEXT/LEADER/MLEADER and dimension
-semantics at its adapter boundary, then fail closed for any field it cannot round-trip. Documents
-carrying dimension chain/style semantics derive explicit `dimension-chain` and
-`dimension-style-profile` requirements in addition to native requirements. A passing core receipt,
-PDF rendering regression or `gate:dxf` regression is necessary integration evidence, but is not
-AutoCAD or generated-file evidence and cannot promote F-057..F-068 to `1.00`.
+This workstream supplies serialization contracts and exact capability declarations/receipts. The
+F-067 test writes and reopens the current bounded non-associative SOLID DXF subset in memory, but
+does not change either adapter and does not prove the missing HATCH fields or AutoCAD behavior.
+Session 4 must map MTEXT/LEADER/MLEADER, HATCH and dimension semantics at its adapter boundary, then
+fail closed for any field it cannot round-trip. Documents carrying dimension chain/style semantics
+derive explicit `dimension-chain` and `dimension-style-profile` requirements in addition to native
+requirements. A passing core receipt, in-memory DXF/PDF regression or `gate:dxf` regression is
+necessary integration evidence, but is not AutoCAD or physical generated-file evidence and cannot
+promote F-057..F-068 to `1.00`.

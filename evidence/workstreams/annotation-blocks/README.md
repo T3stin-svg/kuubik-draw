@@ -190,3 +190,37 @@ the known Vite warning for a minified chunk larger than 500 kB. No DXF/PDF adapt
 App/style/package/index/scope/parity file or F-score was changed. No annotation file was produced or
 reopened, no AutoCAD 2024.1.2 plus Kuubik live workflow/read-back was run and no F-score promotion is
 claimed.
+
+Tenth-wave (work12) F-067 HATCH hardening additions:
+
+- create and edit now share one immutable constructor path; pattern, angle, scale, origin, boundary
+  set, island style and associativity edits keep the HATCH handle and unrelated extension payloads;
+- Normal, Outer and Ignore follow the AutoCAD nesting contract: even/odd islands, direct outer
+  holes only, or fill-through respectively, while stable canonical boundary handles remain stored;
+- case-insensitive handle matching/deduplication and malformed-extension checks fail closed before
+  geometry update, capability declaration or commit;
+- target and boundary layers reject locked, off and frozen states for create, edit, capability and
+  associative refresh; missing/open/degenerate boundaries are never silently retargeted;
+- browser-ready prompt/planner tests prove create/edit preview equals commit, exact read-back and one
+  Undo/Redo step; geometry changes update the same HATCH handle in the source command;
+- a real in-memory `cad-dxf` export/import/export read-back proves the current non-associative SOLID
+  Outer straight-polyline subset byte-identical with stable entity/boundary handles;
+- the same DXF test proves that line-pattern angle/scale/origin, island style and associativity are
+  currently lossy (`71=0`, `75=1`, `52=0`, `41=1`, no source handles), so the capability gate and
+  integration contract block a false parity claim without changing the adapter source.
+
+Targeted F-067 verification passed 23 files / 117 tests. Final repository regression passed 248
+Vitest files / 1139 tests; dedicated gates passed 28 DXF files / 70 tests and 7 PDF files / 22 tests.
+Repository typecheck, lint, production build, public-tree scan (1754 files), license gate (119
+installed packages) and `git diff --check` passed. The build retained the known Vite warning for a
+minified chunk larger than 500 kB. No DXF/PDF adapter source, App/global CSS, shared index,
+package/lock, scope/parity/security file or F-score was changed. No AutoCAD 2024.1.2 plus Kuubik
+paired live workflow or physical DXF reopen was run; F-067 therefore remains below `1.00`.
+
+F-068 remains TABLE in the frozen catalog and was not relabelled as HATCH. Its next bounded wave
+should start from the post-F-067 integration commit in a fresh `work13/reio-annotation-table`
+worktree, own only `annotation/table.ts`, TABLE-specific annotation web files/tests, `cad-dxf` tests,
+this contract and this evidence folder, then harden off/frozen policy, runtime schema validation,
+stable row/column/cell/merge IDs, browser-ready edit/style Undo/Redo and an explicit native/proxy DXF
+read-back boundary. It must not change App/global CSS, shared indexes, package/lock, scope/parity,
+security or score files.

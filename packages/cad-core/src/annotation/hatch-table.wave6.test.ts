@@ -40,7 +40,7 @@ describe("F-067 associative HATCH", () => {
     );
     const hatch = createHatch(document, { handle: "H1", layerId: "0", boundaryHandles: ["P0", "P1", "P2"], pattern: "ANSI31", angleRad: Math.PI / 6, scale: 2.5, origin: { x: 3, y: 4 }, associative: true });
     expect(hatch.loops.map((loop) => loop.isHole)).toEqual([false, true, false]);
-    expect(readHatchAssociation(hatch)).toEqual({ kind: "hatch", pattern: { type: "line", angleRad: Math.PI / 6, scale: 2.5, origin: { x: 3, y: 4 } }, boundaryHandles: ["P0", "P1", "P2"] });
+    expect(readHatchAssociation(hatch)).toEqual({ kind: "hatch", islandDetection: "normal", pattern: { type: "line", angleRad: Math.PI / 6, scale: 2.5, origin: { x: 3, y: 4 } }, boundaryHandles: ["P0", "P1", "P2"] });
     expect(createHatch(document, { handle: "H2", layerId: "0", boundaryHandles: ["P0"], pattern: "SOLID", associative: false })).toMatchObject({ pattern: "SOLID", associative: false });
   });
 

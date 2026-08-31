@@ -28,6 +28,7 @@ export interface DimensionAssociation {
 
 export interface HatchAssociation {
   kind: "hatch";
+  islandDetection: "normal" | "outer" | "ignore";
   pattern: {
     type: "solid" | "line";
     angleRad: number;
@@ -290,10 +291,15 @@ export function readHatchAssociation(entity: CadEntity): HatchAssociation | null
   const value = entity.extensionData?.[ANNOTATION_EXTENSION_KEY];
   if (!isRecord(value) || value.kind !== "hatch" || !isRecord(value.pattern) || !Array.isArray(value.boundaryHandles)) return null;
   if (value.pattern.type !== "solid" && value.pattern.type !== "line") return null;
+  const islandDetection = value.islandDetection === undefined ? "normal" : value.islandDetection;
+  if (islandDetection !== "normal" && islandDetection !== "outer" && islandDetection !== "ignore") return null;
   if (!Number.isFinite(value.pattern.angleRad) || !Number.isFinite(value.pattern.scale) || !(Number(value.pattern.scale) > 0) || !isPoint(value.pattern.origin)) return null;
-  if (value.boundaryHandles.some((handle) => typeof handle !== "string" || handle.length === 0)) return null;
+  if (value.boundaryHandles.some((handle) => typeof handle !== "string" || handle.trim().length === 0)) return null;
+  const normalizedBoundaryHandles = value.boundaryHandles.map((handle) => (handle as string).toLocaleUpperCase("en-US"));
+  if (new Set(normalizedBoundaryHandles).size !== normalizedBoundaryHandles.length) return null;
   return {
     kind: "hatch",
+    islandDetection,
     pattern: {
       type: value.pattern.type,
       angleRad: Number(value.pattern.angleRad),
