@@ -1,0 +1,40 @@
+{
+  "baselineCommit": "633d32ae052951ac475696e7e900cd3170cb59bd",
+  "branch": "work12/reio-precision-snaps",
+  "featureRows": ["F-045", "F-046", "F-047", "F-048", "F-049", "F-050", "F-051"],
+  "osnapModeCount": 13,
+  "apparentIntersection": {
+    "id": "apparentIntersection:A:0|B:0:10.000000000000000,0.0000000000000000",
+    "mode": "apparentIntersection",
+    "point": { "x": 10, "y": 0 },
+    "handle": "A",
+    "otherHandle": "B",
+    "priority": 5,
+    "distance": 0,
+    "segment": 0,
+    "otherSegment": 0,
+    "parameter": -1.25
+  },
+  "gridReadback": {
+    "visible": true,
+    "spacingX": 1,
+    "spacingY": 1,
+    "origin": { "x": 0, "y": 0 }
+  },
+  "apertureReadback": {
+    "enabled": true,
+    "apertureWorld": 0.25,
+    "aperturePixels": 10
+  },
+  "entityCount": 50000,
+  "queryIterations": 100,
+  "buildMs": 362.613,
+  "p95Ms": 0.226,
+  "maxMs": 2.986,
+  "selectionHits": 1,
+  "previewEqualsCommit": true,
+  "autocadLiveReadback": "NOT_RUN",
+  "kuubikBrowserLiveReadback": "NOT_RUN",
+  "gridVisualIntegration": "BLOCKED_VISUAL_OWNER",
+  "parityScoresChanged": false
+}

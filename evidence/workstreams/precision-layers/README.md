@@ -4,6 +4,32 @@ Source baseline: `b09f4e1e0a661b06e5087e6cbb748220dbc48574`
 
 Branch: `work/reio-precision-layers`
 
+## Wave 12: F-045..F-051 precision modes, OSNAP and OTRACK
+
+- Baseline: `633d32ae052951ac475696e7e900cd3170cb59bd`
+- Branch: `work12/reio-precision-snaps`
+- Reproducer: `npx vite-node evidence/workstreams/precision-layers/precision-snaps-wave12.ts`
+- ORTHO precedes POLAR; OSNAP precedes OTRACK. GRID display (F7) and SNAP
+  quantization (F9) remain separate and have DOM-free state read-back.
+- The snap aperture is defined in CSS pixels and converted without rounding by
+  the viewport world scale for OSNAP, OTRACK, preview and commit.
+- The fixed 13-mode OSNAP matrix adds Apparent Intersection between exact
+  Intersection and Extension. Straight supporting-line intersections are
+  canonical under entity order; unsupported curved cases fail closed.
+- Off/frozen owners are excluded and purge OTRACK acquisition; locked owners
+  remain selectable/snappable but not editable.
+- Targeted precision/snap/tracking coverage passed 26 files / 72 tests. The
+  50,000-object profile measured build `362.613 ms`, p95 `0.226 ms`, max
+  `2.986 ms`, one selection hit and exact preview/commit equality.
+- Repository-wide verification passed: 233 Vitest files / 1,086 tests,
+  DXF 25 files / 65 tests, PDF 7 files / 22 tests, typecheck, lint, production
+  build, public-tree scan of 1,698 files, license audit of 119 installed
+  packages and `git diff --check`.
+- GRID rendering still needs the visual owner to consume
+  `precisionModeReadback().grid`; this branch does not edit App/style.
+- AutoCAD 2024.1.2 and integrated Kuubik browser read-back were not run. No
+  parity score changed.
+
 ## Wave 11: F-041/F-042/F-044 coordinate entry
 
 - Baseline: `608ce72ff9ab5ecf699ecd6026051e11be275b85`
