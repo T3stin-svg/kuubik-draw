@@ -13,6 +13,28 @@ describe("F-041/F-042/F-044 precision input", () => {
     expect(parseCadPrecisionInput("@10<45")).toEqual({ kind: "relative-polar", distance: 10, angleRad: Math.PI / 4 });
   });
 
+  it("keeps negative polar angles and zero direct distance independent of cursor aids", () => {
+    const absolute = resolvePrecisionPoint({
+      basePoint: { x: 100, y: 200 }, cursorPoint: { x: 999, y: 999 }, input: "10<-450",
+      modes: { ortho: true, polar: { incrementRad: Math.PI / 2 }, grid: { spacingX: 100, spacingY: 100 }, aperture: 10_000 },
+      objectSnapCandidates: [{ kind: "endpoint", priority: 0, point: { x: 999, y: 999 } }],
+    });
+    expect(absolute.source).toBe("typed-polar");
+    expect(absolute.point.x).toBeCloseTo(0, 14);
+    expect(absolute.point.y).toBeCloseTo(-10, 14);
+
+    const zero = resolvePrecisionPoint({
+      basePoint: { x: 1.25, y: -2.5 }, cursorPoint: { x: 999, y: 999 }, input: "-0",
+      modes: { ortho: true, grid: { spacingX: 100, spacingY: 100 }, aperture: 10_000 },
+      objectSnapCandidates: [{ kind: "endpoint", priority: 0, point: { x: 999, y: 999 } }],
+    });
+    expect(zero).toEqual({
+      point: { x: 1.25, y: -2.5 }, source: "direct-distance",
+      stages: [{ stage: "direct-distance", point: { x: 1.25, y: -2.5 } }],
+      parsedInput: { kind: "direct-distance", distance: 0 },
+    });
+  });
+
   it("keeps explicit Cartesian input exact while cursor aids share one deterministic pipeline", () => {
     const explicit = resolvePrecisionPoint({
       basePoint: { x: 0, y: 0 }, cursorPoint: { x: 99, y: 51 }, input: "1.23456789012345,9.87654321098765",

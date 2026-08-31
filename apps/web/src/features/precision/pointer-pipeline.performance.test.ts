@@ -29,6 +29,9 @@ describe("50,000-object typed precision regression", () => {
     }
     const sorted = [...timings].sort((first, second) => first - second);
     const p95Ms = sorted[Math.floor(sorted.length * 0.95)]!;
+    const zero = contract.preparePointer({ basePoint: { x: 123.25, y: 456.75 }, cursorPoint: { x: 0, y: 0 }, input: "0" }).resolve();
+    expect(zero.commit).toMatchObject({ source: "direct-distance", point: { x: 123.25, y: 456.75 } });
+    expect(zero.snapCandidateIds).toEqual([]);
     expect(buildMs).toBeLessThan(5_000);
     expect(p95Ms).toBeLessThan(100);
   });
