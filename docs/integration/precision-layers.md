@@ -340,6 +340,45 @@ renderer evidence. This branch does not modify that separately owned adapter.
 
 ## Exact integrator touch points
 
+### Wave 11 coordinate-entry adapter (F-041/F-042/F-044)
+
+Import `PrecisionCoordinateEntryAdapter` directly from
+`apps/web/src/features/precision/coordinate-entry-adapter.ts`; this workstream
+does not add a shared `index.ts` export. Construct it with the active
+`CadSession` and `contract.preparePointer.bind(contract)`. Rebuild or refresh
+the shell contract from `onDocumentChange` after commit, Undo and Redo so the
+browser spatial indexes use the accepted document revision.
+
+The accepted command-line forms are absolute Cartesian `x,y` (or `#x,y`),
+relative Cartesian `@dx,dy`, absolute polar `distance<angle`, relative polar
+`@distance<angle`, and direct distance `distance`. The one strict parser uses
+the persisted drawing-unit/angle/decimal-separator contract. Comma-decimal
+input requires `;` between Cartesian coordinates. Suffixes `mm`, `cm`, `m`,
+`in`, `ft`, `deg`, `°`, `grad`, `g` and `rad` are converted before the pointer
+frame is built. Signed values and negative angles remain doubles; display
+formatting does not rewrite the accepted point.
+
+Browser prompt lifecycle is `start()` → `preview()` → `commit()`. A parser or
+pointer error returns status `retry` without a revision; `retry()` replaces the
+bad input in the same context. `cancel()` clears the cached frame and cannot
+commit. A successful preview caches one immutable `PreparedPrecisionPointer`;
+the transactional commit reuses its exact point result, calls the supplied
+atomic planner once and creates exactly one `CadSession` operation. Undo/Redo
+therefore restore the complete document operation, not a UI-only point stack.
+
+Direct distance `0` (including `-0`) is a deliberate zero-length point result:
+it returns the exact base point and bypasses cursor direction, ORTHO/POLAR,
+GRID, OSNAP and OTRACK. The downstream geometry planner may accept or reject a
+degenerate entity, but no precision aid may invent movement. Planner rejection
+leaves the cached preview retryable and keeps document/history unchanged.
+
+The adapter is DOM-free and browser-ready, but `App.tsx` and the shared command
+engine are outside this ownership boundary. The integration owner must connect
+Enter to `commit()`, Escape/CANCEL to `cancel()`, invalid input to `retry()`,
+and replace the live document only from the returned/read-back `CadSession`
+document. Until that wiring plus AutoCAD 2024.1.2 and Kuubik browser read-back
+exists, F-041/F-042/F-044 remain uncertified and their scores must not change.
+
 - Use `contract.commandAdapter` wherever the shell currently expects a
   `VisualShellCommandAdapter`.
 - Send F3/F7/F8/F9/F10/F11/F12 to `handlePrecisionKey()` and command-line text

@@ -4,6 +4,19 @@ Source baseline: `b09f4e1e0a661b06e5087e6cbb748220dbc48574`
 
 Branch: `work/reio-precision-layers`
 
+## Wave 11: F-041/F-042/F-044 coordinate entry
+
+- Baseline: `608ce72ff9ab5ecf699ecd6026051e11be275b85`
+- Branch: `work11/reio-precision-coordinates`
+- Reproducer: `npx vite-node evidence/workstreams/precision-layers/coordinate-entry-wave11.ts`
+- Covers absolute/relative Cartesian and polar coordinates, direct distance,
+  locale/unit conversion, negative angles, exact zero-length behavior,
+  retry/cancel and atomic `CadSession` commit/Undo/Redo.
+- The 50,000-object profile and final repository counts are recorded in
+  `coordinate-entry-wave11-20260831.json` and `test-matrix.json`.
+- AutoCAD and Kuubik browser live read-back were not run. App/command-line DOM
+  wiring is reserved for the integration owner and no F-score changed.
+
 ## Wave 10: F-080 transparency and F-086 draw order
 
 - Baseline: `c607df360f68714e87b475ffbbc1a889abf93306`
