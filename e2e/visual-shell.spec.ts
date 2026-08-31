@@ -136,6 +136,8 @@ test("AutoCAD-style shell keeps all eight primary zones visible at 1920x1080", a
   for (const name of ["ortho", "osnap", "otrack", "dyn"]) {
     expect(statusControls[name]).toMatchObject({ disabled: true, pressed: null, height: 30, color: "rgb(120, 130, 139)", backgroundColor: "rgba(0, 0, 0, 0)" });
   }
+  await expect(page.getByRole("button", { name: "ORTHO unavailable" })).toHaveAttribute("data-scope-selected", "true");
+  await expect(page.getByRole("button", { name: "ORTHO unavailable" })).toHaveAttribute("title", /funktsiooniliides pole veel ühendatud/u);
   await expect(page.getByRole("button", { name: "Kiirpääsu DXF avamine" })).toBeEnabled();
   await expect(page.getByRole("button", { name: "Kiirpääsu KDraw salvestamine" })).toBeEnabled();
   await expect(page.getByRole("button", { name: "Kiirpääsu DXF-väljund" })).toBeEnabled();
@@ -675,7 +677,7 @@ test("scoped shell persists workspace and palette states and remains accessible"
   await expect(page.getByRole("status").filter({ hasText: "Salvestus valmis" })).toBeVisible();
   await expect(palette).toHaveAttribute("data-dock", "docked");
 
-  const scopedTools = page.locator("[data-feature-row]");
+  const scopedTools = page.locator(".ribbon [data-feature-row]");
   const scopedIconCount = await scopedTools.locator(".ribbon-glyph > svg").count();
   expect(scopedIconCount).toBe(await scopedTools.count());
   await expect(page.getByRole("button", { name: "Ribbon Polyline command" })).toBeEnabled();

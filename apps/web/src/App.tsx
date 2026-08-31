@@ -7,10 +7,14 @@ import type { CadEntity, CadLayout, CadPageSetup, CadPaperRect, CadPlotStyle, Ca
 import { clampCadContextMenuPosition } from "./context-menu.js";
 import { KDrawIndexedDb, StorageRevisionConflictError } from "./indexed-db.js";
 import { CadShell, DrawingViewport, type WorkspacePreset } from "./shell/CadShell.js";
+import { CommandLine } from "./shell/CommandLine.js";
 import { DocumentTabs } from "./shell/DocumentTabs.js";
+import { LayoutBar } from "./shell/LayoutBar.js";
 import { PaletteFrame, type PaletteMode } from "./shell/PaletteFrame.js";
+import { Ribbon } from "./shell/Ribbon.js";
 import { RibbonTabs } from "./shell/RibbonTabs.js";
 import { RibbonTool } from "./shell/RibbonTool.js";
+import { StatusBar } from "./shell/StatusBar.js";
 import { TitleBar } from "./shell/TitleBar.js";
 import { prepareAlign, prepareBreak, prepareChamfer, prepareCopy, prepareExtend, prepareFillet, prepareLengthen, prepareMatchProperties, prepareMirror, prepareMove, prepareOffset, prepareRotate, prepareScale, prepareStretch, prepareTrim, putEntities } from "./workflows/modify-command.js";
 import "./style.css";
@@ -3074,7 +3078,7 @@ export function App() {
         onRedo={() => void redoLast()}
       />
       <RibbonTabs />
-      <section className="ribbon" aria-label="Joonestustööriistad" data-visual-zone="ribbon">
+      <Ribbon>
         <div className="ribbon-primary" aria-label="Home ribbon">
           <section className="ribbon-panel ribbon-panel-draw" aria-label="Draw panel" data-ribbon-panel="draw">
             <div className="ribbon-panel-tools">
@@ -3773,7 +3777,7 @@ export function App() {
           </span>
         )}
         </div>
-      </section>
+      </Ribbon>
       <DocumentTabs documentName={documentName} />
       <DrawingViewport paper={Boolean(activePaper)}>
         {activePaper ? (
@@ -3973,43 +3977,8 @@ export function App() {
           <section><h2>Data</h2></section>
         </PaletteFrame>
       </DrawingViewport>
-      <section className="command-line" aria-label="Käsurida" data-visual-zone="command-line">
-        {commandHistoryOpen && (
-          <section className="command-history-window" role="dialog" aria-modal="true" aria-labelledby="command-text-window-title" data-testid="command-text-window">
-            <header className="command-text-titlebar">
-              <span className="command-text-app-icon" aria-hidden="true">K</span>
-              <span id="command-text-window-title">Kuubik Text Window — local.kdraw</span>
-              <button type="button" aria-label="Sulge Kuubik Text Window" onClick={() => setCommandHistoryOpen(false)}>×</button>
-            </header>
-            <nav className="command-text-menubar" aria-label="Käsuajaloo menüü"><span>Edit</span></nav>
-            <div className="command-text-log" role="log" aria-label="Käsuajalugu" tabIndex={0}>
-              <div>Kuubik command utilities loaded.</div>
-              {commandHistory.map((entry, index) => <div key={`${index}-${entry}`}>Command: {entry}</div>)}
-            </div>
-            <div className="command-text-prompt">Command:</div>
-          </section>
-        )}
-        <div className="command-history" role="status" aria-live="polite">{status}</div>
-        <div className="command-prompt">
-          <button type="button" className="command-history-toggle" aria-label={commandHistoryOpen ? "Sulge käsuajalugu" : "Ava käsuajalugu"} aria-expanded={commandHistoryOpen} onClick={() => setCommandHistoryOpen((open) => !open)}>⌃</button>
-          <span>Command:</span>
-          {activeCommandPrompt && <strong>{activeCommandPrompt}</strong>}
-          <span className="command-caret" aria-hidden="true" />
-        </div>
-      </section>
-      <section className="layoutbar" aria-label="Model ja Layout vahelehed" data-visual-zone="layout-status">
-        {document.layouts.map((layout) => (
-          <button
-            key={layout.id}
-            type="button"
-            className={layout.id === activeLayout.id ? "layout-tab active" : "layout-tab"}
-            aria-pressed={layout.id === activeLayout.id}
-            onClick={() => activateLayout(layout.id)}
-          >
-            {layout.name}
-          </button>
-        ))}
-        <button type="button" className="layout-action" aria-label="Lisa paigutus" onClick={() => void createLayout()}>+</button>
+      <CommandLine status={status} activeCommand={activeCommandPrompt} historyOpen={commandHistoryOpen} history={commandHistory} onHistoryOpenChange={setCommandHistoryOpen} />
+      <LayoutBar layouts={document.layouts} activeLayoutId={activeLayout.id} activeSpace={activeSpace} onActivate={activateLayout} onCreate={() => void createLayout()}>
         <details className="layout-tools" data-testid="layout-tools">
           <summary aria-label="Layout tools"><span aria-hidden="true">⚙</span><span>Layout</span></summary>
           <div className="layout-tools-popover">
@@ -4240,19 +4209,13 @@ export function App() {
         </details>
           </div>
         </details>
-        <span className="layout-space">{activeSpace}</span>
-      </section>
-      <footer className="statusbar" data-visual-zone="statusbar">
-        <span className="coordinate-readout" data-testid="coordinate-readout">{cursorReadout ? `${cursorReadout.world.x.toFixed(4)}, ${cursorReadout.world.y.toFixed(4)}, 0.0000` : "0.0000, 0.0000, 0.0000"}</span>
-        <span className="status-toggles">
-          <button type="button" className={`status-toggle${gridEnabled ? " active" : ""}`} data-status-control="grid" aria-label="Grid display" aria-pressed={gridEnabled} onClick={() => setGridEnabled((current) => !current)}>GRID</button>
-          <button type="button" className="status-toggle" data-status-control="ortho" aria-label="ORTHO unavailable" disabled>ORTHO</button>
-          <button type="button" className="status-toggle" data-status-control="osnap" aria-label="OSNAP unavailable" disabled>OSNAP</button>
-          <button type="button" className="status-toggle" data-status-control="otrack" aria-label="OTRACK unavailable" disabled>OTRACK</button>
-          <button type="button" className="status-toggle" data-status-control="dyn" aria-label="Dynamic Input unavailable" disabled>DYN</button>
-          <span className="status-space">{activeSpace} · mm · SNAP</span>
-        </span>
-      </footer>
+      </LayoutBar>
+      <StatusBar
+        coordinates={cursorReadout ? `${cursorReadout.world.x.toFixed(4)}, ${cursorReadout.world.y.toFixed(4)}, 0.0000` : "0.0000, 0.0000, 0.0000"}
+        gridEnabled={gridEnabled}
+        activeSpace={activeSpace}
+        onGridToggle={() => setGridEnabled((current) => !current)}
+      />
     </CadShell>
   );
 }
