@@ -1,4 +1,5 @@
 import { assertKDrawDocumentV1, type CadAttachmentRef, type CadPoint2, type KDrawDocumentV1 } from "@kuubik/cad-schema";
+import type { CadChange } from "./transaction.js";
 
 export const PDF_UNDERLAY_EXTENSION_KEY = "kuubik.pdfUnderlays.v1";
 
@@ -17,6 +18,19 @@ export interface PdfUnderlayPlacement {
 export interface PdfUnderlayDocumentInput {
   attachment: CadAttachmentRef;
   placement: PdfUnderlayPlacement;
+}
+
+function metadataWithPdfUnderlays(
+  document: KDrawDocumentV1,
+  placements: readonly PdfUnderlayPlacement[],
+): KDrawDocumentV1["metadata"] {
+  const metadata = structuredClone(document.metadata);
+  const extensions = { ...(metadata.extensions ?? {}) };
+  if (placements.length > 0) extensions[PDF_UNDERLAY_EXTENSION_KEY] = structuredClone(placements);
+  else delete extensions[PDF_UNDERLAY_EXTENSION_KEY];
+  if (Object.keys(extensions).length > 0) metadata.extensions = extensions;
+  else delete metadata.extensions;
+  return metadata;
 }
 
 function finite(value: number, label: string): number {
@@ -70,4 +84,31 @@ export function addPdfUnderlay(document: KDrawDocumentV1, input: PdfUnderlayDocu
   assertKDrawDocumentV1(next);
   readPdfUnderlays(next);
   return next;
+}
+
+/**
+ * Plan attachment reference and placement metadata as one CadSession revision.
+ * The referenced bytes remain external and must be durably SHA-verified before
+ * the candidate session is accepted by the caller.
+ */
+export function planAddPdfUnderlay(document: KDrawDocumentV1, input: PdfUnderlayDocumentInput): CadChange[] {
+  const next = addPdfUnderlay(document, input);
+  return [
+    { type: "put-attachment", attachment: structuredClone(input.attachment) },
+    { type: "set-metadata", metadata: structuredClone(next.metadata) },
+  ];
+}
+
+export function planRemovePdfUnderlay(document: KDrawDocumentV1, placementId: string): CadChange[] {
+  const id = placementId.trim();
+  if (!id) throw new TypeError("PDF underlay placement id is required.");
+  const placements = readPdfUnderlays(document);
+  const placement = placements.find((candidate) => candidate.id === id);
+  if (!placement) throw new RangeError(`PDF underlay placement ${id} does not exist.`);
+  const retained = placements.filter((candidate) => candidate.id !== id);
+  const changes: CadChange[] = [{ type: "set-metadata", metadata: metadataWithPdfUnderlays(document, retained) }];
+  if (!retained.some((candidate) => candidate.attachmentId === placement.attachmentId)) {
+    changes.push({ type: "delete-attachment", attachmentId: placement.attachmentId });
+  }
+  return changes;
 }
