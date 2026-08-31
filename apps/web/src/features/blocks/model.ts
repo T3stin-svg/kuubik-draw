@@ -22,6 +22,7 @@ export interface BlockPromptField {
   label: string;
   valueKind: BlockPromptValueKind;
   required: boolean;
+  choices?: readonly string[];
 }
 
 export interface BlockPromptPlan {
@@ -46,14 +47,17 @@ export const BLOCK_PROMPT_PLANS: Readonly<Record<BlockCommandId, BlockPromptPlan
   ] },
   EXPLODE: { commandId: "EXPLODE", fields: [
     { id: "confirm", label: "Lahuta valitud plokk", valueKind: "boolean", required: true },
+    { id: "nestedMode", label: "Pesastatud plokid", valueKind: "select", required: false, choices: ["preserve", "recursive"] },
   ] },
   BEDIT: { commandId: "BEDIT", fields: [
     { id: "basePoint", label: "Baasipunkt", valueKind: "point", required: true },
     { id: "entities", label: "Uus plokisisu", valueKind: "entities", required: true },
     { id: "attributes", label: "Atribuudimääratlused", valueKind: "attributes", required: false },
+    { id: "syncAttributes", label: "Sünkrooni atribuudid", valueKind: "boolean", required: false },
   ] },
   ATTRIB: { commandId: "ATTRIB", fields: [
-    { id: "values", label: "Atribuudiväärtused", valueKind: "attributes", required: true },
+    { id: "mode", label: "Tegevus", valueKind: "select", required: false, choices: ["edit", "sync"] },
+    { id: "values", label: "Atribuudiväärtused", valueKind: "attributes", required: false },
   ] },
 });
 

@@ -40,8 +40,10 @@
     "HATCH pattern, angle, scale, outer/hole/island parity and source handles",
     "TABLE handle, row/column/cell/merge ids, sizes, values, field fallback, alignment, format and style reference",
     "BLOCK member handles and acyclic nested graph",
-    "INSERT transform and ATTRIB values",
-    "reopen result after redefine with existing INSERT handles unchanged"
+    "INSERT handle, layer, insertion, signed scale, rotation and ATTRIB values in definition order",
+    "preserve and recursive EXPLODE results with deterministic fresh handles and exact composed model coordinates",
+    "reopen result after redefine with every existing INSERT handle, layer and transform unchanged",
+    "ATTSYNC-like result with matching values preserved, new defaults added, removed tags absent and constants reset to defaults"
   ],
   "mutationsThatMustFail": [
     "missing exact capability declaration",
@@ -53,7 +55,9 @@
     "evaluated TABLE field, dropped fallback, changed cell handle or overlapping merge",
     "duplicate or changed block/member handle",
     "cyclic or dangling nested block",
-    "dropped ATTRIB value or text/dimension style reference"
+    "duplicate case-insensitive block name or global member/model handle",
+    "locked affected layer or direct/transitive proxy child",
+    "dropped, reordered or incorrectly synchronized ATTRIB value or text/dimension style reference"
   ],
   "evidenceRequiredForPass": [
     "Kuubik source and output SHA-256",

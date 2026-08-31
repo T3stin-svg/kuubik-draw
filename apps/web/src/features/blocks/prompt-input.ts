@@ -33,12 +33,18 @@ export function buildBlockPromptInput(
     }
     case "EXPLODE": {
       if (!required<boolean>(values, "confirm")) throw new RangeError("EXPLODE confirmation is required.");
-      return { commandId, insertHandle: selectedHandles[0]! };
+      const nestedMode = optional<"preserve" | "recursive">(values, "nestedMode");
+      return { commandId, insertHandle: selectedHandles[0]!, ...(nestedMode ? { nestedMode } : {}) };
     }
     case "BEDIT": {
       const attributes = optional<BlockAttributeDefinition[]>(values, "attributes");
-      return { commandId, insertHandle: selectedHandles[0]!, basePoint: required<CadPoint2>(values, "basePoint"), entities: required<CadEntity[]>(values, "entities"), ...(attributes === undefined ? {} : { attributes }) };
+      const syncAttributes = optional<boolean>(values, "syncAttributes");
+      return { commandId, insertHandle: selectedHandles[0]!, basePoint: required<CadPoint2>(values, "basePoint"), entities: required<CadEntity[]>(values, "entities"), ...(attributes === undefined ? {} : { attributes }), ...(syncAttributes === undefined ? {} : { syncAttributes }) };
     }
-    case "ATTRIB": return { commandId, insertHandle: selectedHandles[0]!, values: required<Record<string, string>>(values, "values") };
+    case "ATTRIB": {
+      const mode = optional<"edit" | "sync">(values, "mode") ?? "edit";
+      if (mode === "sync") return { commandId, mode, insertHandle: selectedHandles[0]! };
+      return { commandId, mode, insertHandle: selectedHandles[0]!, values: required<Record<string, string>>(values, "values") };
+    }
   }
 }
