@@ -115,12 +115,21 @@ Associativity is encoded as:
 }
 ```
 
-Allowed anchor features are `start`, `end`, `center`, `insertion`, `position` and `vertex`.
-`vertex` additionally requires a non-negative `vertexIndex`. `fallback` is evidence and display
+Allowed anchor features are `start`, `end`, `center`, `quadrant`, `insertion`, `position` and
+`vertex`. `vertex` additionally requires a non-negative `vertexIndex`; `quadrant` requires
+`quadrantIndex` 0, 1, 2 or 3 and resolves positive-X/Y/negative-X/Y for circles and arcs, or
+positive-major/positive-minor/negative-major/negative-minor for ellipses. `fallback` is evidence and display
 recovery data only; it must never be used to re-associate automatically after the target handle
 is missing. `definitionPoints[0..anchors.length-1]` correspond to anchors in order. Remaining
 definition points are the dimension-line, arc or text placement controls and remain unchanged
 during association propagation.
+
+Associative creation validates every anchor against the current document before returning an
+entity. Linear/aligned dimensions require exactly two anchors, angular dimensions three, and
+radius/diameter dimensions two (normally `center` plus `quadrant`). A missing or incompatible
+handle, wrong anchor count, or resolved point that differs from the supplied measured point is a
+hard error. A staged geometry command that would orphan an existing dimension is likewise refused
+before revision change unless the caller explicitly selects a documented broken-association mode.
 
 Linear/aligned dimensions use four definition points: two true measured extension origins,
 dimension-line definition point and text point. `linearAxis` is required for horizontal/vertical
@@ -139,12 +148,46 @@ one planner result and one Undo/Redo step. The serializer must preserve chain ar
 the dimension and association handles.
 
 Dimension-style formatting that is not native in the pinned schema is stored at
-`dimensionStyle.overrides["kuubik.dimensionStyle.v1"]`. Supported fields are `linearUnit`,
-`linearPrecision`, `angularPrecision`, `prefix`, `suffix`, `decimalSeparator`,
-`roundingIncrement`, `tolerance`, `arrowType`, `extensionBeyond` and `textGap`. Tolerance modes are
-`none`, `symmetric`, `deviation` and `limits`; arrow types are `closed-filled`, `open` and
-`architectural-tick`. The native style `scale` multiplies text height, arrow size, extension offset,
-extension-beyond distance and text gap, but does not scale the model-space measurement itself.
+`dimensionStyle.overrides["kuubik.dimensionStyle.v1"]`. Its complete wave10 serialization shape is:
+
+```json
+{
+  "linearUnit": "mm",
+  "linearPrecision": 2,
+  "angularPrecision": 1,
+  "prefix": "",
+  "suffix": " mm",
+  "decimalSeparator": ".",
+  "roundingIncrement": 0.5,
+  "tolerance": { "mode": "symmetric", "value": 0.1, "precision": 2 },
+  "arrowType": "closed-filled",
+  "firstArrowType": "architectural-tick",
+  "secondArrowType": "open",
+  "extensionBeyond": 2,
+  "textGap": 0.625,
+  "textHorizontalPlacement": "centered",
+  "textVerticalPlacement": "above",
+  "textOffset": 1,
+  "textRotationRad": 0,
+  "zeroSuppression": { "leading": false, "trailing": true },
+  "suppression": {
+    "dimensionLine": false,
+    "firstExtensionLine": false,
+    "secondExtensionLine": false,
+    "firstArrow": false,
+    "secondArrow": false
+  }
+}
+```
+
+All fields are optional, but unknown names inside this known profile are rejected rather than
+silently dropped. Tolerance modes are `none`, `symmetric`, `deviation` and `limits`; arrow types
+are `closed-filled`, `open` and `architectural-tick`. Horizontal text placement is `manual`,
+`centered`, `first-extension` or `second-extension`; vertical placement is `centered`, `above` or
+`below`. Leading/trailing numeric zero suppression and dimension-line, extension-line and arrow
+suppression are independent. The native style `scale` multiplies text height, arrow size,
+extension offset, extension-beyond distance, text gap and explicit text offset, but does not scale the model-space
+measurement itself.
 `deriveDimensionPresentation` is the canonical deterministic derivation of formatted text,
 dimension/extension lines, arrow tips/directions and angular arc geometry. Renderers and file
 adapters must consume or reproduce this contract instead of recomputing a different convention.
@@ -459,6 +502,24 @@ only the capability contract; it does not prove that a DXF file was written or r
 - Import/export validation must operate on a clone. No partial document or partial file is valid.
 
 ## Required session 4 read-back matrix
+
+### AutoCAD 2024.1.2 behavior matrix for F-061..F-066
+
+This matrix is a test plan, not parity evidence. Every row remains unscored until the same visible
+operation is run in AutoCAD and Kuubik and the generated file is independently reopened.
+
+| F-row | Kuubik command/contract | AutoCAD comparison | Required exact read-back | Current evidence |
+| --- | --- | --- | --- | --- |
+| F-061 | `DIMLINEAR`, explicit horizontal/vertical axis | `DIMLINEAR` Horizontal/Vertical | handle, two measured origins, axis, dimension/text point, measurement, style ID | unit/golden/wiring only |
+| F-062 | `DIMALIGNED` | `DIMALIGNED` | handle, measured origins, aligned rotation/length, placement, style ID | unit/golden/wiring only |
+| F-063 | `DIMANGULAR`, three stable anchors | `DIMANGULAR` two-line/three-point flow | vertex, ray points, arc radius/sweep, formatted degrees, text placement | unit/golden/wiring only |
+| F-064 | `DIMRADIUS` / `DIMDIAMETER`, center plus quadrant anchor | `DIMRADIUS` / `DIMDIAMETER` | same source handle, quadrant, center, radius/diameter value, arrows and text | unit/associative/wiring only |
+| F-065 | staged handle-based association update; orphan refusal | grip/geometry edit of associated source | unchanged dimension handle/style, refreshed definition points, no proximity retarget, atomic Undo/Redo | unit/mutation/wiring only |
+| F-066 | `DIMCONTINUE`, `DIMBASELINE`, `DIMSTYLE` profile | `DIMCONTINUE`, `DIMBASELINE`, `DIMSTYLE` | chain order/links, immutable baseline origin, precision, two arrows, placement, suppression, text-style ref | unit/golden/wiring only |
+
+For each row record AutoCAD command line/options, before/after entity handles, Properties values,
+Undo/Redo behavior, Kuubik preview-versus-commit equality, output hash, and independent reopen
+results. Screenshots alone cannot prove handle identity, association or serialization.
 
 1. Linear/aligned/angular/radius/diameter/continued/baseline dimensions: type, definition points,
    style, chain mode and all association target handles. Compare derived text, tolerance,

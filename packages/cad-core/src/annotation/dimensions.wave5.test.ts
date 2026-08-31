@@ -96,9 +96,11 @@ describe("F-061..F-066 exact dimension presentation", () => {
     document.layers[0]!.locked = true;
     expect(() => createLinearDimension(document, { handle: "D1", layerId: "0", styleId: "DIM", first: { x: 0, y: 0 }, second: { x: 10, y: 0 }, dimensionLinePoint: { x: 0, y: 5 }, axis: "horizontal" })).toThrow(/locked/u);
     document.layers[0]!.locked = false;
-    const dimension = createAlignedDimension(document, { handle: "D1", layerId: "0", styleId: "DIM", first: { x: 0, y: 0 }, second: { x: 100, y: 0 }, dimensionLinePoint: { x: 0, y: 20 }, anchors: [{ handle: "MISSING", feature: "start", fallback: { x: 0, y: 0 } }] });
+    expect(() => createAlignedDimension(document, { handle: "BROKEN", layerId: "0", styleId: "DIM", first: { x: 0, y: 0 }, second: { x: 100, y: 0 }, dimensionLinePoint: { x: 0, y: 20 }, anchors: [{ handle: "MISSING", feature: "start", fallback: { x: 0, y: 0 } }, { handle: "MISSING", feature: "end", fallback: { x: 100, y: 0 } }] })).toThrow(/orphaned/u);
+    const dimension = createAlignedDimension(document, { handle: "D1", layerId: "0", styleId: "DIM", first: { x: 0, y: 0 }, second: { x: 100, y: 0 }, dimensionLinePoint: { x: 0, y: 20 }, anchors: [{ handle: "10", feature: "start", fallback: { x: 0, y: 0 } }, { handle: "10", feature: "end", fallback: { x: 100, y: 0 } }] });
     document.entities.push(dimension);
-    expect(evaluateDimensionCapability(document, "D1")).toEqual({ executable: false, code: "orphan-association", handle: "MISSING" });
+    document.entities = document.entities.filter((entity) => entity.handle !== "10");
+    expect(evaluateDimensionCapability(document, "D1")).toEqual({ executable: false, code: "orphan-association", handle: "10" });
     expect(() => createDimensionStyle(document, { ...style({ linearPrecision: -1 }), id: "BAD", name: "Bad" })).toThrow(/linearPrecision/u);
   });
 

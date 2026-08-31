@@ -2,12 +2,13 @@ import type { CadEntity, CadPoint2 } from "@kuubik/cad-schema";
 
 export const ANNOTATION_EXTENSION_KEY = "kuubik.annotation.v1" as const;
 
-export type AnchorFeature = "start" | "end" | "center" | "insertion" | "position" | "vertex";
+export type AnchorFeature = "start" | "end" | "center" | "quadrant" | "insertion" | "position" | "vertex";
 
 export interface StableEntityAnchor {
   handle: string;
   feature: AnchorFeature;
   vertexIndex?: number;
+  quadrantIndex?: 0 | 1 | 2 | 3;
   fallback: CadPoint2;
 }
 
@@ -139,12 +140,14 @@ function isStringArray(value: unknown): value is string[] {
 
 function readStableAnchor(value: unknown): StableEntityAnchor | null {
   if (!isRecord(value) || typeof value.handle !== "string" || !value.handle.length || !isPoint(value.fallback)) return null;
-  if (!["start", "end", "center", "insertion", "position", "vertex"].includes(String(value.feature))) return null;
+  if (!["start", "end", "center", "quadrant", "insertion", "position", "vertex"].includes(String(value.feature))) return null;
   if (value.feature === "vertex" && (!Number.isSafeInteger(value.vertexIndex) || (value.vertexIndex as number) < 0)) return null;
+  if (value.feature === "quadrant" && (!Number.isSafeInteger(value.quadrantIndex) || (value.quadrantIndex as number) < 0 || (value.quadrantIndex as number) > 3)) return null;
   return {
     handle: value.handle,
     feature: value.feature as AnchorFeature,
     ...(value.feature === "vertex" ? { vertexIndex: value.vertexIndex as number } : {}),
+    ...(value.feature === "quadrant" ? { quadrantIndex: value.quadrantIndex as 0 | 1 | 2 | 3 } : {}),
     fallback: structuredClone(value.fallback),
   };
 }
@@ -181,12 +184,14 @@ export function readDimensionAssociation(entity: CadEntity): DimensionAssociatio
   const anchors: StableEntityAnchor[] = [];
   for (const candidate of value.anchors) {
     if (!isRecord(candidate) || typeof candidate.handle !== "string" || !isPoint(candidate.fallback)) return null;
-    if (!["start", "end", "center", "insertion", "position", "vertex"].includes(String(candidate.feature))) return null;
+    if (!["start", "end", "center", "quadrant", "insertion", "position", "vertex"].includes(String(candidate.feature))) return null;
     if (candidate.feature === "vertex" && (!Number.isSafeInteger(candidate.vertexIndex) || (candidate.vertexIndex as number) < 0)) return null;
+    if (candidate.feature === "quadrant" && (!Number.isSafeInteger(candidate.quadrantIndex) || (candidate.quadrantIndex as number) < 0 || (candidate.quadrantIndex as number) > 3)) return null;
     anchors.push({
       handle: candidate.handle,
       feature: candidate.feature as AnchorFeature,
       ...(candidate.feature === "vertex" ? { vertexIndex: candidate.vertexIndex as number } : {}),
+      ...(candidate.feature === "quadrant" ? { quadrantIndex: candidate.quadrantIndex as 0 | 1 | 2 | 3 } : {}),
       fallback: structuredClone(candidate.fallback),
     });
   }
