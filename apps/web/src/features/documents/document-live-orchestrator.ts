@@ -1,10 +1,15 @@
 import {
   applyAtomicOperation,
   migrateLayoutWorkspace,
+  migratePaperWorkspace,
   readLayoutWorkspace,
+  readPaperWorkspace,
   type CadChange,
   type LayoutWorkspaceRepairCode,
   type LayoutWorkspaceStateV1,
+  type PaperWorkspaceReceiptV1,
+  type PaperWorkspaceRepairCode,
+  type PaperWorkspaceStateV1,
 } from "@kuubik/cad-core";
 import type { Viewport2D } from "@kuubik/cad-renderer";
 import type { PreparedPdfUnderlay } from "@kuubik/cad-print";
@@ -40,6 +45,7 @@ export interface OpenLiveDocumentInput {
   viewport?: Viewport2D;
   recordedAt?: string;
   layoutWorkspace?: "migrate";
+  paperWorkspace?: "migrate";
 }
 
 export interface OpenLiveDocumentResult {
@@ -49,6 +55,13 @@ export interface OpenLiveDocumentResult {
     migrated: boolean;
     repairs: LayoutWorkspaceRepairCode[];
     state: LayoutWorkspaceStateV1;
+    migrationOperationId: string | null;
+  } | null;
+  paperWorkspace: {
+    migrated: boolean;
+    repairs: PaperWorkspaceRepairCode[];
+    state: PaperWorkspaceStateV1;
+    receipt: PaperWorkspaceReceiptV1;
     migrationOperationId: string | null;
   } | null;
 }
@@ -106,7 +119,7 @@ export class DocumentLiveOrchestrator {
     let document = recovery.document ?? input.fallbackDocument;
     if (!document) throw new RangeError(`No persisted or fallback document exists for ${documentId}.`);
     let layoutWorkspace: OpenLiveDocumentResult["layoutWorkspace"] = null;
-    if (input.layoutWorkspace === "migrate") {
+    if (input.layoutWorkspace === "migrate" || input.paperWorkspace === "migrate") {
       const migration = migrateLayoutWorkspace(document);
       let migrationOperationId: string | null = null;
       if (migration.migrated && recovery.document) {
@@ -133,6 +146,35 @@ export class DocumentLiveOrchestrator {
         migrationOperationId,
       };
     }
+    let paperWorkspace: OpenLiveDocumentResult["paperWorkspace"] = null;
+    if (input.paperWorkspace === "migrate") {
+      const migration = migratePaperWorkspace(document);
+      let migrationOperationId: string | null = null;
+      if (migration.migrated && recovery.document) {
+        migrationOperationId = `paper-workspace-migrate:${documentId}:${document.revision + 1}`;
+        const operation: CadOperation = {
+          opId: migrationOperationId,
+          baseRevision: document.revision,
+          commandId: "PAPER_WORKSPACE_MIGRATE",
+          args: { repairs: migration.repairs, receiptCode: migration.receipt.code },
+          targetHandles: [],
+          resultHandles: [],
+        };
+        const migrated = applyAtomicOperation(document, operation, migration.changes, input.recordedAt);
+        await this.#autosave.commit(migrated.document, operation, recovery.sessionHistory ?? undefined);
+        recovery = await this.database.recoverDocument(documentId);
+        document = recovery.document!;
+      } else if (migration.migrated) {
+        document = migration.document;
+      }
+      paperWorkspace = {
+        migrated: migration.migrated,
+        repairs: [...migration.repairs],
+        state: readPaperWorkspace(document),
+        receipt: structuredClone(migration.receipt),
+        migrationOperationId,
+      };
+    }
     if (!recovery.document) await this.#autosave.checkpoint(document);
 
     const ignored = new Set(recovery.ignoredOperationIds);
@@ -153,7 +195,12 @@ export class DocumentLiveOrchestrator {
       persistedRevision: document.revision,
     });
     this.#recoveries.set(documentId, structuredClone(recovery));
-    return { document: structuredClone(document), recovery: structuredClone(recovery), layoutWorkspace: structuredClone(layoutWorkspace) };
+    return {
+      document: structuredClone(document),
+      recovery: structuredClone(recovery),
+      layoutWorkspace: structuredClone(layoutWorkspace),
+      paperWorkspace: structuredClone(paperWorkspace),
+    };
   }
 
   activate(documentId: string): void {

@@ -49,7 +49,8 @@ export type LayoutCommandErrorCode =
   | "LAST_PAPER_LAYOUT"
   | "ORDER_LIMIT"
   | "VIEWPORT_LOCKED"
-  | "INVALID_LAYOUT_WORKSPACE";
+  | "INVALID_LAYOUT_WORKSPACE"
+  | "INVALID_PAPER_WORKSPACE";
 
 export class LayoutCommandError extends Error {
   constructor(readonly code: LayoutCommandErrorCode, message: string) {
@@ -853,7 +854,10 @@ function workspaceResult(
     nextLayoutSequence: Math.max(sequences.nextLayoutSequence, derived.nextLayoutSequence),
     nextViewportSequence: Math.max(sequences.nextViewportSequence, derived.nextViewportSequence),
   };
-  const metadata = workspaceMetadata(document, workspace);
+  const metadata = synchronizePaperWorkspaceMetadata(
+    { ...structuredClone(document), layouts: structuredClone(layouts) },
+    workspaceMetadata(document, workspace),
+  );
   return {
     changes: [
       ...(includeLayouts ? [{ type: "set-layouts" as const, layouts: structuredClone(layouts) }] : []),
@@ -955,15 +959,14 @@ function rekeyNewLayout(
 
 const NAMED_PAGE_SETUP_LIBRARY_EXTENSION_KEY = "kuubikDraw.pageSetupLibrary.v1";
 
-function updateNamedPageSetupAssignment(
-  result: LayoutWorkspaceEditResult,
+function documentWithNamedPageSetupAssignment(
+  document: KDrawDocumentV1,
   sourceLayoutId: string | null,
   targetLayoutId: string,
-): LayoutWorkspaceEditResult {
-  const metadataChange = result.changes.find((change) => change.type === "set-metadata");
-  if (!metadataChange) return result;
-  const rawLibrary = metadataChange.metadata.extensions?.[NAMED_PAGE_SETUP_LIBRARY_EXTENSION_KEY];
-  if (!isRecord(rawLibrary) || !isRecord(rawLibrary.assignments)) return result;
+): KDrawDocumentV1 {
+  const candidate = structuredClone(document);
+  const rawLibrary = candidate.metadata.extensions?.[NAMED_PAGE_SETUP_LIBRARY_EXTENSION_KEY];
+  if (!isRecord(rawLibrary) || !isRecord(rawLibrary.assignments)) return candidate;
   const assignments = structuredClone(rawLibrary.assignments);
   if (sourceLayoutId === null) {
     delete assignments[targetLayoutId];
@@ -972,7 +975,7 @@ function updateNamedPageSetupAssignment(
     if (typeof setupId === "string") assignments[targetLayoutId] = setupId;
   }
   rawLibrary.assignments = assignments;
-  return result;
+  return candidate;
 }
 
 export function activateLayoutWorkspace(document: KDrawDocumentV1, layoutId: string): LayoutWorkspaceEditResult {
@@ -997,11 +1000,8 @@ export function copyPaperLayoutWorkspace(document: KDrawDocumentV1, layoutId: st
   const workspace = strictWorkspaceState(document);
   const copied = copyPaperLayout(document, layoutId);
   const rekeyed = rekeyNewLayout(copied.layouts, copied.layoutId, workspace);
-  return updateNamedPageSetupAssignment(
-    workspaceResult(document, rekeyed.layouts, rekeyed.layoutId, rekeyed.sequences, true),
-    layoutId,
-    rekeyed.layoutId,
-  );
+  const source = documentWithNamedPageSetupAssignment(document, layoutId, rekeyed.layoutId);
+  return workspaceResult(source, rekeyed.layouts, rekeyed.layoutId, rekeyed.sequences, true);
 }
 
 export function renamePaperLayoutWorkspace(document: KDrawDocumentV1, layoutId: string, name: string): LayoutWorkspaceEditResult {
@@ -1014,11 +1014,8 @@ export function deletePaperLayoutWorkspace(document: KDrawDocumentV1, layoutId: 
   const workspace = strictWorkspaceState(document);
   const deleted = deletePaperLayout(document, layoutId);
   const activeLayoutId = workspace.activeLayoutId === layoutId ? deleted.layoutId : workspace.activeLayoutId;
-  return updateNamedPageSetupAssignment(
-    workspaceResult(document, deleted.layouts, activeLayoutId, workspace, true),
-    null,
-    layoutId,
-  );
+  const source = documentWithNamedPageSetupAssignment(document, null, layoutId);
+  return workspaceResult(source, deleted.layouts, activeLayoutId, workspace, true);
 }
 
 export function reorderPaperLayoutWorkspace(document: KDrawDocumentV1, layoutId: string, targetTabIndex: number): LayoutWorkspaceEditResult {
@@ -1034,4 +1031,223 @@ export function reorderPaperLayoutWorkspace(document: KDrawDocumentV1, layoutId:
   const [layout] = layouts.splice(sourceIndex, 1);
   layouts.splice(targetTabIndex, 0, layout!);
   return workspaceResult(document, layouts, workspace.activeLayoutId, workspace, true);
+}
+
+export const PAPER_WORKSPACE_EXTENSION_KEY = "kuubik.paperWorkspace.v1" as const;
+
+export interface PaperWorkspaceViewportRefV1 {
+  layoutId: string;
+  viewportId: string;
+}
+
+export interface PaperWorkspaceLayoutStateV1 {
+  layoutId: string;
+  boundaryMm: { x: 0; y: 0; width: number; height: number };
+  printableAreaMm: { x: number; y: number; width: number; height: number };
+  mediaName: string;
+  orientation: "portrait" | "landscape";
+  plotOriginMm: CadPoint2;
+  pageSetupId: string | null;
+  viewportRefs: PaperWorkspaceViewportRefV1[];
+}
+
+export interface PaperWorkspaceStateV1 {
+  schemaVersion: 1;
+  paperUnits: "mm";
+  activeLayoutId: string;
+  activeSpace: "model" | "paper";
+  papers: PaperWorkspaceLayoutStateV1[];
+}
+
+export type PaperWorkspaceRepairCode =
+  | "MISSING_PAPER_WORKSPACE_STATE"
+  | "INVALID_PAPER_WORKSPACE_STATE"
+  | "INVALID_ACTIVE_PAPER_CONTEXT"
+  | "INVALID_PAPER_LAYOUT_REFERENCE"
+  | "INVALID_PAPER_BOUNDARY"
+  | "INVALID_PRINTABLE_AREA"
+  | "INVALID_PAPER_ORIGIN"
+  | "INVALID_PAPER_ORIENTATION"
+  | "INVALID_PAPER_UNITS"
+  | "INVALID_PAGE_SETUP_REFERENCE"
+  | "INVALID_VIEWPORT_REFERENCE";
+
+export interface PaperWorkspaceReceiptV1 {
+  schemaVersion: 1;
+  code: "PAPER_WORKSPACE_CURRENT" | "PAPER_WORKSPACE_MIGRATED" | "PAPER_WORKSPACE_REPAIRED";
+  repairs: PaperWorkspaceRepairCode[];
+  summaryEt: string;
+}
+
+export interface PaperWorkspaceMigrationResult {
+  changes: Array<{ type: "set-metadata"; metadata: KDrawDocumentV1["metadata"] }>;
+  document: KDrawDocumentV1;
+  state: PaperWorkspaceStateV1;
+  receipt: PaperWorkspaceReceiptV1;
+  migrated: boolean;
+  repairs: PaperWorkspaceRepairCode[];
+}
+
+function workspaceSemanticEqual(left: unknown, right: unknown): boolean {
+  if (Object.is(left, right)) return true;
+  if (Array.isArray(left) || Array.isArray(right)) {
+    return Array.isArray(left) && Array.isArray(right)
+      && left.length === right.length
+      && left.every((entry, index) => workspaceSemanticEqual(entry, right[index]));
+  }
+  if (!isRecord(left) || !isRecord(right)) return false;
+  const leftKeys = Object.keys(left).sort();
+  const rightKeys = Object.keys(right).sort();
+  return leftKeys.length === rightKeys.length
+    && leftKeys.every((key, index) => key === rightKeys[index] && workspaceSemanticEqual(left[key], right[key]));
+}
+
+function paperWorkspacePageSetupAssignments(document: KDrawDocumentV1): Record<string, string> {
+  const raw = document.metadata.extensions?.[NAMED_PAGE_SETUP_LIBRARY_EXTENSION_KEY];
+  if (raw === undefined) return {};
+  if (!isRecord(raw) || raw.schemaVersion !== 1 || !Array.isArray(raw.setups) || !isRecord(raw.assignments)) {
+    throw new LayoutCommandError("INVALID_PAPER_WORKSPACE", "Stored named page-setup library is invalid for paper workspace read-back.");
+  }
+  const setupIds = new Set(raw.setups.map((entry) => isRecord(entry) && typeof entry.id === "string" ? entry.id : null).filter((id): id is string => id !== null));
+  const layoutIds = new Set(document.layouts.map((layout) => layout.id));
+  const assignments: Record<string, string> = {};
+  for (const [layoutId, setupId] of Object.entries(raw.assignments)) {
+    if (typeof setupId !== "string" || !layoutIds.has(layoutId) || !setupIds.has(setupId)) {
+      throw new LayoutCommandError("INVALID_PAPER_WORKSPACE", `Named page-setup reference is dangling: ${layoutId} -> ${String(setupId)}.`);
+    }
+    assignments[layoutId] = setupId;
+  }
+  return assignments;
+}
+
+function derivePaperWorkspaceState(document: KDrawDocumentV1): PaperWorkspaceStateV1 {
+  const layoutWorkspace = strictWorkspaceState(document);
+  const assignments = paperWorkspacePageSetupAssignments(document);
+  const papers = document.layouts.filter((layout) => layout.kind === "paper").map((layout): PaperWorkspaceLayoutStateV1 => {
+    const paper = resolvePaperDefinition(layout)!;
+    const setup = resolvePageSetup(layout)!;
+    return {
+      layoutId: layout.id,
+      boundaryMm: { x: 0, y: 0, width: paper.widthMm, height: paper.heightMm },
+      printableAreaMm: {
+        x: paper.marginsMm.left,
+        y: paper.marginsMm.bottom,
+        width: paper.widthMm - paper.marginsMm.left - paper.marginsMm.right,
+        height: paper.heightMm - paper.marginsMm.top - paper.marginsMm.bottom,
+      },
+      mediaName: setup.mediaName,
+      orientation: setup.orientation,
+      plotOriginMm: structuredClone(setup.plotOriginMm),
+      pageSetupId: assignments[layout.id] ?? null,
+      viewportRefs: layout.viewports.map((viewport) => ({ layoutId: layout.id, viewportId: viewport.id })),
+    };
+  });
+  return {
+    schemaVersion: 1,
+    paperUnits: "mm",
+    activeLayoutId: layoutWorkspace.activeLayoutId,
+    activeSpace: layoutWorkspace.activeSpace,
+    papers,
+  };
+}
+
+function paperWorkspaceMetadata(document: KDrawDocumentV1, state: PaperWorkspaceStateV1): KDrawDocumentV1["metadata"] {
+  return {
+    ...structuredClone(document.metadata),
+    extensions: {
+      ...structuredClone(document.metadata.extensions ?? {}),
+      [PAPER_WORKSPACE_EXTENSION_KEY]: structuredClone(state),
+    },
+  };
+}
+
+function synchronizePaperWorkspaceMetadata(
+  document: KDrawDocumentV1,
+  metadata: KDrawDocumentV1["metadata"],
+): KDrawDocumentV1["metadata"] {
+  if (metadata.extensions?.[PAPER_WORKSPACE_EXTENSION_KEY] === undefined) return metadata;
+  const candidate = { ...structuredClone(document), metadata: structuredClone(metadata) };
+  return paperWorkspaceMetadata(candidate, derivePaperWorkspaceState(candidate));
+}
+
+function paperRepairReceipt(repairs: PaperWorkspaceRepairCode[], migrated: boolean): PaperWorkspaceReceiptV1 {
+  const code = !migrated
+    ? "PAPER_WORKSPACE_CURRENT"
+    : repairs.length === 1 && repairs[0] === "MISSING_PAPER_WORKSPACE_STATE"
+      ? "PAPER_WORKSPACE_MIGRATED"
+      : "PAPER_WORKSPACE_REPAIRED";
+  const summaryEt = code === "PAPER_WORKSPACE_CURRENT"
+    ? "Paberiruumi dokumendiolek on kehtiv."
+    : code === "PAPER_WORKSPACE_MIGRATED"
+      ? "Paberiruumi päranddokument migreeriti deterministlikult."
+      : `Paberiruumi vigased viited taastati deterministlikult: ${repairs.join(", ")}.`;
+  return { schemaVersion: 1, code, repairs: [...repairs], summaryEt };
+}
+
+function rawPaperByLayout(raw: Record<string, unknown>, layoutId: string): Record<string, unknown> | null {
+  if (!Array.isArray(raw.papers)) return null;
+  const match = raw.papers.find((entry) => isRecord(entry) && entry.layoutId === layoutId);
+  return isRecord(match) ? match : null;
+}
+
+function paperWorkspaceRepairs(raw: unknown, expected: PaperWorkspaceStateV1): PaperWorkspaceRepairCode[] {
+  if (raw === undefined) return ["MISSING_PAPER_WORKSPACE_STATE"];
+  if (!isRecord(raw) || raw.schemaVersion !== 1 || !Array.isArray(raw.papers)) return ["INVALID_PAPER_WORKSPACE_STATE"];
+  const repairs: PaperWorkspaceRepairCode[] = [];
+  if (raw.paperUnits !== expected.paperUnits) repairs.push("INVALID_PAPER_UNITS");
+  if (raw.activeLayoutId !== expected.activeLayoutId || raw.activeSpace !== expected.activeSpace) repairs.push("INVALID_ACTIVE_PAPER_CONTEXT");
+  const rawLayoutIds = raw.papers.map((entry) => isRecord(entry) && typeof entry.layoutId === "string" ? entry.layoutId : null);
+  if (rawLayoutIds.length !== expected.papers.length
+    || rawLayoutIds.some((layoutId, index) => layoutId !== expected.papers[index]!.layoutId)) {
+    repairs.push("INVALID_PAPER_LAYOUT_REFERENCE");
+  }
+  for (const expectedPaper of expected.papers) {
+    const candidate = rawPaperByLayout(raw, expectedPaper.layoutId);
+    if (!candidate) continue;
+    if (!workspaceSemanticEqual(candidate.boundaryMm, expectedPaper.boundaryMm)) repairs.push("INVALID_PAPER_BOUNDARY");
+    if (!workspaceSemanticEqual(candidate.printableAreaMm, expectedPaper.printableAreaMm)) repairs.push("INVALID_PRINTABLE_AREA");
+    if (!workspaceSemanticEqual(candidate.plotOriginMm, expectedPaper.plotOriginMm)) repairs.push("INVALID_PAPER_ORIGIN");
+    if (candidate.orientation !== expectedPaper.orientation || candidate.mediaName !== expectedPaper.mediaName) repairs.push("INVALID_PAPER_ORIENTATION");
+    if (candidate.pageSetupId !== expectedPaper.pageSetupId) repairs.push("INVALID_PAGE_SETUP_REFERENCE");
+    if (!workspaceSemanticEqual(candidate.viewportRefs, expectedPaper.viewportRefs)) repairs.push("INVALID_VIEWPORT_REFERENCE");
+  }
+  if (!workspaceSemanticEqual(raw, expected) && repairs.length === 0) repairs.push("INVALID_PAPER_WORKSPACE_STATE");
+  return [...new Set(repairs)];
+}
+
+export function readPaperWorkspace(document: KDrawDocumentV1): PaperWorkspaceStateV1 {
+  const expected = derivePaperWorkspaceState(document);
+  const raw = document.metadata.extensions?.[PAPER_WORKSPACE_EXTENSION_KEY];
+  if (!workspaceSemanticEqual(raw, expected)) {
+    throw new LayoutCommandError("INVALID_PAPER_WORKSPACE", "Document paper workspace state is missing, stale or malformed.");
+  }
+  return structuredClone(expected);
+}
+
+export function migratePaperWorkspace(document: KDrawDocumentV1): PaperWorkspaceMigrationResult {
+  const state = derivePaperWorkspaceState(document);
+  const raw = document.metadata.extensions?.[PAPER_WORKSPACE_EXTENSION_KEY];
+  const repairs = paperWorkspaceRepairs(raw, state);
+  const metadata = paperWorkspaceMetadata(document, state);
+  const migrated = !workspaceSemanticEqual(metadata, document.metadata);
+  const changes: PaperWorkspaceMigrationResult["changes"] = migrated ? [{ type: "set-metadata", metadata }] : [];
+  return {
+    changes,
+    document: { ...structuredClone(document), metadata },
+    state,
+    receipt: paperRepairReceipt(repairs, migrated),
+    migrated,
+    repairs,
+  };
+}
+
+export function setPaperWorkspacePageSetup(
+  document: KDrawDocumentV1,
+  layoutId: string,
+  requested: CadPageSetup,
+): LayoutWorkspaceEditResult {
+  const workspace = strictWorkspaceState(document);
+  readPaperWorkspace(document);
+  const edited = setPaperLayoutPageSetup(document, layoutId, requested);
+  return workspaceResult(document, edited.layouts, workspace.activeLayoutId, workspace, true);
 }

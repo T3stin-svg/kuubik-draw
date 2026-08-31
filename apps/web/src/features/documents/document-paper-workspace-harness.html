@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="et">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kuubik PAPER SPACE dokumendioleku kontroll</title>
+  </head>
+  <body>
+    <main>
+      <h1>Kuubik PAPER SPACE dokumendioleku kontroll</h1>
+      <output id="status">käivitan</output>
+      <pre id="result"></pre>
+    </main>
+    <script type="module">
+      import {
+        recoverDocumentPaperWorkspaceHarness,
+        seedDocumentPaperWorkspaceHarness,
+        verifyDocumentPaperWorkspaceHarness,
+      } from "./document-paper-workspace-harness.ts";
+      const status = document.querySelector("#status");
+      const result = document.querySelector("#result");
+      const phase = new URL(location.href).searchParams.get("phase") ?? "seed";
+      try {
+        const readback = phase === "recover"
+          ? await recoverDocumentPaperWorkspaceHarness()
+          : phase === "verify"
+            ? await verifyDocumentPaperWorkspaceHarness()
+            : await seedDocumentPaperWorkspaceHarness();
+        status.textContent = "läbitud";
+        result.textContent = JSON.stringify(readback, null, 2);
+        window.__KUUBIK_DOCUMENT_PAPER_WORKSPACE_RESULT__ = readback;
+      } catch (error) {
+        status.textContent = "ebaõnnestus";
+        result.textContent = error instanceof Error ? `${error.name}: ${error.message}\n${error.stack ?? ""}` : String(error);
+        throw error;
+      }
+    </script>
+  </body>
+</html>

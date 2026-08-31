@@ -9,7 +9,10 @@ describe("F-096/F-097 document-model wiring ratchets", () => {
   it("keeps legacy migration explicit and validates persisted workspace before session exposure", async () => {
     const orchestrator = await source("./document-live-orchestrator.ts");
     expect(orchestrator).toContain('layoutWorkspace?: "migrate"');
-    const migration = orchestrator.slice(orchestrator.indexOf('if (input.layoutWorkspace === "migrate")'), orchestrator.indexOf("if (!recovery.document)"));
+    const migration = orchestrator.slice(
+      orchestrator.indexOf('if (input.layoutWorkspace === "migrate" || input.paperWorkspace === "migrate")'),
+      orchestrator.indexOf("if (!recovery.document)"),
+    );
     expect(migration).toContain("migrateLayoutWorkspace(document)");
     expect(migration.indexOf("await this.#autosave.commit(")).toBeLessThan(migration.indexOf("readLayoutWorkspace(document)"));
     expect(orchestrator.indexOf("readLayoutWorkspace(document)")).toBeLessThan(orchestrator.indexOf("this.#coordinator.open(document"));
