@@ -5,9 +5,20 @@ import { trimCurvesOfEntity, trimPointAt, type TrimCurve } from "./trim.js";
 
 const EPSILON = 1e-9;
 const TWO_PI = Math.PI * 2;
+const ARRAY_PATH_EXTENSION_KEY = "kuubikArrayPath";
+
+export type ArrayCommandInputErrorCode =
+  | "EMPTY_SELECTION"
+  | "ENTITY_NOT_FOUND"
+  | "LAYER_NOT_FOUND"
+  | "LAYER_LOCKED"
+  | "LAYER_HIDDEN"
+  | "INVALID_INPUT"
+  | "UNSUPPORTED_ENTITY"
+  | "PATH_COLLISION";
 
 export class ArrayCommandInputError extends Error {
-  constructor(message: string) {
+  constructor(public readonly code: ArrayCommandInputErrorCode, message: string) {
     super(message);
     this.name = "ArrayCommandInputError";
   }
@@ -22,16 +33,23 @@ export interface RectangularArrayInput extends BaseArrayInput {
   command: "ARRAYRECT";
   rows: number;
   columns: number;
-  rowVector: CadPoint2;
-  columnVector: CadPoint2;
+  /** Legacy exact vector input. Prefer row/column spacing plus array angle. */
+  rowVector?: CadPoint2;
+  columnVector?: CadPoint2;
+  rowSpacing?: number;
+  columnSpacing?: number;
+  arrayAngleRad?: number;
 }
 
 export interface PolarArrayInput extends BaseArrayInput {
   command: "ARRAYPOLAR";
   center: CadPoint2;
   items: number;
-  fillAngleRad: number;
+  fillAngleRad?: number;
+  angleBetweenRad?: number;
   rotateItems: boolean;
+  rows?: number;
+  rowSpacing?: number;
 }
 
 export interface PathArrayInput extends BaseArrayInput {
@@ -42,6 +60,13 @@ export interface PathArrayInput extends BaseArrayInput {
   spacing?: number;
   startOffset?: number;
   alignItems: boolean;
+  fillEntirePath?: boolean;
+  tangentDirectionRad?: number;
+  pathDirection?: "forward" | "reverse";
+  rows?: number;
+  rowSpacing?: number;
+  associative?: boolean;
+  associationId?: string;
 }
 
 export type ArrayCommandInput = RectangularArrayInput | PolarArrayInput | PathArrayInput;
@@ -53,29 +78,51 @@ export interface PreparedArrayCommand {
   resultHandles: string[];
   createdHandles: string[];
   itemCount: number;
+  associative: boolean;
+  associationId?: string;
+}
+
+export interface ArrayPathAssociation {
+  version: 1;
+  associationId: string;
+  sourceHandle: string;
+  pathHandle: string;
+  childKey: string;
+  input: Omit<PathArrayInput, "targetHandles" | "associationId">;
+}
+
+interface ArrayPlacement {
+  itemIndex: number;
+  rowIndex: number;
+  delta: CadPoint2;
+  rotation: { center: CadPoint2; angle: number } | null;
 }
 
 function assertPoint(point: CadPoint2, label: string): void {
-  if (!Number.isFinite(point.x) || !Number.isFinite(point.y)) throw new ArrayCommandInputError(`${label} must be finite.`);
+  if (!Number.isFinite(point.x) || !Number.isFinite(point.y)) throw new ArrayCommandInputError("INVALID_INPUT", `${label} must be finite.`);
+}
+
+function editableEntity(document: KDrawDocumentV1, handle: string, role: "source" | "path"): CadEntity {
+  const entity = document.entities.find((candidate) => candidate.handle === handle);
+  if (!entity) throw new ArrayCommandInputError("ENTITY_NOT_FOUND", `ARRAY ${role} ${handle} does not exist.`);
+  const layer = document.layers.find((candidate) => candidate.id === entity.layerId);
+  if (!layer) throw new ArrayCommandInputError("LAYER_NOT_FOUND", `ARRAY ${role} ${handle} references missing layer ${entity.layerId}.`);
+  if (layer.locked) throw new ArrayCommandInputError("LAYER_LOCKED", `ARRAY ${role} ${handle} is on a locked layer.`);
+  if (!layer.visible || layer.frozen) throw new ArrayCommandInputError("LAYER_HIDDEN", `ARRAY ${role} ${handle} is on an off or frozen layer.`);
+  return entity;
 }
 
 function selectedEntities(document: KDrawDocumentV1, handles: readonly string[]): CadEntity[] {
   const unique = [...new Set(handles.map((handle) => handle.trim()).filter(Boolean))];
-  if (unique.length === 0) throw new ArrayCommandInputError("ARRAY requires at least one source entity.");
-  const byHandle = new Map(document.entities.map((entity) => [entity.handle, entity]));
-  return unique.map((handle) => {
-    const entity = byHandle.get(handle);
-    if (!entity) throw new ArrayCommandInputError(`ARRAY source ${handle} does not exist.`);
-    if (document.layers.find((layer) => layer.id === entity.layerId)?.locked) throw new ArrayCommandInputError(`ARRAY source ${handle} is on a locked layer.`);
-    return entity;
-  });
+  if (unique.length === 0) throw new ArrayCommandInputError("EMPTY_SELECTION", "ARRAY requires at least one source entity.");
+  return unique.map((handle) => editableEntity(document, handle, "source"));
 }
 
 function transformedCopy(entity: CadEntity, handle: string, delta: CadPoint2, rotation: { center: CadPoint2; angle: number } | null): CadEntity {
   const translated = translateCadEntity(entity, delta);
-  if (!translated) throw new ArrayCommandInputError(`ARRAY does not support ${entity.kind} source ${entity.handle}.`);
+  if (!translated) throw new ArrayCommandInputError("UNSUPPORTED_ENTITY", `ARRAY does not support ${entity.kind} source ${entity.handle}.`);
   const transformed = rotation ? rotateCadEntity(translated, rotation.center, rotation.angle) : translated;
-  if (!transformed) throw new ArrayCommandInputError(`ARRAY cannot rotate ${entity.kind} source ${entity.handle}.`);
+  if (!transformed) throw new ArrayCommandInputError("UNSUPPORTED_ENTITY", `ARRAY cannot rotate ${entity.kind} source ${entity.handle}.`);
   return { ...transformed, handle } as CadEntity;
 }
 
@@ -168,7 +215,7 @@ function metricForCurve(curve: TrimCurve): CurveMetric | null {
 
 function metricsForPath(entity: CadEntity): CurveMetric[] {
   const metrics = trimCurvesOfEntity(entity).map(metricForCurve).filter((metric): metric is CurveMetric => metric !== null);
-  if (metrics.length === 0) throw new ArrayCommandInputError("ARRAYPATH requires a supported non-degenerate path.");
+  if (metrics.length === 0) throw new ArrayCommandInputError("INVALID_INPUT", "ARRAYPATH requires a supported non-degenerate path.");
   return metrics;
 }
 
@@ -211,7 +258,7 @@ export function arrayPathLength(entity: CadEntity): number {
 }
 
 export function arrayPathSample(entity: CadEntity, distanceAlong: number): ArrayPathSample {
-  if (!Number.isFinite(distanceAlong)) throw new ArrayCommandInputError("ARRAYPATH sample distance must be finite.");
+  if (!Number.isFinite(distanceAlong)) throw new ArrayCommandInputError("INVALID_INPUT", "ARRAYPATH sample distance must be finite.");
   const metrics = metricsForPath(entity);
   const total = metrics.reduce((sum, metric) => sum + metric.length, 0);
   let remaining = Math.max(0, Math.min(distanceAlong, total));
@@ -222,81 +269,351 @@ export function arrayPathSample(entity: CadEntity, distanceAlong: number): Array
   return sampleMetric(metrics.at(-1)!, metrics.at(-1)!.length);
 }
 
-export function prepareArrayCommand(document: KDrawDocumentV1, input: ArrayCommandInput): PreparedArrayCommand {
-  assertPoint(input.basePoint, "ARRAY base point");
-  const sources = selectedEntities(document, input.targetHandles);
-  const placements: Array<{ delta: CadPoint2; rotation: { center: CadPoint2; angle: number } | null }> = [];
+function requireInteger(value: number | undefined, minimum: number, label: string): number {
+  if (!Number.isInteger(value) || value! < minimum) throw new ArrayCommandInputError("INVALID_INPUT", `${label} must be an integer of at least ${minimum}.`);
+  return value!;
+}
 
-  if (input.command === "ARRAYRECT") {
-    if (!Number.isInteger(input.rows) || input.rows < 1 || !Number.isInteger(input.columns) || input.columns < 1 || input.rows * input.columns < 2) {
-      throw new ArrayCommandInputError("Rectangular ARRAY requires positive integer rows/columns and at least two items.");
-    }
+function requireFinite(value: number | undefined, label: string): number {
+  if (!Number.isFinite(value)) throw new ArrayCommandInputError("INVALID_INPUT", `${label} must be finite.`);
+  return value!;
+}
+
+function rotateVector(vector: CadPoint2, angle: number): CadPoint2 {
+  return {
+    x: vector.x * Math.cos(angle) - vector.y * Math.sin(angle),
+    y: vector.x * Math.sin(angle) + vector.y * Math.cos(angle),
+  };
+}
+
+function rectangularPlacements(input: RectangularArrayInput): ArrayPlacement[] {
+  const rows = requireInteger(input.rows, 1, "Rectangular ARRAY row count");
+  const columns = requireInteger(input.columns, 1, "Rectangular ARRAY column count");
+  if (rows * columns < 2) throw new ArrayCommandInputError("INVALID_INPUT", "Rectangular ARRAY requires at least two items.");
+  let rowVector: CadPoint2;
+  let columnVector: CadPoint2;
+  if (input.rowVector || input.columnVector) {
+    if (!input.rowVector || !input.columnVector) throw new ArrayCommandInputError("INVALID_INPUT", "Rectangular ARRAY legacy input requires both row and column vectors.");
     assertPoint(input.rowVector, "ARRAY row vector");
     assertPoint(input.columnVector, "ARRAY column vector");
-    for (let row = 0; row < input.rows; row += 1) for (let column = 0; column < input.columns; column += 1) {
-      if (row === 0 && column === 0) continue;
-      placements.push({
-        delta: { x: row * input.rowVector.x + column * input.columnVector.x, y: row * input.rowVector.y + column * input.columnVector.y },
-        rotation: null,
-      });
-    }
-  } else if (input.command === "ARRAYPOLAR") {
-    assertPoint(input.center, "ARRAY polar center");
-    if (!Number.isInteger(input.items) || input.items < 2) throw new ArrayCommandInputError("Polar ARRAY requires at least two items.");
-    if (!Number.isFinite(input.fillAngleRad) || Math.abs(input.fillAngleRad) <= EPSILON || Math.abs(input.fillAngleRad) > TWO_PI + EPSILON) {
-      throw new ArrayCommandInputError("Polar ARRAY fill angle must be non-zero and at most 2π.");
-    }
-    const divisor = Math.abs(Math.abs(input.fillAngleRad) - TWO_PI) <= EPSILON ? input.items : input.items - 1;
-    for (let index = 1; index < input.items; index += 1) {
-      const angle = input.fillAngleRad * index / divisor;
-      const baseRotated = {
-        x: input.center.x + (input.basePoint.x - input.center.x) * Math.cos(angle) - (input.basePoint.y - input.center.y) * Math.sin(angle),
-        y: input.center.y + (input.basePoint.x - input.center.x) * Math.sin(angle) + (input.basePoint.y - input.center.y) * Math.cos(angle),
-      };
-      placements.push({
-        delta: { x: baseRotated.x - input.basePoint.x, y: baseRotated.y - input.basePoint.y },
-        rotation: input.rotateItems ? { center: baseRotated, angle } : null,
-      });
-    }
+    rowVector = input.rowVector;
+    columnVector = input.columnVector;
   } else {
-    const path = document.entities.find((entity) => entity.handle === input.pathHandle);
-    if (!path) throw new ArrayCommandInputError(`ARRAYPATH path ${input.pathHandle} does not exist.`);
-    const total = arrayPathLength(path);
-    const startOffset = input.startOffset ?? 0;
-    if (!Number.isFinite(startOffset) || startOffset < 0 || startOffset > total + EPSILON) throw new ArrayCommandInputError("ARRAYPATH start offset is outside the path.");
-    let distances: number[];
-    if (input.method === "divide") {
-      if (!Number.isInteger(input.items) || input.items! < 2) throw new ArrayCommandInputError("ARRAYPATH Divide requires at least two items.");
-      const available = total - startOffset;
-      distances = Array.from({ length: input.items! }, (_, index) => startOffset + available * index / (input.items! - 1));
-    } else {
-      if (!Number.isFinite(input.spacing) || input.spacing! <= EPSILON) throw new ArrayCommandInputError("ARRAYPATH Measure requires positive spacing.");
-      distances = [];
-      for (let along = startOffset; along <= total + EPSILON; along += input.spacing!) distances.push(Math.min(along, total));
-      if (distances.length < 1) throw new ArrayCommandInputError("ARRAYPATH spacing produced no items.");
-    }
-    placements.push(...distances.map((along) => {
-      const sampled = arrayPathSample(path, along);
-      return {
-        delta: { x: sampled.point.x - input.basePoint.x, y: sampled.point.y - input.basePoint.y },
-        rotation: input.alignItems ? { center: sampled.point, angle: sampled.tangentAngle } : null,
-      };
-    }));
+    const rowSpacing = requireFinite(input.rowSpacing, "Rectangular ARRAY row spacing");
+    const columnSpacing = requireFinite(input.columnSpacing, "Rectangular ARRAY column spacing");
+    const angle = input.arrayAngleRad ?? 0;
+    if (!Number.isFinite(angle)) throw new ArrayCommandInputError("INVALID_INPUT", "Rectangular ARRAY angle must be finite.");
+    if (rows > 1 && Math.abs(rowSpacing) <= EPSILON) throw new ArrayCommandInputError("INVALID_INPUT", "Rectangular ARRAY row spacing must be non-zero when rows exceed one.");
+    if (columns > 1 && Math.abs(columnSpacing) <= EPSILON) throw new ArrayCommandInputError("INVALID_INPUT", "Rectangular ARRAY column spacing must be non-zero when columns exceed one.");
+    columnVector = rotateVector({ x: columnSpacing, y: 0 }, angle);
+    rowVector = rotateVector({ x: 0, y: rowSpacing }, angle);
   }
+  const placements: ArrayPlacement[] = [];
+  for (let row = 0; row < rows; row += 1) for (let column = 0; column < columns; column += 1) {
+    if (row === 0 && column === 0) continue;
+    placements.push({
+      itemIndex: column,
+      rowIndex: row,
+      delta: { x: row * rowVector.x + column * columnVector.x, y: row * rowVector.y + column * columnVector.y },
+      rotation: null,
+    });
+  }
+  return placements;
+}
 
-  const handleCount = placements.length * sources.length;
-  const handles = allocateEntityHandles(document, handleCount);
+function polarPlacements(input: PolarArrayInput): ArrayPlacement[] {
+  assertPoint(input.center, "ARRAY polar center");
+  const items = requireInteger(input.items, 2, "Polar ARRAY item count");
+  const rows = requireInteger(input.rows ?? 1, 1, "Polar ARRAY row count");
+  const rowSpacing = requireFinite(input.rowSpacing ?? 0, "Polar ARRAY row spacing");
+  if (rows > 1 && Math.abs(rowSpacing) <= EPSILON) throw new ArrayCommandInputError("INVALID_INPUT", "Polar ARRAY row spacing must be non-zero when rows exceed one.");
+  if (input.fillAngleRad !== undefined && input.angleBetweenRad !== undefined) {
+    throw new ArrayCommandInputError("INVALID_INPUT", "Polar ARRAY accepts either fill angle or angle between items, not both.");
+  }
+  const fillAngle = input.angleBetweenRad === undefined
+    ? requireFinite(input.fillAngleRad, "Polar ARRAY fill angle")
+    : requireFinite(input.angleBetweenRad, "Polar ARRAY angle between items") * (items - 1);
+  if (Math.abs(fillAngle) <= EPSILON || Math.abs(fillAngle) > TWO_PI + EPSILON) {
+    throw new ArrayCommandInputError("INVALID_INPUT", "Polar ARRAY fill angle must be non-zero and at most 2π.");
+  }
+  const angleStep = input.angleBetweenRad ?? (fillAngle / (Math.abs(Math.abs(fillAngle) - TWO_PI) <= EPSILON ? items : items - 1));
+  const baseVector = { x: input.basePoint.x - input.center.x, y: input.basePoint.y - input.center.y };
+  const radius = Math.hypot(baseVector.x, baseVector.y);
+  const unit = radius <= EPSILON ? { x: 1, y: 0 } : { x: baseVector.x / radius, y: baseVector.y / radius };
+  const placements: ArrayPlacement[] = [];
+  for (let row = 0; row < rows; row += 1) for (let item = 0; item < items; item += 1) {
+    if (row === 0 && item === 0) continue;
+    const angle = angleStep * item;
+    const targetVector = rotateVector({ x: unit.x * (radius + row * rowSpacing), y: unit.y * (radius + row * rowSpacing) }, angle);
+    const target = { x: input.center.x + targetVector.x, y: input.center.y + targetVector.y };
+    placements.push({
+      itemIndex: item,
+      rowIndex: row,
+      delta: { x: target.x - input.basePoint.x, y: target.y - input.basePoint.y },
+      rotation: input.rotateItems ? { center: target, angle } : null,
+    });
+  }
+  return placements;
+}
+
+function isClosedPath(path: CadEntity): boolean {
+  return path.kind === "circle" || path.kind === "ellipse"
+    || ((path.kind === "polyline" || path.kind === "spline") && path.closed);
+}
+
+function pathPlacements(document: KDrawDocumentV1, input: PathArrayInput): ArrayPlacement[] {
+  if (input.targetHandles.includes(input.pathHandle)) throw new ArrayCommandInputError("PATH_COLLISION", "ARRAYPATH path cannot also be a source entity.");
+  const path = editableEntity(document, input.pathHandle, "path");
+  const total = arrayPathLength(path);
+  const startOffset = input.startOffset ?? 0;
+  if (!Number.isFinite(startOffset) || startOffset < 0 || startOffset > total + EPSILON) {
+    throw new ArrayCommandInputError("INVALID_INPUT", "ARRAYPATH start offset is outside the path.");
+  }
+  const direction = input.pathDirection ?? "forward";
+  const fillEntirePath = input.fillEntirePath ?? true;
+  let distances: number[];
+  if (input.method === "divide") {
+    const items = requireInteger(input.items, 2, "ARRAYPATH Divide item count");
+    const available = total - startOffset;
+    const closedWithoutOffset = isClosedPath(path) && startOffset <= EPSILON;
+    const divisor = closedWithoutOffset ? items : items - 1;
+    distances = Array.from({ length: items }, (_, index) => startOffset + available * index / divisor);
+  } else {
+    const spacing = requireFinite(input.spacing, "ARRAYPATH Measure spacing");
+    if (spacing <= EPSILON) throw new ArrayCommandInputError("INVALID_INPUT", "ARRAYPATH Measure spacing must be positive.");
+    const countCap = fillEntirePath ? Number.POSITIVE_INFINITY : requireInteger(input.items, 1, "ARRAYPATH Measure item count");
+    distances = [];
+    for (let along = startOffset; along <= total + EPSILON && distances.length < countCap; along += spacing) distances.push(Math.min(along, total));
+    if (!fillEntirePath && Number.isFinite(countCap) && distances.length < countCap) {
+      throw new ArrayCommandInputError("INVALID_INPUT", "ARRAYPATH requested item count does not fit at the given spacing.");
+    }
+    if (distances.length < 1) throw new ArrayCommandInputError("INVALID_INPUT", "ARRAYPATH spacing produced no items.");
+  }
+  const rows = requireInteger(input.rows ?? 1, 1, "ARRAYPATH row count");
+  const rowSpacing = requireFinite(input.rowSpacing ?? 0, "ARRAYPATH row spacing");
+  const tangentDirection = requireFinite(input.tangentDirectionRad ?? 0, "ARRAYPATH tangent direction");
+  if (rows > 1 && Math.abs(rowSpacing) <= EPSILON) throw new ArrayCommandInputError("INVALID_INPUT", "ARRAYPATH row spacing must be non-zero when rows exceed one.");
+  const placements: ArrayPlacement[] = [];
+  for (let itemIndex = 0; itemIndex < distances.length; itemIndex += 1) {
+    const along = direction === "reverse" ? total - distances[itemIndex]! : distances[itemIndex]!;
+    const sampled = arrayPathSample(path, along);
+    const pathAngle = sampled.tangentAngle + (direction === "reverse" ? Math.PI : 0);
+    for (let rowIndex = 0; rowIndex < rows; rowIndex += 1) {
+      const normalOffset = rowIndex * rowSpacing;
+      const target = {
+        x: sampled.point.x - Math.sin(pathAngle) * normalOffset,
+        y: sampled.point.y + Math.cos(pathAngle) * normalOffset,
+      };
+      placements.push({
+        itemIndex,
+        rowIndex,
+        delta: { x: target.x - input.basePoint.x, y: target.y - input.basePoint.y },
+        rotation: input.alignItems ? { center: target, angle: pathAngle + tangentDirection } : null,
+      });
+    }
+  }
+  return placements;
+}
+
+function associationInput(input: PathArrayInput): ArrayPathAssociation["input"] {
+  const { targetHandles: _targetHandles, associationId: _associationId, ...definition } = input;
+  return JSON.parse(JSON.stringify(definition)) as ArrayPathAssociation["input"];
+}
+
+function childKey(sourceHandle: string, placement: ArrayPlacement): string {
+  return `${sourceHandle}:${placement.itemIndex}:${placement.rowIndex}`;
+}
+
+function withPathAssociation(entity: CadEntity, association: ArrayPathAssociation): CadEntity {
+  return {
+    ...entity,
+    extensionData: { ...(entity.extensionData ?? {}), [ARRAY_PATH_EXTENSION_KEY]: association },
+  } as CadEntity;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+export function readArrayPathAssociation(entity: CadEntity): ArrayPathAssociation | null {
+  const value = entity.extensionData?.[ARRAY_PATH_EXTENSION_KEY];
+  if (!isRecord(value) || value.version !== 1 || typeof value.associationId !== "string"
+    || typeof value.sourceHandle !== "string" || typeof value.pathHandle !== "string"
+    || typeof value.childKey !== "string" || !isRecord(value.input)) return null;
+  const input = value.input;
+  if (input.command !== "ARRAYPATH" || typeof input.pathHandle !== "string" || !isRecord(input.basePoint)
+    || typeof input.basePoint.x !== "number" || typeof input.basePoint.y !== "number"
+    || (input.method !== "divide" && input.method !== "measure") || typeof input.alignItems !== "boolean") return null;
+  return value as unknown as ArrayPathAssociation;
+}
+
+function planArray(document: KDrawDocumentV1, input: ArrayCommandInput): { sources: CadEntity[]; placements: ArrayPlacement[] } {
+  assertPoint(input.basePoint, "ARRAY base point");
+  const sources = selectedEntities(document, input.targetHandles);
+  if (input.command === "ARRAYRECT") return { sources, placements: rectangularPlacements(input) };
+  if (input.command === "ARRAYPOLAR") return { sources, placements: polarPlacements(input) };
+  return { sources, placements: pathPlacements(document, input) };
+}
+
+export function prepareArrayCommand(document: KDrawDocumentV1, input: ArrayCommandInput): PreparedArrayCommand {
+  const { sources, placements } = planArray(document, input);
+  const handles = allocateEntityHandles(document, placements.length * sources.length);
+  const associative = input.command === "ARRAYPATH" && (input.associative ?? true);
+  const requestedAssociationId = input.command === "ARRAYPATH" ? input.associationId?.trim() : undefined;
+  if (associative && requestedAssociationId && document.entities.some((entity) => readArrayPathAssociation(entity)?.associationId === requestedAssociationId)) {
+    throw new ArrayCommandInputError("INVALID_INPUT", `Associative ARRAYPATH ${requestedAssociationId} already exists.`);
+  }
+  const associationId = associative ? (requestedAssociationId || `ARRAYPATH-${handles[0]!}`) : undefined;
   const entities: CadEntity[] = [];
   let handleIndex = 0;
   for (const placement of placements) for (const source of sources) {
-    entities.push(transformedCopy(source, handles[handleIndex++]!, placement.delta, placement.rotation));
+    let entity = transformedCopy(source, handles[handleIndex++]!, placement.delta, placement.rotation);
+    if (input.command === "ARRAYPATH" && associationId) {
+      entity = withPathAssociation(entity, {
+        version: 1,
+        associationId,
+        sourceHandle: source.handle,
+        pathHandle: input.pathHandle,
+        childKey: childKey(source.handle, placement),
+        input: associationInput(input),
+      });
+    }
+    entities.push(entity);
   }
+  const itemCount = input.command === "ARRAYRECT" ? input.rows * input.columns
+    : input.command === "ARRAYPOLAR" ? input.items * (input.rows ?? 1)
+      : placements.length;
   return {
     commandId: input.command,
     changes: entities.map((entity) => ({ type: "put", entity })),
     sourceHandles: sources.map((entity) => entity.handle),
     resultHandles: entities.map((entity) => entity.handle),
     createdHandles: entities.map((entity) => entity.handle),
-    itemCount: placements.length + (input.command === "ARRAYPATH" ? 0 : 1),
+    itemCount,
+    associative,
+    ...(associationId ? { associationId } : {}),
   };
+}
+
+export interface RefreshedArrayPathCommand {
+  commandId: "ARRAYPATH_REFRESH";
+  changes: EntityChange[];
+  associationIds: string[];
+  resultHandles: string[];
+  createdHandles: string[];
+  deletedHandles: string[];
+}
+
+export type ArrayPathPropertyPatch = Partial<Omit<PathArrayInput, "command" | "targetHandles" | "associationId">>;
+
+/** Rebuilds one associative ARRAYPATH after a Properties edit while retaining every still-addressable child handle. */
+export function prepareArrayPathPropertyUpdate(
+  document: KDrawDocumentV1,
+  associationId: string,
+  patch: ArrayPathPropertyPatch,
+): RefreshedArrayPathCommand {
+  const group = document.entities.flatMap((entity) => {
+    const association = readArrayPathAssociation(entity);
+    return association?.associationId === associationId ? [{ entity, association }] : [];
+  });
+  if (group.length === 0) throw new ArrayCommandInputError("ENTITY_NOT_FOUND", `Associative ARRAYPATH ${associationId} does not exist.`);
+  const first = group[0]!.association;
+  const sourceHandles = [...new Set(group.map(({ association }) => association.sourceHandle))].sort();
+  const input: PathArrayInput = {
+    ...first.input,
+    ...structuredClone(patch),
+    command: "ARRAYPATH",
+    targetHandles: sourceHandles,
+    associationId,
+    associative: true,
+  };
+  const { sources, placements } = planArray(document, input);
+  const existing = new Map(group.map(({ entity, association }) => [association.childKey, entity]));
+  const desired = placements.flatMap((placement) => sources.map((source) => ({ placement, source, key: childKey(source.handle, placement) })));
+  const allocated = allocateEntityHandles(document, desired.filter(({ key }) => !existing.has(key)).length);
+  const changes: EntityChange[] = [];
+  const resultHandles: string[] = [];
+  const createdHandles: string[] = [];
+  const deletedHandles: string[] = [];
+  let allocatedIndex = 0;
+  for (const { placement, source, key } of desired) {
+    const prior = existing.get(key);
+    const handle = prior?.handle ?? allocated[allocatedIndex++]!;
+    const entity = withPathAssociation(transformedCopy(source, handle, placement.delta, placement.rotation), {
+      version: 1,
+      associationId,
+      sourceHandle: source.handle,
+      pathHandle: input.pathHandle,
+      childKey: key,
+      input: associationInput(input),
+    });
+    changes.push({ type: "put", entity });
+    resultHandles.push(handle);
+    if (!prior) createdHandles.push(handle);
+    existing.delete(key);
+  }
+  for (const stale of existing.values()) {
+    changes.push({ type: "delete", handle: stale.handle });
+    deletedHandles.push(stale.handle);
+  }
+  return { commandId: "ARRAYPATH_REFRESH", changes, associationIds: [associationId], resultHandles, createdHandles, deletedHandles };
+}
+
+export function refreshAssociativePathArrays(document: KDrawDocumentV1, changedHandles: readonly string[]): RefreshedArrayPathCommand {
+  const changed = new Set(changedHandles);
+  const groups = new Map<string, Array<{ entity: CadEntity; association: ArrayPathAssociation }>>();
+  for (const entity of document.entities) {
+    const association = readArrayPathAssociation(entity);
+    if (!association || (!changed.has(association.sourceHandle) && !changed.has(association.pathHandle))) continue;
+    const group = groups.get(association.associationId) ?? [];
+    group.push({ entity, association });
+    groups.set(association.associationId, group);
+  }
+  const changes: EntityChange[] = [];
+  const resultHandles: string[] = [];
+  const createdHandles: string[] = [];
+  const deletedHandles: string[] = [];
+  const associationIds = [...groups.keys()].sort();
+  let allocationDocument = document;
+  for (const associationId of associationIds) {
+    const group = groups.get(associationId)!;
+    const first = group[0]!.association;
+    const sourceHandles = [...new Set(group.map(({ association }) => association.sourceHandle))].sort();
+    const input: PathArrayInput = { ...first.input, targetHandles: sourceHandles, associationId, associative: true };
+    const { sources, placements } = planArray(document, input);
+    const existing = new Map(group.map(({ entity, association }) => [association.childKey, entity]));
+    const desired = placements.flatMap((placement) => sources.map((source) => ({ placement, source, key: childKey(source.handle, placement) })));
+    const missingCount = desired.filter(({ key }) => !existing.has(key)).length;
+    const allocated = allocateEntityHandles(allocationDocument, missingCount);
+    let allocatedIndex = 0;
+    for (const { placement, source, key } of desired) {
+      const prior = existing.get(key);
+      const handle = prior?.handle ?? allocated[allocatedIndex++]!;
+      let entity = transformedCopy(source, handle, placement.delta, placement.rotation);
+      entity = withPathAssociation(entity, {
+        version: 1,
+        associationId,
+        sourceHandle: source.handle,
+        pathHandle: input.pathHandle,
+        childKey: key,
+        input: associationInput(input),
+      });
+      changes.push({ type: "put", entity });
+      resultHandles.push(handle);
+      if (!prior) createdHandles.push(handle);
+      existing.delete(key);
+    }
+    for (const stale of existing.values()) {
+      changes.push({ type: "delete", handle: stale.handle });
+      deletedHandles.push(stale.handle);
+    }
+    if (allocated.length > 0) {
+      const reservationSource = group[0]!.entity;
+      allocationDocument = {
+        ...allocationDocument,
+        entities: [...allocationDocument.entities, ...allocated.map((handle) => ({ ...reservationSource, handle }) as CadEntity)],
+      };
+    }
+  }
+  return { commandId: "ARRAYPATH_REFRESH", changes, associationIds, resultHandles, createdHandles, deletedHandles };
 }
