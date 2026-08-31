@@ -59,4 +59,17 @@ describe("versioned IndexedDB persistence", () => {
     firstTab.close();
     secondTab.close();
   });
+
+  it("stores PDF attachment bytes append-only and verifies the hash on read-back", async () => {
+    const database = new KDrawIndexedDb(new IDBFactory());
+    const bytes = new TextEncoder().encode("%PDF-1.4\n%%EOF\n");
+    const digest = await crypto.subtle.digest("SHA-256", bytes);
+    const sha256 = [...new Uint8Array(digest)].map((value) => value.toString(16).padStart(2, "0")).join("");
+    const attachment = { id: "pdf-1", mediaType: "application/pdf", sha256, fileName: "base.pdf", role: "underlay" as const };
+    await database.saveAttachment("local", attachment, bytes);
+    expect(await database.loadAttachment("local", "pdf-1")).toEqual({ attachment, bytes });
+    await expect(database.saveAttachment("local", attachment, bytes)).rejects.toThrow();
+    await expect(database.saveAttachment("local", { ...attachment, id: "pdf-2", sha256: "0".repeat(64) }, bytes)).rejects.toThrow(/checksum mismatch/u);
+    database.close();
+  });
 });
