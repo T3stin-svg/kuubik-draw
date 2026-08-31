@@ -225,3 +225,36 @@ global Undo/Redo step. The F-003 option matrix has core golden/property/mutation
 production DXF export/import read-back, but remains an uncertified extension until
 the AutoCAD 2024.1.2 option matrix and Kuubik browser workflow are run live. No parity
 score or certification record was changed by this lane.
+
+## Wave 9 exports (F-004 complete CIRCLE matrix)
+
+From `packages/cad-core/src/circle-command.ts`:
+
+- `prepareCompleteCircleCommand`
+- `solveCircleTangentConstruction`
+- `CircleCommandInputError`
+- `CompleteCircleCommandInput`, `CompleteCircleConstruction`,
+  `CircleTangentConstraint`, `CircleTangentLine`, `CircleTangentCircle`,
+  `CircleSolutionSelection`, `CircleTangentSolution`, and
+  `PreparedCompleteCircleCommand`
+
+The integration owner should migrate the existing CIRCLE parser to this typed kernel
+to retain Center-Radius, Center-Diameter, 2P, and 3P while adding Tan-Tan-Radius and
+Tan-Tan-Tan. Tangent constraints are exact infinite lines or circles. TTR covers
+line/line, line/circle, and circle/circle pairs. TTT covers three lines, two lines and
+a circle, one line and two circles, and three circles through enumerated signed
+tangency systems.
+
+Every finite candidate includes its center, radius, ordered tangent points, and side
+signature. A unique result may commit directly. Multiple results require constraint
+pick points, a near-center point, or an explicit deterministic candidate index;
+equidistant or missing picks fail with `AMBIGUOUS_TANGENT_SOLUTION`. Empty,
+concentric, parallel, collinear, non-finite, and zero-radius degeneracies fail before
+an `EntityChange` exists.
+
+Preview and commit must call `prepareCompleteCircleCommand` with the same immutable
+input and commit its single returned change once through `CadSession`. The F-004
+matrix has golden/property/mutation coverage and production DXF export/import
+read-back for exact handle, layer, center, radius, appearance, linetype scale, and
+thickness. It remains an uncertified extension until the AutoCAD 2024.1.2 tangent
+matrix and Kuubik browser workflow are run live; parity scores were not changed.

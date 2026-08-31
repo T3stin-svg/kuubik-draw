@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "wave": "f004-complete-circle-matrix",
+  "rows": ["F-004"],
+  "status": "implemented-kernel-and-dxf-readback-not-browser-or-autocad-certified",
+  "sourceAuthority": "C:/Users/Olav/Downloads/kuubik-draw-reio-scope-v1.json",
+  "implemented": {
+    "F-004": [
+      "Center-Radius",
+      "Center-Diameter",
+      "2P diameter",
+      "3P circumcircle",
+      "Tan-Tan-Radius for line/line, line/circle and circle/circle",
+      "Tan-Tan-Tan for three lines and all mixed line/circle triples",
+      "enumerated signed internal and external tangency candidates",
+      "ordered exact tangent points",
+      "pick-point, near-center and explicit-index solution selection",
+      "fail-closed ambiguous and no-solution outcomes",
+      "one prepared global Commit, Undo and Redo operation"
+    ]
+  },
+  "invariants": {
+    "previewEqualsCommit": "preview and commit both call prepareCompleteCircleCommand with the same immutable input",
+    "atomicUndoRedo": "the selected circle is one CadSession operation",
+    "exactIdentityAndProperties": "handle, layer, appearance and extension data are cloned into the prepared circle",
+    "ambiguityDoesNotGuess": "multiple or equidistant solutions require an explicit geometric pick strategy",
+    "degeneracyIsAtomic": "invalid identity, points, radii, collinearity, tangent constraints or selections throw before changes exist",
+    "dxfReadback": "production export/import preserves TTT center, radius, handle, layer, colour, lineweight, linetype scale and thickness"
+  },
+  "tests": {
+    "unitGoldenPropertyAtomic": "packages/cad-core/test/f004-circle-command.test.ts",
+    "mutation": "packages/cad-core/test/f004-circle-mutation-proven.test.ts",
+    "roundtrip": "packages/cad-dxf/test/f004-circle-tangent-roundtrip.test.ts",
+    "targetedResult": "3 files passed; 15 tests passed; 64 deterministic TTR and TTT property cases inside the property test",
+    "fullVitestResult": "147 files passed; 781 tests passed",
+    "dxfGateResult": "18 files passed; 53 tests passed",
+    "pdfGateResult": "7 files passed; 22 tests passed",
+    "typecheckLintBuild": "PASS",
+    "publicTree": "PASS; 1451 files scanned",
+    "license": "PASS; 119 installed packages audited",
+    "diffCheck": "PASS"
+  },
+  "knownLimits": [
+    "tangent line constraints are treated as infinite AutoCAD curve extensions rather than bounded segments",
+    "the complete option parser is not wired into the shared registry or browser shell in this file-ownership lane"
+  ],
+  "certificationGaps": [
+    "AutoCAD 2024.1.2 live CIRCLE tangent-matrix comparison not run",
+    "Kuubik browser CIRCLE tangent workflow not run",
+    "F-004 parity score and certification records were intentionally not changed"
+  ]
+}
