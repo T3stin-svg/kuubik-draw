@@ -5,6 +5,7 @@ import { expect, test, type Download, type Page } from "@playwright/test";
 import { createEmptyDocument, createPaperLayout } from "@kuubik/cad-core";
 import type { KDrawDocumentV1 } from "@kuubik/cad-schema";
 import { openLayoutTools } from "./helpers/layout-tools.js";
+import { seedKDrawDocument } from "./helpers/indexed-db.js";
 
 type RecordedOperation = { commandId: string; baseRevision: number };
 
@@ -47,31 +48,13 @@ function plotStyleDocument(): KDrawDocumentV1 {
 }
 
 async function seedLocalDocument(page: Page, document: KDrawDocumentV1): Promise<void> {
-  await page.goto("/d/local");
-  await page.evaluate(async (value) => {
-    const database = await new Promise<IDBDatabase>((resolveOpen, rejectOpen) => {
-      const request = indexedDB.open("kuubik-draw", 1);
-      request.onsuccess = () => resolveOpen(request.result);
-      request.onerror = () => rejectOpen(request.error);
-    });
-    await new Promise<void>((resolveWrite, rejectWrite) => {
-      const transaction = database.transaction(["documents", "operations", "snapshots"], "readwrite");
-      transaction.objectStore("documents").put(value);
-      transaction.objectStore("operations").clear();
-      transaction.objectStore("snapshots").clear();
-      transaction.oncomplete = () => resolveWrite();
-      transaction.onerror = () => rejectWrite(transaction.error);
-    });
-    database.close();
-  }, document);
-  await page.reload();
-  await expect(page.getByText("Taastatud revision 0")).toBeVisible();
+  await seedKDrawDocument(page, document);
 }
 
 async function readDocument(page: Page): Promise<KDrawDocumentV1> {
   return page.evaluate(async () => {
     const database = await new Promise<IDBDatabase>((resolveOpen, rejectOpen) => {
-      const request = indexedDB.open("kuubik-draw", 1);
+      const request = indexedDB.open("kuubik-draw");
       request.onsuccess = () => resolveOpen(request.result);
       request.onerror = () => rejectOpen(request.error);
     });
@@ -88,7 +71,7 @@ async function readDocument(page: Page): Promise<KDrawDocumentV1> {
 async function readOperations(page: Page): Promise<RecordedOperation[]> {
   return page.evaluate(async () => {
     const database = await new Promise<IDBDatabase>((resolveOpen, rejectOpen) => {
-      const request = indexedDB.open("kuubik-draw", 1);
+      const request = indexedDB.open("kuubik-draw");
       request.onsuccess = () => resolveOpen(request.result);
       request.onerror = () => rejectOpen(request.error);
     });
@@ -178,7 +161,7 @@ test("F-103 applies/persists plot profiles, lineweights and transparency in prev
   await page.clock.setFixedTime("2026-08-28T00:00:00.000Z");
   await page.setViewportSize({ width: 1920, height: 1080 });
   await seedLocalDocument(page, plotStyleDocument());
-  await page.getByRole("button", { name: "F103 PLOT STYLE", exact: true }).click();
+  await page.getByRole("tab", { name: "F103 PLOT STYLE", exact: true }).click();
   await openLayoutTools(page);
   const sheet = page.getByTestId("paper-space-sheet");
   await expect(sheet).toHaveAttribute("data-plot-profile", "monochrome");
@@ -191,7 +174,7 @@ test("F-103 applies/persists plot profiles, lineweights and transparency in prev
   expect(initialPixels.counts.trueColorBlueRange).toBeGreaterThan(0);
 
   await setPlotStyle(page, "color", false, false);
-  await expect.poll(async () => (await readDocument(page)).revision).toBe(1);
+  await expect.poll(async () => (await readDocument(page)).revision).toBe(2);
   await expect(sheet).toHaveAttribute("data-plot-profile", "color");
   await expect(sheet).toHaveAttribute("data-plot-lineweights", "false");
   await expect(sheet).toHaveAttribute("data-plot-transparency", "false");
@@ -211,14 +194,14 @@ test("F-103 applies/persists plot profiles, lineweights and transparency in prev
   expect(colorNoLineweightPdfOperators).toMatchObject({ version: "1.4", pages: 1, eof: true, red: true, green: true, trueColorBlue: true, hairline: true, alpha60: false, solidFill: true });
 
   await page.reload();
-  await expect(page.getByText("Taastatud revision 1")).toBeVisible();
-  await page.getByRole("button", { name: "F103 PLOT STYLE", exact: true }).click();
+  await expect(page.getByTestId("recovery-panel").getByText("Pärast katkestust taastati revisjon 2.", { exact: true })).toBeVisible();
+  await page.getByRole("tab", { name: "F103 PLOT STYLE", exact: true }).click();
   await openLayoutTools(page);
   await expect(sheet).toHaveAttribute("data-plot-profile", "color");
   await expect(sheet).toHaveAttribute("data-plot-lineweights", "false");
 
   await setPlotStyle(page, "grayscale", true, true);
-  await expect.poll(async () => (await readDocument(page)).revision).toBe(2);
+  await expect.poll(async () => (await readDocument(page)).revision).toBe(3);
   const grayscalePixels = await canvasPixels(page);
   expect(grayscalePixels.counts.grayRedAlpha153).toBeGreaterThan(1_000);
   expect(grayscalePixels.counts.grayGreenAny).toBeGreaterThan(0);
@@ -230,7 +213,7 @@ test("F-103 applies/persists plot profiles, lineweights and transparency in prev
   expect(pdfOperators(grayscalePdf.bytes)).toMatchObject({ grayRed: true, grayGreen: true, trueColorBlue: true, fullLineweight: true, hairline: true, alpha60: true });
 
   await setPlotStyle(page, "color", true, true);
-  await expect.poll(async () => (await readDocument(page)).revision).toBe(3);
+  await expect.poll(async () => (await readDocument(page)).revision).toBe(4);
   const colorAlphaPixels = await canvasPixels(page);
   expect(colorAlphaPixels.counts.redOpaque).toBeGreaterThan(0);
   expect(colorAlphaPixels.counts.redAlpha153).toBeGreaterThan(1_000);
@@ -249,7 +232,7 @@ test("F-103 applies/persists plot profiles, lineweights and transparency in prev
   await expect(sheet).toHaveAttribute("data-plot-profile", "color");
 
   await setPlotStyle(page, "monochrome", true, true);
-  await expect.poll(async () => (await readDocument(page)).revision).toBe(6);
+  await expect.poll(async () => (await readDocument(page)).revision).toBe(7);
   const monochromePixels = await canvasPixels(page);
   expect(monochromePixels.counts.blackOpaque).toBeGreaterThan(0);
   expect(monochromePixels.counts.blackAlpha153).toBeGreaterThan(1_000);
@@ -264,11 +247,11 @@ test("F-103 applies/persists plot profiles, lineweights and transparency in prev
   expect(kdraw.bytes.toString("utf8").startsWith("KDRAW1\n")).toBe(true);
 
   const operations = await readOperations(page);
-  expect(operations.map((operation) => operation.commandId)).toEqual(["PAGESETUP", "PAGESETUP", "PAGESETUP", "UNDO", "PAGESETUP", "PAGESETUP"]);
-  expect(operations.map((operation) => operation.baseRevision)).toEqual([0, 1, 2, 3, 4, 5]);
+  expect(operations.map((operation) => operation.commandId)).toEqual(["LAYOUT_ACTIVATE", "PAGESETUP", "PAGESETUP", "PAGESETUP", "UNDO", "PAGESETUP", "PAGESETUP"]);
+  expect(operations.map((operation) => operation.baseRevision)).toEqual([0, 1, 2, 3, 4, 5, 6]);
   await page.reload();
-  await expect(page.getByText("Taastatud revision 6")).toBeVisible();
-  await page.getByRole("button", { name: "F103 PLOT STYLE", exact: true }).click();
+  await expect(page.getByTestId("recovery-panel").getByText("Pärast katkestust taastati revisjon 7.", { exact: true })).toBeVisible();
+  await page.getByRole("tab", { name: "F103 PLOT STYLE", exact: true }).click();
   await expect(sheet).toHaveAttribute("data-plot-profile", "monochrome");
   await expect(sheet).toHaveAttribute("data-plot-lineweights", "true");
   await expect(sheet).toHaveAttribute("data-plot-transparency", "true");

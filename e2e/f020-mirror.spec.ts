@@ -11,6 +11,8 @@ import {
   f020ExpectedSourceHandles,
   f020StandardDocument,
 } from "../parity/fixtures/f020-standard-fixture.mjs";
+import { clearModelSelection } from "./helpers/selection.js";
+import { seedKDrawDocument } from "./helpers/indexed-db.js";
 
 type RecordedOperation = { commandId: string; targetHandles: string[]; resultHandles: string[]; args: unknown };
 
@@ -22,32 +24,13 @@ function collectErrors(page: import("@playwright/test").Page): string[] {
 }
 
 async function seedLocalDocument(page: import("@playwright/test").Page): Promise<void> {
-  await page.goto("/d/local");
-  await page.evaluate(async (document) => {
-    const database = await new Promise<IDBDatabase>((resolveOpen, rejectOpen) => {
-      const request = indexedDB.open("kuubik-draw", 1);
-      request.onsuccess = () => resolveOpen(request.result);
-      request.onerror = () => rejectOpen(request.error);
-    });
-    await new Promise<void>((resolveWrite, rejectWrite) => {
-      const transaction = database.transaction(["documents", "operations", "snapshots"], "readwrite");
-      transaction.objectStore("documents").put(document);
-      transaction.objectStore("operations").clear();
-      transaction.objectStore("snapshots").clear();
-      transaction.oncomplete = () => resolveWrite();
-      transaction.onerror = () => rejectWrite(transaction.error);
-      transaction.onabort = () => rejectWrite(transaction.error);
-    });
-    database.close();
-  }, structuredClone(f020StandardDocument));
-  await page.reload();
-  await expect(page.getByText("Taastatud revision 0")).toBeVisible();
+  await seedKDrawDocument(page, f020StandardDocument);
 }
 
 async function readDocument(page: import("@playwright/test").Page): Promise<typeof f020StandardDocument> {
   return page.evaluate(async () => {
     const database = await new Promise<IDBDatabase>((resolveOpen, rejectOpen) => {
-      const request = indexedDB.open("kuubik-draw", 1);
+      const request = indexedDB.open("kuubik-draw");
       request.onsuccess = () => resolveOpen(request.result);
       request.onerror = () => rejectOpen(request.error);
     });
@@ -64,7 +47,7 @@ async function readDocument(page: import("@playwright/test").Page): Promise<type
 async function readOperations(page: import("@playwright/test").Page): Promise<RecordedOperation[]> {
   return page.evaluate(async () => {
     const database = await new Promise<IDBDatabase>((resolveOpen, rejectOpen) => {
-      const request = indexedDB.open("kuubik-draw", 1);
+      const request = indexedDB.open("kuubik-draw");
       request.onsuccess = () => resolveOpen(request.result);
       request.onerror = () => rejectOpen(request.error);
     });
@@ -100,6 +83,7 @@ async function captureJson(name: string, value: unknown): Promise<void> {
 test("F-020 MIRROR preselection defaults to keeping sources, exports DXF and undoes atomically", async ({ page }) => {
   const consoleErrors = collectErrors(page);
   await page.goto("/d/local");
+  await expect(page.getByText(/DocumentLiveOrchestrator/u)).toBeVisible();
   await page.getByRole("button", { name: "LINE test" }).click();
   await page.getByRole("button", { name: "Vali kõik" }).click();
   await page.getByLabel("MIRROR esimene punkt").fill("100,-100");
@@ -120,10 +104,16 @@ test("F-020 MIRROR preselection defaults to keeping sources, exports DXF and und
 test("F-020 MIRROR postselection supports erase Yes and rejects a mixed locked-layer target", async ({ page }) => {
   const consoleErrors = collectErrors(page);
   await page.goto("/d/local");
+  await expect(page.getByText(/DocumentLiveOrchestrator/u)).toBeVisible();
   await page.getByRole("button", { name: "LINE test" }).click();
-  await page.getByRole("button", { name: "Uus kiht" }).click();
+  await expect(page.getByText("LINE runtime salvestatud, revision 1")).toBeVisible();
+  await page.getByRole("button", { name: "Uus kiht", exact: true }).click();
+  await expect(page.getByText("Layer 1 loodud typed Layer Manageri kaudu")).toBeVisible();
   await page.getByRole("button", { name: "LINE test" }).click();
+  await expect(page.getByText("LINE runtime salvestatud, revision 3")).toBeVisible();
   await page.getByRole("button", { name: "Lukusta aktiivne" }).click();
+  await expect(page.getByText("Layer 1 lukustatud")).toBeVisible();
+  await clearModelSelection(page);
   await page.getByRole("button", { name: "MIRROR", exact: true }).click();
   await expect(page.getByText("MIRROR: vali objektid, seejärel kinnita valik ja peegeldusjoon")).toBeVisible();
   await page.getByRole("button", { name: "Vali kõik" }).click();
@@ -136,12 +126,12 @@ test("F-020 MIRROR postselection supports erase Yes and rejects a mixed locked-l
   await page.getByRole("button", { name: "MIRROR", exact: true }).click();
   await expect(page.getByText("1 objekti peegeldatud; lähteobjektid kustutatud; 1 jäi muutmata")).toBeVisible();
   expect(JSON.parse((await page.getByTestId("mirror-rejected").getAttribute("data-rejected")) ?? "null")).toEqual([
-    { handle: "12", reason: "locked-layer" },
+    { handle: "11", reason: "locked-layer" },
   ]);
   const mirrored = await downloadedDxf(page, "F-020-browser-erased-locked.dxf");
   expect(mirrored?.entities.map((entity) => ({ handle: entity.handle, layer: entity.layer, vertices: entity.vertices }))).toEqual([
     { handle: "10", layer: "0", vertices: [{ x: 190, y: 10, z: 0 }, { x: 20, y: 90, z: 0 }] },
-    { handle: "12", layer: "Layer 1", vertices: [{ x: 10, y: 20, z: 0 }, { x: 180, y: 90, z: 0 }] },
+    { handle: "11", layer: "Layer 1", vertices: [{ x: 10, y: 20, z: 0 }, { x: 180, y: 90, z: 0 }] },
   ]);
   expect(consoleErrors).toEqual([]);
 });
@@ -149,7 +139,10 @@ test("F-020 MIRROR postselection supports erase Yes and rejects a mixed locked-l
 test("F-020 MIRROR command-first rejection returns to idle without mutation", async ({ page }) => {
   const consoleErrors = collectErrors(page);
   await page.goto("/d/local");
+  await expect(page.getByText(/DocumentLiveOrchestrator/u)).toBeVisible();
   await page.getByRole("button", { name: "LINE test" }).click();
+  await expect(page.getByText("LINE runtime salvestatud, revision 1")).toBeVisible();
+  await clearModelSelection(page);
   await page.getByRole("button", { name: "MIRROR", exact: true }).click();
   await expect(page.getByText("MIRROR: vali objektid, seejärel kinnita valik ja peegeldusjoon")).toBeVisible();
   await page.getByRole("button", { name: "Vali kõik" }).click();

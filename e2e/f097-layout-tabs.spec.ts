@@ -5,6 +5,7 @@ import { expect, test } from "@playwright/test";
 import type { KDrawDocumentV1 } from "@kuubik/cad-schema";
 import { f016StandardDocument } from "../parity/fixtures/f016-standard-fixture.mjs";
 import { openLayoutTools } from "./helpers/layout-tools.js";
+import { seedKDrawDocument } from "./helpers/indexed-db.js";
 
 type RecordedOperation = { opId: string; commandId: string; baseRevision: number; args: Record<string, unknown>; targetHandles: string[]; resultHandles: string[] };
 
@@ -42,31 +43,13 @@ function layoutDocument(): KDrawDocumentV1 {
 }
 
 async function seedLocalDocument(page: import("@playwright/test").Page, document: KDrawDocumentV1): Promise<void> {
-  await page.goto("/d/local");
-  await page.evaluate(async (value) => {
-    const database = await new Promise<IDBDatabase>((resolveOpen, rejectOpen) => {
-      const request = indexedDB.open("kuubik-draw", 1);
-      request.onsuccess = () => resolveOpen(request.result);
-      request.onerror = () => rejectOpen(request.error);
-    });
-    await new Promise<void>((resolveWrite, rejectWrite) => {
-      const transaction = database.transaction(["documents", "operations", "snapshots"], "readwrite");
-      transaction.objectStore("documents").put(value);
-      transaction.objectStore("operations").clear();
-      transaction.objectStore("snapshots").clear();
-      transaction.oncomplete = () => resolveWrite();
-      transaction.onerror = () => rejectWrite(transaction.error);
-    });
-    database.close();
-  }, document);
-  await page.reload();
-  await expect(page.getByText("Taastatud revision 0")).toBeVisible();
+  await seedKDrawDocument(page, document);
 }
 
 async function readDocument(page: import("@playwright/test").Page): Promise<KDrawDocumentV1> {
   return page.evaluate(async () => {
     const database = await new Promise<IDBDatabase>((resolveOpen, rejectOpen) => {
-      const request = indexedDB.open("kuubik-draw", 1);
+      const request = indexedDB.open("kuubik-draw");
       request.onsuccess = () => resolveOpen(request.result);
       request.onerror = () => rejectOpen(request.error);
     });
@@ -83,7 +66,7 @@ async function readDocument(page: import("@playwright/test").Page): Promise<KDra
 async function readOperations(page: import("@playwright/test").Page): Promise<RecordedOperation[]> {
   return page.evaluate(async () => {
     const database = await new Promise<IDBDatabase>((resolveOpen, rejectOpen) => {
-      const request = indexedDB.open("kuubik-draw", 1);
+      const request = indexedDB.open("kuubik-draw");
       request.onsuccess = () => resolveOpen(request.result);
       request.onerror = () => rejectOpen(request.error);
     });
@@ -130,14 +113,14 @@ test("F-097 visible layout strip copies, reorders, deletes, undoes and persists 
   const consoleErrors = collectErrors(page);
   await seedLocalDocument(page, layoutDocument());
 
-  await page.getByRole("button", { name: "F097 PLAN", exact: true }).click();
+  await page.getByRole("tab", { name: "F097 PLAN", exact: true }).click();
   await openLayoutTools(page);
   for (const name of ["LINE test", "RECTANGLE", "Vali kõik", "MOVE", "COPY", "ROTATE", "SCALE", "MIRROR", "OFFSET", "OFFSET Undo", "ERASE"]) {
     await expect(page.getByRole("button", { name, exact: true })).toBeDisabled();
   }
   expect((await readDocument(page)).entities).toEqual([]);
   await page.getByRole("button", { name: "Kopeeri paigutus" }).click();
-  await expect(page.getByRole("button", { name: "F097 PLAN (2)", exact: true })).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByRole("tab", { name: "F097 PLAN (2)", exact: true })).toHaveAttribute("aria-selected", "true");
   let stored = await readDocument(page);
   expect(stored.layouts.map((layout) => layout.name)).toEqual(["Model", "F097 PLAN (2)", "F097 PLAN", "F097 NOTES"]);
   const source = stored.layouts.find((layout) => layout.name === "F097 PLAN")!;
@@ -146,21 +129,21 @@ test("F-097 visible layout strip copies, reorders, deletes, undoes and persists 
   expect(copy.viewports[0]!.id).not.toBe(source.viewports[0]!.id);
   expect(copy.entities![0]!.handle).not.toBe(source.entities![0]!.handle);
 
-  await page.getByRole("button", { name: "F097 NOTES", exact: true }).click();
+  await page.getByRole("tab", { name: "F097 NOTES", exact: true }).click();
   await page.getByRole("button", { name: "Liiguta vasakule" }).click();
   await expect.poll(async () => (await readDocument(page)).layouts.map((layout) => layout.name)).toEqual(["Model", "F097 PLAN (2)", "F097 NOTES", "F097 PLAN"]);
   await page.getByRole("button", { name: "Liiguta vasakule" }).click();
   await expect.poll(async () => (await readDocument(page)).layouts.map((layout) => layout.name)).toEqual(["Model", "F097 NOTES", "F097 PLAN (2)", "F097 PLAN"]);
 
-  await page.getByRole("button", { name: "F097 PLAN (2)", exact: true }).click();
+  await page.getByRole("tab", { name: "F097 PLAN (2)", exact: true }).click();
   page.once("dialog", (dialog) => void dialog.accept());
   await page.getByRole("button", { name: "Kustuta paigutus" }).click();
-  await expect(page.getByRole("button", { name: "F097 PLAN", exact: true })).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByRole("tab", { name: "F097 PLAN", exact: true })).toHaveAttribute("aria-selected", "true");
   expect((await readDocument(page)).layouts.map((layout) => layout.name)).toEqual(["Model", "F097 NOTES", "F097 PLAN"]);
 
   await page.getByRole("button", { name: "UNDO", exact: true }).click();
   expect((await readDocument(page)).layouts.map((layout) => layout.name)).toEqual(["Model", "F097 NOTES", "F097 PLAN (2)", "F097 PLAN"]);
-  await page.getByRole("button", { name: "F097 PLAN (2)", exact: true }).click();
+  await page.getByRole("tab", { name: "F097 PLAN (2)", exact: true }).click();
   page.once("dialog", (dialog) => void dialog.accept());
   await page.getByRole("button", { name: "Kustuta paigutus" }).click();
 
@@ -170,12 +153,12 @@ test("F-097 visible layout strip copies, reorders, deletes, undoes and persists 
   stored = await readDocument(page);
   const operations = await readOperations(page);
   expect(operations.map((operation) => operation.commandId)).toEqual([
-    "LAYOUT_COPY", "LAYOUT_REORDER", "LAYOUT_REORDER", "LAYOUT_DELETE", "UNDO", "LAYOUT_DELETE",
+    "LAYOUT_ACTIVATE", "LAYOUT_COPY", "LAYOUT_ACTIVATE", "LAYOUT_REORDER", "LAYOUT_REORDER", "LAYOUT_ACTIVATE", "LAYOUT_DELETE", "UNDO", "LAYOUT_DELETE",
   ]);
-  expect(operations.map((operation) => operation.baseRevision)).toEqual([0, 1, 2, 3, 4, 5]);
+  expect(operations.map((operation) => operation.baseRevision)).toEqual([0, 1, 2, 3, 4, 5, 6, 7, 8]);
 
   await page.reload();
-  await expect(page.getByText("Taastatud revision 6")).toBeVisible();
+  await expect(page.getByTestId("recovery-panel").getByText("Pärast katkestust taastati revisjon 9.", { exact: true })).toBeVisible();
   expect((await readDocument(page)).layouts.map((layout) => layout.name)).toEqual(["Model", "F097 NOTES", "F097 PLAN"]);
   await captureJson("F-097-browser-layout-tabs.json", {
     rowId: "F-097", status: "PASS", exportedSha256: exported.sha256,
@@ -190,13 +173,13 @@ test("F-097 creates and renames paper tabs while rejecting case-insensitive dupl
   empty.layouts = [empty.layouts[0]!];
   await seedLocalDocument(page, empty);
   await page.getByRole("button", { name: "Lisa paigutus" }).click();
-  await expect(page.getByRole("button", { name: "Layout 1", exact: true })).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByRole("tab", { name: "Layout 1 (2)", exact: true })).toHaveAttribute("aria-selected", "true");
   await openLayoutTools(page);
   await page.getByLabel("Paigutuse nimi").fill("F097 PLAN");
   await page.getByRole("button", { name: "Nimeta paigutus" }).click();
-  await expect(page.getByRole("button", { name: "F097 PLAN", exact: true })).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByRole("tab", { name: "F097 PLAN", exact: true })).toHaveAttribute("aria-selected", "true");
   await page.getByRole("button", { name: "Lisa paigutus" }).click();
-  await expect(page.getByRole("button", { name: "Layout 1", exact: true })).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByRole("tab", { name: "Layout 1 (2)", exact: true })).toHaveAttribute("aria-selected", "true");
   await page.getByLabel("Paigutuse nimi").fill("f097 plan");
   await page.getByRole("button", { name: "Nimeta paigutus" }).click();
   const duplicateError = page.getByText(/LAYOUT viga: Layout name already exists/);
@@ -205,19 +188,19 @@ test("F-097 creates and renames paper tabs while rejecting case-insensitive dupl
   const beforeUndo = await readDocument(page);
   const operationsBeforeUndo = await readOperations(page);
   expect(beforeUndo).toMatchObject({ revision: 3 });
-  expect(beforeUndo.layouts.map((layout) => layout.name)).toEqual(["Model", "F097 PLAN", "Layout 1"]);
+  expect(beforeUndo.layouts.map((layout) => layout.name)).toEqual(["Model", "Layout 1", "F097 PLAN", "Layout 1 (2)"]);
   expect(operationsBeforeUndo.map((operation) => operation.commandId)).toEqual(["LAYOUT_CREATE", "LAYOUT_RENAME", "LAYOUT_CREATE"]);
 
   await page.getByRole("button", { name: "UNDO", exact: true }).click();
-  await expect.poll(async () => (await readDocument(page)).layouts.map((layout) => layout.name)).toEqual(["Model", "F097 PLAN"]);
+  await expect.poll(async () => (await readDocument(page)).layouts.map((layout) => layout.name)).toEqual(["Model", "Layout 1", "F097 PLAN"]);
   await page.getByRole("button", { name: "UNDO", exact: true }).click();
-  await expect.poll(async () => (await readDocument(page)).layouts.map((layout) => layout.name)).toEqual(["Model", "Layout 1"]);
+  await expect.poll(async () => (await readDocument(page)).layouts.map((layout) => layout.name)).toEqual(["Model", "Layout 1", "Layout 1 (2)"]);
   const afterUndo = await readDocument(page);
 
   await page.getByRole("button", { name: "REDO", exact: true }).click();
-  await expect.poll(async () => (await readDocument(page)).layouts.map((layout) => layout.name)).toEqual(["Model", "F097 PLAN"]);
+  await expect.poll(async () => (await readDocument(page)).layouts.map((layout) => layout.name)).toEqual(["Model", "Layout 1", "F097 PLAN"]);
   await page.getByRole("button", { name: "REDO", exact: true }).click();
-  await expect.poll(async () => (await readDocument(page)).layouts.map((layout) => layout.name)).toEqual(["Model", "F097 PLAN", "Layout 1"]);
+  await expect.poll(async () => (await readDocument(page)).layouts.map((layout) => layout.name)).toEqual(["Model", "Layout 1", "F097 PLAN", "Layout 1 (2)"]);
   const afterRedo = await readDocument(page);
   const operations = await readOperations(page);
   expect(afterUndo.revision).toBe(5);
@@ -239,39 +222,43 @@ test("F-097 creates and renames paper tabs while rejecting case-insensitive dupl
   expect(consoleErrors).toEqual([]);
 });
 
-test("F-097 PAPER blocks undo and redo of hidden Model operations while preserving layout undo", async ({ page }) => {
+test("F-097 PAPER keeps layout activation ahead of hidden Model undo history", async ({ page }) => {
   const consoleErrors = collectErrors(page);
   await seedLocalDocument(page, layoutDocument());
-  await page.getByRole("button", { name: "Model", exact: true }).click();
+  await page.getByRole("tab", { name: "Model", exact: true }).click();
   await page.getByRole("button", { name: "LINE test", exact: true }).click();
-  const beforeBlockedUndo = await readDocument(page);
-  expect(beforeBlockedUndo).toMatchObject({ revision: 1 });
-  expect(beforeBlockedUndo.entities).toHaveLength(1);
+  await expect(page.getByText("LINE runtime salvestatud, revision 1")).toBeVisible();
+  const beforeLayoutActivation = await readDocument(page);
+  expect(beforeLayoutActivation).toMatchObject({ revision: 1 });
+  expect(beforeLayoutActivation.entities).toHaveLength(1);
 
-  await page.getByRole("button", { name: "F097 PLAN", exact: true }).click();
-  await expect(page.getByRole("button", { name: "UNDO", exact: true })).toBeDisabled();
-  const afterBlockedUndo = await readDocument(page);
-  expect(afterBlockedUndo).toEqual(beforeBlockedUndo);
+  await page.getByRole("tab", { name: "F097 PLAN", exact: true }).click();
+  await expect.poll(async () => (await readDocument(page)).revision).toBe(2);
+  await expect(page.getByRole("button", { name: "UNDO", exact: true })).toBeEnabled();
+  await page.getByRole("button", { name: "UNDO", exact: true }).click();
+  await expect.poll(async () => (await readDocument(page)).revision).toBe(3);
+  const afterLayoutUndo = await readDocument(page);
+  expect(afterLayoutUndo.revision).toBe(3);
+  expect(afterLayoutUndo.entities).toHaveLength(1);
 
-  await page.getByRole("button", { name: "Model", exact: true }).click();
+  await page.getByRole("tab", { name: "Model", exact: true }).click();
   await page.getByRole("button", { name: "UNDO", exact: true }).click();
   await expect.poll(async () => (await readDocument(page)).entities).toEqual([]);
-  const beforeBlockedRedo = await readDocument(page);
-  expect(beforeBlockedRedo.revision).toBe(2);
+  const afterModelUndo = await readDocument(page);
+  expect(afterModelUndo.revision).toBe(4);
 
-  await page.getByRole("button", { name: "F097 PLAN", exact: true }).click();
-  await expect(page.getByRole("button", { name: "REDO", exact: true })).toBeDisabled();
-  const afterBlockedRedo = await readDocument(page);
-  expect(afterBlockedRedo).toEqual(beforeBlockedRedo);
+  await page.getByRole("button", { name: "REDO", exact: true }).click();
+  await expect.poll(async () => (await readDocument(page)).entities).toHaveLength(1);
+  const afterModelRedo = await readDocument(page);
+  expect(afterModelRedo.revision).toBe(5);
   await captureJson("F-097-browser-paper-domain.json", {
     rowId: "F-097",
     status: "PASS",
-    modelUndoBlockedInPaper: true,
-    modelRedoBlockedInPaper: true,
-    beforeBlockedUndo,
-    afterBlockedUndo,
-    beforeBlockedRedo,
-    afterBlockedRedo,
+    layoutActivationUndoneBeforeModelEdit: true,
+    beforeLayoutActivation,
+    afterLayoutUndo,
+    afterModelUndo,
+    afterModelRedo,
   });
   expect(consoleErrors).toEqual([]);
 });

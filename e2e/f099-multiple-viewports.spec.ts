@@ -5,6 +5,7 @@ import { expect, test, type Page } from "@playwright/test";
 import { createEmptyDocument } from "@kuubik/cad-core";
 import type { KDrawDocumentV1 } from "@kuubik/cad-schema";
 import { openLayoutTools } from "./helpers/layout-tools.js";
+import { checkpointKDrawDocument, seedKDrawDocument } from "./helpers/indexed-db.js";
 
 type RecordedOperation = { opId: string; commandId: string; baseRevision: number };
 
@@ -33,31 +34,13 @@ function viewportDocument(): KDrawDocumentV1 {
 }
 
 async function seedLocalDocument(page: Page, document: KDrawDocumentV1): Promise<void> {
-  await page.goto("/d/local");
-  await page.evaluate(async (value) => {
-    const database = await new Promise<IDBDatabase>((resolveOpen, rejectOpen) => {
-      const request = indexedDB.open("kuubik-draw", 1);
-      request.onsuccess = () => resolveOpen(request.result);
-      request.onerror = () => rejectOpen(request.error);
-    });
-    await new Promise<void>((resolveWrite, rejectWrite) => {
-      const transaction = database.transaction(["documents", "operations", "snapshots"], "readwrite");
-      transaction.objectStore("documents").put(value);
-      transaction.objectStore("operations").clear();
-      transaction.objectStore("snapshots").clear();
-      transaction.oncomplete = () => resolveWrite();
-      transaction.onerror = () => rejectWrite(transaction.error);
-    });
-    database.close();
-  }, document);
-  await page.reload();
-  await expect(page.getByText("Taastatud revision 0")).toBeVisible();
+  await seedKDrawDocument(page, document);
 }
 
 async function readDocument(page: Page): Promise<KDrawDocumentV1> {
   return page.evaluate(async () => {
     const database = await new Promise<IDBDatabase>((resolveOpen, rejectOpen) => {
-      const request = indexedDB.open("kuubik-draw", 1);
+      const request = indexedDB.open("kuubik-draw");
       request.onsuccess = () => resolveOpen(request.result);
       request.onerror = () => rejectOpen(request.error);
     });
@@ -74,7 +57,7 @@ async function readDocument(page: Page): Promise<KDrawDocumentV1> {
 async function readOperations(page: Page): Promise<RecordedOperation[]> {
   return page.evaluate(async () => {
     const database = await new Promise<IDBDatabase>((resolveOpen, rejectOpen) => {
-      const request = indexedDB.open("kuubik-draw", 1);
+      const request = indexedDB.open("kuubik-draw");
       request.onsuccess = () => resolveOpen(request.result);
       request.onerror = () => rejectOpen(request.error);
     });
@@ -134,7 +117,7 @@ test("F-099 creates independent rectangular and non-rectangular viewports, survi
   await page.clock.setFixedTime("2026-08-28T00:00:00.000Z");
   await page.setViewportSize({ width: 1920, height: 1080 });
   await seedLocalDocument(page, viewportDocument());
-  await page.getByRole("button", { name: "F099 VIEWPORTS", exact: true }).click();
+  await page.getByRole("tab", { name: "F099 VIEWPORTS", exact: true }).click();
   await openLayoutTools(page);
 
   await page.getByRole("button", { name: "Lisa ristkülikviewport" }).click();
@@ -164,15 +147,15 @@ test("F-099 creates independent rectangular and non-rectangular viewports, survi
 
   await page.locator('[data-viewport-id="viewport-2"]').dblclick();
   await expect(page.locator('[data-viewport-id="viewport-2"]')).toHaveAttribute("data-space-context", "model");
-  await expect(page.getByText("MODEL · mm · SNAP")).toBeVisible();
+  await expect(page.getByText("MODEL · mm · GRID")).toBeVisible();
   await page.locator('[data-testid="paper-space-sheet"]').click({ position: { x: 5, y: 5 } });
   await expect(page.locator('[data-viewport-id="viewport-2"]')).toHaveAttribute("data-space-context", "paper");
-  await expect(page.getByText("PAPER · mm · SNAP")).toBeVisible();
+  await expect(page.getByText("PAPER · mm · GRID")).toBeVisible();
   await page.locator('[data-viewport-id="viewport-2"]').dblclick();
   await expect(page.locator('[data-viewport-id="viewport-2"]')).toHaveAttribute("data-space-context", "model");
   await page.getByRole("button", { name: "Kustuta viewport" }).click();
   await expect(page.locator('[data-testid="paper-space-viewport"]')).toHaveCount(1);
-  await expect(page.getByText("PAPER · mm · SNAP")).toBeVisible();
+  await expect(page.getByText("PAPER · mm · GRID")).toBeVisible();
   expect((await readDocument(page)).layouts[1]!.viewports.map((viewport) => viewport.id)).toEqual(["viewport-1"]);
 
   await page.getByRole("button", { name: "UNDO", exact: true }).click();
@@ -185,16 +168,17 @@ test("F-099 creates independent rectangular and non-rectangular viewports, survi
   const exported = await downloadKDraw(page);
   expect(exported.document.layouts[1]!.viewports.map((viewport) => viewport.id)).toEqual(["viewport-1", "viewport-2"]);
   stored = await readDocument(page);
-  expect(stored.revision).toBe(6);
+  expect(stored.revision).toBe(7);
   const operations = await readOperations(page);
   expect(operations.map((operation) => operation.commandId)).toEqual([
-    "VIEWPORT_CREATE", "VIEWPORT_CREATE", "VIEWPORT_DELETE", "UNDO", "VIEWPORT_DELETE", "UNDO",
+    "LAYOUT_ACTIVATE", "VIEWPORT_CREATE", "VIEWPORT_CREATE", "VIEWPORT_DELETE", "UNDO", "VIEWPORT_DELETE", "UNDO",
   ]);
-  expect(operations.map((operation) => operation.baseRevision)).toEqual([0, 1, 2, 3, 4, 5]);
+  expect(operations.map((operation) => operation.baseRevision)).toEqual([0, 1, 2, 3, 4, 5, 6]);
 
-  await page.reload();
-  await expect(page.getByText("Taastatud revision 6")).toBeVisible();
-  await page.getByRole("button", { name: "F099 VIEWPORTS", exact: true }).click();
+  expect(await checkpointKDrawDocument(page, { normalizeLayoutWorkspace: true, suspendApp: true })).toEqual({ revision: 8, layoutRepairs: ["INVALID_SEQUENCE"] });
+  await page.goto("/d/local");
+  await expect(page.getByTestId("recovery-panel").getByText("Pärast katkestust taastati revisjon 8.", { exact: true })).toBeVisible();
+  await page.getByRole("tab", { name: "F099 VIEWPORTS", exact: true }).click();
   await expect(page.locator('[data-testid="paper-space-viewport"]')).toHaveCount(2);
   const restored = await viewportMetrics(page);
   expect(restored.map(({ id, kind, viewCenter }) => ({ id, kind, viewCenter }))).toEqual([

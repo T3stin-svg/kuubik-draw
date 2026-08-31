@@ -5,6 +5,7 @@ import { expect, test, type Download, type Page } from "@playwright/test";
 import { createEmptyDocument, createPaperLayout } from "@kuubik/cad-core";
 import type { KDrawDocumentV1 } from "@kuubik/cad-schema";
 import { openLayoutTools } from "./helpers/layout-tools.js";
+import { seedKDrawDocument } from "./helpers/indexed-db.js";
 
 type RecordedOperation = { commandId: string; baseRevision: number };
 
@@ -32,31 +33,13 @@ function pageSetupDocument(): KDrawDocumentV1 {
 }
 
 async function seedLocalDocument(page: Page, document: KDrawDocumentV1): Promise<void> {
-  await page.goto("/d/local");
-  await page.evaluate(async (value) => {
-    const database = await new Promise<IDBDatabase>((resolveOpen, rejectOpen) => {
-      const request = indexedDB.open("kuubik-draw", 1);
-      request.onsuccess = () => resolveOpen(request.result);
-      request.onerror = () => rejectOpen(request.error);
-    });
-    await new Promise<void>((resolveWrite, rejectWrite) => {
-      const transaction = database.transaction(["documents", "operations", "snapshots"], "readwrite");
-      transaction.objectStore("documents").put(value);
-      transaction.objectStore("operations").clear();
-      transaction.objectStore("snapshots").clear();
-      transaction.oncomplete = () => resolveWrite();
-      transaction.onerror = () => rejectWrite(transaction.error);
-    });
-    database.close();
-  }, document);
-  await page.reload();
-  await expect(page.getByText("Taastatud revision 0")).toBeVisible();
+  await seedKDrawDocument(page, document);
 }
 
 async function readDocument(page: Page): Promise<KDrawDocumentV1> {
   return page.evaluate(async () => {
     const database = await new Promise<IDBDatabase>((resolveOpen, rejectOpen) => {
-      const request = indexedDB.open("kuubik-draw", 1);
+      const request = indexedDB.open("kuubik-draw");
       request.onsuccess = () => resolveOpen(request.result);
       request.onerror = () => rejectOpen(request.error);
     });
@@ -73,7 +56,7 @@ async function readDocument(page: Page): Promise<KDrawDocumentV1> {
 async function readOperations(page: Page): Promise<RecordedOperation[]> {
   return page.evaluate(async () => {
     const database = await new Promise<IDBDatabase>((resolveOpen, rejectOpen) => {
-      const request = indexedDB.open("kuubik-draw", 1);
+      const request = indexedDB.open("kuubik-draw");
       request.onsuccess = () => resolveOpen(request.result);
       request.onerror = () => rejectOpen(request.error);
     });
@@ -121,7 +104,7 @@ test("F-102 applies/persists Page Setup, preserves viewport paper coordinates an
   await page.clock.setFixedTime("2026-08-28T00:00:00.000Z");
   await page.setViewportSize({ width: 1920, height: 1080 });
   await seedLocalDocument(page, pageSetupDocument());
-  await page.getByRole("button", { name: "F102 PAGE SETUP", exact: true }).click();
+  await page.getByRole("tab", { name: "F102 PAGE SETUP", exact: true }).click();
   await openLayoutTools(page);
   const sheet = page.getByTestId("paper-space-sheet"); const viewport = page.locator('[data-viewport-id="viewport-f102"]');
   await expect(sheet).toHaveAttribute("data-paper-width-mm", "420");
@@ -145,7 +128,7 @@ test("F-102 applies/persists Page Setup, preserves viewport paper coordinates an
   await page.getByLabel("Plot window width").fill("180");
   await page.getByLabel("Plot window height").fill("250");
   await page.getByRole("button", { name: "Rakenda page setup" }).click();
-  await expect.poll(async () => (await readDocument(page)).revision).toBe(1);
+  await expect.poll(async () => (await readDocument(page)).revision).toBe(2);
   await expect(sheet).toHaveAttribute("data-paper-width-mm", "210");
   await expect(sheet).toHaveAttribute("data-paper-height-mm", "297");
   await expect(sheet).toHaveAttribute("data-plot-area", "window");
@@ -184,7 +167,7 @@ test("F-102 applies/persists Page Setup, preserves viewport paper coordinates an
   await page.getByLabel("Plot scale mode").selectOption("fit");
   await page.getByLabel("Center plot").check();
   await page.getByRole("button", { name: "Rakenda page setup" }).click();
-  await expect.poll(async () => (await readDocument(page)).revision).toBe(4);
+  await expect.poll(async () => (await readDocument(page)).revision).toBe(5);
   await expect(sheet).toHaveAttribute("data-plot-area", "extents");
   await expect(sheet).toHaveAttribute("data-plot-scale", "fit");
   await expect(page.getByTestId("page-setup-controls")).toHaveAttribute("data-center-plot", "true");
@@ -200,7 +183,7 @@ test("F-102 applies/persists Page Setup, preserves viewport paper coordinates an
   await page.getByLabel("Plot window width").fill("300");
   await page.getByLabel("Plot window height").fill("400");
   await page.getByRole("button", { name: "Rakenda page setup" }).click();
-  await expect.poll(async () => (await readDocument(page)).revision).toBe(5);
+  await expect.poll(async () => (await readDocument(page)).revision).toBe(6);
   const outsideWindow = (await readDocument(page)).layouts[1]!.pageSetup;
   expect(outsideWindow?.plotArea).toEqual({ kind: "window", window: { x: -25, y: -40, width: 300, height: 400 } });
 
@@ -208,7 +191,7 @@ test("F-102 applies/persists Page Setup, preserves viewport paper coordinates an
   await page.getByLabel("Plot scale mode").selectOption("fit");
   await page.getByLabel("Center plot").check();
   await page.getByRole("button", { name: "Rakenda page setup" }).click();
-  await expect.poll(async () => (await readDocument(page)).revision).toBe(6);
+  await expect.poll(async () => (await readDocument(page)).revision).toBe(7);
   await expect(sheet).toHaveAttribute("data-plot-area", "display");
   const visibleDisplaySource = await page.evaluate(() => {
     const desk = document.querySelector<HTMLElement>('[data-testid="paper-space-desk"]');
@@ -254,7 +237,7 @@ test("F-102 applies/persists Page Setup, preserves viewport paper coordinates an
   await page.getByLabel("Paper orientation").selectOption("landscape");
   await page.getByLabel("Plot area").selectOption("layout");
   await page.getByRole("button", { name: "Rakenda page setup" }).click();
-  await expect.poll(async () => (await readDocument(page)).revision).toBe(7);
+  await expect.poll(async () => (await readDocument(page)).revision).toBe(8);
   await expect(sheet).toHaveAttribute("data-paper-width-mm", "420");
   await expect(sheet).toHaveAttribute("data-paper-height-mm", "297");
   await expect(sheet).toHaveAttribute("data-plot-area", "layout");
@@ -262,11 +245,11 @@ test("F-102 applies/persists Page Setup, preserves viewport paper coordinates an
   await expect(page.getByTestId("page-setup-controls")).toHaveAttribute("data-center-plot", "false");
 
   const operations = await readOperations(page);
-  expect(operations.map((operation) => operation.commandId)).toEqual(["PAGESETUP", "UNDO", "PAGESETUP", "PAGESETUP", "PAGESETUP", "PAGESETUP", "PAGESETUP"]);
-  expect(operations.map((operation) => operation.baseRevision)).toEqual([0, 1, 2, 3, 4, 5, 6]);
+  expect(operations.map((operation) => operation.commandId)).toEqual(["LAYOUT_ACTIVATE", "PAGESETUP", "UNDO", "PAGESETUP", "PAGESETUP", "PAGESETUP", "PAGESETUP", "PAGESETUP"]);
+  expect(operations.map((operation) => operation.baseRevision)).toEqual([0, 1, 2, 3, 4, 5, 6, 7]);
   await page.reload();
-  await expect(page.getByText("Taastatud revision 7")).toBeVisible();
-  await page.getByRole("button", { name: "F102 PAGE SETUP", exact: true }).click();
+  await expect(page.getByTestId("recovery-panel").getByText("Pärast katkestust taastati revisjon 8.", { exact: true })).toBeVisible();
+  await page.getByRole("tab", { name: "F102 PAGE SETUP", exact: true }).click();
   await expect(page.getByTestId("paper-space-sheet")).toHaveAttribute("data-paper-width-mm", "420");
   const stored = await readDocument(page);
   expect(stored.layouts[1]!.pageSetup).toEqual({

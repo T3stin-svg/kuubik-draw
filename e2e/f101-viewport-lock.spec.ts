@@ -5,6 +5,7 @@ import { expect, test, type Locator, type Page } from "@playwright/test";
 import { createEmptyDocument } from "@kuubik/cad-core";
 import type { KDrawDocumentV1 } from "@kuubik/cad-schema";
 import { openLayoutTools } from "./helpers/layout-tools.js";
+import { seedKDrawDocument } from "./helpers/indexed-db.js";
 
 type RecordedOperation = { commandId: string; baseRevision: number };
 
@@ -33,31 +34,13 @@ function lockedViewportDocument(): KDrawDocumentV1 {
 }
 
 async function seedLocalDocument(page: Page, document: KDrawDocumentV1): Promise<void> {
-  await page.goto("/d/local");
-  await page.evaluate(async (value) => {
-    const database = await new Promise<IDBDatabase>((resolveOpen, rejectOpen) => {
-      const request = indexedDB.open("kuubik-draw", 1);
-      request.onsuccess = () => resolveOpen(request.result);
-      request.onerror = () => rejectOpen(request.error);
-    });
-    await new Promise<void>((resolveWrite, rejectWrite) => {
-      const transaction = database.transaction(["documents", "operations", "snapshots"], "readwrite");
-      transaction.objectStore("documents").put(value);
-      transaction.objectStore("operations").clear();
-      transaction.objectStore("snapshots").clear();
-      transaction.oncomplete = () => resolveWrite();
-      transaction.onerror = () => rejectWrite(transaction.error);
-    });
-    database.close();
-  }, document);
-  await page.reload();
-  await expect(page.getByText("Taastatud revision 0")).toBeVisible();
+  await seedKDrawDocument(page, document);
 }
 
 async function readDocument(page: Page): Promise<KDrawDocumentV1> {
   return page.evaluate(async () => {
     const database = await new Promise<IDBDatabase>((resolveOpen, rejectOpen) => {
-      const request = indexedDB.open("kuubik-draw", 1);
+      const request = indexedDB.open("kuubik-draw");
       request.onsuccess = () => resolveOpen(request.result);
       request.onerror = () => rejectOpen(request.error);
     });
@@ -74,7 +57,7 @@ async function readDocument(page: Page): Promise<KDrawDocumentV1> {
 async function readOperations(page: Page): Promise<RecordedOperation[]> {
   return page.evaluate(async () => {
     const database = await new Promise<IDBDatabase>((resolveOpen, rejectOpen) => {
-      const request = indexedDB.open("kuubik-draw", 1);
+      const request = indexedDB.open("kuubik-draw");
       request.onsuccess = () => resolveOpen(request.result);
       request.onerror = () => rejectOpen(request.error);
     });
@@ -131,7 +114,7 @@ test("F-101 locks navigation, permits model editing, unlocks/relocks atomically 
   await page.clock.setFixedTime("2026-08-28T00:00:00.000Z");
   await page.setViewportSize({ width: 1920, height: 1080 });
   await seedLocalDocument(page, lockedViewportDocument());
-  await page.getByRole("button", { name: "F101 LOCK", exact: true }).click();
+  await page.getByRole("tab", { name: "F101 LOCK", exact: true }).click();
   const viewport = page.locator('[data-viewport-id="viewport-f101"]');
   await viewport.dblclick();
   await expect(viewport).toHaveAttribute("data-space-context", "model");
@@ -143,7 +126,7 @@ test("F-101 locks navigation, permits model editing, unlocks/relocks atomically 
   await expect(viewport).toHaveAttribute("data-display-locked", "true");
   await expect(viewport).toHaveAttribute("data-navigation-enabled", "false");
   await expect(page.getByTestId("viewport-lock-toggle")).toHaveAttribute("aria-pressed", "true");
-  await expect(viewport.locator(".paper-space-viewport-label")).toContainText("🔒");
+  await expect(viewport.locator(".paper-space-viewport-label")).toContainText("LOCKED");
   const locked = await viewportState(viewport);
   expect(locked).toMatchObject({ ...initial, locked: true, navigationEnabled: false });
   await page.getByLabel("Layout tools").click();
@@ -154,13 +137,13 @@ test("F-101 locks navigation, permits model editing, unlocks/relocks atomically 
   const pointer = { x: box!.x + box!.width / 2, y: box!.y + box!.height / 2 };
   await page.mouse.move(pointer.x, pointer.y);
   await page.mouse.wheel(0, -120);
-  await expect.poll(async () => (await readDocument(page)).revision).toBe(1);
+  await expect.poll(async () => (await readDocument(page)).revision).toBe(2);
   const afterLockedWheel = await viewportState(viewport);
   expect(afterLockedWheel).toEqual(locked);
   await page.mouse.down();
   await page.mouse.move(pointer.x + 80, pointer.y - 50, { steps: 4 });
   await page.mouse.up();
-  await expect.poll(async () => (await readDocument(page)).revision).toBe(1);
+  await expect.poll(async () => (await readDocument(page)).revision).toBe(2);
   const afterLockedPan = await viewportState(viewport);
   expect(afterLockedPan).toEqual(locked);
 
@@ -172,12 +155,12 @@ test("F-101 locks navigation, permits model editing, unlocks/relocks atomically 
   const applyView = page.getByRole("button", { name: "Rakenda viewport vaade" });
   await expect(applyView).toBeDisabled();
   await applyView.evaluate((element) => (element as HTMLButtonElement).click());
-  await expect.poll(async () => (await readDocument(page)).revision).toBe(1);
+  await expect.poll(async () => (await readDocument(page)).revision).toBe(2);
   const afterLockedDirect = await viewportState(viewport);
   expect(afterLockedDirect).toEqual(locked);
 
   await page.getByRole("button", { name: "LINE test" }).click();
-  await expect.poll(async () => (await readDocument(page)).revision).toBe(2);
+  await expect.poll(async () => (await readDocument(page)).revision).toBe(3);
   const afterLockedEdit = await readDocument(page);
   expect(afterLockedEdit.entities).toHaveLength(2);
   expect(await viewportState(viewport)).toEqual(locked);
@@ -188,14 +171,14 @@ test("F-101 locks navigation, permits model editing, unlocks/relocks atomically 
   await page.getByLabel("Layout tools").click();
   await page.mouse.move(pointer.x, pointer.y);
   await page.mouse.wheel(0, -120);
-  await expect.poll(async () => (await readDocument(page)).revision).toBe(4);
+  await expect.poll(async () => (await readDocument(page)).revision).toBe(5);
   const zoomed = await viewportState(viewport);
   expect(zoomed.scaleDenominator).toBeCloseTo(initial.scaleDenominator / 1.1, 12);
   await page.mouse.move(pointer.x, pointer.y);
   await page.mouse.down();
   await page.mouse.move(pointer.x + 80, pointer.y - 50, { steps: 4 });
   await page.mouse.up();
-  await expect.poll(async () => (await readDocument(page)).revision).toBe(5);
+  await expect.poll(async () => (await readDocument(page)).revision).toBe(6);
   const panned = await viewportState(viewport);
   expect(panned.center).not.toBe(zoomed.center);
   expect(panned.scaleDenominator).toBeCloseTo(zoomed.scaleDenominator, 12);
@@ -210,7 +193,7 @@ test("F-101 locks navigation, permits model editing, unlocks/relocks atomically 
   await page.mouse.down();
   await page.mouse.move(pointer.x - 60, pointer.y + 40, { steps: 4 });
   await page.mouse.up();
-  await expect.poll(async () => (await readDocument(page)).revision).toBe(6);
+  await expect.poll(async () => (await readDocument(page)).revision).toBe(7);
   expect(await viewportState(viewport)).toEqual(relocked);
 
   await page.getByRole("button", { name: "UNDO", exact: true }).click();
@@ -224,17 +207,17 @@ test("F-101 locks navigation, permits model editing, unlocks/relocks atomically 
   const exportedViewport = exported.document.layouts[1]!.viewports[0]!;
   expect(exportedViewport).toMatchObject({ id: "viewport-f101", locked: true, viewCenter: { x: Number(panned.center!.split(",")[0]), y: Number(panned.center!.split(",")[1]) } });
   const stored = await readDocument(page);
-  expect(stored.revision).toBe(8);
+  expect(stored.revision).toBe(9);
   expect(stored.entities).toHaveLength(2);
   const operations = await readOperations(page);
   expect(operations.map((operation) => operation.commandId)).toEqual([
-    "VIEWPORT_LOCK", "LINE", "VIEWPORT_LOCK", "VIEWPORT_ZOOM", "VIEWPORT_PAN", "VIEWPORT_LOCK", "UNDO", "VIEWPORT_LOCK",
+    "LAYOUT_ACTIVATE", "VIEWPORT_LOCK", "LINE", "VIEWPORT_LOCK", "VIEWPORT_ZOOM", "VIEWPORT_PAN", "VIEWPORT_LOCK", "UNDO", "VIEWPORT_LOCK",
   ]);
-  expect(operations.map((operation) => operation.baseRevision)).toEqual([0, 1, 2, 3, 4, 5, 6, 7]);
+  expect(operations.map((operation) => operation.baseRevision)).toEqual([0, 1, 2, 3, 4, 5, 6, 7, 8]);
 
   await page.reload();
-  await expect(page.getByText("Taastatud revision 8")).toBeVisible();
-  await page.getByRole("button", { name: "F101 LOCK", exact: true }).click();
+  await expect(page.getByTestId("recovery-panel").getByText("Pärast katkestust taastati revisjon 9.", { exact: true })).toBeVisible();
+  await page.getByRole("tab", { name: "F101 LOCK", exact: true }).click();
   const restoredViewport = page.locator('[data-viewport-id="viewport-f101"]');
   await expect(restoredViewport).toHaveAttribute("data-display-locked", "true");
   expect(await viewportState(restoredViewport)).toMatchObject({ ...finalState, spaceContext: "paper", navigationEnabled: false });

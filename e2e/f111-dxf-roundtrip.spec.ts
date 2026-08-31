@@ -5,6 +5,7 @@ import { expect, test, type Page } from "@playwright/test";
 import { createEmptyDocument } from "../packages/cad-core/src/index.js";
 import { exportDxf } from "../packages/cad-dxf/src/index.js";
 import { createF109Document } from "../parity/fixtures/f109-document.js";
+import { seedKDrawDocument } from "./helpers/indexed-db.js";
 
 const sha256 = (value: Buffer): string => createHash("sha256").update(value).digest("hex");
 
@@ -32,41 +33,13 @@ function paperAwareDocument() {
 }
 
 async function seedLocalDocument(page: Page, document = createEmptyDocument({ documentId: "local", now: "2026-08-29T08:00:00.000Z" })): Promise<void> {
-  await page.goto("/d/local");
-  await page.evaluate(async (value) => {
-    const database = await new Promise<IDBDatabase>((resolveOpen, rejectOpen) => {
-      const request = indexedDB.open("kuubik-draw", 1);
-      request.onupgradeneeded = () => {
-        const next = request.result;
-        if (!next.objectStoreNames.contains("documents")) next.createObjectStore("documents", { keyPath: "documentId" });
-        if (!next.objectStoreNames.contains("operations")) {
-          const store = next.createObjectStore("operations", { keyPath: "opId" });
-          store.createIndex("byDocument", "documentId");
-        }
-        if (!next.objectStoreNames.contains("snapshots")) next.createObjectStore("snapshots", { keyPath: "key" });
-        if (!next.objectStoreNames.contains("attachments")) next.createObjectStore("attachments", { keyPath: "id" });
-      };
-      request.onsuccess = () => resolveOpen(request.result);
-      request.onerror = () => rejectOpen(request.error);
-    });
-    await new Promise<void>((resolveWrite, rejectWrite) => {
-      const transaction = database.transaction(["documents", "operations", "snapshots"], "readwrite");
-      transaction.objectStore("documents").put(value);
-      transaction.objectStore("operations").clear();
-      transaction.objectStore("snapshots").clear();
-      transaction.oncomplete = () => resolveWrite();
-      transaction.onerror = () => rejectWrite(transaction.error);
-    });
-    database.close();
-  }, document);
-  await page.reload();
-  await expect(page.getByText("Taastatud revision 0")).toBeVisible();
+  await seedKDrawDocument(page, document);
 }
 
 async function storedDocument(page: Page): Promise<{ revision: number; entities: Array<{ handle: string }>; layers: Array<{ id: string; name: string }>; units: { linear: string }; layouts: Array<{ id: string; entities?: Array<{ handle: string; layerId: string; blockId?: string }>; viewports: Array<{ layerOverrides?: Record<string, unknown> }> }>; blocks: Array<{ id: string; entities: Array<{ handle: string }> }> }> {
   return page.evaluate(async () => {
     const database = await new Promise<IDBDatabase>((resolveOpen, rejectOpen) => {
-      const request = indexedDB.open("kuubik-draw", 1);
+      const request = indexedDB.open("kuubik-draw");
       request.onsuccess = () => resolveOpen(request.result);
       request.onerror = () => rejectOpen(request.error);
     });
@@ -105,7 +78,7 @@ test("F-111 imports, edits, atomically undoes/redoes, persists and re-exports th
   await expect(page.getByText("40 objekti · 0 valitud · JOONED")).toBeVisible();
 
   await page.reload();
-  await expect(page.getByText("Taastatud revision 5")).toBeVisible();
+  await expect(page.getByTestId("recovery-panel").getByText("Pärast katkestust taastati revisjon 5.", { exact: true })).toBeVisible();
   await expect(page.getByText("40 objekti · 0 valitud · JOONED")).toBeVisible();
   const persisted = await storedDocument(page);
   expect(persisted.revision).toBe(5);
@@ -209,6 +182,6 @@ test("F-111 refuses a unit change that would invalidate an explicit Model Window
   const metres = Buffer.from(source.toString("latin1").replace("$INSUNITS\r\n 70\r\n4", "$INSUNITS\r\n 70\r\n6"), "latin1");
   await page.getByLabel("DXF import").setInputFiles({ name: "model-metres.dxf", mimeType: "application/dxf", buffer: metres });
   await expect(page.getByText(/DXF impordi viga: DXF units m cannot replace mm model units while unit-sensitive layout state exists/u)).toBeVisible();
-  expect(await storedDocument(page)).toMatchObject({ revision: 0, entities: [], units: { linear: "mm" }, layouts: { length: 1 } });
+  expect(await storedDocument(page)).toMatchObject({ revision: 0, entities: [], units: { linear: "mm" }, layouts: { length: 2 } });
   expect(errors).toEqual([]);
 });

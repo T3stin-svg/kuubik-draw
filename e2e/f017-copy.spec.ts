@@ -11,6 +11,8 @@ import {
   f017ExpectedSourceHandles,
   f017StandardDocument,
 } from "../parity/fixtures/f017-standard-fixture.mjs";
+import { clearModelSelection } from "./helpers/selection.js";
+import { seedKDrawDocument } from "./helpers/indexed-db.js";
 
 async function downloadBytes(download: { path(): Promise<string | null> }, captureName: string): Promise<Buffer> {
   const path = await download.path();
@@ -34,32 +36,13 @@ function collectErrors(page: import("@playwright/test").Page): string[] {
 }
 
 async function seedLocalDocument(page: import("@playwright/test").Page): Promise<void> {
-  await page.goto("/d/local");
-  await page.evaluate(async (document) => {
-    const database = await new Promise<IDBDatabase>((resolveOpen, rejectOpen) => {
-      const request = indexedDB.open("kuubik-draw", 1);
-      request.onsuccess = () => resolveOpen(request.result);
-      request.onerror = () => rejectOpen(request.error);
-    });
-    await new Promise<void>((resolveWrite, rejectWrite) => {
-      const transaction = database.transaction(["documents", "operations", "snapshots"], "readwrite");
-      transaction.objectStore("documents").put(document);
-      transaction.objectStore("operations").clear();
-      transaction.objectStore("snapshots").clear();
-      transaction.oncomplete = () => resolveWrite();
-      transaction.onerror = () => rejectWrite(transaction.error);
-      transaction.onabort = () => rejectWrite(transaction.error);
-    });
-    database.close();
-  }, structuredClone(f017StandardDocument));
-  await page.reload();
-  await expect(page.getByText("Taastatud revision 0")).toBeVisible();
+  await seedKDrawDocument(page, f017StandardDocument);
 }
 
 async function readLocalDocument(page: import("@playwright/test").Page): Promise<typeof f017StandardDocument> {
   return page.evaluate(async () => {
     const database = await new Promise<IDBDatabase>((resolveOpen, rejectOpen) => {
-      const request = indexedDB.open("kuubik-draw", 1);
+      const request = indexedDB.open("kuubik-draw");
       request.onsuccess = () => resolveOpen(request.result);
       request.onerror = () => rejectOpen(request.error);
     });
@@ -81,7 +64,7 @@ async function readFirstOperation(page: import("@playwright/test").Page): Promis
 } | undefined> {
   return page.evaluate(async () => {
     const database = await new Promise<IDBDatabase>((resolveOpen, rejectOpen) => {
-      const request = indexedDB.open("kuubik-draw", 1);
+      const request = indexedDB.open("kuubik-draw");
       request.onsuccess = () => resolveOpen(request.result);
       request.onerror = () => rejectOpen(request.error);
     });
@@ -106,10 +89,13 @@ async function captureJson(name: string, value: unknown): Promise<void> {
 test("F-017 COPY preselection, repeated original-relative placements, DXF and atomic UNDO", async ({ page }) => {
   const consoleErrors = collectErrors(page);
   await page.goto("/d/local");
+  await expect(page.getByText(/DocumentLiveOrchestrator/u)).toBeVisible();
   await page.getByRole("button", { name: "LINE test" }).click();
+  await expect(page.getByText("LINE runtime salvestatud, revision 1")).toBeVisible();
   await page.getByLabel("Esimene nurk").fill("0,1000");
   await page.getByLabel("Teine nurk").fill("1000,1500");
   await page.getByRole("button", { name: "RECTANGLE", exact: true }).click();
+  await expect(page.getByText("RECTANGLE salvestatud, revision 2")).toBeVisible();
   await page.getByRole("button", { name: "Vali kõik" }).click();
   await page.getByLabel("COPY baaspunkt").fill("100,200");
   await page.getByLabel("COPY sihtpunktid").fill("600,950; -200,300");
@@ -135,7 +121,7 @@ test("F-017 COPY preselection, repeated original-relative placements, DXF and at
   await page.getByRole("button", { name: "UNDO", exact: true }).click();
   await expect(page.getByText("UNDO taastatud, revision 4")).toBeVisible();
   await page.reload();
-  await expect(page.getByText("Taastatud revision 4")).toBeVisible();
+  await expect(page.getByTestId("recovery-panel").getByText("Pärast katkestust taastati revisjon 4.", { exact: true })).toBeVisible();
   const restoredDownload = page.waitForEvent("download");
   await page.getByRole("button", { name: "DXF eksport" }).click();
   const restored = new DxfParser().parseSync((await downloadBytes(await restoredDownload, "F-017-browser-restored.dxf")).toString("utf8"));
@@ -146,10 +132,16 @@ test("F-017 COPY preselection, repeated original-relative placements, DXF and at
 test("F-017 COPY postselection, one @relative destination and mixed locked layer", async ({ page }) => {
   const consoleErrors = collectErrors(page);
   await page.goto("/d/local");
+  await expect(page.getByText(/DocumentLiveOrchestrator/u)).toBeVisible();
   await page.getByRole("button", { name: "LINE test" }).click();
-  await page.getByRole("button", { name: "Uus kiht" }).click();
+  await expect(page.getByText("LINE runtime salvestatud, revision 1")).toBeVisible();
+  await page.getByRole("button", { name: "Uus kiht", exact: true }).click();
+  await expect(page.getByText("Layer 1 loodud typed Layer Manageri kaudu")).toBeVisible();
   await page.getByRole("button", { name: "LINE test" }).click();
+  await expect(page.getByText("LINE runtime salvestatud, revision 3")).toBeVisible();
   await page.getByRole("button", { name: "Lukusta aktiivne" }).click();
+  await expect(page.getByText("Layer 1 lukustatud")).toBeVisible();
+  await clearModelSelection(page);
 
   await page.getByRole("button", { name: "COPY", exact: true }).click();
   await expect(page.getByText("COPY: vali objektid, seejärel kinnita valik ja punktid")).toBeVisible();
@@ -161,18 +153,18 @@ test("F-017 COPY postselection, one @relative destination and mixed locked layer
   await page.getByRole("button", { name: "COPY", exact: true }).click();
   await expect(page.getByText("1 koopiat loodud · 1 paigutust; 1 jäi kopeerimata")).toBeVisible();
   expect(JSON.parse((await page.getByTestId("copy-rejected").getAttribute("data-rejected")) ?? "null")).toEqual([
-    { handle: "12", reason: "locked-layer" },
+    { handle: "11", reason: "locked-layer" },
   ]);
   await page.reload();
-  await expect(page.getByText("Taastatud revision 5")).toBeVisible();
+  await expect(page.getByTestId("recovery-panel").getByText("Pärast katkestust taastati revisjon 5.", { exact: true })).toBeVisible();
 
   const mixedDownload = page.waitForEvent("download");
   await page.getByRole("button", { name: "DXF eksport" }).click();
   const mixed = new DxfParser().parseSync((await downloadBytes(await mixedDownload, "F-017-browser-locked.dxf")).toString("utf8"));
   expect(mixed?.entities.map((entity) => ({ handle: entity.handle, layer: entity.layer, vertices: entity.vertices }))).toEqual([
     { handle: "10", layer: "0", vertices: [{ x: 10, y: 10, z: 0 }, { x: 180, y: 90, z: 0 }] },
-    { handle: "12", layer: "Layer 1", vertices: [{ x: 10, y: 20, z: 0 }, { x: 180, y: 90, z: 0 }] },
-    { handle: "13", layer: "0", vertices: [{ x: 110, y: 60, z: 0 }, { x: 280, y: 140, z: 0 }] },
+    { handle: "11", layer: "Layer 1", vertices: [{ x: 10, y: 20, z: 0 }, { x: 180, y: 90, z: 0 }] },
+    { handle: "12", layer: "0", vertices: [{ x: 110, y: 60, z: 0 }, { x: 280, y: 140, z: 0 }] },
   ]);
   expect(consoleErrors).toEqual([]);
 });
@@ -180,6 +172,7 @@ test("F-017 COPY postselection, one @relative destination and mixed locked layer
 test("F-017 COPY accepts a coincident destination as a real copy", async ({ page }) => {
   const consoleErrors = collectErrors(page);
   await page.goto("/d/local");
+  await expect(page.getByText(/DocumentLiveOrchestrator/u)).toBeVisible();
   await page.getByRole("button", { name: "LINE test" }).click();
   await page.getByRole("button", { name: "Vali kõik" }).click();
   await page.getByLabel("COPY baaspunkt").fill("200,300");
@@ -219,7 +212,7 @@ test("F-017 COPY standard entity matrix preserves originals/properties, persists
   await page.getByRole("button", { name: "UNDO", exact: true }).click();
   await expect(page.getByText("UNDO taastatud, revision 2")).toBeVisible();
   await page.reload();
-  await expect(page.getByText("Taastatud revision 2")).toBeVisible();
+  await expect(page.getByTestId("recovery-panel").getByText("Pärast katkestust taastati revisjon 2.", { exact: true })).toBeVisible();
   const restored = await readLocalDocument(page);
   expect(restored.entities).toEqual(f017StandardDocument.entities);
   await captureJson("F-017-browser-standard-matrix.json", {

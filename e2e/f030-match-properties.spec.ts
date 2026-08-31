@@ -5,36 +5,18 @@ import { createEmptyDocument, deserializeKDraw } from "@kuubik/cad-core";
 import type { KDrawDocumentV1 } from "@kuubik/cad-schema";
 import { modelWorldToScreen } from "./helpers/model-space.js";
 import { openLayoutTools } from "./helpers/layout-tools.js";
+import { checkpointKDrawDocument, seedKDrawDocument } from "./helpers/indexed-db.js";
 
 type RecordedOperation = { commandId: string; targetHandles: string[]; resultHandles: string[]; args: Record<string, unknown> };
 
 async function seedLocalDocument(page: Page, document: KDrawDocumentV1): Promise<void> {
-  await page.goto("/d/local");
-  await page.evaluate(async (value) => {
-    const database = await new Promise<IDBDatabase>((resolveOpen, rejectOpen) => {
-      const request = indexedDB.open("kuubik-draw", 1);
-      request.onsuccess = () => resolveOpen(request.result);
-      request.onerror = () => rejectOpen(request.error);
-    });
-    await new Promise<void>((resolveWrite, rejectWrite) => {
-      const transaction = database.transaction(["documents", "operations", "snapshots"], "readwrite");
-      transaction.objectStore("documents").put(value);
-      transaction.objectStore("operations").clear();
-      transaction.objectStore("snapshots").clear();
-      transaction.oncomplete = () => resolveWrite();
-      transaction.onerror = () => rejectWrite(transaction.error);
-    });
-    database.close();
-    localStorage.removeItem("kuubik-draw.match-properties-settings.v1");
-  }, structuredClone(document));
-  await page.reload();
-  await expect(page.getByText("Taastatud revision 0")).toBeVisible();
+  await seedKDrawDocument(page, document, { clearLocalStorageKeys: ["kuubik-draw.match-properties-settings.v1"] });
 }
 
 async function readState(page: Page): Promise<{ document: KDrawDocumentV1; operations: RecordedOperation[] }> {
   return page.evaluate(async () => {
     const database = await new Promise<IDBDatabase>((resolveOpen, rejectOpen) => {
-      const request = indexedDB.open("kuubik-draw", 1);
+      const request = indexedDB.open("kuubik-draw");
       request.onsuccess = () => resolveOpen(request.result);
       request.onerror = () => rejectOpen(request.error);
     });
@@ -95,7 +77,7 @@ test("F-030 MATCHPROP candidate previews, persists settings, commits atomically 
     layerId: "0", center: { x: 500, y: 500 }, radius: 100,
     appearance: { color: "#ff0000", colorMethod: "trueColor", linetypeId: "hidden", linetypeScale: 2.5, lineweightMm: 0.5, transparency: 40 },
   });
-  expect(committed.operations).toHaveLength(1);
+  expect(committed.operations.map((operation) => operation.commandId)).toEqual(["MATCHPROP"]);
   expect(committed.operations[0]).toMatchObject({
     commandId: "MATCHPROP", targetHandles: ["20", "30"], resultHandles: ["20", "30"],
     args: { sourceHandle: "10", targetHandles: ["10", "20", "30"], settings: { layer: false } },
@@ -188,7 +170,7 @@ test("F-030 MATCHPROP copies viewport special properties while preserving target
     entities: [],
   });
   await seedLocalDocument(page, source);
-  await page.getByRole("button", { name: "F030 VIEWPORTS", exact: true }).click();
+  await page.getByRole("tab", { name: "F030 VIEWPORTS", exact: true }).click();
   await openLayoutTools(page);
 
   await page.getByRole("button", { name: "MATCHPROP viewport alusta" }).click();
@@ -217,8 +199,8 @@ test("F-030 MATCHPROP copies viewport special properties while preserving target
     ucsIconVisible: false,
     ucsIconAtOrigin: false,
   });
-  expect(committed.operations).toHaveLength(1);
-  expect(committed.operations[0]).toMatchObject({
+  expect(committed.operations.map((operation) => operation.commandId)).toEqual(["LAYOUT_ACTIVATE", "MATCHPROP"]);
+  expect(committed.operations[1]).toMatchObject({
     commandId: "MATCHPROP",
     targetHandles: [],
     resultHandles: [],
@@ -239,9 +221,10 @@ test("F-030 MATCHPROP copies viewport special properties while preserving target
   const viewportRedone = await readState(page);
   expect(viewportRedone.document.layouts.find(({ id }) => id === "layout-f030-viewports")!.viewports[1]).toEqual(committedLayout.viewports[1]);
 
-  await page.reload();
-  await expect(page.getByText("Taastatud revision 3")).toBeVisible();
-  await page.getByRole("button", { name: "F030 VIEWPORTS", exact: true }).click();
+  expect(await checkpointKDrawDocument(page, { suspendApp: true })).toEqual({ revision: 4, layoutRepairs: [] });
+  await page.goto("/d/local");
+  await expect(page.getByTestId("recovery-panel").getByText("Pärast katkestust taastati revisjon 4.", { exact: true })).toBeVisible();
+  await page.getByRole("tab", { name: "F030 VIEWPORTS", exact: true }).click();
   await expect(page.locator('[data-viewport-id="match-target"]')).toHaveAttribute("data-viewport-on", "false");
   await expect(page.locator('[data-viewport-id="match-target"]')).toHaveAttribute("data-scale-denominator", "20");
   expect(consoleErrors).toEqual([]);

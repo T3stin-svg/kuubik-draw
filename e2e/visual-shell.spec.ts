@@ -1035,6 +1035,8 @@ test("Layer Manager wires F-072..F-079 and exposes fail-closed F-080/F-086 conne
 
   await page.getByRole("button", { name: "Loo uus kiht" }).click();
   await waitForLayerCommand("LAYER_CREATE");
+  await page.getByRole("button", { name: "Tee 0 aktiivseks" }).click();
+  await waitForLayerCommand("LAYER_CURRENT");
   await table.getByText("Layer 1", { exact: true }).click();
   const freeze = page.getByRole("button", { name: "Layer 1 külmutus" });
   await freeze.click();
@@ -1054,10 +1056,14 @@ test("Layer Manager wires F-072..F-079 and exposes fail-closed F-080/F-086 conne
 
   await page.getByRole("button", { name: "Loo uus kiht" }).click();
   await waitForLayerCommand("LAYER_CREATE");
+  await page.getByRole("button", { name: "Tee 0 aktiivseks" }).click();
+  await waitForLayerCommand("LAYER_CURRENT");
   await table.getByText("Layer 2", { exact: true }).click();
   await page.getByRole("button", { name: "Kustuta valitud kiht" }).click();
   await waitForLayerCommand("LAYER_DELETE");
   await expect(table.getByText("Layer 2", { exact: true })).toHaveCount(0);
+  await page.getByRole("button", { name: "Tee A-WALL aktiivseks" }).click();
+  await waitForLayerCommand("LAYER_CURRENT");
 
   const zeroRow = page.getByRole("button", { name: "Tee 0 aktiivseks" }).locator("xpath=ancestor::*[@role='row']");
   const wallRow = page.getByRole("button", { name: "Tee A-WALL aktiivseks" }).locator("xpath=ancestor::*[@role='row']");

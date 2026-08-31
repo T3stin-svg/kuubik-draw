@@ -5,6 +5,7 @@ import { expect, test, type Download, type Page } from "@playwright/test";
 import type { KDrawDocumentV1 } from "@kuubik/cad-schema";
 import { createF105Document, F105_LAYOUT_IDS } from "../parity/fixtures/f105-document.js";
 import { openLayoutTools } from "./helpers/layout-tools.js";
+import { seedKDrawDocument } from "./helpers/indexed-db.js";
 
 const sha256 = (value: Buffer | string): string => createHash("sha256").update(value).digest("hex");
 
@@ -16,31 +17,13 @@ function collectErrors(page: Page): string[] {
 }
 
 async function seedLocalDocument(page: Page, document: KDrawDocumentV1): Promise<void> {
-  await page.goto("/d/local");
-  await page.evaluate(async (value) => {
-    const database = await new Promise<IDBDatabase>((resolveOpen, rejectOpen) => {
-      const request = indexedDB.open("kuubik-draw", 1);
-      request.onsuccess = () => resolveOpen(request.result);
-      request.onerror = () => rejectOpen(request.error);
-    });
-    await new Promise<void>((resolveWrite, rejectWrite) => {
-      const transaction = database.transaction(["documents", "operations", "snapshots"], "readwrite");
-      transaction.objectStore("documents").put(value);
-      transaction.objectStore("operations").clear();
-      transaction.objectStore("snapshots").clear();
-      transaction.oncomplete = () => resolveWrite();
-      transaction.onerror = () => rejectWrite(transaction.error);
-    });
-    database.close();
-  }, document);
-  await page.reload();
-  await expect(page.getByText("Taastatud revision 0")).toBeVisible();
+  await seedKDrawDocument(page, document);
 }
 
 async function readLocalDocument(page: Page): Promise<KDrawDocumentV1> {
   return page.evaluate(async () => {
     const database = await new Promise<IDBDatabase>((resolveOpen, rejectOpen) => {
-      const request = indexedDB.open("kuubik-draw", 1);
+      const request = indexedDB.open("kuubik-draw");
       request.onsuccess = () => resolveOpen(request.result);
       request.onerror = () => rejectOpen(request.error);
     });
@@ -124,7 +107,7 @@ test("F-105 persists ordered publish settings and downloads multi-page, excluded
   await page.clock.setFixedTime("2026-08-28T00:00:00.000Z");
   await page.setViewportSize({ width: 1920, height: 1080 });
   await seedLocalDocument(page, createF105Document("local"));
-  await page.getByRole("button", { name: "F-105 SHEET 10 SECTION", exact: true }).click();
+  await page.getByRole("tab", { name: "F-105 SHEET 10 SECTION", exact: true }).click();
   await openLayoutTools(page);
 
   const options = page.getByTestId("publish-options");
@@ -187,8 +170,8 @@ test("F-105 persists ordered publish settings and downloads multi-page, excluded
   expect(pdfSummary(separate[1]!.bytes)).toMatchObject({ planTitleAt: -1, sectionTitleAt: expect.any(Number), red: false, blue: true });
 
   await page.reload();
-  await expect(page.getByText(/Taastatud revision/u)).toBeVisible();
-  await page.getByRole("button", { name: "F-105 SHEET 10 SECTION", exact: true }).click();
+  await expect(page.getByTestId("recovery-panel").getByText(/Pärast katkestust taastati revisjon/u)).toBeVisible();
+  await page.getByRole("tab", { name: "F-105 SHEET 10 SECTION", exact: true }).click();
   await openLayoutTools(page);
   const restored = page.getByTestId("publish-options");
   await expect(restored).toHaveAttribute("data-order", [...F105_LAYOUT_IDS].reverse().join("|"));
@@ -229,7 +212,7 @@ test("F-105 captures an inactive Display layout source for batch publish", async
   const document = createF105Document("local");
   document.layouts[1]!.pageSetup!.plotArea = { kind: "display" };
   await seedLocalDocument(page, document);
-  await page.getByRole("button", { name: "F-105 SHEET 10 SECTION", exact: true }).click();
+  await page.getByRole("tab", { name: "F-105 SHEET 10 SECTION", exact: true }).click();
   await openLayoutTools(page);
   const expectedWindow = await measuredDisplayWindow(page);
   const options = page.getByTestId("publish-options");
@@ -248,7 +231,7 @@ test("F-105 captures an inactive Display layout source for batch publish", async
   const storedWindow = storedSettings?.sheets?.find((sheet) => sheet.layoutId === F105_LAYOUT_IDS[0])?.displayWindow;
   expect(storedWindow).toEqual(expectedWindow);
   await options.locator("summary").click();
-  await page.getByRole("button", { name: "F-105 SHEET 20 PLAN", exact: true }).click();
+  await page.getByRole("tab", { name: "F-105 SHEET 20 PLAN", exact: true }).click();
   await options.locator("summary").click();
   const output = await oneDownload(page);
   const summary = pdfSummary(output.bytes); const placement = layoutPlacement(output.bytes);

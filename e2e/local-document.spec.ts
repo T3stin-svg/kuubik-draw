@@ -14,10 +14,10 @@ test("/d/local commits and restores a versioned IndexedDB document", async ({ pa
 
   await page.getByRole("button", { name: "LINE test" }).click();
   await expect(page.getByText("1 objekti")).toBeVisible();
-  await expect(page.getByText("LINE salvestatud, revision 1")).toBeVisible();
+  await expect(page.getByText("LINE runtime salvestatud, revision 1")).toBeVisible();
 
   await page.reload();
   await expect(page.getByText("1 objekti")).toBeVisible();
-  await expect(page.getByText("Taastatud revision 1")).toBeVisible();
+  await expect(page.getByTestId("recovery-panel").getByText("Pärast katkestust taastati revisjon 1.", { exact: true })).toBeVisible();
   expect(consoleErrors).toEqual([]);
 });
