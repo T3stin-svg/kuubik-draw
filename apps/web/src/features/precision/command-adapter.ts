@@ -47,7 +47,8 @@ export interface VisualShellCommandAdapter {
 }
 
 const DEFAULT_OSNAP_MODES: readonly CadOsnapMode[] = Object.freeze([
-  "endpoint", "midpoint", "center", "quadrant", "intersection", "perpendicular", "tangent", "nearest",
+  "endpoint", "midpoint", "center", "quadrant", "intersection", "extension", "insertion",
+  "perpendicular", "tangent", "nearest", "geometricCenter", "parallel",
 ]);
 
 const KEY_TOGGLES: Readonly<Record<string, PrecisionToggle>> = Object.freeze({
@@ -77,9 +78,13 @@ const OSNAP_ALIASES: Readonly<Record<string, CadOsnapMode>> = Object.freeze({
   CEN: "center", CENTER: "center",
   QUA: "quadrant", QUADRANT: "quadrant",
   INT: "intersection", INTERSECTION: "intersection",
+  EXT: "extension", EXTENSION: "extension",
+  INS: "insertion", INSERTION: "insertion",
   PER: "perpendicular", PERPENDICULAR: "perpendicular",
   TAN: "tangent", TANGENT: "tangent",
   NEA: "nearest", NEAREST: "nearest",
+  GCE: "geometricCenter", GCEN: "geometricCenter", GEOMETRICCENTER: "geometricCenter",
+  PAR: "parallel", PARALLEL: "parallel",
 });
 
 const SHELL_ROWS: Readonly<Record<PrecisionShellRow, PrecisionToggle>> = Object.freeze({
