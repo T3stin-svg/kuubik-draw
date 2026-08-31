@@ -4,6 +4,33 @@ Source baseline: `b09f4e1e0a661b06e5087e6cbb748220dbc48574`
 
 Branch: `work/reio-precision-layers`
 
+## Wave 15: F-053 AutoCAD 2024.1.2 live UNITS reference
+
+- Baseline: `679a5963fc7ad9128dff78bb076b0e9dbf4c8923`
+- Branch: `work15/reio-precision-units-autocad`
+- Reproducer: `node tools/autocad/run-f053.mjs`
+- A newly launched, authenticated AutoCAD process operated only on its blank
+  scratch document. The pre-existing PID `64444` retained the same executable
+  path and start identity, the owned PID `57308` terminated, and the process
+  set was exactly restored.
+- Nine native checks passed: baseline/commit settings, existing-coordinate
+  preservation, atomic Undo/Redo, no-op stability, invalid `LUPREC` rejection,
+  invalid `INSUNITS` rejection and geometry preservation after invalid input.
+- Independent raw DXF read-back proved all required header variables and line
+  coordinates within eight ULPs. COM `ANGBASE=pi/3` radians maps to DXF
+  `$ANGBASE=60` degrees. The scratch DXF SHA-256 is
+  `9fc4b83555e66216780ce755a6fd4fce0d461e9a0c73fe1b1a3dc8173a5e3dce`.
+- Two items remain `NOT_RUN`: AutoCAD has one `INSUNITS` value rather than
+  separate drawing/insertion-unit fields, and modal UNITS Cancel cannot be
+  proven through COM variables without UI simulation.
+- Targeted coverage passed 3 files / 7 tests: runner/process contract,
+  mutation-resistant DXF parser and content-address binding.
+- Repository-wide verification passed: 266 Vitest files / 1,188 tests, DXF 29
+  files / 73 tests, PDF 7 files / 22 tests, typecheck, lint, 154-module build,
+  public-tree scan of 1,807 files, 119-package license audit and diff-check.
+- Evidence status is `PARTIAL` (9 PASS, 2 NOT_RUN), certification authority is
+  false, F-053 remains uncertified and its score is unchanged.
+
 ## Wave 14: F-053 UNITS persistence and command contract
 
 - Baseline: `a6d2cf917c55bf415257dc9ca1ba59684a53467c`

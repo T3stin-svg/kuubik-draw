@@ -540,3 +540,40 @@ This workstream does not edit `App.tsx` or global CSS. The integration owner
 still owns the actual modal/menu wiring and integrated Chromium read-back.
 AutoCAD 2024.1.2 live evidence is also absent, so F-053 remains uncertified and
 its parity score must not change.
+
+## Wave 15 AutoCAD 2024.1.2 UNITS reference (F-053)
+
+Run the bounded live reference from the repository root:
+
+```powershell
+node tools/autocad/run-f053.mjs
+```
+
+The runner launches one new owned AutoCAD process and accepts only its blank
+scratch document. It records the owned PID, executable identity and process
+start identity, refuses a pre-existing PID, writes only a temporary scratch
+DXF, closes that scratch document, quits the owned process and verifies that
+the complete pre-existing AutoCAD process set is restored. The observed run
+left the user's pre-existing PID `64444` and its document untouched.
+
+The native COM matrix proves decimal length and decimal-degree angle formats,
+precision `8`, `INSUNITS=6` (metres), clockwise direction, a 60 degree base
+angle, preserved double-precision geometry coordinates, atomic Undo/Redo,
+no-op stability and fail-closed invalid `LUPREC`/`INSUNITS` values. COM exposes
+`ANGBASE` in radians (`pi/3`); the independent raw DXF parser correctly expects
+the `$ANGBASE` header value in degrees (`60`). COM coordinate read-back is
+exact, while the independently serialized DXF line is accepted only within an
+explicit eight-ULP double-precision bound. The DXF SHA-256 is bound into
+`evidence/autocad/F-053.json`.
+
+Two capabilities remain `NOT_RUN` instead of being simulated:
+
+- AutoCAD UNITS exposes one `INSUNITS` drawing insertion-scale variable, not
+  the two independent drawing-unit and insertion-unit fields in the Kuubik
+  contract.
+- COM system-variable access cannot prove modal UNITS-dialog Cancel semantics
+  without UI input simulation; this runner uses neither `SendKeys` nor user
+  window automation.
+
+This is a licensed AutoCAD 2024.1.2 reference matrix, not certification
+authority. It does not prove Kuubik UI wiring or change F-053/parity scores.
