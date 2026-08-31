@@ -1,0 +1,29 @@
+{
+  "definition": {
+    "id": "DOOR",
+    "name": "Door",
+    "basePoint": { "x": 10, "y": 20 },
+    "entities": [
+      { "kind": "line", "handle": "10", "layerId": "0", "start": { "x": 10, "y": 20 }, "end": { "x": 1010, "y": 20 } }
+    ],
+    "extensionData": {
+      "kuubik.block.v1": {
+        "kind": "block-definition",
+        "version": 1,
+        "attributeDefinitions": [
+          { "tag": "MARK", "prompt": "Mark", "defaultValue": "D1", "position": { "x": 510, "y": 70 }, "height": 50 }
+        ]
+      }
+    }
+  },
+  "insert": {
+    "kind": "blockRef",
+    "handle": "20",
+    "layerId": "0",
+    "blockId": "DOOR",
+    "insertion": { "x": 10, "y": 20 },
+    "scale": { "x": 1, "y": 1 },
+    "rotationRad": 0,
+    "attributes": { "MARK": "D1" }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "dimension": {
+    "kind": "dimension",
+    "handle": "D1",
+    "layerId": "0",
+    "dimensionKind": "aligned",
+    "definitionPoints": [{ "x": 0, "y": 0 }, { "x": 100, "y": 40 }, { "x": 20, "y": 60 }, { "x": 20, "y": 60 }],
+    "styleId": "DIM-ISO",
+    "extensionData": {
+      "kuubik.annotation.v1": {
+        "kind": "dimension",
+        "associative": true,
+        "anchors": [
+          { "handle": "10", "feature": "start", "fallback": { "x": 0, "y": 0 } },
+          { "handle": "10", "feature": "end", "fallback": { "x": 100, "y": 40 } }
+        ]
+      }
+    }
+  },
+  "hatchPattern": {
+    "kind": "hatch",
+    "pattern": { "type": "line", "angleRad": 0.7853981633974483, "scale": 2, "origin": { "x": 5, "y": 5 } },
+    "boundaryHandles": ["20", "21"]
+  }
+}
