@@ -5,6 +5,7 @@
   "liveEvidence": {
     "autocad2024": "NOT_RUN",
     "chromiumIntegratedUi": "NOT_RUN",
+    "shellPreview": "PASS_ZERO_CONSOLE_ERRORS",
     "devPort": 5202
   },
   "automatedTests": {
@@ -13,7 +14,11 @@
     "propertyCases": 2000,
     "performanceEntityCount": 50000,
     "selectionQueryLimitMs": 100,
-    "indexBuildLimitMs": 5000
+    "indexBuildLimitMs": 5000,
+    "fullTestFiles": 93,
+    "fullTests": 540,
+    "publicTreeFiles": 1209,
+    "auditedInstalledPackages": 119
   },
   "featureRows": [
     "F-041", "F-042", "F-044", "F-045", "F-046", "F-047", "F-048",

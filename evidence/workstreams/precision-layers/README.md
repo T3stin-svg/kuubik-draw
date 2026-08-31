@@ -25,6 +25,10 @@ integration branch.
 - TypeScript package and web typecheck passes.
 - 19 targeted tests pass: unit, seeded property/fuzz, mutation guard, renderer,
   UI wiring and performance.
+- Full repository gate passes: 93 test files / 540 tests, lint, typecheck and
+  production build.
+- Public-tree scan passes on 1,209 files and the license gate passes on 119
+  installed packages.
 - The 50,000-object test builds both snap and selection indexes, then asserts a
   local selection query below 100 ms and total index construction below 5 s.
   The first recorded targeted Vitest run completed the whole two-test
@@ -41,3 +45,8 @@ No parity, visual score, security evidence or production deployment file was
 changed. Dev port 5202 can only provide a meaningful feature preview after the
 integration branch connects the feature controllers to `App.tsx` and package
 exports.
+
+The existing shell was opened at `http://127.0.0.1:5202/`: title and visible DOM
+loaded and browser console error count was zero. The DOM also independently
+showed ORTHO, OSNAP, OTRACK and DYN as disabled, which is why this is a shell
+smoke test rather than feature live evidence.
