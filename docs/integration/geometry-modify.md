@@ -321,3 +321,40 @@ export/import read-back for a rotated clockwise 17-sided closed LWPOLYLINE. It
 remains uncertified until the AutoCAD 2024.1.2 live POLYGON matrix and Kuubik browser
 workflow are run with output read-back. No parity score or certification record was
 changed.
+
+## Wave 12 exports (F-007 complete ELLIPSE matrix)
+
+From `packages/cad-core/src/ellipse-command.ts`:
+
+- `prepareCompleteEllipseCommand`
+- `EllipseCommandInputError`
+- `CompleteEllipseCommandInput`, `CompleteEllipseConstruction`,
+  `EllipseArcDefinition`, `EllipseArcDirection`, `NormalizedEllipseDefinition`,
+  and `PreparedCompleteEllipseCommand`
+
+The integration owner should migrate the existing ELLIPSE parser to this typed
+kernel. It supports center/major-end/minor-distance construction and the AutoCAD
+axis-endpoint form where the first selected axis may become either the canonical
+major or minor axis. The returned entity always uses a major-axis vector and a
+minor/major ratio in `(0, 1]`, with deterministic rotation and full-versus-arc
+metadata.
+
+Elliptical arcs accept either parameters or geometric polar angles. Polar angles are
+converted with the ellipse radii before storage. AutoCAD and DXF traverse an ELLIPSE
+arc counter-clockwise; an explicit clockwise Kuubik construction therefore stores
+the equivalent swapped counter-clockwise parameter interval. This preserves the
+exact locus and requested endpoint pair, while the original direction remains only
+in the prepared normalized command metadata and is not recoverable from DXF alone.
+
+Preview and commit must call `prepareCompleteEllipseCommand` with the same immutable
+input. Commit its single returned change once through `CadSession`. Invalid identity,
+non-finite points or arc inputs, axes at or below numeric tolerance, an invalid
+center-mode minor radius, coincident arc endpoints, and numeric overflow fail before
+an `EntityChange` exists. Use explicit full mode for a closed ellipse.
+
+F-007 has golden/property/fuzz/mutation/prepared-wiring coverage and production DXF
+export/import read-back for rotated full and elliptical-arc geometry, handle, layer,
+parameters, colour, lineweight, and linetype scale. DXF ELLIPSE does not round-trip
+Kuubik `appearance.thickness`. F-007 remains uncertified until the AutoCAD 2024.1.2
+live command matrix and Kuubik browser workflow are run with output read-back. No
+parity score or certification record was changed.

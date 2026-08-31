@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "wave": "f007-complete-ellipse-matrix",
+  "rows": ["F-007"],
+  "status": "implemented-kernel-and-dxf-readback-not-browser-or-autocad-certified",
+  "sourceAuthority": "C:/Users/Olav/Downloads/kuubik-draw-reio-scope-v1.json",
+  "behaviorAuthority": "https://help.autodesk.com/cloudhelp/2024/JPN/AutoCAD-Core/files/GUID-45F9C588-2BA9-414D-8AFD-FB6B448BF273.htm",
+  "implemented": {
+    "F-007": [
+      "center, major-axis endpoint and minor-distance construction",
+      "two axis endpoints plus other-axis distance with either selected axis canonicalized as major",
+      "full ellipse and elliptical arc distinction",
+      "parameter and geometric polar-angle arc input",
+      "counter-clockwise and explicit clockwise construction intent",
+      "deterministic rotation, radii, ratio and endpoint metadata",
+      "immutable handle, layer, appearance and extension data",
+      "fail-closed invalid, near-degenerate and overflowing input",
+      "one prepared global Commit, Undo and Redo operation"
+    ]
+  },
+  "invariants": {
+    "previewEqualsCommit": "preview and commit both call prepareCompleteEllipseCommand with the same immutable input",
+    "atomicUndoRedo": "the ellipse is one CadSession operation",
+    "exactIdentityAndProperties": "handle, layer, appearance and extension data are cloned into the prepared ellipse",
+    "canonicalAxes": "the stored major-axis vector is always at least as long as the derived minor axis and ratio remains in (0, 1]",
+    "polarAngleConversion": "geometric polar angles are converted to ellipse parameters using both radii",
+    "clockwiseStorage": "clockwise construction stores the equivalent swapped counter-clockwise DXF locus",
+    "degeneracyIsAtomic": "invalid identity, point, distance, direction, coincident arc or numeric result throws before changes exist",
+    "dxfReadback": "production export/import preserves handle, layer, center, major axis, ratio, parameter interval, colour, lineweight and linetype scale"
+  },
+  "tests": {
+    "unitGoldenProperty": "packages/cad-core/test/f007-ellipse-command.test.ts",
+    "deterministicFuzz": "packages/cad-core/test/f007-ellipse-fuzz.test.ts",
+    "mutation": "packages/cad-core/test/f007-ellipse-mutation-proven.test.ts",
+    "preparedWiringAtomic": "packages/cad-core/test/f007-ellipse-wiring.test.ts",
+    "roundtrip": "packages/cad-dxf/test/f007-ellipse-roundtrip.test.ts",
+    "targetedResult": "5 files passed; 14 tests passed; 64 deterministic rotation cases plus 256 seeded fuzz constructions",
+    "fullVitestResult": "188 files passed; 916 tests passed",
+    "dxfGateResult": "21 files passed; 56 tests passed",
+    "pdfGateResult": "7 files passed; 22 tests passed",
+    "typecheckLintBuild": "PASS",
+    "publicTree": "PASS; 1533 files scanned",
+    "license": "PASS; 119 installed packages audited",
+    "diffCheck": "PASS"
+  },
+  "knownLimits": [
+    "the typed ELLIPSE parser is not wired into the browser shell in this file-ownership lane",
+    "clockwise direction intent is not representable in the counter-clockwise DXF ELLIPSE record and is retained only in prepared metadata",
+    "DXF ELLIPSE does not round-trip Kuubik appearance.thickness"
+  ],
+  "certificationGaps": [
+    "AutoCAD 2024.1.2 live ELLIPSE construction and arc matrix not run",
+    "Kuubik browser ELLIPSE workflow not run",
+    "F-007 parity score and certification records were intentionally not changed"
+  ]
+}
