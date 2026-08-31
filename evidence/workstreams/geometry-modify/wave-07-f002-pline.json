@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "wave": "f002-pline-command-matrix",
+  "rows": ["F-002"],
+  "status": "implemented-kernel-and-dxf-readback-not-browser-or-autocad-certified",
+  "sourceAuthority": "C:/Users/Olav/Downloads/kuubik-draw-reio-scope-v1.json",
+  "implemented": {
+    "F-002": [
+      "Line and Arc segment modes",
+      "Through, Angle, Center, Direction and Radius arc constructions",
+      "signed minor and major arc bulges",
+      "Width and Halfwidth",
+      "line-mode and tangent arc-mode Close without a duplicate seam vertex",
+      "immutable command-local Undo",
+      "one prepared global Commit, Undo and Redo operation"
+    ]
+  },
+  "invariants": {
+    "previewEqualsCommit": "preview and commit both call preparePlineCommandState with the same immutable state",
+    "atomicUndoRedo": "all PLINE vertices are committed as one CadSession operation",
+    "commandUndoIsLocal": "vertex, option and Close undo rewinds state without touching the document",
+    "degeneracyIsAtomic": "collapsed points, invalid widths and impossible arc constructions throw before changes exist",
+    "dxfReadback": "production export/import preserves handle, layer, seam, variable widths and signed bulges"
+  },
+  "tests": {
+    "unitGoldenPropertyAtomic": "packages/cad-core/test/f002-pline-command.test.ts",
+    "mutation": "packages/cad-core/test/f002-pline-mutation-proven.test.ts",
+    "roundtrip": "packages/cad-dxf/test/f002-pline-roundtrip.test.ts",
+    "targetedResult": "3 files passed; 10 tests passed; 64 deterministic property cases inside the property test",
+    "fullVitestResult": "131 files passed; 721 tests passed",
+    "dxfGateResult": "16 files passed; 51 tests passed",
+    "typecheckLintBuild": "PASS",
+    "publicTree": "PASS; 1403 files scanned",
+    "license": "PASS; 119 installed packages audited",
+    "diffCheck": "PASS"
+  },
+  "certificationGaps": [
+    "AutoCAD 2024.1.2 live PLINE command-matrix comparison not run",
+    "Kuubik browser PLINE workflow is not wired in this file-ownership lane",
+    "F-002 parity score and certification records were intentionally not changed"
+  ]
+}

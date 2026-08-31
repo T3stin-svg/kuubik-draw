@@ -168,3 +168,30 @@ FILLET, and STRETCH through one `PreparedAtomicCommand` contract. QSELECT and
 SELECTSIMILAR have a separate selection-only adapter so they never create a fake
 document transaction. The visual worker supplies typed `CommandInvocation` parsers
 and may register the resulting definitions directly in `CommandRegistry`.
+
+## Wave 7 exports (F-002 PLINE matrix)
+
+From `packages/cad-core/src/pline-command.ts`:
+
+- `startPlineCommand`
+- `applyPlineCommandAction`
+- `preparePlineCommandState`
+- `PlineCommandState`, `PlineCommandAction`, `PlineArcConstruction`, and
+  `PlineSegmentMode`
+
+The integration owner should expose Line/Arc mode, Width/Halfwidth, Close, and
+command-local Undo through one immutable `PlineCommandState`. Arc input variants are
+Through (second point), Angle, Center, Direction, and Radius; signed bulges are
+written on the segment's start vertex. Arc-mode Close derives the closing arc from
+the previous segment's end tangent and does not duplicate the seam vertex.
+
+Both the canvas ghost and final command must call `preparePlineCommandState` for the
+same state. Commit its returned `changes` once through `CadSession`; do not turn each
+vertex action into a document operation. This preserves one global Undo/Redo step
+while `applyPlineCommandAction(..., { type: "undo" })` remains command-local and
+document-free.
+
+F-002 now has a core golden/property/mutation matrix plus production DXF export and
+import read-back for handle, layer, closed seam, signed bulges, and variable widths.
+It remains uncertified until the integration branch supplies a real browser workflow
+and an AutoCAD 2024.1.2 live comparison. No shared `src/index.ts` barrel was changed.
