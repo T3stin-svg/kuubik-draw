@@ -100,7 +100,7 @@ describe("F-067 hatch", () => {
     );
     const hatch = createHatch(document, { handle: "H1", layerId: "0", boundaryHandles: ["20", "21"], pattern: "ANSI31", angleRad: Math.PI / 4, scale: 2, origin: { x: 5, y: 5 } });
     expect(hatch.loops.map((loop) => loop.isHole)).toEqual([false, true]);
-    expect(readHatchAssociation(hatch)).toEqual(golden.hatchPattern);
+    expect(readHatchAssociation(hatch)).toMatchObject(golden.hatchPattern);
     expect(createHatch(document, { handle: "H2", layerId: "0", boundaryHandles: ["20"], pattern: "SOLID" })).toMatchObject({ pattern: "SOLID", associative: true });
   });
 
@@ -114,7 +114,7 @@ describe("F-067 hatch", () => {
     const result = updateAssociativeHatches(staged, ["20"]);
     expect(result).toMatchObject({ updatedHandles: ["H1"], broken: [], changes: [{ entity: { handle: "H1", associative: true } }] });
     const missing = { ...structuredClone(staged), entities: staged.entities.filter((entity) => entity.handle !== "20") };
-    expect(updateAssociativeHatches(missing, ["20"]).broken).toEqual([{ hatchHandle: "H1", boundaryHandle: "20" }]);
+    expect(updateAssociativeHatches(missing, ["20"]).broken).toEqual([{ hatchHandle: "H1", boundaryHandle: "20", reason: "missing-boundary" }]);
   });
 
   it("batches dimension and hatch propagation into the geometry command's single Undo/Redo step", () => {

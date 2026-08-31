@@ -1,4 +1,4 @@
-import type { CadEntity, CadHatch, CadHatchLoop, CadPoint2, CadPolyline, KDrawDocumentV1 } from "@kuubik/cad-schema";
+import type { CadEntity, CadHatch, CadHatchLoop, CadPoint2, CadPolyline, CadPolylineVertex, KDrawDocumentV1 } from "@kuubik/cad-schema";
 import type { EntityChange } from "../transaction.js";
 import { readHatchAssociation, withAnnotationExtension } from "./contracts.js";
 
@@ -30,25 +30,64 @@ function pointInPolygon(point: CadPoint2, vertices: readonly CadPoint2[]): boole
   return inside;
 }
 
-function boundaryVertices(entity: CadEntity): CadPoint2[] | null {
+type HatchVertex = CadPoint2 & { bulge?: number };
+
+interface BoundaryPath {
+  vertices: HatchVertex[];
+  sampled: CadPoint2[];
+}
+
+function tessellate(vertices: readonly HatchVertex[]): CadPoint2[] {
+  const sampled: CadPoint2[] = [];
+  for (let index = 0; index < vertices.length; index += 1) {
+    const start = vertices[index]!;
+    const end = vertices[(index + 1) % vertices.length]!;
+    sampled.push({ x: start.x, y: start.y });
+    const bulge = start.bulge ?? 0;
+    if (Math.abs(bulge) <= EPSILON) continue;
+    const chord = Math.hypot(end.x - start.x, end.y - start.y);
+    if (chord <= EPSILON) return [];
+    const sweep = 4 * Math.atan(bulge);
+    const centerOffset = chord * (1 - bulge * bulge) / (4 * bulge);
+    const center = {
+      x: (start.x + end.x) / 2 - (end.y - start.y) / chord * centerOffset,
+      y: (start.y + end.y) / 2 + (end.x - start.x) / chord * centerOffset,
+    };
+    const startAngle = Math.atan2(start.y - center.y, start.x - center.x);
+    const radius = Math.hypot(start.x - center.x, start.y - center.y);
+    const parts = Math.max(2, Math.ceil(Math.abs(sweep) / (Math.PI / 32)));
+    for (let part = 1; part < parts; part += 1) {
+      const angle = startAngle + sweep * part / parts;
+      sampled.push({ x: center.x + radius * Math.cos(angle), y: center.y + radius * Math.sin(angle) });
+    }
+  }
+  return sampled;
+}
+
+function boundaryVertices(entity: CadEntity): BoundaryPath | null {
   if (entity.kind !== "polyline" || !entity.closed || entity.vertices.length < 3) return null;
-  const vertices = entity.vertices.map(({ x, y }) => ({ x, y }));
+  const vertices: HatchVertex[] = entity.vertices.map(({ x, y, bulge }) => ({ x, y, ...(bulge !== undefined && Math.abs(bulge) > EPSILON ? { bulge } : {}) }));
+  if (vertices.some((vertex) => !Number.isFinite(vertex.x) || !Number.isFinite(vertex.y) || vertex.bulge !== undefined && !Number.isFinite(vertex.bulge))) return null;
   if (samePoint(vertices[0]!, vertices.at(-1)!)) vertices.pop();
-  if (vertices.length < 3 || Math.abs(polygonArea(vertices)) <= EPSILON) return null;
-  return vertices;
+  const sampled = tessellate(vertices);
+  if (vertices.length < 3 || sampled.length < 3 || Math.abs(polygonArea(sampled)) <= EPSILON) return null;
+  return { vertices, sampled };
 }
 
 export type HatchIslandDetection = "normal" | "outer" | "ignore";
 
-function classifyLoops(polygons: CadPoint2[][], islandDetection: HatchIslandDetection): CadHatchLoop[] {
-  const classified = polygons.map((vertices, index) => {
-    const sample = vertices[0]!;
-    const depth = polygons.reduce((count, other, otherIndex) => otherIndex !== index && pointInPolygon(sample, other) ? count + 1 : count, 0);
-    return { vertices: structuredClone(vertices), depth };
+function classifyLoops(paths: BoundaryPath[], islandDetection: HatchIslandDetection): { loops: CadHatchLoop[]; depths: number[] } {
+  const classified = paths.map((path, index) => {
+    const sample = path.sampled[0]!;
+    const depth = paths.reduce((count, other, otherIndex) => otherIndex !== index && pointInPolygon(sample, other.sampled) ? count + 1 : count, 0);
+    return { vertices: structuredClone(path.vertices), depth };
   });
-  if (islandDetection === "ignore") return classified.filter((loop) => loop.depth === 0).map(({ vertices }) => ({ vertices, isHole: false }));
-  if (islandDetection === "outer") return classified.filter((loop) => loop.depth <= 1).map(({ vertices, depth }) => ({ vertices, isHole: depth === 1 }));
-  return classified.map(({ vertices, depth }) => ({ vertices, isHole: depth % 2 === 1 }));
+  const selected = islandDetection === "ignore" ? classified.filter((loop) => loop.depth === 0)
+    : islandDetection === "outer" ? classified.filter((loop) => loop.depth <= 1) : classified;
+  return {
+    loops: selected.map(({ vertices, depth }) => ({ vertices, isHole: islandDetection === "ignore" ? false : depth % 2 === 1 })),
+    depths: classified.map(({ depth }) => depth),
+  };
 }
 
 export interface HatchArgs {
@@ -119,7 +158,7 @@ export function createHatch(document: KDrawDocumentV1, args: HatchArgs): CadHatc
   if (!Array.isArray(args.boundaryHandles)) throw new TypeError("HATCH boundary handles are required.");
   const boundaryHandles = canonicalBoundaryHandles(document, args.boundaryHandles);
   if (!boundaryHandles.length) throw new RangeError("HATCH requires at least one boundary.");
-  const polygons = boundaryHandles.map((handle) => {
+  const paths = boundaryHandles.map((handle) => {
     const boundary = document.entities.find((entity) => entity.handle === handle)!;
     assertParticipatingLayer(document, boundary.layerId, `HATCH boundary ${handle}`);
     const vertices = boundary ? boundaryVertices(boundary) : null;
@@ -132,15 +171,19 @@ export function createHatch(document: KDrawDocumentV1, args: HatchArgs): CadHatc
   const associative = args.associative === undefined ? true : args.associative;
   const islandDetection = validateIslandDetection(args.islandDetection === undefined ? "normal" : args.islandDetection);
   if (typeof args.pattern !== "string" || !args.pattern.trim() || !Number.isFinite(scale) || scale <= 0 || !Number.isFinite(angleRad) || typeof associative !== "boolean" || typeof origin !== "object" || origin === null || !Number.isFinite(origin.x) || !Number.isFinite(origin.y)) throw new RangeError("HATCH pattern settings must be finite and valid.");
+  const classified = classifyLoops(paths, islandDetection);
   const entity: CadHatch = {
     kind: "hatch", handle: args.handle, layerId: args.layerId, pattern: args.pattern,
-    associative, loops: classifyLoops(polygons, islandDetection),
+    associative, loops: classified.loops,
   };
   return withAnnotationExtension(entity, {
     kind: "hatch",
+    version: 2,
     islandDetection,
     pattern: { type: args.pattern.trim().toUpperCase() === "SOLID" ? "solid" : "line", angleRad, scale, origin: structuredClone(origin) },
     boundaryHandles,
+    boundaryDepths: classified.depths,
+    boundaryVertices: paths.map((path) => structuredClone(path.vertices) as CadPolylineVertex[]),
   });
 }
 
@@ -172,7 +215,7 @@ export function editHatch(document: KDrawDocumentV1, handle: string, patch: Hatc
 export interface HatchUpdateResult {
   changes: EntityChange[];
   updatedHandles: string[];
-  broken: Array<{ hatchHandle: string; boundaryHandle: string }>;
+  broken: Array<{ hatchHandle: string; boundaryHandle: string; reason: "missing-boundary" | "invalid-boundary" }>;
 }
 
 export function updateAssociativeHatches(document: KDrawDocumentV1, changedHandles: readonly string[]): HatchUpdateResult {
@@ -186,18 +229,27 @@ export function updateAssociativeHatches(document: KDrawDocumentV1, changedHandl
     if (!association) throw new TypeError(`Malformed associative HATCH contract: ${entity.handle}.`);
     if (!association.boundaryHandles.some((handle) => changed.has(normalizedHandle(handle)))) continue;
     assertParticipatingLayer(document, entity.layerId, `Associative HATCH ${entity.handle}`);
-    const polygons: CadPoint2[][] = [];
+    const paths: BoundaryPath[] = [];
     for (const handle of association.boundaryHandles) {
       const boundary = document.entities.find((candidate) => normalizedHandle(candidate.handle) === normalizedHandle(handle));
       if (boundary) assertParticipatingLayer(document, boundary.layerId, `HATCH boundary ${boundary.handle}`);
       const vertices = boundary ? boundaryVertices(boundary) : null;
-      if (!vertices) broken.push({ hatchHandle: entity.handle, boundaryHandle: handle });
-      else polygons.push(vertices);
+      if (!vertices) broken.push({ hatchHandle: entity.handle, boundaryHandle: handle, reason: boundary ? "invalid-boundary" : "missing-boundary" });
+      else paths.push(vertices);
     }
-    if (polygons.length !== association.boundaryHandles.length) continue;
-    const loops = classifyLoops(polygons, association.islandDetection);
-    if (JSON.stringify(loops) !== JSON.stringify(entity.loops)) {
-      changes.push({ type: "put", entity: { ...structuredClone(entity), loops } });
+    if (paths.length !== association.boundaryHandles.length) continue;
+    const classified = classifyLoops(paths, association.islandDetection);
+    const loops = classified.loops;
+    const snapshotBoundaryVertices = paths.map((path) => structuredClone(path.vertices) as CadPolylineVertex[]);
+    const topologyChanged = JSON.stringify(classified.depths) !== JSON.stringify(association.boundaryDepths)
+      || JSON.stringify(snapshotBoundaryVertices) !== JSON.stringify(association.boundaryVertices);
+    if (JSON.stringify(loops) !== JSON.stringify(entity.loops) || topologyChanged) {
+      changes.push({ type: "put", entity: withAnnotationExtension({ ...structuredClone(entity), loops }, {
+        ...association,
+        version: 2,
+        boundaryDepths: classified.depths,
+        boundaryVertices: snapshotBoundaryVertices,
+      }) });
       updatedHandles.push(entity.handle);
     }
   }
@@ -222,7 +274,7 @@ export function evaluateHatchCapability(document: KDrawDocumentV1, hatchHandle: 
   return { executable: true, code: "ready" };
 }
 
-export function hatchBoundaryPolyline(handle: string, layerId: string, vertices: CadPoint2[]): CadPolyline {
+export function hatchBoundaryPolyline(handle: string, layerId: string, vertices: CadPolylineVertex[]): CadPolyline {
   if (vertices.length < 3) throw new RangeError("Boundary requires at least three vertices.");
   return { kind: "polyline", handle, layerId, closed: true, vertices: vertices.map((point) => ({ ...point })) };
 }

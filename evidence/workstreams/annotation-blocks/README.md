@@ -95,7 +95,7 @@ passed 16 DXF files / 51 tests and 7 PDF files / 22 tests. Repository typecheck,
 build, public-tree scan (1442 files), license gate (119 installed packages) and
 `git diff --check` also passed.
 
-Sixth-wave F-067/F-068 additions:
+Historical sixth-wave annotation additions (TABLE is F-069, not F-068):
 
 - associative HATCH retains exact boundary handles, solid/line pattern type, angle, scale and
   origin while deterministic even/odd nesting identifies outer loops, holes and nested islands;
@@ -217,10 +217,22 @@ minified chunk larger than 500 kB. No DXF/PDF adapter source, App/global CSS, sh
 package/lock, scope/parity/security file or F-score was changed. No AutoCAD 2024.1.2 plus Kuubik
 paired live workflow or physical DXF reopen was run; F-067 therefore remains below `1.00`.
 
-F-068 remains TABLE in the frozen catalog and was not relabelled as HATCH. Its next bounded wave
-should start from the post-F-067 integration commit in a fresh `work13/reio-annotation-table`
-worktree, own only `annotation/table.ts`, TABLE-specific annotation web files/tests, `cad-dxf` tests,
-this contract and this evidence folder, then harden off/frozen policy, runtime schema validation,
-stable row/column/cell/merge IDs, browser-ready edit/style Undo/Redo and an explicit native/proxy DXF
-read-back boundary. It must not change App/global CSS, shared indexes, package/lock, scope/parity,
-security or score files.
+Catalog correction: F-068 is HATCH island/hole associativity. TABLE is F-069 and remains preserved
+only on the separate `work13/reio-annotation-table` side branch; it is not integrated or claimed here.
+
+Eleventh-wave (work14) F-068 correction additions:
+
+- the HATCH contract is version 2 and stores stable boundary handles, aligned nesting depths and
+  exact closed-polyline vertices including signed bulges; tessellation is used only for containment;
+- Normal/Outer/Ignore are proven with four nested loops, translated/scaled/reordered property and
+  fuzz corpora, plus hidden-inner-loop snapshot refresh;
+- boundary move/PEDIT updates the same HATCH handle; missing and incompatible handles are distinct
+  broken lifecycle states and no nearby entity is substituted;
+- default boundary delete is atomic fail-closed; explicitly allowed broken-association mode remains
+  one command and one Undo step, and Undo restores executable association state;
+- HATCHEDIT preserves handle, appearance, pattern and exact loop geometry while changing only the
+  requested settings; locked/off/frozen target and boundary policy remains fail-closed;
+- native DXF now round-trips the bounded non-associative SOLID straight/signed-bulge polyline-loop
+  subset byte-identically. Edge/spline paths, group-97 sources and native associativity are rejected;
+- AutoCAD plus Kuubik paired live execution is `NOT_RUN` while the precision worker owns AutoCAD.
+  No parity score is changed and F-068 remains below `1.00`.

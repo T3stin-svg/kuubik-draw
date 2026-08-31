@@ -1,0 +1,16 @@
+{
+  "feature": "F-068",
+  "status": "NOT_RUN",
+  "reason": "AutoCAD live ownership is reserved for the precision worker; this branch must not compete for the live application.",
+  "devPort": 5203,
+  "workflows": [
+    { "id": "normal-four-depths", "islandDetection": "normal", "expectedDepths": [0, 1, 2, 3], "expectedHoles": [false, true, false, true] },
+    { "id": "outer-four-depths", "islandDetection": "outer", "expectedDepths": [0, 1, 2, 3], "expectedHoles": [false, true] },
+    { "id": "ignore-four-depths", "islandDetection": "ignore", "expectedDepths": [0, 1, 2, 3], "expectedHoles": [false] },
+    { "id": "boundary-pedit", "expected": "same HATCH handle, exact signed bulge, one Undo/Redo step" },
+    { "id": "boundary-delete", "expected": "default fail-closed; explicit broken mode is atomic and Undo restores boundary" },
+    { "id": "dxf-reopen", "expected": "non-associative SOLID straight/bulge loops retain loop flags, coordinates and bulges" }
+  ],
+  "requiredReadback": ["HATCH handle", "boundary handles", "loop count", "island depth", "hole flags", "signed bulges", "associativity", "Undo/Redo", "DXF SHA-256"],
+  "scoreChange": false
+}

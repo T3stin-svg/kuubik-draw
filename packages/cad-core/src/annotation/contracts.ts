@@ -1,4 +1,4 @@
-import type { CadEntity, CadPoint2 } from "@kuubik/cad-schema";
+import type { CadEntity, CadPoint2, CadPolylineVertex } from "@kuubik/cad-schema";
 
 export const ANNOTATION_EXTENSION_KEY = "kuubik.annotation.v1" as const;
 
@@ -28,6 +28,7 @@ export interface DimensionAssociation {
 
 export interface HatchAssociation {
   kind: "hatch";
+  version?: 2;
   islandDetection: "normal" | "outer" | "ignore";
   pattern: {
     type: "solid" | "line";
@@ -36,6 +37,10 @@ export interface HatchAssociation {
     origin: CadPoint2;
   };
   boundaryHandles: string[];
+  /** Stable topology snapshot aligned with boundaryHandles. */
+  boundaryDepths?: number[];
+  /** Exact supported polyline geometry, including signed bulges. */
+  boundaryVertices?: CadPolylineVertex[][];
 }
 
 export interface MTextContract {
@@ -291,14 +296,32 @@ export function readHatchAssociation(entity: CadEntity): HatchAssociation | null
   const value = entity.extensionData?.[ANNOTATION_EXTENSION_KEY];
   if (!isRecord(value) || value.kind !== "hatch" || !isRecord(value.pattern) || !Array.isArray(value.boundaryHandles)) return null;
   if (value.pattern.type !== "solid" && value.pattern.type !== "line") return null;
+  if (value.version !== undefined && value.version !== 2) return null;
   const islandDetection = value.islandDetection === undefined ? "normal" : value.islandDetection;
   if (islandDetection !== "normal" && islandDetection !== "outer" && islandDetection !== "ignore") return null;
   if (!Number.isFinite(value.pattern.angleRad) || !Number.isFinite(value.pattern.scale) || !(Number(value.pattern.scale) > 0) || !isPoint(value.pattern.origin)) return null;
   if (value.boundaryHandles.some((handle) => typeof handle !== "string" || handle.trim().length === 0)) return null;
   const normalizedBoundaryHandles = value.boundaryHandles.map((handle) => (handle as string).toLocaleUpperCase("en-US"));
   if (new Set(normalizedBoundaryHandles).size !== normalizedBoundaryHandles.length) return null;
+  let boundaryDepths: number[] | undefined;
+  if (value.boundaryDepths !== undefined) {
+    if (!Array.isArray(value.boundaryDepths) || value.boundaryDepths.length !== value.boundaryHandles.length
+      || value.boundaryDepths.some((depth) => !Number.isSafeInteger(depth) || (depth as number) < 0)) return null;
+    boundaryDepths = [...value.boundaryDepths] as number[];
+  }
+  let boundaryVertices: CadPolylineVertex[][] | undefined;
+  if (value.boundaryVertices !== undefined) {
+    if (!Array.isArray(value.boundaryVertices) || value.boundaryVertices.length !== value.boundaryHandles.length) return null;
+    boundaryVertices = [];
+    for (const loop of value.boundaryVertices) {
+      if (!Array.isArray(loop) || loop.length < 3 || loop.some((vertex) => !isPoint(vertex)
+        || isRecord(vertex) && vertex.bulge !== undefined && (typeof vertex.bulge !== "number" || !Number.isFinite(vertex.bulge)))) return null;
+      boundaryVertices.push(structuredClone(loop) as CadPolylineVertex[]);
+    }
+  }
   return {
     kind: "hatch",
+    ...(value.version === 2 ? { version: 2 as const } : {}),
     islandDetection,
     pattern: {
       type: value.pattern.type,
@@ -307,6 +330,8 @@ export function readHatchAssociation(entity: CadEntity): HatchAssociation | null
       origin: structuredClone(value.pattern.origin),
     },
     boundaryHandles: [...value.boundaryHandles] as string[],
+    ...(boundaryDepths ? { boundaryDepths } : {}),
+    ...(boundaryVertices ? { boundaryVertices } : {}),
   };
 }
 

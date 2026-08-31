@@ -73,7 +73,10 @@ describe("F-067 browser-ready HATCH wiring", () => {
     workflow.commit(input, "wave12:hatch-association");
     const updated = session.document.entities.find((entity) => entity.handle === hatchHandle)!;
     expect(updated).toMatchObject({ handle: hatchHandle, loops: [{ vertices: moved.vertices }, { isHole: true }, { isHole: false }] });
-    expect(readHatchAssociation(updated)).toEqual(readHatchAssociation(created.readBack.entities[0]!));
+    expect(readHatchAssociation(updated)).toMatchObject({
+      boundaryHandles: ["A0", "A1", "A2"], islandDetection: "normal",
+      pattern: readHatchAssociation(created.readBack.entities[0]!)!.pattern,
+    });
     const after = content(session.document);
     workflow.undo();
     workflow.redo();

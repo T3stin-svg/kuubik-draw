@@ -38,7 +38,10 @@ describe("F-067 HATCH deterministic property ratchet", () => {
       expect(update.updatedHandles).toEqual(["A1"]);
       if (update.changes[0]?.type !== "put") throw new Error("Expected associative HATCH put change.");
       expect(update.changes[0].entity.handle).toBe("A1");
-      expect(readHatchAssociation(update.changes[0].entity)).toEqual(readHatchAssociation(hatch));
+      expect(readHatchAssociation(update.changes[0].entity)).toMatchObject({
+        kind: "hatch", islandDetection, boundaryHandles: ["A0"],
+        pattern: readHatchAssociation(hatch)!.pattern,
+      });
     }
   });
 });

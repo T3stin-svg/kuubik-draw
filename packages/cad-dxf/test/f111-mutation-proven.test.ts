@@ -52,7 +52,7 @@ describe("F-111 mutation-proven roundtrip ratchet", () => {
 
   it("kills fail-open HATCH, global-handle and parser-budget mutants", () => {
     const source = exportDxf(createF109Document()).text;
-    expect(() => importDxf(source.replace(" 72\r\n0\r\n", " 72\r\n1\r\n"), { documentId: "F-111-hatch-mutant" })).toThrow(/bulged polyline boundaries/i);
+    expect(() => importDxf(source.replace(" 72\r\n0\r\n", " 72\r\n2\r\n"), { documentId: "F-111-hatch-mutant" })).toThrow(/bulge flag is outside/i);
     expect(() => importDxf(source.replace(" 91\r\n1\r\n", "999\r\nlossy\r\n 91\r\n1\r\n"), { documentId: "F-111-hatch-preamble-mutant" })).toThrow(/preamble/i);
     expect(() => importDxf(source.replace("  5\r\n401\r\n", "  5\r\n400\r\n"), { documentId: "F-111-handle-mutant" })).toThrow(/duplicate global handle/i);
     expect(() => importDxf(source.replace("  5\r\nF00\r\n", "  5\r\n1000\r\n"), { documentId: "F-111-object-handle-mutant" })).toThrow(/duplicate global handle/i);

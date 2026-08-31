@@ -21,8 +21,8 @@ export const ANNOTATION_TOOLS: readonly AnnotationTool[] = Object.freeze([
   { rowIds: ["F-058"], id: "STYLE", label: "Tekstistiilid", selection: "optional" },
   { rowIds: ["F-059"], id: "LEADER", label: "Viitjoon", selection: "optional" },
   { rowIds: ["F-060"], id: "MLEADER", label: "Multiviide", selection: "optional" },
-  { rowIds: ["F-067"], id: "HATCH", label: "Viirutus", selection: "required" },
-  { rowIds: ["F-068"], id: "TABLE", label: "Tabel", selection: "optional" },
+  { rowIds: ["F-067", "F-068"], id: "HATCH", label: "Viirutus", selection: "required" },
+  { rowIds: ["F-069"], id: "TABLE", label: "Tabel", selection: "optional" },
 ]);
 
 export interface AnnotationAction {

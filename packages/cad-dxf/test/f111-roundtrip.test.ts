@@ -74,7 +74,7 @@ describe("F-111 DXF roundtrip fidelity", () => {
     expect(() => importDxf(`${source}BROKEN`, { documentId: "broken" })).toThrow(/unpaired group-code line/i);
   });
 
-  it("accepts exact closed straight outer/hole loops and rejects every lossy HATCH variant", () => {
+  it("accepts exact closed straight/bulged outer/hole loops and rejects every lossy HATCH variant", () => {
     const source = exportDxf(createF109Document()).text;
     const start = source.indexOf("  0\r\nHATCH\r\n");
     const end = source.indexOf("  0\r\nHATCH\r\n", start + 1);
@@ -89,8 +89,13 @@ describe("F-111 DXF roundtrip fidelity", () => {
       loops: [{ isHole: false }, { isHole: true }],
     });
     const mutateFirst = (from: string, to: string): string => `${prefix}${record.replace(from, to)}${suffix}`;
-    expect(() => importDxf(mutateFirst(" 72\r\n0\r\n", " 72\r\n1\r\n"), { documentId: "bulge" })).toThrow(/bulged polyline boundaries/i);
-    expect(() => importDxf(mutateFirst(" 92\r\n3\r\n", " 92\r\n1\r\n"), { documentId: "edge" })).toThrow(/straight closed polyline subset/i);
+    const withBulgeRecord = record.replace(" 72\r\n0\r\n 73\r\n1\r\n 93\r\n", " 72\r\n1\r\n 73\r\n1\r\n 93\r\n").replace(" 20\r\n3000\r\n", " 20\r\n3000\r\n 42\r\n0.5\r\n");
+    const withBulge = `${prefix}${withBulgeRecord}${suffix}`;
+    const bulgedHatch = importDxf(withBulge, { documentId: "bulge" }).document.entities.find((entity) => entity.handle === "1300");
+    expect(bulgedHatch).toMatchObject({ kind: "hatch" });
+    expect(bulgedHatch?.kind === "hatch" ? (bulgedHatch.loops[0]!.vertices[0] as { bulge?: number }).bulge : undefined).toBe(0.5);
+    expect(() => importDxf(mutateFirst(" 72\r\n0\r\n", " 72\r\n2\r\n"), { documentId: "bulge-flag" })).toThrow(/bulge flag is outside/i);
+    expect(() => importDxf(mutateFirst(" 92\r\n3\r\n", " 92\r\n1\r\n"), { documentId: "edge" })).toThrow(/closed polyline subset/i);
     expect(() => importDxf(mutateFirst(" 71\r\n0\r\n", " 71\r\n1\r\n"), { documentId: "associative" })).toThrow(/associative boundary references/i);
     expect(() => importDxf(mutateFirst(" 97\r\n0\r\n", " 97\r\n1\r\n"), { documentId: "boundary-ref" })).toThrow(/associative source handles/i);
     expect(() => importDxf(mutateFirst(" 75\r\n1\r\n", `${hole} 75\r\n1\r\n`), { documentId: "extra-loop" })).toThrow(/pattern definition|unconsumed/i);
