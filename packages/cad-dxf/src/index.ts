@@ -355,7 +355,7 @@ function emitDimension(context: Context, entity: CadDimension): { text: string |
   const aligned = entity.dimensionKind === "aligned";
   if (!aligned && entity.dimensionKind !== "linear") return { text: null, points: [] };
   let output = header(context, "DIMENSION", entity) + pair(100, "AcDbDimension") + pair(2, block) +
-    point(10, 20, definition) + point(11, 21, textAt) + pair(70, aligned ? 1 : 0) +
+    point(10, 20, definition) + point(11, 21, textAt) + pair(70, 32 | (aligned ? 1 : 0)) +
     pair(1, escapedText(entity.overrideText ?? "<>", false)) + pair(3, style) + pair(42, num(measurement));
   // The subclass marker must precede every subclass-specific point group. AutoCAD rejects the inverse order.
   output += pair(100, aligned ? "AcDbAlignedDimension" : "AcDbRotatedDimension") +
@@ -612,9 +612,9 @@ function blockTable(dimensionNames: readonly string[], userBlocks: readonly CadB
   return text + pair(0, "ENDTAB");
 }
 
-function emptyBlock(name: string, record: string, begin: string, end: string): string {
+function emptyBlock(name: string, record: string, begin: string, end: string, flags = 0): string {
   return pair(0, "BLOCK") + pair(5, begin) + pair(330, record) + pair(100, "AcDbEntity") + pair(8, 0) + pair(100, "AcDbBlockBegin") +
-    pair(2, name) + pair(70, 0) + point(10, 20, { x: 0, y: 0 }) + pair(3, name) + pair(1, "") + pair(0, "ENDBLK") +
+    pair(2, name) + pair(70, flags) + point(10, 20, { x: 0, y: 0 }) + pair(3, name) + pair(1, "") + pair(0, "ENDBLK") +
     pair(5, end) + pair(330, record) + pair(100, "AcDbEntity") + pair(8, 0) + pair(100, "AcDbBlockEnd");
 }
 
@@ -625,7 +625,7 @@ function blocks(
   emittedHandles: string[],
 ): string {
   let text = pair(0, "SECTION") + pair(2, "BLOCKS") + emptyBlock("*Model_Space", "1A", "18", "19") + emptyBlock("*Paper_Space", "1B", "1C", "1D");
-  dimensionNames.forEach((name, index) => { text += emptyBlock(name, infrastructure.dimensionBlockRecords[index]!, infrastructure.dimensionBlockBegins[index]!, infrastructure.dimensionBlockEnds[index]!); });
+  dimensionNames.forEach((name, index) => { text += emptyBlock(name, infrastructure.dimensionBlockRecords[index]!, infrastructure.dimensionBlockBegins[index]!, infrastructure.dimensionBlockEnds[index]!, 1); });
   context.document.blocks.forEach((definition, index) => {
     const name = symbolName(definition.name, "block");
     const record = infrastructure.userBlockRecords[index]!;
