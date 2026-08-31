@@ -110,6 +110,17 @@ describe("DOM-independent annotation/block live workflow", () => {
     expect(dimensionEntity).toMatchObject({ kind: "dimension", styleId: "DIM2" });
     expect(dimensionEntity?.kind === "dimension" ? readDimensionAssociation(dimensionEntity)?.anchors.map((anchor) => anchor.handle) : []).toEqual(["A1", "A1"]);
 
+    const baseline = runPrompt(shell, session, { commandId: "DIM", dimensionCommandId: "DIMBASELINE", context: { dimensionAnchors: [
+      { handle: "A1", feature: "start", fallback: { x: 0, y: 0 } },
+      { handle: "A1", feature: "end", fallback: { x: 100, y: 20 } },
+      { handle: "P1", feature: "vertex", vertexIndex: 2, fallback: { x: 100, y: 100 } },
+    ] } }, { points: [{ x: 0, y: 0 }, { x: 100, y: 20 }, { x: 100, y: 100 }], dimensionLinePoints: [{ x: 0, y: 50 }, { x: 0, y: 60 }], axis: "horizontal", chainId: "BASE-1", associative: true, styleId: "DIM2" });
+    expect(baseline.readBack.entities).toHaveLength(2);
+    expect(baseline.readBack.entities.map((entity) => entity.handle)).toEqual(baseline.prepared.resultHandles);
+
+    const apply = runPrompt(shell, session, { commandId: "DIM", dimensionCommandId: "DIMSTYLE", context: { selectedHandles: [dimension.prepared.resultHandles[0]!] } }, { mode: "apply", styleId: "DIM" });
+    expect(apply.readBack.entities).toEqual([expect.objectContaining({ handle: dimension.prepared.resultHandles[0], kind: "dimension", styleId: "DIM" })]);
+
     const hatch = runPrompt(shell, session, { commandId: "HATCH" }, { boundaryHandles: ["P1"], pattern: "ANSI31", angleRad: Math.PI / 4, scale: 2, associative: true, origin: { x: 1, y: 2 } });
     expect(hatch.readBack.entities[0]).toMatchObject({ handle: hatch.prepared.resultHandles[0], kind: "hatch", pattern: "ANSI31", associative: true, extensionData: { "kuubik.annotation.v1": { boundaryHandles: ["P1"], pattern: { angleRad: Math.PI / 4, scale: 2, origin: { x: 1, y: 2 } } } } });
   });

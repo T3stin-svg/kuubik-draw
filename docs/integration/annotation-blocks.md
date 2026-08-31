@@ -41,8 +41,8 @@ The visual shell consumes only `AnnotationBlockShellAdapter` from
 
 Typed command payloads are URI-encoded JSON tokens produced by `annotationCommandLine` or
 `blockCommandLine`; visual code must not build raw command strings. `DIM` is the engine command
-and requires exactly one of `LINEAR`, `ALIGNED`, `ANGULAR`, `RADIUS`, `DIAMETER`, `CONTINUE` or
-`STYLE`. Its operation records both the canonical `DIM` command and the concrete typed planner
+and requires exactly one of `LINEAR`, `ALIGNED`, `ANGULAR`, `RADIUS`, `DIAMETER`, `CONTINUE`,
+`BASELINE` or `STYLE`. Its operation records both the canonical `DIM` command and the concrete typed planner
 command. Each other definition rejects a payload whose discriminant does not match its command.
 
 A command is registered as executable only when its planner and `AnnotationBlockSessionAdapter`
@@ -110,7 +110,7 @@ Associativity is encoded as:
       { "handle": "10", "feature": "start", "fallback": { "x": 0, "y": 0 } },
       { "handle": "10", "feature": "end", "fallback": { "x": 100, "y": 0 } }
     ],
-    "chain": { "id": "CHAIN-1", "index": 1, "previousDimensionHandle": "D1" }
+    "chain": { "id": "CHAIN-1", "index": 1, "mode": "continued", "previousDimensionHandle": "D1" }
   }
 }
 ```
@@ -131,6 +131,30 @@ its two measured origins.
 `styleId` references `document.dimensionStyles[].id`. A dimension style may reference
 `textStyleId`; the full transitive style dependency must be emitted before the entity on formats
 with tables. Import must reject dangling references.
+
+Continued chains measure adjacent point pairs and set `chain.mode="continued"`. Baseline chains
+measure every point from the immutable first origin and set `chain.mode="baseline"`; entries after
+index zero also carry `baselineDimensionHandle` pointing to the first dimension. Chain creation is
+one planner result and one Undo/Redo step. The serializer must preserve chain array order and both
+the dimension and association handles.
+
+Dimension-style formatting that is not native in the pinned schema is stored at
+`dimensionStyle.overrides["kuubik.dimensionStyle.v1"]`. Supported fields are `linearUnit`,
+`linearPrecision`, `angularPrecision`, `prefix`, `suffix`, `decimalSeparator`,
+`roundingIncrement`, `tolerance`, `arrowType`, `extensionBeyond` and `textGap`. Tolerance modes are
+`none`, `symmetric`, `deviation` and `limits`; arrow types are `closed-filled`, `open` and
+`architectural-tick`. The native style `scale` multiplies text height, arrow size, extension offset,
+extension-beyond distance and text gap, but does not scale the model-space measurement itself.
+`deriveDimensionPresentation` is the canonical deterministic derivation of formatted text,
+dimension/extension lines, arrow tips/directions and angular arc geometry. Renderers and file
+adapters must consume or reproduce this contract instead of recomputing a different convention.
+
+`DIMSTYLE create` adds a style, `update` replaces the immutable style value under the same ID, and
+`apply` replaces selected dimension values while preserving every dimension handle and only
+changing `styleId`. Existing dimensions therefore follow a redefined style without insert-like
+entity rewrites. All three modes are a single atomic session commit. Locked dimension layers fail
+before mutation. `evaluateDimensionCapability` reports `locked-layer` and missing stable anchors as
+`orphan-association`; fallback coordinates never convert an orphan to executable state.
 
 DXF guidance: emit native DIMENSION subtypes and DIMSTYLE/TEXTSTYLE resources. Where supported,
 emit handle-backed DIMASSOC semantics. If the chosen DXF version cannot preserve a particular
@@ -290,8 +314,9 @@ only the capability contract; it does not prove that a DXF file was written or r
 
 ## Required session 4 read-back matrix
 
-1. Linear/aligned/angular/radius/diameter/continued dimensions: type, definition points, style,
-   chain and both association target handles.
+1. Linear/aligned/angular/radius/diameter/continued/baseline dimensions: type, definition points,
+   style, chain mode and all association target handles. Compare derived text, tolerance,
+   arrows, extension geometry, units, precision and annotation scale after reopen.
 2. MTEXT and text styles: Unicode text, line breaks, width, attachment, spacing, font, width factor
    and oblique angle.
 3. LEADER and MLEADER: vertices, content placement, both style references and native/lossy status.
@@ -307,3 +332,14 @@ only the capability contract; it does not prove that a DXF file was written or r
 
 The F-row remains below `1.00` until the same visible workflow is proven in AutoCAD 2024.1.2 and
 Kuubik and the produced file is independently read back.
+
+## Current file-output capability boundary
+
+This workstream supplies the serialization contract, exact capability declaration/receipt and
+read-back fixture only. It does not call a DXF/PDF writer, does not alter either adapter and has not
+produced or reopened a dimension file. Session 4 must map baseline/continued chain semantics and
+the namespaced style profile at its adapter boundary, then fail closed for any field it cannot
+round-trip. Documents carrying those semantics derive explicit `dimension-chain` and
+`dimension-style-profile` requirements in addition to the native dimension requirements. A
+passing core receipt or `gate:dxf` regression is necessary integration evidence, but
+is not AutoCAD or generated-file evidence and cannot promote F-061..F-066 to `1.00`.

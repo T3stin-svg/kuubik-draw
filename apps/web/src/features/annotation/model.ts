@@ -1,4 +1,4 @@
-export type AnnotationCommandId = "DIMLINEAR" | "DIMALIGNED" | "DIMANGULAR" | "DIMRADIUS" | "DIMDIAMETER" | "DIMCONTINUE" | "DIMSTYLE" | "TEXT" | "MTEXT" | "STYLE" | "LEADER" | "MLEADER" | "HATCH";
+export type AnnotationCommandId = "DIMLINEAR" | "DIMALIGNED" | "DIMANGULAR" | "DIMRADIUS" | "DIMDIAMETER" | "DIMCONTINUE" | "DIMBASELINE" | "DIMSTYLE" | "TEXT" | "MTEXT" | "STYLE" | "LEADER" | "MLEADER" | "HATCH";
 
 export interface AnnotationTool {
   rowIds: string[];
@@ -14,7 +14,8 @@ export const ANNOTATION_TOOLS: readonly AnnotationTool[] = Object.freeze([
   { rowIds: ["F-063"], id: "DIMRADIUS", label: "Raadiuse mõõt", selection: "required" },
   { rowIds: ["F-063"], id: "DIMDIAMETER", label: "Diameetri mõõt", selection: "required" },
   { rowIds: ["F-064", "F-065"], id: "DIMCONTINUE", label: "Jätkuv mõõt", selection: "required" },
-  { rowIds: ["F-066"], id: "DIMSTYLE", label: "Mõõdustiilid", selection: "none" },
+  { rowIds: ["F-064", "F-065"], id: "DIMBASELINE", label: "Baasjoonmõõt", selection: "required" },
+  { rowIds: ["F-066"], id: "DIMSTYLE", label: "Mõõdustiilid", selection: "optional" },
   { rowIds: ["F-057"], id: "TEXT", label: "Üherealine tekst", selection: "none" },
   { rowIds: ["F-057"], id: "MTEXT", label: "Mitmerealine tekst", selection: "none" },
   { rowIds: ["F-058"], id: "STYLE", label: "Tekstistiilid", selection: "none" },
@@ -89,9 +90,18 @@ export const ANNOTATION_PROMPT_PLANS: Readonly<Record<AnnotationCommandId, Annot
     { id: "associative", label: "Assotsiatiivne", valueKind: "boolean", required: true },
     { id: "styleId", label: "Mõõdustiil", valueKind: "string", required: true },
   ] },
+  DIMBASELINE: { commandId: "DIMBASELINE", fields: [
+    { id: "points", label: "Baasjoone punktid", valueKind: "points", required: true },
+    { id: "dimensionLinePoints", label: "Mõõtjoonte asukohad", valueKind: "points", required: true },
+    { id: "axis", label: "Suund", valueKind: "select", required: true, choices: ["horizontal", "vertical"] },
+    { id: "chainId", label: "Mõõtketi ID", valueKind: "string", required: true },
+    { id: "associative", label: "Assotsiatiivne", valueKind: "boolean", required: true },
+    { id: "styleId", label: "Mõõdustiil", valueKind: "string", required: true },
+  ] },
   DIMSTYLE: { commandId: "DIMSTYLE", fields: [
-    { id: "mode", label: "Tegevus", valueKind: "select", required: true, choices: ["create", "update"] },
-    { id: "style", label: "Mõõdustiil", valueKind: "attributes", required: true },
+    { id: "mode", label: "Tegevus", valueKind: "select", required: true, choices: ["create", "update", "apply"] },
+    { id: "style", label: "Mõõdustiil", valueKind: "attributes", required: false },
+    { id: "styleId", label: "Rakendatav mõõdustiil", valueKind: "string", required: false },
   ] },
   TEXT: { commandId: "TEXT", fields: [
     { id: "position", label: "Sisestuspunkt", valueKind: "point", required: true },

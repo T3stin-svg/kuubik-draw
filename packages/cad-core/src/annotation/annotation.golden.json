@@ -17,6 +17,22 @@
       }
     }
   },
+  "dimensionPresentation": {
+    "handle": "D1",
+    "styleId": "DIM",
+    "measurement": 100,
+    "formattedText": "L=10,0 cm ±0,1",
+    "text": { "position": { "x": 0, "y": 20 }, "rotationRad": 0, "height": 5, "gap": 1.5 },
+    "dimensionLines": [{ "start": { "x": 0, "y": 20 }, "end": { "x": 100, "y": 20 } }],
+    "extensionLines": [
+      { "start": { "x": 0, "y": 2 }, "end": { "x": 0, "y": 24 } },
+      { "start": { "x": 100, "y": 2 }, "end": { "x": 100, "y": 24 } }
+    ],
+    "arrows": [
+      { "tip": { "x": 0, "y": 20 }, "direction": { "x": 1, "y": 0 }, "size": 6, "type": "open" },
+      { "tip": { "x": 100, "y": 20 }, "direction": { "x": -1, "y": 0 }, "size": 6, "type": "open" }
+    ]
+  },
   "hatchPattern": {
     "kind": "hatch",
     "pattern": { "type": "line", "angleRad": 0.7853981633974483, "scale": 2, "origin": { "x": 5, "y": 5 } },

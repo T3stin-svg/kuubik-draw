@@ -30,6 +30,7 @@ describe("F-057..F-068 typed annotation command adapter", () => {
     { commandId: "DIMRADIUS", args: { handle: "D4", layerId: "0", styleId: "DIM", center: { x: 0, y: 0 }, circumferencePoint: { x: 10, y: 0 }, textPoint: { x: 15, y: 0 } } },
     { commandId: "DIMDIAMETER", args: { handle: "D5", layerId: "0", styleId: "DIM", center: { x: 0, y: 0 }, circumferencePoint: { x: 10, y: 0 }, textPoint: { x: 15, y: 0 } } },
     { commandId: "DIMCONTINUE", args: { handles: ["D6", "D7"], layerId: "0", styleId: "DIM", points: [{ x: 0, y: 0 }, { x: 50, y: 0 }, { x: 100, y: 0 }], dimensionLinePoint: { x: 0, y: 20 }, axis: "horizontal", chainId: "C1" } },
+    { commandId: "DIMBASELINE", args: { handles: ["D8", "D9"], layerId: "0", styleId: "DIM", points: [{ x: 0, y: 0 }, { x: 50, y: 0 }, { x: 100, y: 0 }], dimensionLinePoints: [{ x: 0, y: 20 }, { x: 0, y: 30 }], axis: "horizontal", chainId: "B1" } },
     { commandId: "DIMSTYLE", mode: "create", style: { id: "DIM2", name: "DIM2", textStyleId: "TXT", textHeight: 3, arrowSize: 3, extensionOffset: 0.75, scale: 10 } },
     { commandId: "TEXT", args: { handle: "T0", layerId: "0", position: { x: 0, y: 0 }, text: "Üks rida", height: 2.5, styleId: "TXT" } },
     { commandId: "MTEXT", args: { handle: "T1", layerId: "0", position: { x: 0, y: 0 }, text: "Kaks\nrida", height: 2.5, width: 60, styleId: "TXT" } },

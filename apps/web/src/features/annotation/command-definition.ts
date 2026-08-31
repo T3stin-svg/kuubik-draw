@@ -12,6 +12,7 @@ const DIMENSION_OPTIONS = Object.freeze({
   RADIUS: "DIMRADIUS",
   DIAMETER: "DIMDIAMETER",
   CONTINUE: "DIMCONTINUE",
+  BASELINE: "DIMBASELINE",
   STYLE: "DIMSTYLE",
 } satisfies Record<string, AnnotationCommandInput["commandId"]>);
 

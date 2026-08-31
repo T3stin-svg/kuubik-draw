@@ -23,7 +23,7 @@ describe("AnnotationBlockShellAdapter contract", () => {
       "TEXT", "MTEXT", "LEADER", "MLEADER", "DIM", "STYLE", "HATCH",
       "BLOCK", "INSERT", "BEDIT", "EXPLODE", "ATTRIB",
     ]);
-    expect(shell.commandDefinitions.find((definition) => definition.id === "DIM")?.options?.map((option) => option.id)).toEqual(["LINEAR", "ALIGNED", "ANGULAR", "RADIUS", "DIAMETER", "CONTINUE", "STYLE"]);
+    expect(shell.commandDefinitions.find((definition) => definition.id === "DIM")?.options?.map((option) => option.id)).toEqual(["LINEAR", "ALIGNED", "ANGULAR", "RADIUS", "DIAMETER", "CONTINUE", "BASELINE", "STYLE"]);
     expect(shell.capabilities.every((state) => state.executable)).toBe(true);
   });
 

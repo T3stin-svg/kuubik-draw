@@ -16,7 +16,13 @@ export interface DimensionAssociation {
   associative: boolean;
   anchors: StableEntityAnchor[];
   linearAxis?: "horizontal" | "vertical";
-  chain?: { id: string; index: number; previousDimensionHandle?: string };
+  chain?: {
+    id: string;
+    index: number;
+    mode?: "continued" | "baseline";
+    previousDimensionHandle?: string;
+    baselineDimensionHandle?: string;
+  };
 }
 
 export interface HatchAssociation {
@@ -85,11 +91,15 @@ export function readDimensionAssociation(entity: CadEntity): DimensionAssociatio
   let chain: DimensionAssociation["chain"];
   if (value.chain !== undefined) {
     if (!isRecord(value.chain) || typeof value.chain.id !== "string" || !Number.isSafeInteger(value.chain.index) || (value.chain.index as number) < 0) return null;
+    if (value.chain.mode !== undefined && value.chain.mode !== "continued" && value.chain.mode !== "baseline") return null;
     if (value.chain.previousDimensionHandle !== undefined && typeof value.chain.previousDimensionHandle !== "string") return null;
+    if (value.chain.baselineDimensionHandle !== undefined && typeof value.chain.baselineDimensionHandle !== "string") return null;
     chain = {
       id: value.chain.id,
       index: value.chain.index as number,
+      ...(value.chain.mode === "continued" || value.chain.mode === "baseline" ? { mode: value.chain.mode } : {}),
       ...(typeof value.chain.previousDimensionHandle === "string" ? { previousDimensionHandle: value.chain.previousDimensionHandle } : {}),
+      ...(typeof value.chain.baselineDimensionHandle === "string" ? { baselineDimensionHandle: value.chain.baselineDimensionHandle } : {}),
     };
   }
   if (value.linearAxis !== undefined && value.linearAxis !== "horizontal" && value.linearAxis !== "vertical") return null;

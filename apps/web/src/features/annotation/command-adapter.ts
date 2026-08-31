@@ -1,6 +1,7 @@
 import {
   createAlignedDimension,
   createAngularDimension,
+  createBaselineDimensions,
   createContinuedDimensions,
   createDimensionStyle,
   createHatch,
@@ -11,6 +12,7 @@ import {
   createRadialDimension,
   createText,
   createTextStyle,
+  applyDimensionStyle,
   updateDimensionStyle,
   updateTextStyle,
   type CadChange,
@@ -26,6 +28,7 @@ import { createAtomicCommandWorkflow, type AtomicCommandAdapter, type PreparedAt
 type AngularArgs = Parameters<typeof createAngularDimension>[1];
 type RadialArgs = Parameters<typeof createRadialDimension>[1];
 type ContinueArgs = Parameters<typeof createContinuedDimensions>[1];
+type BaselineArgs = Parameters<typeof createBaselineDimensions>[1];
 type LeaderArgs = Parameters<typeof createLeader>[1];
 type MLeaderArgs = Parameters<typeof createMLeader>[1];
 
@@ -38,7 +41,9 @@ export type AnnotationCommandInput =
   | ({ commandId: "DIMRADIUS"; args: RadialArgs } & WithTargets)
   | ({ commandId: "DIMDIAMETER"; args: RadialArgs } & WithTargets)
   | ({ commandId: "DIMCONTINUE"; args: ContinueArgs } & WithTargets)
+  | ({ commandId: "DIMBASELINE"; args: BaselineArgs } & WithTargets)
   | { commandId: "DIMSTYLE"; mode: "create" | "update"; style: CadDimensionStyle }
+  | { commandId: "DIMSTYLE"; mode: "apply"; styleId: string; targetHandles: string[] }
   | ({ commandId: "TEXT"; args: TextArgs } & WithTargets)
   | ({ commandId: "MTEXT"; args: MTextArgs } & WithTargets)
   | { commandId: "STYLE"; mode: "create" | "update"; style: CadTextStyle }
@@ -52,7 +57,7 @@ function result(commandId: string, changes: CadChange[], targetHandles: readonly
 }
 
 export function prepareAnnotationCommand(document: KDrawDocumentV1, input: AnnotationCommandInput): PreparedAtomicCommand {
-  const targets = input.commandId === "DIMSTYLE" || input.commandId === "STYLE" ? [] : input.targetHandles ?? [];
+  const targets = input.commandId === "STYLE" ? [] : input.commandId === "DIMSTYLE" ? (input.mode === "apply" ? input.targetHandles : []) : input.targetHandles ?? [];
   switch (input.commandId) {
     case "DIMLINEAR": {
       const entity = createLinearDimension(document, input.args);
@@ -78,7 +83,15 @@ export function prepareAnnotationCommand(document: KDrawDocumentV1, input: Annot
       const entities = createContinuedDimensions(document, input.args);
       return result(input.commandId, entities.map((entity) => ({ type: "put", entity })), targets, entities.map((entity) => entity.handle), input.args);
     }
+    case "DIMBASELINE": {
+      const entities = createBaselineDimensions(document, input.args);
+      return result(input.commandId, entities.map((entity) => ({ type: "put", entity })), targets, entities.map((entity) => entity.handle), input.args);
+    }
     case "DIMSTYLE": {
+      if (input.mode === "apply") {
+        const changes = applyDimensionStyle(document, input.styleId, input.targetHandles);
+        return result(input.commandId, changes, input.targetHandles, input.targetHandles, input);
+      }
       const change = input.mode === "create" ? createDimensionStyle(document, input.style) : updateDimensionStyle(document, input.style);
       return result(input.commandId, [change], [], [], input);
     }
