@@ -4,6 +4,30 @@ Source baseline: `b09f4e1e0a661b06e5087e6cbb748220dbc48574`
 
 Branch: `work/reio-precision-layers`
 
+## Wave 13: F-052 Dynamic Input
+
+- Baseline: `0a0bc61cb631147138855bcee7779aa24c55780b`
+- Branch: `work13/reio-precision-dynamic-input`
+- Reproducer: `npx vite-node evidence/workstreams/precision-layers/dynamic-input-wave13.ts`
+- DOM-free pointer overlay read-back exposes X/Y, distance/angle, fixed CSS
+  offset, editable/active fields and exact unrounded result values.
+- Tab/Shift+Tab cycles the mode fields; Escape cancels without revision; Enter
+  requests commit only after a valid immutable preview.
+- Dot/comma locale and absolute/relative Cartesian, absolute/relative polar and
+  direct-distance input reuse the shared parser and precision pipeline.
+- ORTHO precedes POLAR and OSNAP precedes OTRACK. Zoom changes move only the
+  world aperture; the CSS overlay remains fixed and atomic commit reuses the
+  exact prepared frame.
+- Targeted precision coverage passed 32 files / 83 tests, including 2,000
+  property cases, 5,000 malformed-input fuzz cases and mutation/wiring gates.
+- The 50,000-object / 100-frame profile measured complete shell+session+adapter
+  build `575.025 ms`, p95 `0.268 ms`, max `3.052 ms` and preview=commit.
+- Repository-wide verification passed: 249 Vitest files / 1,136 tests, DXF 27
+  files / 68 tests, PDF 7 files / 22 tests, typecheck, lint, 154-module build,
+  public-tree scan of 1,758 files, 119-package license audit and diff-check.
+- App/CSS wiring, integrated Kuubik browser read-back and AutoCAD 2024.1.2 live
+  evidence were not run. F-052 remains uncertified and its score is unchanged.
+
 ## Wave 12: F-045..F-051 precision modes, OSNAP and OTRACK
 
 - Baseline: `633d32ae052951ac475696e7e900cd3170cb59bd`
