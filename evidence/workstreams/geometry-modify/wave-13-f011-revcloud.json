@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 1,
+  "wave": "f011-complete-revcloud-matrix",
+  "rows": ["F-011"],
+  "status": "implemented-kernel-adapter-and-dxf-readback-not-browser-or-autocad-certified",
+  "sourceAuthority": "C:/Users/Olav/Downloads/kuubik-draw-reio-scope-v1.json",
+  "behaviorAuthority": "https://help.autodesk.com/cloudhelp/2024/ENU/AutoCAD-Core/files/GUID-7BC6D4B1-5279-4B5F-90E0-AC87DA861E78.htm",
+  "implemented": {
+    "F-011": [
+      "rectangular creation with automatic closure after the opposite corner",
+      "polygonal creation with explicit Close and command-local Undo",
+      "freehand sampled-point creation with explicit Close and command-local Undo",
+      "in-place Object conversion for closed LWPOLYLINE including bulges, circle, full ellipse and closed spline",
+      "minimum and maximum arc-length compatibility input with maximum at most three times minimum",
+      "normal and reversed sequential arc direction",
+      "normal and deterministic tapered calligraphy style",
+      "stable creation identity and in-place Object handle, layer, appearance and extension-data retention",
+      "locked-layer, missing-layer, duplicate-handle, open-source and degenerate-outline refusal",
+      "one prepared global Commit, Undo and Redo operation"
+    ]
+  },
+  "invariants": {
+    "previewEqualsCommit": "the feature adapter and commit both call prepareRevcloudCommand from the same immutable input",
+    "atomicUndoRedo": "creation or in-place Object conversion is one CadSession operation",
+    "stableIdentityAndProperties": "Object conversion preserves source handle, layer, appearance and extension data; creation clones supplied values",
+    "outwardAndReverse": "normal bulge sign follows outline winding and Reverse flips every sequential arc without changing vertex order",
+    "lockedLayerRefusal": "both creation and Object conversion reject a locked target layer before an EntityChange exists",
+    "deterministicGeometry": "closed-path resampling and bulge generation contain no random source and repeat byte-equivalent prepared output",
+    "dxfReadback": "production export/import preserves closed LWPOLYLINE vertex order, bulges, widths, handle, layer, colour, lineweight and linetype scale"
+  },
+  "tests": {
+    "unit": "packages/cad-core/test/f011-revcloud-command.test.ts",
+    "golden": "packages/cad-core/test/f011-revcloud-golden.test.ts and packages/cad-core/test/f011-revcloud.golden.json",
+    "property": "packages/cad-core/test/f011-revcloud-property.test.ts",
+    "mutation": "packages/cad-core/test/f011-revcloud-mutation-proven.test.ts",
+    "preparedWiringAtomic": "packages/cad-core/test/f011-revcloud-wiring.test.ts",
+    "featureAdapter": "apps/web/src/features/draw-modify/f011-revcloud-command-adapter.test.ts",
+    "roundtrip": "packages/cad-dxf/test/f011-revcloud-roundtrip.test.ts",
+    "targetedResult": "7 files passed; 11 tests passed; 96 deterministic scaled and translated property cases inside the property test",
+    "fullVitestResult": "217 files passed; 1027 tests passed",
+    "dxfGateResult": "22 files passed; 57 tests passed",
+    "pdfGateResult": "7 files passed; 22 tests passed",
+    "typecheckLintBuild": "PASS",
+    "publicTree": "PASS; 1665 files scanned",
+    "license": "PASS; 119 installed packages audited",
+    "diffCheck": "PASS"
+  },
+  "autocadLiveAttempt": {
+    "status": "BLOCKED",
+    "safety": "a separate temporary drawing was opened and the original active document was retained for restoration; the temporary drawing was closed without saving in finally",
+    "result": "AutoCAD rejected COM SendCommand before REVCLOUD execution with HRESULT 0x80010001 RPC_E_CALL_REJECTED",
+    "consequence": "no AutoCAD geometry or Properties read-back is claimed"
+  },
+  "knownLimits": [
+    "AutoCAD 2024 exposes one approximate arc chord-length property, while the pinned F-011 compatibility interface retains a minimum and maximum pair",
+    "calligraphy taper is deterministic but remains subject to AutoCAD live comparison",
+    "standard DXF does not preserve the native kuubikRevcloud extension metadata",
+    "the shared cad-core barrel and command registry are intentionally unchanged in this file-ownership lane"
+  ],
+  "certificationGaps": [
+    "AutoCAD 2024.1.2 live rectangular, polygonal, freehand, Object, Reverse and Style matrix read-back was blocked by the active COM server",
+    "Kuubik browser REVCLOUD workflow and rendered output read-back were not run because App.tsx and shared registry wiring are outside this lane",
+    "F-011 parity score and certification records were intentionally not changed"
+  ]
+}
