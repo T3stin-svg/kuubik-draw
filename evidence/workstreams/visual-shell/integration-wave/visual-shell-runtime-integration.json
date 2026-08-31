@@ -1,0 +1,48 @@
+{
+  "viewport": [
+    1920,
+    1080
+  ],
+  "committedLineHandle": "10",
+  "workflows": [
+    "LINE",
+    "UNDO",
+    "REDO",
+    "ORTHO",
+    "LAYER_CREATE",
+    "MTEXT_INTENT",
+    "INSERT_INTENT",
+    "DOCUMENT_NEW",
+    "DOCUMENT_ACTIVATE",
+    "DOCUMENT_CLOSE"
+  ],
+  "readback": {
+    "commandAdapter": "command-engine",
+    "precisionSource": "ortho",
+    "layerIds": [
+      "0",
+      "layer-layer-1"
+    ],
+    "tabs": [
+      {
+        "id": "local",
+        "active": true
+      }
+    ],
+    "runtimeIntent": {
+      "kind": "none",
+      "command": ""
+    },
+    "validatedIntents": {
+      "annotation": {
+        "kind": "annotation",
+        "command": "MTEXT"
+      },
+      "block": {
+        "kind": "block",
+        "command": "INSERT"
+      }
+    }
+  },
+  "consoleErrors": []
+}
