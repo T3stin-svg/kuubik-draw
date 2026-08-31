@@ -434,7 +434,7 @@ export function App() {
     targets: MatchViewportRef[];
   } | null>(null);
   const [layerFilterInput, setLayerFilterInput] = useState("");
-  const [previewCommand, setPreviewCommand] = useState<"MOVE" | "COPY" | "ROTATE" | "SCALE" | "MIRROR" | "OFFSET" | "TRIM" | "EXTEND" | "FILLET" | "CHAMFER" | "BREAK" | "STRETCH" | "LENGTHEN" | "ALIGN" | "MATCHPROP">("MOVE");
+  const [previewCommand, setPreviewCommand] = useState<"MOVE" | "COPY" | "ROTATE" | "SCALE" | "MIRROR" | "OFFSET" | "TRIM" | "EXTEND" | "FILLET" | "CHAMFER" | "BREAK" | "STRETCH" | "LENGTHEN" | "ALIGN" | "MATCHPROP" | null>(null);
   const activeLayer = document.layers.find((layer) => layer.id === document.currentLayerId)!;
   const primarySelectedEntity = selectedHandles.length === 1
     ? document.entities.find((entity) => entity.handle === selectedHandles[0]) ?? null
@@ -1592,6 +1592,7 @@ export function App() {
   function cancelActiveCommandFromContextMenu(): void {
     const command = activeCommandPrompt;
     setActiveCommandPrompt(null);
+    setPreviewCommand(null);
     closeDrawingContextMenu();
     setStatus(command ? `Command: *Cancel* (${command})` : "Command: *Cancel*");
   }
@@ -3835,6 +3836,7 @@ export function App() {
             <canvas
               ref={canvas}
               aria-label="Kuubik Draw joonestusala"
+              data-preview-command={previewCommand ?? ""}
               data-selected-handles={selectedHandles.join(",")}
               onPointerDown={selectModifyTargetFromCanvas}
               onPointerMove={updateModelPointer}

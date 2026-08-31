@@ -104,6 +104,7 @@ try {
   Assert-Close ([double]$fixture.text.insertion.x) $expectedFixture.text.insertion.x 1 'Selected TEXT insertion x'
   Assert-Close ([double]$fixture.text.insertion.y) $expectedFixture.text.insertion.y 1 'Selected TEXT insertion y'
   Assert-Close ([double]$fixture.text.heightPx) $expectedFixture.text.heightPx 1 'Selected TEXT height'
+  if ([int]$state.states.staleMovePreviewPixels -ne 0) { throw 'Idle mixed selection rendered a stale MOVE preview.' }
 
   $result = [ordered]@{
     reference = [ordered]@{
@@ -125,6 +126,7 @@ try {
     surfaces = $surfaceSamples
     expectedFixture = $expectedFixture
     actualFixture = $fixture
+    staleMovePreviewPixels = [int]$state.states.staleMovePreviewPixels
     tolerancePx = 1
     scope = 'Selected-object TEXT/POLYLINE/CIRCLE fixture, projected geometry, Properties and Layer Properties Manager split, density, repeated rows and sampled palette surfaces; the five-category visual score remains separately gated.'
     status = 'PASS'

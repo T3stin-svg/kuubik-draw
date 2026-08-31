@@ -4,8 +4,8 @@
   "kind": "readback",
   "authority": "independent-parser",
   "status": "PASS",
-  "artifactSha256": "11dcec6db0cf2beced9e85c1a6fb0d5b683840fd42bcd8d95f24dabc26fc197c",
-  "observedAt": "2026-08-31T02:03:38.239Z",
+  "artifactSha256": "b0656c14ef64f02bbeb08d6dc9f8923da5565e07dfa5b3cf47e73cec2c08a3f1",
+  "observedAt": "2026-08-31T02:39:33.730Z",
   "workflow": "Production cad-core CHAMFER operations are committed atomically, exported through cad-dxf and KDRAW1, then read through strict Kuubik import, independent dxf-parser semantics and independent KDRAW1 checksum decoding. Distance, angle, selected/whole polyline, zero-distance, oversized-distance, property and construction-line cases are included.",
   "result": "Entity kinds, handles, geometry, layers, appearances, widths, vertices and construction-line direction vectors matched the contract; oversized selected-polyline sources remained exact, output hashes matched and multi-step Undo/Redo restored each exact revision.",
   "artifact": "evidence/artifacts/F-025-independent-readback.json"

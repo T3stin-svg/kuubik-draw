@@ -376,6 +376,7 @@ test("AutoCAD-style shell keeps all eight primary zones visible at 1920x1080", a
   await expect(page.getByRole("complementary", { name: "Properties palette" }).getByText("3 selected")).toBeVisible();
   await expect(page.getByRole("complementary", { name: "Properties palette" }).getByText("All (3)", { exact: true })).toBeVisible();
   await expect(page.getByLabel("Kuubik Draw joonestusala")).toHaveAttribute("data-selected-handles", /.+/);
+  await expect(page.getByLabel("Kuubik Draw joonestusala")).toHaveAttribute("data-preview-command", "");
   const selectedFixture = await modelCanvas.evaluate(async (canvas) => {
     const database = await new Promise<IDBDatabase>((resolveOpen, rejectOpen) => {
       const request = indexedDB.open("kuubik-draw", 1);
@@ -496,6 +497,18 @@ test("AutoCAD-style shell keeps all eight primary zones visible at 1920x1080", a
     return count;
   });
   expect(selectionPixels).toBeGreaterThan(150);
+  const staleMovePreviewPixels = await page.getByLabel("Kuubik Draw joonestusala").evaluate((canvas) => {
+    const element = canvas as HTMLCanvasElement;
+    const context = element.getContext("2d", { willReadFrequently: true });
+    if (!context) return -1;
+    const pixels = context.getImageData(1424, 176, 11, 11).data;
+    let count = 0;
+    for (let index = 0; index < pixels.length; index += 4) {
+      if (pixels[index + 2]! - pixels[index]! > 15 && pixels[index + 2]! - pixels[index + 1]! > 5) count += 1;
+    }
+    return count;
+  });
+  expect(staleMovePreviewPixels).toBe(0);
   await page.getByLabel("Kuubik Draw joonestusala").hover({ position: { x: 1200, y: 320 } });
   await expect(page.getByTestId("cad-crosshair")).toBeVisible();
   if (captureRoot) await writeFile(resolve(captureRoot, "visual-shell-selected-properties.png"), await page.screenshot());
@@ -619,6 +632,7 @@ test("AutoCAD-style shell keeps all eight primary zones visible at 1920x1080", a
         selectedProperties: { visible: true, geometry: selectedPropertiesGeometry },
         selectedFixture,
         selectionPixels,
+        staleMovePreviewPixels,
         contextMenu: {
           activeCommand: true,
           selectedObject: true,

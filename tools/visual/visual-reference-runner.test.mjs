@@ -38,7 +38,7 @@ describe("AutoCAD visual-reference runner ratchet", () => {
 
   it("keeps the light-model comparison content-addressed and pixel-private", async () => {
     const source = await readFile(new URL("compare-light-model-surface.ps1", import.meta.url), "utf8");
-    const evidence = JSON.parse(await readFile(new URL("../../evidence/artifacts/visual-shell-wave-13/autocad-light-model-readback.json", import.meta.url), "utf8"));
+    const evidence = JSON.parse(await readFile(new URL("../../evidence/artifacts/visual-shell-wave-14/autocad-light-model-readback.json", import.meta.url), "utf8"));
     expect(source).toContain("Private AutoCAD reference SHA-256 mismatch");
     expect(source).toContain("redistributablePixelsIncluded = $false");
     expect(source).toContain("fixed +/-1 px tolerance");
@@ -50,7 +50,7 @@ describe("AutoCAD visual-reference runner ratchet", () => {
 
   it("keeps the Home ribbon comparison content-addressed and pixel-private", async () => {
     const source = await readFile(new URL("compare-ribbon-surface.ps1", import.meta.url), "utf8");
-    const evidence = JSON.parse(await readFile(new URL("../../evidence/artifacts/visual-shell-wave-13/autocad-ribbon-readback.json", import.meta.url), "utf8"));
+    const evidence = JSON.parse(await readFile(new URL("../../evidence/artifacts/visual-shell-wave-14/autocad-ribbon-readback.json", import.meta.url), "utf8"));
     expect(source).toContain("Private AutoCAD reference SHA-256 mismatch");
     expect(source).toContain("redistributablePixelsIncluded = $false");
     expect(source).toContain("fixed +/-2 px boundary tolerance");
@@ -64,7 +64,7 @@ describe("AutoCAD visual-reference runner ratchet", () => {
 
   it("keeps the top application chrome comparison content-addressed and pixel-private", async () => {
     const source = await readFile(new URL("compare-top-chrome.ps1", import.meta.url), "utf8");
-    const evidence = JSON.parse(await readFile(new URL("../../evidence/artifacts/visual-shell-wave-13/autocad-top-chrome-readback.json", import.meta.url), "utf8"));
+    const evidence = JSON.parse(await readFile(new URL("../../evidence/artifacts/visual-shell-wave-14/autocad-top-chrome-readback.json", import.meta.url), "utf8"));
     expect(source).toContain("Private AutoCAD reference SHA-256 mismatch");
     expect(source).toContain("redistributablePixelsIncluded = $false");
     expect(source).toContain("fixed +/-$Tolerance px tolerance");
@@ -88,7 +88,7 @@ describe("AutoCAD visual-reference runner ratchet", () => {
 
   it("keeps the shared bottom chrome comparison content-addressed and pixel-private", async () => {
     const source = await readFile(new URL("compare-bottom-chrome.ps1", import.meta.url), "utf8");
-    const evidence = JSON.parse(await readFile(new URL("../../evidence/artifacts/visual-shell-wave-13/autocad-bottom-chrome-readback.json", import.meta.url), "utf8"));
+    const evidence = JSON.parse(await readFile(new URL("../../evidence/artifacts/visual-shell-wave-14/autocad-bottom-chrome-readback.json", import.meta.url), "utf8"));
     expect(source).toContain("Private AutoCAD reference SHA-256 mismatch");
     expect(source).toContain("redistributablePixelsIncluded = $false");
     expect(source).toContain("fixed +/-$Tolerance px tolerance");
@@ -110,7 +110,7 @@ describe("AutoCAD visual-reference runner ratchet", () => {
 
   it("keeps the selected Properties and Layer Manager comparison content-addressed and pixel-private", async () => {
     const source = await readFile(new URL("compare-selected-properties.ps1", import.meta.url), "utf8");
-    const evidence = JSON.parse(await readFile(new URL("../../evidence/artifacts/visual-shell-wave-13/autocad-selected-properties-readback.json", import.meta.url), "utf8"));
+    const evidence = JSON.parse(await readFile(new URL("../../evidence/artifacts/visual-shell-wave-14/autocad-selected-properties-readback.json", import.meta.url), "utf8"));
     expect(source).toContain("Private AutoCAD reference SHA-256 mismatch");
     expect(source).toContain("redistributablePixelsIncluded = $false");
     expect(source).toContain("fixed +/-$Tolerance px tolerance");
@@ -138,6 +138,7 @@ describe("AutoCAD visual-reference runner ratchet", () => {
     expect(evidence.actualFixture.text.insertion.x).toBeCloseTo(1032, 6);
     expect(evidence.actualFixture.text.insertion.y).toBeCloseTo(134, 6);
     expect(evidence.actualFixture.text.heightPx).toBeCloseTo(75, 6);
+    expect(evidence.staleMovePreviewPixels).toBe(0);
     expect(evidence.status).toBe("PASS");
   });
 });
