@@ -4,9 +4,12 @@ import { CommandEngineInputError, CommandLineEngine, CommandRegistry } from "../
 import { blockPromptPlan, type BlockCommandId } from "../blocks/model.js";
 import { blockCommandLine, createBlockCommandDefinitions, type BlockCommandPlanner, type BlockEngineCommandId } from "../blocks/command-definition.js";
 import type { BlockCommandInput } from "../blocks/command-adapter.js";
+import { buildBlockPromptInput } from "../blocks/prompt-input.js";
 import { annotationCommandLine, createAnnotationCommandDefinitions, type AnnotationCommandPlanner, type AnnotationEngineCommandId } from "./command-definition.js";
 import type { AnnotationCommandInput } from "./command-adapter.js";
+import { readBackAnnotationBlockCommit, type AnnotationBlockCommandReadBack } from "./command-read-back.js";
 import { annotationPromptPlan, type AnnotationCommandId } from "./model.js";
+import { buildAnnotationPromptInput, type AnnotationBlockPromptContext } from "./prompt-input.js";
 import { CommandPromptStateMachine, type CommandPromptSnapshot } from "./prompt-state-machine.js";
 
 export type AnnotationBlockShellCommandId = AnnotationEngineCommandId | BlockEngineCommandId;
@@ -32,6 +35,19 @@ export interface AnnotationBlockShellDependencies {
 export interface AnnotationBlockPromptRequest {
   commandId: AnnotationBlockShellCommandId;
   dimensionCommandId?: Extract<AnnotationCommandId, `DIM${string}`>;
+  context?: AnnotationBlockPromptContext;
+}
+
+export interface AnnotationBlockPromptPreview {
+  input: AnnotationCommandInput | BlockCommandInput;
+  prepared: PreparedEngineCommand;
+}
+
+export interface AnnotationBlockPromptCommit {
+  input: AnnotationCommandInput | BlockCommandInput;
+  prepared: PreparedEngineCommand;
+  execution: Extract<CommandExecutionResult, { kind: "commit" }>;
+  readBack: AnnotationBlockCommandReadBack;
 }
 
 export interface AnnotationBlockShellAdapter {
@@ -39,6 +55,8 @@ export interface AnnotationBlockShellAdapter {
   readonly capabilities: readonly AnnotationBlockCommandCapability[];
   capability(commandId: AnnotationBlockShellCommandId): AnnotationBlockCommandCapability;
   createPrompt(request: AnnotationBlockPromptRequest): CommandPromptStateMachine;
+  previewPrompt(): AnnotationBlockPromptPreview;
+  executePrompt(now?: string): AnnotationBlockPromptCommit;
   preview(input: AnnotationCommandInput | BlockCommandInput): PreparedEngineCommand;
   execute(input: AnnotationCommandInput | BlockCommandInput, now?: string): CommandExecutionResult;
   cancel(): CommandPromptSnapshot;
@@ -81,6 +99,7 @@ export function createAnnotationBlockShellAdapter(dependencies: AnnotationBlockS
   ].filter((definition) => executableIds.has(definition.id as AnnotationBlockShellCommandId));
   const engine = dependencies.sessionAdapter ? new CommandLineEngine(dependencies.sessionAdapter.session, new CommandRegistry(commandDefinitions)) : null;
   let activePrompt: CommandPromptStateMachine | null = null;
+  let activePromptRequest: AnnotationBlockPromptRequest | null = null;
   let lastPromptRequest: AnnotationBlockPromptRequest | null = null;
 
   const capability = (commandId: AnnotationBlockShellCommandId): AnnotationBlockCommandCapability => {
@@ -103,8 +122,18 @@ export function createAnnotationBlockShellAdapter(dependencies: AnnotationBlockS
       prompt = new CommandPromptStateMachine(annotationPromptPlan(request.commandId as Exclude<AnnotationCommandId, `DIM${string}`>));
     } else prompt = new CommandPromptStateMachine(blockPromptPlan(request.commandId as BlockCommandId));
     activePrompt = prompt;
+    activePromptRequest = structuredClone(request);
     lastPromptRequest = structuredClone(request);
     return prompt;
+  };
+  const activeInput = (): AnnotationCommandInput | BlockCommandInput => {
+    if (!activePrompt || !activePromptRequest) throw new CommandEngineInputError("Aktiivne annotation/block prompt puudub.");
+    const snapshot = activePrompt.snapshot;
+    if (snapshot.status !== "ready") throw new CommandEngineInputError(`${snapshot.commandId}: prompt ei ole valmis.`);
+    const document = dependencies.sessionAdapter!.session.document;
+    if (activePromptRequest.commandId === "DIM") return buildAnnotationPromptInput(document, activePromptRequest.dimensionCommandId!, snapshot.values, activePromptRequest.context);
+    if (ANNOTATION_COMMANDS.includes(activePromptRequest.commandId as AnnotationEngineCommandId)) return buildAnnotationPromptInput(document, activePromptRequest.commandId as AnnotationCommandId, snapshot.values, activePromptRequest.context);
+    return buildBlockPromptInput(document, activePromptRequest.commandId as BlockCommandId, snapshot.values, activePromptRequest.context);
   };
 
   return {
@@ -112,6 +141,19 @@ export function createAnnotationBlockShellAdapter(dependencies: AnnotationBlockS
     capabilities: structuredClone(capabilities),
     capability,
     createPrompt,
+    previewPrompt() {
+      const input = activeInput();
+      return { input: structuredClone(input), prepared: this.preview(input) };
+    },
+    executePrompt(now) {
+      const { input, prepared } = this.previewPrompt();
+      const execution = this.execute(input, now);
+      if (execution.kind !== "commit") throw new CommandEngineInputError(`${prepared.commandId}: commit puudub.`);
+      const readBack = readBackAnnotationBlockCommit(dependencies.sessionAdapter!.session, prepared, execution.committed);
+      activePrompt = null;
+      activePromptRequest = null;
+      return { input: structuredClone(input), prepared, execution, readBack };
+    },
     preview(input) {
       const id = engineCommandId(input);
       return requireEngine(id).preview(BLOCK_COMMANDS.includes(id as BlockEngineCommandId)
@@ -126,7 +168,10 @@ export function createAnnotationBlockShellAdapter(dependencies: AnnotationBlockS
     cancel() {
       if (!activePrompt) throw new CommandEngineInputError("Aktiivne annotation/block prompt puudub.");
       engine?.handleKey("Escape");
-      return activePrompt.cancel();
+      const snapshot = activePrompt.cancel();
+      activePrompt = null;
+      activePromptRequest = null;
+      return snapshot;
     },
     repeat() {
       if (!lastPromptRequest) throw new CommandEngineInputError("Kordamiseks puudub eelmine annotation/block käsk.");

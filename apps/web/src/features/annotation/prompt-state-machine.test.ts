@@ -13,7 +13,8 @@ describe("annotation/block command prompt state machine", () => {
     expect(() => prompt.answer("diagonal")).toThrow(/must be one of/u);
     expect(prompt.snapshot.currentFieldId).toBe("axis");
     prompt.answer("horizontal");
-    expect(prompt.answer(true)).toMatchObject({ status: "ready", currentFieldId: null });
+    prompt.answer(true);
+    expect(prompt.answer("DIM")).toMatchObject({ status: "ready", currentFieldId: null });
     expect(prompt.repeat()).toMatchObject({ status: "active", currentFieldId: "first", values: {} });
     prompt.answer({ x: 1, y: 2 });
     expect(prompt.cancel()).toMatchObject({ status: "cancelled", values: {} });

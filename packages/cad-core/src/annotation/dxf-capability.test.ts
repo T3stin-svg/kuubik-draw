@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { createEmptyDocument } from "../document.js";
 import { withBlockAttributes } from "../blocks/contracts.js";
 import { withAnnotationExtension } from "./contracts.js";
-import { AnnotationBlockDxfCapabilityError, assertAnnotationBlockDxfCapabilities, evaluateAnnotationBlockDxfCapabilities, requiredAnnotationBlockDxfCapabilities, type AnnotationBlockDxfCapabilityId } from "./dxf-capability.js";
+import { AnnotationBlockDxfCapabilityError, assertAnnotationBlockDxfCapabilities, createAnnotationBlockDxfCapabilityReceipt, evaluateAnnotationBlockDxfCapabilities, readBackAnnotationBlockDxfCapabilityReceipt, requiredAnnotationBlockDxfCapabilities, type AnnotationBlockDxfCapabilityId } from "./dxf-capability.js";
 
 function fixture() {
   const document = createEmptyDocument({ documentId: "dxf-capabilities" });
@@ -49,5 +49,20 @@ describe("annotation/block DXF fail-closed capability contract", () => {
     const document = fixture();
     const capabilities = Object.fromEntries(requiredAnnotationBlockDxfCapabilities(document).map((item) => [item.capability, "exact"])) as Record<AnnotationBlockDxfCapabilityId, "exact">;
     expect(assertAnnotationBlockDxfCapabilities(document, { adapterId: "verified-adapter", dxfVersion: "AC1021", capabilities })).toHaveLength(Object.keys(capabilities).length);
+  });
+
+  it("round-trips an annotation/block capability receipt and rejects document or receipt mutants", () => {
+    const document = fixture();
+    const capabilities = Object.fromEntries(requiredAnnotationBlockDxfCapabilities(document).map((item) => [item.capability, "exact"])) as Record<AnnotationBlockDxfCapabilityId, "exact">;
+    const receipt = createAnnotationBlockDxfCapabilityReceipt(document, { adapterId: "contract-read-back", dxfVersion: "AC1021", capabilities });
+    const serialized = JSON.stringify(receipt);
+    expect(readBackAnnotationBlockDxfCapabilityReceipt(document, JSON.parse(serialized))).toEqual(receipt);
+
+    const changedDocument = structuredClone(document);
+    changedDocument.entities.find((entity) => entity.handle === "ML1")!.handle = "ML2";
+    expect(() => readBackAnnotationBlockDxfCapabilityReceipt(changedDocument, JSON.parse(serialized))).toThrow(/does not match/u);
+    const changedReceipt = JSON.parse(serialized) as typeof receipt;
+    changedReceipt.declaration.dxfVersion = "AC1018";
+    expect(() => readBackAnnotationBlockDxfCapabilityReceipt(document, changedReceipt)).toThrow(/requires-AC1021/u);
   });
 });

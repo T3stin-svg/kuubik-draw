@@ -47,6 +47,12 @@ export interface AnnotationBlockDxfEvaluation {
   }>;
 }
 
+export interface AnnotationBlockDxfCapabilityReceipt {
+  schemaVersion: 1;
+  declaration: AnnotationBlockDxfDeclaration;
+  requirements: AnnotationBlockDxfRequirement[];
+}
+
 export class AnnotationBlockDxfCapabilityError extends Error {
   constructor(readonly evaluation: AnnotationBlockDxfEvaluation) {
     super(`DXF adapter cannot preserve annotation/block semantics exactly: ${evaluation.rejected.map((item) => `${item.capability}=${item.reason === "version" ? `requires-${item.minimumVersion}` : item.declared}`).join(", ")}.`);
@@ -143,4 +149,17 @@ export function assertAnnotationBlockDxfCapabilities(document: KDrawDocumentV1, 
   const evaluation = evaluateAnnotationBlockDxfCapabilities(document, declaration);
   if (evaluation.rejected.length) throw new AnnotationBlockDxfCapabilityError(evaluation);
   return evaluation.requirements;
+}
+
+export function createAnnotationBlockDxfCapabilityReceipt(document: KDrawDocumentV1, declaration: AnnotationBlockDxfDeclaration): AnnotationBlockDxfCapabilityReceipt {
+  return { schemaVersion: 1, declaration: structuredClone(declaration), requirements: structuredClone(assertAnnotationBlockDxfCapabilities(document, declaration)) };
+}
+
+export function readBackAnnotationBlockDxfCapabilityReceipt(document: KDrawDocumentV1, value: unknown): AnnotationBlockDxfCapabilityReceipt {
+  if (typeof value !== "object" || value === null || Array.isArray(value) || (value as { schemaVersion?: unknown }).schemaVersion !== 1) throw new TypeError("Annotation/block DXF capability receipt schema is invalid.");
+  const receipt = value as AnnotationBlockDxfCapabilityReceipt;
+  if (typeof receipt.declaration !== "object" || receipt.declaration === null || !Array.isArray(receipt.requirements)) throw new TypeError("Annotation/block DXF capability receipt payload is invalid.");
+  const requirements = assertAnnotationBlockDxfCapabilities(document, receipt.declaration);
+  if (JSON.stringify(requirements) !== JSON.stringify(receipt.requirements)) throw new Error("Annotation/block DXF capability receipt does not match the document read-back.");
+  return structuredClone(receipt);
 }

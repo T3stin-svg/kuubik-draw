@@ -34,7 +34,6 @@ export const BLOCK_PROMPT_PLANS: Readonly<Record<BlockCommandId, BlockPromptPlan
     { id: "id", label: "Ploki ID", valueKind: "string", required: true },
     { id: "name", label: "Ploki nimi", valueKind: "string", required: true },
     { id: "basePoint", label: "Baasipunkt", valueKind: "point", required: true },
-    { id: "insertHandle", label: "Insert-handle", valueKind: "string", required: true },
     { id: "attributes", label: "Atribuudimääratlused", valueKind: "attributes", required: false },
   ] },
   INSERT: { commandId: "INSERT", fields: [
