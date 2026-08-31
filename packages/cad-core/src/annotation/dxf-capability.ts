@@ -1,7 +1,7 @@
 import type { CadEntity, KDrawDocumentV1 } from "@kuubik/cad-schema";
 import { readBlockAttributes } from "../blocks/contracts.js";
 import { readDimensionAssociation, readHatchAssociation, readLeaderContract, readTableContract } from "./contracts.js";
-import { readTableStyles, TABLE_STYLES_EXTENSION_KEY } from "./table.js";
+import { TABLE_STYLES_EXTENSION_KEY } from "./table.js";
 
 export type AnnotationBlockDxfCapabilityId =
   | "dimension-linear"
@@ -111,10 +111,7 @@ export function requiredAnnotationBlockDxfCapabilities(document: KDrawDocumentV1
   if (document.dimensionStyles.length) add("dimension-style", "$DIMSTYLE");
   for (const style of document.dimensionStyles) if (style.overrides?.["kuubik.dimensionStyle.v1"] !== undefined) add("dimension-style-profile", `$DIMSTYLE:${style.id}`);
   if (document.textStyles.length) add("text-style", "$TEXTSTYLE");
-  if (document.metadata.extensions?.[TABLE_STYLES_EXTENSION_KEY] !== undefined) {
-    readTableStyles(document);
-    add("table", "$TABLESTYLE");
-  }
+  if (document.metadata.extensions?.[TABLE_STYLES_EXTENSION_KEY] !== undefined) add("table", "$TABLESTYLE");
   for (const entity of document.entities) {
     if (entity.kind === "dimension") {
       add(`dimension-${entity.dimensionKind}` as AnnotationBlockDxfCapabilityId, entity.handle);
@@ -138,10 +135,7 @@ export function requiredAnnotationBlockDxfCapabilities(document: KDrawDocumentV1
       add("insert-transform", entity.handle);
       if (Object.keys(entity.attributes ?? {}).length) add("block-attributes", entity.handle);
     }
-    if (entity.kind === "proxy" && entity.originalType === "TABLE") {
-      if (!readTableContract(entity)) throw new TypeError(`Malformed TABLE extension contract: ${entity.handle}.`);
-      add("table", entity.handle);
-    }
+    if (readTableContract(entity)) add("table", entity.handle);
   }
   for (const block of document.blocks) {
     add("block-definition", `$BLOCK:${block.id}`);
