@@ -2,6 +2,7 @@ import type { CadBlockDefinition, CadEntity, CadPoint2 } from "@kuubik/cad-schem
 import { entityBounds, entityHasUnboundedGeometry } from "./bounds.js";
 import { RTreeIndex } from "./rtree.js";
 import { pickCadEntity, type CadPickHit } from "./selection.js";
+import { CadSnapIndex, type CadSnapCandidate, type CadSnapGenerationOptions } from "./snap.js";
 
 export class CadSelectionIndex {
   readonly #index = new RTreeIndex();
@@ -40,4 +41,53 @@ export class CadSelectionIndex {
       return hit ? [hit] : [];
     }).sort((a, b) => a.distance - b.distance || a.handle.localeCompare(b.handle));
   }
+}
+
+export interface CadSpatialPerformanceProfile {
+  entityCount: number;
+  selectionBuildMs: number;
+  snapBuildMs: number;
+  queryMs: number;
+  selectionHits: number;
+  snapCandidates: number;
+}
+
+export interface CadSpatialPerformanceOptions {
+  selectionPoint: CadPoint2;
+  selectionTolerance: number;
+  snap: CadSnapGenerationOptions;
+  eligible?: (entity: CadEntity) => boolean;
+  now?: () => number;
+}
+
+/** Reproducible profile boundary used by the 50k regression gate and manual evidence runs. */
+export function profileCadSpatialIndexes(
+  entities: readonly CadEntity[],
+  options: CadSpatialPerformanceOptions,
+): { profile: CadSpatialPerformanceProfile; selection: CadPickHit[]; snaps: CadSnapCandidate[] } {
+  const now = options.now ?? (() => globalThis.performance.now());
+  const selection = new CadSelectionIndex();
+  const snap = new CadSnapIndex();
+  const selectionStarted = now();
+  selection.setEntities(entities);
+  const selectionBuildMs = now() - selectionStarted;
+  const snapStarted = now();
+  snap.setEntities(entities);
+  const snapBuildMs = now() - snapStarted;
+  const queryStarted = now();
+  const selectionHits = selection.pick(options.selectionPoint, options.selectionTolerance, options.eligible);
+  const snaps = snap.query(options.snap, options.eligible);
+  const queryMs = now() - queryStarted;
+  return {
+    profile: {
+      entityCount: entities.length,
+      selectionBuildMs,
+      snapBuildMs,
+      queryMs,
+      selectionHits: selectionHits.length,
+      snapCandidates: snaps.length,
+    },
+    selection: selectionHits,
+    snaps,
+  };
 }

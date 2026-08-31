@@ -1,7 +1,5 @@
-import { performance } from "node:perf_hooks";
 import { describe, expect, it } from "vitest";
-import { CadSelectionIndex } from "../src/selection-index.js";
-import { CadSnapIndex } from "../src/snap.js";
+import { profileCadSpatialIndexes } from "../src/selection-index.js";
 import { CadObjectTrack } from "../src/tracking.js";
 
 describe("F-051 OTRACK", () => {
@@ -25,19 +23,14 @@ describe("50,000 object snap/selection performance", () => {
       start: { x: (index % 500) * 20, y: Math.floor(index / 500) * 20 },
       end: { x: (index % 500) * 20 + 10, y: Math.floor(index / 500) * 20 },
     }));
-    const selection = new CadSelectionIndex();
-    const snap = new CadSnapIndex();
-    const started = performance.now();
-    selection.setEntities(entities);
-    snap.setEntities(entities);
-    const buildMs = performance.now() - started;
-    const queryStarted = performance.now();
-    const picks = selection.pick({ x: 5, y: 0 }, 6);
-    const snaps = snap.query({ modes: ["endpoint", "midpoint", "nearest", "intersection"], cursor: { x: 5, y: 0 }, aperture: 6 });
-    const queryMs = performance.now() - queryStarted;
-    expect(picks[0]?.handle).toBe("0");
-    expect(snaps.length).toBeLessThan(20);
-    expect(buildMs).toBeLessThan(5_000);
-    expect(queryMs).toBeLessThan(100);
+    const result = profileCadSpatialIndexes(entities, {
+      selectionPoint: { x: 5, y: 0 }, selectionTolerance: 6,
+      snap: { modes: ["endpoint", "midpoint", "nearest", "intersection"], cursor: { x: 5, y: 0 }, aperture: 6 },
+    });
+    expect(result.selection[0]?.handle).toBe("0");
+    expect(result.snaps.length).toBeLessThan(20);
+    expect(result.profile).toMatchObject({ entityCount: 50_000, selectionHits: 1, snapCandidates: result.snaps.length });
+    expect(result.profile.selectionBuildMs + result.profile.snapBuildMs).toBeLessThan(5_000);
+    expect(result.profile.queryMs).toBeLessThan(100);
   });
 });
