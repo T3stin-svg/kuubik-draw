@@ -36,3 +36,19 @@ is changed by the integration owner.
 Wave 1 is implemented and unit-tested, but remains intentionally uncertified:
 there is no integration-branch browser workflow, AutoCAD live comparison, or saved
 output read-back in this branch yet.
+
+## Wave 2 exports
+
+From `apps/web/src/features/draw-modify/modify-command-matrix.ts`:
+
+- `MODIFY_COMMAND_MATRIX`
+- `previewModifyMatrixCommand`
+- `commitModifyMatrixCommand`
+- `undoLastModifyMatrixStep`
+- `ModifyMatrixInput` and `PreparedModifyMatrixCommand`
+
+This feature layer routes TRIM, EXTEND, FILLET, and STRETCH variants into the
+existing, tested core/workflow implementation. Integration should call the preview
+and commit functions directly; both pass through the same internal preparation
+matrix. The matrix commit produces one `CadSession` operation, while command-local
+Undo is an immutable input-prefix replay and does not mutate the document.

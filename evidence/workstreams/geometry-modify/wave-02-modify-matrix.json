@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "wave": "modify-command-matrix",
+  "rows": ["F-022", "F-023", "F-024", "F-027"],
+  "status": "implemented-not-recertified",
+  "reusedSources": [
+    "packages/cad-core/src/trim.ts",
+    "packages/cad-core/src/fillet.ts",
+    "packages/cad-core/src/stretch.ts",
+    "packages/cad-core/src/commands.ts",
+    "apps/web/src/workflows/modify-command.ts"
+  ],
+  "matrix": {
+    "TRIM": ["Quick", "Standard", "Edge", "Project", "Trim", "Extend", "Erase", "Undo"],
+    "EXTEND": ["Quick", "Standard", "Edge", "Project", "Extend", "Trim", "Undo"],
+    "FILLET": ["Radius", "Trim", "No Trim", "Multiple", "Polyline", "Undo"],
+    "STRETCH": ["Crossing window", "Crossing polygon", "Individual", "Relative displacement", "Undo"]
+  },
+  "invariants": {
+    "previewEqualsCommit": "both routes use one internal matrix preparation function",
+    "atomicUndoRedo": "one matrix command is committed as one CadSession operation",
+    "commandUndo": "the latest command target is removed by immutable prefix replay"
+  },
+  "tests": {
+    "unitGoldenMutationWiring": "apps/web/src/features/draw-modify/modify-command-matrix.test.ts"
+  },
+  "certificationGaps": [
+    "No new AutoCAD live comparison was run for the feature matrix",
+    "App.tsx integration is intentionally deferred to the integration owner",
+    "No new browser or saved-output read-back was run"
+  ]
+}
