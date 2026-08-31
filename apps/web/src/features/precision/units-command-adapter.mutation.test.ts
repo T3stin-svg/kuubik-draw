@@ -40,4 +40,20 @@ describe("F-053 UNITS persistence mutation sentinels", () => {
     await expect(PrecisionUnitsCommandAdapter.open(persistence, source.documentId))
       .rejects.toMatchObject({ code: "RECOVERY_INVALID" } satisfies Partial<PrecisionUnitsPersistenceError>);
   });
+
+  it("blocks the stale session when post-commit IndexedDB read-back throws", async () => {
+    const source = createEmptyDocument({ documentId: "units-readback-throw" });
+    const persistence: PrecisionUnitsPersistencePort = {
+      async recoverDocument() { return { document: source, ignoredOperationIds: [], corruptSnapshotKeys: [], corruptCompactionKeys: [], sessionHistory: null }; },
+      async operations() { return []; },
+      async commitRevision() { return undefined; },
+      async loadDocument() { throw new Error("IndexedDB request failed after commit"); },
+    };
+    const adapter = await PrecisionUnitsCommandAdapter.open(persistence, source.documentId, { operationId: () => "units-readback-throw-op" });
+    adapter.openDialog();
+    adapter.updateDraft({ insertionUnit: "m" });
+    await expect(adapter.commit()).rejects.toMatchObject({ code: "READBACK_MISSING" } satisfies Partial<PrecisionUnitsPersistenceError>);
+    expect(adapter.readBack()).toMatchObject({ document: source, blocked: true, canUndo: false });
+    expect(() => adapter.openDialog()).toThrow(/blocked/u);
+  });
 });
