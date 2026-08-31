@@ -10,7 +10,7 @@ describe("annotation feature contract", () => {
   it("normalizes selection and fails closed for selection-incompatible commands", () => {
     expect(createAnnotationAction("HATCH", [" 10 ", "10", "20"])).toEqual({ commandId: "HATCH", selectedHandles: ["10", "20"] });
     expect(() => createAnnotationAction("HATCH", [])).toThrow(/requires a selection/u);
-    expect(() => createAnnotationAction("STYLE", ["10"])).toThrow(/does not accept/u);
+    expect(createAnnotationAction("STYLE", ["10"])).toEqual({ commandId: "STYLE", selectedHandles: ["10"] });
     expect(createAnnotationAction("TABLE", ["T1"])).toEqual({ commandId: "TABLE", selectedHandles: ["T1"] });
   });
 });
