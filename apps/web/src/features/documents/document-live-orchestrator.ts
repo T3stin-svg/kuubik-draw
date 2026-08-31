@@ -1,4 +1,11 @@
-import type { CadChange } from "@kuubik/cad-core";
+import {
+  applyAtomicOperation,
+  migrateLayoutWorkspace,
+  readLayoutWorkspace,
+  type CadChange,
+  type LayoutWorkspaceRepairCode,
+  type LayoutWorkspaceStateV1,
+} from "@kuubik/cad-core";
 import type { Viewport2D } from "@kuubik/cad-renderer";
 import type { PreparedPdfUnderlay } from "@kuubik/cad-print";
 import type { CadOperation, KDrawDocumentV1 } from "@kuubik/cad-schema";
@@ -32,11 +39,18 @@ export interface OpenLiveDocumentInput {
   selectedHandles?: readonly string[];
   viewport?: Viewport2D;
   recordedAt?: string;
+  layoutWorkspace?: "migrate";
 }
 
 export interface OpenLiveDocumentResult {
   document: KDrawDocumentV1;
   recovery: DocumentRecoveryResult;
+  layoutWorkspace: {
+    migrated: boolean;
+    repairs: LayoutWorkspaceRepairCode[];
+    state: LayoutWorkspaceStateV1;
+    migrationOperationId: string | null;
+  } | null;
 }
 
 export interface DocumentLiveReadback {
@@ -88,15 +102,45 @@ export class DocumentLiveOrchestrator {
     if (!input.fallbackDocument && !(await this.database.recoverDocument(documentId)).document) {
       throw new RangeError(`No persisted or fallback document exists for ${documentId}.`);
     }
-    const recovery = await this.#autosave.open(documentId, input.recordedAt);
-    const document = recovery.document ?? input.fallbackDocument;
+    let recovery = await this.#autosave.open(documentId, input.recordedAt);
+    let document = recovery.document ?? input.fallbackDocument;
     if (!document) throw new RangeError(`No persisted or fallback document exists for ${documentId}.`);
+    let layoutWorkspace: OpenLiveDocumentResult["layoutWorkspace"] = null;
+    if (input.layoutWorkspace === "migrate") {
+      const migration = migrateLayoutWorkspace(document);
+      let migrationOperationId: string | null = null;
+      if (migration.migrated && recovery.document) {
+        migrationOperationId = `layout-workspace-migrate:${documentId}:${document.revision + 1}`;
+        const operation: CadOperation = {
+          opId: migrationOperationId,
+          baseRevision: document.revision,
+          commandId: "LAYOUT_WORKSPACE_MIGRATE",
+          args: { repairs: migration.repairs },
+          targetHandles: [],
+          resultHandles: [],
+        };
+        const migrated = applyAtomicOperation(document, operation, migration.changes, input.recordedAt);
+        await this.#autosave.commit(migrated.document, operation, recovery.sessionHistory ?? undefined);
+        recovery = await this.database.recoverDocument(documentId);
+        document = recovery.document!;
+      } else if (migration.migrated) {
+        document = migration.document;
+      }
+      layoutWorkspace = {
+        migrated: migration.migrated,
+        repairs: [...migration.repairs],
+        state: readLayoutWorkspace(document),
+        migrationOperationId,
+      };
+    }
     if (!recovery.document) await this.#autosave.checkpoint(document);
 
     const ignored = new Set(recovery.ignoredOperationIds);
     const operations = await this.database.operations(documentId);
+    const persistedLayoutId = layoutWorkspace?.state.activeLayoutId;
+    const openedLayoutId = input.activeLayoutId ?? persistedLayoutId;
     this.#coordinator.open(document, {
-      ...(input.activeLayoutId === undefined ? {} : { activeLayoutId: input.activeLayoutId }),
+      ...(openedLayoutId === undefined ? {} : { activeLayoutId: openedLayoutId }),
       ...(input.selectedHandles === undefined ? {} : { selectedHandles: input.selectedHandles }),
       ...(input.viewport === undefined ? {} : { viewport: input.viewport }),
       appliedOperationIds: operations.filter((record) => !ignored.has(record.opId)).map((record) => record.opId),
@@ -105,11 +149,11 @@ export class DocumentLiveOrchestrator {
     this.#tabs = openDocumentTab(this.#tabs, {
       document,
       ...(input.sourceFileName === undefined ? {} : { sourceFileName: input.sourceFileName }),
-      ...(input.activeLayoutId === undefined ? {} : { activeLayoutId: input.activeLayoutId }),
+      ...(openedLayoutId === undefined ? {} : { activeLayoutId: openedLayoutId }),
       persistedRevision: document.revision,
     });
     this.#recoveries.set(documentId, structuredClone(recovery));
-    return { document: structuredClone(document), recovery: structuredClone(recovery) };
+    return { document: structuredClone(document), recovery: structuredClone(recovery), layoutWorkspace: structuredClone(layoutWorkspace) };
   }
 
   activate(documentId: string): void {

@@ -10,6 +10,8 @@ Fifth-wave document workspace source: `work5/reio-documents-live` from integrato
 
 Sixth-wave recovery/compaction source: `work6/reio-documents-live` from integrator base `2bbec19176b8a17bc88f6b3ff962e8caf2fb444e`.
 
+Seventh-wave Model/Layout document-state source: `work7/reio-documents-live` from integrator base `bf203e8ac4681b206eacc9f19fcfe73378cdc56d`.
+
 This workstream deliberately does not modify `App.tsx`, `style.css`, package manifests, parity scores or security evidence. The integration owner must wire the following surfaces without weakening the existing F-097...F-107, F-109, F-111 and F-114 paths.
 
 ## Shared package exports
@@ -51,6 +53,8 @@ The transaction module also exports `put-attachment` and `delete-attachment` `Ca
 - `document-workspace-shell.ts`: DOM-independent F-128/F-129/F-130 contract for document switching, per-document command context, persisted atomic history and PGP-like aliases
 - `document-workspace-harness.ts` and `.html`: deterministic real-Chromium two-document isolation, undo-mark, crash/reload, stale-revision and alias roundtrip fixture
 - `recovery-compaction-harness.ts` and `.html`: two-phase real-Chromium seed/reload fixture for multi-document compaction, interrupted session, incomplete operation tail and idempotent replay
+- `document-layout-workspace.ts`: DOM-independent F-096/F-097 controller for atomic Model/Layout switch, create, copy, rename, delete, reorder, Undo/Redo and independent read-back
+- `document-layout-workspace-harness.ts` and `.html`: three-phase real-Chromium crash/reload/second-reload fixture for persistent active space, tab order, monotonic ids and multi-document isolation
 - `indexed-db.ts`: schema v3 attachment, append-only snapshot/operation/compaction and crash-event methods
 
 `KDrawIndexedDb(factory, databaseName?)` accepts an optional isolated database name for non-destructive browser fixtures. Production callers retain the default `kuubik-draw` name.
@@ -62,6 +66,10 @@ The transaction module also exports `put-attachment` and `delete-attachment` `Ca
 `DocumentLayoutPlotShell` is the approved DOM-independent F-096...F-107/F-114/F-115 shell boundary. It delegates semantic changes to the existing core planners and accepts them only through `DocumentLiveOrchestrator.commit`. Layout create/rename/delete, rectangular viewport creation, viewport view/pan/twist/lock, Model/Paper page setup, named page setup, publish settings, vector PDF and underlay read-back therefore share one revision contract.
 
 `DocumentLiveOrchestrator.undo`/`redo` use `DocumentSessionCoordinator.undoPersisted`/`redoPersisted`: a candidate history state is persisted before it replaces the accepted session. A failed storage callback leaves revision, document and Undo/Redo stacks unchanged. If an active layout is removed by a commit or Undo, the coordinator reconciles the session and tab to Model before callers select an adjacent paper layout.
+
+`DocumentLayoutWorkspace` is the seventh-wave F-096/F-097 document-model boundary. Callers opt in with `DocumentLiveOrchestrator.open({ layoutWorkspace: "migrate" })`; existing certified callers that omit this flag keep their prior behavior. The opt-in guarantees exactly one Model layout, at least one paper Layout, a strict persisted `kuubik.layoutWorkspace.v1` extension, stable monotonic layout/viewport ids, exact tab order and an active-space value that matches the active layout kind. Layout collection and workspace extension are one atomic `CadChange` plan. The controller accepts the revision before synchronizing live tab/session state.
+
+Legacy documents migrate deterministically and idempotently. A new fallback document is normalized before its first checkpoint. An already persisted legacy document receives an append-only `LAYOUT_WORKSPACE_MIGRATE` revision that is deliberately excluded from user Undo history. Missing paper state creates `layout-1`; malformed active ids, space kinds, tab permutations or allocation counters fail strict read and are repaired before session exposure. The repair never lowers allocation counters, so deleted `layout-N` and `viewport-N` ids are not reused. Named page-setup assignments and viewport definitions remain attached to their stable layout ids through copy/reorder/Undo/Redo.
 
 The shell capability map is intentionally not a parity score. F-096...F-107/F-114 and F-115 are `candidate`; they still require the row-specific browser/AutoCAD/read-back chain before score changes. F-108 PC3/CTB/STB is `disabled`, while F-112/F-113/F-117/F-121 remain `disabled` with `NATIVE_SDK_UNAVAILABLE`.
 
@@ -107,6 +115,8 @@ F-115 atomic persistence and crash/reload wiring now have real-Chromium read-bac
 A corrupt operation tail is never deleted. `DocumentAutosaveRecovery.open` appends a `recover` event that records the ignored operation ids and rewinds only the mutable head to the last valid SHA-chained document. Later commits reuse that revision with unique append-only snapshot keys; replay filters only explicitly quarantined operation ids. Open/clean pairing is chronological, so an early or duplicate clean event cannot hide a later interrupted session.
 
 The sixth-wave fixture is available at `/src/features/documents/recovery-compaction-harness.html`. Load `?phase=seed`, then navigate or reload with `?phase=recover` against the same browser profile. The seed phase creates alpha revision 2 and beta revision 1, compacts alpha, appends an intentionally incomplete alpha revision-3 tail and closes without clean events. The recover phase must return alpha revision 2 from compaction with the incomplete tail named, beta revision 1 from the operation log, unchanged operation counts 3/1, `browser-crashed` on both receipts and a byte-identical repeated alpha document/receipt.
+
+The seventh-wave fixture is available at `/src/features/documents/document-layout-workspace-harness.html`. Run `?phase=seed`, `?phase=recover`, then `?phase=verify` in the same browser profile. Alpha performs nine atomic operations covering Model/Paper switching and paper create/copy/rename/delete/reorder, then crashes at revision 9. Reload must restore active `layout-3`, paper space, tab order `model/layout-3/layout-1/layout-2`, counters 5/5 and report `layout-workspace-crashed`. Undo persists revision 10 with Model active; Redo persists revision 11 with `layout-3` active. Beta remains revision 1 throughout. The verify phase must keep revisions 11/1, operation counts 11/1 and report no repeat migration.
 
 Threat boundary: SHA-256 detects accidental/corruption-fixture mutation but is not a signature against an attacker able to rewrite both payload and digest. IndexedDB origin isolation, browser quota policy and physical process-kill durability remain browser/platform responsibilities. Compaction is a replay optimization and audit checkpoint, not destructive garbage collection. It refuses degraded recovery state, preserves every prior record and never upgrades a recovery result into certification evidence by itself.
 

@@ -48,7 +48,8 @@ export type LayoutCommandErrorCode =
   | "MODEL_LAYOUT_PROTECTED"
   | "LAST_PAPER_LAYOUT"
   | "ORDER_LIMIT"
-  | "VIEWPORT_LOCKED";
+  | "VIEWPORT_LOCKED"
+  | "INVALID_LAYOUT_WORKSPACE";
 
 export class LayoutCommandError extends Error {
   constructor(readonly code: LayoutCommandErrorCode, message: string) {
@@ -703,4 +704,334 @@ export function deletePaperLayout(document: KDrawDocumentV1, layoutId: string): 
   layouts.splice(index, 1);
   const adjacent = layouts[Math.min(index, layouts.length - 1)] ?? layouts[0]!;
   return result(layouts, adjacent.id);
+}
+
+export const LAYOUT_WORKSPACE_EXTENSION_KEY = "kuubik.layoutWorkspace.v1" as const;
+
+export interface LayoutWorkspaceStateV1 {
+  schemaVersion: 1;
+  activeLayoutId: string;
+  activeSpace: "model" | "paper";
+  tabOrder: string[];
+  nextLayoutSequence: number;
+  nextViewportSequence: number;
+}
+
+export type LayoutWorkspaceRepairCode =
+  | "MISSING_PAPER_LAYOUT"
+  | "MISSING_WORKSPACE_STATE"
+  | "INVALID_WORKSPACE_STATE"
+  | "INVALID_ACTIVE_LAYOUT"
+  | "INVALID_ACTIVE_SPACE"
+  | "INVALID_TAB_ORDER"
+  | "INVALID_SEQUENCE";
+
+export type LayoutWorkspaceChange =
+  | LayoutSetChange
+  | { type: "set-metadata"; metadata: KDrawDocumentV1["metadata"] };
+
+export interface LayoutWorkspaceEditResult {
+  changes: LayoutWorkspaceChange[];
+  layoutId: string;
+  layouts: CadLayout[];
+  workspace: LayoutWorkspaceStateV1;
+}
+
+export interface LayoutWorkspaceMigrationResult extends LayoutWorkspaceEditResult {
+  document: KDrawDocumentV1;
+  migrated: boolean;
+  repairs: LayoutWorkspaceRepairCode[];
+}
+
+const WORKSPACE_KEYS = [
+  "activeLayoutId",
+  "activeSpace",
+  "nextLayoutSequence",
+  "nextViewportSequence",
+  "schemaVersion",
+  "tabOrder",
+] as const;
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function exactWorkspaceKeys(value: Record<string, unknown>): boolean {
+  const keys = Object.keys(value).sort();
+  return keys.length === WORKSPACE_KEYS.length && keys.every((key, index) => key === WORKSPACE_KEYS[index]);
+}
+
+function numericSuffixMaximum(ids: readonly string[], prefix: string): number {
+  let maximum = 0;
+  const pattern = new RegExp(`^${prefix}-(\\d+)$`, "u");
+  for (const id of ids) {
+    const match = pattern.exec(id);
+    if (match) maximum = Math.max(maximum, Number(match[1]));
+  }
+  return maximum;
+}
+
+function derivedSequences(layouts: readonly CadLayout[]): Pick<LayoutWorkspaceStateV1, "nextLayoutSequence" | "nextViewportSequence"> {
+  return {
+    nextLayoutSequence: numericSuffixMaximum(layouts.map((layout) => layout.id), "layout") + 1,
+    nextViewportSequence: numericSuffixMaximum(layouts.flatMap((layout) => layout.viewports.map((viewport) => viewport.id)), "viewport") + 1,
+  };
+}
+
+function exactTabOrder(layouts: readonly CadLayout[], candidate: unknown): candidate is string[] {
+  if (!Array.isArray(candidate) || candidate.some((entry) => typeof entry !== "string")) return false;
+  const expected = layouts.map((layout) => layout.id);
+  return candidate.length === expected.length
+    && new Set(candidate).size === expected.length
+    && expected.every((layoutId) => candidate.includes(layoutId));
+}
+
+function tabOrderMatchesLayouts(layouts: readonly CadLayout[], candidate: unknown): candidate is string[] {
+  return exactTabOrder(layouts, candidate)
+    && layouts.every((layout, index) => candidate[index] === layout.id);
+}
+
+function workspaceMetadata(document: KDrawDocumentV1, workspace: LayoutWorkspaceStateV1): KDrawDocumentV1["metadata"] {
+  return {
+    ...structuredClone(document.metadata),
+    extensions: {
+      ...structuredClone(document.metadata.extensions ?? {}),
+      [LAYOUT_WORKSPACE_EXTENSION_KEY]: structuredClone(workspace),
+    },
+  };
+}
+
+function strictWorkspaceState(document: KDrawDocumentV1): LayoutWorkspaceStateV1 {
+  assertLayoutCollection(document.layouts);
+  if (!document.layouts.some((layout) => layout.kind === "paper")) {
+    throw new LayoutCommandError("INVALID_LAYOUT_WORKSPACE", "At least one paper layout must remain in the document workspace.");
+  }
+  const raw = document.metadata.extensions?.[LAYOUT_WORKSPACE_EXTENSION_KEY];
+  if (!isRecord(raw) || !exactWorkspaceKeys(raw) || raw.schemaVersion !== 1
+    || typeof raw.activeLayoutId !== "string"
+    || (raw.activeSpace !== "model" && raw.activeSpace !== "paper")
+    || !Number.isSafeInteger(raw.nextLayoutSequence) || (raw.nextLayoutSequence as number) < 1
+    || !Number.isSafeInteger(raw.nextViewportSequence) || (raw.nextViewportSequence as number) < 1
+    || !tabOrderMatchesLayouts(document.layouts, raw.tabOrder)) {
+    throw new LayoutCommandError("INVALID_LAYOUT_WORKSPACE", "Document layout workspace state is missing or malformed.");
+  }
+  const active = document.layouts.find((layout) => layout.id === raw.activeLayoutId);
+  if (!active || active.kind !== raw.activeSpace) {
+    throw new LayoutCommandError("INVALID_LAYOUT_WORKSPACE", "Document active layout and active space do not match.");
+  }
+  const derived = derivedSequences(document.layouts);
+  if ((raw.nextLayoutSequence as number) < derived.nextLayoutSequence
+    || (raw.nextViewportSequence as number) < derived.nextViewportSequence) {
+    throw new LayoutCommandError("INVALID_LAYOUT_WORKSPACE", "Document layout workspace id sequence would reuse an issued id.");
+  }
+  return structuredClone(raw) as unknown as LayoutWorkspaceStateV1;
+}
+
+export function readLayoutWorkspace(document: KDrawDocumentV1): LayoutWorkspaceStateV1 {
+  return strictWorkspaceState(document);
+}
+
+function workspaceResult(
+  document: KDrawDocumentV1,
+  layouts: CadLayout[],
+  activeLayoutId: string,
+  sequences: Pick<LayoutWorkspaceStateV1, "nextLayoutSequence" | "nextViewportSequence">,
+  includeLayouts: boolean,
+): LayoutWorkspaceEditResult {
+  assertLayoutCollection(layouts);
+  if (!layouts.some((layout) => layout.kind === "paper")) {
+    throw new LayoutCommandError("LAST_PAPER_LAYOUT", "At least one paper layout must remain.");
+  }
+  const active = layouts.find((layout) => layout.id === activeLayoutId);
+  if (!active) throw new LayoutCommandError("MISSING_LAYOUT", `Layout not found: ${activeLayoutId}`);
+  const derived = derivedSequences(layouts);
+  const workspace: LayoutWorkspaceStateV1 = {
+    schemaVersion: 1,
+    activeLayoutId,
+    activeSpace: active.kind,
+    tabOrder: layouts.map((layout) => layout.id),
+    nextLayoutSequence: Math.max(sequences.nextLayoutSequence, derived.nextLayoutSequence),
+    nextViewportSequence: Math.max(sequences.nextViewportSequence, derived.nextViewportSequence),
+  };
+  const metadata = workspaceMetadata(document, workspace);
+  return {
+    changes: [
+      ...(includeLayouts ? [{ type: "set-layouts" as const, layouts: structuredClone(layouts) }] : []),
+      { type: "set-metadata", metadata },
+    ],
+    layoutId: activeLayoutId,
+    layouts: structuredClone(layouts),
+    workspace,
+  };
+}
+
+export function migrateLayoutWorkspace(document: KDrawDocumentV1): LayoutWorkspaceMigrationResult {
+  assertLayoutCollection(document.layouts);
+  const repairs: LayoutWorkspaceRepairCode[] = [];
+  let layouts = structuredClone(document.layouts);
+  if (!layouts.some((layout) => layout.kind === "paper")) {
+    const created = createPaperLayout({ ...structuredClone(document), layouts }, { name: "Layout 1" });
+    layouts = created.layouts;
+    repairs.push("MISSING_PAPER_LAYOUT");
+  }
+  const raw = document.metadata.extensions?.[LAYOUT_WORKSPACE_EXTENSION_KEY];
+  const validShape = isRecord(raw) && exactWorkspaceKeys(raw) && raw.schemaVersion === 1
+    && typeof raw.activeLayoutId === "string"
+    && (raw.activeSpace === "model" || raw.activeSpace === "paper")
+    && Array.isArray(raw.tabOrder)
+    && Number.isSafeInteger(raw.nextLayoutSequence)
+    && Number.isSafeInteger(raw.nextViewportSequence);
+  if (raw === undefined) repairs.push("MISSING_WORKSPACE_STATE");
+  else if (!validShape) repairs.push("INVALID_WORKSPACE_STATE");
+  const modelId = layouts.find((layout) => layout.kind === "model")!.id;
+  const activeCandidate = validShape ? layouts.find((layout) => layout.id === raw.activeLayoutId) : undefined;
+  if (validShape && !activeCandidate) repairs.push("INVALID_ACTIVE_LAYOUT");
+  const activeLayoutId = activeCandidate?.id ?? modelId;
+  if (validShape && activeCandidate && activeCandidate.kind !== raw.activeSpace) repairs.push("INVALID_ACTIVE_SPACE");
+  const tabOrder = validShape && tabOrderMatchesLayouts(layouts, raw.tabOrder)
+    ? [...raw.tabOrder]
+    : layouts.map((layout) => layout.id);
+  if (validShape && !tabOrderMatchesLayouts(layouts, raw.tabOrder)) repairs.push("INVALID_TAB_ORDER");
+  const derived = derivedSequences(layouts);
+  const validSequences = validShape
+    && (raw.nextLayoutSequence as number) >= derived.nextLayoutSequence
+    && (raw.nextViewportSequence as number) >= derived.nextViewportSequence;
+  if (validShape && !validSequences) repairs.push("INVALID_SEQUENCE");
+  const workspace: LayoutWorkspaceStateV1 = {
+    schemaVersion: 1,
+    activeLayoutId,
+    activeSpace: layouts.find((layout) => layout.id === activeLayoutId)!.kind,
+    tabOrder,
+    nextLayoutSequence: validSequences ? raw.nextLayoutSequence as number : derived.nextLayoutSequence,
+    nextViewportSequence: validSequences ? raw.nextViewportSequence as number : derived.nextViewportSequence,
+  };
+  const metadata = workspaceMetadata(document, workspace);
+  const layoutsChanged = JSON.stringify(layouts) !== JSON.stringify(document.layouts);
+  const metadataChanged = JSON.stringify(metadata) !== JSON.stringify(document.metadata);
+  const changes: LayoutWorkspaceChange[] = [
+    ...(layoutsChanged ? [{ type: "set-layouts" as const, layouts: structuredClone(layouts) }] : []),
+    ...(metadataChanged ? [{ type: "set-metadata" as const, metadata }] : []),
+  ];
+  return {
+    changes,
+    layoutId: activeLayoutId,
+    layouts: structuredClone(layouts),
+    workspace,
+    document: { ...structuredClone(document), layouts: structuredClone(layouts), metadata },
+    migrated: changes.length > 0,
+    repairs,
+  };
+}
+
+function allocateWorkspaceId(prefix: "layout" | "viewport", used: ReadonlySet<string>, sequence: number): { id: string; next: number } {
+  let next = sequence;
+  while (used.has(`${prefix}-${next}`)) next += 1;
+  return { id: `${prefix}-${next}`, next: next + 1 };
+}
+
+function rekeyNewLayout(
+  layouts: CadLayout[],
+  temporaryLayoutId: string,
+  workspace: LayoutWorkspaceStateV1,
+): { layouts: CadLayout[]; layoutId: string; sequences: Pick<LayoutWorkspaceStateV1, "nextLayoutSequence" | "nextViewportSequence"> } {
+  const nextLayouts = structuredClone(layouts);
+  const layout = nextLayouts.find((candidate) => candidate.id === temporaryLayoutId)!;
+  const allocatedLayout = allocateWorkspaceId("layout", new Set(nextLayouts.filter((candidate) => candidate !== layout).map((candidate) => candidate.id)), workspace.nextLayoutSequence);
+  layout.id = allocatedLayout.id;
+  let nextViewportSequence = workspace.nextViewportSequence;
+  const usedViewportIds = new Set(nextLayouts.filter((candidate) => candidate !== layout).flatMap((candidate) => candidate.viewports.map((viewport) => viewport.id)));
+  for (const viewport of layout.viewports) {
+    const allocatedViewport = allocateWorkspaceId("viewport", usedViewportIds, nextViewportSequence);
+    viewport.id = allocatedViewport.id;
+    usedViewportIds.add(allocatedViewport.id);
+    nextViewportSequence = allocatedViewport.next;
+  }
+  return {
+    layouts: nextLayouts,
+    layoutId: allocatedLayout.id,
+    sequences: { nextLayoutSequence: allocatedLayout.next, nextViewportSequence },
+  };
+}
+
+const NAMED_PAGE_SETUP_LIBRARY_EXTENSION_KEY = "kuubikDraw.pageSetupLibrary.v1";
+
+function updateNamedPageSetupAssignment(
+  result: LayoutWorkspaceEditResult,
+  sourceLayoutId: string | null,
+  targetLayoutId: string,
+): LayoutWorkspaceEditResult {
+  const metadataChange = result.changes.find((change) => change.type === "set-metadata");
+  if (!metadataChange) return result;
+  const rawLibrary = metadataChange.metadata.extensions?.[NAMED_PAGE_SETUP_LIBRARY_EXTENSION_KEY];
+  if (!isRecord(rawLibrary) || !isRecord(rawLibrary.assignments)) return result;
+  const assignments = structuredClone(rawLibrary.assignments);
+  if (sourceLayoutId === null) {
+    delete assignments[targetLayoutId];
+  } else {
+    const setupId = assignments[sourceLayoutId];
+    if (typeof setupId === "string") assignments[targetLayoutId] = setupId;
+  }
+  rawLibrary.assignments = assignments;
+  return result;
+}
+
+export function activateLayoutWorkspace(document: KDrawDocumentV1, layoutId: string): LayoutWorkspaceEditResult {
+  const workspace = strictWorkspaceState(document);
+  if (workspace.activeLayoutId === layoutId) {
+    return { changes: [], layoutId, layouts: structuredClone(document.layouts), workspace };
+  }
+  return workspaceResult(document, structuredClone(document.layouts), layoutId, workspace, false);
+}
+
+export function createPaperLayoutWorkspace(
+  document: KDrawDocumentV1,
+  options: Parameters<typeof createPaperLayout>[1] = {},
+): LayoutWorkspaceEditResult {
+  const workspace = strictWorkspaceState(document);
+  const created = createPaperLayout(document, options);
+  const rekeyed = rekeyNewLayout(created.layouts, created.layoutId, workspace);
+  return workspaceResult(document, rekeyed.layouts, rekeyed.layoutId, rekeyed.sequences, true);
+}
+
+export function copyPaperLayoutWorkspace(document: KDrawDocumentV1, layoutId: string): LayoutWorkspaceEditResult {
+  const workspace = strictWorkspaceState(document);
+  const copied = copyPaperLayout(document, layoutId);
+  const rekeyed = rekeyNewLayout(copied.layouts, copied.layoutId, workspace);
+  return updateNamedPageSetupAssignment(
+    workspaceResult(document, rekeyed.layouts, rekeyed.layoutId, rekeyed.sequences, true),
+    layoutId,
+    rekeyed.layoutId,
+  );
+}
+
+export function renamePaperLayoutWorkspace(document: KDrawDocumentV1, layoutId: string, name: string): LayoutWorkspaceEditResult {
+  const workspace = strictWorkspaceState(document);
+  const renamed = renamePaperLayout(document, layoutId, name);
+  return workspaceResult(document, renamed.layouts, workspace.activeLayoutId, workspace, true);
+}
+
+export function deletePaperLayoutWorkspace(document: KDrawDocumentV1, layoutId: string): LayoutWorkspaceEditResult {
+  const workspace = strictWorkspaceState(document);
+  const deleted = deletePaperLayout(document, layoutId);
+  const activeLayoutId = workspace.activeLayoutId === layoutId ? deleted.layoutId : workspace.activeLayoutId;
+  return updateNamedPageSetupAssignment(
+    workspaceResult(document, deleted.layouts, activeLayoutId, workspace, true),
+    null,
+    layoutId,
+  );
+}
+
+export function reorderPaperLayoutWorkspace(document: KDrawDocumentV1, layoutId: string, targetTabIndex: number): LayoutWorkspaceEditResult {
+  const workspace = strictWorkspaceState(document);
+  if (!Number.isSafeInteger(targetTabIndex) || targetTabIndex < 1 || targetTabIndex >= document.layouts.length) {
+    throw new LayoutCommandError("ORDER_LIMIT", "Paper layout target tab index is outside the paper-layout range.");
+  }
+  const layouts = structuredClone(document.layouts);
+  const sourceIndex = layouts.findIndex((layout) => layout.id === layoutId);
+  if (sourceIndex < 0) throw new LayoutCommandError("MISSING_LAYOUT", `Layout not found: ${layoutId}`);
+  if (layouts[sourceIndex]!.kind !== "paper") throw new LayoutCommandError("MODEL_LAYOUT_PROTECTED", "Model layout cannot be reordered.");
+  if (sourceIndex === targetTabIndex) return { changes: [], layoutId: workspace.activeLayoutId, layouts, workspace };
+  const [layout] = layouts.splice(sourceIndex, 1);
+  layouts.splice(targetTabIndex, 0, layout!);
+  return workspaceResult(document, layouts, workspace.activeLayoutId, workspace, true);
 }
