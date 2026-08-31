@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-08-31T21:30:34.047Z",
+  "node": "v26.7.0",
+  "command": "npx vite-node evidence/workstreams/precision-layers/units-persistence-wave14.ts",
+  "baselineCommit": "a6d2cf917c55bf415257dc9ca1ba59684a53467c",
+  "featureRows": [
+    "F-053"
+  ],
+  "contract": {
+    "schemaVersion": 1,
+    "drawingUnit": "m",
+    "insertionUnit": "cm",
+    "lengthFormat": "scientific",
+    "lengthPrecision": 12,
+    "angleFormat": "radians",
+    "anglePrecision": 12,
+    "decimalSeparator": ",",
+    "clockwise": true,
+    "baseAngleRad": 1.0471975511965974
+  },
+  "atomicHistory": {
+    "revisions": {
+      "source": 0,
+      "committed": 1,
+      "undone": 2,
+      "redone": 3,
+      "reopenedUndo": 4
+    },
+    "operationIds": [
+      "units-wave14-op",
+      "units-wave14-op:undo:1",
+      "units-wave14-op:redo:2",
+      "units-wave14-op:undo:3"
+    ],
+    "commandIds": [
+      "UNITS",
+      "UNDO",
+      "UNITS",
+      "UNDO"
+    ],
+    "reopenedCanUndo": true,
+    "reopenedCanRedo": false,
+    "recoveredSource": "operation-log",
+    "recoveredRevision": 4,
+    "recoveryReceipt": "RECOVERY_CLEAN"
+  },
+  "durableReadback": {
+    "commitExact": true,
+    "recoveryExact": true,
+    "contractAfterUndo": {
+      "schemaVersion": 1,
+      "drawingUnit": "mm",
+      "insertionUnit": "mm",
+      "lengthFormat": "decimal",
+      "lengthPrecision": 4,
+      "angleFormat": "decimal-degrees",
+      "anglePrecision": 6,
+      "decimalSeparator": ".",
+      "clockwise": false,
+      "baseAngleRad": 0
+    },
+    "expectedUndoContract": {
+      "schemaVersion": 1,
+      "drawingUnit": "mm",
+      "insertionUnit": "mm",
+      "lengthFormat": "decimal",
+      "lengthPrecision": 4,
+      "angleFormat": "decimal-degrees",
+      "anglePrecision": 6,
+      "decimalSeparator": ".",
+      "clockwise": false,
+      "baseAngleRad": 0
+    }
+  },
+  "geometry": {
+    "sourceSha256": "02d905f0896e35a55e7dc13d426525581958eba41d12f4669e4b4c2e54af5150",
+    "committedSha256": "02d905f0896e35a55e7dc13d426525581958eba41d12f4669e4b4c2e54af5150",
+    "reopenedUndoSha256": "02d905f0896e35a55e7dc13d426525581958eba41d12f4669e4b4c2e54af5150",
+    "coordinatesPreserved": true,
+    "coordinateScale": 1
+  },
+  "liveEvidence": {
+    "autocad2024": "NOT_RUN",
+    "chromiumIntegratedUi": "NOT_RUN",
+    "parityScoresChanged": false
+  }
+}

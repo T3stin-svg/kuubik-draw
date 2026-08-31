@@ -4,6 +4,33 @@ Source baseline: `b09f4e1e0a661b06e5087e6cbb748220dbc48574`
 
 Branch: `work/reio-precision-layers`
 
+## Wave 14: F-053 UNITS persistence and command contract
+
+- Baseline: `a6d2cf917c55bf415257dc9ca1ba59684a53467c`
+- Branch: `work14/reio-precision-units`
+- Reproducer: `npx vite-node evidence/workstreams/precision-layers/units-persistence-wave14.ts`
+- `PrecisionUnitsCommandAdapter` supplies a DOM-free UNITS dialog lifecycle on
+  the existing normalized core contract. Invalid settings and degraded recovery
+  fail closed before the live document can change.
+- Preview and commit use the same planned contract. A drawing-unit change with
+  existing geometry still requires explicit `preserve-coordinates`; no display
+  precision or unit setting scales or rounds stored doubles.
+- One `CadSession` operation persists drawing units and extension metadata
+  together. Candidate commit/Undo/Redo state remains private until IndexedDB
+  commit and exact document read-back both pass.
+- IndexedDB reopen restores the append-only operation history. The evidence
+  revision sequence is commit `1`, Undo `2`, Redo `3`, reopen+Undo `4`; recovery
+  is clean from the operation log and all geometry SHA-256 values are identical.
+- Targeted coverage passed 5 files / 11 tests: golden/unit, 2,000 property
+  previews, 1,000 invalid fuzz patches, mutation, IndexedDB wiring and a 50,000
+  object coordinate-preservation performance case.
+- Repository-wide verification passed: 257 Vitest files / 1,161 tests, DXF 28
+  files / 70 tests, PDF 7 files / 22 tests, typecheck, lint, 154-module build,
+  public-tree scan of 1,772 files, 119-package license audit and diff-check.
+- App/CSS integration, integrated Kuubik browser read-back and AutoCAD 2024.1.2
+  live evidence were not run. F-053 remains uncertified and its score is
+  unchanged.
+
 ## Wave 13: F-052 Dynamic Input
 
 - Baseline: `0a0bc61cb631147138855bcee7779aa24c55780b`

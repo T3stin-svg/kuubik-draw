@@ -491,3 +491,52 @@ This branch does not edit `App.tsx`, shell files or the scope manifest.
 
 Do not change parity scores until the required AutoCAD 2024.1.2 and Chromium
 live evidence is complete.
+
+## Wave 14 UNITS command and persistence adapter (F-053)
+
+Import `PrecisionUnitsCommandAdapter` directly from
+`apps/web/src/features/precision/units-command-adapter.ts`; no shared
+`src/index.ts` export is required. `KDrawIndexedDb` satisfies the adapter's
+structural `PrecisionUnitsPersistencePort` without a new runtime dependency.
+
+Open it only after the initial document exists in IndexedDB:
+
+```ts
+const units = await PrecisionUnitsCommandAdapter.open(database, documentId);
+const dialog = units.openDialog();
+```
+
+Bind the UNITS fields to the complete `dialog.draft`: drawing unit, insertion
+unit, length format/precision, angle format/precision, decimal separator,
+clockwise direction and base angle in radians. Send complete field patches to
+`updateDraft()`. A returned `invalid` state is not committable; display its
+`error` and leave the accepted document untouched. Cancel must call
+`cancelDialog()`.
+
+Call `preview()` and `commit()` with
+`{ existingGeometryPolicy: "preserve-coordinates" }` only after the user has
+explicitly chosen to reinterpret an existing drawing in a different drawing
+unit. This policy never rescales existing coordinates: read-back always reports
+`coordinateScale: 1`. Import/insertion scaling remains the separate
+`PrecisionUnitsFeatureModel.insertionScale()` contract.
+
+The adapter commits drawing units plus extension metadata as one `CadSession`
+revision. It persists the candidate and its history through IndexedDB, loads
+the document back, validates the units contract and compares the complete
+document before exposing success. Commit, `undo()` and `redo()` keep their
+candidate private on storage failure. A missing/mismatched post-commit read-back
+blocks the adapter until the integration owner reopens the document; do not
+continue from UI-cached settings.
+
+`open()` recovers the append-only history and refuses missing documents,
+degraded operation recovery, corrupt snapshots/compactions, document-ID
+mismatch and invalid stored unit contracts. After every accepted
+commit/Undo/Redo, rebuild or refresh `PrecisionLayersShellContract` from the
+adapter's returned document so typed input and Dynamic Input consume the same
+persisted unit, locale and angle model. Never duplicate formatting or parser
+rules in React.
+
+This workstream does not edit `App.tsx` or global CSS. The integration owner
+still owns the actual modal/menu wiring and integrated Chromium read-back.
+AutoCAD 2024.1.2 live evidence is also absent, so F-053 remains uncertified and
+its parity score must not change.
