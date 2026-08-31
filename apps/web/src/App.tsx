@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { DEFAULT_MATCH_PROPERTIES_SETTINGS, ISO_PAPER_MEDIA, MAX_PAGE_SETUP_TEMPLATE_BYTES, STANDARD_VIEWPORT_SCALE_DENOMINATORS, allocateEntityHandles, applyNamedPageSetup, buildLayoutPublishPlan, CadCommandInputError, CadSession, clearNamedPageSetupAssignment, createPageSetupTemplate, LayoutCommandError, LayoutPublishSettingsError, NoOpOperationError, PageSetupLibraryError, createEmptyDocument, createPaperViewport, deleteNamedPageSetup, deletePaperViewport, executeMatchViewportProperties, formatViewportScale, importPageSetupTemplate, metadataWithLayoutPublishSettings, panPaperViewportByPixels, paperDefinitionForPageSetup, parseCartesianPoint, parsePageSetupTemplate, renameNamedPageSetup, replaceDrawingContentPreservingLayouts, resolveCadCommand, resolveLayoutPublishSettings, resolveMatchPropertiesSettings, resolveModelPageSetup, resolvePageSetup, resolvePageSetupLibrary, resolvePaperDefinition, sanitizePdfFileStem, saveNamedPageSetup, serializeKDraw, serializePageSetupTemplate, setModelLayoutPageSetup, setPaperLayoutPageSetup, setPaperViewportDisplayLocked, setPaperViewportView, viewportScaleDenominator, zoomPaperViewportAtModelPoint, type AlignRejectedTarget, type BreakMode, type BreakRejectedTarget, type CadChange, type CadLayerToggle, type CadUnitsContractV1, type ChamferRejectedTarget, type ChamferTrimMode, type CopyRejectedTarget, type ExtendRejectedTarget, type ExtendTargetAction, type FilletRejectedTarget, type FilletTrimMode, type LayoutPublishSettingsV1, type LengthenMeasurement, type LengthenMode, type LengthenRejectedTarget, type MatchPropertiesRejectedTarget, type MatchPropertiesSettings, type MatchViewportRef, type MirrorRejectedTarget, type MoveRejectedTarget, type OffsetLayerMode, type OffsetRejectedTarget, type RotateRejectedTarget, type ScaleRejectedTarget, type StretchRejectedTarget, type TrimEdgeMode, type TrimMode, type TrimProjectMode, type TrimRejectedTarget, type TrimTargetAction } from "@kuubik/cad-core";
+import { DEFAULT_MATCH_PROPERTIES_SETTINGS, ISO_PAPER_MEDIA, MAX_PAGE_SETUP_TEMPLATE_BYTES, STANDARD_VIEWPORT_SCALE_DENOMINATORS, allocateEntityHandles, applyNamedPageSetup, buildLayoutPublishPlan, CadCommandInputError, CadSession, clearNamedPageSetupAssignment, createPageSetupTemplate, LayoutCommandError, LayoutPublishSettingsError, NoOpOperationError, PageSetupLibraryError, createEmptyDocument, createPaperViewport, deleteNamedPageSetup, deletePaperViewport, executeMatchViewportProperties, formatViewportScale, importPageSetupTemplate, metadataWithLayoutPublishSettings, panPaperViewportByPixels, paperDefinitionForPageSetup, parseCartesianPoint, parsePageSetupTemplate, renameNamedPageSetup, replaceDrawingContentPreservingLayouts, resolveCadCommand, resolveLayoutPublishSettings, resolveMatchPropertiesSettings, resolveModelPageSetup, resolvePageSetup, resolvePageSetupLibrary, resolvePaperDefinition, sanitizePdfFileStem, saveNamedPageSetup, serializeKDraw, serializePageSetupTemplate, setModelLayoutPageSetup, setPaperLayoutPageSetup, setPaperViewportDisplayLocked, setPaperViewportView, viewportScaleDenominator, zoomPaperViewportAtModelPoint, type AlignRejectedTarget, type BreakMode, type BreakRejectedTarget, type CadChange, type CadDrawOrderAction, type CadLayerAppearancePatch, type CadLayerToggle, type CadUnitsContractV1, type ChamferRejectedTarget, type ChamferTrimMode, type CopyRejectedTarget, type ExtendRejectedTarget, type ExtendTargetAction, type FilletRejectedTarget, type FilletTrimMode, type LayoutPublishSettingsV1, type LengthenMeasurement, type LengthenMode, type LengthenRejectedTarget, type MatchPropertiesRejectedTarget, type MatchPropertiesSettings, type MatchViewportRef, type MirrorRejectedTarget, type MoveRejectedTarget, type OffsetLayerMode, type OffsetRejectedTarget, type RotateRejectedTarget, type ScaleRejectedTarget, type StretchRejectedTarget, type TrimEdgeMode, type TrimMode, type TrimProjectMode, type TrimRejectedTarget, type TrimTargetAction } from "@kuubik/cad-core";
 import { DxfImportError, MAX_DXF_IMPORT_BYTES, exportDxf, importDxf } from "@kuubik/cad-dxf";
 import { createPdfUnderlayPlacement, exportLayoutSvg, exportLayoutsVectorPdf, exportLayoutVectorPdf, exportModelSvg, exportModelVectorPdf, preparePdfUnderlay, type LayoutPlotOptions, type ModelPlotOptions } from "@kuubik/cad-print";
 import { CadCanvasRenderer, pickCadEntity, pannedViewportWorldCenter, selectCadEntityHitsByCrossingPolygon, selectCadEntityHitsByFence, viewportScreenToWorld, viewportScreenTransform, viewportWorldToScreen, type Viewport2D } from "@kuubik/cad-renderer";
@@ -22,6 +22,7 @@ import { DocumentTabs } from "./shell/DocumentTabs.js";
 import { DimensionMenu } from "./shell/DimensionMenu.js";
 import { EllipsePrompt } from "./shell/EllipsePrompt.js";
 import { LayoutBar } from "./shell/LayoutBar.js";
+import { LayerPropertiesPanel, type LayerOperationState } from "./shell/LayerPropertiesPanel.js";
 import { LiveCommandPrompt } from "./shell/LiveCommandPrompt.js";
 import { PaletteFrame, type PaletteMode } from "./shell/PaletteFrame.js";
 import { PolygonPrompt, type PolygonFormState } from "./shell/PolygonPrompt.js";
@@ -366,6 +367,8 @@ export function App() {
     const stored = window.localStorage.getItem("kuubik-draw-palette-mode");
     return stored === "floating" || stored === "auto-hide" ? stored : "docked";
   });
+  const [layerOperationState, setLayerOperationState] = useState<LayerOperationState>("idle");
+  const [layerOperationMessage, setLayerOperationMessage] = useState("");
   const [activeCommandPrompt, setActiveCommandPrompt] = useState<string | null>(null);
   const [polygonPromptOpen, setPolygonPromptOpen] = useState(false);
   const [polygonForm, setPolygonForm] = useState<PolygonFormState>(DEFAULT_POLYGON_FORM);
@@ -550,10 +553,6 @@ export function App() {
   const primarySelectedEntity = selectedHandles.length === 1
     ? document.entities.find((entity) => entity.handle === selectedHandles[0]) ?? null
     : null;
-  const primarySelectedLayer = primarySelectedEntity
-    ? document.layers.find((layer) => layer.id === primarySelectedEntity.layerId) ?? activeLayer
-    : activeLayer;
-  const visiblePaletteLayers = document.layers.filter((layer) => layer.name.toLocaleLowerCase().includes(layerFilterInput.trim().toLocaleLowerCase()));
 
   useEffect(() => {
     window.localStorage.setItem("kuubik-draw-workspace", workspacePreset);
@@ -2988,18 +2987,33 @@ export function App() {
     }
   }
 
-  async function commitLayerCommand(command: Parameters<VisualShellRuntimeAdapter["executeLayer"]>[1], success: string): Promise<void> {
+  async function commitLayerCommand(command: Parameters<VisualShellRuntimeAdapter["executeLayerCapability"]>[1], success: string): Promise<void> {
     if (committing.current) return;
     committing.current = true;
+    setLayerOperationState("loading");
+    setLayerOperationMessage("Layer core commit…");
+    let finalState: LayerOperationState = "idle";
+    let finalMessage = "";
     try {
-      const result = runtime.executeLayer(document, command);
+      const result = runtime.executeLayerCapability(document, command);
       await commitChanges(result.committed.operation.commandId, result.committed.operation.args, result.committed.changes, result.committed.operation.resultHandles, result.committed.operation.targetHandles);
       setStatus(success);
+      finalMessage = `${result.committed.operation.commandId} · revision ${result.document.revision}`;
     } catch (error) {
-      if (error instanceof StorageRevisionConflictError) await recoverFromStorageConflict(error);
-      else setStatus(`LAYER viga: ${error instanceof Error ? error.message : String(error)}`);
+      if (error instanceof StorageRevisionConflictError) {
+        await recoverFromStorageConflict(error);
+        finalState = "recovered";
+        finalMessage = "Salvestuskonfliktist taastatud; käsku ei korratud";
+      } else {
+        const message = error instanceof Error ? error.message : String(error);
+        setStatus(`LAYER viga: ${message}`);
+        finalState = "error";
+        finalMessage = message;
+      }
     } finally {
       committing.current = false;
+      setLayerOperationState(finalState);
+      setLayerOperationMessage(finalMessage);
     }
   }
 
@@ -3007,24 +3021,51 @@ export function App() {
     let sequence = document.layers.length;
     while (document.layers.some((layer) => layer.name === `Layer ${sequence}`)) sequence += 1;
     const name = `Layer ${sequence}`;
-    await commitLayerCommand({ type: "create", name }, `${name} loodud PrecisionLayersShellContracti kaudu`);
+    await commitLayerCommand({ capability: "layers.create", name }, `${name} loodud typed Layer Manageri kaudu`);
   }
 
   async function toggleActiveLayerLock(): Promise<void> {
     const locked = !activeLayer.locked;
-    await commitLayerCommand({ type: "toggle", layerId: activeLayer.id, property: "locked", value: locked }, `${activeLayer.name} ${locked ? "lukustatud" : "avatud"}`);
+    await commitLayerCommand({ capability: "layers.lock", layerIds: [activeLayer.id], locked }, `${activeLayer.name} ${locked ? "lukustatud" : "avatud"}`);
   }
 
   async function toggleLayer(layerId: string, property: CadLayerToggle, value: boolean): Promise<void> {
     const layer = document.layers.find((candidate) => candidate.id === layerId);
     if (!layer) return;
-    await commitLayerCommand({ type: "toggle", layerId, property, value }, `${layer.name}: ${property} ${value ? "ON" : "OFF"}`);
+    const command = property === "visible"
+      ? { capability: "layers.visibility" as const, layerIds: [layerId], visible: value }
+      : property === "frozen"
+        ? { capability: "layers.freeze" as const, layerIds: [layerId], frozen: value }
+        : property === "locked"
+          ? { capability: "layers.lock" as const, layerIds: [layerId], locked: value }
+          : { capability: "layers.plot" as const, layerIds: [layerId], plottable: value };
+    await commitLayerCommand(command, `${layer.name}: ${property} ${value ? "ON" : "OFF"}`);
   }
 
   async function makeLayerCurrent(layerId: string): Promise<void> {
     const layer = document.layers.find((candidate) => candidate.id === layerId);
     if (!layer || layerId === document.currentLayerId) return;
-    await commitLayerCommand({ type: "current", layerId }, `${layer.name} on aktiivne kiht`);
+    await commitLayerCommand({ capability: "layers.current", layerId }, `${layer.name} on aktiivne kiht`);
+  }
+
+  async function renameLayer(layerId: string, name: string): Promise<void> {
+    await commitLayerCommand({ capability: "layers.rename", layerId, name }, `${name} on kihi uus nimi`);
+  }
+
+  async function deleteLayer(layerId: string): Promise<void> {
+    const layer = document.layers.find((candidate) => candidate.id === layerId);
+    if (!layer) return;
+    await commitLayerCommand({ capability: "layers.delete", layerId }, `${layer.name} kustutatud`);
+  }
+
+  async function setLayerAppearance(layerId: string, patch: CadLayerAppearancePatch): Promise<void> {
+    const layer = document.layers.find((candidate) => candidate.id === layerId);
+    if (!layer) return;
+    await commitLayerCommand({ capability: "layers.properties", layerIds: [layerId], patch }, `${layer.name}: omadused uuendatud`);
+  }
+
+  async function changeDrawOrder(action: CadDrawOrderAction): Promise<void> {
+    await commitLayerCommand({ capability: "layers.draw-order", handles: selectedHandles, action }, `DRAWORDER ${action}: ${selectedHandles.length} objekti`);
   }
 
   async function createLayout(): Promise<void> {
@@ -3830,7 +3871,7 @@ export function App() {
               <div className="ribbon-layer-actions">
                 <RibbonTool rowId="F-072" label="New layer" icon="layer" available={runtime.canExecute("F-072")} onClick={() => void createLayer()} />
                 <RibbonTool rowId="F-074" label={activeLayer.locked ? "Unlock" : "Lock"} icon="lock" available={runtime.canExecute("F-074")} onClick={() => void toggleActiveLayerLock()} />
-                <RibbonTool rowId="F-073" label="Make current" icon="current" available={runtime.canExecute("F-073")} onClick={() => setStatus(`Current layer: ${activeLayer.name} · LayerFeatureModel`)} />
+                <RibbonTool rowId="F-073" label={activeLayer.visible ? "Layer off" : "Layer on"} icon={activeLayer.visible ? "visible" : "hidden"} available={runtime.canExecute("F-073")} onClick={() => void toggleLayer(activeLayer.id, "visible", !activeLayer.visible)} />
                 <RibbonTool rowId="F-081" label="Match layer" icon="match" />
               </div>
             </div>
@@ -4647,67 +4688,24 @@ export function App() {
           </>
         )}
         <PaletteFrame mode={paletteMode} onModeChange={setPaletteMode}>
-          <section className="layer-manager" aria-label="Layer Properties Manager">
-            <header><strong>LAYER PROPERTIES MANAGER</strong><CadIcon name="close" /></header>
-            <div className="layer-current"><span>Current layer: <strong>{activeLayer.name}</strong></span><label>Search for layer<input aria-label="Search for layer" value={layerFilterInput} onChange={(event) => setLayerFilterInput(event.target.value)} /></label></div>
-            <div className="layer-toolbar" aria-label="Layer tools">
-              <button type="button" aria-label="Loo uus kiht" onClick={() => void createLayer()}><CadIcon name="add" /></button>
-              <button type="button" aria-label="Tee valitud kiht aktiivseks" disabled={visiblePaletteLayers.length === 0} onClick={() => { const layer = visiblePaletteLayers.find((candidate) => candidate.id !== activeLayer.id); if (layer) void makeLayerCurrent(layer.id); }}><CadIcon name="current" /></button>
-              <span aria-hidden="true"><CadIcon name="layer" /></span><span aria-hidden="true"><CadIcon name="refresh" /></span><span aria-hidden="true"><CadIcon name="settings" /></span>
-            </div>
-            <div className="layer-manager-body">
-              <aside className="layer-filter-rail" aria-label="Layer filters">
-                <strong>Filters</strong>
-                <button type="button" className="active"><CadIcon name="layer" />All</button>
-                <button type="button"><CadIcon name="layer" />All Used Layers</button>
-                <label><input type="checkbox" /> Invert filter</label>
-              </aside>
-              <div className="layer-grid" role="table" aria-label="Kihtide loend">
-                <div className="layer-grid-header" role="row"><span>Status</span><span>Name</span><span>On</span><span>Freeze</span><span>Lock</span><span>Plot</span><span>Color</span></div>
-                {visiblePaletteLayers.map((layer) => (
-                  <div className={layer.id === activeLayer.id ? "layer-grid-row active" : "layer-grid-row"} role="row" key={layer.id} data-layer-id={layer.id}>
-                    <span><button type="button" aria-label={`Tee ${layer.name} aktiivseks`} disabled={layer.id === activeLayer.id || !layer.visible || layer.frozen} onClick={() => void makeLayerCurrent(layer.id)}>{layer.id === activeLayer.id ? <CadIcon name="current" /> : <CadIcon name="layer" />}</button></span>
-                    <span>{layer.name}</span>
-                    <span><button type="button" aria-label={`${layer.name} nähtavus`} aria-pressed={layer.visible} onClick={() => void toggleLayer(layer.id, "visible", !layer.visible)}><CadIcon name={layer.visible ? "visible" : "hidden"} /></button></span>
-                    <span><button type="button" aria-label={`${layer.name} külmutus`} aria-pressed={layer.frozen} disabled={layer.id === activeLayer.id} onClick={() => void toggleLayer(layer.id, "frozen", !layer.frozen)}><CadIcon name={layer.frozen ? "freeze" : "unfreeze"} /></button></span>
-                    <span><button type="button" aria-label={`${layer.name} lukustus`} aria-pressed={layer.locked} onClick={() => void toggleLayer(layer.id, "locked", !layer.locked)}><CadIcon name="lock" className={layer.locked ? "is-on" : "is-off"} /></button></span>
-                    <span><button type="button" aria-label={`${layer.name} plot`} aria-pressed={layer.plottable} onClick={() => void toggleLayer(layer.id, "plottable", !layer.plottable)}><CadIcon name={layer.plottable ? "plot" : "unplot"} /></button></span>
-                    <span><i className="layer-color-swatch" style={{ background: layer.appearance?.color ?? "#ffffff" }} />{layer.appearance?.color ?? "White"}</span>
-                  </div>
-                ))}
-                {visiblePaletteLayers.length === 0 && <div className="layer-grid-empty">No matching layers</div>}
-              </div>
-            </div>
-            <footer className="layer-manager-summary">All: {visiblePaletteLayers.length} layers displayed of {document.layers.length} total layers</footer>
-          </section>
-          <header>
-            <strong>PROPERTIES</strong>
-            <span>{selectedHandles.length === 0 ? "No selection" : `${selectedHandles.length} selected`}</span>
-          </header>
-          <div className="properties-selection-summary">{selectedHandles.length === 0 ? "No selection" : selectedHandles.length === 1 ? primarySelectedEntity?.kind.toUpperCase() ?? "Object" : `All (${selectedHandles.length})`}</div>
-          <section>
-            <h2>General</h2>
-            <dl>
-              <div><dt>Color</dt><dd>{primarySelectedEntity?.appearance?.color ?? "ByLayer"}</dd></div>
-              <div><dt>Layer</dt><dd>{primarySelectedLayer.name}</dd></div>
-              <div><dt>Linetype</dt><dd>{primarySelectedEntity?.appearance?.linetypeId ?? "ByLayer"}</dd></div>
-              <div><dt>Linetype scale</dt><dd>{primarySelectedEntity?.appearance?.linetypeScale ?? 1}</dd></div>
-              <div><dt>Plot style</dt><dd>{primarySelectedEntity?.appearance?.plotStyleId ?? "ByColor"}</dd></div>
-              <div><dt>Lineweight</dt><dd>{primarySelectedEntity?.appearance?.lineweightMm === undefined ? "ByLayer" : `${primarySelectedEntity.appearance.lineweightMm.toFixed(2)} mm`}</dd></div>
-              <div><dt>Transparency</dt><dd>{primarySelectedEntity?.appearance?.transparency === undefined ? "ByLayer" : `${primarySelectedEntity.appearance.transparency}%`}</dd></div>
-              <div><dt>Hyperlink</dt><dd>—</dd></div>
-              <div><dt>Thickness</dt><dd>{primarySelectedEntity?.appearance?.thickness ?? 0}</dd></div>
-            </dl>
-          </section>
-          <section>
-            <h2>3D Visualization</h2>
-            <dl>
-              <div><dt>Material</dt><dd>{primarySelectedEntity?.appearance?.materialId ?? "ByLayer"}</dd></div>
-            </dl>
-          </section>
-          <section><h2>Plot style</h2></section>
-          <section><h2>View</h2></section>
-          <section><h2>Data</h2></section>
+          <LayerPropertiesPanel
+            document={document}
+            selectedHandles={selectedHandles}
+            primarySelectedEntity={primarySelectedEntity}
+            modelSpaceEditing={modelSpaceEditing}
+            filter={layerFilterInput}
+            operationState={layerOperationState}
+            operationMessage={layerOperationMessage}
+            featureAvailable={(rowId) => runtime.canExecute(rowId)}
+            onFilterChange={setLayerFilterInput}
+            onCreate={createLayer}
+            onRename={renameLayer}
+            onDelete={deleteLayer}
+            onCurrent={makeLayerCurrent}
+            onToggle={toggleLayer}
+            onAppearance={setLayerAppearance}
+            onDrawOrder={changeDrawOrder}
+          />
           <div className="runtime-tool-panels" aria-label="Runtime tool panels">
             <AnnotationPanel
               selectedHandles={[]}

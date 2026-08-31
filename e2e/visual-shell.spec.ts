@@ -152,9 +152,9 @@ test("AutoCAD-style shell keeps all eight primary zones visible at 1920x1080", a
   await expect(page.getByRole("button", { name: "Kiirpääsu uus joonis unavailable" })).toBeDisabled();
   const palette = page.getByRole("complementary", { name: "Properties palette" });
   await expect(palette.getByRole("complementary", { name: "Layer filters" })).toBeVisible();
-  await expect(palette.getByRole("row").first().locator("span")).toHaveCount(7);
+  await expect(palette.getByRole("row").first().locator("span")).toHaveCount(10);
   await expect(palette.getByText("Linetype scale")).toBeVisible();
-  await expect(palette.getByText("Transparency")).toBeVisible();
+  await expect(palette.getByRole("term").filter({ hasText: "Transparency" })).toBeVisible();
   const ribbonPrimary = await page.getByLabel("Home ribbon").evaluate((element) => ({ clientWidth: element.clientWidth, scrollWidth: element.scrollWidth }));
   expect(ribbonPrimary.scrollWidth).toBeLessThanOrEqual(ribbonPrimary.clientWidth);
   const ribbonPanels = await page.locator("[data-ribbon-panel]").evaluateAll((elements) => Object.fromEntries(elements.map((element) => {
@@ -862,7 +862,7 @@ test("visual shell routes real runtime workflows without enabling unbound comman
   await expect(layerRows).toHaveCount(1);
   await page.getByRole("button", { name: "Loo uus kiht" }).click();
   await expect(layerRows).toHaveCount(2);
-  await expect(page.locator(".command-history")).toContainText("PrecisionLayersShellContracti kaudu");
+  await expect(page.locator(".command-history")).toContainText("typed Layer Manageri kaudu");
   await expect(page.getByRole("button", { name: "Layer 1 lukustus" })).toBeEnabled();
 
   await page.getByRole("button", { name: "Mitmerealine tekst" }).click();
@@ -921,6 +921,200 @@ test("visual shell routes real runtime workflows without enabling unbound comman
     }, null, 2)}\n`, "utf8");
   }
   expect(consoleErrors).toEqual([]);
+});
+
+test("Layer Manager wires F-072..F-079 and exposes fail-closed F-080/F-086 connections", async ({ page }) => {
+  test.setTimeout(60_000);
+  const consoleErrors: string[] = [];
+  page.on("console", (message) => { if (message.type() === "error") consoleErrors.push(message.text()); });
+  page.on("pageerror", (error) => consoleErrors.push(error.message));
+  await page.setViewportSize({ width: 1920, height: 1080 });
+  await page.goto("/d/local");
+  await expect(page.getByRole("status").filter({ hasText: "Salvestus valmis" })).toBeVisible();
+
+  const linetypeDocument = createEmptyDocument({ documentId: "layer-shell-linetype", now: "2026-08-31T12:00:00.000Z" });
+  linetypeDocument.linetypes = [{ id: "hidden-ui", name: "HIDDEN_UI", description: "Layer shell audit", pattern: [12, -6] }];
+  linetypeDocument.layers[0]!.appearance = { linetypeId: "hidden-ui" };
+  linetypeDocument.entities = [{ kind: "line", handle: "LT1", layerId: "0", start: { x: -100, y: -100 }, end: { x: -50, y: -50 } }];
+  await page.getByLabel("DXF import").setInputFiles({ name: "layer-shell-linetype.dxf", mimeType: "application/dxf", buffer: Buffer.from(exportDxf(linetypeDocument).bytes) });
+  await expect(page.getByText(/DXF imporditud/u)).toBeVisible();
+
+  const palette = page.getByRole("complementary", { name: "Properties palette" });
+  const table = page.getByRole("table", { name: "Kihtide loend" });
+  const operation = page.getByTestId("layer-operation-readback");
+  const commandInput = page.getByRole("textbox", { name: "Command input" });
+  let observedRevision = 0;
+  const waitForLayerCommand = async (commandId: string) => {
+    const expectedRevision = observedRevision + 1;
+    await expect(page.locator(".runtime-intent-readback")).toHaveAttribute("data-runtime-revision", String(expectedRevision));
+    await expect(operation).toContainText(commandId);
+    await expect(operation).toHaveAttribute("data-state", "idle");
+    observedRevision = expectedRevision;
+  };
+
+  const front = page.getByRole("button", { name: "Too valitud objektid ette" });
+  const back = page.getByRole("button", { name: "Saada valitud objektid taha" });
+  await expect(front).toBeDisabled();
+  await expect(back).toBeDisabled();
+  await expect(back).toHaveAttribute("data-scope-selected", "true");
+  await expect(back).toHaveAttribute("title", "Vali objektid; draw-order on fail-closed");
+
+  await commandInput.fill("LINE 10,10 180,90");
+  await commandInput.press("Enter");
+  await commandInput.fill("LINE 20,120 220,30");
+  await commandInput.press("Enter");
+  await expect(back).toBeEnabled();
+  observedRevision = Number(await page.locator(".runtime-intent-readback").getAttribute("data-runtime-revision"));
+  const selectedHandle = await page.getByLabel("Kuubik Draw joonestusala").getAttribute("data-selected-handles");
+  const orderBefore = await page.evaluate(async () => {
+    const database = await new Promise<IDBDatabase>((resolveOpen, rejectOpen) => {
+      const request = indexedDB.open("kuubik-draw");
+      request.onsuccess = () => resolveOpen(request.result);
+      request.onerror = () => rejectOpen(request.error);
+    });
+    const stored = await new Promise<any>((resolveRead, rejectRead) => {
+      const request = database.transaction("documents", "readonly").objectStore("documents").get("local");
+      request.onsuccess = () => resolveRead(request.result);
+      request.onerror = () => rejectRead(request.error);
+    });
+    database.close();
+    return stored.entities.map((entity: any) => entity.handle);
+  });
+  await back.click();
+  await waitForLayerCommand("DRAWORDER");
+  const orderAfter = await page.evaluate(async () => {
+    const database = await new Promise<IDBDatabase>((resolveOpen, rejectOpen) => {
+      const request = indexedDB.open("kuubik-draw");
+      request.onsuccess = () => resolveOpen(request.result);
+      request.onerror = () => rejectOpen(request.error);
+    });
+    const stored = await new Promise<any>((resolveRead, rejectRead) => {
+      const request = database.transaction("documents", "readonly").objectStore("documents").get("local");
+      request.onsuccess = () => resolveRead(request.result);
+      request.onerror = () => rejectRead(request.error);
+    });
+    database.close();
+    return stored.entities.map((entity: any) => entity.handle);
+  });
+  expect(orderAfter[0]).toBe(selectedHandle);
+  expect(orderAfter.slice(1)).toEqual(orderBefore.slice(0, -1));
+
+  await page.getByRole("combobox", { name: "0 värv" }).selectOption("#ff0000");
+  await waitForLayerCommand("LAYER_BATCH_PROPERTIES");
+  await page.getByRole("combobox", { name: "0 joonetüüp" }).selectOption("");
+  await waitForLayerCommand("LAYER_BATCH_PROPERTIES");
+  await page.getByRole("combobox", { name: "0 joonetüüp" }).selectOption({ index: 1 });
+  await waitForLayerCommand("LAYER_BATCH_PROPERTIES");
+  await page.getByRole("combobox", { name: "0 joonepaksus" }).selectOption("0.35");
+  await waitForLayerCommand("LAYER_BATCH_PROPERTIES");
+  await page.getByRole("combobox", { name: "0 läbipaistvus" }).selectOption("25");
+  await waitForLayerCommand("LAYER_BATCH_PROPERTIES");
+
+  const effectiveProperty = (name: string) => palette.locator("dt", { hasText: name }).locator("xpath=following-sibling::dd");
+  await expect(effectiveProperty("Color")).toHaveAttribute("data-property-source", "layer");
+  await expect(effectiveProperty("Color")).toHaveAttribute("data-effective-value", "#ff0000");
+  await expect(effectiveProperty("Lineweight")).toHaveAttribute("data-effective-value", "0.35");
+  await expect(effectiveProperty("Transparency")).toHaveAttribute("data-effective-value", "25");
+
+  const zeroVisibility = page.getByRole("button", { name: "0 nähtavus" });
+  await zeroVisibility.click();
+  await waitForLayerCommand("LAYER_BATCH_PROPERTIES");
+  await expect(zeroVisibility).toHaveAttribute("aria-pressed", "false");
+  await zeroVisibility.click();
+  await waitForLayerCommand("LAYER_BATCH_PROPERTIES");
+  const zeroLock = page.getByRole("button", { name: "0 lukustus" });
+  await zeroLock.click();
+  await waitForLayerCommand("LAYER_BATCH_PROPERTIES");
+  await expect(page.locator(".ribbon [data-feature-row='F-001']")).toBeDisabled();
+  await zeroLock.click();
+  await waitForLayerCommand("LAYER_BATCH_PROPERTIES");
+  const zeroPlot = page.getByRole("button", { name: "0 plot" });
+  await zeroPlot.click();
+  await waitForLayerCommand("LAYER_BATCH_PROPERTIES");
+  await expect(zeroPlot).toHaveAttribute("aria-pressed", "false");
+
+  await page.getByRole("button", { name: "Loo uus kiht" }).click();
+  await waitForLayerCommand("LAYER_CREATE");
+  await table.getByText("Layer 1", { exact: true }).click();
+  const freeze = page.getByRole("button", { name: "Layer 1 külmutus" });
+  await freeze.click();
+  await waitForLayerCommand("LAYER_BATCH_PROPERTIES");
+  await expect(freeze).toHaveAttribute("aria-pressed", "true");
+  await freeze.click();
+  await waitForLayerCommand("LAYER_BATCH_PROPERTIES");
+  await page.getByRole("button", { name: "Nimeta valitud kiht ümber" }).click();
+  const rename = page.getByRole("textbox", { name: "Layer 1 uus nimi" });
+  await rename.fill("A-WALL");
+  await rename.press("Enter");
+  await waitForLayerCommand("LAYER_RENAME");
+  await expect(table.getByText("A-WALL", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Tee valitud kiht aktiivseks", exact: true }).click();
+  await waitForLayerCommand("LAYER_CURRENT");
+  await expect(palette.getByText("Current layer:").locator("strong")).toHaveText("A-WALL");
+
+  await page.getByRole("button", { name: "Loo uus kiht" }).click();
+  await waitForLayerCommand("LAYER_CREATE");
+  await table.getByText("Layer 2", { exact: true }).click();
+  await page.getByRole("button", { name: "Kustuta valitud kiht" }).click();
+  await waitForLayerCommand("LAYER_DELETE");
+  await expect(table.getByText("Layer 2", { exact: true })).toHaveCount(0);
+
+  const zeroRow = page.getByRole("button", { name: "Tee 0 aktiivseks" }).locator("xpath=ancestor::*[@role='row']");
+  const wallRow = page.getByRole("button", { name: "Tee A-WALL aktiivseks" }).locator("xpath=ancestor::*[@role='row']");
+  await zeroRow.click();
+  await zeroRow.focus();
+  await zeroRow.press("ArrowDown");
+  await expect(wallRow).toBeFocused();
+  await wallRow.press("F2");
+  await expect(page.getByRole("textbox", { name: "A-WALL uus nimi" })).toBeFocused();
+  await page.keyboard.press("Escape");
+
+  const resizeHandle = page.getByRole("separator", { name: "Muuda paleti laiust" });
+  await resizeHandle.focus();
+  await resizeHandle.press("ArrowRight");
+  await expect(palette).toHaveAttribute("data-palette-width", "476");
+  await page.getByRole("button", { name: "Ujuta paletid" }).click();
+  await expect(palette).toHaveAttribute("data-dock", "floating");
+  await page.getByRole("button", { name: "Doki paletid" }).click();
+  await expect(palette).toHaveAttribute("data-dock", "docked");
+  await page.reload();
+  await expect(page.getByRole("complementary", { name: "Properties palette" })).toHaveAttribute("data-palette-width", "476");
+  await expect(page.getByRole("table", { name: "Kihtide loend" }).getByText("A-WALL", { exact: true })).toBeVisible();
+
+  const readBack = await page.evaluate(async () => {
+    const database = await new Promise<IDBDatabase>((resolveOpen, rejectOpen) => {
+      const request = indexedDB.open("kuubik-draw");
+      request.onsuccess = () => resolveOpen(request.result);
+      request.onerror = () => rejectOpen(request.error);
+    });
+    const stored = await new Promise<any>((resolveRead, rejectRead) => {
+      const request = database.transaction("documents", "readonly").objectStore("documents").get("local");
+      request.onsuccess = () => resolveRead(request.result);
+      request.onerror = () => rejectRead(request.error);
+    });
+    database.close();
+    return {
+      revision: stored.revision,
+      currentLayerId: stored.currentLayerId,
+      layers: stored.layers,
+      entityOrder: stored.entities.map((entity: any) => entity.handle),
+      palette: {
+        dock: document.querySelector(".properties-palette")?.getAttribute("data-dock"),
+        width: document.querySelector(".properties-palette")?.getAttribute("data-palette-width"),
+      },
+    };
+  });
+  expect(readBack.currentLayerId).toBe("layer-layer-1");
+  expect(readBack.layers).toHaveLength(2);
+  expect(readBack.layers.find((layer: any) => layer.name === "0")).toMatchObject({ visible: true, locked: false, plottable: false, appearance: { color: "#ff0000", lineweightMm: 0.35, transparency: 25 } });
+  expect(readBack.palette).toEqual({ dock: "docked", width: "476" });
+  expect(consoleErrors).toEqual([]);
+
+  if (captureRoot) {
+    await mkdir(captureRoot, { recursive: true });
+    await writeFile(resolve(captureRoot, "visual-layer-core-after.png"), await page.screenshot());
+    await writeFile(resolve(captureRoot, "visual-layer-core-readback.json"), `${JSON.stringify({ consoleErrors, orderBefore, orderAfter, readBack }, null, 2)}\n`, "utf8");
+  }
 });
 
 test("DIM and HATCH use typed prompts with atomic durable read-back", async ({ page }) => {
