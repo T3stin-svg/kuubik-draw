@@ -137,11 +137,7 @@ export class DocumentSessionCoordinator {
     const entry = this.requireEntry(documentId);
     const candidate = entry.session.fork();
     const committed = candidate.commit(operation, changes, now);
-    entry.session = candidate;
-    entry.selectedHandles = normalizedSelection(candidate.document, entry.selectedHandles.filter((handle) => (
-      candidate.document.entities.some((entity) => entity.handle === handle)
-      || candidate.document.layouts.some((layout) => (layout.entities ?? []).some((entity) => entity.handle === handle))
-    )));
+    this.acceptCandidate(entry, candidate);
     return committed;
   }
 
@@ -156,7 +152,7 @@ export class DocumentSessionCoordinator {
     const candidate = entry.session.fork();
     const committed = candidate.commit(operation, changes, now);
     await persist(candidate.document, operation);
-    entry.session = candidate;
+    this.acceptCandidate(entry, candidate);
     return committed;
   }
 
@@ -164,7 +160,7 @@ export class DocumentSessionCoordinator {
     const entry = this.requireEntry(documentId);
     const candidate = entry.session.fork();
     const committed = candidate.undo(now);
-    if (committed) entry.session = candidate;
+    if (committed) this.acceptCandidate(entry, candidate);
     return committed;
   }
 
@@ -172,7 +168,7 @@ export class DocumentSessionCoordinator {
     const entry = this.requireEntry(documentId);
     const candidate = entry.session.fork();
     const committed = candidate.redo(now);
-    if (committed) entry.session = candidate;
+    if (committed) this.acceptCandidate(entry, candidate);
     return committed;
   }
 
@@ -196,5 +192,14 @@ export class DocumentSessionCoordinator {
     const entry = this.#entries.get(documentId);
     if (!entry) throw new RangeError(`Document session ${documentId} is not open.`);
     return entry;
+  }
+
+  private acceptCandidate(entry: DocumentSessionEntry, candidate: CadSession): void {
+    const document = candidate.document;
+    entry.session = candidate;
+    entry.selectedHandles = normalizedSelection(document, entry.selectedHandles.filter((handle) => (
+      document.entities.some((entity) => entity.handle === handle)
+      || document.layouts.some((layout) => (layout.entities ?? []).some((entity) => entity.handle === handle))
+    )));
   }
 }

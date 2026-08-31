@@ -252,7 +252,9 @@ export class KDrawIndexedDb {
     const transaction = this.#database!.transaction("operations", "readonly");
     const records = await requestResult(transaction.objectStore("operations").index("byDocument").getAll(documentId));
     await transactionDone(transaction);
-    return structuredClone((records as StoredOperation[]).sort((a, b) => a.revision - b.revision));
+    return structuredClone((records as StoredOperation[]).sort((a, b) => (
+      a.revision - b.revision || a.recordedAt.localeCompare(b.recordedAt) || a.opId.localeCompare(b.opId)
+    )));
   }
 
   async snapshots(documentId: string): Promise<StoredSnapshot[]> {
@@ -260,7 +262,7 @@ export class KDrawIndexedDb {
     const transaction = this.#database!.transaction("snapshots", "readonly");
     const records = await requestResult(transaction.objectStore("snapshots").index("byDocument").getAll(documentId));
     await transactionDone(transaction);
-    return structuredClone((records as StoredSnapshot[]).sort((a, b) => a.revision - b.revision));
+    return structuredClone((records as StoredSnapshot[]).sort((a, b) => a.revision - b.revision || a.key.localeCompare(b.key)));
   }
 
   async recordRecoveryOpen(documentId: string, sessionId: string, recordedAt = new Date().toISOString()): Promise<void> {
@@ -371,10 +373,10 @@ export class KDrawIndexedDb {
       previousSha256 = record.afterSha256;
       expectedRevision += 1;
     }
-    const ignoredOperationIds = [...new Set([
-      ...quarantinedOperationIds,
-      ...activeOperations.slice(failedIndex).map((record) => record.opId),
-    ])];
+    const newlyIgnoredOperationIds = new Set(activeOperations.slice(failedIndex).map((record) => record.opId));
+    const ignoredOperationIds = operations
+      .filter((record) => quarantinedOperationIds.has(record.opId) || newlyIgnoredOperationIds.has(record.opId))
+      .map((record) => record.opId);
     let document: KDrawDocumentV1 | null = null;
     let source: DocumentRecoveryResult["source"] = "none";
     if (replayed) {
