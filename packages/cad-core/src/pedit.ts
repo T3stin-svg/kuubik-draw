@@ -33,7 +33,7 @@ export interface PreparedPeditCommand {
   sourceHandles: string[];
   resultHandles: string[];
   joinedHandles: string[];
-  rejectedJoins: Array<{ handle: string; reason: "missing" | "locked-layer" | "unsupported-entity" | "not-contiguous" }>;
+  rejectedJoins: Array<{ handle: string; reason: "missing" | "locked-layer" | "unsupported-entity" | "degenerate-geometry" | "not-contiguous" }>;
   entity: CadPolyline;
 }
 
@@ -67,10 +67,57 @@ function reversedPolylineVertices(vertices: readonly CadPolylineVertex[], closed
   });
 }
 
-function asJoinVertices(entity: CadEntity): { vertices: CadPolylineVertex[]; closed: boolean } | null {
-  if (entity.kind === "line") return { vertices: [{ ...entity.start }, { ...entity.end }], closed: false };
-  if (entity.kind === "polyline") return { vertices: structuredClone(entity.vertices), closed: entity.closed };
-  return null;
+type JoinGeometry =
+  | { vertices: CadPolylineVertex[]; closed: boolean; reason: null }
+  | { vertices: null; closed: false; reason: "unsupported-entity" | "degenerate-geometry" };
+
+function normalizedAngle(angle: number): number {
+  const fullTurn = Math.PI * 2;
+  const normalized = angle % fullTurn;
+  return normalized < 0 ? normalized + fullTurn : normalized;
+}
+
+function asJoinVertices(entity: CadEntity): JoinGeometry {
+  if (entity.kind === "line") return { vertices: [{ ...entity.start }, { ...entity.end }], closed: false, reason: null };
+  if (entity.kind === "polyline") return { vertices: structuredClone(entity.vertices), closed: entity.closed, reason: null };
+  if (entity.kind === "arc") {
+    if (!Number.isFinite(entity.radius) || entity.radius <= EPSILON) return { vertices: null, closed: false, reason: "degenerate-geometry" };
+    const sweep = entity.counterClockwise
+      ? normalizedAngle(entity.endAngleRad - entity.startAngleRad)
+      : -normalizedAngle(entity.startAngleRad - entity.endAngleRad);
+    if (!Number.isFinite(sweep) || Math.abs(sweep) <= EPSILON || Math.abs(sweep) >= Math.PI * 2 - EPSILON) {
+      return { vertices: null, closed: false, reason: "degenerate-geometry" };
+    }
+    const start = {
+      x: entity.center.x + entity.radius * Math.cos(entity.startAngleRad),
+      y: entity.center.y + entity.radius * Math.sin(entity.startAngleRad),
+      bulge: Math.tan(sweep / 4),
+    };
+    const end = {
+      x: entity.center.x + entity.radius * Math.cos(entity.endAngleRad),
+      y: entity.center.y + entity.radius * Math.sin(entity.endAngleRad),
+    };
+    if (![start.x, start.y, start.bulge, end.x, end.y].every(Number.isFinite)) return { vertices: null, closed: false, reason: "degenerate-geometry" };
+    return { vertices: [start, end], closed: false, reason: null };
+  }
+  return { vertices: null, closed: false, reason: "unsupported-entity" };
+}
+
+function outgoingSegment(vertex: CadPolylineVertex): Pick<CadPolylineVertex, "bulge" | "startWidth" | "endWidth"> {
+  return {
+    ...(vertex.bulge !== undefined ? { bulge: vertex.bulge } : {}),
+    ...(vertex.startWidth !== undefined ? { startWidth: vertex.startWidth } : {}),
+    ...(vertex.endWidth !== undefined ? { endWidth: vertex.endWidth } : {}),
+  };
+}
+
+function appendJoined(current: readonly CadPolylineVertex[], candidate: readonly CadPolylineVertex[]): CadPolylineVertex[] {
+  const joined = current.map((vertex) => structuredClone(vertex));
+  const last = joined.at(-1)!;
+  const { bulge: _bulge, startWidth: _startWidth, endWidth: _endWidth, ...point } = last;
+  joined[joined.length - 1] = { ...point, ...outgoingSegment(candidate[0]!) };
+  joined.push(...candidate.slice(1).map((vertex) => structuredClone(vertex)));
+  return joined;
 }
 
 function joinVertices(
@@ -82,8 +129,8 @@ function joinVertices(
   const currentEnd = current.at(-1)!;
   const candidateStart = candidate[0]!;
   const candidateEnd = candidate.at(-1)!;
-  if (distance(currentEnd, candidateStart) <= tolerance) return [...current, ...candidate.slice(1)];
-  if (distance(currentEnd, candidateEnd) <= tolerance) return [...current, ...reversedPolylineVertices(candidate, false).slice(1)];
+  if (distance(currentEnd, candidateStart) <= tolerance) return appendJoined(current, candidate);
+  if (distance(currentEnd, candidateEnd) <= tolerance) return appendJoined(current, reversedPolylineVertices(candidate, false));
   if (distance(currentStart, candidateEnd) <= tolerance) return [...candidate.slice(0, -1), ...current];
   if (distance(currentStart, candidateStart) <= tolerance) {
     const reversed = reversedPolylineVertices(candidate, false);
@@ -161,7 +208,8 @@ export function preparePeditCommand(document: KDrawDocumentV1, input: PeditComma
         if (!candidate) { rejectedJoins.push({ handle, reason: "missing" }); continue; }
         if (document.layers.find((layer) => layer.id === candidate.layerId)?.locked) { rejectedJoins.push({ handle, reason: "locked-layer" }); continue; }
         const joinable = asJoinVertices(candidate);
-        if (!joinable || joinable.closed) { rejectedJoins.push({ handle, reason: "unsupported-entity" }); continue; }
+        if (!joinable.vertices) { rejectedJoins.push({ handle, reason: joinable.reason }); continue; }
+        if (joinable.closed) { rejectedJoins.push({ handle, reason: "unsupported-entity" }); continue; }
         const vertices = joinVertices(entity.vertices, joinable.vertices, action.tolerance + EPSILON);
         if (!vertices) { rejectedJoins.push({ handle, reason: "not-contiguous" }); continue; }
         entity = { ...entity, vertices };
