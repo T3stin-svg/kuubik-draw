@@ -22,6 +22,7 @@ export * from "./geometry-commands.js";
 export * from "./array-commands.js";
 export * from "./pedit.js";
 export * from "./pline-command.js";
+export * from "./polygon-command.js";
 export * from "./rectangle-command.js";
 export * from "./selection-query.js";
 export * from "./spline.js";
