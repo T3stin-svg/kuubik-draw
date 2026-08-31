@@ -1,0 +1,382 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-110",
+  "authority": "kuubik-dxf-parser",
+  "status": "PASS",
+  "source": {
+    "path": "packages\\cad-dxf\\test\\fixtures\\synthetic\\F-110-desktop-source.dxf",
+    "bytes": 7587,
+    "sha256": "99e40e4537e1788a6ebd2d9d6092b4501f3e7fc96fb7fe1769dbeaae549bb0d3",
+    "report": {
+      "acadVersion": "AC1018",
+      "codePage": "ANSI_1252",
+      "sourceByteLength": 7587,
+      "sourceUnits": "mm",
+      "targetUnits": "mm",
+      "insertionScale": 1,
+      "importedHandles": [
+        "C0",
+        "C1",
+        "10",
+        "20",
+        "30",
+        "40",
+        "50",
+        "60",
+        "70",
+        "80",
+        "90",
+        "A0",
+        "B0"
+      ],
+      "preservedProxyHandles": [],
+      "skipped": [],
+      "warnings": []
+    },
+    "semantic": {
+      "units": "mm",
+      "entities": [
+        {
+          "kind": "line",
+          "handle": "10",
+          "layer": "GEOMETRY"
+        },
+        {
+          "kind": "polyline",
+          "handle": "20",
+          "layer": "GEOMETRY"
+        },
+        {
+          "kind": "circle",
+          "handle": "30",
+          "layer": "GEOMETRY"
+        },
+        {
+          "kind": "arc",
+          "handle": "40",
+          "layer": "GEOMETRY"
+        },
+        {
+          "kind": "ellipse",
+          "handle": "50",
+          "layer": "GEOMETRY"
+        },
+        {
+          "kind": "spline",
+          "handle": "60",
+          "layer": "GEOMETRY"
+        },
+        {
+          "kind": "text",
+          "handle": "70",
+          "layer": "GEOMETRY"
+        },
+        {
+          "kind": "mtext",
+          "handle": "80",
+          "layer": "GEOMETRY"
+        },
+        {
+          "kind": "hatch",
+          "handle": "90",
+          "layer": "GEOMETRY"
+        },
+        {
+          "kind": "dimension",
+          "handle": "A0",
+          "layer": "GEOMETRY"
+        },
+        {
+          "kind": "blockRef",
+          "handle": "B0",
+          "layer": "GEOMETRY"
+        }
+      ],
+      "layers": [
+        "0",
+        "GEOMETRY"
+      ],
+      "linetypes": [
+        "DASHED"
+      ],
+      "textStyles": [
+        "Standard",
+        "ISO"
+      ],
+      "dimensionStyles": [
+        "Standard",
+        "DIM-ISO"
+      ],
+      "blocks": [
+        {
+          "name": "SYMBOL",
+          "handles": [
+            "C0",
+            "C1"
+          ]
+        }
+      ],
+      "text": {
+        "kind": "text",
+        "handle": "70",
+        "layerId": "dxf-layer:GEOMETRY",
+        "position": {
+          "x": 0,
+          "y": 125
+        },
+        "text": "TÕEND ŠŽ€",
+        "height": 4,
+        "rotationRad": 0.1,
+        "styleId": "dxf-text-style:ISO"
+      },
+      "mtext": {
+        "kind": "mtext",
+        "handle": "80",
+        "layerId": "dxf-layer:GEOMETRY",
+        "position": {
+          "x": 0,
+          "y": 140
+        },
+        "text": "Rida 1\nRida 2",
+        "height": 3.5,
+        "rotationRad": 0.2,
+        "styleId": "dxf-text-style:ISO",
+        "extensionData": {
+          "kuubik.dxf.mtext.v1": {
+            "width": 60,
+            "attachment": 5
+          }
+        }
+      },
+      "dimension": {
+        "kind": "dimension",
+        "handle": "A0",
+        "layerId": "dxf-layer:GEOMETRY",
+        "dimensionKind": "aligned",
+        "definitionPoints": [
+          {
+            "x": 0,
+            "y": 0
+          },
+          {
+            "x": 100,
+            "y": 25
+          },
+          {
+            "x": 0,
+            "y": 35
+          },
+          {
+            "x": 50,
+            "y": 35
+          }
+        ],
+        "styleId": "dxf-dimension-style:DIM-ISO",
+        "overrideText": "100.00"
+      },
+      "insert": {
+        "kind": "blockRef",
+        "handle": "B0",
+        "layerId": "dxf-layer:GEOMETRY",
+        "blockId": "dxf-block:SYMBOL",
+        "insertion": {
+          "x": 150,
+          "y": 50
+        },
+        "scale": {
+          "x": 2,
+          "y": 0.5
+        },
+        "rotationRad": 0.523598775598
+      }
+    }
+  },
+  "desktopSaved": {
+    "path": "packages\\cad-dxf\\test\\fixtures\\synthetic\\F-110-desktop-saved.dxf",
+    "bytes": 86099,
+    "sha256": "8540f77da4b011c39f38fee5cdeb285ca854e918398fa1fd8944eab31cd4cb4f",
+    "report": {
+      "acadVersion": "AC1032",
+      "codePage": "ANSI_1252",
+      "sourceByteLength": 86099,
+      "sourceUnits": "mm",
+      "targetUnits": "mm",
+      "insertionScale": 1,
+      "importedHandles": [
+        "C0",
+        "C1",
+        "10",
+        "20",
+        "30",
+        "40",
+        "50",
+        "60",
+        "70",
+        "80",
+        "90",
+        "A0",
+        "B0"
+      ],
+      "preservedProxyHandles": [],
+      "skipped": [],
+      "warnings": []
+    },
+    "semantic": {
+      "units": "mm",
+      "entities": [
+        {
+          "kind": "line",
+          "handle": "10",
+          "layer": "GEOMETRY"
+        },
+        {
+          "kind": "polyline",
+          "handle": "20",
+          "layer": "GEOMETRY"
+        },
+        {
+          "kind": "circle",
+          "handle": "30",
+          "layer": "GEOMETRY"
+        },
+        {
+          "kind": "arc",
+          "handle": "40",
+          "layer": "GEOMETRY"
+        },
+        {
+          "kind": "ellipse",
+          "handle": "50",
+          "layer": "GEOMETRY"
+        },
+        {
+          "kind": "spline",
+          "handle": "60",
+          "layer": "GEOMETRY"
+        },
+        {
+          "kind": "text",
+          "handle": "70",
+          "layer": "GEOMETRY"
+        },
+        {
+          "kind": "mtext",
+          "handle": "80",
+          "layer": "GEOMETRY"
+        },
+        {
+          "kind": "hatch",
+          "handle": "90",
+          "layer": "GEOMETRY"
+        },
+        {
+          "kind": "dimension",
+          "handle": "A0",
+          "layer": "GEOMETRY"
+        },
+        {
+          "kind": "blockRef",
+          "handle": "B0",
+          "layer": "GEOMETRY"
+        }
+      ],
+      "layers": [
+        "0",
+        "GEOMETRY"
+      ],
+      "linetypes": [
+        "DASHED"
+      ],
+      "textStyles": [
+        "Standard",
+        "ISO"
+      ],
+      "dimensionStyles": [
+        "Standard",
+        "DIM-ISO"
+      ],
+      "blocks": [
+        {
+          "name": "SYMBOL",
+          "handles": [
+            "C0",
+            "C1"
+          ]
+        }
+      ],
+      "text": {
+        "kind": "text",
+        "handle": "70",
+        "layerId": "dxf-layer:GEOMETRY",
+        "position": {
+          "x": 0,
+          "y": 125
+        },
+        "text": "TÕEND ŠŽ€",
+        "height": 4,
+        "rotationRad": 0.1,
+        "styleId": "dxf-text-style:ISO"
+      },
+      "mtext": {
+        "kind": "mtext",
+        "handle": "80",
+        "layerId": "dxf-layer:GEOMETRY",
+        "position": {
+          "x": 0,
+          "y": 140
+        },
+        "text": "Rida 1\nRida 2",
+        "height": 3.5,
+        "rotationRad": 0.2,
+        "styleId": "dxf-text-style:ISO",
+        "extensionData": {
+          "kuubik.dxf.mtext.v1": {
+            "width": 60,
+            "attachment": 5
+          }
+        }
+      },
+      "dimension": {
+        "kind": "dimension",
+        "handle": "A0",
+        "layerId": "dxf-layer:GEOMETRY",
+        "dimensionKind": "aligned",
+        "definitionPoints": [
+          {
+            "x": 0,
+            "y": 0
+          },
+          {
+            "x": 100,
+            "y": 25
+          },
+          {
+            "x": 0,
+            "y": 35
+          },
+          {
+            "x": 50,
+            "y": 35
+          }
+        ],
+        "styleId": "dxf-dimension-style:DIM-ISO",
+        "overrideText": "100.00"
+      },
+      "insert": {
+        "kind": "blockRef",
+        "handle": "B0",
+        "layerId": "dxf-layer:GEOMETRY",
+        "blockId": "dxf-block:SYMBOL",
+        "insertion": {
+          "x": 150,
+          "y": 50
+        },
+        "scale": {
+          "x": 2,
+          "y": 0.5
+        },
+        "rotationRad": 0.523598775598
+      }
+    }
+  }
+}

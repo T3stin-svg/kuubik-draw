@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-110",
+  "kind": "readback",
+  "authority": "ezdxf-1.4.3-and-kuubik-parser",
+  "status": "PASS",
+  "artifactSha256": "02b6e3a3648c246b162d5ae183085f98185b9a3236b54a283d1a4213d241714e",
+  "observedAt": "2026-08-31T21:13:35.207Z",
+  "workflow": "The exact AutoCAD Desktop SaveAs output was independently audited and semantically compared with ezdxf 1.4.3, then imported with the production Kuubik parser; the visible Chromium export was imported again.",
+  "result": "All readers preserved millimetres, 11 model handles and entity kinds, two block-entity handles, geometry, tables, named block, UTF-8 text and dimension semantics. Both ezdxf audits had 0 errors/fixes; Kuubik skipped 0 records. Allowed Desktop normalizations were AC1018 to AC1032 and anonymous block name *D1 to *D0 with handle 700 unchanged.",
+  "artifact": "evidence/artifacts/F-110-readback.json"
+}
