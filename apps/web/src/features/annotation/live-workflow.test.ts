@@ -1,4 +1,4 @@
-import { CadSession, createEmptyDocument, hatchBoundaryPolyline, readDimensionAssociation, readTableContract } from "@kuubik/cad-core";
+import { CadSession, createEmptyDocument, hatchBoundaryPolyline, readDimensionAssociation, readLeaderContract, readMTextContract, readTableContract } from "@kuubik/cad-core";
 import type { KDrawDocumentV1 } from "@kuubik/cad-schema";
 import { describe, expect, it } from "vitest";
 import { prepareBlockCommand } from "../blocks/command-adapter.js";
@@ -96,12 +96,29 @@ describe("DOM-independent annotation/block live workflow", () => {
 
     const mtext = runPrompt(shell, session, { commandId: "MTEXT" }, { position: { x: 5, y: 6 }, text: "Rida 1\nRida 2", height: 3, width: 80, rotationRad: 0.5, styleId: "TXT2", attachment: "middle-center", lineSpacingFactor: 1.2 });
     expect(mtext.readBack.entities[0]).toMatchObject({ handle: mtext.prepared.resultHandles[0], kind: "mtext", styleId: "TXT2", extensionData: { "kuubik.annotation.v1": { width: 80, attachment: "middle-center", lineSpacingFactor: 1.2 } } });
+    const mtextHandle = mtext.prepared.resultHandles[0]!;
+    const mtextEdit = runPrompt(shell, session, { commandId: "MTEXT", context: { selectedHandles: [mtextHandle] } }, { mode: "edit", patch: { text: "Pealkiri\nPikem kirjeldus", width: 24, rotationRad: 0.75, wrapMode: "word", paragraphs: [{ id: "TITLE", alignment: "center" }, { id: "BODY", alignment: "justify" }] } });
+    expect(mtextEdit.prepared.targetHandles).toEqual([mtextHandle]);
+    expect(readMTextContract(mtextEdit.readBack.entities[0]!)).toMatchObject({ width: 24, wrapMode: "word", paragraphs: [{ id: "TITLE", alignment: "center" }, { id: "BODY", alignment: "justify" }] });
+    expect(mtextEdit.readBack.entities[0]).toMatchObject({ handle: mtextHandle, rotationRad: 0.75, styleId: "TXT2" });
 
-    const leader = runPrompt(shell, session, { commandId: "LEADER" }, { vertices: [{ x: 0, y: 0 }, { x: 10, y: 10 }, { x: 20, y: 10 }], text: "Viide" });
-    expect(leader.readBack.entities[0]).toMatchObject({ handle: leader.prepared.resultHandles[0], kind: "leader", text: "Viide" });
+    const leader = runPrompt(shell, session, { commandId: "LEADER", context: { leaderAnchor: { handle: "A1", feature: "end", fallback: { x: 100, y: 20 } } } }, { vertices: [{ x: -1, y: -1 }, { x: 10, y: 10 }, { x: 20, y: 10 }], text: "Viide", contentPosition: { x: 25, y: 10 }, textStyleId: "TXT2", textHeight: 2.5, arrowType: "open", arrowSize: 3, landingEnabled: true, landingLength: 5, associative: true });
+    const leaderHandle = leader.prepared.resultHandles[0]!;
+    expect(leader.readBack.entities[0]).toMatchObject({ handle: leaderHandle, kind: "leader", text: "Viide", vertices: [{ x: 100, y: 20 }, { x: 10, y: 10 }, { x: 20, y: 10 }] });
+    expect(readLeaderContract(leader.readBack.entities[0]!)).toMatchObject({ kind: "leader", arrow: { type: "open", size: 3 }, landing: { enabled: true, length: 5 }, content: { textStyleId: "TXT2" }, anchor: { handle: "A1", feature: "end" } });
 
-    const mleader = runPrompt(shell, session, { commandId: "MLEADER" }, { vertices: [{ x: 0, y: 0 }, { x: 10, y: 10 }], text: "Märkus", textPosition: { x: 12, y: 10 }, styleId: "MLS", textHeight: 2.75, textStyleId: "TXT2", landingGap: 1.5 });
-    expect(mleader.readBack.entities[0]).toMatchObject({ handle: mleader.prepared.resultHandles[0], kind: "leader", extensionData: { "kuubik.annotation.v1": { kind: "mleader", styleId: "MLS", textStyleId: "TXT2", textHeight: 2.75, landingGap: 1.5 } } });
+    const mleader = runPrompt(shell, session, { commandId: "MLEADER", context: { leaderAnchor: { handle: "A1", feature: "start", fallback: { x: 0, y: 0 } } } }, { vertices: [{ x: -1, y: -1 }, { x: 10, y: 10 }], text: "Märkus", textPosition: { x: 12, y: 10 }, styleId: "MLS", textHeight: 2.75, textStyleId: "TXT2", landingGap: 1.5, arrowType: "dot", arrowSize: 3.25, landingEnabled: true, landingLength: 6, associative: true });
+    const mleaderHandle = mleader.prepared.resultHandles[0]!;
+    expect(mleader.readBack.entities[0]).toMatchObject({ handle: mleaderHandle, kind: "leader", extensionData: { "kuubik.annotation.v1": { kind: "mleader", styleId: "MLS", textStyleId: "TXT2", textHeight: 2.75, landingGap: 1.5, arrow: { type: "dot", size: 3.25 }, landing: { enabled: true, length: 6 }, associative: true, anchor: { handle: "A1" } } } });
+    const mleaderEdit = runPrompt(shell, session, { commandId: "MLEADER", context: { selectedHandles: [mleaderHandle] } }, { mode: "edit", patch: { text: "Muudetud märkus", textPosition: { x: 15, y: 12 }, arrowType: "open", landingLength: 8 } });
+    expect(mleaderEdit.readBack.entities[0]).toMatchObject({ handle: mleaderHandle, text: "Muudetud märkus" });
+    expect(readLeaderContract(mleaderEdit.readBack.entities[0]!)).toMatchObject({ kind: "mleader", styleId: "MLS", textStyleId: "TXT2", textPosition: { x: 15, y: 12 }, arrow: { type: "open" }, landing: { length: 8 }, anchor: { handle: "A1" } });
+
+    const styleApply = runPrompt(shell, session, { commandId: "STYLE", context: { selectedHandles: [mtextHandle, leaderHandle, mleaderHandle] } }, { mode: "apply", styleId: "TXT" });
+    expect(styleApply.prepared.targetHandles).toEqual([mtextHandle, leaderHandle, mleaderHandle]);
+    expect(styleApply.readBack.entities.map((entity) => entity.handle)).toEqual([mtextHandle, leaderHandle, mleaderHandle]);
+    expect(styleApply.readBack.entities.find((entity) => entity.handle === mtextHandle)).toMatchObject({ styleId: "TXT" });
+    expect(readLeaderContract(styleApply.readBack.entities.find((entity) => entity.handle === mleaderHandle)!)).toMatchObject({ kind: "mleader", styleId: "MLS", textStyleId: "TXT" });
 
     const dimension = runPrompt(shell, session, { commandId: "DIM", dimensionCommandId: "DIMLINEAR", context: { dimensionAnchors: [
       { handle: "A1", feature: "start", fallback: { x: 0, y: 0 } },

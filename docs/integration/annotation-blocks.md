@@ -169,28 +169,93 @@ Its extension is:
 ```json
 {
   "kind": "mtext",
+  "version": 2,
   "width": 80,
   "attachment": "top-left",
-  "lineSpacingFactor": 1.2
+  "lineSpacingFactor": 1.2,
+  "wrapMode": "word",
+  "paragraphs": [
+    { "id": "TITLE", "alignment": "center" },
+    { "id": "BODY", "alignment": "justify" }
+  ]
 }
 ```
 
 Allowed attachments are the nine top/middle/bottom × left/center/right combinations. Width,
-height and line spacing are positive finite drawing units/factors.
+height and line spacing are positive finite drawing units/factors. `wrapMode` is `word`,
+`character` or `none`. Paragraph order matches the newline-delimited native `CadText.text`; there
+must be exactly one unique, stable paragraph ID per paragraph. Alignment is `left`, `center`,
+`right` or `justify`. `deriveMTextLayout` is a deterministic Kuubik display layout based on width,
+height and text-style width factor. It is not a native font-shaping or AutoCAD line-break oracle.
+
+`MTEXT edit` replaces one immutable entity value under the same handle. It may change content,
+position, height, width, rotation, style, attachment, spacing, wrap and paragraph settings in one
+command/Undo step. A changed paragraph count without a matching paragraph contract regenerates
+deterministic `P1..Pn` IDs. Import must reject mismatched counts, duplicate paragraph IDs,
+unsupported alignment/wrap values, non-finite geometry and missing text-style references.
 
 Plain `LEADER` is a native `CadLeader` with two or more model-coordinate vertices and optional
-text. `MLEADER` uses the same base kind so existing renderers can show its leader geometry, plus:
+text. Its extension stores the parts not present in the public schema:
+
+```json
+{
+  "kind": "leader",
+  "version": 1,
+  "arrow": { "type": "open", "size": 3 },
+  "landing": { "enabled": true, "length": 8 },
+  "content": {
+    "position": { "x": 28, "y": 10 },
+    "textStyleId": "TXT-ISO",
+    "textHeight": 2.5
+  },
+  "associative": true,
+  "anchor": {
+    "handle": "10",
+    "feature": "end",
+    "fallback": { "x": 100, "y": 40 }
+  }
+}
+```
+
+Allowed arrows are `closed-filled`, `open`, `dot` and `none`. Size and content height are positive
+finite drawing units; landing length is non-negative. The first vertex is the arrow head. For an
+associative leader it is resolved only from the stable `anchor.handle` plus feature; `fallback` is
+recovery/audit data and never proximity-based retargeting.
+
+`MLEADER` uses the same base kind so existing renderers can show its leader geometry, plus:
 
 ```json
 {
   "kind": "mleader",
+  "version": 2,
   "styleId": "MLEADER-STD",
   "textPosition": { "x": 22, "y": 10 },
   "textStyleId": "TXT-ISO",
   "textHeight": 2.5,
-  "landingGap": 1
+  "landingGap": 1,
+  "arrow": { "type": "closed-filled", "size": 2.5 },
+  "landing": { "enabled": true, "length": 6 },
+  "associative": true,
+  "anchor": {
+    "handle": "10",
+    "feature": "start",
+    "fallback": { "x": 0, "y": 0 }
+  }
 }
 ```
+
+LEADER/MLEADER edit preserves entity handle, layer, multileader `styleId`, text-style reference and
+stable anchor unless that specific field is changed. `STYLE apply` may update TEXT, MTEXT, LEADER
+and MLEADER together; all entity replacements and the style target/result handle lists are one
+atomic command. Updating a `CadTextStyle` replaces only the resource with the same style ID, so
+every existing reference remains valid without rewriting the annotations.
+
+`updateAssociativeLeaders` runs against the staged post-geometry document and replaces only the
+first vertex under the existing annotation handle. It is appended to the geometry command beside
+dimension/hatch refreshes and committed once. A missing/incompatible anchor records a broken
+association and produces no leader change; a locked annotation layer throws before commit.
+`evaluateTextAnnotationCapability` reports missing annotation, locked layer, malformed extension,
+orphan style or orphan association without fallback execution.
 
 R2004/AC1018 predates native MLEADER. Session 4 must either select a format/version that supports
 MLEADER, or fail closed for native MLEADER export. A LEADER+MTEXT surrogate may be offered only
@@ -346,7 +411,7 @@ capability's minimum version are hard failures before any download or file mutat
 MLEADER requires at least AC1021; declaring it `exact` for AC1018 is rejected.
 
 The gate derives requirements from the actual document, including style tables, stable
-dimension/hatch associations, hatch holes, block nesting, insert transforms and attributes.
+dimension/hatch/leader associations, hatch holes, block nesting, insert transforms and attributes.
 Session 4 must add the adapter-specific declaration at its output boundary and independently
 read back the fixture described in
 `evidence/workstreams/annotation-blocks/dxf-readback-fixture.json`. That JSON is a test contract,
@@ -377,9 +442,12 @@ only the capability contract; it does not prove that a DXF file was written or r
 1. Linear/aligned/angular/radius/diameter/continued/baseline dimensions: type, definition points,
    style, chain mode and all association target handles. Compare derived text, tolerance,
    arrows, extension geometry, units, precision and annotation scale after reopen.
-2. MTEXT and text styles: Unicode text, line breaks, width, attachment, spacing, font, width factor
-   and oblique angle.
-3. LEADER and MLEADER: vertices, content placement, both style references and native/lossy status.
+2. MTEXT and text styles: Unicode text, line breaks, stable paragraph IDs, paragraph alignment,
+   wrap mode, width, attachment, spacing, rotation, font, width factor and oblique angle. Reopen,
+   edit width/wrap/rotation, Undo/Redo and verify the same MTEXT handle.
+3. LEADER and MLEADER: vertices, arrow type/size, landing enabled/length/gap, content placement,
+   both style references, stable association handle/feature and native/lossy status. Move the
+   target, reopen and verify only the arrow-head vertex changed under the same leader handle.
 4. SOLID and ANSI31-like line HATCH: outer loop, hole, nested island, angle, scale, origin and
    boundary source handles; mutate a boundary and verify same hatch handle after update.
 5. TABLE: origin/rotation, row/column sizes and order, cell IDs and literal/field values, fallback,
@@ -389,7 +457,7 @@ only the capability contract; it does not prove that a DXF file was written or r
 7. Redefine: open/reload and verify two pre-existing inserts retain exact transforms/attributes but
    render the new definition.
 8. Attributes: default, overridden, constant and invisible values; edit, Undo, Redo and reload.
-9. Cycle, dangling handle/style, duplicate handle and unsupported transform mutants must fail before
+9. Cycle, dangling handle/style/leader anchor, duplicate handle and unsupported transform mutants must fail before
    download or document mutation.
 
 The F-row remains below `1.00` until the same visible workflow is proven in AutoCAD 2024.1.2 and

@@ -1,6 +1,6 @@
 import type { CadEntity, KDrawDocumentV1 } from "@kuubik/cad-schema";
 import { readBlockAttributes } from "../blocks/contracts.js";
-import { readDimensionAssociation, readHatchAssociation, readTableContract } from "./contracts.js";
+import { readDimensionAssociation, readHatchAssociation, readLeaderContract, readTableContract } from "./contracts.js";
 import { TABLE_STYLES_EXTENSION_KEY } from "./table.js";
 
 export type AnnotationBlockDxfCapabilityId =
@@ -17,6 +17,7 @@ export type AnnotationBlockDxfCapabilityId =
   | "text-style"
   | "mtext-layout"
   | "leader"
+  | "leader-association"
   | "mleader"
   | "hatch-solid"
   | "hatch-line-pattern"
@@ -86,6 +87,7 @@ function requirementMetadata(capability: AnnotationBlockDxfCapabilityId): Pick<A
     case "text-style": return { rowIds: ["F-058"], minimumVersion: "AC1018" };
     case "mtext-layout": return { rowIds: ["F-057"], minimumVersion: "AC1018" };
     case "leader": return { rowIds: ["F-059"], minimumVersion: "AC1018" };
+    case "leader-association": return { rowIds: ["F-059", "F-060"], minimumVersion: "AC1018" };
     case "mleader": return { rowIds: ["F-060"], minimumVersion: "AC1021" };
     case "hatch-solid":
     case "hatch-line-pattern": return { rowIds: ["F-067"], minimumVersion: "AC1018" };
@@ -118,7 +120,10 @@ export function requiredAnnotationBlockDxfCapabilities(document: KDrawDocumentV1
       if (association?.chain) add("dimension-chain", entity.handle);
     }
     if (entity.kind === "mtext") add("mtext-layout", entity.handle);
-    if (entity.kind === "leader") add(extensionKind(entity) === "mleader" ? "mleader" : "leader", entity.handle);
+    if (entity.kind === "leader") {
+      add(extensionKind(entity) === "mleader" ? "mleader" : "leader", entity.handle);
+      if (readLeaderContract(entity)?.associative) add("leader-association", entity.handle);
+    }
     if (entity.kind === "hatch") {
       const association = readHatchAssociation(entity);
       add(association?.pattern.type === "solid" || entity.pattern.trim().toLocaleUpperCase("en-US") === "SOLID" ? "hatch-solid" : "hatch-line-pattern", entity.handle);

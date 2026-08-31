@@ -117,3 +117,25 @@ and 7 PDF files / 22 tests. Repository typecheck, lint, production build, public
 retained the existing Vite warning for a minified chunk larger than 500 kB; it is not an
 annotation/TABLE correctness failure. No adapter was changed, no annotation DXF/PDF was produced
 or reopened, no AutoCAD live workflow was run and no F-score promotion is claimed.
+
+Seventh-wave F-057..F-060 additions:
+
+- MTEXT v2 preserves model-space position/rotation, style reference, width, attachment, line
+  spacing, wrap mode and one stable ID/alignment record per newline-delimited paragraph;
+- deterministic word/character/no-wrap layout is mutation-tested without claiming native font
+  shaping or AutoCAD line-break parity;
+- text-style create/update/apply keeps the resource ID and annotation handles, with multi-entity
+  application committed as one Undo/Redo step;
+- LEADER/MLEADER preserve arrow, landing, content placement, text and multileader style references,
+  plus an optional stable handle/feature anchor;
+- staged geometry changes update only the leader-head vertex under the existing handle, while
+  missing anchors, orphan styles, malformed contracts and locked layers fail closed;
+- prompt, shared planner, preview, commit, exact read-back, Undo and Redo cover MTEXT/leader edits
+  and text-style application without modifying a DXF/PDF adapter.
+
+Targeted seventh-wave verification passed 7 files / 50 tests. Final repository regression on
+2026-08-31 passed 173 Vitest files / 877 tests. Dedicated gates passed 19 DXF files / 54 tests
+and 7 PDF files / 22 tests. Repository typecheck, lint, production build, public-tree scan
+(1509 files), license gate (119 installed packages) and `git diff --check` also passed. The build
+retained the known Vite warning for a minified chunk larger than 500 kB. No native annotation DXF
+or PDF was produced/reopened, no AutoCAD live workflow was run and no F-score promotion is claimed.

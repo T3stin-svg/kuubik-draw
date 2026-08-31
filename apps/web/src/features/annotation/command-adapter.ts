@@ -12,6 +12,9 @@ import {
   createRadialDimension,
   createText,
   createTextStyle,
+  applyTextStyle,
+  editLeader,
+  editMText,
   createTable,
   createTableStyle,
   applyDimensionStyle,
@@ -24,7 +27,10 @@ import {
   type DimensionBaseArgs,
   type HatchArgs,
   type MTextArgs,
+  type MTextEditPatch,
   type TextArgs,
+  type LeaderEditPatch,
+  type MLeaderEditPatch,
   type CreateTableArgs,
   type TableEditOperation,
   type TableStyle,
@@ -52,10 +58,14 @@ export type AnnotationCommandInput =
   | { commandId: "DIMSTYLE"; mode: "create" | "update"; style: CadDimensionStyle }
   | { commandId: "DIMSTYLE"; mode: "apply"; styleId: string; targetHandles: string[] }
   | ({ commandId: "TEXT"; args: TextArgs } & WithTargets)
-  | ({ commandId: "MTEXT"; args: MTextArgs } & WithTargets)
+  | ({ commandId: "MTEXT"; mode?: "create"; args: MTextArgs } & WithTargets)
+  | { commandId: "MTEXT"; mode: "edit"; handle: string; patch: MTextEditPatch }
   | { commandId: "STYLE"; mode: "create" | "update"; style: CadTextStyle }
-  | ({ commandId: "LEADER"; args: LeaderArgs } & WithTargets)
-  | ({ commandId: "MLEADER"; args: MLeaderArgs } & WithTargets)
+  | { commandId: "STYLE"; mode: "apply"; styleId: string; targetHandles: string[] }
+  | ({ commandId: "LEADER"; mode?: "create"; args: LeaderArgs } & WithTargets)
+  | { commandId: "LEADER"; mode: "edit"; handle: string; patch: LeaderEditPatch }
+  | ({ commandId: "MLEADER"; mode?: "create"; args: MLeaderArgs } & WithTargets)
+  | { commandId: "MLEADER"; mode: "edit"; handle: string; patch: MLeaderEditPatch }
   | ({ commandId: "HATCH"; args: HatchArgs } & WithTargets)
   | { commandId: "TABLE"; mode: "create"; args: CreateTableArgs }
   | { commandId: "TABLE"; mode: "edit"; handle: string; operations: TableEditOperation[] }
@@ -67,7 +77,7 @@ function result(commandId: string, changes: CadChange[], targetHandles: readonly
 }
 
 export function prepareAnnotationCommand(document: KDrawDocumentV1, input: AnnotationCommandInput): PreparedAtomicCommand {
-  const targets = input.commandId === "STYLE" || input.commandId === "TABLE" ? [] : input.commandId === "DIMSTYLE" ? (input.mode === "apply" ? input.targetHandles : []) : input.targetHandles ?? [];
+  const targets = input.commandId === "TABLE" ? [] : input.commandId === "STYLE" ? (input.mode === "apply" ? input.targetHandles : []) : input.commandId === "DIMSTYLE" ? (input.mode === "apply" ? input.targetHandles : []) : "targetHandles" in input ? input.targetHandles ?? [] : [];
   switch (input.commandId) {
     case "DIMLINEAR": {
       const entity = createLinearDimension(document, input.args);
@@ -110,18 +120,34 @@ export function prepareAnnotationCommand(document: KDrawDocumentV1, input: Annot
       return result(input.commandId, [{ type: "put", entity }], targets, [entity.handle], input.args);
     }
     case "MTEXT": {
+      if (input.mode === "edit") {
+        const change = editMText(document, input.handle, input.patch);
+        return result(input.commandId, [change], [input.handle], [input.handle], input);
+      }
       const entity = createMText(document, input.args);
       return result(input.commandId, [{ type: "put", entity }], targets, [entity.handle], input.args);
     }
     case "STYLE": {
+      if (input.mode === "apply") {
+        const changes = applyTextStyle(document, input.styleId, input.targetHandles);
+        return result(input.commandId, changes, input.targetHandles, input.targetHandles, input);
+      }
       const change = input.mode === "create" ? createTextStyle(document, input.style) : updateTextStyle(document, input.style);
       return result(input.commandId, [change], [], [], input);
     }
     case "LEADER": {
+      if (input.mode === "edit") {
+        const change = editLeader(document, input.handle, input.patch);
+        return result(input.commandId, [change], [input.handle], [input.handle], input);
+      }
       const entity = createLeader(document, input.args);
       return result(input.commandId, [{ type: "put", entity }], targets, [entity.handle], input.args);
     }
     case "MLEADER": {
+      if (input.mode === "edit") {
+        const change = editLeader(document, input.handle, input.patch);
+        return result(input.commandId, [change], [input.handle], [input.handle], input);
+      }
       const entity = createMLeader(document, input.args);
       return result(input.commandId, [{ type: "put", entity }], targets, [entity.handle], input.args);
     }
