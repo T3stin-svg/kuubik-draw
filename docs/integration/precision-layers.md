@@ -6,7 +6,7 @@ below. No new runtime dependency is required.
 
 ## Package exports
 
-The current integrated base `633d32ae052951ac475696e7e900cd3170cb59bd`
+The current integrated base `0a0bc61cb631147138855bcee7779aa24c55780b`
 already contains all required package exports. No shared `src/index.ts` file
 needs to change for this workstream.
 
@@ -352,6 +352,49 @@ same `readCadDrawOrderContract()` handle order before F-086 can receive live
 renderer evidence. This branch does not modify that separately owned adapter.
 
 ## Exact integrator touch points
+
+### Wave 13 Dynamic Input adapter (F-052)
+
+Import `PrecisionDynamicInputAdapter` directly from
+`apps/web/src/features/precision/dynamic-input-adapter.ts`; no shared index or
+package export is required. Construct it with the same
+`PrecisionCoordinateEntryAdapter` and `PrecisionLayersShellContract` used by
+the active command. The `CadSession` passed to the coordinate adapter is owned
+by that adapter for the operation; route commit, Undo and Redo through it so its
+constant-time revision read-back stays synchronized.
+
+Call `start(pointerContext, cursorCssPoint, entryMode)` when the command prompt
+opens and `updatePointer(pointerContext, cursorCssPoint)` for pointer/viewport
+frames. Render the four returned field rows (`x`, `y`, `distance`, `angle`) at
+`snapshot.overlay.leftCssPx/topCssPx`; CSS coordinates and the fixed offset are
+not world coordinates and do not scale with zoom. Only fields marked
+`editable` accept text. Do not recompute X/Y, delta, distance, angle, snapping
+or formatting in React.
+
+Entry modes are `absolute-cartesian`, `relative-cartesian`, `absolute-polar`,
+`relative-polar` and `direct-distance`. Field input is assembled with the
+persisted locale contract; semicolon is the unambiguous Cartesian separator for
+both dot and comma decimals. The adapter then calls the one shared strict parser
+and immutable precision frame. Display strings follow units precision, while
+`snapshot.result.point`, `delta`, `distanceValue` and `angleRad` remain doubles.
+
+Route keys to `handleKey()` before global shortcuts while the overlay is
+visible. Tab and Shift+Tab cycle only the current mode's editable fields;
+Escape cancels and clears the cached frame without a revision. Enter returning
+`action: "commit-requested"` means the caller must immediately call
+`commit(atomicPlanner)`. Enter never commits an incomplete or failed prompt.
+F12/DYNMODE controls visibility; when disabled, the adapter consumes no keys.
+
+Call `setViewportSnapAperture()` on the shell before `updatePointer()` whenever
+zoom changes. The CSS overlay stays at the pointer offset while OSNAP/OTRACK use
+the new world aperture. Once a valid frame is prepared, `commit()` consumes
+that exact cached frame even if ORTHO/POLAR/OSNAP/OTRACK or zoom changes before
+the atomic planner runs. Rebuild/refresh the shell from `onDocumentChange`
+after commit, Undo and Redo.
+
+The UI owner still needs to provide the four input elements and position them
+from this read-back. This branch deliberately does not edit `App.tsx` or global
+CSS and therefore does not claim integrated Chromium or AutoCAD certification.
 
 ### Wave 11 coordinate-entry adapter (F-041/F-042/F-044)
 
