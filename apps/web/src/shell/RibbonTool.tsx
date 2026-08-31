@@ -22,8 +22,8 @@ export function RibbonTool({ rowId, label, icon, large = false, pressed = false,
     <button
       type="button"
       className={`ribbon-tool${large ? " ribbon-tool-large" : ""}${selected ? " is-scope-selected" : " is-scope-unselected"}`}
-      aria-label={`Ribbon ${label}${available ? " command" : " unavailable"}`}
-      aria-pressed={available ? pressed : undefined}
+      aria-label={`Ribbon ${label}${disabled ? " unavailable" : " command"}`}
+      aria-pressed={!disabled ? pressed : undefined}
       data-feature-row={rowId}
       data-scope-selected={selected ? "true" : "false"}
       title={`${label} · ${reason}`}

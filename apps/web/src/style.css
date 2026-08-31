@@ -172,16 +172,19 @@ button:focus-visible, select:focus-visible, input:focus-visible, summary:focus-v
 .document-tabs button { min-width: 0; padding: 0; color: #c9d1d7; background: transparent; border: 0; border-right: 1px solid #171b1e; font-size: 10px; }
 .document-tabs button:hover:not(:disabled) { background: #363d43; }
 .document-tabs button:disabled { opacity: .55; }
-.document-tabs .drawing-tab.active { color: #fff; background: var(--cad-ribbon-surface); border-bottom: 0; }
-.document-tabs .drawing-tab span { margin-left: 18px; color: #929ca4; }
+.document-tabs .drawing-tab-shell.active { color: #fff; background: var(--cad-ribbon-surface); border-bottom: 0; }
+.document-tabs .drawing-tab-shell { display: flex; flex: 0 0 118px; min-width: 0; border-right: 1px solid #171b1e; }
+.document-tabs .drawing-tab-shell > button { border-right: 0; }
+.document-tabs .drawing-tab { flex: 1 1 auto; padding-left: 8px; overflow: hidden; text-align: left; text-overflow: ellipsis; white-space: nowrap; }
+.document-tabs .drawing-tab-close { flex: 0 0 24px; color: #929ca4; }
+.document-tabs .drawing-tab-close:hover { color: #fff; }
 .document-menu { flex: 0 0 42px; }
 .start-tab { flex: 0 0 48px; }
-.drawing-tab { flex: 0 0 95px; }
 .new-drawing-tab { flex: 0 0 47px; }
 .document-menu, .new-drawing-tab { padding: 0 !important; font-size: 15px !important; }
 .document-tabs button svg { width: 13px; height: 13px; vertical-align: middle; }
 .document-tabs .document-menu svg, .document-tabs .new-drawing-tab svg { width: 16px; height: 16px; }
-.document-tabs .drawing-tab svg { width: 11px; height: 11px; margin-left: 18px; color: #929ca4; }
+.document-tabs .drawing-tab-close svg { width: 11px; height: 11px; color: currentColor; }
 .drawing-area { position: relative; min-height: 0; padding: 0; overflow: hidden; background: #111416; box-shadow: inset 0 1px #090b0c; }
 .drawing-area canvas { display: block; width: 100%; height: 100%; background: #1e2225; }
 .drawing-area.model-mode canvas { background: #fff; }
@@ -308,6 +311,10 @@ button:focus-visible, select:focus-visible, input:focus-visible, summary:focus-v
 .command-history { padding: 5px 10px 2px; overflow: hidden; color: #c6ced4; text-overflow: ellipsis; white-space: nowrap; }
 .command-prompt { display: flex; align-items: center; gap: 7px; padding: 0 10px 3px; color: #f1f3f4; }
 .command-prompt strong { color: #fff; font-weight: 400; }
+.command-prompt label { flex: 0 0 auto; }
+.command-prompt input { flex: 1 1 auto; min-width: 60px; height: 19px; padding: 0 4px; color: #fff; background: #161c22; border: 1px solid #52606b; border-radius: 1px; font: inherit; }
+.command-submit { flex: 0 0 auto; min-width: 38px; height: 19px; padding: 0 5px; color: #dbe5eb; background: #303a43; border: 1px solid #566674; border-radius: 1px; font: inherit; }
+.command-submit:hover { color: #fff; background: #176a99; }
 .command-history-toggle { width: 18px; height: 18px; min-height: 0; padding: 0; color: #9da7af; background: transparent; border: 1px solid #444d54; font-size: 10px; }
 .command-history-toggle svg { width: 12px; height: 12px; }
 .command-history-toggle[aria-expanded="true"] { color: #fff; background: #176a99; }
@@ -540,6 +547,19 @@ button:focus-visible, select:focus-visible, input:focus-visible, summary:focus-v
 .status-toggles button.status-toggle:disabled { color: #78828b; background: transparent; cursor: default; opacity: 1; }
 .status-toggle.active { color: #eef4f7; background: #176a99; }
 .status-toggles button.status-toggle.active { background: #176a99; }
+
+.layer-toolbar button { width: 24px; height: 22px; padding: 2px; color: #c8d1d8; background: transparent; border: 1px solid transparent; }
+.layer-toolbar button:hover:not(:disabled) { color: #fff; background: #394550; border-color: #60717e; }
+.layer-toolbar button:disabled { opacity: .4; }
+.layer-grid-row button { display: inline-flex; align-items: center; justify-content: center; width: 100%; min-width: 18px; height: 18px; padding: 1px; color: inherit; background: transparent; border: 0; }
+.layer-grid-row button:hover:not(:disabled) { color: #fff; background: #314758; }
+.layer-grid-row button:disabled { opacity: .75; }
+.runtime-tool-panels { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 6px; border-top: 1px solid #45505a; }
+.runtime-tool-panels section { display: flex; flex-wrap: wrap; align-content: flex-start; gap: 3px; padding: 4px; background: #252d35; border: 1px solid #424e58; }
+.runtime-tool-panels button { min-height: 24px; padding: 3px 6px; color: #d7dfe5; background: #333d46; border: 1px solid #56636e; border-radius: 2px; font-size: 10px; }
+.runtime-tool-panels button:hover:not(:disabled) { color: #fff; background: #176a99; }
+.runtime-tool-panels button:disabled { color: #77838d; background: #2a3036; border-color: #3d464e; }
+.runtime-intent-readback { display: block; min-height: 20px; padding: 4px 8px; color: #8fd2f5; background: #1a2229; border-top: 1px solid #45505a; font-size: 10px; }
 
 @media (max-width: 1180px) {
   .command-line { right: 12px; left: 12px; width: auto; }
