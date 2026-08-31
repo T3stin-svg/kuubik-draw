@@ -323,12 +323,77 @@ test("AutoCAD-style shell keeps all eight primary zones visible at 1920x1080", a
   await expect(page.getByText("Command: *Cancel* (LINE)")).toBeVisible();
 
   await page.reload();
-  await page.getByLabel("Esimene nurk").fill("100,100");
-  await page.getByLabel("Teine nurk").fill("900,600");
-  await page.getByRole("button", { name: "RECTANGLE", exact: true }).click();
+  for (const [firstCorner, secondCorner] of [["250,-600", "4125,1730"], ["1600,300", "2500,1200"], ["1200,1900", "3500,2200"]]) {
+    await page.getByLabel("Esimene nurk").fill(firstCorner);
+    await page.getByLabel("Teine nurk").fill(secondCorner);
+    await page.getByRole("button", { name: "RECTANGLE", exact: true }).click();
+  }
   await page.getByRole("button", { name: "Vali kõik", exact: true }).click();
-  await expect(page.getByRole("complementary", { name: "Properties palette" }).getByText("1 selected")).toBeVisible();
+  await expect(page.getByRole("complementary", { name: "Properties palette" }).getByText("3 selected")).toBeVisible();
+  await expect(page.getByRole("complementary", { name: "Properties palette" }).getByText("All (3)", { exact: true })).toBeVisible();
   await expect(page.getByLabel("Kuubik Draw joonestusala")).toHaveAttribute("data-selected-handles", /.+/);
+  const selectedPropertiesGeometry = await page.getByRole("complementary", { name: "Properties palette" }).evaluate((element) => {
+    const bounds = (target: Element) => {
+      const rect = target.getBoundingClientRect();
+      return { x: rect.x, y: rect.y, width: rect.width, height: rect.height, right: rect.right, bottom: rect.bottom };
+    };
+    const background = (target: Element) => getComputedStyle(target).backgroundColor;
+    const sections = Array.from(element.querySelectorAll<HTMLElement>(":scope > section:not(.layer-manager)"));
+    const generalRows = Array.from(sections[0]!.querySelectorAll<HTMLElement>("dl > div"));
+    const layerManager = element.querySelector<HTMLElement>(":scope > .layer-manager")!;
+    const propertiesHeader = element.querySelector<HTMLElement>(":scope > header")!;
+    const selectionSummary = element.querySelector<HTMLElement>(":scope > .properties-selection-summary")!;
+    return {
+      palette: bounds(element),
+      layerManager: bounds(layerManager),
+      propertiesHeader: bounds(propertiesHeader),
+      selectionSummary: bounds(selectionSummary),
+      generalHeader: bounds(sections[0]!.querySelector("h2")!),
+      generalRows: generalRows.map(bounds),
+      threeDHeader: bounds(sections[1]!.querySelector("h2")!),
+      materialRow: bounds(sections[1]!.querySelector("dl > div")!),
+      plotStyleHeader: bounds(sections[2]!.querySelector("h2")!),
+      viewHeader: bounds(sections[3]!.querySelector("h2")!),
+      dataHeader: bounds(sections[4]!.querySelector("h2")!),
+      surfaces: {
+        palette: background(element),
+        layerHeader: background(layerManager.querySelector(":scope > header")!),
+        layerCurrent: background(layerManager.querySelector(".layer-current")!),
+        layerToolbar: background(layerManager.querySelector(".layer-toolbar")!),
+        layerRail: background(layerManager.querySelector(".layer-filter-rail")!),
+        layerGrid: background(layerManager.querySelector(".layer-grid")!),
+        layerGridHeader: background(layerManager.querySelector(".layer-grid-header")!),
+        layerActiveRow: background(layerManager.querySelector(".layer-grid-row.active")!),
+        layerSummary: background(layerManager.querySelector(".layer-manager-summary")!),
+        propertiesHeader: background(propertiesHeader),
+        selectionSummary: background(selectionSummary),
+        sectionHeader: background(sections[0]!.querySelector("h2")!),
+        propertyName: background(generalRows[0]!.querySelector("dt")!),
+        propertyValue: background(generalRows[0]!.querySelector("dd")!),
+      },
+    };
+  });
+  expect(selectedPropertiesGeometry).toMatchObject({
+    palette: { x: 0, y: 181, width: 680, height: 862, bottom: 1043 },
+    layerManager: { x: 0, y: 181, width: 678, height: 513, bottom: 694 },
+    propertiesHeader: { x: 0, y: 694, width: 678, height: 20, bottom: 714 },
+    selectionSummary: { x: 20, y: 727, width: 638, height: 22, bottom: 749 },
+    generalHeader: { x: 0, y: 753, width: 678, height: 20, bottom: 773 },
+    threeDHeader: { x: 0, y: 944, width: 678, height: 20, bottom: 964 },
+    materialRow: { x: 0, y: 964, width: 678, height: 19, bottom: 983 },
+    plotStyleHeader: { x: 0, y: 983, width: 678, height: 20, bottom: 1003 },
+    viewHeader: { x: 0, y: 1003, width: 678, height: 20, bottom: 1023 },
+    dataHeader: { x: 0, y: 1023, width: 678, height: 20, bottom: 1043 },
+  });
+  expect(selectedPropertiesGeometry.generalRows).toHaveLength(9);
+  expect(selectedPropertiesGeometry.generalRows.every(({ height }) => height === 19)).toBe(true);
+  expect(selectedPropertiesGeometry.surfaces).toEqual({
+    palette: "rgb(59, 68, 83)", layerHeader: "rgb(46, 52, 64)", layerCurrent: "rgb(59, 68, 83)", layerToolbar: "rgb(59, 68, 83)",
+    layerRail: "rgb(59, 68, 83)", layerGrid: "rgb(59, 68, 83)", layerGridHeader: "rgb(69, 79, 97)",
+    layerActiveRow: "rgb(116, 135, 165)", layerSummary: "rgb(59, 68, 83)", propertiesHeader: "rgb(46, 52, 64)",
+    selectionSummary: "rgb(78, 90, 110)", sectionHeader: "rgb(46, 52, 64)", propertyName: "rgba(0, 0, 0, 0)",
+    propertyValue: "rgb(59, 68, 83)",
+  });
   const selectionPixels = await page.getByLabel("Kuubik Draw joonestusala").evaluate((canvas) => {
     const element = canvas as HTMLCanvasElement;
     const context = element.getContext("2d", { willReadFrequently: true });
@@ -355,11 +420,11 @@ test("AutoCAD-style shell keeps all eight primary zones visible at 1920x1080", a
   if (captureRoot) await writeFile(resolve(captureRoot, "visual-shell-context-menu.png"), await page.screenshot());
   await page.keyboard.press("Escape");
   await expect(selectedContextMenu).toBeHidden();
-  await expect(page.getByRole("complementary", { name: "Properties palette" }).getByText("1 selected")).toBeVisible();
+  await expect(page.getByRole("complementary", { name: "Properties palette" }).getByText("3 selected")).toBeVisible();
   await page.getByLabel("Kuubik Draw joonestusala").click({ button: "right", position: { x: 1200, y: 320 } });
   await page.getByRole("menu", { name: "Drawing context menu" }).getByRole("menuitem", { name: "Count" }).click();
-  await expect(page.getByText("Count: 1 object")).toBeVisible();
-  await expect(page.getByRole("complementary", { name: "Properties palette" }).getByText("1 selected")).toBeVisible();
+  await expect(page.getByText("Count: 3 objects")).toBeVisible();
+  await expect(page.getByRole("complementary", { name: "Properties palette" }).getByText("3 selected")).toBeVisible();
 
   await page.getByRole("button", { name: "Uus kiht", exact: true }).click();
   await expect(page.getByRole("table", { name: "Kihtide loend" }).getByText("Layer 1")).toBeVisible();
@@ -461,7 +526,7 @@ test("AutoCAD-style shell keeps all eight primary zones visible at 1920x1080", a
         },
         modelNavigation,
         modelDisplayReadback,
-        selectedProperties: true,
+        selectedProperties: { visible: true, geometry: selectedPropertiesGeometry },
         selectionPixels,
         contextMenu: {
           activeCommand: true,

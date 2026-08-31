@@ -107,7 +107,8 @@ try {
   }
   $directory = Split-Path -Parent $OutputJson
   if ($directory) { [void](New-Item -ItemType Directory -Force -Path $directory) }
-  $result | ConvertTo-Json -Depth 10 | Set-Content -LiteralPath $OutputJson -Encoding utf8
+  $json = $result | ConvertTo-Json -Depth 10
+  [System.IO.File]::WriteAllText([System.IO.Path]::GetFullPath($OutputJson), "$json`n", [System.Text.UTF8Encoding]::new($false))
 } finally {
   $reference.Dispose()
 }

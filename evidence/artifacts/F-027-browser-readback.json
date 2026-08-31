@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "rowId": "F-027",
   "status": "PASS",
-  "observedAt": "2026-08-31T00:55:23.253Z",
+  "observedAt": "2026-08-31T01:31:23.400Z",
   "checks": {
     "browserWorkflowPassedWithoutErrors": true,
     "exactPartialAndWholeGeometry": true,
@@ -20,11 +20,11 @@
   },
   "artifacts": {
     "evidence/artifacts/F-027-browser-matrix.json": {
-      "sha256": "21b2ba26cc529c84ff20b09b6d2a10e22537abf270035da872cf53fd56429cc3",
+      "sha256": "5cca2ca5f151a0d3bd3ceeaa1b7bd3e4f9c9191e467e415bdf90b478a5c76b9c",
       "byteLength": 12528
     },
     "evidence/artifacts/F-027-browser-native-edge-matrix.json": {
-      "sha256": "5c2500b13a52712b1c59cf1d9dfd8daf5e24704c1f00ac620714a291dca3905d",
+      "sha256": "89a4aed255191bbd411a714aff9335be6d60fe2c897437690641718ec6fa0566",
       "byteLength": 4671
     },
     "evidence/artifacts/F-027-browser-locked.json": {
@@ -40,7 +40,7 @@
       "byteLength": 295
     },
     "evidence/artifacts/F-027-browser-ellipse.json": {
-      "sha256": "11ba76ace8ad7949a4e12232db40db8a767f42d16a69436c15f77c3d40214c56",
+      "sha256": "47507f048b06f51813f6882ca5b5c54b85aff11d8ec8c70f196baab899e2aec8",
       "byteLength": 4345
     },
     "evidence/artifacts/F-027-browser-ellipse.dxf": {
@@ -48,7 +48,7 @@
       "byteLength": 3966
     },
     "evidence/artifacts/F-027-browser-ellipse.kdraw": {
-      "sha256": "baee3d8f57d8ad529c8e8439363e736cd81964b48e65e30560b7a1dbe0fa072c",
+      "sha256": "99235e19b16d0918c6d7782affa123a9b7cc2b1912a6d2ab59c68663f692414c",
       "byteLength": 1440
     },
     "evidence/artifacts/F-027-browser.dxf": {
@@ -56,13 +56,13 @@
       "byteLength": 4319
     },
     "evidence/artifacts/F-027-browser.kdraw": {
-      "sha256": "4e3527d404b9dd86df56785c665dc11f6bdb42132b90d96956e62c921d1696e9",
+      "sha256": "a4594af731b93c45d8cae65cee8dfca1968f1bac34757c0bb01510d778c812a6",
       "byteLength": 1849
     }
   },
   "sourceSha256": {
-    "apps/web/src/App.tsx": "3a5e7091456139ed2735bc46804526c25627b2c85ed67ee0426eae96e7f80041",
-    "apps/web/src/style.css": "90133880286e25d777020272faeb819f7a92520e50395c46c59e0edfce48b6d6",
+    "apps/web/src/App.tsx": "c24142e01afee62139bc861cbc36d69fe2a67a36b2eccaa5fe89c1cf04e8bbd3",
+    "apps/web/src/style.css": "f4543a27eb6bae5858da62a5b0ddd64b858a8ad3c0badf62cbf3393d66e65f51",
     "apps/web/src/workflows/modify-command.ts": "9d1f7d0b1d3e308eac2a5d4055436626e3a497cbaaf116c05957e1fde15616c7",
     "apps/web/src/workflows/modify-command.test.ts": "aac0694d3a93a08ed5c6b98ea5456e62ba7c0f05777780a47d99dcabdf2e12b9",
     "packages/cad-core/src/stretch.ts": "5e76f375057f553ef91c38df96b28686d1e56cf57e1debd51b71bae8a2739944",

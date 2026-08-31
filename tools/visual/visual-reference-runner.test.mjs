@@ -38,7 +38,7 @@ describe("AutoCAD visual-reference runner ratchet", () => {
 
   it("keeps the light-model comparison content-addressed and pixel-private", async () => {
     const source = await readFile(new URL("compare-light-model-surface.ps1", import.meta.url), "utf8");
-    const evidence = JSON.parse(await readFile(new URL("../../evidence/artifacts/visual-shell-wave-11/autocad-light-model-readback.json", import.meta.url), "utf8"));
+    const evidence = JSON.parse(await readFile(new URL("../../evidence/artifacts/visual-shell-wave-12/autocad-light-model-readback.json", import.meta.url), "utf8"));
     expect(source).toContain("Private AutoCAD reference SHA-256 mismatch");
     expect(source).toContain("redistributablePixelsIncluded = $false");
     expect(source).toContain("fixed +/-1 px tolerance");
@@ -50,7 +50,7 @@ describe("AutoCAD visual-reference runner ratchet", () => {
 
   it("keeps the Home ribbon comparison content-addressed and pixel-private", async () => {
     const source = await readFile(new URL("compare-ribbon-surface.ps1", import.meta.url), "utf8");
-    const evidence = JSON.parse(await readFile(new URL("../../evidence/artifacts/visual-shell-wave-11/autocad-ribbon-readback.json", import.meta.url), "utf8"));
+    const evidence = JSON.parse(await readFile(new URL("../../evidence/artifacts/visual-shell-wave-12/autocad-ribbon-readback.json", import.meta.url), "utf8"));
     expect(source).toContain("Private AutoCAD reference SHA-256 mismatch");
     expect(source).toContain("redistributablePixelsIncluded = $false");
     expect(source).toContain("fixed +/-2 px boundary tolerance");
@@ -64,7 +64,7 @@ describe("AutoCAD visual-reference runner ratchet", () => {
 
   it("keeps the top application chrome comparison content-addressed and pixel-private", async () => {
     const source = await readFile(new URL("compare-top-chrome.ps1", import.meta.url), "utf8");
-    const evidence = JSON.parse(await readFile(new URL("../../evidence/artifacts/visual-shell-wave-11/autocad-top-chrome-readback.json", import.meta.url), "utf8"));
+    const evidence = JSON.parse(await readFile(new URL("../../evidence/artifacts/visual-shell-wave-12/autocad-top-chrome-readback.json", import.meta.url), "utf8"));
     expect(source).toContain("Private AutoCAD reference SHA-256 mismatch");
     expect(source).toContain("redistributablePixelsIncluded = $false");
     expect(source).toContain("fixed +/-$Tolerance px tolerance");
@@ -88,7 +88,7 @@ describe("AutoCAD visual-reference runner ratchet", () => {
 
   it("keeps the shared bottom chrome comparison content-addressed and pixel-private", async () => {
     const source = await readFile(new URL("compare-bottom-chrome.ps1", import.meta.url), "utf8");
-    const evidence = JSON.parse(await readFile(new URL("../../evidence/artifacts/visual-shell-wave-11/autocad-bottom-chrome-readback.json", import.meta.url), "utf8"));
+    const evidence = JSON.parse(await readFile(new URL("../../evidence/artifacts/visual-shell-wave-12/autocad-bottom-chrome-readback.json", import.meta.url), "utf8"));
     expect(source).toContain("Private AutoCAD reference SHA-256 mismatch");
     expect(source).toContain("redistributablePixelsIncluded = $false");
     expect(source).toContain("fixed +/-$Tolerance px tolerance");
@@ -105,6 +105,26 @@ describe("AutoCAD visual-reference runner ratchet", () => {
     });
     expect(evidence.statusControls.grid).toMatchObject({ disabled: false, pressed: "true" });
     expect(["ortho", "osnap", "otrack", "dyn"].every((name) => evidence.statusControls[name].disabled)).toBe(true);
+    expect(evidence.status).toBe("PASS");
+  });
+
+  it("keeps the selected Properties and Layer Manager comparison content-addressed and pixel-private", async () => {
+    const source = await readFile(new URL("compare-selected-properties.ps1", import.meta.url), "utf8");
+    const evidence = JSON.parse(await readFile(new URL("../../evidence/artifacts/visual-shell-wave-12/autocad-selected-properties-readback.json", import.meta.url), "utf8"));
+    expect(source).toContain("Private AutoCAD reference SHA-256 mismatch");
+    expect(source).toContain("redistributablePixelsIncluded = $false");
+    expect(source).toContain("fixed +/-$Tolerance px tolerance");
+    expect(evidence.reference.sha256).toBe("6a9037b0ec7bad08692f2ebdbd3da4b09aa125bde1efc2a3de66223b9c82ef0c");
+    expect(evidence.reference.redistributablePixelsIncluded).toBe(false);
+    expect(evidence.actualGeometry).toMatchObject({
+      palette: { x: 0, y: 181, width: 680, height: 862, bottom: 1043 },
+      layerManager: { y: 181, height: 513, bottom: 694 },
+      propertiesHeader: { y: 694, height: 20, bottom: 714 },
+      generalHeader: { y: 753, height: 20, bottom: 773 },
+      dataHeader: { y: 1023, height: 20, bottom: 1043 },
+    });
+    expect(evidence.actualGeometry.generalRows).toHaveLength(9);
+    expect(evidence.surfaces.propertyValue).toMatchObject({ autoCad: "#3b4453", kuubik: "rgb(59, 68, 83)" });
     expect(evidence.status).toBe("PASS");
   });
 });

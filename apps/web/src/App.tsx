@@ -3935,12 +3935,10 @@ export function App() {
             <strong>PROPERTIES</strong>
             <span>{selectedHandles.length === 0 ? "No selection" : `${selectedHandles.length} selected`}</span>
           </header>
-          <div className="properties-selection-summary">{selectedHandles.length === 0 ? "No selection" : primarySelectedEntity?.kind.toUpperCase() ?? `${selectedHandles.length} objects`}</div>
+          <div className="properties-selection-summary">{selectedHandles.length === 0 ? "No selection" : selectedHandles.length === 1 ? primarySelectedEntity?.kind.toUpperCase() ?? "Object" : `All (${selectedHandles.length})`}</div>
           <section>
             <h2>General</h2>
             <dl>
-              <div><dt>Type</dt><dd>{primarySelectedEntity?.kind.toUpperCase() ?? (selectedHandles.length > 1 ? "Multiple" : "None")}</dd></div>
-              <div><dt>Handle</dt><dd>{primarySelectedEntity?.handle ?? "—"}</dd></div>
               <div><dt>Color</dt><dd>{primarySelectedEntity?.appearance?.color ?? "ByLayer"}</dd></div>
               <div><dt>Layer</dt><dd>{primarySelectedLayer.name}</dd></div>
               <div><dt>Linetype</dt><dd>{primarySelectedEntity?.appearance?.linetypeId ?? "ByLayer"}</dd></div>
@@ -3948,6 +3946,7 @@ export function App() {
               <div><dt>Plot style</dt><dd>{primarySelectedEntity?.appearance?.plotStyleId ?? "ByColor"}</dd></div>
               <div><dt>Lineweight</dt><dd>{primarySelectedEntity?.appearance?.lineweightMm === undefined ? "ByLayer" : `${primarySelectedEntity.appearance.lineweightMm.toFixed(2)} mm`}</dd></div>
               <div><dt>Transparency</dt><dd>{primarySelectedEntity?.appearance?.transparency === undefined ? "ByLayer" : `${primarySelectedEntity.appearance.transparency}%`}</dd></div>
+              <div><dt>Hyperlink</dt><dd>—</dd></div>
               <div><dt>Thickness</dt><dd>{primarySelectedEntity?.appearance?.thickness ?? 0}</dd></div>
             </dl>
           </section>
@@ -3959,6 +3958,7 @@ export function App() {
           </section>
           <section><h2>Plot style</h2></section>
           <section><h2>View</h2></section>
+          <section><h2>Data</h2></section>
         </aside>
       </section>
       <section className="command-line" aria-label="Käsurida" data-visual-zone="command-line">
