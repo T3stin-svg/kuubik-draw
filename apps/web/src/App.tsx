@@ -1,10 +1,16 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { DEFAULT_MATCH_PROPERTIES_SETTINGS, ISO_PAPER_MEDIA, MAX_PAGE_SETUP_TEMPLATE_BYTES, STANDARD_VIEWPORT_SCALE_DENOMINATORS, allocateEntityHandles, applyNamedPageSetup, buildLayoutPublishPlan, CadCommandInputError, CadSession, clearNamedPageSetupAssignment, createPageSetupTemplate, LayoutCommandError, LayoutPublishSettingsError, NoOpOperationError, PageSetupLibraryError, copyPaperLayout, createEmptyDocument, createPaperLayout, createPaperViewport, deleteNamedPageSetup, deletePaperLayout, deletePaperViewport, executeMatchViewportProperties, formatViewportScale, importPageSetupTemplate, metadataWithLayoutPublishSettings, movePaperLayout, panPaperViewportByPixels, paperDefinitionForPageSetup, parseCartesianPoint, parsePageSetupTemplate, renameNamedPageSetup, renamePaperLayout, replaceDrawingContentPreservingLayouts, resolveCadCommand, resolveLayoutPublishSettings, resolveMatchPropertiesSettings, resolveModelPageSetup, resolvePageSetup, resolvePageSetupLibrary, resolvePaperDefinition, sanitizePdfFileStem, saveNamedPageSetup, serializeKDraw, serializePageSetupTemplate, setModelLayoutPageSetup, setPaperLayoutPageSetup, setPaperViewportDisplayLocked, setPaperViewportView, viewportScaleDenominator, zoomPaperViewportAtModelPoint, type AlignRejectedTarget, type BreakMode, type BreakRejectedTarget, type CadChange, type ChamferRejectedTarget, type ChamferTrimMode, type CopyRejectedTarget, type ExtendRejectedTarget, type ExtendTargetAction, type FilletRejectedTarget, type FilletTrimMode, type LayoutPublishSettingsV1, type LengthenMeasurement, type LengthenMode, type LengthenRejectedTarget, type MatchPropertiesRejectedTarget, type MatchPropertiesSettings, type MatchViewportRef, type MirrorRejectedTarget, type MoveRejectedTarget, type OffsetLayerMode, type OffsetRejectedTarget, type RotateRejectedTarget, type ScaleRejectedTarget, type StretchRejectedTarget, type TrimEdgeMode, type TrimMode, type TrimProjectMode, type TrimRejectedTarget, type TrimTargetAction } from "@kuubik/cad-core";
+import { DEFAULT_MATCH_PROPERTIES_SETTINGS, ISO_PAPER_MEDIA, MAX_PAGE_SETUP_TEMPLATE_BYTES, STANDARD_VIEWPORT_SCALE_DENOMINATORS, allocateEntityHandles, applyNamedPageSetup, buildLayoutPublishPlan, CadCommandInputError, CadSession, clearNamedPageSetupAssignment, createPageSetupTemplate, LayoutCommandError, LayoutPublishSettingsError, NoOpOperationError, PageSetupLibraryError, copyPaperLayout, createEmptyDocument, createPaperLayout, createPaperViewport, deleteNamedPageSetup, deletePaperLayout, deletePaperViewport, executeMatchViewportProperties, formatViewportScale, importPageSetupTemplate, metadataWithLayoutPublishSettings, movePaperLayout, panPaperViewportByPixels, paperDefinitionForPageSetup, parseCartesianPoint, parsePageSetupTemplate, renameNamedPageSetup, renamePaperLayout, replaceDrawingContentPreservingLayouts, resolveCadCommand, resolveLayoutPublishSettings, resolveMatchPropertiesSettings, resolveModelPageSetup, resolvePageSetup, resolvePageSetupLibrary, resolvePaperDefinition, sanitizePdfFileStem, saveNamedPageSetup, serializeKDraw, serializePageSetupTemplate, setModelLayoutPageSetup, setPaperLayoutPageSetup, setPaperViewportDisplayLocked, setPaperViewportView, viewportScaleDenominator, zoomPaperViewportAtModelPoint, type AlignRejectedTarget, type BreakMode, type BreakRejectedTarget, type CadChange, type CadLayerPlan, type CadLayerToggle, type ChamferRejectedTarget, type ChamferTrimMode, type CopyRejectedTarget, type ExtendRejectedTarget, type ExtendTargetAction, type FilletRejectedTarget, type FilletTrimMode, type LayoutPublishSettingsV1, type LengthenMeasurement, type LengthenMode, type LengthenRejectedTarget, type MatchPropertiesRejectedTarget, type MatchPropertiesSettings, type MatchViewportRef, type MirrorRejectedTarget, type MoveRejectedTarget, type OffsetLayerMode, type OffsetRejectedTarget, type RotateRejectedTarget, type ScaleRejectedTarget, type StretchRejectedTarget, type TrimEdgeMode, type TrimMode, type TrimProjectMode, type TrimRejectedTarget, type TrimTargetAction } from "@kuubik/cad-core";
 import { DxfImportError, MAX_DXF_IMPORT_BYTES, exportDxf, importDxf } from "@kuubik/cad-dxf";
 import { exportLayoutSvg, exportLayoutsVectorPdf, exportLayoutVectorPdf, exportModelSvg, exportModelVectorPdf, type LayoutPlotOptions, type ModelPlotOptions } from "@kuubik/cad-print";
 import { CadCanvasRenderer, pickCadEntity, pannedViewportWorldCenter, selectCadEntityHitsByCrossingPolygon, selectCadEntityHitsByFence, viewportScreenToWorld, viewportScreenTransform, type Viewport2D } from "@kuubik/cad-renderer";
 import type { CadEntity, CadLayout, CadPageSetup, CadPaperRect, CadPlotStyle, CadViewport, KDrawDocumentV1 } from "@kuubik/cad-schema";
 import { clampCadContextMenuPosition } from "./context-menu.js";
+import { AnnotationPanel } from "./features/annotation/AnnotationPanel.js";
+import type { AnnotationAction, AnnotationCommandId } from "./features/annotation/model.js";
+import { BlocksPanel } from "./features/blocks/BlocksPanel.js";
+import type { BlockAction, BlockCommandId } from "./features/blocks/model.js";
+import { CommandEngineInputError } from "./features/command-system/command-engine.js";
+import { activateDocumentTab, closeDocumentTab, createDocumentTabsState, markDocumentTabPersisted, openDocumentTab, readBackDocumentTabs, setDocumentTabLayout, updateDocumentTab, type DocumentTabsState } from "./features/documents/document-tabs.js";
 import { CadIcon } from "./icons/CadIcon.js";
 import { KDrawIndexedDb, StorageRevisionConflictError } from "./indexed-db.js";
 import { CadShell, DrawingViewport, type WorkspacePreset } from "./shell/CadShell.js";
@@ -17,6 +23,7 @@ import { RibbonTabs } from "./shell/RibbonTabs.js";
 import { RibbonTool } from "./shell/RibbonTool.js";
 import { StatusBar } from "./shell/StatusBar.js";
 import { TitleBar } from "./shell/TitleBar.js";
+import { VisualShellRuntimeAdapter, type PrecisionToggleId, type PrecisionToggleState } from "./shell/runtime-adapter.js";
 import { prepareAlign, prepareBreak, prepareChamfer, prepareCopy, prepareExtend, prepareFillet, prepareLengthen, prepareMatchProperties, prepareMirror, prepareMove, prepareOffset, prepareRotate, prepareScale, prepareStretch, prepareTrim, putEntities } from "./workflows/modify-command.js";
 import "./style.css";
 
@@ -278,8 +285,15 @@ export function App() {
   const dxfImportInput = useRef<HTMLInputElement>(null);
   const database = useMemo(() => new KDrawIndexedDb(), []);
   const session = useRef(new CadSession(createEmptyDocument({ documentId: LOCAL_DOCUMENT_ID })));
+  const sessions = useRef(new Map<string, CadSession>([[LOCAL_DOCUMENT_ID, session.current]]));
+  const nextDocumentSequence = useRef(2);
   const committing = useRef(false);
   const [document, setDocument] = useState<KDrawDocumentV1>(session.current.document);
+  const [documentTabs, setDocumentTabs] = useState<DocumentTabsState>(() => openDocumentTab(createDocumentTabsState(), {
+    document: session.current.document,
+    sourceFileName: "local.kdraw",
+  }));
+  const runtime = useMemo(() => new VisualShellRuntimeAdapter(), []);
   const [status, setStatus] = useState("Uus kohalik dokument");
   const [storageState, setStorageState] = useState<"loading" | "ready" | "recovered" | "recovery">("loading");
   const [workspacePreset, setWorkspacePreset] = useState<WorkspacePreset>(() => {
@@ -291,9 +305,14 @@ export function App() {
     return stored === "floating" || stored === "auto-hide" ? stored : "docked";
   });
   const [activeCommandPrompt, setActiveCommandPrompt] = useState<string | null>(null);
+  const [commandInput, setCommandInput] = useState("");
+  const [runtimeCommandHistory, setRuntimeCommandHistory] = useState<string[]>([]);
+  const [runtimeHistoryIndex, setRuntimeHistoryIndex] = useState(0);
+  const [runtimeIntent, setRuntimeIntent] = useState<{ kind: "annotation" | "block"; commandId: string; selectedHandles: string[] } | null>(null);
   const [commandHistoryOpen, setCommandHistoryOpen] = useState(false);
   const [commandHistory, setCommandHistory] = useState<string[]>(["Uus kohalik dokument"]);
-  const [gridEnabled, setGridEnabled] = useState(true);
+  const [precision, setPrecision] = useState<PrecisionToggleState>({ grid: true, ortho: false, osnap: true, otrack: true, dyn: true });
+  const [precisionSource, setPrecisionSource] = useState("grid");
   const [cursorReadout, setCursorReadout] = useState<{
     pixel: { x: number; y: number };
     world: { x: number; y: number };
@@ -538,6 +557,7 @@ export function App() {
   const publishSettings = useMemo(() => resolveLayoutPublishSettings(document), [document]);
   const pageSetupLibrary = useMemo(() => resolvePageSetupLibrary(document), [document]);
   const activePaperIndex = paperLayouts.findIndex((layout) => layout.id === activeLayout.id);
+  const documentTabsReadback = useMemo(() => readBackDocumentTabs(documentTabs), [documentTabs]);
   const movePreview = useMemo((): { entities: CadEntity[]; delta: { x: number; y: number } } | null => {
     if (previewCommand !== "MOVE" || selectedHandles.length === 0) return null;
     try {
@@ -836,7 +856,12 @@ export function App() {
         const operations = await database.operations(LOCAL_DOCUMENT_ID);
         if (!active) return;
         session.current = new CadSession(stored, operations.map((entry) => entry.opId));
+        sessions.current.set(stored.documentId, session.current);
         setDocument(session.current.document);
+        setDocumentTabs((current) => markDocumentTabPersisted(updateDocumentTab(current, {
+          document: session.current.document,
+          activeLayoutId: current.tabs.find((tab) => tab.documentId === stored.documentId)?.activeLayoutId ?? "model",
+        }), stored.documentId, stored.revision));
         setStatus(`Taastatud revision ${stored.revision}`);
         setStorageState("recovered");
       } catch (error) {
@@ -985,7 +1010,7 @@ export function App() {
         ...(activeLayout.kind === "model" ? {
           displayTheme: "light" as const,
           grid: {
-            enabled: gridEnabled,
+            enabled: precision.grid,
             spacingWorld: 662.67,
             originWorld: { x: 177.5, y: -45.35 },
             minorColor: "#9b9ea6",
@@ -1000,7 +1025,7 @@ export function App() {
     const observer = new ResizeObserver(render);
     observer.observe(element);
     return () => observer.disconnect();
-  }, [activeLayout, activePageSetup, activePaper, alignPreview, breakPreview, chamferPreview, copyPreview, document, extendPreview, filletPreview, gridEnabled, lengthenPreview, matchPropertiesPreview, mirrorPreview, movePreview, offsetPreview, rotatePreview, scalePreview, selectedHandles, stretchPreview, trimPreview]);
+  }, [activeLayout, activePageSetup, activePaper, alignPreview, breakPreview, chamferPreview, copyPreview, document, extendPreview, filletPreview, lengthenPreview, matchPropertiesPreview, mirrorPreview, movePreview, offsetPreview, precision.grid, rotatePreview, scalePreview, selectedHandles, stretchPreview, trimPreview]);
 
   async function recoverFromStorageConflict(error: unknown): Promise<void> {
     if (!(error instanceof StorageRevisionConflictError)) throw error;
@@ -1008,26 +1033,18 @@ export function App() {
     if (!stored) return;
     const operations = await database.operations(stored.documentId);
     session.current = new CadSession(stored, operations.map((entry) => entry.opId));
+    sessions.current.set(stored.documentId, session.current);
     setDocument(stored);
+    setDocumentTabs((current) => markDocumentTabPersisted(updateDocumentTab(current, {
+      document: stored,
+      activeLayoutId: stored.layouts.some((layout) => layout.id === activeLayoutId) ? activeLayoutId : stored.layouts[0]!.id,
+    }), stored.documentId, stored.revision));
     setStatus(`Teine vaheleht muutis dokumenti; taastatud revision ${stored.revision}`);
     setStorageState("recovered");
   }
 
   async function addSyntheticLine(): Promise<void> {
-    if (committing.current) return;
-    committing.current = true;
-    try {
-      const handle = nextInteractiveHandle(document);
-      const args = { start: { x: 10, y: 10 + document.revision * 5 }, end: { x: 180, y: 90 } };
-      await commitChanges("LINE", args, [{
-        type: "put",
-        entity: { kind: "line", handle, layerId: document.currentLayerId, start: args.start, end: args.end },
-      }], [handle]);
-    } catch (error) {
-      await recoverFromStorageConflict(error);
-    } finally {
-      committing.current = false;
-    }
+    await executeRuntimeCommand(`LINE 10,${10 + document.revision * 5} 180,90`);
   }
 
   async function commitChanges(
@@ -1054,8 +1071,186 @@ export function App() {
     const next = candidate.document;
     await database.commitRevision(next, operation);
     session.current = candidate;
+    sessions.current.set(next.documentId, candidate);
     setDocument(next);
+    setDocumentTabs((current) => markDocumentTabPersisted(updateDocumentTab(current, {
+      document: next,
+      activeLayoutId: next.layouts.some((layout) => layout.id === activeLayoutId) ? activeLayoutId : next.layouts[0]!.id,
+    }), next.documentId, next.revision));
     setStatus(`${commandId} salvestatud, revision ${next.revision}`);
+  }
+
+  function beginRuntimeCommand(commandId: "LINE" | "RECTANGLE", prompt: string): void {
+    if (!runtime.commandRegistry.resolve(commandId)) {
+      setStatus(`${commandId}: runtime adapter puudub`);
+      return;
+    }
+    setRuntimeIntent(null);
+    setActiveCommandPrompt(commandId);
+    setCommandInput(`${commandId} `);
+    setStatus(prompt);
+  }
+
+  async function executeRuntimeCommand(rawOverride?: string): Promise<void> {
+    if (committing.current) return;
+    const raw = (rawOverride ?? commandInput).trim();
+    if (!raw) {
+      setStatus("Command: sisesta käsk");
+      return;
+    }
+    const commandName = raw.split(/\s+/u, 1)[0]!.replace(/^[_.]+/u, "").toLocaleUpperCase();
+    if (!["U", "UNDO", "REDO"].includes(commandName) && (!modelSpaceEditing || activeLayer.locked)) {
+      setStatus(`${commandName}: käsk pole praeguses mudeliruumi/kihi olekus saadaval`);
+      return;
+    }
+    committing.current = true;
+    try {
+      const candidate = session.current.fork();
+      const engine = runtime.commandEngine(candidate);
+      const result = engine.execute(raw);
+      if (result.kind === "cancel") {
+        setStatus("Command: *Cancel*");
+        return;
+      }
+      const committed = result.committed;
+      if (!committed) {
+        setStatus(`${commandName}: midagi pole ${result.kind === "undo" ? "tagasi võtta" : "uuesti teha"}`);
+        return;
+      }
+      const next = candidate.document;
+      await database.commitRevision(next, committed.operation);
+      session.current = candidate;
+      sessions.current.set(next.documentId, candidate);
+      setDocument(next);
+      setDocumentTabs((current) => markDocumentTabPersisted(updateDocumentTab(current, {
+        document: next,
+        activeLayoutId: next.layouts.some((layout) => layout.id === activeLayoutId) ? activeLayoutId : next.layouts[0]!.id,
+      }), next.documentId, next.revision));
+      setSelectedHandles(result.kind === "commit" ? committed.operation.resultHandles : []);
+      setRuntimeCommandHistory((current) => [...current.slice(-29), raw]);
+      setRuntimeHistoryIndex(runtimeCommandHistory.length + 1);
+      setCommandInput("");
+      setActiveCommandPrompt(null);
+      setRuntimeIntent(null);
+      setStatus(`${committed.operation.commandId} runtime salvestatud, revision ${next.revision}`);
+    } catch (error) {
+      if (error instanceof StorageRevisionConflictError) await recoverFromStorageConflict(error);
+      else if (error instanceof CommandEngineInputError || error instanceof CadCommandInputError || error instanceof RangeError || error instanceof TypeError) {
+        setStatus(`Command viga: ${error.message}`);
+      } else throw error;
+    } finally {
+      committing.current = false;
+    }
+  }
+
+  function cancelRuntimeCommand(): void {
+    setCommandInput("");
+    setActiveCommandPrompt(null);
+    setRuntimeIntent(null);
+    setStatus("Command: *Cancel*");
+  }
+
+  function navigateRuntimeHistory(direction: -1 | 1): void {
+    if (runtimeCommandHistory.length === 0) return;
+    const next = Math.max(0, Math.min(runtimeCommandHistory.length, runtimeHistoryIndex + direction));
+    setRuntimeHistoryIndex(next);
+    setCommandInput(next === runtimeCommandHistory.length ? "" : runtimeCommandHistory[next]!);
+  }
+
+  function handleAnnotationAction(action: AnnotationAction): void {
+    try {
+      const intent = runtime.annotation(action.commandId, action.selectedHandles);
+      setRuntimeIntent({ kind: "annotation", commandId: intent.commandId, selectedHandles: intent.selectedHandles });
+      setActiveCommandPrompt(intent.commandId);
+      setStatus(`${intent.commandId}: typed annotation intent · ${intent.selectedHandles.length} eelvalitud`);
+    } catch (error) {
+      setStatus(`Annotatsiooni viga: ${error instanceof Error ? error.message : String(error)}`);
+    }
+  }
+
+  function handleBlockAction(action: BlockAction): void {
+    try {
+      const intent = runtime.block(action.commandId, action.selectedHandles);
+      setRuntimeIntent({ kind: "block", commandId: intent.commandId, selectedHandles: intent.selectedHandles });
+      setActiveCommandPrompt(intent.commandId);
+      setStatus(`${intent.commandId}: typed block intent · ${intent.selectedHandles.length} eelvalitud`);
+    } catch (error) {
+      setStatus(`Ploki viga: ${error instanceof Error ? error.message : String(error)}`);
+    }
+  }
+
+  function beginAnnotation(commandId: AnnotationCommandId, handles: readonly string[] = []): void {
+    try { handleAnnotationAction(runtime.annotation(commandId, handles)); }
+    catch (error) { setStatus(`Annotatsiooni viga: ${error instanceof Error ? error.message : String(error)}`); }
+  }
+
+  function beginBlock(commandId: BlockCommandId, handles: readonly string[] = []): void {
+    try { handleBlockAction(runtime.block(commandId, handles)); }
+    catch (error) { setStatus(`Ploki viga: ${error instanceof Error ? error.message : String(error)}`); }
+  }
+
+  function togglePrecision(mode: PrecisionToggleId): void {
+    setPrecision((current) => {
+      const next = { ...current, [mode]: !current[mode] };
+      setStatus(`${mode.toUpperCase()} ${next[mode] ? "ON" : "OFF"} · PrecisionFeatureModel`);
+      return next;
+    });
+  }
+
+  function switchDocument(nextState: DocumentTabsState, documentId: string): void {
+    const tab = nextState.tabs.find((candidate) => candidate.documentId === documentId);
+    if (!tab) return;
+    sessions.current.set(document.documentId, session.current);
+    const targetSession = sessions.current.get(documentId) ?? new CadSession(tab.document);
+    sessions.current.set(documentId, targetSession);
+    session.current = targetSession;
+    setDocument(targetSession.document);
+    setDocumentTabs(nextState);
+    setActiveLayoutId(tab.activeLayoutId);
+    setSelectedHandles([]);
+    setSelectedViewportId(null);
+    setModelViewportId(null);
+    setActiveCommandPrompt(null);
+    setRuntimeIntent(null);
+    setCommandInput("");
+    setStatus(`${tab.label} aktiivne · revision ${tab.document.revision}`);
+  }
+
+  function activateOpenDocument(documentId: string): void {
+    if (documentId === document.documentId) return;
+    const synchronized = updateDocumentTab(documentTabs, { document, activeLayoutId });
+    switchDocument(activateDocumentTab(synchronized, documentId), documentId);
+  }
+
+  function createOpenDocument(): void {
+    let documentId = `drawing-${nextDocumentSequence.current++}`;
+    while (documentTabs.tabs.some((tab) => tab.documentId === documentId)) documentId = `drawing-${nextDocumentSequence.current++}`;
+    const nextDocument = createEmptyDocument({ documentId });
+    sessions.current.set(document.documentId, session.current);
+    const nextSession = new CadSession(nextDocument);
+    sessions.current.set(documentId, nextSession);
+    const synchronized = updateDocumentTab(documentTabs, { document, activeLayoutId });
+    const nextState = openDocumentTab(synchronized, { document: nextDocument, sourceFileName: `${documentId}.kdraw` });
+    session.current = nextSession;
+    setDocument(nextDocument);
+    setDocumentTabs(nextState);
+    setActiveLayoutId("model");
+    setSelectedHandles([]);
+    setStatus(`${documentId}.kdraw loodud päris document-tabs mudelis`);
+  }
+
+  function closeOpenDocument(documentId: string): void {
+    if (documentTabs.tabs.length <= 1) {
+      setStatus("Vähemalt üks joonis peab jääma avatuks");
+      return;
+    }
+    const synchronized = documentId === document.documentId ? updateDocumentTab(documentTabs, { document, activeLayoutId }) : documentTabs;
+    const result = closeDocumentTab(synchronized, documentId, true);
+    if (!result.closed) return;
+    sessions.current.delete(documentId);
+    const nextId = result.state.activeDocumentId;
+    if (documentId === document.documentId && nextId) switchDocument(result.state, nextId);
+    else setDocumentTabs(result.state);
   }
 
   async function addRectangle(): Promise<void> {
@@ -1660,10 +1855,22 @@ export function App() {
   function updateModelPointer(event: React.PointerEvent<HTMLCanvasElement>): void {
     const rect = event.currentTarget.getBoundingClientRect();
     const pixel = { x: event.clientX - rect.left, y: event.clientY - rect.top };
-    const world = viewportScreenToWorld(modelViewport(rect.width, rect.height, window.devicePixelRatio || 1), pixel);
+    const cursorPoint = viewportScreenToWorld(modelViewport(rect.width, rect.height, window.devicePixelRatio || 1), pixel);
+    const resolved = runtime.precision.preview({
+      basePoint: { x: 0, y: 0 },
+      cursorPoint,
+      modes: {
+        ...(precision.ortho ? { ortho: true } : {}),
+        ...(precision.grid ? { grid: { spacingX: 25, spacingY: 25, origin: { x: 0, y: 0 } } } : {}),
+        aperture: precision.osnap || precision.otrack ? 12 : 0,
+      },
+      ...(precision.osnap ? { objectSnapCandidates: [] } : {}),
+      ...(precision.otrack ? { trackingCandidates: [] } : {}),
+    });
+    setPrecisionSource(resolved.source);
     setCursorReadout({
       pixel,
-      world: { x: Number(world.x.toFixed(6)), y: Number(world.y.toFixed(6)) },
+      world: { x: Number(resolved.point.x.toFixed(6)), y: Number(resolved.point.y.toFixed(6)) },
     });
     updateStretchDrag(event);
   }
@@ -2289,7 +2496,12 @@ export function App() {
       if (!committed) return;
       const next = session.current.document;
       await database.commitRevision(next, committed.operation);
+      sessions.current.set(next.documentId, session.current);
       setDocument(next);
+      setDocumentTabs((current) => markDocumentTabPersisted(updateDocumentTab(current, {
+        document: next,
+        activeLayoutId: next.layouts.some((layout) => layout.id === activeLayoutId) ? activeLayoutId : next.layouts[0]!.id,
+      }), next.documentId, next.revision));
       setActiveLayoutId((current) => next.layouts.some((layout) => layout.id === current) ? current : next.layouts[0]!.id);
       setSelectedHandles([]);
       setStatus(`UNDO taastatud, revision ${next.revision}`);
@@ -2308,7 +2520,12 @@ export function App() {
       if (!committed) return;
       const next = session.current.document;
       await database.commitRevision(next, committed.operation);
+      sessions.current.set(next.documentId, session.current);
       setDocument(next);
+      setDocumentTabs((current) => markDocumentTabPersisted(updateDocumentTab(current, {
+        document: next,
+        activeLayoutId: next.layouts.some((layout) => layout.id === activeLayoutId) ? activeLayoutId : next.layouts[0]!.id,
+      }), next.documentId, next.revision));
       setActiveLayoutId((current) => next.layouts.some((layout) => layout.id === current) ? current : next.layouts[0]!.id);
       setSelectedHandles([]);
       setStatus(`REDO taastatud, revision ${next.revision}`);
@@ -2319,44 +2536,42 @@ export function App() {
     }
   }
 
-  async function createLayer(): Promise<void> {
+  async function commitLayerPlan(plan: CadLayerPlan, success: string): Promise<void> {
     if (committing.current) return;
     committing.current = true;
     try {
-      let sequence = document.layers.length;
-      while (document.layers.some((layer) => layer.id === `layer-${sequence}`)) sequence += 1;
-      const layer = {
-        id: `layer-${sequence}`,
-        name: `Layer ${sequence}`,
-        visible: true,
-        frozen: false,
-        locked: false,
-        plottable: true,
-      };
-      await commitChanges("LAYER_NEW", { layerId: layer.id }, [
-        { type: "put-layer", layer },
-        { type: "set-current-layer", layerId: layer.id },
-      ], []);
-      setStatus(`${layer.name} loodud ja aktiivne`);
+      await commitChanges(plan.commandId, plan.args, plan.changes, []);
+      setStatus(success);
     } catch (error) {
-      await recoverFromStorageConflict(error);
+      if (error instanceof StorageRevisionConflictError) await recoverFromStorageConflict(error);
+      else setStatus(`LAYER viga: ${error instanceof Error ? error.message : String(error)}`);
     } finally {
       committing.current = false;
     }
   }
 
+  async function createLayer(): Promise<void> {
+    let sequence = document.layers.length;
+    while (document.layers.some((layer) => layer.name === `Layer ${sequence}`)) sequence += 1;
+    const name = `Layer ${sequence}`;
+    await commitLayerPlan(runtime.layers(document).create(name), `${name} loodud päris LayerFeatureModeli kaudu`);
+  }
+
   async function toggleActiveLayerLock(): Promise<void> {
-    if (committing.current) return;
-    committing.current = true;
-    try {
-      const next = { ...activeLayer, locked: !activeLayer.locked };
-      await commitChanges("LAYER_LOCK", { layerId: next.id, locked: next.locked }, [{ type: "put-layer", layer: next }], []);
-      setStatus(`${next.name} ${next.locked ? "lukustatud" : "avatud"}`);
-    } catch (error) {
-      await recoverFromStorageConflict(error);
-    } finally {
-      committing.current = false;
-    }
+    const locked = !activeLayer.locked;
+    await commitLayerPlan(runtime.layers(document).toggle(activeLayer.id, "locked", locked), `${activeLayer.name} ${locked ? "lukustatud" : "avatud"}`);
+  }
+
+  async function toggleLayer(layerId: string, property: CadLayerToggle, value: boolean): Promise<void> {
+    const layer = document.layers.find((candidate) => candidate.id === layerId);
+    if (!layer) return;
+    await commitLayerPlan(runtime.layers(document).toggle(layerId, property, value), `${layer.name}: ${property} ${value ? "ON" : "OFF"}`);
+  }
+
+  async function makeLayerCurrent(layerId: string): Promise<void> {
+    const layer = document.layers.find((candidate) => candidate.id === layerId);
+    if (!layer || layerId === document.currentLayerId) return;
+    await commitLayerPlan(runtime.layers(document).makeCurrent(layerId), `${layer.name} on aktiivne kiht`);
   }
 
   async function createLayout(): Promise<void> {
@@ -2611,6 +2826,7 @@ export function App() {
     const layout = document.layouts.find((candidate) => candidate.id === layoutId);
     if (!layout) return;
     setActiveLayoutId(layoutId);
+    setDocumentTabs((current) => setDocumentTabLayout(current, document.documentId, layoutId));
     setLayoutRenameInput(layout.name);
     setSelectedHandles([]);
     setSelectedViewportId(null);
@@ -3083,39 +3299,39 @@ export function App() {
         <div className="ribbon-primary" aria-label="Home ribbon">
           <section className="ribbon-panel ribbon-panel-draw" aria-label="Draw panel" data-ribbon-panel="draw">
             <div className="ribbon-panel-tools">
-              <RibbonTool rowId="F-001" label="Line" icon="line" large available pressed={activeCommandPrompt === "LINE"} onClick={() => { setActiveCommandPrompt("LINE"); setStatus("LINE Specify first point"); }} disabled={!modelSpaceEditing || activeLayer.locked} />
+              <RibbonTool rowId="F-001" label="Line" icon="line" large available={runtime.canExecute("F-001")} pressed={activeCommandPrompt === "LINE"} onClick={() => beginRuntimeCommand("LINE", "LINE Specify first point · sisesta kaks punkti käsureale")} disabled={!modelSpaceEditing || activeLayer.locked} />
               <div className="ribbon-tool-grid ribbon-tool-grid-dense">
-                <RibbonTool rowId="F-003" label="Rectangle" icon="rectangle" available pressed={activeCommandPrompt === "RECTANGLE"} onClick={() => { setActiveCommandPrompt("RECTANGLE"); setStatus("RECTANGLE Specify first corner point"); }} disabled={!modelSpaceEditing || activeLayer.locked} />
-                <RibbonTool rowId="F-002" label="Polyline" icon="polyline" available onClick={() => { setActiveCommandPrompt("POLYLINE"); setStatus("POLYLINE Specify start point"); }} disabled={!modelSpaceEditing || activeLayer.locked} />
-                <RibbonTool rowId="F-004" label="Circle" icon="circle" available onClick={() => { setActiveCommandPrompt("CIRCLE"); setStatus("CIRCLE Specify center point"); }} disabled={!modelSpaceEditing || activeLayer.locked} />
-                <RibbonTool rowId="F-005" label="Arc" icon="arc" available onClick={() => { setActiveCommandPrompt("ARC"); setStatus("ARC Specify start point"); }} disabled={!modelSpaceEditing || activeLayer.locked} />
-                <RibbonTool rowId="F-067" label="Hatch" icon="hatch" available onClick={() => { setActiveCommandPrompt("HATCH"); setStatus("HATCH Pick internal point"); }} disabled={!modelSpaceEditing || activeLayer.locked} />
-                <RibbonTool rowId="F-007" label="Ellipse" icon="ellipse" available onClick={() => { setActiveCommandPrompt("ELLIPSE"); setStatus("ELLIPSE Specify axis endpoint"); }} disabled={!modelSpaceEditing || activeLayer.locked} />
+                <RibbonTool rowId="F-003" label="Rectangle" icon="rectangle" available={runtime.canExecute("F-003")} pressed={activeCommandPrompt === "RECTANGLE"} onClick={() => beginRuntimeCommand("RECTANGLE", "RECTANGLE Specify two corner points on command line")} disabled={!modelSpaceEditing || activeLayer.locked} />
+                <RibbonTool rowId="F-002" label="Polyline" icon="polyline" />
+                <RibbonTool rowId="F-004" label="Circle" icon="circle" />
+                <RibbonTool rowId="F-005" label="Arc" icon="arc" />
+                <RibbonTool rowId="F-067" label="Hatch" icon="hatch" available={runtime.canExecute("F-067")} pressed={activeCommandPrompt === "HATCH"} onClick={() => beginAnnotation("HATCH", selectedHandles)} disabled={!modelSpaceEditing || activeLayer.locked || selectedHandles.length === 0} />
+                <RibbonTool rowId="F-007" label="Ellipse" icon="ellipse" />
               </div>
             </div>
             <strong>Draw</strong>
           </section>
           <section className="ribbon-panel ribbon-panel-modify" aria-label="Modify panel" data-ribbon-panel="modify">
             <div className="ribbon-panel-tools ribbon-tool-grid ribbon-tool-grid-dense">
-              <RibbonTool rowId="F-016" label="Move" icon="move" available pressed={activeCommandPrompt === "MOVE"} onClick={() => { setActiveCommandPrompt("MOVE"); setPreviewCommand("MOVE"); setStatus("MOVE Select objects"); }} disabled={!modelSpaceEditing} />
-              <RibbonTool rowId="F-017" label="Copy" icon="copy" available pressed={activeCommandPrompt === "COPY"} onClick={() => { setActiveCommandPrompt("COPY"); setPreviewCommand("COPY"); setStatus("COPY Select objects"); }} disabled={!modelSpaceEditing} />
-              <RibbonTool rowId="F-018" label="Rotate" icon="rotate" available pressed={activeCommandPrompt === "ROTATE"} onClick={() => { setActiveCommandPrompt("ROTATE"); setPreviewCommand("ROTATE"); setStatus("ROTATE Select objects"); }} disabled={!modelSpaceEditing} />
-              <RibbonTool rowId="F-020" label="Mirror" icon="mirror" available pressed={activeCommandPrompt === "MIRROR"} onClick={() => { setActiveCommandPrompt("MIRROR"); setPreviewCommand("MIRROR"); setStatus("MIRROR Select objects"); }} disabled={!modelSpaceEditing} />
-              <RibbonTool rowId="F-022" label="Trim" icon="trim" available pressed={activeCommandPrompt === "TRIM"} onClick={() => { setActiveCommandPrompt("TRIM"); setPreviewCommand("TRIM"); setStatus("TRIM Select cutting edges or objects to trim"); }} disabled={!modelSpaceEditing} />
-              <RibbonTool rowId="F-021" label="Offset" icon="offset" available pressed={activeCommandPrompt === "OFFSET"} onClick={() => { setActiveCommandPrompt("OFFSET"); setPreviewCommand("OFFSET"); setStatus("OFFSET Specify offset distance or Through"); }} disabled={!modelSpaceEditing} />
-              <RibbonTool rowId="F-027" label="Stretch" icon="stretch" available pressed={activeCommandPrompt === "STRETCH"} onClick={() => { setActiveCommandPrompt("STRETCH"); setPreviewCommand("STRETCH"); setStatus("STRETCH Specify crossing window"); }} disabled={!modelSpaceEditing} />
-              <RibbonTool rowId="F-019" label="Scale" icon="scale" available pressed={activeCommandPrompt === "SCALE"} onClick={() => { setActiveCommandPrompt("SCALE"); setPreviewCommand("SCALE"); setStatus("SCALE Select objects"); }} disabled={!modelSpaceEditing} />
-              <RibbonTool rowId="F-024" label="Fillet" icon="fillet" available pressed={activeCommandPrompt === "FILLET"} onClick={() => { setActiveCommandPrompt("FILLET"); setPreviewCommand("FILLET"); setStatus("FILLET Select first object"); }} disabled={!modelSpaceEditing} />
+              <RibbonTool rowId="F-016" label="Move" icon="move" available={runtime.canExecute("F-016")} pressed={activeCommandPrompt === "MOVE"} onClick={() => { setActiveCommandPrompt("MOVE"); setPreviewCommand("MOVE"); setStatus("MOVE Select objects"); }} disabled={!modelSpaceEditing} />
+              <RibbonTool rowId="F-017" label="Copy" icon="copy" available={runtime.canExecute("F-017")} pressed={activeCommandPrompt === "COPY"} onClick={() => { setActiveCommandPrompt("COPY"); setPreviewCommand("COPY"); setStatus("COPY Select objects"); }} disabled={!modelSpaceEditing} />
+              <RibbonTool rowId="F-018" label="Rotate" icon="rotate" available={runtime.canExecute("F-018")} pressed={activeCommandPrompt === "ROTATE"} onClick={() => { setActiveCommandPrompt("ROTATE"); setPreviewCommand("ROTATE"); setStatus("ROTATE Select objects"); }} disabled={!modelSpaceEditing} />
+              <RibbonTool rowId="F-020" label="Mirror" icon="mirror" available={runtime.canExecute("F-020")} pressed={activeCommandPrompt === "MIRROR"} onClick={() => { setActiveCommandPrompt("MIRROR"); setPreviewCommand("MIRROR"); setStatus("MIRROR Select objects"); }} disabled={!modelSpaceEditing} />
+              <RibbonTool rowId="F-022" label="Trim" icon="trim" available={runtime.canExecute("F-022")} pressed={activeCommandPrompt === "TRIM"} onClick={() => { setActiveCommandPrompt("TRIM"); setPreviewCommand("TRIM"); setStatus("TRIM Select cutting edges or objects to trim"); }} disabled={!modelSpaceEditing} />
+              <RibbonTool rowId="F-021" label="Offset" icon="offset" available={runtime.canExecute("F-021")} pressed={activeCommandPrompt === "OFFSET"} onClick={() => { setActiveCommandPrompt("OFFSET"); setPreviewCommand("OFFSET"); setStatus("OFFSET Specify offset distance or Through"); }} disabled={!modelSpaceEditing} />
+              <RibbonTool rowId="F-027" label="Stretch" icon="stretch" available={runtime.canExecute("F-027")} pressed={activeCommandPrompt === "STRETCH"} onClick={() => { setActiveCommandPrompt("STRETCH"); setPreviewCommand("STRETCH"); setStatus("STRETCH Specify crossing window"); }} disabled={!modelSpaceEditing} />
+              <RibbonTool rowId="F-019" label="Scale" icon="scale" available={runtime.canExecute("F-019")} pressed={activeCommandPrompt === "SCALE"} onClick={() => { setActiveCommandPrompt("SCALE"); setPreviewCommand("SCALE"); setStatus("SCALE Select objects"); }} disabled={!modelSpaceEditing} />
+              <RibbonTool rowId="F-024" label="Fillet" icon="fillet" available={runtime.canExecute("F-024")} pressed={activeCommandPrompt === "FILLET"} onClick={() => { setActiveCommandPrompt("FILLET"); setPreviewCommand("FILLET"); setStatus("FILLET Select first object"); }} disabled={!modelSpaceEditing} />
             </div>
             <strong>Modify</strong>
           </section>
           <section className="ribbon-panel ribbon-panel-annotation" aria-label="Annotation panel" data-ribbon-panel="annotation">
             <div className="ribbon-panel-tools">
-              <RibbonTool rowId="F-057" label="Text" icon="text" large available onClick={() => { setActiveCommandPrompt("TEXT"); setStatus("TEXT Specify insertion point"); }} disabled={!modelSpaceEditing || activeLayer.locked} />
+              <RibbonTool rowId="F-057" label="Text" icon="text" large available={runtime.canExecute("F-057")} pressed={activeCommandPrompt === "MTEXT"} onClick={() => beginAnnotation("MTEXT")} disabled={!modelSpaceEditing || activeLayer.locked} />
               <div className="ribbon-tool-grid ribbon-tool-grid-dense">
-                <RibbonTool rowId="F-061" label="Dimension" icon="dimension" available onClick={() => { setActiveCommandPrompt("DIM"); setStatus("DIM Select object"); }} disabled={!modelSpaceEditing || activeLayer.locked} />
-                <RibbonTool rowId="F-059" label="Leader" icon="leader" available onClick={() => { setActiveCommandPrompt("MLEADER"); setStatus("MLEADER Specify arrowhead location"); }} disabled={!modelSpaceEditing || activeLayer.locked} />
-                <RibbonTool rowId="F-068" label="Table" icon="table" available onClick={() => { setActiveCommandPrompt("TABLE"); setStatus("TABLE Specify insertion point"); }} disabled={!modelSpaceEditing || activeLayer.locked} />
+                <RibbonTool rowId="F-061" label="Dimension" icon="dimension" available={runtime.canExecute("F-061")} pressed={activeCommandPrompt === "DIMLINEAR"} onClick={() => beginAnnotation("DIMLINEAR", selectedHandles)} disabled={!modelSpaceEditing || activeLayer.locked} />
+                <RibbonTool rowId="F-059" label="Leader" icon="leader" available={runtime.canExecute("F-059")} pressed={activeCommandPrompt === "LEADER"} onClick={() => beginAnnotation("LEADER")} disabled={!modelSpaceEditing || activeLayer.locked} />
+                <RibbonTool rowId="F-068" label="Table" icon="table" />
               </div>
             </div>
             <strong>Annotation</strong>
@@ -3124,9 +3340,9 @@ export function App() {
             <div className="ribbon-layer-tools">
               <span className="ribbon-layer-current"><CadIcon name="layer" />{activeLayer.name}</span>
               <div className="ribbon-layer-actions">
-                <RibbonTool rowId="F-072" label="New layer" icon="layer" available onClick={() => void createLayer()} />
-                <RibbonTool rowId="F-074" label={activeLayer.locked ? "Unlock" : "Lock"} icon="lock" available onClick={() => void toggleActiveLayerLock()} />
-                <RibbonTool rowId="F-073" label="Make current" icon="current" available onClick={() => setStatus(`Current layer: ${activeLayer.name}`)} />
+                <RibbonTool rowId="F-072" label="New layer" icon="layer" available={runtime.canExecute("F-072")} onClick={() => void createLayer()} />
+                <RibbonTool rowId="F-074" label={activeLayer.locked ? "Unlock" : "Lock"} icon="lock" available={runtime.canExecute("F-074")} onClick={() => void toggleActiveLayerLock()} />
+                <RibbonTool rowId="F-073" label="Make current" icon="current" available={runtime.canExecute("F-073")} onClick={() => setStatus(`Current layer: ${activeLayer.name} · LayerFeatureModel`)} />
                 <RibbonTool rowId="F-081" label="Match layer" icon="match" />
               </div>
             </div>
@@ -3134,18 +3350,18 @@ export function App() {
           </section>
           <section className="ribbon-panel ribbon-panel-block" aria-label="Block panel" data-ribbon-panel="block">
             <div className="ribbon-panel-tools">
-              <RibbonTool rowId="F-087" label="Insert block" icon="block" large available onClick={() => { setActiveCommandPrompt("INSERT"); setStatus("INSERT Select block definition"); }} disabled={!modelSpaceEditing || activeLayer.locked} />
+              <RibbonTool rowId="F-088" label="Insert block" icon="block" large available={runtime.canExecute("F-088")} pressed={activeCommandPrompt === "INSERT"} onClick={() => beginBlock("INSERT")} disabled={!modelSpaceEditing || activeLayer.locked || selectedHandles.length > 0} />
               <div className="ribbon-tool-grid ribbon-tool-grid-dense">
-                <RibbonTool rowId="F-086" label="Create" icon="add" available onClick={() => { setActiveCommandPrompt("BLOCK"); setStatus("BLOCK Select objects"); }} disabled={!modelSpaceEditing} />
-                <RibbonTool rowId="F-088" label="Edit block" icon="edit" available onClick={() => setStatus("BEDIT Select block reference")} disabled={!modelSpaceEditing} />
-                <RibbonTool rowId="F-090" label="Attributes" icon="attribute" available onClick={() => setStatus("ATTEDIT Select block reference")} disabled={!modelSpaceEditing} />
+                <RibbonTool rowId="F-087" label="Create" icon="add" available={runtime.canExecute("F-087")} pressed={activeCommandPrompt === "BLOCK"} onClick={() => beginBlock("BLOCK", selectedHandles)} disabled={!modelSpaceEditing || selectedHandles.length === 0} />
+                <RibbonTool rowId="F-090" label="Edit block" icon="edit" available={runtime.canExecute("F-090")} pressed={activeCommandPrompt === "BEDIT"} onClick={() => beginBlock("BEDIT", selectedHandles)} disabled={!modelSpaceEditing || selectedHandles.length !== 1} />
+                <RibbonTool rowId="F-091" label="Attributes" icon="attribute" available={runtime.canExecute("F-091")} pressed={activeCommandPrompt === "ATTEDIT"} onClick={() => beginBlock("ATTEDIT", selectedHandles)} disabled={!modelSpaceEditing || selectedHandles.length !== 1} />
               </div>
             </div>
             <strong>Block</strong>
           </section>
           <section className="ribbon-panel ribbon-panel-properties" aria-label="Properties panel" data-ribbon-panel="properties">
             <div className="ribbon-panel-tools">
-              <RibbonTool rowId="F-030" label="Match properties" icon="match" large />
+              <RibbonTool rowId="F-030" label="Match properties" icon="match" large available={runtime.canExecute("F-030")} pressed={activeCommandPrompt === "MATCHPROP"} onClick={() => { setActiveCommandPrompt("MATCHPROP"); setPreviewCommand("MATCHPROP"); setStatus("MATCHPROP Select source object"); }} disabled={!modelSpaceEditing} />
               <div className="ribbon-property-stack">
                 <span><i className="property-swatch" />ByLayer</span>
                 <span>— ByLayer</span>
@@ -3779,7 +3995,7 @@ export function App() {
         )}
         </div>
       </Ribbon>
-      <DocumentTabs documentName={documentName} />
+      <DocumentTabs state={documentTabsReadback} onActivate={activateOpenDocument} onClose={closeOpenDocument} onNew={createOpenDocument} />
       <DrawingViewport paper={Boolean(activePaper)}>
         {activePaper ? (
           <div className="paper-space-desk" data-testid="paper-space-desk" ref={paperDesk}>
@@ -3928,7 +4144,11 @@ export function App() {
           <section className="layer-manager" aria-label="Layer Properties Manager">
             <header><strong>LAYER PROPERTIES MANAGER</strong><CadIcon name="close" /></header>
             <div className="layer-current"><span>Current layer: <strong>{activeLayer.name}</strong></span><label>Search for layer<input aria-label="Search for layer" value={layerFilterInput} onChange={(event) => setLayerFilterInput(event.target.value)} /></label></div>
-            <div className="layer-toolbar" aria-label="Layer tools"><CadIcon name="layer" /><CadIcon name="add" /><CadIcon name="remove" /><CadIcon name="current" /><CadIcon name="refresh" /><CadIcon name="settings" /></div>
+            <div className="layer-toolbar" aria-label="Layer tools">
+              <button type="button" aria-label="Loo uus kiht" onClick={() => void createLayer()}><CadIcon name="add" /></button>
+              <button type="button" aria-label="Tee valitud kiht aktiivseks" disabled={visiblePaletteLayers.length === 0} onClick={() => { const layer = visiblePaletteLayers.find((candidate) => candidate.id !== activeLayer.id); if (layer) void makeLayerCurrent(layer.id); }}><CadIcon name="current" /></button>
+              <span aria-hidden="true"><CadIcon name="layer" /></span><span aria-hidden="true"><CadIcon name="refresh" /></span><span aria-hidden="true"><CadIcon name="settings" /></span>
+            </div>
             <div className="layer-manager-body">
               <aside className="layer-filter-rail" aria-label="Layer filters">
                 <strong>Filters</strong>
@@ -3939,8 +4159,14 @@ export function App() {
               <div className="layer-grid" role="table" aria-label="Kihtide loend">
                 <div className="layer-grid-header" role="row"><span>Status</span><span>Name</span><span>On</span><span>Freeze</span><span>Lock</span><span>Plot</span><span>Color</span></div>
                 {visiblePaletteLayers.map((layer) => (
-                  <div className={layer.id === activeLayer.id ? "layer-grid-row active" : "layer-grid-row"} role="row" key={layer.id}>
-                    <span>{layer.id === activeLayer.id && <CadIcon name="current" />}</span><span>{layer.name}</span><span><CadIcon name={layer.visible ? "visible" : "hidden"} /></span><span><CadIcon name={layer.frozen ? "freeze" : "unfreeze"} /></span><span><CadIcon name="lock" className={layer.locked ? "is-on" : "is-off"} /></span><span><CadIcon name={layer.plottable ? "plot" : "unplot"} /></span><span><i className="layer-color-swatch" style={{ background: layer.appearance?.color ?? "#ffffff" }} />{layer.appearance?.color ?? "White"}</span>
+                  <div className={layer.id === activeLayer.id ? "layer-grid-row active" : "layer-grid-row"} role="row" key={layer.id} data-layer-id={layer.id}>
+                    <span><button type="button" aria-label={`Tee ${layer.name} aktiivseks`} disabled={layer.id === activeLayer.id || !layer.visible || layer.frozen} onClick={() => void makeLayerCurrent(layer.id)}>{layer.id === activeLayer.id ? <CadIcon name="current" /> : <CadIcon name="layer" />}</button></span>
+                    <span>{layer.name}</span>
+                    <span><button type="button" aria-label={`${layer.name} nähtavus`} aria-pressed={layer.visible} onClick={() => void toggleLayer(layer.id, "visible", !layer.visible)}><CadIcon name={layer.visible ? "visible" : "hidden"} /></button></span>
+                    <span><button type="button" aria-label={`${layer.name} külmutus`} aria-pressed={layer.frozen} disabled={layer.id === activeLayer.id} onClick={() => void toggleLayer(layer.id, "frozen", !layer.frozen)}><CadIcon name={layer.frozen ? "freeze" : "unfreeze"} /></button></span>
+                    <span><button type="button" aria-label={`${layer.name} lukustus`} aria-pressed={layer.locked} onClick={() => void toggleLayer(layer.id, "locked", !layer.locked)}><CadIcon name="lock" className={layer.locked ? "is-on" : "is-off"} /></button></span>
+                    <span><button type="button" aria-label={`${layer.name} plot`} aria-pressed={layer.plottable} onClick={() => void toggleLayer(layer.id, "plottable", !layer.plottable)}><CadIcon name={layer.plottable ? "plot" : "unplot"} /></button></span>
+                    <span><i className="layer-color-swatch" style={{ background: layer.appearance?.color ?? "#ffffff" }} />{layer.appearance?.color ?? "White"}</span>
                   </div>
                 ))}
                 {visiblePaletteLayers.length === 0 && <div className="layer-grid-empty">No matching layers</div>}
@@ -3976,9 +4202,16 @@ export function App() {
           <section><h2>Plot style</h2></section>
           <section><h2>View</h2></section>
           <section><h2>Data</h2></section>
+          <div className="runtime-tool-panels" aria-label="Runtime tool panels">
+            <AnnotationPanel selectedHandles={selectedHandles} onAction={handleAnnotationAction} />
+            <BlocksPanel selectedHandles={selectedHandles} onAction={handleBlockAction} />
+          </div>
+          <output className="runtime-intent-readback" aria-live="polite" data-runtime-intent-kind={runtimeIntent?.kind ?? "none"} data-runtime-command={runtimeIntent?.commandId ?? ""} data-runtime-selection={runtimeIntent?.selectedHandles.join(",") ?? ""}>
+            {runtimeIntent ? `${runtimeIntent.kind}: ${runtimeIntent.commandId}` : "Runtime valmis"}
+          </output>
         </PaletteFrame>
       </DrawingViewport>
-      <CommandLine status={status} activeCommand={activeCommandPrompt} historyOpen={commandHistoryOpen} history={commandHistory} onHistoryOpenChange={setCommandHistoryOpen} />
+      <CommandLine status={status} activeCommand={activeCommandPrompt} input={commandInput} historyOpen={commandHistoryOpen} history={commandHistory} documentName={documentName} onInputChange={setCommandInput} onSubmit={() => void executeRuntimeCommand()} onCancel={cancelRuntimeCommand} onHistoryNavigate={navigateRuntimeHistory} onHistoryOpenChange={setCommandHistoryOpen} />
       <LayoutBar layouts={document.layouts} activeLayoutId={activeLayout.id} activeSpace={activeSpace} onActivate={activateLayout} onCreate={() => void createLayout()}>
         <details className="layout-tools" data-testid="layout-tools">
           <summary aria-label="Layout tools"><CadIcon name="settings" /><span>Layout</span></summary>
@@ -4213,9 +4446,10 @@ export function App() {
       </LayoutBar>
       <StatusBar
         coordinates={cursorReadout ? `${cursorReadout.world.x.toFixed(4)}, ${cursorReadout.world.y.toFixed(4)}, 0.0000` : "0.0000, 0.0000, 0.0000"}
-        gridEnabled={gridEnabled}
+        precision={precision}
+        precisionSource={precisionSource}
         activeSpace={activeSpace}
-        onGridToggle={() => setGridEnabled((current) => !current)}
+        onPrecisionToggle={togglePrecision}
       />
     </CadShell>
   );
