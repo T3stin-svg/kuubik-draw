@@ -47,11 +47,13 @@ describe("F-041/F-042/F-044..F-047 shell pointer pipeline", () => {
     expect(direct.request.objectSnapCandidates?.some(({ kind }) => kind === "intersection")).toBe(true);
   });
 
-  it("returns a stable zero-distance frame even when cursor equals base", () => {
+  it("returns the exact base for zero distance without GRID/OSNAP inventing movement", () => {
     const contract = typedContract();
     const resolved = contract.preparePointer({ basePoint: { x: 2.5, y: -7.25 }, cursorPoint: { x: 2.5, y: -7.25 }, input: "0" }).resolve();
     expect(resolved.preview).toEqual(resolved.commit);
-    expect(resolved.commit).toMatchObject({ source: "grid", point: { x: 5, y: -5 } });
+    expect(resolved.commit).toMatchObject({ source: "direct-distance", point: { x: 2.5, y: -7.25 }, stages: [{ stage: "direct-distance", point: { x: 2.5, y: -7.25 } }] });
     expect(resolved.commit.parsedInput).toEqual({ kind: "direct-distance", distance: 0 });
+    expect(resolved.request.objectSnapCandidates).toEqual([]);
+    expect(resolved.request.trackingCandidates).toEqual([]);
   });
 });

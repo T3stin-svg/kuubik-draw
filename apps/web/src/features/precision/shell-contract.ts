@@ -255,7 +255,8 @@ export class PrecisionLayersShellContract {
             documentUnit: this.#unitsContract.drawingUnit,
           })
         : structuredClone(input.input);
-    const explicitCoordinate = normalizedInput !== undefined && normalizedInput.kind !== "direct-distance";
+    const explicitCoordinate = normalizedInput !== undefined
+      && (normalizedInput.kind !== "direct-distance" || normalizedInput.distance === 0);
     const candidateRequest = this.precision.prepareRequest({
       basePoint: { ...input.basePoint },
       cursorPoint: { ...input.cursorPoint },

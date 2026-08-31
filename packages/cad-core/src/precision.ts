@@ -91,6 +91,10 @@ export function resolvePrecisionPoint(request: PrecisionRequest): PrecisionResul
     const source = parsedInput.kind.endsWith("polar") ? "typed-polar" : "typed-cartesian";
     return { point: resolveCadPrecisionInput(parsedInput, request.basePoint), source, stages: [], parsedInput };
   }
+  if (parsedInput?.kind === "direct-distance" && parsedInput.distance === 0) {
+    const point = resolveCadPrecisionInput(parsedInput, request.basePoint);
+    return { point, source: "direct-distance", stages: [{ stage: "direct-distance", point }], parsedInput };
+  }
   const constrained = constrainedDirection(request.basePoint, request.cursorPoint, modes);
   const stages: Array<{ stage: string; point: CadPoint2 }> = [{ stage: constrained.source, point: constrained.point }];
   let point = parsedInput ? resolveCadPrecisionInput(parsedInput, request.basePoint, constrained.point) : constrained.point;
