@@ -1,3 +1,4 @@
+import type { CadSessionHistoryState } from "@kuubik/cad-core";
 import type { CadOperation, KDrawDocumentV1 } from "@kuubik/cad-schema";
 import { KDrawIndexedDb, type DocumentRecoveryResult } from "../../indexed-db.js";
 
@@ -27,9 +28,13 @@ export class DocumentAutosaveRecovery {
     await this.database.saveSnapshot(document);
   }
 
-  async commit(document: KDrawDocumentV1, operation: CadOperation): Promise<void> {
+  async commit(
+    document: KDrawDocumentV1,
+    operation: CadOperation,
+    sessionHistory?: CadSessionHistoryState,
+  ): Promise<void> {
     this.assertOpen(document.documentId);
-    await this.database.commitRevision(document, operation);
+    await this.database.commitRevision(document, operation, sessionHistory);
   }
 
   async close(documentId: string, revision: number, recordedAt?: string): Promise<void> {

@@ -60,7 +60,7 @@ function requireDocumentId(documentId: string): string {
 }
 
 /**
- * Browser-ready composition root for F-115, F-128 and F-133.
+ * Browser-ready composition root for F-115, F-128, F-129 and F-133.
  *
  * A candidate CadSession revision is exposed to tabs only after the append-only
  * IndexedDB transaction and its independent read-back have succeeded.
@@ -98,6 +98,7 @@ export class DocumentLiveOrchestrator {
       ...(input.selectedHandles === undefined ? {} : { selectedHandles: input.selectedHandles }),
       ...(input.viewport === undefined ? {} : { viewport: input.viewport }),
       appliedOperationIds: operations.filter((record) => !ignored.has(record.opId)).map((record) => record.opId),
+      sessionHistory: recovery.sessionHistory,
     });
     this.#tabs = openDocumentTab(this.#tabs, {
       document,
@@ -129,6 +130,10 @@ export class DocumentLiveOrchestrator {
     this.#tabs = setDocumentTabLayout(this.#tabs, id, layoutId);
   }
 
+  recordCommand(documentId: string, command: string): void {
+    this.#coordinator.recordCommand(requireDocumentId(documentId), command);
+  }
+
   document(documentId: string): KDrawDocumentV1 {
     return this.#coordinator.document(requireDocumentId(documentId));
   }
@@ -144,7 +149,7 @@ export class DocumentLiveOrchestrator {
       id,
       operation,
       changes,
-      (document, committedOperation) => this.#autosave.commit(document, committedOperation),
+      (document, committedOperation, history) => this.#autosave.commit(document, committedOperation, history),
       now,
     );
     return this.acceptPersistedDocument(id);
@@ -154,7 +159,7 @@ export class DocumentLiveOrchestrator {
     const id = requireDocumentId(documentId);
     const committed = await this.#coordinator.undoPersisted(
       id,
-      (document, operation) => this.#autosave.commit(document, operation),
+      (document, operation, history) => this.#autosave.commit(document, operation, history),
       now,
     );
     return committed ? this.acceptPersistedDocument(id) : null;
@@ -164,7 +169,7 @@ export class DocumentLiveOrchestrator {
     const id = requireDocumentId(documentId);
     const committed = await this.#coordinator.redoPersisted(
       id,
-      (document, operation) => this.#autosave.commit(document, operation),
+      (document, operation, history) => this.#autosave.commit(document, operation, history),
       now,
     );
     return committed ? this.acceptPersistedDocument(id) : null;

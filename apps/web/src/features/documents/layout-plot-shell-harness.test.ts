@@ -20,7 +20,7 @@ describe("F-096...F-107/F-114/F-115 browser-ready shell harness", () => {
       },
     }));
     expect(result.beforeCrash).toMatchObject({ revision: 12, activeLayoutId: "layout-1" });
-    expect(result.afterReload).toMatchObject({ revision: 12, activeLayoutId: "layout-1", canUndo: false, canRedo: false });
+    expect(result.afterReload).toMatchObject({ revision: 12, activeLayoutId: "layout-1", canUndo: true, canRedo: false });
     expect(result.afterReload.layouts[1]).toMatchObject({
       name: "SHEET A - ISSUE 1",
       paper: { widthMm: 420, heightMm: 297 },

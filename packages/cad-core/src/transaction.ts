@@ -56,6 +56,35 @@ export interface CommittedOperation {
   committedRevision: number;
 }
 
+export interface CadSessionHistoryState {
+  sequence: number;
+  undo: CommittedOperation[];
+  redo: CommittedOperation[];
+}
+
+export function assertCadSessionHistoryState(candidate: unknown): asserts candidate is CadSessionHistoryState {
+  if (!candidate || typeof candidate !== "object") throw new TypeError("CAD session history must be an object.");
+  const history = candidate as Partial<CadSessionHistoryState>;
+  if (!Number.isSafeInteger(history.sequence) || (history.sequence ?? -1) < 0) {
+    throw new RangeError("CAD session history sequence must be a non-negative integer.");
+  }
+  const operationIds = new Set<string>();
+  for (const [name, stack] of [["undo", history.undo], ["redo", history.redo]] as const) {
+    if (!Array.isArray(stack)) throw new TypeError(`CAD session ${name} history must be an array.`);
+    for (const committed of stack) {
+      if (!committed || typeof committed !== "object"
+        || !committed.operation || typeof committed.operation.opId !== "string" || !committed.operation.opId
+        || typeof committed.operation.commandId !== "string" || !committed.operation.commandId
+        || !Number.isSafeInteger(committed.committedRevision) || committed.committedRevision < 1
+        || !Array.isArray(committed.changes) || !Array.isArray(committed.inverseChanges)) {
+        throw new TypeError(`CAD session ${name} history contains an invalid committed operation.`);
+      }
+      if (operationIds.has(committed.operation.opId)) throw new TypeError(`CAD session history repeats operation ${committed.operation.opId}.`);
+      operationIds.add(committed.operation.opId);
+    }
+  }
+}
+
 export class RevisionConflictError extends Error {
   constructor(
     readonly expectedRevision: number,
@@ -529,11 +558,25 @@ export class CadSession {
   #sequence = 0;
   readonly #appliedOperationIds: Set<string>;
 
-  constructor(document: KDrawDocumentV1, appliedOperationIds: Iterable<string> = []) {
+  constructor(
+    document: KDrawDocumentV1,
+    appliedOperationIds: Iterable<string> = [],
+    history?: CadSessionHistoryState | null,
+  ) {
     assertKDrawDocumentV1(document);
     assertLayoutCollection(document.layouts);
     this.#document = structuredClone(document);
     this.#appliedOperationIds = new Set(appliedOperationIds);
+    if (history) {
+      assertCadSessionHistoryState(history);
+      const missing = [...history.undo, ...history.redo]
+        .map((committed) => committed.operation.opId)
+        .filter((opId) => !this.#appliedOperationIds.has(opId));
+      if (missing.length > 0) throw new TypeError(`CAD session history references unapplied operations: ${missing.join(", ")}.`);
+      this.#undo = structuredClone(history.undo);
+      this.#redo = structuredClone(history.redo);
+      this.#sequence = history.sequence;
+    }
   }
 
   get document(): KDrawDocumentV1 {
@@ -556,12 +599,12 @@ export class CadSession {
     return this.#redo.at(-1)?.operation.commandId ?? null;
   }
 
+  get history(): CadSessionHistoryState {
+    return structuredClone({ sequence: this.#sequence, undo: this.#undo, redo: this.#redo });
+  }
+
   fork(): CadSession {
-    const fork = new CadSession(this.#document, this.#appliedOperationIds);
-    fork.#undo = structuredClone(this.#undo);
-    fork.#redo = structuredClone(this.#redo);
-    fork.#sequence = this.#sequence;
-    return fork;
+    return new CadSession(this.#document, this.#appliedOperationIds, this.history);
   }
 
   commit(operation: CadOperation, changes: readonly CadChange[], now?: string): CommittedOperation {

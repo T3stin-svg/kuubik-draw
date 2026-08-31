@@ -6,6 +6,8 @@ Third-wave live integration source: `work3/reio-documents-live` from integrator 
 
 Fourth-wave layout/plot shell source: `work4/reio-documents-live` from integrator base `6bd651bff79e40f0b21c11e178af74cd477e9d11`.
 
+Fifth-wave document workspace source: `work5/reio-documents-live` from integrator base `dce6190f73d527b89d9f418a25f266243ebc2f41`.
+
 This workstream deliberately does not modify `App.tsx`, `style.css`, package manifests, parity scores or security evidence. The integration owner must wire the following surfaces without weakening the existing F-097...F-107, F-109, F-111 and F-114 paths.
 
 ## Shared package exports
@@ -44,6 +46,8 @@ The transaction module also exports `put-attachment` and `delete-attachment` `Ca
 - `documents-live-harness.html`: isolated real-Chromium IndexedDB runner; this test page is not part of `App.tsx`
 - `layout-plot-shell.ts`: DOM-independent F-096...F-107/F-114/F-115 caller contract over live document revisions, Layout/PageSetup/Plot primitives, vector PDF and underlay read-back
 - `layout-plot-shell-harness.ts` and `.html`: deterministic real-Chromium layout, rectangular viewport, scale/pan/twist/lock, page setup, named setup, publish, Undo/Redo and crash/reload fixture
+- `document-workspace-shell.ts`: DOM-independent F-128/F-129/F-130 contract for document switching, per-document command context, persisted atomic history and PGP-like aliases
+- `document-workspace-harness.ts` and `.html`: deterministic real-Chromium two-document isolation, undo-mark, crash/reload, stale-revision and alias roundtrip fixture
 - `indexed-db.ts`: schema v2 attachment, append-only snapshot/operation and crash-event methods
 
 `KDrawIndexedDb(factory, databaseName?)` accepts an optional isolated database name for non-destructive browser fixtures. Production callers retain the default `kuubik-draw` name.
@@ -57,6 +61,14 @@ The transaction module also exports `put-attachment` and `delete-attachment` `Ca
 `DocumentLiveOrchestrator.undo`/`redo` use `DocumentSessionCoordinator.undoPersisted`/`redoPersisted`: a candidate history state is persisted before it replaces the accepted session. A failed storage callback leaves revision, document and Undo/Redo stacks unchanged. If an active layout is removed by a commit or Undo, the coordinator reconciles the session and tab to Model before callers select an adjacent paper layout.
 
 The shell capability map is intentionally not a parity score. F-096...F-107/F-114 and F-115 are `candidate`; they still require the row-specific browser/AutoCAD/read-back chain before score changes. F-108 PC3/CTB/STB is `disabled`, while F-112/F-113/F-117/F-121 remain `disabled` with `NATIVE_SDK_UNAVAILABLE`.
+
+`DocumentWorkspaceShell` is the F-128/F-129/F-130 integration boundary. It keeps selection, viewport, active layout and command history on each document entry, rejects an expected revision before recording or mutating a command, and routes committed changes, explicit undo marks, Undo and Redo through `DocumentLiveOrchestrator`.
+
+`PgpAliasMapping` accepts UTF-8 `ALIAS, *COMMAND` text up to 1 MiB. Canonical command names are reserved and always win. Imported aliases override built-ins; repeated imported aliases use the last valid declaration and report each changed mapping as `incoming-wins`. Unknown commands, malformed lines, canonical-name replacement and invalid alias tokens reject the entire import before replacing the active map. Export is uppercase, alias-sorted CRLF text with a final CRLF, so export -> import -> export is bit-identical.
+
+Each enhanced operation record stores the post-operation `CadSessionHistoryState` and its own SHA-256 beside the existing document SHA chain in the same IndexedDB transaction. Recovery accepts history only from the last valid operation-log record. A history-only mutation quarantines that operation tail even if document revision and document SHA remain valid. Legacy records without history remain readable but return `sessionHistory: null` and do not claim recoverable Undo/Redo.
+
+The fifth-wave browser fixture is available at `/src/features/documents/document-workspace-harness.html`. It proves two isolated document contexts, an explicit SCALE undo mark, LINE/CIRCLE history separation, crash recovery, two Undo steps plus Redo, stale-revision rejection and bit-identical PGP alias export/import. F-128/F-129/F-130 remain `candidate`: `App.tsx`, visible keyboard routing and the owned AutoCAD comparison are outside this worktree.
 
 The deterministic browser fixture is available during development at `/src/features/documents/documents-live-harness.html`. Each run uses a fresh isolated database name, creates two documents, persists a PDF underlay atomically, simulates process loss by closing the database without clean events, corrupts one operation-log tail, reloads both documents and proves:
 
