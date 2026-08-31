@@ -5,6 +5,7 @@ import {
 import {
   assertKDrawDocumentV1,
   type CadAppearance,
+  type CadBlockDefinition,
   type CadDimensionStyle,
   type CadEntity,
   type CadHatchLoop,
@@ -56,7 +57,11 @@ export interface DxfImportReport {
   acadVersion: string;
   codePage: string;
   sourceByteLength: number;
+  sourceUnits: CadLinearUnit;
+  targetUnits: CadLinearUnit;
+  insertionScale: number;
   importedHandles: string[];
+  preservedProxyHandles: string[];
   skipped: DxfImportSkippedRecord[];
   warnings: string[];
 }
@@ -69,6 +74,10 @@ export interface DxfImportResult {
 export interface DxfImportOptions {
   documentId: string;
   now?: string;
+  /** Convert all drawing-unit geometry into these destination units. */
+  targetUnits?: CadLinearUnit;
+  /** Retain unsupported records as inert proxy entities for forensic read-back. */
+  preserveUnsupported?: boolean;
 }
 
 export class DxfImportError extends Error {
@@ -84,6 +93,27 @@ function normalizedName(value: string): string {
 
 function stableId(kind: string, name: string): string {
   return `dxf-${kind}:${encodeURIComponent(normalizedName(name))}`;
+}
+
+const SUPPORTED_ENTITY_TYPES = new Set([
+  "LINE", "RAY", "XLINE", "CIRCLE", "ARC", "ELLIPSE", "LWPOLYLINE", "SPLINE",
+  "TEXT", "MTEXT", "HATCH", "DIMENSION", "INSERT",
+]);
+
+const UNIT_TO_MM: Readonly<Record<Exclude<CadLinearUnit, "unitless">, number>> = Object.freeze({
+  in: 25.4,
+  ft: 304.8,
+  mm: 1,
+  cm: 10,
+  m: 1_000,
+});
+
+function insertionScale(source: CadLinearUnit, target: CadLinearUnit): number {
+  if (source === target) return 1;
+  if (source === "unitless" || target === "unitless") {
+    throw new DxfImportError(`DXF unit conversion ${source} -> ${target} requires an explicit unit interpretation outside the audited F-110 path.`);
+  }
+  return UNIT_TO_MM[source] / UNIT_TO_MM[target];
 }
 
 function decodeInput(input: string | Uint8Array): { text: string; byteLength: number } {
@@ -693,6 +723,7 @@ function parseEntity(
   linetypeIds: ReadonlyMap<string, string>,
   textStyleIds: ReadonlyMap<string, string>,
   dimensionStyleIds: ReadonlyMap<string, string>,
+  blockIds: ReadonlyMap<string, string>,
   usedHandles: Set<string>,
 ): CadEntity | null {
   const base = entityBase(record, layerIds, linetypeIds, usedHandles);
@@ -780,6 +811,34 @@ function parseEntity(
         styleId,
       };
     }
+    case "MTEXT": {
+      const label = `MTEXT ${base.handle}`;
+      auditedPlanarConic(record.pairs, label, [{ x: 10, y: 20, z: 30, name: "insertion" }]);
+      if (firstPair(record.pairs, 11) || firstPair(record.pairs, 21)) {
+        throw new DxfImportError(`${label} direction-vector rotation is outside the audited group-50 subset.`);
+      }
+      const styleName = textValue(record.pairs, 7, `${label} style`, false) ?? "Standard";
+      const styleId = textStyleIds.get(normalizedName(styleName));
+      if (!styleId) throw new DxfImportError(`${label} references missing style ${styleName}.`);
+      const height = singletonNumberValue(record.pairs, 40, `${label} height`)!;
+      if (!(height > 0)) throw new DxfImportError(`${label} height must be positive.`);
+      const width = singletonNumberValue(record.pairs, 41, `${label} width`, false) ?? 0;
+      if (width < 0) throw new DxfImportError(`${label} width must be non-negative.`);
+      const attachment = integerValue(record.pairs, 71, `${label} attachment`, false) ?? 1;
+      if (attachment < 1 || attachment > 9) throw new DxfImportError(`${label} attachment must be in 1..9.`);
+      const chunks = record.pairs.filter((pair) => pair.code === 3 || pair.code === 1);
+      if (!chunks.some((pair) => pair.code === 1)) throw new DxfImportError(`${label} is missing its final group 1 text chunk.`);
+      return {
+        kind: "mtext",
+        ...base,
+        position: pointValue(record.pairs, 10, 20, `${label} insertion`),
+        text: unescapeDxfText(chunks.map((pair) => pair.value).join(""), true),
+        height,
+        rotationRad: (singletonNumberValue(record.pairs, 50, `${label} rotation`, false) ?? 0) * Math.PI / 180,
+        styleId,
+        extensionData: { "kuubik.dxf.mtext.v1": { width, attachment } },
+      };
+    }
     case "HATCH":
       return parseHatch(record, base);
     case "DIMENSION": {
@@ -803,9 +862,162 @@ function parseEntity(
         ...(override && override !== "<>" ? { overrideText: unescapeDxfText(override, false) } : {}),
       };
     }
+    case "INSERT": {
+      const label = `INSERT ${base.handle}`;
+      auditedPlanarConic(record.pairs, label, [{ x: 10, y: 20, z: 30, name: "insertion" }]);
+      const blockName = textValue(record.pairs, 2, `${label} block`)!;
+      const blockId = blockIds.get(normalizedName(blockName));
+      if (!blockId) throw new DxfImportError(`${label} references missing block ${blockName}.`);
+      const scaleX = singletonNumberValue(record.pairs, 41, `${label} X scale`, false) ?? 1;
+      const scaleY = singletonNumberValue(record.pairs, 42, `${label} Y scale`, false) ?? 1;
+      const scaleZ = singletonNumberValue(record.pairs, 43, `${label} Z scale`, false) ?? 1;
+      if (!(scaleX !== 0 && scaleY !== 0) || Math.abs(scaleZ - 1) > 1e-9) {
+        throw new DxfImportError(`${label} requires non-zero planar X/Y scale and Z scale 1.`);
+      }
+      const columns = integerValue(record.pairs, 70, `${label} column count`, false) ?? 1;
+      const rows = integerValue(record.pairs, 71, `${label} row count`, false) ?? 1;
+      if (columns !== 1 || rows !== 1) throw new DxfImportError(`${label} MINSERT arrays are outside the audited single-reference subset.`);
+      return {
+        kind: "blockRef",
+        ...base,
+        blockId,
+        insertion: pointValue(record.pairs, 10, 20, `${label} insertion`),
+        scale: { x: scaleX, y: scaleY },
+        rotationRad: (singletonNumberValue(record.pairs, 50, `${label} rotation`, false) ?? 0) * Math.PI / 180,
+      };
+    }
     default:
       return null;
   }
+}
+
+function preserveProxyRecord(
+  record: DxfRecord,
+  layerIds: ReadonlyMap<string, string>,
+  linetypeIds: ReadonlyMap<string, string>,
+  usedHandles: Set<string>,
+): CadEntity | null {
+  if (!firstPair(record.pairs, 5) || !firstPair(record.pairs, 8)) return null;
+  const base = entityBase(record, layerIds, linetypeIds, usedHandles);
+  return {
+    kind: "proxy",
+    ...base,
+    originalType: record.type,
+    raw: { pairs: record.pairs.map((pair) => ({ code: pair.code, value: pair.value })) },
+  };
+}
+
+function parseBlocks(
+  blockSection: readonly DxfPair[] | undefined,
+  layerIds: ReadonlyMap<string, string>,
+  linetypeIds: ReadonlyMap<string, string>,
+  textStyleIds: ReadonlyMap<string, string>,
+  dimensionStyleIds: ReadonlyMap<string, string>,
+  usedHandles: Set<string>,
+  report: DxfImportReport,
+  preserveUnsupported: boolean,
+): { values: CadBlockDefinition[]; ids: Map<string, string> } {
+  if (!blockSection) return { values: [], ids: new Map() };
+  const all = records(blockSection);
+  const ids = new Map<string, string>();
+  for (const record of all.filter((candidate) => candidate.type === "BLOCK")) {
+    const name = textValue(record.pairs, 2, "BLOCK name")!;
+    const normalized = normalizedName(name);
+    if (ids.has(normalized)) throw new DxfImportError(`DXF contains duplicate block name ${name}.`);
+    ids.set(normalized, stableId("block", name));
+  }
+  const values: CadBlockDefinition[] = [];
+  for (let index = 0; index < all.length; index += 1) {
+    const begin = all[index]!;
+    if (begin.type !== "BLOCK") continue;
+    const beginHandle = textValue(begin.pairs, 5, "BLOCK handle")!;
+    registerHandle(beginHandle, usedHandles, "BLOCK");
+    const name = textValue(begin.pairs, 2, "BLOCK name")!;
+    const id = ids.get(normalizedName(name))!;
+    const basePoint = pointValue(begin.pairs, 10, 20, `BLOCK ${name} base point`);
+    const ignoredAutoCadBlock = /^\*(?:MODEL_SPACE|PAPER_SPACE|D\d+)$/iu.test(name);
+    const blockEntities: CadEntity[] = [];
+    let closed = false;
+    for (index += 1; index < all.length; index += 1) {
+      const record = all[index]!;
+      if (record.type === "ENDBLK") {
+        const endHandle = textValue(record.pairs, 5, `BLOCK ${name} ENDBLK handle`)!;
+        registerHandle(endHandle, usedHandles, `BLOCK ${name} ENDBLK`);
+        closed = true;
+        break;
+      }
+      if (record.type === "BLOCK") throw new DxfImportError(`BLOCK ${name} is missing ENDBLK.`);
+      const rawHandle = textValue(record.pairs, 5, `${record.type} handle`, false) ?? null;
+      if (ignoredAutoCadBlock) {
+        if (rawHandle) registerHandle(rawHandle, usedHandles, `${record.type} in ${name}`);
+        continue;
+      }
+      if (!SUPPORTED_ENTITY_TYPES.has(record.type)) {
+        let proxy: CadEntity | null = null;
+        if (preserveUnsupported) proxy = preserveProxyRecord(record, layerIds, linetypeIds, usedHandles);
+        else if (rawHandle) registerHandle(rawHandle, usedHandles, record.type);
+        report.skipped.push({ type: record.type, handle: rawHandle, reason: `DXF block ${name} contains an entity outside the F-110 audited import subset.` });
+        if (proxy) {
+          blockEntities.push(proxy);
+          report.preservedProxyHandles.push(proxy.handle);
+        }
+        continue;
+      }
+      const parsed = parseEntity(record, layerIds, linetypeIds, textStyleIds, dimensionStyleIds, ids, usedHandles);
+      if (!parsed) {
+        report.skipped.push({ type: record.type, handle: rawHandle, reason: `DXF block ${name} contains a paper-space-only entity.` });
+        continue;
+      }
+      blockEntities.push(parsed);
+      report.importedHandles.push(parsed.handle);
+    }
+    if (!closed) throw new DxfImportError(`BLOCK ${name} is missing ENDBLK.`);
+    // AutoCAD-owned Model/Paper and anonymous dimension blocks are represented
+    // by typed layouts/dimensions, not duplicated as editable user blocks.
+    if (!ignoredAutoCadBlock) values.push({ id, name, basePoint, entities: blockEntities });
+  }
+  uniqueNames(values, "block");
+  return { values, ids };
+}
+
+function scaledPoint(point: CadPoint2, factor: number): CadPoint2 {
+  return { x: point.x * factor, y: point.y * factor };
+}
+
+function scaleEntity(entity: CadEntity, factor: number): CadEntity {
+  const next = structuredClone(entity);
+  if (factor === 1) return next;
+  if (next.kind === "proxy") throw new DxfImportError(`DXF proxy ${next.handle} cannot be insertion-scaled without a licensed semantic adapter.`);
+  if (next.appearance?.thickness !== undefined) next.appearance.thickness *= factor;
+  switch (next.kind) {
+    case "line": next.start = scaledPoint(next.start, factor); next.end = scaledPoint(next.end, factor); break;
+    case "ray":
+    case "xline": next.basePoint = scaledPoint(next.basePoint, factor); break;
+    case "circle": next.center = scaledPoint(next.center, factor); next.radius *= factor; break;
+    case "arc": next.center = scaledPoint(next.center, factor); next.radius *= factor; break;
+    case "ellipse": next.center = scaledPoint(next.center, factor); next.majorAxis = scaledPoint(next.majorAxis, factor); break;
+    case "polyline": next.vertices = next.vertices.map((vertex) => ({
+      ...vertex,
+      x: vertex.x * factor,
+      y: vertex.y * factor,
+      ...(vertex.startWidth === undefined ? {} : { startWidth: vertex.startWidth * factor }),
+      ...(vertex.endWidth === undefined ? {} : { endWidth: vertex.endWidth * factor }),
+    })); break;
+    case "spline": next.controlPoints = next.controlPoints.map((point) => scaledPoint(point, factor)); break;
+    case "text":
+    case "mtext": next.position = scaledPoint(next.position, factor); next.height *= factor; {
+      const mtext = next.extensionData?.["kuubik.dxf.mtext.v1"];
+      if (mtext && typeof mtext === "object" && typeof (mtext as { width?: unknown }).width === "number") {
+        next.extensionData = { ...next.extensionData, "kuubik.dxf.mtext.v1": { ...mtext, width: (mtext as { width: number }).width * factor } };
+      }
+      break;
+    }
+    case "dimension": next.definitionPoints = next.definitionPoints.map((point) => scaledPoint(point, factor)); break;
+    case "hatch": next.loops = next.loops.map((loop) => ({ ...loop, vertices: loop.vertices.map((point) => scaledPoint(point, factor)) })); break;
+    case "blockRef": next.insertion = scaledPoint(next.insertion, factor); break;
+    case "leader": next.vertices = next.vertices.map((point) => scaledPoint(point, factor)); break;
+  }
+  return next;
 }
 
 export function importDxf(input: string | Uint8Array, options: DxfImportOptions): DxfImportResult {
@@ -820,7 +1032,6 @@ export function importDxf(input: string | Uint8Array, options: DxfImportOptions)
   const usedHandles = new Set<string>();
   registerSectionHandles(tables, usedHandles, "DXF table record");
   const blockSection = parsedSections.get("BLOCKS");
-  if (blockSection) registerSectionHandles(blockSection, usedHandles, "DXF block record");
   const objectSection = parsedSections.get("OBJECTS");
   if (objectSection) registerSectionHandles(objectSection, usedHandles, "DXF object record");
   const headers = headerVariables(header);
@@ -828,8 +1039,10 @@ export function importDxf(input: string | Uint8Array, options: DxfImportOptions)
   const codePage = requireHeader(headers, "$DWGCODEPAGE").value.trim();
   if (normalizedName(codePage) !== "ANSI_1252") throw new DxfImportError(`DXF code page ${codePage} is outside the audited ANSI_1252 path.`);
   const rawUnits = Number(requireHeader(headers, "$INSUNITS").value.trim());
-  const units = INSUNITS[rawUnits];
-  if (!units) throw new DxfImportError(`DXF INSUNITS ${rawUnits} is unsupported.`);
+  const sourceUnits = INSUNITS[rawUnits];
+  if (!sourceUnits) throw new DxfImportError(`DXF INSUNITS ${rawUnits} is unsupported.`);
+  const targetUnits = options.targetUnits ?? sourceUnits;
+  const scale = insertionScale(sourceUnits, targetUnits);
 
   const linetypes = parseLinetypes(tables);
   const textStyles = parseTextStyles(tables);
@@ -843,20 +1056,42 @@ export function importDxf(input: string | Uint8Array, options: DxfImportOptions)
     acadVersion,
     codePage,
     sourceByteLength: decoded.byteLength,
+    sourceUnits,
+    targetUnits,
+    insertionScale: scale,
     importedHandles: [],
+    preservedProxyHandles: [],
     skipped: [],
     warnings: [],
   };
+  if (scale !== 1) report.warnings.push(`Applied deterministic insertion scale ${scale} for ${sourceUnits} -> ${targetUnits}.`);
+  const blocks = parseBlocks(
+    blockSection,
+    layers.ids,
+    linetypes.ids,
+    textStyles.ids,
+    dimensionStyles.ids,
+    usedHandles,
+    report,
+    options.preserveUnsupported ?? false,
+  );
   const entities: CadEntity[] = [];
   for (const record of records(entitySection)) {
     if (["ENDSEC", "EOF"].includes(record.type)) continue;
     const rawHandle = textValue(record.pairs, 5, `${record.type} handle`, false) ?? null;
-    if (!["LINE", "RAY", "XLINE", "CIRCLE", "ARC", "ELLIPSE", "LWPOLYLINE", "SPLINE", "TEXT", "HATCH", "DIMENSION"].includes(record.type)) {
-      if (rawHandle) registerHandle(rawHandle, usedHandles, record.type);
+    if (!SUPPORTED_ENTITY_TYPES.has(record.type)) {
+      let proxy: CadEntity | null = null;
+      if (options.preserveUnsupported) proxy = preserveProxyRecord(record, layers.ids, linetypes.ids, usedHandles);
+      else if (rawHandle) registerHandle(rawHandle, usedHandles, record.type);
       report.skipped.push({ type: record.type, handle: rawHandle, reason: "DXF entity type is outside the F-111 audited import subset." });
+      if (proxy) {
+        entities.push(proxy);
+        report.importedHandles.push(proxy.handle);
+        report.preservedProxyHandles.push(proxy.handle);
+      }
       continue;
     }
-    const parsed = parseEntity(record, layers.ids, linetypes.ids, textStyles.ids, dimensionStyles.ids, usedHandles);
+    const parsed = parseEntity(record, layers.ids, linetypes.ids, textStyles.ids, dimensionStyles.ids, blocks.ids, usedHandles);
     if (!parsed) {
       report.skipped.push({ type: record.type, handle: rawHandle, reason: "Paper-space entities are outside the F-111 model-space import subset." });
       continue;
@@ -865,13 +1100,31 @@ export function importDxf(input: string | Uint8Array, options: DxfImportOptions)
     report.importedHandles.push(parsed.handle);
   }
 
-  const document = createEmptyDocument({ documentId: options.documentId, ...(options.now ? { now: options.now } : {}), units });
+  const scaledLayers = layers.values.map((layer) => {
+    const next = structuredClone(layer);
+    if (scale !== 1 && next.appearance?.thickness !== undefined) next.appearance.thickness *= scale;
+    return next;
+  });
+  const scaledLinetypes = linetypes.values.map((linetype) => ({ ...structuredClone(linetype), pattern: linetype.pattern.map((value) => value * scale) }));
+  const scaledDimensionStyles = dimensionStyles.values.map((style) => ({
+    ...structuredClone(style),
+    textHeight: style.textHeight * scale,
+    arrowSize: style.arrowSize * scale,
+    extensionOffset: style.extensionOffset * scale,
+  }));
+  const scaledBlocks = blocks.values.map((block) => ({
+    ...structuredClone(block),
+    basePoint: scaledPoint(block.basePoint, scale),
+    entities: block.entities.map((entity) => scaleEntity(entity, scale)),
+  }));
+  const document = createEmptyDocument({ documentId: options.documentId, ...(options.now ? { now: options.now } : {}), units: targetUnits });
   document.currentLayerId = currentLayerId;
-  document.entities = entities;
-  document.layers = layers.values;
-  document.linetypes = linetypes.values;
+  document.entities = entities.map((entity) => scaleEntity(entity, scale));
+  document.layers = scaledLayers;
+  document.linetypes = scaledLinetypes;
   document.textStyles = textStyles.values;
-  document.dimensionStyles = dimensionStyles.values;
+  document.dimensionStyles = scaledDimensionStyles;
+  document.blocks = scaledBlocks;
   document.metadata.source = `DXF ${acadVersion} ${codePage}`;
   assertKDrawDocumentV1(document);
   return { document, report };

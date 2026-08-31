@@ -1,5 +1,6 @@
 import type {
   CadAppearance,
+  CadBlockDefinition,
   CadDimension,
   CadEntity,
   CadLayer,
@@ -43,6 +44,8 @@ interface Context {
   dimensionStyles: Map<string, string>;
   handleMap: ReadonlyMap<string, string>;
   dimensionBlocks: Map<string, string>;
+  blockNames: Map<string, string>;
+  ownerHandles: Map<string, string>;
   infrastructure: InfrastructureHandles;
 }
 
@@ -54,6 +57,9 @@ interface InfrastructureHandles {
   dimensionBlockRecords: string[];
   dimensionBlockBegins: string[];
   dimensionBlockEnds: string[];
+  userBlockRecords: string[];
+  userBlockBegins: string[];
+  userBlockEnds: string[];
   used: Set<string>;
 }
 
@@ -109,6 +115,13 @@ function createInfrastructureHandles(document: KDrawDocumentV1, dimensionCount: 
     dimensionBlockBegins.push(allocateHandle(used, 0x700n + BigInt(index * 2)));
     dimensionBlockEnds.push(allocateHandle(used, 0x701n + BigInt(index * 2)));
   }
+  const userBlockRecords = allocateRange(0x800n, document.blocks.length);
+  const userBlockBegins: string[] = [];
+  const userBlockEnds: string[] = [];
+  for (let index = 0; index < document.blocks.length; index += 1) {
+    userBlockBegins.push(allocateHandle(used, 0x900n + BigInt(index * 2)));
+    userBlockEnds.push(allocateHandle(used, 0x901n + BigInt(index * 2)));
+  }
   return {
     linetypes: allocateRange(0x200n, 3 + document.linetypes.length),
     layers: allocateRange(0x300n, layerCount),
@@ -117,6 +130,9 @@ function createInfrastructureHandles(document: KDrawDocumentV1, dimensionCount: 
     dimensionBlockRecords,
     dimensionBlockBegins,
     dimensionBlockEnds,
+    userBlockRecords,
+    userBlockBegins,
+    userBlockEnds,
     used,
   };
 }
@@ -284,7 +300,7 @@ function appearanceRows(context: Context, entity: CadEntity): string {
 function header(context: Context, type: string, entity: CadEntity): string {
   const handle = context.handleMap.get(entity.handle);
   if (!handle) throw new TypeError(`Missing allocated DXF handle for CAD entity: ${entity.handle}`);
-  return pair(0, type) + pair(5, handle) + pair(330, "1A") +
+  return pair(0, type) + pair(5, handle) + pair(330, context.ownerHandles.get(entity.handle) ?? "1A") +
     pair(100, "AcDbEntity") + pair(8, layerName(context, entity.layerId)) + appearanceRows(context, entity);
 }
 
@@ -442,17 +458,33 @@ function emitEntity(context: Context, entity: CadEntity): { text: string | null;
       const style = entity.styleId ? context.textStyles.get(entity.styleId) : undefined;
       if (entity.styleId && !style) throw new RangeError(`DXF text references missing style: ${entity.styleId}`);
       const styleName = style ? symbolName(style.name, "text style") : "Standard";
+      const mtextData = entity.kind === "mtext" ? entity.extensionData?.["kuubik.dxf.mtext.v1"] : undefined;
+      const width = mtextData && typeof mtextData === "object" && typeof (mtextData as { width?: unknown }).width === "number"
+        ? (mtextData as { width: number }).width : 0;
+      const attachment = mtextData && typeof mtextData === "object" && Number.isInteger((mtextData as { attachment?: unknown }).attachment)
+        ? (mtextData as { attachment: number }).attachment : 1;
+      if (entity.kind === "mtext" && (width < 0 || attachment < 1 || attachment > 9)) throw new TypeError(`DXF MTEXT ${entity.handle} has invalid width or attachment.`);
       const text = entity.kind === "text"
         ? header(context, "TEXT", entity) + pair(100, "AcDbText") + point(10, 20, entity.position) + pair(40, num(entity.height)) +
           pair(1, escapedText(entity.text, false)) + pair(50, num(entity.rotationRad * 180 / Math.PI)) + pair(7, styleName) + pair(100, "AcDbText")
         : header(context, "MTEXT", entity) + pair(100, "AcDbMText") + point(10, 20, entity.position) + pair(40, num(entity.height)) +
-          pair(41, 0) + pair(71, 1) + pair(1, escapedText(entity.text, true)) + pair(7, styleName) + pair(50, num(entity.rotationRad));
+          pair(41, num(width)) + pair(71, attachment) + pair(1, escapedText(entity.text, true)) + pair(7, styleName) + pair(50, num(entity.rotationRad * 180 / Math.PI));
       return { text, points: [entity.position] };
     }
     case "dimension": return emitDimension(context, entity);
     case "hatch": return emitHatch(context, entity);
+    case "blockRef": {
+      if (entity.attributes && Object.keys(entity.attributes).length > 0) return { text: null, points: [] };
+      const blockName = context.blockNames.get(entity.blockId);
+      if (!blockName) throw new RangeError(`DXF INSERT ${entity.handle} references missing block ${entity.blockId}.`);
+      if (!(entity.scale.x !== 0 && entity.scale.y !== 0)) throw new TypeError(`DXF INSERT ${entity.handle} scale must be non-zero.`);
+      return {
+        text: header(context, "INSERT", entity) + pair(100, "AcDbBlockReference") + pair(2, blockName) + point(10, 20, entity.insertion) +
+          pair(41, num(entity.scale.x)) + pair(42, num(entity.scale.y)) + pair(43, 1) + pair(50, num(entity.rotationRad * 180 / Math.PI)),
+        points: [entity.insertion],
+      };
+    }
     case "leader":
-    case "blockRef":
     case "proxy": return { text: null, points: [] };
   }
 }
@@ -566,24 +598,47 @@ function appIdTable(document: KDrawDocumentV1): string {
       : "") + pair(0, "ENDTAB");
 }
 
-function blockTable(names: readonly string[], infrastructure: InfrastructureHandles): string {
-  let text = pair(0, "TABLE") + pair(2, "BLOCK_RECORD") + pair(5, "9") + pair(330, 0) + pair(100, "AcDbSymbolTable") + pair(70, names.length + 2);
-  ["*Model_Space", "*Paper_Space", ...names].forEach((name, index) => {
-    const handle = index === 0 ? "1A" : index === 1 ? "1B" : infrastructure.dimensionBlockRecords[index - 2]!;
+function blockTable(dimensionNames: readonly string[], userBlocks: readonly CadBlockDefinition[], infrastructure: InfrastructureHandles): string {
+  const names = ["*Model_Space", "*Paper_Space", ...dimensionNames, ...userBlocks.map((block) => symbolName(block.name, "block"))];
+  if (new Set(names.map((name) => name.toUpperCase())).size !== names.length) throw new TypeError("Duplicate DXF block name.");
+  let text = pair(0, "TABLE") + pair(2, "BLOCK_RECORD") + pair(5, "9") + pair(330, 0) + pair(100, "AcDbSymbolTable") + pair(70, names.length);
+  names.forEach((name, index) => {
+    const customIndex = index - 2 - dimensionNames.length;
+    const handle = index === 0 ? "1A" : index === 1 ? "1B"
+      : customIndex < 0 ? infrastructure.dimensionBlockRecords[index - 2]!
+        : infrastructure.userBlockRecords[customIndex]!;
     text += pair(0, "BLOCK_RECORD") + pair(5, handle) + pair(330, "9") + pair(100, "AcDbSymbolTableRecord") + pair(100, "AcDbBlockTableRecord") + pair(2, name);
   });
   return text + pair(0, "ENDTAB");
 }
 
-function block(name: string, record: string, begin: string, end: string): string {
+function emptyBlock(name: string, record: string, begin: string, end: string): string {
   return pair(0, "BLOCK") + pair(5, begin) + pair(330, record) + pair(100, "AcDbEntity") + pair(8, 0) + pair(100, "AcDbBlockBegin") +
     pair(2, name) + pair(70, 0) + point(10, 20, { x: 0, y: 0 }) + pair(3, name) + pair(1, "") + pair(0, "ENDBLK") +
     pair(5, end) + pair(330, record) + pair(100, "AcDbEntity") + pair(8, 0) + pair(100, "AcDbBlockEnd");
 }
 
-function blocks(names: readonly string[], infrastructure: InfrastructureHandles): string {
-  let text = pair(0, "SECTION") + pair(2, "BLOCKS") + block("*Model_Space", "1A", "18", "19") + block("*Paper_Space", "1B", "1C", "1D");
-  names.forEach((name, index) => { text += block(name, infrastructure.dimensionBlockRecords[index]!, infrastructure.dimensionBlockBegins[index]!, infrastructure.dimensionBlockEnds[index]!); });
+function blocks(
+  context: Context,
+  dimensionNames: readonly string[],
+  infrastructure: InfrastructureHandles,
+  emittedHandles: string[],
+): string {
+  let text = pair(0, "SECTION") + pair(2, "BLOCKS") + emptyBlock("*Model_Space", "1A", "18", "19") + emptyBlock("*Paper_Space", "1B", "1C", "1D");
+  dimensionNames.forEach((name, index) => { text += emptyBlock(name, infrastructure.dimensionBlockRecords[index]!, infrastructure.dimensionBlockBegins[index]!, infrastructure.dimensionBlockEnds[index]!); });
+  context.document.blocks.forEach((definition, index) => {
+    const name = symbolName(definition.name, "block");
+    const record = infrastructure.userBlockRecords[index]!;
+    text += pair(0, "BLOCK") + pair(5, infrastructure.userBlockBegins[index]!) + pair(330, record) + pair(100, "AcDbEntity") + pair(8, 0) + pair(100, "AcDbBlockBegin") +
+      pair(2, name) + pair(70, 0) + point(10, 20, definition.basePoint) + pair(3, name) + pair(1, "");
+    for (const entity of definition.entities) {
+      const output = emitEntity(context, entity);
+      if (!output.text) throw new TypeError(`DXF block ${definition.id} contains unsupported ${entity.kind} entity ${entity.handle}.`);
+      text += output.text;
+      emittedHandles.push(entity.handle);
+    }
+    text += pair(0, "ENDBLK") + pair(5, infrastructure.userBlockEnds[index]!) + pair(330, record) + pair(100, "AcDbEntity") + pair(8, 0) + pair(100, "AcDbBlockEnd");
+  });
   return text + pair(0, "ENDSEC");
 }
 
@@ -612,7 +667,7 @@ function bounds(points: readonly CadPoint2[]): DxfReadbackSummary["extents"] {
 export function exportDxf(document: KDrawDocumentV1): DxfExportResult {
   const dimensionEntities = document.entities.filter((entity): entity is CadDimension => entity.kind === "dimension");
   const infrastructure = createInfrastructureHandles(document, dimensionEntities.length);
-  const handleMap = mapHandles(document.entities, infrastructure.used);
+  const handleMap = mapHandles([...document.blocks.flatMap((block) => block.entities), ...document.entities], infrastructure.used);
   const dimensionBlocks = new Map(dimensionEntities.map((entity, index) => [entity.handle, `*D${index + 1}`]));
   const dimensionStyles = new Map(document.dimensionStyles.map((style) => [style.id, symbolName(style.name, "dimension style")]));
   if (!dimensionStyles.size) dimensionStyles.set("Standard", "Standard");
@@ -620,17 +675,22 @@ export function exportDxf(document: KDrawDocumentV1): DxfExportResult {
   if (!dxfTextStyles.some((value) => value.name.toUpperCase() === "STANDARD")) dxfTextStyles.unshift({ id: "builtin-standard", name: "Standard", fontFamily: "txt", widthFactor: 1, obliqueAngleRad: 0 });
   const textStyleHandles = new Map(dxfTextStyles.map((style, index) => [style.id, infrastructure.textStyles[index]!]));
   const standardTextStyle = dxfTextStyles.find((style) => style.name.toUpperCase() === "STANDARD")!;
-  const context: Context = { document, layers: uniqueMap(document.layers, "layer"), linetypes: uniqueMap(document.linetypes, "linetype"), textStyles: uniqueMap(document.textStyles, "text style"), dxfTextStyles, textStyleHandles, standardTextStyleHandle: textStyleHandles.get(standardTextStyle.id)!, dimensionStyles, handleMap, dimensionBlocks, infrastructure };
+  const blockNames = new Map(document.blocks.map((block) => [block.id, symbolName(block.name, "block")]));
+  if (blockNames.size !== document.blocks.length) throw new TypeError("Duplicate CAD block id.");
+  const ownerHandles = new Map<string, string>();
+  document.blocks.forEach((block, index) => block.entities.forEach((entity) => ownerHandles.set(entity.handle, infrastructure.userBlockRecords[index]!)));
+  const context: Context = { document, layers: uniqueMap(document.layers, "layer"), linetypes: uniqueMap(document.linetypes, "linetype"), textStyles: uniqueMap(document.textStyles, "text style"), dxfTextStyles, textStyleHandles, standardTextStyleHandle: textStyleHandles.get(standardTextStyle.id)!, dimensionStyles, handleMap, dimensionBlocks, blockNames, ownerHandles, infrastructure };
   if (!context.layers.has(document.currentLayerId)) throw new RangeError(`Current layer does not exist: ${document.currentLayerId}`);
   const emittedHandles: string[] = [];
   const skipped: DxfExportReport["skipped"] = [];
+  const names = [...dimensionBlocks.values()];
+  const blockText = blocks(context, names, infrastructure, emittedHandles);
   let entityText = "";
   for (const entity of document.entities) {
     const output = emitEntity(context, entity);
     if (output.text) { entityText += output.text; emittedHandles.push(entity.handle); }
     else skipped.push({ handle: entity.handle, kind: entity.kind, reason: "DXF adapter not implemented for this entity kind." });
   }
-  const names = [...dimensionBlocks.values()];
   const maximumHandle = [...infrastructure.used].reduce((maximum, value) => {
     const current = BigInt(`0x${value}`);
     return current > maximum ? current : maximum;
@@ -640,9 +700,9 @@ export function exportDxf(document: KDrawDocumentV1): DxfExportResult {
     pair(9, "$INSUNITS") + pair(70, INSUNITS[document.units.linear]) + pair(9, "$MEASUREMENT") + pair(70, ["mm", "cm", "m"].includes(document.units.linear) ? 1 : 0) +
     pair(9, "$CLAYER") + pair(8, layerName(context, document.currentLayerId)) + pair(9, "$HANDSEED") + pair(5, handseed) + pair(0, "ENDSEC");
   const tables = pair(0, "SECTION") + pair(2, "TABLES") + viewportTable() + linetypeTable(document, infrastructure.linetypes) + layerTable(context) + styleTable(context) +
-    emptyTable("VIEW", "7") + emptyTable("UCS", "6") + appIdTable(document) + dimstyleTable(context) + blockTable(names, infrastructure) + pair(0, "ENDSEC");
+    emptyTable("VIEW", "7") + emptyTable("UCS", "6") + appIdTable(document) + dimstyleTable(context) + blockTable(names, document.blocks, infrastructure) + pair(0, "ENDSEC");
   const classes = pair(0, "SECTION") + pair(2, "CLASSES") + pair(0, "ENDSEC");
-  const text = fileHeader + classes + tables + blocks(names, infrastructure) + pair(0, "SECTION") + pair(2, "ENTITIES") + entityText +
+  const text = fileHeader + classes + tables + blockText + pair(0, "SECTION") + pair(2, "ENTITIES") + entityText +
     pair(0, "ENDSEC") + objectsSection() + pair(0, "EOF");
   return { text, bytes: encodeDxfWindows1252(text), report: { emittedHandles, handleMap: Object.fromEntries(handleMap), skipped } };
 }
