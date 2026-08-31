@@ -1,5 +1,6 @@
 import {
   assertKDrawDocumentV1,
+  type CadAttachmentRef,
   type CadBlockDefinition,
   type CadDocumentMetadata,
   type CadDimensionStyle,
@@ -31,6 +32,8 @@ export type CadChange =
   | { type: "set-current-layer"; layerId: string }
   | DrawingContentChange
   | { type: "set-layouts"; layouts: CadLayout[] }
+  | { type: "put-attachment"; attachment: CadAttachmentRef; index?: number }
+  | { type: "delete-attachment"; attachmentId: string }
   | { type: "set-metadata"; metadata: CadDocumentMetadata }
   | { type: "undo-mark" };
 
@@ -79,6 +82,15 @@ export class DuplicateOperationError extends Error {
 
 function cloneEntity(entity: CadEntity): CadEntity {
   return structuredClone(entity);
+}
+
+function assertAttachmentRef(attachment: CadAttachmentRef): void {
+  if (!attachment.id.trim()) throw new TypeError("Attachment id is required.");
+  if (!attachment.mediaType.trim()) throw new TypeError(`Attachment ${attachment.id} media type is required.`);
+  if (!attachment.fileName.trim()) throw new TypeError(`Attachment ${attachment.id} file name is required.`);
+  if (!/^[0-9a-f]{64}$/u.test(attachment.sha256)) {
+    throw new TypeError(`Attachment ${attachment.id} requires a lowercase SHA-256 digest.`);
+  }
 }
 
 export function replaceDrawingContent(document: KDrawDocumentV1): DrawingContentChange {
@@ -301,6 +313,7 @@ export function applyAtomicOperation(
   let textStyles = structuredClone(source.textStyles);
   let dimensionStyles = structuredClone(source.dimensionStyles);
   let blocks = structuredClone(source.blocks);
+  let attachments = structuredClone(source.attachments);
   let currentLayerId = source.currentLayerId;
   let layouts = structuredClone(source.layouts);
   let metadata = structuredClone(source.metadata);
@@ -426,6 +439,28 @@ export function applyAtomicOperation(
       layouts = structuredClone(change.layouts);
       continue;
     }
+    if (change.type === "put-attachment") {
+      assertAttachmentRef(change.attachment);
+      if (attachments.some((attachment) => attachment.id === change.attachment.id)) {
+        throw new RangeError(`Cannot replace immutable attachment ${change.attachment.id}.`);
+      }
+      const insertionIndex = change.index ?? attachments.length;
+      if (!Number.isSafeInteger(insertionIndex) || insertionIndex < 0 || insertionIndex > attachments.length) {
+        throw new RangeError(`Attachment insertion index ${insertionIndex} is outside 0..${attachments.length}.`);
+      }
+      inverseChanges.unshift({ type: "delete-attachment", attachmentId: change.attachment.id });
+      attachments.splice(insertionIndex, 0, structuredClone(change.attachment));
+      continue;
+    }
+    if (change.type === "delete-attachment") {
+      deleteResource(
+        attachments,
+        change.attachmentId,
+        (attachment, index) => ({ type: "put-attachment", attachment, ...(index === undefined ? {} : { index }) }),
+        "attachment",
+      );
+      continue;
+    }
     if (change.type === "set-metadata") {
       inverseChanges.unshift({ type: "set-metadata", metadata: structuredClone(metadata) });
       metadata = structuredClone(change.metadata);
@@ -456,6 +491,7 @@ export function applyAtomicOperation(
     textStyles,
     dimensionStyles,
     blocks,
+    attachments,
     layouts,
     currentLayerId,
     metadata: { ...metadata, updatedAt: now },
@@ -468,6 +504,7 @@ export function applyAtomicOperation(
     JSON.stringify(document.textStyles) === JSON.stringify(source.textStyles) &&
     JSON.stringify(document.dimensionStyles) === JSON.stringify(source.dimensionStyles) &&
     JSON.stringify(document.blocks) === JSON.stringify(source.blocks) &&
+    JSON.stringify(document.attachments) === JSON.stringify(source.attachments) &&
     JSON.stringify(document.layouts) === JSON.stringify(source.layouts) &&
     JSON.stringify(metadata) === JSON.stringify(source.metadata) &&
     document.currentLayerId === source.currentLayerId &&
