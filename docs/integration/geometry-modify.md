@@ -109,3 +109,19 @@ replacement modes are available. Non-zero Fit tolerance is retained as editable
 metadata but currently uses exact interpolation rather than WIP's bounded
 approximation; it must stay visibly partial until that algorithm and live behavior are
 integrated.
+
+## Wave 5 exports
+
+From `packages/cad-core/src/boundary-region.ts`:
+
+- `prepareBoundaryCommand`
+- `prepareRegionCommand`
+- `BoundaryRegionInputError`
+- BOUNDARY/REGION input and prepared-result types
+
+BOUNDARY returns either a closed polyline or a Kuubik region proxy. REGION converts
+closed polylines, full circles, and full ellipses into the same proxy format. The v1
+schema has no native region entity, so integration must display the proxy limitation
+and must not present the result as native ACDBREGION/DXF round-trip parity. Straight
+line/open-polyline loops, closed polylines, circles, and full ellipses are supported;
+stitched arc/bulge loops are not yet supported.
