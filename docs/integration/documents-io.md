@@ -2,6 +2,8 @@
 
 Second-wave source: `work2/reio-documents-io` from integrated commit `34683acfb1ab7a0546539cd6f72546ecb868011c`.
 
+Third-wave live integration source: `work3/reio-documents-live` from integrator base `9af0b7b241ec28f6d5976ed69f79d973611f1c5b`.
+
 This workstream deliberately does not modify `App.tsx`, `style.css`, package manifests, parity scores or security evidence. The integration owner must wire the following surfaces without weakening the existing F-097...F-107, F-109, F-111 and F-114 paths.
 
 ## Shared package exports
@@ -35,9 +37,26 @@ The transaction module also exports `put-attachment` and `delete-attachment` `Ca
 - `autosave-recovery.ts`: `DocumentAutosaveRecovery` open/checkpoint/commit/close lifecycle
 - `document-session-coordinator.ts`: one isolated `CadSession`, viewport, selection and active layout per `documentId`
 - `pdf-underlay-transaction.ts`: atomic attachment-byte/document commit and fail-closed stored-byte read-back
+- `document-live-orchestrator.ts`: browser-ready composition root that exposes a document only after session, tab, append-only storage and attachment read-back agree
+- `documents-live-harness.ts`: deterministic F-115/F-128/F-133 crash/reload, stale-revision and corrupt-tail fixture; it is also published as `window.runKuubikDocumentsLiveHarness` when imported in a browser
+- `documents-live-harness.html`: isolated real-Chromium IndexedDB runner; this test page is not part of `App.tsx`
 - `indexed-db.ts`: schema v2 attachment, append-only snapshot/operation and crash-event methods
 
-## Required App wiring order
+`KDrawIndexedDb(factory, databaseName?)` accepts an optional isolated database name for non-destructive browser fixtures. Production callers retain the default `kuubik-draw` name.
+
+## Live integration surface
+
+`DocumentLiveOrchestrator` is the approved F-115/F-128/F-133 integration boundary. Its `open`, `commit`, `attachPdf`, `activate`, view-context and `close` methods keep the pure tab state and the per-document `CadSession` synchronized. `commit` and `attachPdf` update the visible tab only after the candidate revision has been durably accepted. `close` records a clean boundary only after the exact revision and every referenced attachment have passed storage read-back.
+
+The deterministic browser fixture is available during development at `/src/features/documents/documents-live-harness.html`. Each run uses a fresh isolated database name, creates two documents, persists a PDF underlay atomically, simulates process loss by closing the database without clean events, corrupts one operation-log tail, reloads both documents and proves:
+
+- alpha returns at revision 1 with exact PDF SHA-256 and byte length;
+- beta returns at the last valid revision 1 and reports `beta-line-2` as ignored;
+- both documents report the interrupted `browser-session-crashed` session;
+- an operation with base revision 0 is rejected against alpha revision 1;
+- multi-document tab, session, selection, viewport and revision state remain isolated.
+
+## Legacy/manual App wiring order
 
 1. Replace the single visible tab shell with `DocumentTabs`, while retaining one `CadSession` per `documentId` and deriving the renderer document/layout from the active tab.
 2. Route New/Open DXF through `createNewModelSpaceDocument` or `openDxfInModelSpace`; keep the existing DXFIN command unchanged for replacing content in the active document.
@@ -52,7 +71,7 @@ The transaction module also exports `put-attachment` and `delete-attachment` `Ca
 
 `commitRevisionWithAttachment` writes document head, immutable snapshot, operation record and attachment bytes in one IndexedDB transaction. A checksum mismatch, duplicate append-only attachment id or revision conflict aborts every store. Clean close additionally verifies every referenced attachment byte stream and metadata. No attachment store delete is provided; Undo removes only the document reference.
 
-F-115 remains a candidate until App integration and the PDF.js page renderer are live-tested. The current object surface is a safe visual fallback for traditional uncompressed PDFs; compressed object streams and inherited page boxes fail closed.
+F-115 atomic persistence and crash/reload wiring now have real-Chromium read-back. Full F-115 parity remains a candidate until the owned AutoCAD PDFATTACH comparison and PDF.js page renderer are live-tested. The current object surface is a safe visual fallback for traditional uncompressed PDFs; compressed object streams and inherited page boxes fail closed.
 
 ## Recovery boundary
 
