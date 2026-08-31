@@ -1,4 +1,5 @@
 export * from "./container.js";
+export * from "./arc-command.js";
 export * from "./commands.js";
 export * from "./document.js";
 export * from "./fillet.js";
