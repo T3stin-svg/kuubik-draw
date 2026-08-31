@@ -1110,6 +1110,7 @@ test("PGP aliases and per-document workspace history remain isolated and durable
   await command.fill("ZZ 0,0 80,0");
   await command.press("Enter");
   const canvas = page.getByLabel("Kuubik Draw joonestusala");
+  await expect(canvas).toHaveAttribute("data-selected-handles", /.+/u);
   const localSelection = await canvas.getAttribute("data-selected-handles");
   expect(localSelection).toBeTruthy();
   const readback = page.getByTestId("live-contract-readback");
@@ -1272,6 +1273,158 @@ test("POLYGON runs ribbon typed preview, keyboard commit and command-line edge r
   await expect(readback).toHaveAttribute("data-polygon-mode", "edge");
   await expect(readback).toHaveAttribute("data-polygon-orientation", "clockwise");
   await expect(page.getByLabel("Kuubik Draw joonestusala")).toHaveAttribute("data-selected-handles", /.+/u);
+  expect(errors).toEqual([]);
+});
+
+test("ELLIPSE uses typed ghost, keyboard commit, command-line arc and reload read-back", async ({ page }) => {
+  const errors: string[] = [];
+  page.on("console", (message) => { if (message.type() === "error") errors.push(message.text()); });
+  page.on("pageerror", (error) => errors.push(error.message));
+  await page.setViewportSize({ width: 1920, height: 1080 });
+  await page.goto("/d/local");
+
+  const ellipse = page.getByRole("button", { name: "Ribbon Ellipse command" });
+  await ellipse.focus();
+  await page.keyboard.press("Enter");
+  const prompt = page.getByTestId("ellipse-prompt");
+  await expect(prompt).toBeVisible();
+  await expect(page.getByLabel("Ellipse construction mode")).toBeFocused();
+  await expect(prompt).toHaveAttribute("data-preview-valid", "true");
+  await expect(page.getByLabel("Kuubik Draw joonestusala")).toHaveAttribute("data-ellipse-preview", "true");
+  if (captureRoot) {
+    const geometry = await page.evaluate(() => Object.fromEntries([".ellipse-prompt", ".properties-palette", ".layoutbar"].map((selector) => {
+      const rect = document.querySelector<HTMLElement>(selector)!.getBoundingClientRect();
+      return [selector, { x: rect.x, y: rect.y, width: rect.width, height: rect.height, right: rect.right, bottom: rect.bottom }];
+    })));
+    await writeFile(resolve(captureRoot, "visual-live-ellipse-before.png"), await page.screenshot());
+    await writeFile(resolve(captureRoot, "visual-live-ellipse-before.json"), `${JSON.stringify({ viewport: [1920, 1080], geometry, consoleErrors: errors }, null, 2)}\n`, "utf8");
+  }
+  await page.getByRole("button", { name: "Rakenda" }).focus();
+  await page.keyboard.press("Enter");
+  await expect(prompt).toBeHidden();
+  const readback = page.getByTestId("live-contract-readback");
+  await expect(readback).toHaveAttribute("data-ellipse-shape", "full");
+  await expect(readback).toHaveAttribute("data-ellipse-mode", "center-major-minor");
+  await expect(page.locator(".runtime-intent-readback")).toHaveAttribute("data-runtime-entity-kinds", /ellipse/u);
+
+  const command = page.getByRole("textbox", { name: "Command input" });
+  await command.fill("EL A 200,200 600,200 120 ARC 15 240 CW");
+  await command.press("Enter");
+  await expect(readback).toHaveAttribute("data-ellipse-shape", "arc");
+  await expect(readback).toHaveAttribute("data-ellipse-mode", "axis-endpoints");
+  await page.reload();
+  await expect(page.locator(".runtime-intent-readback")).toHaveAttribute("data-runtime-entity-kinds", /ellipse,ellipse/u);
+  if (captureRoot) await writeFile(resolve(captureRoot, "visual-live-ellipse-after.png"), await page.screenshot());
+  expect(errors).toEqual([]);
+});
+
+test("UNITS covers all formats, confirms coordinate preservation and survives reload", async ({ page }) => {
+  const errors: string[] = [];
+  page.on("console", (message) => { if (message.type() === "error") errors.push(message.text()); });
+  page.on("pageerror", (error) => errors.push(error.message));
+  await page.setViewportSize({ width: 1920, height: 1080 });
+  await page.goto("/d/local");
+  const command = page.getByRole("textbox", { name: "Command input" });
+  await command.fill("LINE 0,0 100,0");
+  await command.press("Enter");
+
+  await page.getByRole("button", { name: "Ribbon Units command" }).click();
+  const panel = page.getByTestId("units-panel");
+  await expect(panel).toBeVisible();
+  await expect(page.getByLabel("Length format").locator("option")).toHaveCount(5);
+  await expect(page.getByLabel("Angle format").locator("option")).toHaveCount(5);
+  await expect(page.getByLabel("Drawing unit", { exact: true }).locator("option")).toHaveCount(6);
+  await page.getByLabel("Length format").selectOption("fractional");
+  await page.getByLabel("Length precision").fill("4");
+  await page.getByLabel("Angle format").selectOption("surveyor");
+  await page.getByLabel("Angle precision").fill("3");
+  await page.getByLabel("Base angle").fill("30");
+  await page.getByLabel("Clockwise angles").check();
+  await page.getByLabel("Drawing unit", { exact: true }).selectOption("cm");
+  await expect(page.getByLabel("Preserve existing coordinates")).toBeVisible();
+  await expect(panel.getByRole("button", { name: "OK" })).toBeDisabled();
+  if (captureRoot) {
+    const geometry = await panel.evaluate((element) => {
+      const rect = element.getBoundingClientRect();
+      return { x: rect.x, y: rect.y, width: rect.width, height: rect.height, right: rect.right, bottom: rect.bottom };
+    });
+    await writeFile(resolve(captureRoot, "visual-live-units-confirmation.png"), await page.screenshot());
+    await writeFile(resolve(captureRoot, "visual-live-units-confirmation.json"), `${JSON.stringify({ viewport: [1920, 1080], geometry, lengthFormats: 5, angleFormats: 5, linearUnits: 6, requiresPreserveConfirmation: true, consoleErrors: errors }, null, 2)}\n`, "utf8");
+  }
+  await page.getByLabel("Preserve existing coordinates").check();
+  await panel.getByRole("button", { name: "OK" }).click();
+  const readback = page.getByTestId("live-contract-readback");
+  await expect(readback).toHaveAttribute("data-units-drawing", "cm");
+  await expect(readback).toHaveAttribute("data-units-length-format", "fractional");
+  await expect(readback).toHaveAttribute("data-units-angle-format", "surveyor");
+  await expect(readback).toHaveAttribute("data-units-clockwise", "true");
+  await expect(readback).toHaveAttribute("data-units-coordinate-scale", "1");
+  await expect(readback).toHaveAttribute("data-units-coordinates-preserved", "true");
+  await page.reload();
+  await expect(readback).toHaveAttribute("data-units-drawing", "cm");
+  await expect(readback).toHaveAttribute("data-units-length-format", "fractional");
+  await expect(readback).toHaveAttribute("data-units-angle-format", "surveyor");
+  await expect(page.locator(".runtime-intent-readback")).toHaveAttribute("data-runtime-entity-kinds", /line/u);
+  expect(errors).toEqual([]);
+});
+
+test("Model/Layout workspace creates, copies, renames, reorders, switches and reloads by keyboard", async ({ page }) => {
+  const errors: string[] = [];
+  page.on("console", (message) => { if (message.type() === "error") errors.push(message.text()); });
+  page.on("pageerror", (error) => errors.push(error.message));
+  await page.setViewportSize({ width: 1920, height: 1080 });
+  await page.goto("/d/local");
+  const readback = page.getByTestId("live-contract-readback");
+  await expect(readback).toHaveAttribute("data-layout-workspace-order", "model,layout-1");
+
+  const model = page.getByRole("tab", { name: "Model" });
+  await model.focus();
+  await page.keyboard.press("ArrowRight");
+  await expect(page.getByRole("tab", { name: "Layout 1" })).toHaveAttribute("aria-selected", "true");
+  await page.getByRole("button", { name: "Lisa paigutus" }).click();
+  await expect(readback).toHaveAttribute("data-layout-workspace-active", "layout-2");
+  await expect(readback).toHaveAttribute("data-layout-workspace-order", "model,layout-1,layout-2");
+  await page.locator('summary[aria-label="Layout tools"]').click();
+  await page.getByRole("button", { name: "Kopeeri paigutus" }).click();
+  await expect(readback).toHaveAttribute("data-layout-workspace-active", "layout-3");
+  await expect(readback).toHaveAttribute("data-layout-workspace-order", "model,layout-1,layout-3,layout-2");
+  await page.getByLabel("Paigutuse nimi").fill("Kontroll-leht");
+  await page.getByLabel("Paigutuse nimi").press("Enter");
+  await expect(page.getByRole("tab", { name: "Kontroll-leht" })).toBeVisible();
+  await page.getByRole("button", { name: "Liiguta vasakule" }).click();
+  await expect(readback).toHaveAttribute("data-layout-workspace-order", "model,layout-3,layout-1,layout-2");
+  const storedOrder = await page.evaluate(async () => {
+    const { KDrawIndexedDb } = await import("/src/indexed-db.ts");
+    const database = new KDrawIndexedDb(indexedDB, "kuubik-draw");
+    const current = await database.loadDocument("local");
+    const recovered = await database.recoverDocument("local");
+    database.close();
+    return {
+      current: current?.layouts.map((layout) => layout.id).join(",") ?? "",
+      recovered: recovered.document?.layouts.map((layout) => layout.id).join(",") ?? "",
+      ignored: recovered.ignoredOperationIds,
+      source: recovered.source,
+    };
+  });
+  expect(storedOrder).toEqual({ current: "model,layout-3,layout-1,layout-2", recovered: "model,layout-3,layout-1,layout-2", ignored: [], source: "operation-log" });
+  await page.reload();
+  await expect(readback).toHaveAttribute("data-layout-workspace-active", "layout-3");
+  await expect(readback).toHaveAttribute("data-layout-workspace-order", "model,layout-3,layout-1,layout-2");
+  await expect(page.getByRole("tab", { name: "Kontroll-leht" })).toHaveAttribute("aria-selected", "true");
+  const recoveryPanel = page.getByTestId("recovery-panel");
+  if (await recoveryPanel.isVisible()) await page.getByRole("button", { name: "Sulge taastamispaneel" }).click();
+  if (captureRoot) {
+    const geometry = await page.evaluate(() => Object.fromEntries([".layoutbar", ".layout-tabs", ".paper-space-sheet"].map((selector) => {
+      const rect = document.querySelector<HTMLElement>(selector)!.getBoundingClientRect();
+      return [selector, { x: rect.x, y: rect.y, width: rect.width, height: rect.height, right: rect.right, bottom: rect.bottom }];
+    })));
+    await writeFile(resolve(captureRoot, "visual-live-layout-workspace.png"), await page.screenshot());
+    await writeFile(resolve(captureRoot, "visual-live-layout-workspace.json"), `${JSON.stringify({ viewport: [1920, 1080], geometry, storedOrder, consoleErrors: errors }, null, 2)}\n`, "utf8");
+  }
+  await page.locator('summary[aria-label="Layout tools"]').click();
+  page.once("dialog", (dialog) => dialog.accept());
+  await page.getByRole("button", { name: "Kustuta paigutus" }).click();
+  await expect(readback).toHaveAttribute("data-layout-workspace-order", "model,layout-1,layout-2");
   expect(errors).toEqual([]);
 });
 

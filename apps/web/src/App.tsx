@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { DEFAULT_MATCH_PROPERTIES_SETTINGS, ISO_PAPER_MEDIA, MAX_PAGE_SETUP_TEMPLATE_BYTES, STANDARD_VIEWPORT_SCALE_DENOMINATORS, allocateEntityHandles, applyNamedPageSetup, buildLayoutPublishPlan, CadCommandInputError, CadSession, clearNamedPageSetupAssignment, createPageSetupTemplate, LayoutCommandError, LayoutPublishSettingsError, NoOpOperationError, PageSetupLibraryError, copyPaperLayout, createEmptyDocument, createPaperLayout, createPaperViewport, deleteNamedPageSetup, deletePaperLayout, deletePaperViewport, executeMatchViewportProperties, formatViewportScale, importPageSetupTemplate, metadataWithLayoutPublishSettings, movePaperLayout, panPaperViewportByPixels, paperDefinitionForPageSetup, parseCartesianPoint, parsePageSetupTemplate, renameNamedPageSetup, renamePaperLayout, replaceDrawingContentPreservingLayouts, resolveCadCommand, resolveLayoutPublishSettings, resolveMatchPropertiesSettings, resolveModelPageSetup, resolvePageSetup, resolvePageSetupLibrary, resolvePaperDefinition, sanitizePdfFileStem, saveNamedPageSetup, serializeKDraw, serializePageSetupTemplate, setModelLayoutPageSetup, setPaperLayoutPageSetup, setPaperViewportDisplayLocked, setPaperViewportView, viewportScaleDenominator, zoomPaperViewportAtModelPoint, type AlignRejectedTarget, type BreakMode, type BreakRejectedTarget, type CadChange, type CadLayerToggle, type ChamferRejectedTarget, type ChamferTrimMode, type CopyRejectedTarget, type ExtendRejectedTarget, type ExtendTargetAction, type FilletRejectedTarget, type FilletTrimMode, type LayoutPublishSettingsV1, type LengthenMeasurement, type LengthenMode, type LengthenRejectedTarget, type MatchPropertiesRejectedTarget, type MatchPropertiesSettings, type MatchViewportRef, type MirrorRejectedTarget, type MoveRejectedTarget, type OffsetLayerMode, type OffsetRejectedTarget, type RotateRejectedTarget, type ScaleRejectedTarget, type StretchRejectedTarget, type TrimEdgeMode, type TrimMode, type TrimProjectMode, type TrimRejectedTarget, type TrimTargetAction } from "@kuubik/cad-core";
+import { DEFAULT_MATCH_PROPERTIES_SETTINGS, ISO_PAPER_MEDIA, MAX_PAGE_SETUP_TEMPLATE_BYTES, STANDARD_VIEWPORT_SCALE_DENOMINATORS, allocateEntityHandles, applyNamedPageSetup, buildLayoutPublishPlan, CadCommandInputError, CadSession, clearNamedPageSetupAssignment, createPageSetupTemplate, LayoutCommandError, LayoutPublishSettingsError, NoOpOperationError, PageSetupLibraryError, createEmptyDocument, createPaperViewport, deleteNamedPageSetup, deletePaperViewport, executeMatchViewportProperties, formatViewportScale, importPageSetupTemplate, metadataWithLayoutPublishSettings, panPaperViewportByPixels, paperDefinitionForPageSetup, parseCartesianPoint, parsePageSetupTemplate, renameNamedPageSetup, replaceDrawingContentPreservingLayouts, resolveCadCommand, resolveLayoutPublishSettings, resolveMatchPropertiesSettings, resolveModelPageSetup, resolvePageSetup, resolvePageSetupLibrary, resolvePaperDefinition, sanitizePdfFileStem, saveNamedPageSetup, serializeKDraw, serializePageSetupTemplate, setModelLayoutPageSetup, setPaperLayoutPageSetup, setPaperViewportDisplayLocked, setPaperViewportView, viewportScaleDenominator, zoomPaperViewportAtModelPoint, type AlignRejectedTarget, type BreakMode, type BreakRejectedTarget, type CadChange, type CadLayerToggle, type CadUnitsContractV1, type ChamferRejectedTarget, type ChamferTrimMode, type CopyRejectedTarget, type ExtendRejectedTarget, type ExtendTargetAction, type FilletRejectedTarget, type FilletTrimMode, type LayoutPublishSettingsV1, type LengthenMeasurement, type LengthenMode, type LengthenRejectedTarget, type MatchPropertiesRejectedTarget, type MatchPropertiesSettings, type MatchViewportRef, type MirrorRejectedTarget, type MoveRejectedTarget, type OffsetLayerMode, type OffsetRejectedTarget, type RotateRejectedTarget, type ScaleRejectedTarget, type StretchRejectedTarget, type TrimEdgeMode, type TrimMode, type TrimProjectMode, type TrimRejectedTarget, type TrimTargetAction } from "@kuubik/cad-core";
 import { DxfImportError, MAX_DXF_IMPORT_BYTES, exportDxf, importDxf } from "@kuubik/cad-dxf";
 import { createPdfUnderlayPlacement, exportLayoutSvg, exportLayoutsVectorPdf, exportLayoutVectorPdf, exportModelSvg, exportModelVectorPdf, preparePdfUnderlay, type LayoutPlotOptions, type ModelPlotOptions } from "@kuubik/cad-print";
 import { CadCanvasRenderer, pickCadEntity, pannedViewportWorldCenter, selectCadEntityHitsByCrossingPolygon, selectCadEntityHitsByFence, viewportScreenToWorld, viewportScreenTransform, viewportWorldToScreen, type Viewport2D } from "@kuubik/cad-renderer";
@@ -20,6 +20,7 @@ import { CadShell, DrawingViewport, type WorkspacePreset } from "./shell/CadShel
 import { CommandLine } from "./shell/CommandLine.js";
 import { DocumentTabs } from "./shell/DocumentTabs.js";
 import { DimensionMenu } from "./shell/DimensionMenu.js";
+import { EllipsePrompt } from "./shell/EllipsePrompt.js";
 import { LayoutBar } from "./shell/LayoutBar.js";
 import { LiveCommandPrompt } from "./shell/LiveCommandPrompt.js";
 import { PaletteFrame, type PaletteMode } from "./shell/PaletteFrame.js";
@@ -30,7 +31,8 @@ import { RibbonTabs } from "./shell/RibbonTabs.js";
 import { RibbonTool } from "./shell/RibbonTool.js";
 import { StatusBar } from "./shell/StatusBar.js";
 import { TitleBar } from "./shell/TitleBar.js";
-import { prepareVisualPolygon, VISUAL_SHELL_COMMAND_DEFINITIONS, VisualShellRuntimeAdapter, type PrecisionToggleId, type PrecisionToggleState, type VisualPolygonPrepared, type VisualShellLivePrompt, type VisualSnapCycleReadback } from "./shell/runtime-adapter.js";
+import { UnitsPanel } from "./shell/UnitsPanel.js";
+import { prepareVisualEllipse, prepareVisualPolygon, VISUAL_SHELL_COMMAND_DEFINITIONS, VisualShellRuntimeAdapter, type PrecisionToggleId, type PrecisionToggleState, type VisualEllipseFormState, type VisualEllipsePrepared, type VisualPolygonPrepared, type VisualShellLivePrompt, type VisualSnapCycleReadback } from "./shell/runtime-adapter.js";
 import { prepareAlign, prepareBreak, prepareChamfer, prepareCopy, prepareExtend, prepareFillet, prepareLengthen, prepareMatchProperties, prepareMirror, prepareMove, prepareOffset, prepareRotate, prepareScale, prepareStretch, prepareTrim, putEntities } from "./workflows/modify-command.js";
 import "./style.css";
 
@@ -72,6 +74,19 @@ const DEFAULT_POLYGON_FORM: PolygonFormState = Object.freeze({
   rotationDeg: "0",
   rotationInput: "radius-point",
   orientation: "counter-clockwise",
+});
+const DEFAULT_ELLIPSE_FORM: VisualEllipseFormState = Object.freeze({
+  constructionMode: "center-major-minor",
+  center: "900,700",
+  majorAxisEnd: "1250,700",
+  minorDistance: "180",
+  firstAxisEnd: "550,700",
+  secondAxisEnd: "1250,700",
+  otherAxisDistance: "180",
+  shape: "full",
+  startAngleDeg: "0",
+  endAngleDeg: "220",
+  direction: "counter-clockwise",
 });
 
 function recoveryOutcomeFingerprint(receipt: RecoveryReceipt): string {
@@ -355,6 +370,13 @@ export function App() {
   const [polygonPromptOpen, setPolygonPromptOpen] = useState(false);
   const [polygonForm, setPolygonForm] = useState<PolygonFormState>(DEFAULT_POLYGON_FORM);
   const [polygonReadback, setPolygonReadback] = useState<VisualPolygonPrepared["normalized"] | null>(null);
+  const [ellipsePromptOpen, setEllipsePromptOpen] = useState(false);
+  const [ellipseForm, setEllipseForm] = useState<VisualEllipseFormState>(DEFAULT_ELLIPSE_FORM);
+  const [ellipseReadback, setEllipseReadback] = useState<VisualEllipsePrepared["normalized"] | null>(null);
+  const [unitsPanelOpen, setUnitsPanelOpen] = useState(false);
+  const [unitsForm, setUnitsForm] = useState<CadUnitsContractV1>(() => runtime.units(document));
+  const [unitsPreserveConfirmed, setUnitsPreserveConfirmed] = useState(false);
+  const [unitsReadback, setUnitsReadback] = useState<{ coordinateScale: number; coordinatesPreserved: boolean } | null>(null);
   const [commandInput, setCommandInput] = useState("");
   const [runtimeCommandHistory, setRuntimeCommandHistory] = useState<string[]>([]);
   const [runtimeHistoryIndex, setRuntimeHistoryIndex] = useState(0);
@@ -591,6 +613,10 @@ export function App() {
     return () => window.cancelAnimationFrame(frame);
   }, [drawingContextMenu]);
   const activeLayout = document.layouts.find((layout) => layout.id === activeLayoutId) ?? document.layouts[0]!;
+  const layoutWorkspaceState = useMemo(() => {
+    try { return runtime.layout(document); }
+    catch { return { activeLayoutId: activeLayout.id, activeSpace: activeLayout.kind, tabOrder: document.layouts.map((layout) => layout.id), nextLayoutSequence: 0, nextViewportSequence: 0, schemaVersion: 1 as const }; }
+  }, [activeLayout.id, activeLayout.kind, document, runtime]);
   const selectedViewport = activeLayout.kind === "paper"
     ? activeLayout.viewports.find((viewport) => viewport.id === selectedViewportId) ?? null
     : null;
@@ -916,18 +942,39 @@ export function App() {
       return { prepared: null, error: error instanceof Error ? error.message : String(error) };
     }
   }, [document, polygonForm, polygonPromptOpen]);
+  const ellipsePreview = useMemo((): { prepared: VisualEllipsePrepared | null; error: string | null } => {
+    if (!ellipsePromptOpen) return { prepared: null, error: null };
+    try {
+      return { prepared: prepareVisualEllipse(document, ellipseForm), error: null };
+    } catch (error) {
+      return { prepared: null, error: error instanceof Error ? error.message : String(error) };
+    }
+  }, [document, ellipseForm, ellipsePromptOpen]);
+  const unitsPreview = useMemo((): { error: string | null; requiresPreserveConfirmation: boolean } => {
+    if (!unitsPanelOpen) return { error: null, requiresPreserveConfirmation: false };
+    const current = runtime.units(document);
+    const requiresPreserveConfirmation = current.drawingUnit !== unitsForm.drawingUnit && (document.entities.length > 0 || document.layouts.some((layout) => (layout.entities?.length ?? 0) > 0 || layout.viewports.length > 0));
+    try {
+      runtime.planUnits(document, unitsForm, requiresPreserveConfirmation || unitsPreserveConfirmed);
+      return { error: null, requiresPreserveConfirmation };
+    } catch (error) {
+      return { error: error instanceof Error ? error.message : String(error), requiresPreserveConfirmation };
+    }
+  }, [document, runtime, unitsForm, unitsPanelOpen, unitsPreserveConfirmed]);
 
   useEffect(() => {
     let active = true;
     void (async () => {
       try {
         await database.open();
-        const opened = await workspace.open({ documentId: LOCAL_DOCUMENT_ID, fallbackDocument: session.current.document, sourceFileName: "local.kdraw" });
+        const opened = await workspace.open({ documentId: LOCAL_DOCUMENT_ID, fallbackDocument: session.current.document, sourceFileName: "local.kdraw", layoutWorkspace: "migrate" });
         const operations = await database.operations(LOCAL_DOCUMENT_ID);
         if (!active) return;
         session.current = new CadSession(opened.document, operations.map((entry) => entry.opId));
         sessions.current.set(opened.document.documentId, session.current);
         setDocument(session.current.document);
+        setActiveLayoutId(opened.layoutWorkspace?.state.activeLayoutId ?? session.current.document.layouts[0]!.id);
+        setUnitsForm(runtime.units(session.current.document));
         setDocumentTabs((current) => markDocumentTabPersisted(updateDocumentTab(current, {
           document: session.current.document,
           activeLayoutId: current.tabs.find((tab) => tab.documentId === opened.document.documentId)?.activeLayoutId ?? "model",
@@ -958,7 +1005,7 @@ export function App() {
       active = false;
       database.close();
     };
-  }, [database, workspace]);
+  }, [database, runtime, workspace]);
 
   useEffect(() => {
     try {
@@ -1094,7 +1141,7 @@ export function App() {
         delete element.dataset.worldCenterY;
         delete element.dataset.worldUnitsPerPixel;
       }
-      renderer.render(context, viewport, document.layers, activeLayout.kind === "model" ? [...(polygonPreview.prepared?.previewEntities ?? []), ...(movePreview?.entities ?? []), ...(copyPreview?.entities ?? []), ...(rotatePreview?.entities ?? []), ...(scalePreview?.entities ?? []), ...(mirrorPreview?.entities ?? []), ...(offsetPreview?.entities ?? []), ...(trimPreview?.entities ?? []), ...(extendPreview?.entities ?? []), ...(filletPreview?.entities ?? []), ...(chamferPreview?.entities ?? []), ...(breakPreview?.entities ?? []), ...(stretchPreview?.entities ?? []), ...(lengthenPreview?.entities ?? []), ...(alignPreview?.entities ?? []), ...(matchPropertiesPreview?.entities ?? [])] : [], [
+      renderer.render(context, viewport, document.layers, activeLayout.kind === "model" ? [...(polygonPreview.prepared?.previewEntities ?? []), ...(ellipsePreview.prepared?.previewEntities ?? []), ...(movePreview?.entities ?? []), ...(copyPreview?.entities ?? []), ...(rotatePreview?.entities ?? []), ...(scalePreview?.entities ?? []), ...(mirrorPreview?.entities ?? []), ...(offsetPreview?.entities ?? []), ...(trimPreview?.entities ?? []), ...(extendPreview?.entities ?? []), ...(filletPreview?.entities ?? []), ...(chamferPreview?.entities ?? []), ...(breakPreview?.entities ?? []), ...(stretchPreview?.entities ?? []), ...(lengthenPreview?.entities ?? []), ...(alignPreview?.entities ?? []), ...(matchPropertiesPreview?.entities ?? [])] : [], [
         ...(mirrorPreview?.eraseSource ? mirrorPreview.sourceHandles : []),
         ...(offsetPreview?.eraseSource ? offsetPreview.sourceHandles : []),
         ...(trimPreview?.sourceHandles ?? []),
@@ -1132,7 +1179,7 @@ export function App() {
     const observer = new ResizeObserver(render);
     observer.observe(element);
     return () => observer.disconnect();
-  }, [activeLayout, activePageSetup, activePaper, alignPreview, breakPreview, chamferPreview, copyPreview, document, extendPreview, filletPreview, lengthenPreview, matchPropertiesPreview, mirrorPreview, movePreview, offsetPreview, polygonPreview, precision.grid, rotatePreview, scalePreview, selectedHandles, stretchPreview, trimPreview, workspace]);
+  }, [activeLayout, activePageSetup, activePaper, alignPreview, breakPreview, chamferPreview, copyPreview, document, ellipsePreview, extendPreview, filletPreview, lengthenPreview, matchPropertiesPreview, mirrorPreview, movePreview, offsetPreview, polygonPreview, precision.grid, rotatePreview, scalePreview, selectedHandles, stretchPreview, trimPreview, workspace]);
 
   async function recoverFromStorageConflict(error: unknown): Promise<void> {
     if (!(error instanceof StorageRevisionConflictError)) throw error;
@@ -1190,7 +1237,7 @@ export function App() {
     setStatus(`${commandId} salvestatud, revision ${next.revision}`);
   }
 
-  function beginRuntimeCommand(commandId: "LINE" | "PLINE" | "RECTANGLE" | "CIRCLE" | "ARC" | "POLYGON" | "MTEXT" | "LEADER", prompt: string): void {
+  function beginRuntimeCommand(commandId: "LINE" | "PLINE" | "RECTANGLE" | "CIRCLE" | "ARC" | "POLYGON" | "ELLIPSE" | "MTEXT" | "LEADER", prompt: string): void {
     if (!runtime.commandRegistry.resolve(commandId)) {
       setStatus(`${commandId}: runtime adapter puudub`);
       return;
@@ -1229,6 +1276,70 @@ export function App() {
     } catch (error) {
       if (error instanceof StorageRevisionConflictError) await recoverFromStorageConflict(error);
       else setStatus(`POLYGON viga: ${error instanceof Error ? error.message : String(error)}`);
+    } finally {
+      committing.current = false;
+    }
+  }
+
+  function beginEllipsePrompt(): void {
+    setRuntimeIntent(null);
+    setCommandInput("");
+    setActiveCommandPrompt("ELLIPSE");
+    setEllipsePromptOpen(true);
+    setStatus("ELLIPSE · typed konstruktsioon; ghost ja commit kasutavad sama core plannerit");
+  }
+
+  function cancelEllipsePrompt(): void {
+    setEllipsePromptOpen(false);
+    setActiveCommandPrompt(null);
+    setStatus("ELLIPSE: *Cancel*");
+  }
+
+  async function commitEllipsePrompt(): Promise<void> {
+    const prepared = ellipsePreview.prepared;
+    if (!prepared || committing.current) return;
+    committing.current = true;
+    try {
+      await commitChanges(prepared.commandId, prepared.operationArgs, prepared.changes, prepared.resultHandles);
+      const persisted = session.current.document.entities.find((entity) => entity.handle === prepared.resultHandles[0]);
+      if (!persisted || persisted.kind !== "ellipse" || JSON.stringify(persisted) !== JSON.stringify(prepared.previewEntities[0])) {
+        throw new Error("ELLIPSE read-back erines preview/commit plannerist.");
+      }
+      setSelectedHandles(prepared.resultHandles);
+      setEllipseReadback(prepared.normalized);
+      setEllipsePromptOpen(false);
+      setActiveCommandPrompt(null);
+      setStatus(`ELLIPSE · atomic commit/read-back revision ${session.current.document.revision} · ${prepared.normalized.shape}`);
+    } catch (error) {
+      if (error instanceof StorageRevisionConflictError) await recoverFromStorageConflict(error);
+      else setStatus(`ELLIPSE viga: ${error instanceof Error ? error.message : String(error)}`);
+    } finally {
+      committing.current = false;
+    }
+  }
+
+  function openUnitsPanel(): void {
+    setUnitsForm(runtime.units(document));
+    setUnitsPreserveConfirmed(false);
+    setUnitsPanelOpen(true);
+    setStatus("UNITS · kuva- ja sisestusühikud; koordinaadid jäävad muutmata");
+  }
+
+  async function commitUnits(): Promise<void> {
+    if (committing.current) return;
+    committing.current = true;
+    try {
+      const plan = runtime.planUnits(document, unitsForm, unitsPreserveConfirmed);
+      await commitChanges("UNITS", { previous: plan.previous, current: plan.current, existingGeometryPolicy: "preserve-coordinates" }, plan.changes, []);
+      const readback = runtime.units(session.current.document);
+      if (JSON.stringify(readback) !== JSON.stringify(plan.current)) throw new Error("UNITS read-back erines atomaarse plaani tulemusest.");
+      setUnitsForm(readback);
+      setUnitsReadback({ coordinateScale: plan.coordinateScale, coordinatesPreserved: plan.coordinatesPreserved });
+      setUnitsPanelOpen(false);
+      setStatus(`UNITS · atomic read-back revision ${session.current.document.revision} · coordinates preserved · scale ${plan.coordinateScale}`);
+    } catch (error) {
+      if (error instanceof StorageRevisionConflictError) await recoverFromStorageConflict(error);
+      else setStatus(`UNITS viga: ${error instanceof Error ? error.message : String(error)}`);
     } finally {
       committing.current = false;
     }
@@ -1307,6 +1418,7 @@ export function App() {
       }), next.documentId, next.revision));
       setSelectedHandles(committed.operation.resultHandles);
       if (prepared.commandId === "POLYGON") setPolygonReadback((prepared as VisualPolygonPrepared).normalized);
+      if (prepared.commandId === "ELLIPSE") setEllipseReadback((prepared as VisualEllipsePrepared).normalized);
       setRuntimeCommandHistory((current) => [...current.slice(-29), raw]);
       setRuntimeHistoryIndex(runtimeCommandHistory.length + 1);
       setCommandInput("");
@@ -1324,6 +1436,10 @@ export function App() {
   }
 
   function cancelRuntimeCommand(): void {
+    if (ellipsePromptOpen) {
+      cancelEllipsePrompt();
+      return;
+    }
     if (polygonPromptOpen) {
       cancelPolygonPrompt();
       return;
@@ -1532,8 +1648,9 @@ export function App() {
     let documentId = `drawing-${nextDocumentSequence.current++}`;
     while (documentTabs.tabs.some((tab) => tab.documentId === documentId)) documentId = `drawing-${nextDocumentSequence.current++}`;
     const created = createNewModelSpaceDocument({ documentId, title: `${documentId}.kdraw` });
-    const nextDocument = created.document;
-    await workspace.open({ documentId, fallbackDocument: nextDocument, sourceFileName: `${documentId}.kdraw`, activeLayoutId: created.activeLayoutId });
+    let nextDocument = created.document;
+    const opened = await workspace.open({ documentId, fallbackDocument: nextDocument, sourceFileName: `${documentId}.kdraw`, activeLayoutId: created.activeLayoutId, layoutWorkspace: "migrate" });
+    nextDocument = opened.document;
     sessions.current.set(document.documentId, session.current);
     const nextSession = new CadSession(nextDocument);
     sessions.current.set(documentId, nextSession);
@@ -2914,7 +3031,7 @@ export function App() {
     if (committing.current) return;
     committing.current = true;
     try {
-      const result = createPaperLayout(document);
+      const result = runtime.createLayout(document);
       await commitChanges("LAYOUT_CREATE", { name: result.layouts.find((layout) => layout.id === result.layoutId)!.name }, result.changes, []);
       setActiveLayoutId(result.layoutId);
       setLayoutRenameInput(result.layouts.find((layout) => layout.id === result.layoutId)!.name);
@@ -2931,7 +3048,7 @@ export function App() {
     if (committing.current || activeLayout.kind !== "paper") return;
     committing.current = true;
     try {
-      const result = copyPaperLayout(document, activeLayout.id);
+      const result = runtime.copyLayout(document, activeLayout.id);
       const copied = result.layouts.find((layout) => layout.id === result.layoutId)!;
       await commitChanges(
         "LAYOUT_COPY",
@@ -2955,8 +3072,10 @@ export function App() {
     if (committing.current || activeLayout.kind !== "paper") return;
     committing.current = true;
     try {
-      const result = movePaperLayout(document, activeLayout.id, delta);
-      await commitChanges("LAYOUT_REORDER", { layoutId: activeLayout.id, delta }, result.changes, []);
+      const sourceIndex = document.layouts.findIndex((layout) => layout.id === activeLayout.id);
+      const targetTabIndex = sourceIndex + delta;
+      const result = runtime.reorderLayout(document, activeLayout.id, targetTabIndex);
+      await commitChanges("LAYOUT_REORDER", { layoutId: activeLayout.id, targetTabIndex }, result.changes, []);
     } catch (error) {
       if (error instanceof StorageRevisionConflictError) await recoverFromStorageConflict(error);
       else if (error instanceof LayoutCommandError) setStatus(`LAYOUT viga: ${error.message}`);
@@ -2970,7 +3089,7 @@ export function App() {
     if (committing.current || activeLayout.kind !== "paper") return;
     committing.current = true;
     try {
-      const result = renamePaperLayout(document, activeLayout.id, layoutRenameInput);
+      const result = runtime.renameLayout(document, activeLayout.id, layoutRenameInput);
       const renamed = result.layouts.find((layout) => layout.id === activeLayout.id)!;
       await commitChanges("LAYOUT_RENAME", { layoutId: activeLayout.id, name: renamed.name }, result.changes, []);
       setLayoutRenameInput(renamed.name);
@@ -2989,7 +3108,7 @@ export function App() {
     committing.current = true;
     try {
       const deletedHandles = (activeLayout.entities ?? []).map((entity) => entity.handle);
-      const result = deletePaperLayout(document, activeLayout.id);
+      const result = runtime.deleteLayout(document, activeLayout.id);
       await commitChanges("LAYOUT_DELETE", { layoutId: activeLayout.id }, result.changes, [], deletedHandles);
       setActiveLayoutId(result.layoutId);
       setLayoutRenameInput(result.layouts.find((layout) => layout.id === result.layoutId)?.name ?? "");
@@ -3158,17 +3277,28 @@ export function App() {
     }
   }
 
-  function activateLayout(layoutId: string): void {
+  async function activateLayout(layoutId: string): Promise<void> {
     const layout = document.layouts.find((candidate) => candidate.id === layoutId);
     if (!layout) return;
-    liveDocuments.setLayout(document.documentId, layoutId);
-    setActiveLayoutId(layoutId);
-    setDocumentTabs((current) => setDocumentTabLayout(current, document.documentId, layoutId));
-    setLayoutRenameInput(layout.name);
-    setSelectedHandles([]);
-    setSelectedViewportId(null);
-    setModelViewportId(null);
-    setStatus(`${layout.name}: ${layout.kind === "model" ? "MODEL" : "PAPER"}`);
+    if (committing.current) return;
+    committing.current = true;
+    try {
+      const result = runtime.activateLayout(document, layoutId);
+      if (result.changes.length > 0) await commitChanges("LAYOUT_ACTIVATE", { layoutId }, result.changes, []);
+      liveDocuments.setLayout(document.documentId, layoutId);
+      setActiveLayoutId(layoutId);
+      setDocumentTabs((current) => setDocumentTabLayout(current, document.documentId, layoutId));
+      setLayoutRenameInput(layout.name);
+      setSelectedHandles([]);
+      setSelectedViewportId(null);
+      setModelViewportId(null);
+      setStatus(`${layout.name}: ${layout.kind === "model" ? "MODEL" : "PAPER"} · workspace read-back`);
+    } catch (error) {
+      if (error instanceof StorageRevisionConflictError) await recoverFromStorageConflict(error);
+      else setStatus(`LAYOUT viga: ${error instanceof Error ? error.message : String(error)}`);
+    } finally {
+      committing.current = false;
+    }
   }
 
   function pageNumber(value: string, label: string, positive = false): number {
@@ -3664,7 +3794,7 @@ export function App() {
                 <RibbonTool rowId="F-005" label="Arc" icon="arc" available={runtime.canExecute("F-005")} pressed={activeCommandPrompt === "ARC"} onClick={() => beginRuntimeCommand("ARC", "ARC · sisesta algus-, vahe- ja lõpp-punkt")} disabled={!modelSpaceEditing || activeLayer.locked} />
                 <RibbonTool rowId="F-006" label="Polygon" icon="polyline" available={runtime.canExecute("F-006")} pressed={activeCommandPrompt === "POLYGON"} onClick={beginPolygonPrompt} disabled={!modelSpaceEditing || activeLayer.locked} />
                 <RibbonTool rowId="F-067" label="Hatch" icon="hatch" available={runtime.canExecute("F-067")} pressed={activeCommandPrompt === "HATCH"} onClick={() => beginAnnotation("HATCH", selectedHandles)} disabled={!modelSpaceEditing || activeLayer.locked || selectedHandles.length === 0} />
-                <RibbonTool rowId="F-007" label="Ellipse" icon="ellipse" />
+                <RibbonTool rowId="F-007" label="Ellipse" icon="ellipse" available={runtime.canExecute("F-007")} pressed={activeCommandPrompt === "ELLIPSE"} onClick={beginEllipsePrompt} disabled={!modelSpaceEditing || activeLayer.locked} />
               </div>
             </div>
             <strong>Draw</strong>
@@ -3739,6 +3869,7 @@ export function App() {
           <section className="ribbon-panel ribbon-panel-utilities" aria-label="Utilities panel" data-ribbon-panel="utilities">
             <div className="ribbon-panel-tools ribbon-tool-grid ribbon-tool-grid-dense">
               <RibbonTool rowId="F-054" label="Measure" icon="measure" />
+              <RibbonTool rowId="F-053" label="Units" icon="settings" available={runtime.canExecute("F-053")} pressed={unitsPanelOpen} onClick={openUnitsPanel} />
               <RibbonTool rowId="F-120" label="Count" icon="count" />
             </div>
             <strong>Utilities</strong>
@@ -4430,6 +4561,8 @@ export function App() {
               data-preview-command={previewCommand ?? ""}
               data-polygon-preview={polygonPreview.prepared ? "true" : "false"}
               data-polygon-preview-handle={polygonPreview.prepared?.resultHandles[0] ?? ""}
+              data-ellipse-preview={ellipsePreview.prepared ? "true" : "false"}
+              data-ellipse-preview-handle={ellipsePreview.prepared?.resultHandles[0] ?? ""}
               data-selected-handles={selectedHandles.join(",")}
               onPointerDown={(event) => { event.currentTarget.focus({ preventScroll: true }); selectModifyTargetFromCanvas(event); }}
               onPointerMove={updateModelPointer}
@@ -4628,6 +4761,19 @@ export function App() {
             data-polygon-rotation-input={polygonReadback?.rotationInput ?? ""}
             data-polygon-orientation={polygonReadback?.orientation ?? ""}
             data-polygon-signed-area={polygonReadback?.signedArea ?? ""}
+            data-ellipse-shape={ellipseReadback?.shape ?? ""}
+            data-ellipse-mode={ellipseReadback?.constructionMode ?? ""}
+            data-ellipse-ratio={ellipseReadback?.ratio ?? ""}
+            data-units-drawing={runtime.units(document).drawingUnit}
+            data-units-length-format={runtime.units(document).lengthFormat}
+            data-units-angle-format={runtime.units(document).angleFormat}
+            data-units-clockwise={runtime.units(document).clockwise ? "true" : "false"}
+            data-units-base-angle={runtime.units(document).baseAngleRad}
+            data-units-coordinate-scale={unitsReadback?.coordinateScale ?? ""}
+            data-units-coordinates-preserved={unitsReadback?.coordinatesPreserved ? "true" : "false"}
+            data-layout-workspace-active={layoutWorkspaceState.activeLayoutId}
+            data-layout-workspace-space={layoutWorkspaceState.activeSpace}
+            data-layout-workspace-order={layoutWorkspaceState.tabOrder.join(",")}
           >Precision/Layers + Documents live read-back{pdfUnderlayReadback ? ` · PDF ${pdfUnderlayReadback.byteLength} B` : ""}</output>
         </PaletteFrame>
       </DrawingViewport>
@@ -4640,6 +4786,25 @@ export function App() {
         onChange={setPolygonForm}
         onCommit={() => void commitPolygonPrompt()}
         onCancel={cancelPolygonPrompt}
+      />}
+      {ellipsePromptOpen && <EllipsePrompt
+        value={ellipseForm}
+        previewValid={ellipsePreview.prepared !== null}
+        normalizedSummary={ellipsePreview.prepared ? `${ellipsePreview.prepared.normalized.shape} · R ${ellipsePreview.prepared.normalized.majorRadius.toFixed(2)} / ${ellipsePreview.prepared.normalized.minorRadius.toFixed(2)} · ratio ${ellipsePreview.prepared.normalized.ratio.toFixed(4)}` : "Eelvaade pole valmis"}
+        error={ellipsePreview.error}
+        onChange={setEllipseForm}
+        onCommit={() => void commitEllipsePrompt()}
+        onCancel={cancelEllipsePrompt}
+      />}
+      {unitsPanelOpen && <UnitsPanel
+        value={unitsForm}
+        requiresPreserveConfirmation={unitsPreview.requiresPreserveConfirmation}
+        preserveConfirmed={unitsPreserveConfirmed}
+        error={unitsPreview.error}
+        onChange={(value) => { setUnitsForm(value); setUnitsPreserveConfirmed(false); }}
+        onPreserveConfirmed={setUnitsPreserveConfirmed}
+        onCommit={() => void commitUnits()}
+        onCancel={() => setUnitsPanelOpen(false)}
       />}
       {livePromptCommand && activeLivePromptField && <LiveCommandPrompt
         commandId={livePromptCommand}

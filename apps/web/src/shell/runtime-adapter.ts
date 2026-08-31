@@ -1,11 +1,24 @@
 import {
   allocateEntityHandles,
+  activateLayoutWorkspace,
+  copyPaperLayoutWorkspace,
   createEmptyDocument,
+  createPaperLayoutWorkspace,
+  deletePaperLayoutWorkspace,
   parseCartesianPoint,
+  planCadUnitsContract,
   prepareCompletePolygonCommand,
+  prepareCompleteEllipseCommand,
   prepareGeometryCommand,
+  readCadUnitsContract,
+  readLayoutWorkspace,
+  renamePaperLayoutWorkspace,
+  reorderPaperLayoutWorkspace,
   resolveCadCommand,
   CadSession,
+  type CadChange,
+  type CadUnitsContractV1,
+  type LayoutWorkspaceEditResult,
 } from "@kuubik/cad-core";
 import type { KDrawDocumentV1 } from "@kuubik/cad-schema";
 import {
@@ -39,9 +52,9 @@ export interface PrecisionToggleState {
 }
 
 const RUNTIME_ROWS = new Set([
-  "F-001", "F-002", "F-003", "F-004", "F-005", "F-006",
+  "F-001", "F-002", "F-003", "F-004", "F-005", "F-006", "F-007",
   "F-016", "F-017", "F-018", "F-019", "F-020", "F-021", "F-022", "F-024", "F-027", "F-030",
-  "F-045", "F-047", "F-049", "F-050", "F-052",
+  "F-045", "F-047", "F-049", "F-050", "F-052", "F-053",
   "F-057", "F-058", "F-059",
   "F-061", "F-062", "F-063", "F-064", "F-065", "F-066", "F-067", "F-068",
   "F-072", "F-073", "F-074",
@@ -93,6 +106,35 @@ export interface VisualPolygonDraft {
 export interface VisualPolygonPrepared extends PreparedEngineCommand {
   previewEntities: KDrawDocumentV1["entities"];
   normalized: ReturnType<typeof prepareCompletePolygonCommand>["normalized"];
+}
+
+export type VisualEllipseConstructionMode = "center-major-minor" | "axis-endpoints";
+
+export interface VisualEllipseFormState {
+  constructionMode: VisualEllipseConstructionMode;
+  center: string;
+  majorAxisEnd: string;
+  minorDistance: string;
+  firstAxisEnd: string;
+  secondAxisEnd: string;
+  otherAxisDistance: string;
+  shape: "full" | "arc";
+  startAngleDeg: string;
+  endAngleDeg: string;
+  direction: "counter-clockwise" | "clockwise";
+}
+
+export interface VisualEllipsePrepared extends PreparedEngineCommand {
+  previewEntities: KDrawDocumentV1["entities"];
+  normalized: ReturnType<typeof prepareCompleteEllipseCommand>["normalized"];
+}
+
+export interface VisualUnitsPlan {
+  changes: CadChange[];
+  previous: CadUnitsContractV1;
+  current: CadUnitsContractV1;
+  coordinatesPreserved: true;
+  coordinateScale: 1;
 }
 
 function promptPlan(request: AnnotationBlockPromptRequest) {
@@ -377,6 +419,79 @@ export function prepareVisualPolygon(document: KDrawDocumentV1, draft: VisualPol
   };
 }
 
+function finiteDraftNumber(raw: string, label: string): number {
+  const value = Number(raw.trim().replace(",", "."));
+  if (!Number.isFinite(value)) throw new CommandEngineInputError(`${label} peab olema lõplik arv.`);
+  return value;
+}
+
+export function prepareVisualEllipse(document: KDrawDocumentV1, draft: VisualEllipseFormState): VisualEllipsePrepared {
+  const common = {
+    command: "ELLIPSE" as const,
+    handle: allocateEntityHandles(document, 1)[0]!,
+    layerId: document.currentLayerId,
+  };
+  const construction = draft.constructionMode === "center-major-minor"
+    ? {
+        mode: "center-major-minor" as const,
+        center: parseCartesianPoint(draft.center),
+        majorAxisEnd: parseCartesianPoint(draft.majorAxisEnd),
+        minorDistance: finiteDraftNumber(draft.minorDistance, "Kõrvaltelje kaugus"),
+      }
+    : {
+        mode: "axis-endpoints" as const,
+        firstAxisEnd: parseCartesianPoint(draft.firstAxisEnd),
+        secondAxisEnd: parseCartesianPoint(draft.secondAxisEnd),
+        otherAxisDistance: finiteDraftNumber(draft.otherAxisDistance, "Teise telje kaugus"),
+      };
+  const arc = draft.shape === "full" ? { mode: "full" as const } : {
+    mode: "angles" as const,
+    startAngleRad: finiteDraftNumber(draft.startAngleDeg, "Algusnurk") * Math.PI / 180,
+    endAngleRad: finiteDraftNumber(draft.endAngleDeg, "Lõppnurk") * Math.PI / 180,
+    direction: draft.direction,
+  };
+  const prepared = prepareCompleteEllipseCommand({ ...common, construction, arc });
+  return {
+    commandId: prepared.commandId,
+    changes: prepared.changes,
+    targetHandles: [],
+    resultHandles: prepared.resultHandles,
+    operationArgs: { ...common, construction, arc, normalized: prepared.normalized },
+    previewEntities: prepared.entities,
+    normalized: prepared.normalized,
+  };
+}
+
+function ellipseMode(raw: string): VisualEllipseConstructionMode {
+  const value = raw.trim().toLocaleUpperCase("en-US");
+  if (value === "C" || value === "CENTER" || value === "CENTER-MAJOR-MINOR") return "center-major-minor";
+  if (value === "A" || value === "AXIS" || value === "AXIS-ENDPOINTS") return "axis-endpoints";
+  throw new CommandEngineInputError("ELLIPSE mode must be C or A.");
+}
+
+function prepareEllipse(document: KDrawDocumentV1, invocation: CommandInvocation): VisualEllipsePrepared {
+  if (invocation.arguments.length < 4) {
+    throw new CommandEngineInputError("ELLIPSE expects C center majorEnd minor [FULL|ARC start end CCW|CW], or A firstEnd secondEnd otherAxis [...].");
+  }
+  const mode = ellipseMode(invocation.arguments[0]!);
+  const shapeIndex = 4;
+  const shape = invocation.arguments[shapeIndex]?.toLocaleUpperCase("en-US") === "ARC" ? "arc" : "full";
+  const direction = invocation.arguments[7]?.toLocaleUpperCase("en-US") === "CW" ? "clockwise" : "counter-clockwise";
+  return prepareVisualEllipse(document, {
+    constructionMode: mode,
+    center: invocation.arguments[1]!,
+    majorAxisEnd: invocation.arguments[2]!,
+    minorDistance: invocation.arguments[3]!,
+    firstAxisEnd: invocation.arguments[1]!,
+    secondAxisEnd: invocation.arguments[2]!,
+    otherAxisDistance: invocation.arguments[3]!,
+    shape,
+    startAngleDeg: invocation.arguments[5] ?? "0",
+    endAngleDeg: invocation.arguments[6] ?? "180",
+    direction,
+  });
+}
+
 function preparePolygon(document: KDrawDocumentV1, invocation: CommandInvocation): VisualPolygonPrepared {
   if (invocation.arguments.length < 4) {
     throw new CommandEngineInputError("POLYGON expects: sides I|C center size [rotationDeg] [CCW|CW], or sides E first second [CCW|CW].");
@@ -447,6 +562,7 @@ function createCommandRegistry(): CommandRegistry {
     { id: "CIRCLE", aliases: ["C"], prepare: prepareCircle },
     { id: "ARC", aliases: ["A"], prepare: prepareArc },
     { id: "POLYGON", aliases: ["POL"], prepare: preparePolygon },
+    { id: "ELLIPSE", aliases: ["EL"], prepare: prepareEllipse },
     { id: "MTEXT", aliases: ["MT"], prepare: prepareMText },
     { id: "LEADER", aliases: ["LE"], prepare: prepareLeader },
   ]);
@@ -459,6 +575,7 @@ export const VISUAL_SHELL_COMMAND_DEFINITIONS = Object.freeze([
   { id: "CIRCLE", aliases: ["C"] },
   { id: "ARC", aliases: ["A"] },
   { id: "POLYGON", aliases: ["POL"] },
+  { id: "ELLIPSE", aliases: ["EL"] },
   { id: "MTEXT", aliases: ["MT"] },
   { id: "LEADER", aliases: ["LE"] },
   { id: "UNDO", aliases: ["U"] },
@@ -482,6 +599,62 @@ export class VisualShellRuntimeAdapter {
 
   canExecute(rowId: string): boolean {
     return RUNTIME_ROWS.has(rowId);
+  }
+
+  units(document: KDrawDocumentV1): CadUnitsContractV1 {
+    return readCadUnitsContract(document);
+  }
+
+  planUnits(document: KDrawDocumentV1, contract: CadUnitsContractV1, preserveCoordinates: boolean): VisualUnitsPlan {
+    const planned = planCadUnitsContract(document, contract, preserveCoordinates ? { existingGeometryPolicy: "preserve-coordinates" } : {});
+    return {
+      changes: [
+        {
+          type: "replace-drawing-content",
+          units: structuredClone(planned.document.units),
+          currentLayerId: planned.document.currentLayerId,
+          entities: structuredClone(planned.document.entities),
+          layers: structuredClone(planned.document.layers),
+          linetypes: structuredClone(planned.document.linetypes),
+          textStyles: structuredClone(planned.document.textStyles),
+          dimensionStyles: structuredClone(planned.document.dimensionStyles),
+          blocks: structuredClone(planned.document.blocks),
+        },
+        { type: "set-metadata", metadata: structuredClone(planned.document.metadata) },
+      ],
+      previous: planned.previous,
+      current: planned.current,
+      coordinatesPreserved: planned.coordinatesPreserved,
+      coordinateScale: planned.coordinateScale,
+    };
+  }
+
+  layout(document: KDrawDocumentV1) {
+    return readLayoutWorkspace(document);
+  }
+
+  activateLayout(document: KDrawDocumentV1, layoutId: string): LayoutWorkspaceEditResult {
+    return activateLayoutWorkspace(document, layoutId);
+  }
+
+  createLayout(document: KDrawDocumentV1): LayoutWorkspaceEditResult {
+    return createPaperLayoutWorkspace(document);
+  }
+
+  copyLayout(document: KDrawDocumentV1, layoutId: string): LayoutWorkspaceEditResult {
+    return copyPaperLayoutWorkspace(document, layoutId);
+  }
+
+  renameLayout(document: KDrawDocumentV1, layoutId: string, name: string): LayoutWorkspaceEditResult {
+    return renamePaperLayoutWorkspace(document, layoutId, name);
+  }
+
+  deleteLayout(document: KDrawDocumentV1, layoutId: string): LayoutWorkspaceEditResult {
+    return deletePaperLayoutWorkspace(document, layoutId);
+  }
+
+  reorderLayout(document: KDrawDocumentV1, layoutId: string, targetTabIndex: number): LayoutWorkspaceEditResult {
+    return reorderPaperLayoutWorkspace(document, layoutId, targetTabIndex);
   }
 
   commandEngine(session: CadSession): CommandLineEngine {

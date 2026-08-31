@@ -419,6 +419,7 @@ button:focus-visible, select:focus-visible, input:focus-visible, summary:focus-v
   pointer-events: none;
 }
 .layoutbar { position: relative; z-index: 1; display: flex; height: var(--cad-bottom-bar-height); grid-row: 6; align-items: stretch; min-width: 0; gap: 1px; padding: 6px 450px 1px 8px; overflow: visible; background: var(--cad-shell-surface); border-top: 4px solid var(--cad-ribbon-surface); border-bottom: 1px solid #0696d7; }
+.layoutbar:has(.layout-tools[open]), .layoutbar:has(.publish-options[open]), .layoutbar:has(.page-setup-library[open]) { z-index: 52; }
 .layoutbar button, .layoutbar input, .layoutbar select { min-height: 29px; color: #dce3e9; background: #2a323a; border: 1px solid #46515c; font-size: 11px; }
 .layout-tabs { display: flex; min-width: 0; gap: 1px; }
 .layout-tab { padding: 0 12px; border-bottom: 0 !important; }
@@ -636,6 +637,70 @@ button:focus-visible, select:focus-visible, input:focus-visible, summary:focus-v
 .polygon-prompt button:disabled { color: #79858e; background: #283139; border-color: #404b54; cursor: not-allowed; }
 .polygon-prompt :focus-visible { outline: 2px solid #7fd4ff; outline-offset: 1px; }
 
+.typed-cad-prompt {
+  position: fixed;
+  z-index: 62;
+  right: 16px;
+  bottom: 72px;
+  left: calc(var(--cad-palette-width) + 8px);
+  display: grid;
+  min-height: 126px;
+  color: #e9f0f4;
+  background: #202932;
+  border: 1px solid #5d6d7a;
+  border-left: 3px solid #159ddd;
+  box-shadow: 0 10px 28px rgb(0 0 0 / 46%);
+}
+.typed-cad-prompt > header { display: flex; height: 25px; padding: 0 8px; align-items: center; justify-content: space-between; background: #2e3944; border-bottom: 1px solid #111820; }
+.typed-cad-prompt > header strong { color: #7fd4ff; font: 700 11px Consolas, "Courier New", monospace; letter-spacing: .05em; }
+.typed-cad-prompt > header span { color: #9daab4; font-size: 9px; }
+.typed-cad-prompt-grid { display: grid; grid-template-columns: repeat(5, minmax(112px, 1fr)); gap: 6px; padding: 7px 8px 4px; }
+.typed-cad-prompt label { display: grid; gap: 2px; min-width: 0; color: #bbc6ce; font-size: 9px; }
+.typed-cad-prompt input, .typed-cad-prompt select { width: 100%; height: 25px; min-width: 0; padding: 0 6px; color: #f3f7f9; background: #111820; border: 1px solid #687985; font: 11px Consolas, "Courier New", monospace; }
+.typed-cad-readback { min-height: 21px; padding: 3px 8px; color: #8ed6f8; font: 10px Consolas, "Courier New", monospace; }
+.typed-cad-readback.is-error { color: #ffbe9b; }
+.typed-cad-prompt > footer { display: flex; justify-content: flex-end; gap: 5px; padding: 0 8px 7px; }
+.typed-cad-prompt button { min-height: 25px; padding: 0 11px; color: #e6edf1; background: #35424c; border: 1px solid #62717c; }
+.typed-cad-prompt button[type="submit"]:not(:disabled) { background: #176a99; border-color: #66b9e8; }
+.typed-cad-prompt button:disabled { color: #79858e; background: #283139; border-color: #404b54; cursor: not-allowed; }
+.typed-cad-prompt :focus-visible { outline: 2px solid #7fd4ff; outline-offset: 1px; }
+
+.units-panel {
+  position: fixed;
+  z-index: 64;
+  top: 150px;
+  left: 50%;
+  display: grid;
+  width: min(650px, calc(100vw - 32px));
+  color: #e7edf1;
+  background: #222a31;
+  border: 1px solid #667784;
+  border-top: 3px solid #159ddd;
+  box-shadow: 0 18px 48px rgb(0 0 0 / 58%);
+  transform: translateX(-50%);
+}
+.units-panel > header { display: flex; min-height: 38px; padding: 5px 6px 5px 11px; align-items: center; justify-content: space-between; background: #303a43; border-bottom: 1px solid #111820; }
+.units-panel > header div { display: grid; gap: 1px; }
+.units-panel > header strong { color: #fff; font-size: 12px; }
+.units-panel > header span { color: #9eabb4; font: 9px Consolas, "Courier New", monospace; }
+.units-panel > header button { width: 26px; min-height: 24px; color: #cdd6dc; background: transparent; border: 1px solid transparent; font-size: 18px; }
+.units-panel > header button:hover { color: #fff; background: #a43b36; }
+.units-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; padding: 11px; }
+.units-grid fieldset { display: grid; gap: 7px; margin: 0; padding: 9px; border: 1px solid #46545f; }
+.units-grid legend { padding: 0 5px; color: #7fd4ff; font-size: 10px; }
+.units-grid label { display: grid; grid-template-columns: 98px 1fr; align-items: center; gap: 7px; color: #c2ccd3; font-size: 10px; }
+.units-grid input, .units-grid select { min-width: 0; height: 27px; padding: 0 6px; color: #f2f6f8; background: #111820; border: 1px solid #687985; font: 11px Segoe UI, sans-serif; }
+.units-grid .units-check { grid-template-columns: 18px 1fr; }
+.units-grid .units-check input, .units-preserve input { width: 14px; height: 14px; }
+.units-preserve { display: flex; align-items: center; gap: 8px; margin: 0 11px 8px; padding: 8px; color: #f0d69a; background: #3b3326; border: 1px solid #79623c; font-size: 10px; }
+.units-readback { min-height: 24px; padding: 5px 11px; color: #8ed6f8; background: #182028; border-top: 1px solid #3e4a53; font: 10px Consolas, "Courier New", monospace; }
+.units-readback.is-error { color: #ffbe9b; }
+.units-panel > footer { display: flex; justify-content: flex-end; gap: 6px; padding: 8px 11px; background: #1b232a; }
+.units-panel > footer button { min-width: 76px; min-height: 28px; color: #e7edf1; background: #35424c; border: 1px solid #62717c; }
+.units-panel > footer button[type="submit"]:not(:disabled) { background: #176a99; border-color: #66b9e8; }
+.units-panel button:disabled { color: #7b8790; background: #293139; cursor: not-allowed; }
+.units-panel :focus-visible { outline: 2px solid #7fd4ff; outline-offset: 2px; }
+
 .recovery-panel {
   position: fixed;
   z-index: 65;
@@ -669,6 +734,8 @@ button:focus-visible, select:focus-visible, input:focus-visible, summary:focus-v
   .live-command-cancel { grid-column: 3; }
   .polygon-prompt { right: 12px; left: 12px; }
   .polygon-prompt-grid { grid-template-columns: repeat(2, minmax(110px, 1fr)); }
+  .typed-cad-prompt { right: 12px; left: 12px; }
+  .typed-cad-prompt-grid, .units-grid { grid-template-columns: repeat(2, minmax(110px, 1fr)); }
 }
 
 @media (max-width: 1180px) {
