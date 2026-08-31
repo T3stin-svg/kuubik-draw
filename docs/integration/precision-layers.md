@@ -6,11 +6,11 @@ below. No new runtime dependency is required.
 
 ## Package exports
 
-The integrated base `34683acfb1ab7a0546539cd6f72546ecb868011c`
-already contains the required package exports below. No shared `src/index.ts`
-file needs to change in the second-wave branch.
+The current integrated base `9af0b7b241ec28f6d5976ed69f79d973611f1c5b`
+already contains all required package exports. No shared `src/index.ts` file
+needs to change for this workstream.
 
-Add these exports to `packages/cad-core/src/index.ts`:
+The existing core exports consumed by the contract are:
 
 ```ts
 export * from "./precision-input.js";
@@ -21,7 +21,7 @@ export * from "./layers.js";
 export * from "./draw-order.js";
 ```
 
-Add these exports to `packages/cad-renderer/src/index.ts`:
+The existing renderer exports consumed by the contract are:
 
 ```ts
 export * from "./snap.js";
@@ -36,6 +36,15 @@ The feature controllers already live at:
 - `apps/web/src/features/layers/model.ts`
 - `apps/web/src/features/layers/controller.ts`
 - `apps/web/src/features/layers/command-adapter.ts`
+
+The third-wave DOM-independent composition root is:
+
+- `apps/web/src/features/precision/shell-contract.ts`
+
+The integrator should construct one `PrecisionLayersShellContract` per open
+document and replace duplicated React precision/layer state with that instance.
+This application feature is imported directly; it does not require a new
+shared-package export.
 
 ## Typed shell adapter
 
@@ -56,17 +65,21 @@ the same request to preview, commit and Dynamic Input.
 
 ## Precision wiring
 
-1. Keep one `CadSnapIndex` and one `CadSelectionIndex` per open document. Call
-   `setEntities` and `setBlocks` after a committed revision.
+1. Construct `PrecisionLayersShellContract(document, options)`. It owns one
+   `CadSnapIndex`, one `CadSelectionIndex`, one `CadObjectTrack`, the typed
+   precision state and the layer controller for that document.
 2. Convert the cursor aperture from pixels to document world units before
-   querying either index.
-3. Pass the same `PrecisionRequest` to `PrecisionFeatureModel.preview()` and
-   `.commit()`. Do not reproduce ORTHO/POLAR/GRID/OSNAP/OTRACK rules in React.
-4. Feed `CadObjectTrack.candidates()` into
-   `PrecisionRequest.trackingCandidates`, and map `CadSnapCandidate` to
-   `PrecisionCandidate` without changing `priority`, `point`, or `key`.
-5. Dynamic Input must call `PrecisionFeatureModel.dynamicInput()`; its point is
-   the exact pipeline result and only the displayed strings are rounded.
+   setting `options.settings.aperture` or preparing a pointer frame.
+3. For every pointer frame, call `preparePointer()` exactly once. Use the
+   returned `PreparedPrecisionPointer.preview()`, `.commit()` and
+   `.dynamicInput()` methods. The object owns a cloned immutable request, so a
+   later mode or layer change cannot make the committed point differ from its
+   preview.
+4. Call `querySnap()` for cursor markers, `acquireTracking()` after an OSNAP
+   acquisition and `trackingCandidates()` for guide rendering. Do not rebuild
+   candidate priority or layer filtering in React.
+5. Only displayed Dynamic Input strings are rounded; its `point` and the
+   committed document geometry retain double precision.
 6. Explicit absolute/relative Cartesian input bypasses cursor aids. Direct
    distance follows the constrained cursor direction and then the shared
    GRID/OSNAP/OTRACK stages.
@@ -81,13 +94,14 @@ Every layer UI action calls the corresponding `LayerFeatureModel` planner and
 commits its returned changes as one `CadSession` operation. The UI must not
 mutate `document.layers` or `document.entities` directly.
 
-Second-wave integration should call `LayerManagerController.execute()` with a
-typed command instead. The controller always plans against its latest document,
-commits exactly one operation/revision, and returns a cloned document for
-read-back. It covers create, rename, delete, current, visible, frozen, locked,
-plottable, color, linetype, lineweight, transparency and draw order. A planner
-error occurs before the operation id/revision is committed and leaves the
-document unchanged.
+Live integration should call `PrecisionLayersShellContract.executeLayer()` with
+a typed command, then replace the shell document with the returned cloned
+read-back. `undoLayer()` and `redoLayer()` provide the same read-back contract.
+Every successful call refreshes both spatial indexes. The controller always
+plans against its latest document and commits exactly one operation/revision.
+It covers create, rename, delete, current, visible, frozen, locked, plottable,
+color, linetype, lineweight, transparency and draw order. A planner error occurs
+before the operation id/revision is committed and leaves the document unchanged.
 
 Use `LayerFeatureModel.participates()` as the eligibility callback for the
 selection and snap indexes. Renderer and print already implement the same
@@ -105,14 +119,30 @@ locked:
 Draw order is the model-space `entities` array order. `planDrawOrderChanges()`
 preserves entity values and handles and creates one atomic Undo step.
 
-## App surfaces still requiring integration-branch edits
+## Exact integrator touch points
+
+- Use `contract.commandAdapter` wherever the shell currently expects a
+  `VisualShellCommandAdapter`.
+- Send F3/F7/F8/F9/F10/F11/F12 to `handlePrecisionKey()` and command-line text
+  to `executePrecisionCommand()`.
+- Use `preparePointer()` once per pointer frame; never separately reconstruct a
+  precision request for commit.
+- Consume layer ribbon/menu requests with `takeLayerIntents()`, map each typed
+  intent to the relevant dialog/result and finish it through `executeLayer()`.
+- Replace the open shell document only from `executeLayer()`, `undoLayer()` or
+  `redoLayer()` read-back.
+- Use `select()`, `querySnap()` and `participates()` instead of independent
+  hidden/frozen/locked predicates.
+
+## App surfaces still requiring integration-owner edits
 
 - Connect the existing command-line and status controls to the typed feature
   adapters. Do not duplicate their key/command parsing in React.
-- Connect Layer Manager fields/dialogs to `LayerManagerController` commands and
-  replace the open document only with the returned read-back document.
+- Connect Layer Manager fields/dialogs to typed layer commands and replace the
+  open document only with the returned read-back document.
 - Draw-order commands and context menu actions.
-- IndexedDB read-back and real-browser workflows on dev port 5212.
+- IndexedDB read-back and real-browser workflows on the integration owner's
+  selected dev port.
 
 The integrated base currently uses row `F-086` for a Block Create ribbon tool,
 while this assigned workstream contract uses `F-086` for draw order. The shared
