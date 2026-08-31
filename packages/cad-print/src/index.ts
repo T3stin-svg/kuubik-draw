@@ -1,6 +1,8 @@
 import type { CadEntity, CadLayout, CadPageSetup, CadPaperRect, CadPlotStyle, CadViewport, KDrawDocumentV1 } from "@kuubik/cad-schema";
 import { paperDefinitionForPageSetup, resolveEntityPlotAppearance, resolveModelPageSetup, resolvePlotStyle } from "@kuubik/cad-core";
 
+export * from "./pdf-underlay.js";
+
 export interface PrintPage {
   widthMm: number;
   heightMm: number;

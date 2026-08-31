@@ -1,4 +1,4 @@
-import type { CadOperation, KDrawDocumentV1 } from "@kuubik/cad-schema";
+import type { CadAttachmentRef, CadOperation, KDrawDocumentV1 } from "@kuubik/cad-schema";
 
 const DATABASE_NAME = "kuubik-draw";
 const DATABASE_VERSION = 1;
@@ -9,6 +9,18 @@ interface StoredOperation {
   revision: number;
   operation: CadOperation;
   recordedAt: string;
+}
+
+interface StoredAttachment {
+  id: string;
+  documentId: string;
+  attachment: CadAttachmentRef;
+  bytes: Uint8Array;
+}
+
+async function sha256(bytes: Uint8Array): Promise<string> {
+  const digest = await crypto.subtle.digest("SHA-256", bytes as Uint8Array<ArrayBuffer>);
+  return [...new Uint8Array(digest)].map((value) => value.toString(16).padStart(2, "0")).join("");
 }
 
 function requestResult<T>(request: IDBRequest<T>): Promise<T> {
@@ -130,6 +142,33 @@ export class KDrawIndexedDb {
     const records = await requestResult(transaction.objectStore("operations").index("byDocument").getAll(documentId));
     await transactionDone(transaction);
     return (records as StoredOperation[]).sort((a, b) => a.revision - b.revision);
+  }
+
+  async saveAttachment(documentId: string, attachment: CadAttachmentRef, bytes: Uint8Array): Promise<void> {
+    await this.open();
+    if (!documentId.trim() || !attachment.id.trim()) throw new TypeError("Attachment document and attachment ids are required.");
+    const copy = Uint8Array.from(bytes);
+    if ((await sha256(copy)) !== attachment.sha256.toLowerCase()) throw new TypeError(`Attachment ${attachment.id} checksum mismatch before storage.`);
+    const transaction = this.#database!.transaction("attachments", "readwrite");
+    const record: StoredAttachment = {
+      id: `${documentId}:${attachment.id}`,
+      documentId,
+      attachment: structuredClone(attachment),
+      bytes: copy,
+    };
+    transaction.objectStore("attachments").add(record);
+    await transactionDone(transaction);
+  }
+
+  async loadAttachment(documentId: string, attachmentId: string): Promise<{ attachment: CadAttachmentRef; bytes: Uint8Array } | null> {
+    await this.open();
+    const transaction = this.#database!.transaction("attachments", "readonly");
+    const result = await requestResult(transaction.objectStore("attachments").get(`${documentId}:${attachmentId}`)) as StoredAttachment | undefined;
+    await transactionDone(transaction);
+    if (!result) return null;
+    const bytes = Uint8Array.from(result.bytes);
+    if ((await sha256(bytes)) !== result.attachment.sha256.toLowerCase()) throw new TypeError(`Stored attachment ${attachmentId} checksum mismatch.`);
+    return { attachment: structuredClone(result.attachment), bytes };
   }
 
   close(): void {
