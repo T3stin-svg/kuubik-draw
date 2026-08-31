@@ -7,6 +7,7 @@ import type {
   CadPrecisionInput,
 } from "@kuubik/cad-core";
 import type { PrecisionPointerInput, PrecisionPointerResolution, PreparedPrecisionPointer } from "./shell-contract.js";
+import type { DynamicInputModel } from "./model.js";
 
 export type CoordinateEntryStatus = "idle" | "active" | "retry" | "preview" | "committed" | "cancelled";
 
@@ -16,6 +17,7 @@ export interface CoordinateEntrySnapshot {
   status: CoordinateEntryStatus;
   input: string | CadPrecisionInput | null;
   preview: PrecisionResult | null;
+  dynamicInput: DynamicInputModel | null;
   error: string | null;
   revision: number;
   canUndo: boolean;
@@ -44,7 +46,7 @@ export interface CoordinateEntryAdapterOptions {
 }
 
 type PointerFactory = (input: PrecisionPointerInput) => PreparedPrecisionPointer;
-type AtomicPlanner = (point: CadPoint2, result: PrecisionResult, document: KDrawDocumentV1) => CoordinateEntryAtomicPlan;
+export type CoordinateEntryAtomicPlanner = (point: CadPoint2, result: PrecisionResult, document: KDrawDocumentV1) => CoordinateEntryAtomicPlan;
 
 function inputClone(input: string | CadPrecisionInput | null): string | CadPrecisionInput | null {
   return typeof input === "string" || input === null ? input : structuredClone(input);
@@ -61,6 +63,7 @@ export class PrecisionCoordinateEntryAdapter {
   readonly #now: () => string;
   readonly #onDocumentChange: ((document: KDrawDocumentV1) => void) | undefined;
   #sequence = 0;
+  #revision: number;
   #status: CoordinateEntryStatus = "idle";
   #context: CoordinateEntryContext | null = null;
   #input: string | CadPrecisionInput | null = null;
@@ -74,6 +77,7 @@ export class PrecisionCoordinateEntryAdapter {
     this.#opIdPrefix = options.opIdPrefix ?? "precision-coordinate";
     this.#now = options.now ?? (() => new Date().toISOString());
     this.#onDocumentChange = options.onDocumentChange;
+    this.#revision = session.document.revision;
   }
 
   get document(): KDrawDocumentV1 { return this.#session.document; }
@@ -83,8 +87,9 @@ export class PrecisionCoordinateEntryAdapter {
       status: this.#status,
       input: inputClone(this.#input),
       preview: this.#resolution ? structuredClone(this.#resolution.preview) : null,
+      dynamicInput: this.#resolution ? structuredClone(this.#resolution.dynamicInput) : null,
       error: this.#error,
-      revision: this.document.revision,
+      revision: this.#revision,
       canUndo: this.#session.canUndo,
       canRedo: this.#session.canRedo,
     };
@@ -139,7 +144,7 @@ export class PrecisionCoordinateEntryAdapter {
     return this.snapshot();
   }
 
-  commit(plan: AtomicPlanner): CoordinateEntryCommit {
+  commit(plan: CoordinateEntryAtomicPlanner): CoordinateEntryCommit {
     if (this.#status !== "preview" || !this.#prepared || !this.#resolution) {
       throw new TypeError("Coordinate entry requires a valid preview before commit.");
     }
@@ -148,30 +153,39 @@ export class PrecisionCoordinateEntryAdapter {
     if (JSON.stringify(preview) !== JSON.stringify(pointCommit)) {
       throw new TypeError("Coordinate preview and point commit disagree.");
     }
-    const planned = plan(structuredClone(pointCommit.point), structuredClone(pointCommit), this.document);
+    const before = this.document;
+    const planned = plan(structuredClone(pointCommit.point), structuredClone(pointCommit), before);
     const operation = {
-      opId: `${this.#opIdPrefix}:${this.document.revision}:${++this.#sequence}`,
-      baseRevision: this.document.revision,
+      opId: `${this.#opIdPrefix}:${before.revision}:${++this.#sequence}`,
+      baseRevision: before.revision,
       commandId: planned.commandId,
       args: { ...(planned.args ?? {}), point: structuredClone(pointCommit.point) },
       targetHandles: [...(planned.targetHandles ?? [])],
       resultHandles: [...(planned.resultHandles ?? [])],
     };
     const committed = this.#session.commit(operation, planned.changes, this.#now());
+    this.#revision = committed.committedRevision;
     this.#status = "committed";
-    this.#onDocumentChange?.(this.document);
-    return { preview: structuredClone(preview), pointCommit, committed, document: this.document };
+    const document = this.document;
+    this.#onDocumentChange?.(structuredClone(document));
+    return { preview: structuredClone(preview), pointCommit, committed, document };
   }
 
   undo(): CommittedOperation | null {
     const committed = this.#session.undo(this.#now());
-    if (committed) this.#onDocumentChange?.(this.document);
+    if (committed) {
+      this.#revision = committed.committedRevision;
+      this.#onDocumentChange?.(this.document);
+    }
     return committed;
   }
 
   redo(): CommittedOperation | null {
     const committed = this.#session.redo(this.#now());
-    if (committed) this.#onDocumentChange?.(this.document);
+    if (committed) {
+      this.#revision = committed.committedRevision;
+      this.#onDocumentChange?.(this.document);
+    }
     return committed;
   }
 }
