@@ -30,6 +30,34 @@ export interface MTextArgs {
   lineSpacingFactor?: number;
 }
 
+export interface TextArgs {
+  handle: string;
+  layerId: string;
+  position: CadPoint2;
+  text: string;
+  height: number;
+  rotationRad?: number;
+  styleId?: string;
+}
+
+export function createText(document: KDrawDocumentV1, args: TextArgs): CadText {
+  validateEntityIdentity(document, args.handle, args.layerId);
+  validateStyleReference(document, args.styleId);
+  const rotationRad = args.rotationRad ?? 0;
+  if (!args.text.length) throw new TypeError("TEXT content is required.");
+  if (!Number.isFinite(args.height) || args.height <= 0 || !Number.isFinite(rotationRad)) throw new RangeError("TEXT height and rotation must be finite and valid.");
+  return {
+    kind: "text",
+    handle: args.handle,
+    layerId: args.layerId,
+    position: validatePoint(args.position, "TEXT position"),
+    text: args.text,
+    height: args.height,
+    rotationRad,
+    ...(args.styleId ? { styleId: args.styleId } : {}),
+  };
+}
+
 export function createMText(document: KDrawDocumentV1, args: MTextArgs): CadText {
   validateEntityIdentity(document, args.handle, args.layerId);
   validateStyleReference(document, args.styleId);

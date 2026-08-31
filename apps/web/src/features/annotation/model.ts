@@ -1,4 +1,4 @@
-export type AnnotationCommandId = "DIMLINEAR" | "DIMALIGNED" | "DIMANGULAR" | "DIMRADIUS" | "DIMDIAMETER" | "DIMCONTINUE" | "DIMSTYLE" | "MTEXT" | "STYLE" | "LEADER" | "MLEADER" | "HATCH";
+export type AnnotationCommandId = "DIMLINEAR" | "DIMALIGNED" | "DIMANGULAR" | "DIMRADIUS" | "DIMDIAMETER" | "DIMCONTINUE" | "DIMSTYLE" | "TEXT" | "MTEXT" | "STYLE" | "LEADER" | "MLEADER" | "HATCH";
 
 export interface AnnotationTool {
   rowIds: string[];
@@ -15,6 +15,7 @@ export const ANNOTATION_TOOLS: readonly AnnotationTool[] = Object.freeze([
   { rowIds: ["F-063"], id: "DIMDIAMETER", label: "Diameetri mõõt", selection: "required" },
   { rowIds: ["F-064", "F-065"], id: "DIMCONTINUE", label: "Jätkuv mõõt", selection: "required" },
   { rowIds: ["F-066"], id: "DIMSTYLE", label: "Mõõdustiilid", selection: "none" },
+  { rowIds: ["F-057"], id: "TEXT", label: "Üherealine tekst", selection: "none" },
   { rowIds: ["F-057"], id: "MTEXT", label: "Mitmerealine tekst", selection: "none" },
   { rowIds: ["F-058"], id: "STYLE", label: "Tekstistiilid", selection: "none" },
   { rowIds: ["F-059"], id: "LEADER", label: "Viitjoon", selection: "none" },
@@ -63,10 +64,12 @@ export const ANNOTATION_PROMPT_PLANS: Readonly<Record<AnnotationCommandId, Annot
     { id: "arcPoint", label: "Mõõtkaare asukoht", valueKind: "point", required: true },
   ] },
   DIMRADIUS: { commandId: "DIMRADIUS", fields: [
+    { id: "center", label: "Keskpunkt", valueKind: "point", required: true },
     { id: "circumferencePoint", label: "Ringjoone punkt", valueKind: "point", required: true },
     { id: "textPoint", label: "Mõõtteksti asukoht", valueKind: "point", required: true },
   ] },
   DIMDIAMETER: { commandId: "DIMDIAMETER", fields: [
+    { id: "center", label: "Keskpunkt", valueKind: "point", required: true },
     { id: "circumferencePoint", label: "Ringjoone punkt", valueKind: "point", required: true },
     { id: "textPoint", label: "Mõõtteksti asukoht", valueKind: "point", required: true },
   ] },
@@ -79,6 +82,13 @@ export const ANNOTATION_PROMPT_PLANS: Readonly<Record<AnnotationCommandId, Annot
   DIMSTYLE: { commandId: "DIMSTYLE", fields: [
     { id: "mode", label: "Tegevus", valueKind: "select", required: true, choices: ["create", "update"] },
     { id: "style", label: "Mõõdustiil", valueKind: "attributes", required: true },
+  ] },
+  TEXT: { commandId: "TEXT", fields: [
+    { id: "position", label: "Sisestuspunkt", valueKind: "point", required: true },
+    { id: "text", label: "Tekst", valueKind: "string", required: true },
+    { id: "height", label: "Kõrgus", valueKind: "number", required: true },
+    { id: "rotationRad", label: "Pööre", valueKind: "number", required: false },
+    { id: "styleId", label: "Tekstistiil", valueKind: "string", required: false },
   ] },
   MTEXT: { commandId: "MTEXT", fields: [
     { id: "position", label: "Sisestuspunkt", valueKind: "point", required: true },
