@@ -77,3 +77,11 @@ No parity score, scope, security-evidence, production deployment or forbidden
 integration file is changed in this wave. Live feature certification remains
 blocked until the integration owner wires the adapter and controller into the
 shared shell and runs the required browser/AutoCAD read-back.
+
+Repository-wide verification passed on the second-wave head: 121 Vitest files
+and 667 tests, typecheck, lint, production build, public-tree scan of 1,367
+files, license audit of 119 installed packages and `git diff --check`.
+The shell at `http://127.0.0.1:5212/` loaded as `Kuubik Draw` with zero browser
+console errors. Visible DOM read-back showed GRID enabled and ORTHO, OSNAP,
+OTRACK and DYN disabled, confirming this remains a shell smoke test rather than
+live evidence of the unintegrated feature adapters.
