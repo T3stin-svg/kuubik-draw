@@ -4,7 +4,11 @@ This workstream intentionally does not edit shared `src/index.ts` files or
 `apps/web/src/App.tsx`. The integration branch must add the exports and wiring
 below. No new runtime dependency is required.
 
-## Required package exports
+## Package exports
+
+The integrated base `34683acfb1ab7a0546539cd6f72546ecb868011c`
+already contains the required package exports below. No shared `src/index.ts`
+file needs to change in the second-wave branch.
 
 Add these exports to `packages/cad-core/src/index.ts`:
 
@@ -28,7 +32,27 @@ export * from "./selection-index.js";
 The feature controllers already live at:
 
 - `apps/web/src/features/precision/model.ts`
+- `apps/web/src/features/precision/command-adapter.ts`
 - `apps/web/src/features/layers/model.ts`
+- `apps/web/src/features/layers/controller.ts`
+- `apps/web/src/features/layers/command-adapter.ts`
+
+## Typed shell adapter
+
+Compose `PrecisionVisualShellAdapter` first and wrap it in
+`LayerVisualShellCommandAdapter`. This implements the shell team's typed
+`VisualShellCommandAdapter` without importing `shell/**` into either feature.
+
+The precision state model owns F3 OSNAP, F7 GRID display, F8 ORTHO, F9 model
+SNAP, F10 POLAR, F11 OTRACK and F12 Dynamic Input. The same state is available
+through ORTHO/POLAR/GRID/SNAP/OSNAP/OTRACK/DYN/DYNMODE command-line input.
+Keyboard events from editable controls and repeat events return `handled: false`.
+GRID display and SNAP quantization are independent states.
+
+`PrecisionCommandState.prepareRequest()` is the only feature-side conversion
+from UI state to `PrecisionRequest`: it enables grid quantization only for SNAP,
+filters OSNAP/OTRACK candidate lists when their master state is off, and supplies
+the same request to preview, commit and Dynamic Input.
 
 ## Precision wiring
 
@@ -57,6 +81,14 @@ Every layer UI action calls the corresponding `LayerFeatureModel` planner and
 commits its returned changes as one `CadSession` operation. The UI must not
 mutate `document.layers` or `document.entities` directly.
 
+Second-wave integration should call `LayerManagerController.execute()` with a
+typed command instead. The controller always plans against its latest document,
+commits exactly one operation/revision, and returns a cloned document for
+read-back. It covers create, rename, delete, current, visible, frozen, locked,
+plottable, color, linetype, lineweight, transparency and draw order. A planner
+error occurs before the operation id/revision is committed and leaves the
+document unchanged.
+
 Use `LayerFeatureModel.participates()` as the eligibility callback for the
 selection and snap indexes. Renderer and print already implement the same
 state matrix at the source commit; integration tests must keep the matrix
@@ -75,12 +107,18 @@ preserves entity values and handles and creates one atomic Undo step.
 
 ## App surfaces still requiring integration-branch edits
 
-- Command-line and Dynamic Input fields for absolute, relative and direct
-  distance input.
-- F8 ORTHO, F10 POLAR, F7 GRID, F9 SNAP, F3 OSNAP and F11 OTRACK state wiring.
-- Layer Manager CRUD/current and property editors.
+- Connect the existing command-line and status controls to the typed feature
+  adapters. Do not duplicate their key/command parsing in React.
+- Connect Layer Manager fields/dialogs to `LayerManagerController` commands and
+  replace the open document only with the returned read-back document.
 - Draw-order commands and context menu actions.
-- IndexedDB read-back and real-browser workflows on dev port 5202.
+- IndexedDB read-back and real-browser workflows on dev port 5212.
+
+The integrated base currently uses row `F-086` for a Block Create ribbon tool,
+while this assigned workstream contract uses `F-086` for draw order. The shared
+integration owner must resolve that row ownership before binding
+`LayerVisualShellCommandAdapter`; this branch does not edit `App.tsx` or scope
+data to guess the resolution.
 
 Do not change parity scores until the required AutoCAD 2024.1.2 and Chromium
 live evidence is complete.
