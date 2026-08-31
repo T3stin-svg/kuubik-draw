@@ -11,6 +11,7 @@ import type {
 import { nearestAciIndex } from "@kuubik/cad-core";
 
 export * from "./import.js";
+export * from "./open.js";
 
 export interface DxfExportReport {
   emittedHandles: string[];
