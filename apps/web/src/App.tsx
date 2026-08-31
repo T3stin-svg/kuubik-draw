@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { DEFAULT_MATCH_PROPERTIES_SETTINGS, ISO_PAPER_MEDIA, MAX_PAGE_SETUP_TEMPLATE_BYTES, STANDARD_VIEWPORT_SCALE_DENOMINATORS, allocateEntityHandles, applyNamedPageSetup, buildLayoutPublishPlan, CadCommandInputError, CadSession, clearNamedPageSetupAssignment, createPageSetupTemplate, LayoutCommandError, LayoutPublishSettingsError, NoOpOperationError, PageSetupLibraryError, copyPaperLayout, createEmptyDocument, createPaperLayout, createPaperViewport, deleteNamedPageSetup, deletePaperLayout, deletePaperViewport, executeMatchViewportProperties, formatViewportScale, importPageSetupTemplate, metadataWithLayoutPublishSettings, movePaperLayout, panPaperViewportByPixels, paperDefinitionForPageSetup, parseCartesianPoint, parsePageSetupTemplate, renameNamedPageSetup, renamePaperLayout, replaceDrawingContentPreservingLayouts, resolveCadCommand, resolveLayoutPublishSettings, resolveMatchPropertiesSettings, resolveModelPageSetup, resolvePageSetup, resolvePageSetupLibrary, resolvePaperDefinition, sanitizePdfFileStem, saveNamedPageSetup, serializeKDraw, serializePageSetupTemplate, setModelLayoutPageSetup, setPaperLayoutPageSetup, setPaperViewportDisplayLocked, setPaperViewportView, viewportScaleDenominator, zoomPaperViewportAtModelPoint, type AlignRejectedTarget, type BreakMode, type BreakRejectedTarget, type CadChange, type CadLayerPlan, type CadLayerToggle, type ChamferRejectedTarget, type ChamferTrimMode, type CopyRejectedTarget, type ExtendRejectedTarget, type ExtendTargetAction, type FilletRejectedTarget, type FilletTrimMode, type LayoutPublishSettingsV1, type LengthenMeasurement, type LengthenMode, type LengthenRejectedTarget, type MatchPropertiesRejectedTarget, type MatchPropertiesSettings, type MatchViewportRef, type MirrorRejectedTarget, type MoveRejectedTarget, type OffsetLayerMode, type OffsetRejectedTarget, type RotateRejectedTarget, type ScaleRejectedTarget, type StretchRejectedTarget, type TrimEdgeMode, type TrimMode, type TrimProjectMode, type TrimRejectedTarget, type TrimTargetAction } from "@kuubik/cad-core";
+import { DEFAULT_MATCH_PROPERTIES_SETTINGS, ISO_PAPER_MEDIA, MAX_PAGE_SETUP_TEMPLATE_BYTES, STANDARD_VIEWPORT_SCALE_DENOMINATORS, allocateEntityHandles, applyNamedPageSetup, buildLayoutPublishPlan, CadCommandInputError, CadSession, clearNamedPageSetupAssignment, createPageSetupTemplate, LayoutCommandError, LayoutPublishSettingsError, NoOpOperationError, PageSetupLibraryError, copyPaperLayout, createEmptyDocument, createPaperLayout, createPaperViewport, deleteNamedPageSetup, deletePaperLayout, deletePaperViewport, executeMatchViewportProperties, formatViewportScale, importPageSetupTemplate, metadataWithLayoutPublishSettings, movePaperLayout, panPaperViewportByPixels, paperDefinitionForPageSetup, parseCartesianPoint, parsePageSetupTemplate, renameNamedPageSetup, renamePaperLayout, replaceDrawingContentPreservingLayouts, resolveCadCommand, resolveLayoutPublishSettings, resolveMatchPropertiesSettings, resolveModelPageSetup, resolvePageSetup, resolvePageSetupLibrary, resolvePaperDefinition, sanitizePdfFileStem, saveNamedPageSetup, serializeKDraw, serializePageSetupTemplate, setModelLayoutPageSetup, setPaperLayoutPageSetup, setPaperViewportDisplayLocked, setPaperViewportView, viewportScaleDenominator, zoomPaperViewportAtModelPoint, type AlignRejectedTarget, type BreakMode, type BreakRejectedTarget, type CadChange, type CadLayerToggle, type ChamferRejectedTarget, type ChamferTrimMode, type CopyRejectedTarget, type ExtendRejectedTarget, type ExtendTargetAction, type FilletRejectedTarget, type FilletTrimMode, type LayoutPublishSettingsV1, type LengthenMeasurement, type LengthenMode, type LengthenRejectedTarget, type MatchPropertiesRejectedTarget, type MatchPropertiesSettings, type MatchViewportRef, type MirrorRejectedTarget, type MoveRejectedTarget, type OffsetLayerMode, type OffsetRejectedTarget, type RotateRejectedTarget, type ScaleRejectedTarget, type StretchRejectedTarget, type TrimEdgeMode, type TrimMode, type TrimProjectMode, type TrimRejectedTarget, type TrimTargetAction } from "@kuubik/cad-core";
 import { DxfImportError, MAX_DXF_IMPORT_BYTES, exportDxf, importDxf } from "@kuubik/cad-dxf";
-import { exportLayoutSvg, exportLayoutsVectorPdf, exportLayoutVectorPdf, exportModelSvg, exportModelVectorPdf, type LayoutPlotOptions, type ModelPlotOptions } from "@kuubik/cad-print";
+import { createPdfUnderlayPlacement, exportLayoutSvg, exportLayoutsVectorPdf, exportLayoutVectorPdf, exportModelSvg, exportModelVectorPdf, preparePdfUnderlay, type LayoutPlotOptions, type ModelPlotOptions } from "@kuubik/cad-print";
 import { CadCanvasRenderer, pickCadEntity, pannedViewportWorldCenter, selectCadEntityHitsByCrossingPolygon, selectCadEntityHitsByFence, viewportScreenToWorld, viewportScreenTransform, type Viewport2D } from "@kuubik/cad-renderer";
 import type { CadEntity, CadLayout, CadPageSetup, CadPaperRect, CadPlotStyle, CadViewport, KDrawDocumentV1 } from "@kuubik/cad-schema";
 import { clampCadContextMenuPosition } from "./context-menu.js";
@@ -12,19 +12,21 @@ import type { BlockAction, BlockCommandId } from "./features/blocks/model.js";
 import { CommandEngineInputError } from "./features/command-system/command-engine.js";
 import { activateDocumentTab, closeDocumentTab, createDocumentTabsState, markDocumentTabPersisted, openDocumentTab, readBackDocumentTabs, setDocumentTabLayout, updateDocumentTab, type DocumentTabsState } from "./features/documents/document-tabs.js";
 import { createNewModelSpaceDocument } from "./features/documents/model-space.js";
+import { DocumentLiveOrchestrator } from "./features/documents/document-live-orchestrator.js";
 import { CadIcon } from "./icons/CadIcon.js";
 import { KDrawIndexedDb, StorageRevisionConflictError } from "./indexed-db.js";
 import { CadShell, DrawingViewport, type WorkspacePreset } from "./shell/CadShell.js";
 import { CommandLine } from "./shell/CommandLine.js";
 import { DocumentTabs } from "./shell/DocumentTabs.js";
 import { LayoutBar } from "./shell/LayoutBar.js";
+import { LiveCommandPrompt } from "./shell/LiveCommandPrompt.js";
 import { PaletteFrame, type PaletteMode } from "./shell/PaletteFrame.js";
 import { Ribbon } from "./shell/Ribbon.js";
 import { RibbonTabs } from "./shell/RibbonTabs.js";
 import { RibbonTool } from "./shell/RibbonTool.js";
 import { StatusBar } from "./shell/StatusBar.js";
 import { TitleBar } from "./shell/TitleBar.js";
-import { VisualShellRuntimeAdapter, type PrecisionToggleId, type PrecisionToggleState } from "./shell/runtime-adapter.js";
+import { VisualShellRuntimeAdapter, type PrecisionToggleId, type PrecisionToggleState, type VisualShellLivePrompt } from "./shell/runtime-adapter.js";
 import { prepareAlign, prepareBreak, prepareChamfer, prepareCopy, prepareExtend, prepareFillet, prepareLengthen, prepareMatchProperties, prepareMirror, prepareMove, prepareOffset, prepareRotate, prepareScale, prepareStretch, prepareTrim, putEntities } from "./workflows/modify-command.js";
 import "./style.css";
 
@@ -54,8 +56,8 @@ const MODEL_VIEW_WORLD = Object.freeze({ minX: -500, minY: -500, maxX: 2500, max
 const MODEL_VIEW_REFERENCE_HEIGHT_PX = 793;
 const MODEL_VIEW_WORLD_UNITS_PER_PIXEL = (MODEL_VIEW_WORLD.maxY - MODEL_VIEW_WORLD.minY) / MODEL_VIEW_REFERENCE_HEIGHT_PX;
 const DRAWING_CONTEXT_MENU_SIZE = Object.freeze({ width: 200, height: 371 });
-const ANNOTATION_DEVELOPMENT_ROWS = new Set(["F-061", "F-062", "F-063", "F-064", "F-065", "F-066", "F-058", "F-060", "F-067", "F-068"]);
-const BLOCK_DEVELOPMENT_ROWS = new Set(["F-087", "F-088", "F-089", "F-090", "F-091"]);
+const ANNOTATION_DEVELOPMENT_ROWS = new Set(["F-062", "F-063", "F-064", "F-065", "F-060"]);
+const BLOCK_DEVELOPMENT_ROWS = new Set<string>();
 
 function modelViewport(widthPx: number, heightPx: number, devicePixelRatio: number): Viewport2D {
   if (heightPx <= MODEL_VIEW_REFERENCE_HEIGHT_PX) {
@@ -286,7 +288,9 @@ export function App() {
   const paperDesk = useRef<HTMLDivElement>(null);
   const paperSheet = useRef<HTMLDivElement>(null);
   const dxfImportInput = useRef<HTMLInputElement>(null);
+  const pdfUnderlayInput = useRef<HTMLInputElement>(null);
   const database = useMemo(() => new KDrawIndexedDb(), []);
+  const liveDocuments = useMemo(() => new DocumentLiveOrchestrator(database, `visual-shell-${crypto.randomUUID()}`), [database]);
   const session = useRef(new CadSession(createEmptyDocument({ documentId: LOCAL_DOCUMENT_ID })));
   const sessions = useRef(new Map<string, CadSession>([[LOCAL_DOCUMENT_ID, session.current]]));
   const nextDocumentSequence = useRef(2);
@@ -297,6 +301,12 @@ export function App() {
     sourceFileName: "local.kdraw",
   }));
   const runtime = useMemo(() => new VisualShellRuntimeAdapter(), []);
+  const livePrompt = useRef<VisualShellLivePrompt | null>(null);
+  const [livePromptCommand, setLivePromptCommand] = useState<string | null>(null);
+  const [livePromptValue, setLivePromptValue] = useState("");
+  const [livePromptFieldVersion, setLivePromptFieldVersion] = useState(0);
+  const [precisionCandidateReadback, setPrecisionCandidateReadback] = useState({ snapCount: 0, trackingCount: 0, dynamic: false });
+  const [pdfUnderlayReadback, setPdfUnderlayReadback] = useState<{ placementId: string; byteLength: number; sha256: string } | null>(null);
   const [status, setStatus] = useState("Uus kohalik dokument");
   const [storageState, setStorageState] = useState<"loading" | "ready" | "recovered" | "recovery">("loading");
   const [workspacePreset, setWorkspacePreset] = useState<WorkspacePreset>(() => {
@@ -561,6 +571,7 @@ export function App() {
   const pageSetupLibrary = useMemo(() => resolvePageSetupLibrary(document), [document]);
   const activePaperIndex = paperLayouts.findIndex((layout) => layout.id === activeLayout.id);
   const documentTabsReadback = useMemo(() => readBackDocumentTabs(documentTabs), [documentTabs]);
+  const activeLivePromptField = livePromptFieldVersion >= 0 ? livePrompt.current?.field ?? null : null;
   const movePreview = useMemo((): { entities: CadEntity[]; delta: { x: number; y: number } } | null => {
     if (previewCommand !== "MOVE" || selectedHandles.length === 0) return null;
     try {
@@ -850,23 +861,19 @@ export function App() {
     void (async () => {
       try {
         await database.open();
-        const stored = await database.loadDocument(LOCAL_DOCUMENT_ID);
-        if (!active) return;
-        if (!stored) {
-          setStorageState("ready");
-          return;
-        }
+        const opened = await liveDocuments.open({ documentId: LOCAL_DOCUMENT_ID, fallbackDocument: session.current.document, sourceFileName: "local.kdraw" });
         const operations = await database.operations(LOCAL_DOCUMENT_ID);
         if (!active) return;
-        session.current = new CadSession(stored, operations.map((entry) => entry.opId));
-        sessions.current.set(stored.documentId, session.current);
+        session.current = new CadSession(opened.document, operations.map((entry) => entry.opId));
+        sessions.current.set(opened.document.documentId, session.current);
         setDocument(session.current.document);
         setDocumentTabs((current) => markDocumentTabPersisted(updateDocumentTab(current, {
           document: session.current.document,
-          activeLayoutId: current.tabs.find((tab) => tab.documentId === stored.documentId)?.activeLayoutId ?? "model",
-        }), stored.documentId, stored.revision));
-        setStatus(`Taastatud revision ${stored.revision}`);
-        setStorageState("recovered");
+          activeLayoutId: current.tabs.find((tab) => tab.documentId === opened.document.documentId)?.activeLayoutId ?? "model",
+        }), opened.document.documentId, opened.document.revision));
+        const recovered = opened.recovery.source !== "none" && opened.document.revision > 0;
+        setStatus(`${recovered ? "Taastatud" : "Avatud"} revision ${opened.document.revision} · DocumentLiveOrchestrator`);
+        setStorageState(recovered ? "recovered" : "ready");
       } catch (error) {
         if (!active) return;
         setStorageState("recovery");
@@ -877,7 +884,7 @@ export function App() {
       active = false;
       database.close();
     };
-  }, [database]);
+  }, [database, liveDocuments]);
 
   useEffect(() => {
     setPublishBaseNameInput(publishSettings.baseFileName);
@@ -1084,9 +1091,11 @@ export function App() {
       resultHandles,
     };
     const candidate = session.current.fork();
-    candidate.commit(operation, changes);
+    const committedAt = new Date().toISOString();
+    candidate.commit(operation, changes, committedAt);
     const next = candidate.document;
-    await database.commitRevision(next, operation);
+    const persisted = await liveDocuments.commit(next.documentId, operation, changes, committedAt);
+    if (JSON.stringify(persisted) !== JSON.stringify(next)) throw new Error(`${commandId}: DocumentLiveOrchestrator read-back erines kandidaadist.`);
     session.current = candidate;
     sessions.current.set(next.documentId, candidate);
     setDocument(next);
@@ -1137,10 +1146,11 @@ export function App() {
     try {
       const candidate = session.current.fork();
       const engine = runtime.commandEngine(candidate);
+      const committedAt = new Date().toISOString();
       let resultKind: "commit" | "undo" | "redo";
       let committed: ReturnType<CadSession["commit"]> | null;
       if (["U", "UNDO", "REDO"].includes(commandName)) {
-        const result = engine.execute(raw);
+        const result = engine.execute(raw, committedAt);
         if (result.kind === "cancel" || result.kind === "commit") throw new CommandEngineInputError(`Unexpected ${result.kind} result for ${commandName}.`);
         resultKind = result.kind;
         committed = result.committed;
@@ -1154,7 +1164,7 @@ export function App() {
           targetHandles: prepared.targetHandles,
           resultHandles: prepared.resultHandles,
         };
-        committed = candidate.commit(operation, prepared.changes);
+        committed = candidate.commit(operation, prepared.changes, committedAt);
         resultKind = "commit";
       }
       if (!committed) {
@@ -1162,7 +1172,8 @@ export function App() {
         return;
       }
       const next = candidate.document;
-      await database.commitRevision(next, committed.operation);
+      const persisted = await liveDocuments.commit(next.documentId, committed.operation, committed.changes, committedAt);
+      if (JSON.stringify(persisted) !== JSON.stringify(next)) throw new Error(`${committed.operation.commandId}: DocumentLiveOrchestrator read-back erines kandidaadist.`);
       session.current = candidate;
       sessions.current.set(next.documentId, candidate);
       setDocument(next);
@@ -1188,6 +1199,10 @@ export function App() {
   }
 
   function cancelRuntimeCommand(): void {
+    if (livePrompt.current) {
+      cancelLivePrompt();
+      return;
+    }
     setCommandInput("");
     setActiveCommandPrompt(null);
     setRuntimeIntent(null);
@@ -1212,6 +1227,22 @@ export function App() {
         beginRuntimeCommand("LEADER", "LEADER · sisesta kaks punkti ja soovi korral tekst");
         return;
       }
+      if (intent.commandId === "DIMLINEAR") {
+        beginLivePrompt({ commandId: "DIM", dimensionCommandId: "DIMLINEAR", context: { activeLayerId: document.currentLayerId, selectedHandles: intent.selectedHandles } });
+        return;
+      }
+      if (intent.commandId === "HATCH") {
+        beginLivePrompt({ commandId: "HATCH", context: { activeLayerId: document.currentLayerId, selectedHandles: intent.selectedHandles } });
+        return;
+      }
+      if (intent.commandId === "DIMSTYLE") {
+        beginLivePrompt({ commandId: "DIM", dimensionCommandId: "DIMSTYLE" });
+        return;
+      }
+      if (intent.commandId === "STYLE") {
+        beginLivePrompt({ commandId: "STYLE" });
+        return;
+      }
       setRuntimeIntent({ kind: "annotation", commandId: intent.commandId, selectedHandles: intent.selectedHandles });
       setActiveCommandPrompt(intent.commandId);
       setStatus(`${intent.commandId}: Arenduses · commit-liides pole veel shelliga ühendatud`);
@@ -1223,11 +1254,99 @@ export function App() {
   function handleBlockAction(action: BlockAction): void {
     try {
       const intent = runtime.block(action.commandId, action.selectedHandles);
-      setRuntimeIntent({ kind: "block", commandId: intent.commandId, selectedHandles: intent.selectedHandles });
-      setActiveCommandPrompt(intent.commandId);
-      setStatus(`${intent.commandId}: typed block intent · ${intent.selectedHandles.length} eelvalitud`);
+      beginLivePrompt({ commandId: intent.commandId, context: { activeLayerId: document.currentLayerId, selectedHandles: intent.selectedHandles } });
     } catch (error) {
       setStatus(`Ploki viga: ${error instanceof Error ? error.message : String(error)}`);
+    }
+  }
+
+  function beginLivePrompt(request: Parameters<VisualShellRuntimeAdapter["livePrompt"]>[1]): void {
+    const capability = runtime.liveCapability(request.commandId);
+    if (!capability.executable) {
+      setStatus(capability.message);
+      return;
+    }
+    livePrompt.current = runtime.livePrompt(session.current, request);
+    setLivePromptCommand(request.commandId === "DIM" ? request.dimensionCommandId ?? "DIM" : request.commandId);
+    setLivePromptValue("");
+    setLivePromptFieldVersion((current) => current + 1);
+    setActiveCommandPrompt(request.commandId === "DIM" ? request.dimensionCommandId ?? "DIM" : request.commandId);
+    setRuntimeIntent({ kind: request.commandId === "DIM" || request.commandId === "HATCH" ? "annotation" : "block", commandId: request.commandId, selectedHandles: [...(request.context?.selectedHandles ?? [])] });
+    setStatus(`${request.commandId}: ${livePrompt.current.field?.label ?? "valmis commitiks"}`);
+  }
+
+  async function advanceLivePrompt(): Promise<void> {
+    const prompt = livePrompt.current;
+    if (!prompt || committing.current) return;
+    try {
+      const snapshot = prompt.answer(livePromptValue);
+      setLivePromptValue("");
+      setLivePromptFieldVersion((current) => current + 1);
+      if (snapshot.status === "active") {
+        setStatus(`${livePromptCommand}: ${prompt.field?.label}`);
+        return;
+      }
+      committing.current = true;
+      const committedAt = new Date().toISOString();
+      const result = prompt.commit(committedAt);
+      const persisted = await liveDocuments.commit(document.documentId, result.committed.operation, result.committed.changes, committedAt);
+      if (JSON.stringify(persisted) !== JSON.stringify(result.document)) throw new Error(`${result.committed.operation.commandId}: durable read-back erines adapteri read-backist.`);
+      session.current = result.session;
+      sessions.current.set(result.document.documentId, result.session);
+      setDocument(result.document);
+      setDocumentTabs((current) => markDocumentTabPersisted(updateDocumentTab(current, { document: result.document, activeLayoutId }), result.document.documentId, result.document.revision));
+      setSelectedHandles(result.readBack.resultHandles);
+      setStatus(`${result.readBack.commandId} · atomic commit/read-back revision ${result.readBack.revision}`);
+      livePrompt.current = null;
+      setLivePromptCommand(null);
+      setActiveCommandPrompt(null);
+      setRuntimeIntent(null);
+    } catch (error) {
+      setStatus(`Typed prompt viga: ${error instanceof Error ? error.message : String(error)}`);
+    } finally {
+      committing.current = false;
+    }
+  }
+
+  function cancelLivePrompt(): void {
+    try { livePrompt.current?.cancel(); } catch { /* Prompt may already be ready. */ }
+    livePrompt.current = null;
+    setLivePromptCommand(null);
+    setLivePromptValue("");
+    setActiveCommandPrompt(null);
+    setRuntimeIntent(null);
+    setStatus("Command: *Cancel*");
+  }
+
+  async function attachPdfUnderlay(file: File): Promise<void> {
+    if (committing.current) return;
+    committing.current = true;
+    try {
+      const sequence = document.attachments.length + 1;
+      const prepared = await preparePdfUnderlay(new Uint8Array(await file.arrayBuffer()), {
+        attachmentId: `pdf-${sequence}-${crypto.randomUUID()}`,
+        fileName: file.name,
+      });
+      const placement = createPdfUnderlayPlacement(prepared, {
+        id: `underlay-${sequence}-${crypto.randomUUID()}`,
+        pageNumber: 1,
+        position: { x: 0, y: 0 },
+        opacity: 0.7,
+      });
+      const operation = { opId: crypto.randomUUID(), baseRevision: document.revision, commandId: "PDFATTACH", args: { fileName: file.name, pageNumber: 1 }, targetHandles: [], resultHandles: [] };
+      const readBack = await liveDocuments.attachPdf(document.documentId, operation, prepared, placement);
+      const next = liveDocuments.document(document.documentId);
+      const operations = await database.operations(document.documentId);
+      session.current = new CadSession(next, operations.map((entry) => entry.opId));
+      sessions.current.set(next.documentId, session.current);
+      setDocument(next);
+      setDocumentTabs((current) => markDocumentTabPersisted(updateDocumentTab(current, { document: next, activeLayoutId }), next.documentId, next.revision));
+      setPdfUnderlayReadback({ placementId: readBack.placement.id, byteLength: readBack.bytes.byteLength, sha256: readBack.attachment.sha256 });
+      setStatus(`PDFATTACH · ${readBack.placement.id} · ${readBack.bytes.byteLength} B durable read-back`);
+    } catch (error) {
+      setStatus(`PDF underlay viga: ${error instanceof Error ? error.message : String(error)}`);
+    } finally {
+      committing.current = false;
     }
   }
 
@@ -1268,15 +1387,17 @@ export function App() {
 
   function activateOpenDocument(documentId: string): void {
     if (documentId === document.documentId) return;
+    liveDocuments.activate(documentId);
     const synchronized = updateDocumentTab(documentTabs, { document, activeLayoutId });
     switchDocument(activateDocumentTab(synchronized, documentId), documentId);
   }
 
-  function createOpenDocument(): void {
+  async function createOpenDocument(): Promise<void> {
     let documentId = `drawing-${nextDocumentSequence.current++}`;
     while (documentTabs.tabs.some((tab) => tab.documentId === documentId)) documentId = `drawing-${nextDocumentSequence.current++}`;
     const created = createNewModelSpaceDocument({ documentId, title: `${documentId}.kdraw` });
     const nextDocument = created.document;
+    await liveDocuments.open({ documentId, fallbackDocument: nextDocument, sourceFileName: `${documentId}.kdraw`, activeLayoutId: created.activeLayoutId });
     sessions.current.set(document.documentId, session.current);
     const nextSession = new CadSession(nextDocument);
     sessions.current.set(documentId, nextSession);
@@ -1290,7 +1411,7 @@ export function App() {
     setStatus(`${documentId}.kdraw loodud ModelSpaceDocument + document-tabs mudelis`);
   }
 
-  function closeOpenDocument(documentId: string): void {
+  async function closeOpenDocument(documentId: string): Promise<void> {
     if (documentTabs.tabs.length <= 1) {
       setStatus("Vähemalt üks joonis peab jääma avatuks");
       return;
@@ -1298,6 +1419,7 @@ export function App() {
     const synchronized = documentId === document.documentId ? updateDocumentTab(documentTabs, { document, activeLayoutId }) : documentTabs;
     const result = closeDocumentTab(synchronized, documentId, true);
     if (!result.closed) return;
+    await liveDocuments.close(documentId);
     sessions.current.delete(documentId);
     const nextId = result.state.activeDocumentId;
     if (documentId === document.documentId && nextId) switchDocument(result.state, nextId);
@@ -1907,18 +2029,17 @@ export function App() {
     const rect = event.currentTarget.getBoundingClientRect();
     const pixel = { x: event.clientX - rect.left, y: event.clientY - rect.top };
     const cursorPoint = viewportScreenToWorld(modelViewport(rect.width, rect.height, window.devicePixelRatio || 1), pixel);
-    const precisionRequest = runtime.preparePrecisionRequest({
+    const candidates = runtime.precisionCandidates(document, cursorPoint);
+    const resolved = runtime.precisionPointer(document, {
       basePoint: { x: 0, y: 0 },
       cursorPoint,
-      modes: { aperture: 0 },
-      objectSnapCandidates: [],
-      trackingCandidates: [],
+      trackingAnglesRad: [0, Math.PI / 2, Math.PI, Math.PI * 1.5],
     });
-    const resolved = runtime.precision.preview(precisionRequest);
-    setPrecisionSource(resolved.source);
+    setPrecisionSource(resolved.preview.source);
+    setPrecisionCandidateReadback({ ...candidates, dynamic: precision.dyn });
     setCursorReadout({
       pixel,
-      world: { x: Number(resolved.point.x.toFixed(6)), y: Number(resolved.point.y.toFixed(6)) },
+      world: { x: Number(resolved.commit.point.x.toFixed(6)), y: Number(resolved.commit.point.y.toFixed(6)) },
     });
     updateStretchDrag(event);
   }
@@ -2540,10 +2661,12 @@ export function App() {
     if (committing.current || !canUndoInActiveLayout) return;
     committing.current = true;
     try {
-      const committed = session.current.undo();
+      const committedAt = new Date().toISOString();
+      const committed = session.current.undo(committedAt);
       if (!committed) return;
       const next = session.current.document;
-      await database.commitRevision(next, committed.operation);
+      const persisted = await liveDocuments.commit(next.documentId, committed.operation, committed.changes, committedAt);
+      if (JSON.stringify(persisted) !== JSON.stringify(next)) throw new Error("UNDO DocumentLiveOrchestrator read-back erines kandidaadist.");
       sessions.current.set(next.documentId, session.current);
       setDocument(next);
       setDocumentTabs((current) => markDocumentTabPersisted(updateDocumentTab(current, {
@@ -2564,10 +2687,12 @@ export function App() {
     if (committing.current || !canRedoInActiveLayout) return;
     committing.current = true;
     try {
-      const committed = session.current.redo();
+      const committedAt = new Date().toISOString();
+      const committed = session.current.redo(committedAt);
       if (!committed) return;
       const next = session.current.document;
-      await database.commitRevision(next, committed.operation);
+      const persisted = await liveDocuments.commit(next.documentId, committed.operation, committed.changes, committedAt);
+      if (JSON.stringify(persisted) !== JSON.stringify(next)) throw new Error("REDO DocumentLiveOrchestrator read-back erines kandidaadist.");
       sessions.current.set(next.documentId, session.current);
       setDocument(next);
       setDocumentTabs((current) => markDocumentTabPersisted(updateDocumentTab(current, {
@@ -2584,11 +2709,12 @@ export function App() {
     }
   }
 
-  async function commitLayerPlan(plan: CadLayerPlan, success: string): Promise<void> {
+  async function commitLayerCommand(command: Parameters<VisualShellRuntimeAdapter["executeLayer"]>[1], success: string): Promise<void> {
     if (committing.current) return;
     committing.current = true;
     try {
-      await commitChanges(plan.commandId, plan.args, plan.changes, []);
+      const result = runtime.executeLayer(document, command);
+      await commitChanges(result.committed.operation.commandId, result.committed.operation.args, result.committed.changes, result.committed.operation.resultHandles, result.committed.operation.targetHandles);
       setStatus(success);
     } catch (error) {
       if (error instanceof StorageRevisionConflictError) await recoverFromStorageConflict(error);
@@ -2602,24 +2728,24 @@ export function App() {
     let sequence = document.layers.length;
     while (document.layers.some((layer) => layer.name === `Layer ${sequence}`)) sequence += 1;
     const name = `Layer ${sequence}`;
-    await commitLayerPlan(runtime.layerPlan(document, { type: "create", name }), `${name} loodud LayerManagerControlleri plaanist`);
+    await commitLayerCommand({ type: "create", name }, `${name} loodud PrecisionLayersShellContracti kaudu`);
   }
 
   async function toggleActiveLayerLock(): Promise<void> {
     const locked = !activeLayer.locked;
-    await commitLayerPlan(runtime.layerPlan(document, { type: "toggle", layerId: activeLayer.id, property: "locked", value: locked }), `${activeLayer.name} ${locked ? "lukustatud" : "avatud"}`);
+    await commitLayerCommand({ type: "toggle", layerId: activeLayer.id, property: "locked", value: locked }, `${activeLayer.name} ${locked ? "lukustatud" : "avatud"}`);
   }
 
   async function toggleLayer(layerId: string, property: CadLayerToggle, value: boolean): Promise<void> {
     const layer = document.layers.find((candidate) => candidate.id === layerId);
     if (!layer) return;
-    await commitLayerPlan(runtime.layerPlan(document, { type: "toggle", layerId, property, value }), `${layer.name}: ${property} ${value ? "ON" : "OFF"}`);
+    await commitLayerCommand({ type: "toggle", layerId, property, value }, `${layer.name}: ${property} ${value ? "ON" : "OFF"}`);
   }
 
   async function makeLayerCurrent(layerId: string): Promise<void> {
     const layer = document.layers.find((candidate) => candidate.id === layerId);
     if (!layer || layerId === document.currentLayerId) return;
-    await commitLayerPlan(runtime.layerPlan(document, { type: "current", layerId }), `${layer.name} on aktiivne kiht`);
+    await commitLayerCommand({ type: "current", layerId }, `${layer.name} on aktiivne kiht`);
   }
 
   async function createLayout(): Promise<void> {
@@ -2873,6 +2999,7 @@ export function App() {
   function activateLayout(layoutId: string): void {
     const layout = document.layouts.find((candidate) => candidate.id === layoutId);
     if (!layout) return;
+    liveDocuments.setLayout(document.documentId, layoutId);
     setActiveLayoutId(layoutId);
     setDocumentTabs((current) => setDocumentTabLayout(current, document.documentId, layoutId));
     setLayoutRenameInput(layout.name);
@@ -3403,6 +3530,7 @@ export function App() {
                 <RibbonTool rowId="F-087" label="Create" icon="add" available={runtime.canExecute("F-087")} pressed={activeCommandPrompt === "BLOCK"} onClick={() => beginBlock("BLOCK", selectedHandles)} disabled={!modelSpaceEditing || selectedHandles.length === 0} />
                 <RibbonTool rowId="F-090" label="Edit block" icon="edit" available={runtime.canExecute("F-090")} pressed={activeCommandPrompt === "BEDIT"} onClick={() => beginBlock("BEDIT", selectedHandles)} disabled={!modelSpaceEditing || selectedHandles.length !== 1} />
                 <RibbonTool rowId="F-091" label="Attributes" icon="attribute" available={runtime.canExecute("F-091")} pressed={activeCommandPrompt === "ATTRIB"} onClick={() => beginBlock("ATTRIB", selectedHandles)} disabled={!modelSpaceEditing || selectedHandles.length !== 1} />
+                <RibbonTool rowId="F-089" label="Explode" icon="block" available={runtime.canExecute("F-089")} pressed={activeCommandPrompt === "EXPLODE"} onClick={() => beginBlock("EXPLODE", selectedHandles)} disabled={!modelSpaceEditing || selectedHandles.length !== 1} />
               </div>
             </div>
             <strong>Block</strong>
@@ -4257,6 +4385,15 @@ export function App() {
               onAction={handleAnnotationAction}
             />
             <BlocksPanel selectedHandles={selectedHandles} disabledRowIds={BLOCK_DEVELOPMENT_ROWS} onAction={handleBlockAction} />
+            <label className="pdf-underlay-control">
+              <span>PDF underlay</span>
+              <button type="button" onClick={() => pdfUnderlayInput.current?.click()}>Lisa PDF…</button>
+              <input ref={pdfUnderlayInput} type="file" accept="application/pdf,.pdf" aria-label="PDF underlay fail" onChange={(event) => {
+                const input = event.currentTarget;
+                const file = input.files?.[0];
+                if (file) void attachPdfUnderlay(file).finally(() => { input.value = ""; });
+              }} />
+            </label>
           </div>
           <output
             className="runtime-intent-readback"
@@ -4271,8 +4408,25 @@ export function App() {
           >
             {runtimeIntent ? `${runtimeIntent.kind}: ${runtimeIntent.commandId}` : "Runtime valmis"}
           </output>
+          <output className="live-contract-readback" aria-live="polite" data-testid="live-contract-readback"
+            data-snap-candidates={precisionCandidateReadback.snapCount}
+            data-tracking-candidates={precisionCandidateReadback.trackingCount}
+            data-dynamic-input={precisionCandidateReadback.dynamic ? "true" : "false"}
+            data-live-tabs={liveDocuments.readBack().tabs.tabOrder.join(",")}
+            data-live-recovery={liveDocuments.readBack().recoveries.map((item) => `${item.documentId}:${item.source}`).join(",")}
+            data-pdf-placement={pdfUnderlayReadback?.placementId ?? ""}
+            data-pdf-bytes={pdfUnderlayReadback?.byteLength ?? 0}
+          >Precision/Layers + Documents live read-back{pdfUnderlayReadback ? ` · PDF ${pdfUnderlayReadback.byteLength} B` : ""}</output>
         </PaletteFrame>
       </DrawingViewport>
+      {livePromptCommand && activeLivePromptField && <LiveCommandPrompt
+        commandId={livePromptCommand}
+        field={activeLivePromptField}
+        value={livePromptValue}
+        onValueChange={setLivePromptValue}
+        onNext={() => void advanceLivePrompt()}
+        onCancel={cancelLivePrompt}
+      />}
       <CommandLine status={status} activeCommand={activeCommandPrompt} input={commandInput} historyOpen={commandHistoryOpen} history={commandHistory} documentName={documentName} onInputChange={setCommandInput} onSubmit={() => void executeRuntimeCommand()} onCancel={cancelRuntimeCommand} onHistoryNavigate={navigateRuntimeHistory} onHistoryOpenChange={setCommandHistoryOpen} />
       <LayoutBar layouts={document.layouts} activeLayoutId={activeLayout.id} activeSpace={activeSpace} onActivate={activateLayout} onCreate={() => void createLayout()}>
         <details className="layout-tools" data-testid="layout-tools">
