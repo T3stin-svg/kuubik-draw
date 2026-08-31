@@ -43,8 +43,10 @@ import {
 import {
   PrecisionCommandState,
   PrecisionVisualShellAdapter,
+  precisionWorldAperture,
   type PrecisionDispatchResult,
   type PrecisionInputContext,
+  type PrecisionModeReadback,
   type PrecisionSettings,
   type PrecisionState,
   type VisualShellCommandAdapter,
@@ -168,6 +170,7 @@ export class PrecisionLayersShellContract {
   readonly #layers: LayerManagerController;
   readonly #adapter: VisualShellCommandAdapter;
   readonly #layerIntents: LayerShellIntent[] = [];
+  readonly #trackingOwners = new Map<string, readonly string[]>();
   readonly #unitsContract: CadUnitsContractV1;
   readonly #inputFormat: Omit<CadPrecisionInputOptions, "documentUnit">;
   #layerSnapshot: KDrawDocumentV1["layers"] = [];
@@ -229,6 +232,15 @@ export class PrecisionLayersShellContract {
     this.#settings = cloneSettings(settings);
   }
 
+  /** Browser-ready, DOM-free viewport update. CSS pixels stay constant while the world aperture follows zoom. */
+  setViewportSnapAperture(aperturePixels: number, worldUnitsPerCssPixel: number): void {
+    this.setPrecisionSettings({ ...this.#settings, aperturePixels, worldUnitsPerCssPixel });
+  }
+
+  precisionModeReadback(): PrecisionModeReadback {
+    return this.precision.readback(this.#settings);
+  }
+
   handlePrecisionKey(key: string, context: PrecisionInputContext = {}): PrecisionDispatchResult {
     return this.precision.handleKey(key, context);
   }
@@ -265,12 +277,13 @@ export class PrecisionLayersShellContract {
       trackingCandidates: [],
     }, this.#settings);
     const candidateCursor = explicitCoordinate ? input.cursorPoint : this.#precisionModel.preview(candidateRequest).point;
+    const aperture = precisionWorldAperture(this.#settings);
     const eligibleForSnap = (entity: CadEntity): boolean => entityParticipates(entity, layers, "snap").participates;
     const objectSnapCandidates = precisionState.osnap && !explicitCoordinate
       ? this.#snap.query({
           modes: precisionState.osnapModes,
           cursor: candidateCursor,
-          aperture: this.#settings.aperture,
+          aperture,
           ...(input.referencePoint ? { referencePoint: input.referencePoint } : {}),
           ...(input.snapReferenceHandles ? { referenceHandles: [...input.snapReferenceHandles] } : {}),
         }, eligibleForSnap)
@@ -282,8 +295,8 @@ export class PrecisionLayersShellContract {
     const trackingAngles = input.trackingAnglesRad ?? this.#polarTrackingAngles();
     const trackingCandidates = precisionState.otrack && !explicitCoordinate
       ? trackingAngles
-        ? this.tracking.candidates(candidateCursor, this.#settings.aperture, trackingAngles)
-        : this.tracking.candidates(candidateCursor, this.#settings.aperture)
+        ? this.tracking.candidates(candidateCursor, aperture, trackingAngles)
+        : this.tracking.candidates(candidateCursor, aperture)
       : [];
     const request: PrecisionRequest = this.precision.prepareRequest({
       basePoint: { ...input.basePoint },
@@ -306,10 +319,11 @@ export class PrecisionLayersShellContract {
     const state = this.precision.state;
     if (!state.osnap) return [];
     const layers = this.#layerSnapshot;
+    const aperture = precisionWorldAperture(this.#settings);
     return this.#snap.query({
       modes: state.osnapModes,
       cursor,
-      aperture: this.#settings.aperture,
+      aperture,
       ...(referencePoint ? { referencePoint } : {}),
       ...(referenceHandles ? { referenceHandles: [...referenceHandles] } : {}),
     }, (entity) => entityParticipates(entity, layers, "snap").participates);
@@ -328,25 +342,36 @@ export class PrecisionLayersShellContract {
   }
 
   acquireTracking(candidate: CadSnapCandidate, acquiredAt?: number): CadTrackingPoint {
-    return acquiredAt === undefined
+    const owners = [candidate.handle, candidate.otherHandle].filter((handle): handle is string => handle !== undefined);
+    const document = this.#layers.document;
+    if (owners.some((handle) => {
+      const entity = document.entities.find((candidateEntity) => candidateEntity.handle === handle);
+      return !entity || !entityParticipates(entity, this.#layerSnapshot, "snap").participates;
+    })) throw new RangeError(`Snap candidate ${candidate.id} is no longer eligible for tracking.`);
+    const acquired = acquiredAt === undefined
       ? this.tracking.acquire(candidate.id, candidate.point)
       : this.tracking.acquire(candidate.id, candidate.point, acquiredAt);
+    this.#trackingOwners.set(candidate.id, owners);
+    return acquired;
   }
 
   releaseTracking(candidateId: string): CadTrackingMutationReadback {
+    this.#trackingOwners.delete(candidateId);
     return this.tracking.releaseReadback(candidateId);
   }
 
   clearTracking(): CadTrackingMutationReadback {
+    this.#trackingOwners.clear();
     return this.tracking.clearReadback();
   }
 
   trackingCandidates(cursor: CadPoint2, anglesRad?: readonly number[]): CadTrackingCandidate[] {
     if (!this.precision.enabled("otrack")) return [];
     const angles = anglesRad ?? this.#polarTrackingAngles();
+    const aperture = precisionWorldAperture(this.#settings);
     return angles
-      ? this.tracking.candidates(cursor, this.#settings.aperture, angles)
-      : this.tracking.candidates(cursor, this.#settings.aperture);
+      ? this.tracking.candidates(cursor, aperture, angles)
+      : this.tracking.candidates(cursor, aperture);
   }
 
   select(point: CadPoint2, tolerance: number): CadPickHit[] {
@@ -383,6 +408,16 @@ export class PrecisionLayersShellContract {
     this.#selection.setEntities(document.entities);
     this.#snap.setBlocks(document.blocks);
     this.#snap.setEntities(document.entities);
+    for (const [candidateId, handles] of this.#trackingOwners) {
+      const valid = handles.every((handle) => {
+        const entity = document.entities.find((candidateEntity) => candidateEntity.handle === handle);
+        return entity !== undefined && entityParticipates(entity, this.#layerSnapshot, "snap").participates;
+      });
+      if (!valid) {
+        this.tracking.releaseReadback(candidateId);
+        this.#trackingOwners.delete(candidateId);
+      }
+    }
   }
 
   #polarTrackingAngles(): readonly number[] | undefined {

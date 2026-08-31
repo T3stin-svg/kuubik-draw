@@ -43,6 +43,38 @@ describe("complete deterministic OSNAP candidate engine", () => {
     expect(forward.key).toBe(forward.id);
     expect(forward.id).toBe("intersection:A:0|B:0:5.0000000000000000,5.0000000000000000");
     expect(forward.id.startsWith(String(forward.priority))).toBe(false);
+    expect(reverse).toEqual(forward);
+  });
+
+  it("separates exact and apparent intersections with canonical ordering", () => {
+    const horizontal = { kind: "line" as const, handle: "B", layerId: "0", start: { x: 0, y: 0 }, end: { x: 4, y: 0 } };
+    const vertical = { kind: "line" as const, handle: "A", layerId: "0", start: { x: 10, y: 5 }, end: { x: 10, y: 9 } };
+    const options = { modes: ["intersection", "apparentIntersection"] as const, cursor: { x: 10, y: 0 }, aperture: 0 };
+    const forward = generateCadSnapCandidates([horizontal, vertical], options);
+    const reverse = generateCadSnapCandidates([vertical, horizontal], options);
+    expect(forward).toEqual(reverse);
+    expect(forward).toEqual([
+      expect.objectContaining({
+        mode: "apparentIntersection", point: { x: 10, y: 0 }, handle: "A", otherHandle: "B",
+        segment: 0, otherSegment: 0, priority: 5,
+      }),
+    ]);
+
+    const crossing = { ...vertical, start: { x: 2, y: -1 }, end: { x: 2, y: 1 } };
+    expect(generateCadSnapCandidates([horizontal, crossing], { ...options, cursor: { x: 2, y: 0 } }).map(({ mode }) => mode)).toEqual(["intersection"]);
+  });
+
+  it("uses explicit references for far apparent intersections and preserves large world coordinates", () => {
+    const index = new CadSnapIndex();
+    index.setEntities([
+      { kind: "line", handle: "A", layerId: "0", start: { x: 1e12, y: 1e12 }, end: { x: 1e12 + 10, y: 1e12 } },
+      { kind: "line", handle: "B", layerId: "0", start: { x: 1e12 + 20, y: 1e12 + 30 }, end: { x: 1e12 + 20, y: 1e12 + 40 } },
+    ]);
+    const options = { modes: ["apparentIntersection"] as const, cursor: { x: 1e12 + 20, y: 1e12 }, aperture: 0 };
+    expect(index.query(options)).toEqual([]);
+    expect(index.query({ ...options, referenceHandles: ["B", "A"] })).toEqual([
+      expect.objectContaining({ point: { x: 1e12 + 20, y: 1e12 }, handle: "A", otherHandle: "B" }),
+    ]);
   });
 
   it("cycles by stable candidate ID and preserves the active ID across fresh queries", () => {

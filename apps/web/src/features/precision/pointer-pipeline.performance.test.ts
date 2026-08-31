@@ -14,7 +14,10 @@ describe("50,000-object typed precision regression", () => {
     }));
     const buildStarted = performance.now();
     const contract = new PrecisionLayersShellContract(document, {
-      settings: { polarIncrementRad: Math.PI / 4, gridSpacingX: 1, gridSpacingY: 1, aperture: 0.25 },
+      settings: {
+        polarIncrementRad: Math.PI / 4, gridSpacingX: 1, gridSpacingY: 1,
+        aperture: 999, aperturePixels: 10, worldUnitsPerCssPixel: 0.025,
+      },
       units: { linear: "mm", displayPrecision: 6, angularPrecision: 6 },
       initialPrecision: { ortho: true, snap: true, osnap: true, otrack: true },
     });

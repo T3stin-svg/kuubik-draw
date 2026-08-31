@@ -9,13 +9,14 @@ export const CAD_OSNAP_PRIORITY = Object.freeze({
   center: 2,
   quadrant: 3,
   intersection: 4,
-  extension: 5,
-  insertion: 6,
-  perpendicular: 7,
-  tangent: 8,
-  nearest: 9,
-  geometricCenter: 10,
-  parallel: 11,
+  apparentIntersection: 5,
+  extension: 6,
+  insertion: 7,
+  perpendicular: 8,
+  tangent: 9,
+  nearest: 10,
+  geometricCenter: 11,
+  parallel: 12,
 });
 
 export type CadOsnapMode = keyof typeof CAD_OSNAP_PRIORITY;
@@ -68,6 +69,7 @@ interface DirectionalSegment {
   end: CadPoint2;
   segment: number;
   terminal: "both" | "start" | "end" | "ray" | "none";
+  extent: "segment" | "ray" | "line";
 }
 
 function finiteDirection(start: CadPoint2, end: CadPoint2): boolean {
@@ -77,12 +79,12 @@ function finiteDirection(start: CadPoint2, end: CadPoint2): boolean {
 
 function directionalSegments(entity: CadEntity): DirectionalSegment[] {
   if (entity.kind === "line") return finiteDirection(entity.start, entity.end)
-    ? [{ start: entity.start, end: entity.end, segment: 0, terminal: "both" }]
+    ? [{ start: entity.start, end: entity.end, segment: 0, terminal: "both", extent: "segment" }]
     : [];
   if (entity.kind === "ray" || entity.kind === "xline") {
     const end = { x: entity.basePoint.x + entity.direction.x, y: entity.basePoint.y + entity.direction.y };
     return finiteDirection(entity.basePoint, end)
-      ? [{ start: entity.basePoint, end, segment: 0, terminal: entity.kind === "ray" ? "ray" : "none" }]
+      ? [{ start: entity.basePoint, end, segment: 0, terminal: entity.kind === "ray" ? "ray" : "none", extent: entity.kind === "ray" ? "ray" : "line" }]
       : [];
   }
   if (entity.kind !== "polyline" || entity.vertices.length < 2) return [];
@@ -93,9 +95,46 @@ function directionalSegments(entity: CadEntity): DirectionalSegment[] {
     const end = entity.vertices[(index + 1) % entity.vertices.length]!;
     if (Math.abs(start.bulge ?? 0) > TRIM_EPSILON || !finiteDirection(start, end)) continue;
     const terminal = entity.closed ? "none" : index === 0 && index === count - 1 ? "both" : index === 0 ? "start" : index === count - 1 ? "end" : "none";
-    result.push({ start, end, segment: index, terminal });
+    result.push({ start, end, segment: index, terminal, extent: "segment" });
   }
   return result;
+}
+
+interface SupportingLineHit {
+  point: CadPoint2;
+  firstParameter: number;
+  secondParameter: number;
+}
+
+function supportingLineIntersection(first: DirectionalSegment, second: DirectionalSegment): SupportingLineHit | null {
+  const firstDirection = { x: first.end.x - first.start.x, y: first.end.y - first.start.y };
+  const secondDirection = { x: second.end.x - second.start.x, y: second.end.y - second.start.y };
+  const denominator = firstDirection.x * secondDirection.y - firstDirection.y * secondDirection.x;
+  const scale = Math.hypot(firstDirection.x, firstDirection.y) * Math.hypot(secondDirection.x, secondDirection.y);
+  if (!Number.isFinite(denominator) || Math.abs(denominator) <= TRIM_EPSILON * scale) return null;
+  const delta = { x: second.start.x - first.start.x, y: second.start.y - first.start.y };
+  const firstParameter = (delta.x * secondDirection.y - delta.y * secondDirection.x) / denominator;
+  const secondParameter = (delta.x * firstDirection.y - delta.y * firstDirection.x) / denominator;
+  const point = {
+    x: first.start.x + firstParameter * firstDirection.x,
+    y: first.start.y + firstParameter * firstDirection.y,
+  };
+  return [point.x, point.y, firstParameter, secondParameter].every(Number.isFinite)
+    ? { point, firstParameter, secondParameter }
+    : null;
+}
+
+function parameterIsOnEntity(segment: DirectionalSegment, parameter: number): boolean {
+  if (segment.extent === "line") return true;
+  if (segment.extent === "ray") return parameter >= -TRIM_EPSILON;
+  return parameter >= -TRIM_EPSILON && parameter <= 1 + TRIM_EPSILON;
+}
+
+function canonicalPair(
+  first: { handle: string; segment: number; parameter: number },
+  second: { handle: string; segment: number; parameter: number },
+): readonly [typeof first, typeof second] {
+  return [first, second].sort((a, b) => a.handle.localeCompare(b.handle) || a.segment - b.segment) as [typeof first, typeof second];
 }
 
 function projectToLine(point: CadPoint2, segment: DirectionalSegment): { point: CadPoint2; parameter: number } {
@@ -291,6 +330,9 @@ export interface CadSnapGenerationOptions {
 export function generateCadSnapCandidates(entities: readonly CadEntity[], options: CadSnapGenerationOptions): CadSnapCandidate[] {
   if (![options.cursor.x, options.cursor.y, options.aperture].every(Number.isFinite) || options.aperture < 0) throw new TypeError("Snap cursor/aperture must be finite and aperture non-negative.");
   const modes = options.modes instanceof Set ? options.modes : new Set(options.modes);
+  for (const mode of modes) {
+    if (!Object.hasOwn(CAD_OSNAP_PRIORITY, mode)) throw new TypeError(`Unsupported OSNAP mode ${String(mode)}.`);
+  }
   const results: CadSnapCandidate[] = [];
   for (const entity of entities) {
     if (modes.has("endpoint")) endpoints(entity).forEach((point, index) => results.push(candidate("endpoint", point, options.cursor, entity.handle, String(index))));
@@ -320,18 +362,47 @@ export function generateCadSnapCandidates(entities: readonly CadEntity[], option
         const second = entities[secondIndex]!;
         trimCurvesOfEntity(first).forEach((firstCurve) => trimCurvesOfEntity(second).forEach((secondCurve) => {
           trimCurveIntersections(firstCurve, secondCurve).forEach((hit, index) => {
-            const stablePair = [
-              { handle: first.handle, segment: firstCurve.segment },
-              { handle: second.handle, segment: secondCurve.segment },
-            ].sort((a, b) => a.handle.localeCompare(b.handle) || a.segment - b.segment);
+            const stablePair = canonicalPair(
+              { handle: first.handle, segment: firstCurve.segment, parameter: hit.first },
+              { handle: second.handle, segment: secondCurve.segment, parameter: hit.second },
+            );
             const stableIdentity = stablePair.map((item) => `${item.handle}:${item.segment}`).join("|");
             results.push(candidate(
-              "intersection", hit.point, options.cursor, first.handle, `${second.handle}:${index}`,
-              { otherHandle: second.handle, segment: firstCurve.segment, otherSegment: secondCurve.segment, parameter: hit.first },
+              "intersection", hit.point, options.cursor, stablePair[0].handle, `${stablePair[1].handle}:${index}`,
+              { otherHandle: stablePair[1].handle, segment: stablePair[0].segment, otherSegment: stablePair[1].segment, parameter: stablePair[0].parameter },
               stableIdentity,
             ));
           });
         }));
+      }
+    }
+  }
+  if (modes.has("apparentIntersection")) {
+    for (let firstIndex = 0; firstIndex < entities.length; firstIndex += 1) {
+      for (let secondIndex = firstIndex + 1; secondIndex < entities.length; secondIndex += 1) {
+        const first = entities[firstIndex]!;
+        const second = entities[secondIndex]!;
+        for (const firstSegment of directionalSegments(first)) {
+          for (const secondSegment of directionalSegments(second)) {
+            const hit = supportingLineIntersection(firstSegment, secondSegment);
+            if (!hit || (parameterIsOnEntity(firstSegment, hit.firstParameter) && parameterIsOnEntity(secondSegment, hit.secondParameter))) continue;
+            const stablePair = canonicalPair(
+              { handle: first.handle, segment: firstSegment.segment, parameter: hit.firstParameter },
+              { handle: second.handle, segment: secondSegment.segment, parameter: hit.secondParameter },
+            );
+            const stableIdentity = stablePair.map((item) => `${item.handle}:${item.segment}`).join("|");
+            results.push(candidate(
+              "apparentIntersection", hit.point, options.cursor, stablePair[0].handle, stablePair[1].handle,
+              {
+                otherHandle: stablePair[1].handle,
+                segment: stablePair[0].segment,
+                otherSegment: stablePair[1].segment,
+                parameter: stablePair[0].parameter,
+              },
+              stableIdentity,
+            ));
+          }
+        }
       }
     }
   }
@@ -396,11 +467,13 @@ export class CadSnapIndex {
   #unbounded = new Set<string>();
 
   setBlocks(blocks: readonly CadBlockDefinition[]): void {
+    if (new Set(blocks.map((block) => block.id)).size !== blocks.length) throw new TypeError("Duplicate block ids are not allowed in the snap index.");
     this.#blocks = new Map(blocks.map((block) => [block.id, block]));
     this.#rebuild();
   }
 
   setEntities(entities: readonly CadEntity[]): void {
+    if (new Set(entities.map((entity) => entity.handle)).size !== entities.length) throw new TypeError("Duplicate entity handles are not allowed in the snap index.");
     this.#entities = new Map(entities.map((entity) => [entity.handle, entity]));
     this.#rebuild();
   }

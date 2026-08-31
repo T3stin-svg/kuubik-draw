@@ -31,6 +31,17 @@ export interface PrecisionResult {
   parsedInput?: CadPrecisionInput;
 }
 
+/** Converts a CSS-pixel snap aperture into document-space units without rounding. */
+export function worldApertureFromCssPixels(aperturePixels: number, worldUnitsPerCssPixel: number): number {
+  if (!Number.isFinite(aperturePixels) || aperturePixels < 0) {
+    throw new TypeError("Snap aperture pixels must be finite and non-negative.");
+  }
+  if (!Number.isFinite(worldUnitsPerCssPixel) || worldUnitsPerCssPixel <= 0) {
+    throw new TypeError("Viewport world units per CSS pixel must be finite and positive.");
+  }
+  return aperturePixels * worldUnitsPerCssPixel;
+}
+
 function finitePoint(point: CadPoint2, label: string): void {
   if (![point.x, point.y].every(Number.isFinite)) throw new TypeError(`${label} must be finite.`);
 }
