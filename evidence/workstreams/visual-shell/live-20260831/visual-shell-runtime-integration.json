@@ -1,0 +1,52 @@
+{
+  "viewport": [
+    1920,
+    1080
+  ],
+  "committedLineHandle": "10",
+  "workflows": [
+    "LINE",
+    "UNDO",
+    "REDO",
+    "PLINE",
+    "CIRCLE",
+    "ARC",
+    "F8_ORTHO",
+    "GRID_COMMAND",
+    "LAYER_CREATE",
+    "MTEXT_COMMIT",
+    "LEADER_COMMIT",
+    "DOCUMENT_NEW",
+    "DOCUMENT_ACTIVATE",
+    "DOCUMENT_CLOSE"
+  ],
+  "readback": {
+    "commandAdapter": "command-engine",
+    "precisionSource": "ortho",
+    "layerIds": [
+      "0",
+      "layer-layer-1"
+    ],
+    "tabs": [
+      {
+        "id": "local",
+        "active": true
+      }
+    ],
+    "revision": 9,
+    "entityKinds": [
+      "line",
+      "polyline",
+      "circle",
+      "arc",
+      "mtext",
+      "leader"
+    ],
+    "disabledRibbonRows": [
+      "F-007",
+      "F-088"
+    ],
+    "disabledBlockState": "F-088"
+  },
+  "consoleErrors": []
+}

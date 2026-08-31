@@ -42,7 +42,7 @@ const RUNTIME_ROWS = new Set([
   "F-016", "F-017", "F-018", "F-019", "F-020", "F-021", "F-022", "F-024", "F-027", "F-030",
   "F-045", "F-047", "F-049", "F-050", "F-052",
   "F-057", "F-058", "F-059",
-  "F-061", "F-066", "F-067",
+  "F-061", "F-062", "F-063", "F-064", "F-065", "F-066", "F-067", "F-068",
   "F-072", "F-073", "F-074",
   "F-087", "F-088", "F-089", "F-090", "F-091",
   "F-097", "F-098", "F-122", "F-127", "F-131", "F-132",
@@ -61,6 +61,17 @@ export interface LivePromptCommit {
   session: CadSession;
   committed: ReturnType<CadSession["commit"]>;
   readBack: AnnotationBlockCommandReadBack;
+}
+
+export interface VisualSnapCycleReadback {
+  candidateId: string | null;
+  candidateIds: string[];
+  mode: string | null;
+  point: { x: number; y: number } | null;
+  handle: string | null;
+  index: number;
+  count: number;
+  trackingCount: number;
 }
 
 function promptPlan(request: AnnotationBlockPromptRequest) {
@@ -116,8 +127,13 @@ export class VisualShellLivePrompt {
     if (snapshot.status !== "active" || !snapshot.currentFieldId) return null;
     const field = promptPlan(this.#request).fields.find((candidate) => candidate.id === snapshot.currentFieldId)!;
     const dimStyleMode = this.#dimStyleMode(snapshot);
+    const tableMode = this.#tableMode(snapshot);
     const branchRequired = (field.id === "style" && (dimStyleMode === "create" || dimStyleMode === "update"))
-      || (field.id === "styleId" && dimStyleMode === "apply");
+      || (field.id === "styleId" && dimStyleMode === "apply")
+      || (field.id === "definition" && tableMode === "create")
+      || (field.id === "operations" && tableMode === "edit")
+      || (field.id === "tableHandle" && tableMode === "edit" && (this.#request.context?.selectedHandles?.length ?? 0) !== 1)
+      || (field.id === "style" && (tableMode === "style-create" || tableMode === "style-update"));
     return { id: field.id, label: field.label, kind: field.valueKind, required: field.required || branchRequired, choices: [...("choices" in field ? field.choices ?? [] : [])] };
   }
 
@@ -127,7 +143,7 @@ export class VisualShellLivePrompt {
     const snapshot = !raw.trim() && !field.required
       ? this.#prompt.skip()
       : this.#prompt.answer(promptValue(field.kind, raw));
-    return this.#skipInactiveDimStyleFields(snapshot);
+    return this.#skipInactiveBranchFields(snapshot);
   }
 
   cancel(): CommandPromptSnapshot { return this.#adapter.cancel(); }
@@ -153,13 +169,25 @@ export class VisualShellLivePrompt {
     return mode === "create" || mode === "update" || mode === "apply" ? mode : null;
   }
 
-  #skipInactiveDimStyleFields(snapshot: CommandPromptSnapshot): CommandPromptSnapshot {
-    const mode = this.#dimStyleMode(snapshot);
+  #tableMode(snapshot: CommandPromptSnapshot): "create" | "edit" | "style-create" | "style-update" | null {
+    if (this.#request.commandId !== "TABLE") return null;
+    const mode = snapshot.values.mode;
+    return mode === "create" || mode === "edit" || mode === "style-create" || mode === "style-update" ? mode : null;
+  }
+
+  #skipInactiveBranchFields(snapshot: CommandPromptSnapshot): CommandPromptSnapshot {
+    const dimStyleMode = this.#dimStyleMode(snapshot);
+    const tableMode = this.#tableMode(snapshot);
     let routed = snapshot;
     while (routed.status === "active") {
-      const skipStyle = mode === "apply" && routed.currentFieldId === "style";
-      const skipStyleId = (mode === "create" || mode === "update") && routed.currentFieldId === "styleId";
-      if (!skipStyle && !skipStyleId) break;
+      const skipDimStyle = dimStyleMode === "apply" && routed.currentFieldId === "style";
+      const skipDimStyleId = (dimStyleMode === "create" || dimStyleMode === "update") && routed.currentFieldId === "styleId";
+      const skipTableDefinition = tableMode !== null && tableMode !== "create" && routed.currentFieldId === "definition";
+      const skipTableHandle = tableMode !== null && tableMode !== "edit" && routed.currentFieldId === "tableHandle";
+      const skipSelectedTableHandle = tableMode === "edit" && (this.#request.context?.selectedHandles?.length ?? 0) === 1 && routed.currentFieldId === "tableHandle";
+      const skipTableOperations = tableMode !== null && tableMode !== "edit" && routed.currentFieldId === "operations";
+      const skipTableStyle = (tableMode === "create" || tableMode === "edit") && routed.currentFieldId === "style";
+      if (!skipDimStyle && !skipDimStyleId && !skipTableDefinition && !skipTableHandle && !skipSelectedTableHandle && !skipTableOperations && !skipTableStyle) break;
       routed = this.#prompt.skip();
     }
     return routed;
@@ -299,6 +327,25 @@ function createCommandRegistry(): CommandRegistry {
   ]);
 }
 
+export const VISUAL_SHELL_COMMAND_DEFINITIONS = Object.freeze([
+  { id: "LINE", aliases: ["L"] },
+  { id: "PLINE", aliases: ["PL"] },
+  { id: "RECTANGLE", aliases: ["REC", "RECTANG"] },
+  { id: "CIRCLE", aliases: ["C"] },
+  { id: "ARC", aliases: ["A"] },
+  { id: "MTEXT", aliases: ["MT"] },
+  { id: "LEADER", aliases: ["LE"] },
+  { id: "UNDO", aliases: ["U"] },
+  { id: "REDO", aliases: [] },
+  { id: "GRID", aliases: [] },
+  { id: "ORTHO", aliases: [] },
+  { id: "OSNAP", aliases: [] },
+  { id: "OTRACK", aliases: [] },
+  { id: "DYN", aliases: [] },
+  { id: "SNAP", aliases: [] },
+  { id: "POLAR", aliases: [] },
+]);
+
 /** Typed boundary between the visual shell and already-integrated deterministic feature modules. */
 export class VisualShellRuntimeAdapter {
   readonly commandRegistry = createCommandRegistry();
@@ -360,6 +407,14 @@ export class VisualShellRuntimeAdapter {
     return { snapCount: snaps.length, trackingCount: contract.trackingCandidates(cursorPoint).length };
   }
 
+  updateSnapCycle(document: KDrawDocumentV1, cursorPoint: { x: number; y: number }): VisualSnapCycleReadback {
+    return this.#snapCycleReadback(document, cursorPoint, false, 1);
+  }
+
+  cycleSnap(document: KDrawDocumentV1, cursorPoint: { x: number; y: number }, step = 1): VisualSnapCycleReadback {
+    return this.#snapCycleReadback(document, cursorPoint, true, step);
+  }
+
   layerPlan(document: KDrawDocumentV1, command: LayerManagerCommand): LayerManagerPlan {
     return new LayerManagerController(document, { opIdPrefix: "visual-shell-layer" }).plan(command);
   }
@@ -400,5 +455,21 @@ export class VisualShellRuntimeAdapter {
     });
     this.#precisionDocumentKey = key;
     return this.#precisionContract;
+  }
+
+  #snapCycleReadback(document: KDrawDocumentV1, cursorPoint: { x: number; y: number }, cycle: boolean, step: number): VisualSnapCycleReadback {
+    const contract = this.precisionLayers(document);
+    const readback = cycle ? contract.cycleSnap(cursorPoint, step) : contract.updateSnapCycle(cursorPoint);
+    if (readback.candidate) contract.acquireTracking(readback.candidate);
+    return {
+      candidateId: readback.candidateId,
+      candidateIds: [...readback.candidateIds],
+      mode: readback.candidate?.mode ?? null,
+      point: readback.candidate ? { ...readback.candidate.point } : null,
+      handle: readback.candidate?.handle ?? null,
+      index: readback.index,
+      count: readback.count,
+      trackingCount: contract.trackingCandidates(cursorPoint).length,
+    };
   }
 }

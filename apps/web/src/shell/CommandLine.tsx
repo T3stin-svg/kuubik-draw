@@ -7,14 +7,17 @@ interface CommandLineProps {
   historyOpen: boolean;
   history: readonly string[];
   documentName: string;
+  aliasCount: number;
   onInputChange: (value: string) => void;
   onSubmit: () => void;
   onCancel: () => void;
   onHistoryNavigate: (direction: -1 | 1) => void;
   onHistoryOpenChange: (open: boolean) => void;
+  onAliasImport: (file: File) => void;
+  onAliasExport: () => void;
 }
 
-export function CommandLine({ status, activeCommand, input, historyOpen, history, documentName, onInputChange, onSubmit, onCancel, onHistoryNavigate, onHistoryOpenChange }: CommandLineProps) {
+export function CommandLine({ status, activeCommand, input, historyOpen, history, documentName, aliasCount, onInputChange, onSubmit, onCancel, onHistoryNavigate, onHistoryOpenChange, onAliasImport, onAliasExport }: CommandLineProps) {
   return (
     <section className="command-line" aria-label="Käsurida" data-visual-zone="command-line">
       {historyOpen && (
@@ -24,7 +27,19 @@ export function CommandLine({ status, activeCommand, input, historyOpen, history
             <span id="command-text-window-title">Kuubik Text Window — {documentName}</span>
             <button type="button" aria-label="Sulge Kuubik Text Window" onClick={() => onHistoryOpenChange(false)}><CadIcon name="close" /></button>
           </header>
-          <nav className="command-text-menubar" aria-label="Käsuajaloo menüü"><span>Edit</span></nav>
+          <nav className="command-text-menubar" aria-label="Käsuajaloo menüü">
+            <span>Edit</span>
+            <label className="command-alias-import">
+              Import PGP
+              <input type="file" accept=".pgp,text/plain" aria-label="Import PGP aliases" onChange={(event) => {
+                const file = event.currentTarget.files?.[0];
+                if (file) onAliasImport(file);
+                event.currentTarget.value = "";
+              }} />
+            </label>
+            <button type="button" onClick={onAliasExport}>Export PGP</button>
+            <output data-testid="pgp-alias-count">{aliasCount} custom alias{aliasCount === 1 ? "" : "es"}</output>
+          </nav>
           <div className="command-text-log" role="log" aria-label="Käsuajalugu" tabIndex={0}>
             <div>Kuubik command utilities loaded.</div>
             {history.map((entry, index) => <div key={`${index}-${entry}`}>Command: {entry}</div>)}

@@ -105,6 +105,18 @@ button:focus-visible, select:focus-visible, input:focus-visible, summary:focus-v
 .ribbon .ribbon-tool[aria-pressed="true"] { color: #fff; background: #176f9f; border-color: #68b4df; }
 .ribbon .ribbon-tool[aria-pressed="true"]:hover { background: #176f9f; border-color: #68b4df; }
 .ribbon .ribbon-tool:disabled { color: #7e878e; background: transparent; border-color: transparent; }
+.dimension-menu { position: relative; min-width: 78px; }
+.dimension-menu > summary { display: grid; min-height: 21px; padding: 0 3px; grid-template-columns: 14px minmax(0, 1fr) 10px; align-items: center; gap: 3px; color: #f1f4f6; border: 1px solid transparent; font-size: 9px; cursor: pointer; list-style: none; }
+.dimension-menu > summary::-webkit-details-marker { display: none; }
+.dimension-menu > summary:hover, .dimension-menu[open] > summary { color: #fff; background: #48515a; border-color: #707b85; }
+.dimension-menu > summary svg { width: 13px; height: 13px; }
+.dimension-menu > summary > svg:last-child { width: 9px; height: 9px; }
+.dimension-menu-popover { position: fixed; z-index: 45; top: 120px; left: 520px; display: grid; width: 188px; padding: 4px; color: #e8eef2; background: #252d35; border: 1px solid #65737e; box-shadow: 0 8px 20px rgb(0 0 0 / 48%); }
+.dimension-menu-popover button { display: grid; min-height: 27px; padding: 3px 7px; grid-template-columns: 18px 1fr auto; align-items: center; gap: 6px; color: #e0e7ec; background: transparent; border: 1px solid transparent; text-align: left; font: 10px "Segoe UI", sans-serif; }
+.dimension-menu-popover button svg { width: 15px; height: 15px; color: #72bfe8; }
+.dimension-menu-popover button:hover:not(:disabled), .dimension-menu-popover button:focus-visible, .dimension-menu-popover button.is-active { color: #fff; background: #176a99; border-color: #65b8e5; outline: none; }
+.dimension-menu-popover button:disabled { color: #7d8992; background: #2d343b; }
+.dimension-menu-popover small { color: #99a5ad; font-size: 8px; text-transform: uppercase; }
 .ribbon .ribbon-tool.is-scope-unselected:disabled { color: #747d84; background: #343b45; border-color: #424b57; opacity: .78; }
 .ribbon .ribbon-tool.is-scope-unselected:disabled::after { position: fixed; z-index: 80; top: 154px; left: 50%; display: none; width: max-content; max-width: 320px; padding: 6px 9px; color: #edf3f7; content: "Pole sinu töövoogu valitud"; background: #202731; border: 1px solid #5d6a78; box-shadow: 0 4px 12px rgb(0 0 0 / 45%); transform: translateX(-50%); }
 .ribbon .ribbon-tool.is-scope-unselected:disabled:hover::after { display: block; }
@@ -195,6 +207,11 @@ button:focus-visible, select:focus-visible, input:focus-visible, summary:focus-v
 .cad-crosshair-horizontal { left: 0; top: 38px; width: 77px; height: 1px; background: currentcolor; }
 .cad-crosshair-vertical { left: 38px; top: 0; width: 1px; height: 77px; background: currentcolor; }
 .cad-pickbox { left: 34px; top: 34px; width: 9px; height: 9px; background: #fff; border: 1px solid currentcolor; box-sizing: border-box; }
+.drawing-area.model-mode > canvas:focus-visible { outline: 2px solid #078ed1; outline-offset: -2px; }
+.cad-snap-marker { position: absolute; z-index: 5; width: 13px; height: 13px; pointer-events: none; color: #00a9e8; transform: translate(-6.5px, -6.5px); filter: drop-shadow(0 0 1px #fff); }
+.cad-snap-marker span { display: block; width: 100%; height: 100%; border: 2px solid currentcolor; box-sizing: border-box; transform: rotate(45deg); }
+.cad-snap-marker.snap-center span { border-radius: 50%; transform: none; }
+.cad-snap-marker.snap-midpoint span { width: 0; height: 0; border: 7px solid transparent; border-bottom-color: currentcolor; transform: translateY(-5px); }
 .view-orientation-indicator { position: absolute; z-index: 3; top: 20px; right: 24px; width: 76px; height: 82px; color: #c9d2d8; pointer-events: none; font: 9px "Segoe UI", sans-serif; text-align: center; }
 .view-orientation-indicator::before { position: absolute; top: 15px; left: 14px; width: 46px; height: 46px; content: ""; background: rgb(47 57 64 / 82%); border: 1px solid #77838b; transform: rotate(45deg); box-shadow: inset 0 0 0 1px #20272c, 0 2px 5px rgb(0 0 0 / 35%); }
 .view-orientation-indicator strong { position: absolute; z-index: 1; top: 30px; left: 0; width: 100%; color: #f0f4f6; font-size: 10px; font-weight: 600; letter-spacing: .05em; }
@@ -328,8 +345,12 @@ button:focus-visible, select:focus-visible, input:focus-visible, summary:focus-v
 .command-text-app-icon { display: inline-grid; width: 16px; height: 16px; place-items: center; color: #fff; background: #1276a8; font: 700 10px/1 "Segoe UI", sans-serif; }
 .command-text-app-icon svg { width: 12px; height: 12px; }
 .command-text-titlebar button svg { width: 15px; height: 15px; }
-.command-text-menubar { height: 22px; padding: 3px 8px; color: #000; background: #fff; border-bottom: 1px solid #696969; font: 12px "Segoe UI", sans-serif; }
+.command-text-menubar { display: flex; height: 22px; padding: 1px 8px; align-items: center; gap: 8px; color: #000; background: #fff; border-bottom: 1px solid #696969; font: 12px "Segoe UI", sans-serif; }
 .command-text-menubar span { display: inline-block; padding: 0 3px; }
+.command-text-menubar button, .command-alias-import { min-height: 18px; padding: 1px 5px; color: #111; background: transparent; border: 1px solid transparent; font: inherit; cursor: pointer; }
+.command-text-menubar button:hover, .command-alias-import:hover { background: #e8f2f8; border-color: #80b9d6; }
+.command-alias-import input { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+.command-text-menubar output { margin-left: auto; color: #4d5961; font-size: 11px; }
 .command-text-log { min-height: 0; padding: 3px 8px; overflow: auto; color: #000; background: #c8c8c8; outline: none; white-space: pre-wrap; }
 .command-text-log:focus-visible { box-shadow: inset 0 0 0 2px #176a99; }
 .command-text-log > div { min-height: 14px; margin: 0 0 8px; }
