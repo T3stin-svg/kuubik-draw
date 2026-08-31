@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "status": "CONTRACT_ONLY",
+  "certificationAuthority": false,
+  "benchmark": "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
+  "minimumVersions": {
+    "default": "AC1018",
+    "nativeMleader": "AC1021"
+  },
+  "fixture": {
+    "units": "mm",
+    "textStyles": ["TXT-ISO"],
+    "dimensionStyles": ["DIM-ISO"],
+    "entities": [
+      { "handle": "D1", "kind": "dimension", "dimensionKind": "linear", "associativeTargets": ["10", "11"] },
+      { "handle": "D2", "kind": "dimension", "dimensionKind": "aligned", "chainId": "CHAIN-1", "chainIndex": 0 },
+      { "handle": "D3", "kind": "dimension", "dimensionKind": "angular" },
+      { "handle": "D4", "kind": "dimension", "dimensionKind": "radial" },
+      { "handle": "D5", "kind": "dimension", "dimensionKind": "diameter" },
+      { "handle": "T1", "kind": "mtext", "text": "Rida 1\nRida 2", "width": 80, "attachment": "top-left", "lineSpacingFactor": 1.2 },
+      { "handle": "L1", "kind": "leader", "vertexCount": 3 },
+      { "handle": "ML1", "kind": "mleader", "minimumVersion": "AC1021" },
+      { "handle": "H1", "kind": "hatch", "pattern": "SOLID", "loopRoles": ["outer", "hole", "island"], "associativeTargets": ["20", "21", "22"] },
+      { "handle": "H2", "kind": "hatch", "pattern": "ANSI31", "angleRad": 0.7853981633974483, "scale": 2 },
+      { "handle": "I1", "kind": "blockRef", "blockId": "DOOR", "scale": [2, 0.5], "rotationRad": 1.5707963267948966, "attributes": { "MARK": "D7" } }
+    ],
+    "blocks": [
+      { "id": "DOOR", "memberHandles": ["B1", "B2"], "attributeTags": ["MARK"] },
+      { "id": "DOOR-NESTED", "memberHandles": ["B3"], "nestedBlockIds": ["DOOR"] }
+    ]
+  },
+  "requiredReadBack": [
+    "entity count, kind and stable handle",
+    "all definition points and style references",
+    "dimension association target handles and continued-chain order",
+    "MTEXT Unicode, line breaks, width, attachment and spacing",
+    "LEADER/MLEADER vertices, content placement and native-versus-lossy status",
+    "HATCH pattern, angle, scale, outer/hole/island parity and source handles",
+    "BLOCK member handles and acyclic nested graph",
+    "INSERT transform and ATTRIB values",
+    "reopen result after redefine with existing INSERT handles unchanged"
+  ],
+  "mutationsThatMustFail": [
+    "missing exact capability declaration",
+    "lossy MLEADER claimed as exact",
+    "dropped dimension or hatch association handle",
+    "changed hatch hole/island parity",
+    "duplicate or changed block/member handle",
+    "cyclic or dangling nested block",
+    "dropped ATTRIB value or text/dimension style reference"
+  ],
+  "evidenceRequiredForPass": [
+    "Kuubik source and output SHA-256",
+    "independent parser read-back SHA-256",
+    "owned AutoCAD process identity and reopen report",
+    "same visible Kuubik and AutoCAD workflow",
+    "zero P0 and zero P1 independent review"
+  ]
+}

@@ -13,6 +13,7 @@ renaming their symbols:
 - `packages/cad-core/src/annotation/text.ts`
 - `packages/cad-core/src/annotation/hatch.ts`
 - `packages/cad-core/src/annotation/update.ts`
+- `packages/cad-core/src/annotation/dxf-capability.ts`
 - `packages/cad-core/src/blocks/contracts.ts`
 - `packages/cad-core/src/blocks/operations.ts`
 - `packages/cad-core/src/blocks/transform.ts`
@@ -21,6 +22,11 @@ The UI integration points are `AnnotationPanel`, `ANNOTATION_TOOLS`, `createAnno
 `BlocksPanel`, `BLOCK_TOOLS` and `createBlockAction`. The panels emit command intent only.
 The application command runtime must allocate handles, collect points/options, call the core
 planner and commit all returned changes once through `CadSession.commit`.
+
+The typed web command boundaries are `annotation/command-adapter.ts`,
+`annotation/association-workflow.ts` and `blocks/command-adapter.ts`. They return one complete
+`PreparedAtomicCommand`; the shell must preview and commit that value as one operation rather than
+committing intermediate prompts or planner results.
 
 ## Common invariants
 
@@ -210,6 +216,22 @@ DXF guidance: definitions map to BLOCK/ENDBLK records and references to INSERT. 
 definitions map to ATTDEF; values map to ATTRIB/SEQEND. Redefinition keeps the same definition
 identity so all existing INSERT references resolve to the new content. Import must validate the
 complete graph before exposing any partial document.
+
+## Fail-closed DXF capability gate
+
+Before writing an annotation/block document, the DXF adapter must call
+`assertAnnotationBlockDxfCapabilities(document, declaration)`. The declaration identifies the
+adapter and selected DXF version and marks every semantic capability as `exact`, `lossy` or
+`unsupported`. Missing declarations, `lossy`, `unsupported`, and a DXF version older than a
+capability's minimum version are hard failures before any download or file mutation. Native
+MLEADER requires at least AC1021; declaring it `exact` for AC1018 is rejected.
+
+The gate derives requirements from the actual document, including style tables, stable
+dimension/hatch associations, hatch holes, block nesting, insert transforms and attributes.
+Session 4 must add the adapter-specific declaration at its output boundary and independently
+read back the fixture described in
+`evidence/workstreams/annotation-blocks/dxf-readback-fixture.json`. That JSON is a test contract,
+not evidence that a DXF adapter or AutoCAD round trip has passed.
 
 ## Deterministic ordering and failure behavior
 
