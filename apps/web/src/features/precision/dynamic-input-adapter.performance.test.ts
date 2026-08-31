@@ -19,9 +19,9 @@ describe("F-052 Dynamic Input 50,000-object performance", () => {
       units: { linear: "mm", displayPrecision: 6, angularPrecision: 6 },
       initialPrecision: { ortho: true, snap: true, osnap: true, otrack: true, dynamicInput: true },
     });
-    const buildMs = performance.now() - buildStarted;
     const coordinate = new PrecisionCoordinateEntryAdapter(new CadSession(document), (input) => shell.preparePointer(input));
     const dynamic = new PrecisionDynamicInputAdapter(coordinate, shell);
+    const buildMs = performance.now() - buildStarted;
     const timings: number[] = [];
     for (let index = 0; index < 100; index += 1) {
       const started = performance.now();
