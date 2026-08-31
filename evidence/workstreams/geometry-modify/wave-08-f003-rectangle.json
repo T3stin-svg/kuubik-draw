@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "wave": "f003-rectangle-option-matrix",
+  "rows": ["F-003"],
+  "status": "implemented-kernel-and-dxf-readback-not-browser-or-autocad-certified",
+  "sourceAuthority": "C:/Users/Olav/Downloads/kuubik-draw-reio-scope-v1.json",
+  "implemented": {
+    "F-003": [
+      "Corners projected onto rotated local axes",
+      "Dimensions with explicit quadrant direction",
+      "Area with known Length or Width",
+      "normalized Rotation",
+      "Chamfer with independent local-axis distances",
+      "Fillet with signed quarter-arc bulges",
+      "constant LWPOLYLINE Width",
+      "zero Elevation normalization and non-zero Elevation fail-closed rejection",
+      "signed 2D Thickness through appearance.thickness",
+      "clockwise and counterclockwise output",
+      "one prepared global Commit, Undo and Redo operation"
+    ]
+  },
+  "invariants": {
+    "previewEqualsCommit": "preview and commit both call prepareRectangleCommand with the same immutable input",
+    "atomicUndoRedo": "the complete rectangle is one CadSession operation",
+    "exactIdentityAndProperties": "handle, layer, appearance, extension data, widths, bulges and thickness are cloned into the prepared entity",
+    "degeneracyIsAtomic": "invalid identity, dimensions, area, rotation, corner styles, width, elevation or thickness throw before changes exist",
+    "dxfReadback": "production export/import preserves rotated vertices, winding, handle, layer, widths, signed bulges, colour, lineweight and thickness"
+  },
+  "tests": {
+    "unitGoldenPropertyAtomic": "packages/cad-core/test/f003-rectangle-command.test.ts",
+    "mutation": "packages/cad-core/test/f003-rectangle-mutation-proven.test.ts",
+    "roundtrip": "packages/cad-dxf/test/f003-rectangle-options-roundtrip.test.ts",
+    "targetedResult": "3 files passed; 11 tests passed; 64 deterministic property cases inside the property test",
+    "fullVitestResult": "141 files passed; 757 tests passed",
+    "dxfGateResult": "17 files passed; 52 tests passed",
+    "pdfGateResult": "7 files passed; 22 tests passed",
+    "typecheckLintBuild": "PASS",
+    "publicTree": "PASS; 1421 files scanned",
+    "license": "PASS; 119 installed packages audited",
+    "diffCheck": "PASS"
+  },
+  "knownLimits": [
+    "non-zero Elevation cannot be represented by the pinned 2D schema and is rejected",
+    "the extended option parser is not wired into the shared registry or browser shell in this file-ownership lane"
+  ],
+  "certificationGaps": [
+    "AutoCAD 2024.1.2 live RECTANGLE option-matrix comparison not run",
+    "Kuubik browser RECTANGLE option workflow not run",
+    "F-003 parity score and certification records were intentionally not changed"
+  ]
+}

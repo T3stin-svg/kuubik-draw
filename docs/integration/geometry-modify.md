@@ -195,3 +195,33 @@ F-002 now has a core golden/property/mutation matrix plus production DXF export 
 import read-back for handle, layer, closed seam, signed bulges, and variable widths.
 It remains uncertified until the integration branch supplies a real browser workflow
 and an AutoCAD 2024.1.2 live comparison. No shared `src/index.ts` barrel was changed.
+
+## Wave 8 exports (F-003 RECTANGLE option matrix)
+
+From `packages/cad-core/src/rectangle-command.ts`:
+
+- `prepareRectangleCommand`
+- `RectangleCommandInputError`
+- `RectangleCommandInput`, `RectangleConstruction`, `RectangleDirection`,
+  `RectangleChamfer`, `NormalizedRectangleDefinition`, and
+  `PreparedRectangleCommand`
+
+The existing certified two-corner RECTANGLE registry path remains unchanged. The
+integration owner can migrate its parser to the typed preparation function to add
+Dimensions, Area, Rotation, Chamfer, Fillet, Width, Elevation, and Thickness without
+duplicating geometry in the shell. Corners are projected onto the explicitly rotated
+local axes; Dimensions and Area carry an explicit quadrant direction, so clockwise
+and counterclockwise results are deterministic.
+
+Chamfer and Fillet are mutually exclusive active corner styles. Width becomes exact
+per-segment LWPOLYLINE start/end width, while signed Thickness becomes
+`appearance.thickness`. Zero values normalize to omitted 2D properties. The pinned
+schema has no Z/elevation coordinate, so every non-zero Elevation is rejected with
+`UNSUPPORTED_ELEVATION` instead of being silently lost.
+
+Preview and commit must call `prepareRectangleCommand` with the same immutable input.
+Commit the returned single `changes` tuple once through `CadSession`, preserving one
+global Undo/Redo step. The F-003 option matrix has core golden/property/mutation and
+production DXF export/import read-back, but remains an uncertified extension until
+the AutoCAD 2024.1.2 option matrix and Kuubik browser workflow are run live. No parity
+score or certification record was changed by this lane.
