@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "wave": "boundary-region",
+  "rows": ["F-014"],
+  "status": "implemented-partial-not-certified",
+  "implemented": [
+    "seed-point loop discovery",
+    "straight line and open-polyline stitching",
+    "closed polyline, circle and full ellipse loops",
+    "Gap Tolerance",
+    "Island Detection",
+    "polyline output",
+    "REGION conversion with explicit proxy representation"
+  ],
+  "invariants": {
+    "previewEqualsCommit": "BOUNDARY and REGION preparations are pure and deterministic",
+    "atomicUndoRedo": "each BOUNDARY creation or REGION replacement is one CadSession operation",
+    "noFalseNativeRegionClaim": "region output is tagged ACDBREGION proxy with kuubik-region-v1 raw data"
+  },
+  "tests": {
+    "unitGoldenMutationWiringAtomic": "packages/cad-core/test/boundary-region.test.ts",
+    "lastResult": "1 file passed; 8 tests passed"
+  },
+  "knownLimits": [
+    "KDraw v1 has no native region entity",
+    "stitched arc and bulged-polyline boundaries are not implemented",
+    "native REGION boolean operations and DXF round-trip are not implemented"
+  ],
+  "certificationGaps": [
+    "AutoCAD live workflow comparison not run",
+    "Kuubik browser workflow not integrated in this branch",
+    "saved output read-back not run"
+  ]
+}
