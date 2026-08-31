@@ -26,7 +26,7 @@ describe("50,000 object snap/selection performance", () => {
     const result = profileCadSpatialIndexes(entities, {
       selectionPoint: { x: 5, y: 0 }, selectionTolerance: 6,
       snap: {
-        modes: ["endpoint", "midpoint", "center", "quadrant", "intersection", "extension", "insertion", "perpendicular", "tangent", "nearest", "geometricCenter", "parallel"],
+        modes: ["endpoint", "midpoint", "center", "quadrant", "intersection", "apparentIntersection", "extension", "insertion", "perpendicular", "tangent", "nearest", "geometricCenter", "parallel"],
         cursor: { x: 5, y: 0 }, aperture: 6, referencePoint: { x: 5, y: 5 }, referenceHandles: ["0"],
       },
       queryIterations: 100,

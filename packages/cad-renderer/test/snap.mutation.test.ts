@@ -3,7 +3,7 @@ import { CAD_OSNAP_PRIORITY, generateCadSnapCandidates } from "../src/snap.js";
 
 describe("F-050 OSNAP mutation guards", () => {
   it("kills priority, aperture, trim-filter and deterministic-key mutations", () => {
-    expect(Object.values(CAD_OSNAP_PRIORITY)).toEqual([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
+    expect(Object.values(CAD_OSNAP_PRIORITY)).toEqual([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
     const quarter = {
       kind: "ellipse" as const, handle: "E", layerId: "0", center: { x: 0, y: 0 },
       majorAxis: { x: 10, y: 0 }, ratio: 0.5, startParameter: 0, endParameter: Math.PI / 2,

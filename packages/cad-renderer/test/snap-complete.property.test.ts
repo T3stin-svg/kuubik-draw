@@ -12,7 +12,7 @@ function seeded(seed: number): () => number {
 describe("complete OSNAP seeded property coverage", () => {
   it("keeps 2,000 candidate sets finite, ordered, unique and clone-stable", () => {
     const random = seeded(0x534e4150);
-    const modes = ["endpoint", "midpoint", "center", "quadrant", "intersection", "extension", "insertion", "perpendicular", "tangent", "nearest", "geometricCenter", "parallel"] as const;
+    const modes = ["endpoint", "midpoint", "center", "quadrant", "intersection", "apparentIntersection", "extension", "insertion", "perpendicular", "tangent", "nearest", "geometricCenter", "parallel"] as const;
     for (let index = 0; index < 2_000; index += 1) {
       const x = (random() - 0.5) * 1e6;
       const y = (random() - 0.5) * 1e6;
@@ -26,6 +26,7 @@ describe("complete OSNAP seeded property coverage", () => {
       const first = generateCadSnapCandidates(entities, options);
       const second = generateCadSnapCandidates(structuredClone(entities), structuredClone(options));
       expect(second).toEqual(first);
+      expect(generateCadSnapCandidates(structuredClone(entities).reverse(), structuredClone(options))).toEqual(first);
       expect(new Set(first.map((candidate) => candidate.id)).size).toBe(first.length);
       expect(first.map((candidate) => candidate.priority)).toEqual([...first.map((candidate) => candidate.priority)].sort((a, b) => a - b));
       expect(first.every((candidate) => [candidate.point.x, candidate.point.y, candidate.distance].every(Number.isFinite))).toBe(true);

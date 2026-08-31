@@ -73,6 +73,36 @@ describe("DOM-free precision/layers shell contract", () => {
     }
   });
 
+  it("keeps the CSS-pixel aperture zoom-independent and GRID visual-only", () => {
+    const contract = createContract();
+    contract.executePrecisionCommand("OSNAP END");
+    expect(contract.querySnap({ x: 5.5, y: 0 })).toEqual([]);
+    contract.setViewportSnapAperture(10, 0.1);
+    expect(contract.querySnap({ x: 5.5, y: 0 }).some((candidate) => candidate.point.x === 5 && candidate.point.y === 0)).toBe(true);
+    expect(contract.precisionModeReadback()).toMatchObject({
+      grid: { visible: true, spacingX: 1, spacingY: 1 },
+      snap: { enabled: false, apertureWorld: 1, aperturePixels: 10 },
+      constraintPriority: ["ortho", "polar"], candidatePriority: ["osnap", "otrack"],
+    });
+    contract.handlePrecisionKey("F7");
+    contract.handlePrecisionKey("F9");
+    expect(contract.precisionModeReadback()).toMatchObject({ grid: { visible: false }, snap: { enabled: true } });
+    contract.setViewportSnapAperture(10, 0.01);
+    expect(contract.querySnap({ x: 5.5, y: 0 })).toEqual([]);
+  });
+
+  it("drops acquired OTRACK points when an owner layer becomes off but retains locked owners", () => {
+    const contract = createContract();
+    const locked = contract.querySnap({ x: 20, y: 0 }).find((candidate) => candidate.handle === "locked" && candidate.mode === "endpoint")!;
+    contract.acquireTracking(locked, 1);
+    expect(contract.tracking.acquired.map(({ key }) => key)).toEqual([locked.id]);
+    contract.executeLayer({ type: "toggle", layerId: "locked", property: "locked", value: false });
+    expect(contract.tracking.acquired.map(({ key }) => key)).toEqual([locked.id]);
+    contract.executeLayer({ type: "toggle", layerId: "locked", property: "visible", value: false });
+    expect(contract.tracking.acquired).toEqual([]);
+    expect(() => contract.acquireTracking(locked, 2)).toThrow("no longer eligible");
+  });
+
   it("queues typed shell intents and delegates precision rows through one adapter", () => {
     const contract = createContract();
     expect(contract.commandAdapter.canExecute("F-072", "paper")).toBe(true);

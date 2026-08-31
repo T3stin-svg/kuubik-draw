@@ -13,8 +13,8 @@ describe("F-048..F-050 OSNAP", () => {
     expect(candidates.filter((item) => item.handle === "C" && item.mode === "quadrant")).toHaveLength(4);
     expect(candidates.map((item) => item.priority)).toEqual([...candidates.map((item) => item.priority)].sort((a, b) => a - b));
     expect(CAD_OSNAP_PRIORITY).toEqual({
-      endpoint: 0, midpoint: 1, center: 2, quadrant: 3, intersection: 4, extension: 5,
-      insertion: 6, perpendicular: 7, tangent: 8, nearest: 9, geometricCenter: 10, parallel: 11,
+      endpoint: 0, midpoint: 1, center: 2, quadrant: 3, intersection: 4, apparentIntersection: 5,
+      extension: 6, insertion: 7, perpendicular: 8, tangent: 9, nearest: 10, geometricCenter: 11, parallel: 12,
     });
   });
 
@@ -78,7 +78,7 @@ describe("F-048..F-050 OSNAP", () => {
       cursor: { x: 5, y: 5 }, aperture: 20, referencePoint: { x: 5, y: 8 },
     });
     expect(candidates.filter((item) => item.handle === "S" && item.mode === "endpoint")).toHaveLength(2);
-    expect(candidates.some((item) => item.mode === "intersection" && item.otherHandle === "L" && item.point.x === 5 && Math.abs(item.point.y - 5) < 1e-6)).toBe(true);
+    expect(candidates.some((item) => item.mode === "intersection" && [item.handle, item.otherHandle].sort().join("|") === "L|S" && item.point.x === 5 && Math.abs(item.point.y - 5) < 1e-6)).toBe(true);
     expect(candidates.some((item) => item.handle === "S" && item.mode === "perpendicular")).toBe(true);
     expect(candidates.some((item) => item.handle === "S" && item.mode === "nearest")).toBe(true);
     expect(candidates.some((item) => item.handle === "S" && item.mode === "tangent")).toBe(false);

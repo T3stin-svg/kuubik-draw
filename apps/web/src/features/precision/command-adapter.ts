@@ -1,6 +1,6 @@
 import type { CadPoint2 } from "@kuubik/cad-schema";
 import type { CadOsnapMode } from "../../../../../packages/cad-renderer/src/snap.js";
-import type { PrecisionModes, PrecisionRequest } from "../../../../../packages/cad-core/src/precision.js";
+import { worldApertureFromCssPixels, type PrecisionModes, type PrecisionRequest } from "../../../../../packages/cad-core/src/precision.js";
 
 export type PrecisionToggle = "ortho" | "polar" | "grid" | "snap" | "osnap" | "otrack" | "dynamicInput";
 export type PrecisionShellRow = "F-045" | "F-046" | "F-047" | "F-049" | "F-050" | "F-051" | "F-052";
@@ -40,7 +40,20 @@ export interface PrecisionSettings {
   gridSpacingX: number;
   gridSpacingY: number;
   gridOrigin?: CadPoint2;
+  /** Legacy/document-space aperture. Used when no viewport conversion pair is supplied. */
   aperture: number;
+  /** CSS-pixel aperture; must be paired with worldUnitsPerCssPixel. */
+  aperturePixels?: number;
+  /** Current viewport scale in document units per CSS pixel. */
+  worldUnitsPerCssPixel?: number;
+}
+
+export interface PrecisionModeReadback {
+  state: PrecisionState;
+  grid: { visible: boolean; spacingX: number; spacingY: number; origin: CadPoint2 };
+  snap: { enabled: boolean; apertureWorld: number; aperturePixels: number | null };
+  constraintPriority: readonly ["ortho", "polar"];
+  candidatePriority: readonly ["osnap", "otrack"];
 }
 
 export interface PrecisionInputContext {
@@ -65,7 +78,7 @@ export interface VisualShellCommandAdapter {
 }
 
 const DEFAULT_OSNAP_MODES: readonly CadOsnapMode[] = Object.freeze([
-  "endpoint", "midpoint", "center", "quadrant", "intersection", "extension", "insertion",
+  "endpoint", "midpoint", "center", "quadrant", "intersection", "apparentIntersection", "extension", "insertion",
   "perpendicular", "tangent", "nearest", "geometricCenter", "parallel",
 ]);
 
@@ -84,6 +97,7 @@ const OSNAP_ALIASES: Readonly<Record<string, CadOsnapMode>> = Object.freeze({
   CEN: "center", CENTER: "center",
   QUA: "quadrant", QUADRANT: "quadrant",
   INT: "intersection", INTERSECTION: "intersection",
+  APP: "apparentIntersection", APPINT: "apparentIntersection", APPARENTINTERSECTION: "apparentIntersection",
   EXT: "extension", EXTENSION: "extension",
   INS: "insertion", INSERTION: "insertion",
   PER: "perpendicular", PERPENDICULAR: "perpendicular",
@@ -119,6 +133,17 @@ function validSettings(settings: PrecisionSettings): void {
   }
   if (settings.polarAdditionalAnglesRad?.some((angle) => !Number.isFinite(angle))) throw new TypeError("Additional polar angles must be finite.");
   if (settings.gridOrigin && ![settings.gridOrigin.x, settings.gridOrigin.y].every(Number.isFinite)) throw new TypeError("Grid origin must be finite.");
+  const hasPixelAperture = settings.aperturePixels !== undefined;
+  const hasViewportScale = settings.worldUnitsPerCssPixel !== undefined;
+  if (hasPixelAperture !== hasViewportScale) throw new TypeError("Pixel aperture and viewport scale must be supplied together.");
+  if (hasPixelAperture) worldApertureFromCssPixels(settings.aperturePixels!, settings.worldUnitsPerCssPixel!);
+}
+
+export function precisionWorldAperture(settings: PrecisionSettings): number {
+  validSettings(settings);
+  return settings.aperturePixels === undefined
+    ? settings.aperture
+    : worldApertureFromCssPixels(settings.aperturePixels, settings.worldUnitsPerCssPixel!);
 }
 
 export class PrecisionCommandState {
@@ -202,7 +227,27 @@ export class PrecisionCommandState {
       ...(this.#state.ortho ? { ortho: true } : {}),
       ...(this.#state.polar ? { polar: { incrementRad: settings.polarIncrementRad, ...(settings.polarAdditionalAnglesRad ? { additionalAnglesRad: settings.polarAdditionalAnglesRad } : {}) } } : {}),
       ...(this.#state.snap ? { grid: { spacingX: settings.gridSpacingX, spacingY: settings.gridSpacingY, ...(settings.gridOrigin ? { origin: settings.gridOrigin } : {}) } } : {}),
-      aperture: this.#state.osnap || this.#state.otrack ? settings.aperture : 0,
+      aperture: this.#state.osnap || this.#state.otrack ? precisionWorldAperture(settings) : 0,
+    };
+  }
+
+  readback(settings: PrecisionSettings): PrecisionModeReadback {
+    const apertureWorld = precisionWorldAperture(settings);
+    return {
+      state: this.state,
+      grid: {
+        visible: this.#state.grid,
+        spacingX: settings.gridSpacingX,
+        spacingY: settings.gridSpacingY,
+        origin: { ...(settings.gridOrigin ?? { x: 0, y: 0 }) },
+      },
+      snap: {
+        enabled: this.#state.snap,
+        apertureWorld,
+        aperturePixels: settings.aperturePixels ?? null,
+      },
+      constraintPriority: ["ortho", "polar"],
+      candidatePriority: ["osnap", "otrack"],
     };
   }
 

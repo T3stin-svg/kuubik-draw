@@ -42,13 +42,32 @@ describe("precision keyboard and command-line state", () => {
 
   it("normalizes the complete OSNAP alias set into fixed priority order", () => {
     const state = new PrecisionCommandState();
-    expect(state.executeCommandLine("OSNAP PAR,GCE,NEA,TAN,PER,INS,EXT,INT,QUA,CEN,MID,END")).toMatchObject({
+    expect(state.executeCommandLine("OSNAP PAR,GCE,NEA,TAN,PER,INS,EXT,APP,INT,QUA,CEN,MID,END")).toMatchObject({
       changed: true,
       state: { osnapModes: [
-        "endpoint", "midpoint", "center", "quadrant", "intersection", "extension", "insertion",
+        "endpoint", "midpoint", "center", "quadrant", "intersection", "apparentIntersection", "extension", "insertion",
         "perpendicular", "tangent", "nearest", "geometricCenter", "parallel",
       ] },
     });
+  });
+
+  it("keeps GRID visual state separate from SNAP and publishes zoom-resolved read-back", () => {
+    const state = new PrecisionCommandState({ grid: true, snap: false, osnap: true });
+    const settings = {
+      polarIncrementRad: Math.PI / 4, gridSpacingX: 2.5, gridSpacingY: 5,
+      gridOrigin: { x: 1, y: -1 }, aperture: 99, aperturePixels: 12, worldUnitsPerCssPixel: 0.25,
+    };
+    expect(state.readback(settings)).toEqual({
+      state: state.state,
+      grid: { visible: true, spacingX: 2.5, spacingY: 5, origin: { x: 1, y: -1 } },
+      snap: { enabled: false, apertureWorld: 3, aperturePixels: 12 },
+      constraintPriority: ["ortho", "polar"], candidatePriority: ["osnap", "otrack"],
+    });
+    expect(state.precisionModes(settings)).toEqual({ aperture: 3 });
+    state.handleKey("F7");
+    state.handleKey("F9");
+    expect(state.readback(settings)).toMatchObject({ grid: { visible: false }, snap: { enabled: true } });
+    expect(state.precisionModes(settings)).toMatchObject({ grid: { spacingX: 2.5, spacingY: 5 } });
   });
 
   it("uses SNAP for model-grid quantization and OSNAP/OTRACK only when enabled", () => {

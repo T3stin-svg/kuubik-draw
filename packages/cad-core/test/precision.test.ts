@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { parseCadPrecisionInput, resolveCadPrecisionInput } from "../src/precision-input.js";
-import { resolvePrecisionPoint } from "../src/precision.js";
+import { resolvePrecisionPoint, worldApertureFromCssPixels } from "../src/precision.js";
 import { convertCadLength, formatCadAngle, formatCadLength, withCadDisplayPrecision } from "../src/units.js";
 
 describe("F-041/F-042/F-044 precision input", () => {
@@ -63,6 +63,13 @@ describe("F-041/F-042/F-044 precision input", () => {
       trackingCandidates: [{ kind: "otrack", priority: 0, point: { x: 10, y: 0 }, key: "track" }],
     });
     expect(result).toMatchObject({ source: "osnap", point: { x: 9.5, y: 0 } });
+  });
+
+  it("converts a constant CSS-pixel aperture to exact world coordinates at every zoom", () => {
+    expect(worldApertureFromCssPixels(12, 0.00125)).toBe(0.015);
+    expect(worldApertureFromCssPixels(12, 125_000.125)).toBe(1_500_001.5);
+    expect(() => worldApertureFromCssPixels(-1, 1)).toThrow("non-negative");
+    expect(() => worldApertureFromCssPixels(12, 0)).toThrow("positive");
   });
 
   it("formats units/precision without changing the stored geometry value", () => {
