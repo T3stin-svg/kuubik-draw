@@ -22,7 +22,7 @@
     "styleId": "DIM",
     "measurement": 100,
     "formattedText": "L=10,0 cm ±0,1",
-    "text": { "position": { "x": 0, "y": 20 }, "rotationRad": 0, "height": 5, "gap": 1.5 },
+    "text": { "position": { "x": 0, "y": 20 }, "rotationRad": 0, "height": 5, "gap": 1.5, "horizontalPlacement": "manual", "verticalPlacement": "centered" },
     "dimensionLines": [{ "start": { "x": 0, "y": 20 }, "end": { "x": 100, "y": 20 } }],
     "extensionLines": [
       { "start": { "x": 0, "y": 2 }, "end": { "x": 0, "y": 24 } },
@@ -32,6 +32,16 @@
       { "tip": { "x": 0, "y": 20 }, "direction": { "x": 1, "y": 0 }, "size": 6, "type": "open" },
       { "tip": { "x": 100, "y": 20 }, "direction": { "x": -1, "y": 0 }, "size": 6, "type": "open" }
     ]
+  },
+  "dimensionStylePresentation": {
+    "handle": "D-STYLE",
+    "styleId": "DIM-STYLE",
+    "measurement": 0.5,
+    "formattedText": "L=.5 mm",
+    "text": { "position": { "x": 0.25, "y": 6 }, "rotationRad": 0, "height": 2.5, "gap": 0.625, "horizontalPlacement": "centered", "verticalPlacement": "above" },
+    "dimensionLines": [{ "start": { "x": 0, "y": 2 }, "end": { "x": 0.5, "y": 2 } }],
+    "extensionLines": [{ "start": { "x": 0.5, "y": 1 }, "end": { "x": 0.5, "y": 4 } }],
+    "arrows": [{ "tip": { "x": 0, "y": 2 }, "direction": { "x": 1, "y": 0 }, "size": 3, "type": "architectural-tick" }]
   },
   "hatchPattern": {
     "kind": "hatch",

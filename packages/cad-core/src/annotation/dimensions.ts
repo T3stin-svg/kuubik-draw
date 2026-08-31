@@ -6,6 +6,8 @@ const EPSILON = 1e-9;
 export const DIMENSION_STYLE_OVERRIDE_KEY = "kuubik.dimensionStyle.v1" as const;
 
 export type DimensionArrowType = "closed-filled" | "open" | "architectural-tick";
+export type DimensionTextHorizontalPlacement = "manual" | "centered" | "first-extension" | "second-extension";
+export type DimensionTextVerticalPlacement = "centered" | "above" | "below";
 export type DimensionTolerance =
   | { mode: "none" }
   | { mode: "symmetric"; value: number; precision?: number }
@@ -22,8 +24,22 @@ export interface DimensionStyleProfile {
   roundingIncrement?: number;
   tolerance?: DimensionTolerance;
   arrowType?: DimensionArrowType;
+  firstArrowType?: DimensionArrowType;
+  secondArrowType?: DimensionArrowType;
   extensionBeyond?: number;
   textGap?: number;
+  textHorizontalPlacement?: DimensionTextHorizontalPlacement;
+  textVerticalPlacement?: DimensionTextVerticalPlacement;
+  textOffset?: number;
+  textRotationRad?: number;
+  zeroSuppression?: { leading?: boolean; trailing?: boolean };
+  suppression?: {
+    dimensionLine?: boolean;
+    firstExtensionLine?: boolean;
+    secondExtensionLine?: boolean;
+    firstArrow?: boolean;
+    secondArrow?: boolean;
+  };
 }
 
 export interface DimensionLineGeometry { start: CadPoint2; end: CadPoint2 }
@@ -34,7 +50,7 @@ export interface DimensionPresentation {
   styleId: string;
   measurement: number;
   formattedText: string;
-  text: { position: CadPoint2; rotationRad: number; height: number; gap: number };
+  text: { position: CadPoint2; rotationRad: number; height: number; gap: number; horizontalPlacement: DimensionTextHorizontalPlacement; verticalPlacement: DimensionTextVerticalPlacement };
   dimensionLines: DimensionLineGeometry[];
   extensionLines: DimensionLineGeometry[];
   arrows: DimensionArrowGeometry[];
@@ -61,7 +77,27 @@ function ensureWritableLayer(document: KDrawDocumentV1, layerId: string): void {
 }
 
 function handleExists(document: KDrawDocumentV1, handle: string): boolean {
-  return [...document.entities, ...document.blocks.flatMap((block) => block.entities)].some((entity) => entity.handle === handle);
+  const normalized = handle.toLocaleUpperCase("en-US");
+  return [...document.entities, ...document.blocks.flatMap((block) => block.entities)].some((entity) => entity.handle.toLocaleUpperCase("en-US") === normalized);
+}
+
+function expectedAnchorCount(kind: CadDimension["dimensionKind"]): number {
+  if (kind === "linear" || kind === "aligned") return 2;
+  if (kind === "angular") return 3;
+  if (kind === "radial" || kind === "diameter") return 2;
+  return 0;
+}
+
+function validateAnchorBindings(document: KDrawDocumentV1, kind: CadDimension["dimensionKind"], anchors: readonly StableEntityAnchor[], points: readonly CadPoint2[]): void {
+  if (!anchors.length) return;
+  const expected = expectedAnchorCount(kind);
+  if (anchors.length !== expected) throw new RangeError(`${kind} associative dimension requires exactly ${expected} stable anchors.`);
+  anchors.forEach((anchor, index) => {
+    const resolved = resolveStableAnchor(document, anchor);
+    if (!resolved) throw new RangeError(`Associative dimension anchor is orphaned or incompatible: ${anchor.handle}/${anchor.feature}.`);
+    const point = points[index]!;
+    if (Math.hypot(resolved.x - point.x, resolved.y - point.y) > EPSILON) throw new RangeError(`Associative dimension point ${index} does not match stable anchor ${anchor.handle}/${anchor.feature}.`);
+  });
 }
 
 function baseDimension(
@@ -72,6 +108,7 @@ function baseDimension(
   if (handleExists(document, args.handle)) throw new RangeError(`Duplicate entity handle: ${args.handle}.`);
   ensureWritableLayer(document, args.layerId);
   ensureDimensionStyle(document, args.styleId);
+  validateAnchorBindings(document, args.dimensionKind, args.anchors ?? [], args.definitionPoints);
   const entity: CadDimension = {
     kind: "dimension",
     handle: args.handle,
@@ -135,7 +172,7 @@ export function createContinuedDimensions(
   args: { handles: string[]; layerId: string; styleId: string; points: CadPoint2[]; dimensionLinePoint: CadPoint2; axis: "horizontal" | "vertical"; chainId: string; anchors?: StableEntityAnchor[] },
 ): CadDimension[] {
   if (args.points.length < 3 || args.handles.length !== args.points.length - 1) throw new RangeError("Continued dimension requires N points and N-1 handles.");
-  if (new Set(args.handles).size !== args.handles.length) throw new RangeError("Continued dimension handles must be unique.");
+  if (new Set(args.handles.map((handle) => handle.toLocaleUpperCase("en-US"))).size !== args.handles.length) throw new RangeError("Continued dimension handles must be unique.");
   if (!args.chainId.trim()) throw new TypeError("Dimension chain id is required.");
   const result: CadDimension[] = [];
   for (let index = 0; index < args.handles.length; index += 1) {
@@ -161,7 +198,7 @@ export function createBaselineDimensions(
   if (args.points.length < 3 || args.handles.length !== args.points.length - 1 || args.dimensionLinePoints.length !== args.handles.length) {
     throw new RangeError("Baseline dimension requires N points, N-1 handles and N-1 dimension-line points.");
   }
-  if (new Set(args.handles).size !== args.handles.length) throw new RangeError("Baseline dimension handles must be unique.");
+  if (new Set(args.handles.map((handle) => handle.toLocaleUpperCase("en-US"))).size !== args.handles.length) throw new RangeError("Baseline dimension handles must be unique.");
   if (!args.chainId.trim()) throw new TypeError("Dimension chain id is required.");
   const result: CadDimension[] = [];
   for (let index = 0; index < args.handles.length; index += 1) {
@@ -186,6 +223,16 @@ export function resolveStableAnchor(document: KDrawDocumentV1, anchor: StableEnt
   if (anchor.feature === "start" && entity.kind === "line") return structuredClone(entity.start);
   if (anchor.feature === "end" && entity.kind === "line") return structuredClone(entity.end);
   if (anchor.feature === "center" && (entity.kind === "circle" || entity.kind === "arc" || entity.kind === "ellipse")) return structuredClone(entity.center);
+  if (anchor.feature === "quadrant" && anchor.quadrantIndex !== undefined && (entity.kind === "circle" || entity.kind === "arc" || entity.kind === "ellipse")) {
+    if (entity.kind === "circle" || entity.kind === "arc") {
+      const angle = anchor.quadrantIndex * Math.PI / 2;
+      return { x: entity.center.x + Math.cos(angle) * entity.radius, y: entity.center.y + Math.sin(angle) * entity.radius };
+    }
+    if (anchor.quadrantIndex === 0) return add(entity.center, entity.majorAxis);
+    if (anchor.quadrantIndex === 2) return add(entity.center, entity.majorAxis, -1);
+    const minor = { x: -entity.majorAxis.y * entity.ratio, y: entity.majorAxis.x * entity.ratio };
+    return add(entity.center, minor, anchor.quadrantIndex === 1 ? 1 : -1);
+  }
   if (anchor.feature === "insertion" && entity.kind === "blockRef") return structuredClone(entity.insertion);
   if (anchor.feature === "position" && (entity.kind === "text" || entity.kind === "mtext")) return structuredClone(entity.position);
   if (anchor.feature === "vertex" && entity.kind === "polyline" && anchor.vertexIndex !== undefined) {
@@ -252,6 +299,9 @@ export function readDimensionStyleProfile(style: CadDimensionStyle): DimensionSt
   const raw = style.overrides?.[DIMENSION_STYLE_OVERRIDE_KEY];
   if (raw === undefined) return {};
   if (!isRecord(raw)) throw new TypeError(`${DIMENSION_STYLE_OVERRIDE_KEY} must be an object.`);
+  const allowed = new Set(["linearUnit", "linearPrecision", "angularPrecision", "prefix", "suffix", "decimalSeparator", "roundingIncrement", "tolerance", "arrowType", "firstArrowType", "secondArrowType", "extensionBeyond", "textGap", "textHorizontalPlacement", "textVerticalPlacement", "textOffset", "textRotationRad", "zeroSuppression", "suppression"]);
+  const unknown = Object.keys(raw).find((key) => !allowed.has(key));
+  if (unknown) throw new RangeError(`Unsupported dimension style profile field: ${unknown}.`);
   const profile = structuredClone(raw) as DimensionStyleProfile;
   if (profile.linearUnit !== undefined && !["unitless", "mm", "cm", "m", "in", "ft"].includes(profile.linearUnit)) throw new RangeError("Unsupported dimension linear unit.");
   for (const [label, value] of [["linearPrecision", profile.linearPrecision], ["angularPrecision", profile.angularPrecision]] as const) {
@@ -263,7 +313,21 @@ export function readDimensionStyleProfile(style: CadDimensionStyle): DimensionSt
   if (profile.roundingIncrement !== undefined && (!(profile.roundingIncrement > 0) || !Number.isFinite(profile.roundingIncrement))) throw new RangeError("Rounding increment must be positive and finite.");
   if (profile.extensionBeyond !== undefined && !finiteNonNegative(profile.extensionBeyond)) throw new RangeError("Extension beyond must be non-negative and finite.");
   if (profile.textGap !== undefined && !finiteNonNegative(profile.textGap)) throw new RangeError("Text gap must be non-negative and finite.");
-  if (profile.arrowType !== undefined && !["closed-filled", "open", "architectural-tick"].includes(profile.arrowType)) throw new RangeError("Unsupported arrow type.");
+  if (profile.textOffset !== undefined && !finiteNonNegative(profile.textOffset)) throw new RangeError("Text offset must be non-negative and finite.");
+  if (profile.textRotationRad !== undefined && !Number.isFinite(profile.textRotationRad)) throw new RangeError("Text rotation must be finite.");
+  for (const arrow of [profile.arrowType, profile.firstArrowType, profile.secondArrowType]) if (arrow !== undefined && !["closed-filled", "open", "architectural-tick"].includes(arrow)) throw new RangeError("Unsupported arrow type.");
+  if (profile.textHorizontalPlacement !== undefined && !["manual", "centered", "first-extension", "second-extension"].includes(profile.textHorizontalPlacement)) throw new RangeError("Unsupported horizontal dimension text placement.");
+  if (profile.textVerticalPlacement !== undefined && !["centered", "above", "below"].includes(profile.textVerticalPlacement)) throw new RangeError("Unsupported vertical dimension text placement.");
+  for (const [label, value, keys] of [
+    ["zeroSuppression", profile.zeroSuppression, ["leading", "trailing"]],
+    ["suppression", profile.suppression, ["dimensionLine", "firstExtensionLine", "secondExtensionLine", "firstArrow", "secondArrow"]],
+  ] as const) {
+    if (value === undefined) continue;
+    if (!isRecord(value)) throw new TypeError(`${label} must be an object.`);
+    const allowedKeys = new Set<string>(keys);
+    const invalid = Object.entries(value).find(([key, entry]) => !allowedKeys.has(key) || typeof entry !== "boolean");
+    if (invalid) throw new RangeError(`${label}.${invalid[0]} must be a supported boolean field.`);
+  }
   const tolerance = profile.tolerance;
   if (tolerance) {
     if (tolerance.mode === "symmetric" && !finiteNonNegative(tolerance.value)) throw new RangeError("Symmetric tolerance must be non-negative and finite.");
@@ -288,18 +352,30 @@ function fixed(value: number, precision: number, separator: "." | ","): string {
   return normalized.toFixed(precision).replace(".", separator);
 }
 
+function formatFixed(value: number, precision: number, separator: "." | ",", suppression: DimensionStyleProfile["zeroSuppression"]): string {
+  let text = fixed(value, precision, separator);
+  if (suppression?.trailing && text.includes(separator)) {
+    const [integer, decimal = ""] = text.split(separator);
+    const trimmed = decimal.replace(/0+$/u, "");
+    text = trimmed ? `${integer}${separator}${trimmed}` : integer!;
+  }
+  if (suppression?.leading) text = text.replace(/^(-?)0(?=[.,])/u, "$1");
+  return text;
+}
+
 function formatMeasurement(value: number, angular: boolean, document: KDrawDocumentV1, style: CadDimensionStyle, profile: DimensionStyleProfile): string {
   const separator = profile.decimalSeparator ?? ".";
   const precision = angular ? profile.angularPrecision ?? document.units.angularPrecision : profile.linearPrecision ?? document.units.displayPrecision;
   let displayValue = angular ? value * 180 / Math.PI : convertLinear(value, document.units.linear, profile.linearUnit ?? document.units.linear);
   if (profile.roundingIncrement) displayValue = Math.round(displayValue / profile.roundingIncrement) * profile.roundingIncrement;
-  let text = `${profile.prefix ?? ""}${fixed(displayValue, precision, separator)}${angular ? "°" : profile.suffix ?? ""}`;
+  const number = (candidate: number, candidatePrecision = precision) => formatFixed(candidate, candidatePrecision, separator, profile.zeroSuppression);
+  let text = `${profile.prefix ?? ""}${number(displayValue)}${angular ? "°" : profile.suffix ?? ""}`;
   const tolerance = profile.tolerance;
   if (!tolerance || tolerance.mode === "none") return text;
   const tolerancePrecision = tolerance.precision ?? precision;
-  if (tolerance.mode === "symmetric") text += ` ±${fixed(tolerance.value, tolerancePrecision, separator)}`;
-  if (tolerance.mode === "deviation") text += ` +${fixed(tolerance.upper, tolerancePrecision, separator)}/-${fixed(tolerance.lower, tolerancePrecision, separator)}`;
-  if (tolerance.mode === "limits") text = `${profile.prefix ?? ""}${fixed(displayValue + tolerance.upper, tolerancePrecision, separator)}${angular ? "°" : profile.suffix ?? ""}/${profile.prefix ?? ""}${fixed(displayValue - tolerance.lower, tolerancePrecision, separator)}${angular ? "°" : profile.suffix ?? ""}`;
+  if (tolerance.mode === "symmetric") text += ` ±${number(tolerance.value, tolerancePrecision)}`;
+  if (tolerance.mode === "deviation") text += ` +${number(tolerance.upper, tolerancePrecision)}/-${number(tolerance.lower, tolerancePrecision)}`;
+  if (tolerance.mode === "limits") text = `${profile.prefix ?? ""}${number(displayValue + tolerance.upper, tolerancePrecision)}${angular ? "°" : profile.suffix ?? ""}/${profile.prefix ?? ""}${number(displayValue - tolerance.lower, tolerancePrecision)}${angular ? "°" : profile.suffix ?? ""}`;
   return text;
 }
 
@@ -323,7 +399,8 @@ export function deriveDimensionPresentation(document: KDrawDocumentV1, dimension
   if (!style) throw new RangeError(`Unknown dimension style: ${dimension.styleId}.`);
   const profile = readDimensionStyleProfile(style);
   const association = readDimensionAssociation(dimension);
-  const arrowType = profile.arrowType ?? "closed-filled";
+  const firstArrowType = profile.firstArrowType ?? profile.arrowType ?? "closed-filled";
+  const secondArrowType = profile.secondArrowType ?? profile.arrowType ?? "closed-filled";
   const arrowSize = style.arrowSize * style.scale;
   const extensionOffset = style.extensionOffset * style.scale;
   const extensionBeyond = (profile.extensionBeyond ?? style.extensionOffset) * style.scale;
@@ -353,8 +430,8 @@ export function deriveDimensionPresentation(document: KDrawDocumentV1, dimension
     ];
     dimensionLines = [{ start: firstProjection, end: secondProjection }];
     arrows = [
-      { tip: firstProjection, direction, size: arrowSize, type: arrowType },
-      { tip: secondProjection, direction: negate(direction), size: arrowSize, type: arrowType },
+      { tip: firstProjection, direction, size: arrowSize, type: firstArrowType },
+      { tip: secondProjection, direction: negate(direction), size: arrowSize, type: secondArrowType },
     ];
     measurement = Math.abs(dot(subtract(second, first), direction));
     rotationRad = Math.atan2(direction.y, direction.x);
@@ -370,8 +447,8 @@ export function deriveDimensionPresentation(document: KDrawDocumentV1, dimension
     arc = { center: structuredClone(center), radius, startAngleRad: start, endAngleRad: end };
     const firstTip = add(center, firstDirection, radius); const secondTip = add(center, secondDirection, radius);
     arrows = [
-      { tip: firstTip, direction: { x: -firstDirection.y, y: firstDirection.x }, size: arrowSize, type: arrowType },
-      { tip: secondTip, direction: { x: secondDirection.y, y: -secondDirection.x }, size: arrowSize, type: arrowType },
+      { tip: firstTip, direction: { x: -firstDirection.y, y: firstDirection.x }, size: arrowSize, type: firstArrowType },
+      { tip: secondTip, direction: { x: secondDirection.y, y: -secondDirection.x }, size: arrowSize, type: secondArrowType },
     ];
   } else if (dimension.dimensionKind === "radial" || dimension.dimensionKind === "diameter") {
     const center = point(0); const circumference = point(1); const direction = normalize(subtract(circumference, center));
@@ -379,16 +456,41 @@ export function deriveDimensionPresentation(document: KDrawDocumentV1, dimension
     measurement = dimension.dimensionKind === "diameter" ? radius * 2 : radius;
     const opposite = add(center, direction, -radius);
     dimensionLines = [{ start: dimension.dimensionKind === "diameter" ? opposite : center, end: circumference }];
-    arrows = [{ tip: circumference, direction: negate(direction), size: arrowSize, type: arrowType }];
-    if (dimension.dimensionKind === "diameter") arrows.push({ tip: opposite, direction, size: arrowSize, type: arrowType });
+    arrows = [{ tip: circumference, direction: negate(direction), size: arrowSize, type: firstArrowType }];
+    if (dimension.dimensionKind === "diameter") arrows.push({ tip: opposite, direction, size: arrowSize, type: secondArrowType });
     rotationRad = Math.atan2(direction.y, direction.x);
   } else throw new RangeError(`Dimension presentation does not support ${dimension.dimensionKind}.`);
+  const horizontalPlacement = profile.textHorizontalPlacement ?? "manual";
+  const verticalPlacement = profile.textVerticalPlacement ?? "centered";
+  if (horizontalPlacement !== "manual") {
+    if (arc) {
+      const sweep = Math.atan2(Math.sin(arc.endAngleRad - arc.startAngleRad), Math.cos(arc.endAngleRad - arc.startAngleRad));
+      const angle = horizontalPlacement === "first-extension"
+        ? arc.startAngleRad
+        : horizontalPlacement === "second-extension"
+          ? arc.endAngleRad
+          : arc.startAngleRad + sweep / 2;
+      textPosition = add(arc.center, { x: Math.cos(angle), y: Math.sin(angle) }, arc.radius);
+    } else if (dimensionLines[0]) {
+      const line = dimensionLines[0];
+      textPosition = horizontalPlacement === "first-extension" ? structuredClone(line.start) : horizontalPlacement === "second-extension" ? structuredClone(line.end) : { x: (line.start.x + line.end.x) / 2, y: (line.start.y + line.end.y) / 2 };
+    }
+  }
+  const textRotationRad = profile.textRotationRad ?? rotationRad;
+  if (verticalPlacement !== "centered") {
+    const normal = { x: -Math.sin(textRotationRad), y: Math.cos(textRotationRad) };
+    const textOffset = profile.textOffset === undefined ? textGap : profile.textOffset * style.scale;
+    textPosition = add(textPosition, normal, (verticalPlacement === "above" ? 1 : -1) * textOffset);
+  }
+  if (profile.suppression?.dimensionLine) dimensionLines = [];
+  extensionLines = extensionLines.filter((_, index) => !(index === 0 && profile.suppression?.firstExtensionLine) && !(index === 1 && profile.suppression?.secondExtensionLine));
+  arrows = arrows.filter((_, index) => !(index === 0 && profile.suppression?.firstArrow) && !(index === 1 && profile.suppression?.secondArrow));
   return {
     handle: dimension.handle,
     styleId: dimension.styleId,
     measurement,
     formattedText: dimension.overrideText ?? formatMeasurement(measurement, angular, document, style, profile),
-    text: { position: textPosition, rotationRad, height: style.textHeight * style.scale, gap: textGap },
+    text: { position: textPosition, rotationRad: textRotationRad, height: style.textHeight * style.scale, gap: textGap, horizontalPlacement, verticalPlacement },
     dimensionLines,
     extensionLines,
     arrows,
