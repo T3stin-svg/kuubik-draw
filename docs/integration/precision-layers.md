@@ -6,7 +6,7 @@ below. No new runtime dependency is required.
 
 ## Package exports
 
-The current integrated base `e5b65b566912c969320989f5cbb7365e34fe1a1d`
+The current integrated base `e150ebbbaaec5c3aa04eb480b576aefca8d677f8`
 already contains all required package exports. No shared `src/index.ts` file
 needs to change for this workstream.
 
@@ -136,6 +136,49 @@ has two distinct capabilities: F7 controls GRID display and F9 controls model
 SNAP quantization. Row-only dispatch maps F-047 to GRID; the shell must route
 F9 through the shortcut capability instead of treating the parity row as a
 unique toggle identifier.
+
+## F-053 units contract
+
+The complete two-dimensional units settings are stored as schema v1 data at
+`metadata.extensions["kuubikDraw.units.v1"]`. The public document schema's
+legacy `units.linear`, `units.displayPrecision` and `units.angularPrecision`
+fields remain synchronized with `drawingUnit`, `lengthPrecision` and
+`anglePrecision`. `readCadUnitsContract()` rejects a persisted mismatch instead
+of silently choosing one value.
+
+The contract contains drawing and insertion units, length/angle format and
+precision, decimal separator, clockwise direction and base angle. Supported
+length formats are decimal, engineering, architectural, fractional and
+scientific. Supported angle formats are decimal degrees, DMS, grads, radians
+and surveyor bearings. `formatCad*WithContract()` and
+`parseCad*WithContract()` are canonical inverse pairs at the chosen precision;
+rounding across zero/full-turn and surveyor axes is normalized deterministically.
+
+`planCadUnitsContract()` returns a cloned serializable document and exact
+before/after contract read-back. Changing drawing units when geometry exists
+requires `existingGeometryPolicy: "preserve-coordinates"`; entity, block,
+layout and viewport coordinate arrays are never scaled. The returned
+`coordinateScale` is exactly `1`. This matches the CAD units-setting behavior:
+changing the unit declaration does not rewrite existing geometry.
+
+Insertion/import scaling is separate. `resolveCadImportScale()` and
+`resolveCadInsertionScale()` return the exact factor and its source. Known
+physical units convert deterministically; unitless-to-physical conversion
+fails closed unless the caller supplies a finite positive explicit scale.
+DXF/document import adapters are outside this workstream and must call this
+contract before inserting geometry.
+
+`PrecisionUnitsFeatureModel` is the DOM-free application boundary for reading,
+planning and insertion-scale read-back. A reopened
+`PrecisionLayersShellContract` reads the persisted contract and uses it for
+typed-input locale/default angle units and Dynamic Input formatting. Legacy
+documents without the extension derive a compatible decimal/degrees contract
+from the existing constructor units.
+
+The document/IndexedDB integration owner must persist the planned document in
+one atomic document replacement and reconstruct the shell contract from that
+read-back. This branch deliberately does not edit document storage, App or
+shell code and therefore does not claim a live persisted UI workflow.
 
 OSNAP priority is fixed as endpoint, midpoint, center, quadrant, intersection,
 extension, insertion, perpendicular, tangent, nearest, geometric center and

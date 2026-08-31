@@ -226,3 +226,38 @@ files / 838 tests, DXF gate 18 files / 53 tests, PDF gate 7 files / 22 tests,
 build, public-tree scan of 1,499 files, license audit of 119 installed packages
 and `git diff --check`. The focused precision matrix passed 16 files / 43
 tests.
+
+## Integrated-base seventh wave
+
+- Integrated base: `e150ebbbaaec5c3aa04eb480b576aefca8d677f8`.
+- Branch: `work7/reio-precision-live`.
+- F-053 has a schema-v1 document extension for drawing/insertion units, five
+  length formats, five angle formats, both precisions, locale decimal separator,
+  clockwise direction and base angle.
+- Legacy `document.units` and the extension must agree on drawing unit and both
+  precisions. Reopen read-back fails closed on disagreement.
+- Format/parse is canonical at configured precision, including imperial carry,
+  fractional denominators, DMS carry, full-turn rounding and surveyor axes.
+- Typed polar input derives degrees/grads/radians from the persisted contract;
+  Dynamic Input uses the same contract for coordinate, distance and angle text.
+- Drawing-unit changes with existing geometry require explicit
+  `preserve-coordinates`; geometry SHA is identical before/after and reported
+  scale is exactly 1.
+- Known physical import units produce exact scale. Unitless/physical import is
+  refused unless a positive explicit scale is supplied.
+- Seeded coverage includes 10,000 length and 10,000 angle round-trips, 5,000
+  fuzz strings, mutation guards, golden vectors, document JSON reopen and
+  DOM-free wiring.
+- `units-readback-wave7-20260831.json` records the complete contract, all ten
+  golden formats, import-scale read-back, typed-input read-back and identical
+  before/after geometry SHA-256.
+
+This wave does not change App/style/shell, document/IndexedDB, DXF/PDF adapters,
+geometry/modify, annotation/blocks, package, scope, parity-score or deployment
+files. No AutoCAD or Chromium live/output read-back was run, so F-053 remains
+uncertified and its score is unchanged.
+
+Verification passed: typecheck, lint, 180 files / 906 tests, DXF gate 19 files /
+54 tests, PDF gate 7 files / 22 tests, build, public-tree scan of 1,521 files,
+license audit of 119 installed packages and `git diff --check`. The focused
+precision matrix passed 17 files / 64 tests.
