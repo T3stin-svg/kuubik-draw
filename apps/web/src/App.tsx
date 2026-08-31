@@ -276,6 +276,7 @@ export function App() {
   const committing = useRef(false);
   const [document, setDocument] = useState<KDrawDocumentV1>(session.current.document);
   const [status, setStatus] = useState("Uus kohalik dokument");
+  const [storageState, setStorageState] = useState<"loading" | "ready" | "recovered" | "recovery">("loading");
   const [workspacePreset, setWorkspacePreset] = useState<WorkspacePreset>(() => {
     const stored = window.localStorage.getItem("kuubik-draw-workspace");
     return stored === "focus" || stored === "review" ? stored : "drafting";
@@ -819,14 +820,25 @@ export function App() {
   useEffect(() => {
     let active = true;
     void (async () => {
-      await database.open();
-      const stored = await database.loadDocument(LOCAL_DOCUMENT_ID);
-      if (!active || !stored) return;
-      const operations = await database.operations(LOCAL_DOCUMENT_ID);
-      if (!active) return;
-      session.current = new CadSession(stored, operations.map((entry) => entry.opId));
-      setDocument(session.current.document);
-      setStatus(`Taastatud revision ${stored.revision}`);
+      try {
+        await database.open();
+        const stored = await database.loadDocument(LOCAL_DOCUMENT_ID);
+        if (!active) return;
+        if (!stored) {
+          setStorageState("ready");
+          return;
+        }
+        const operations = await database.operations(LOCAL_DOCUMENT_ID);
+        if (!active) return;
+        session.current = new CadSession(stored, operations.map((entry) => entry.opId));
+        setDocument(session.current.document);
+        setStatus(`Taastatud revision ${stored.revision}`);
+        setStorageState("recovered");
+      } catch (error) {
+        if (!active) return;
+        setStorageState("recovery");
+        setStatus(`Taastamine vajab tähelepanu: ${error instanceof Error ? error.message : String(error)}`);
+      }
     })();
     return () => {
       active = false;
@@ -993,6 +1005,7 @@ export function App() {
     session.current = new CadSession(stored, operations.map((entry) => entry.opId));
     setDocument(stored);
     setStatus(`Teine vaheleht muutis dokumenti; taastatud revision ${stored.revision}`);
+    setStorageState("recovered");
   }
 
   async function addSyntheticLine(): Promise<void> {
@@ -3052,6 +3065,7 @@ export function App() {
         canUndo={canUndoInActiveLayout}
         canRedo={canRedoInActiveLayout}
         workspace={workspacePreset}
+        storageState={storageState}
         onWorkspaceChange={setWorkspacePreset}
         onOpenDxf={() => dxfImportInput.current?.click()}
         onSaveKDraw={() => void downloadKDraw()}
