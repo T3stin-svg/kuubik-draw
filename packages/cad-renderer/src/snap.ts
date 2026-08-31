@@ -54,8 +54,13 @@ function endpoints(entity: CadEntity): CadPoint2[] {
       const curves = trimCurvesOfEntity(entity);
       return curves.length === 0 ? [] : [trimPointAt(curves[0]!, 0), trimPointAt(curves[0]!, 1)];
     }
-    case "ellipse":
+    case "ellipse": {
+      if (Math.abs(entity.endParameter - entity.startParameter) >= Math.PI * 2 - TRIM_EPSILON) return [];
+      const curves = trimCurvesOfEntity(entity);
+      return curves.length === 0 ? [] : [trimPointAt(curves[0]!, 0), trimPointAt(curves.at(-1)!, 1)];
+    }
     case "spline": {
+      if (entity.closed) return [];
       const curves = trimCurvesOfEntity(entity);
       return curves.length === 0 ? [] : [trimPointAt(curves[0]!, 0), trimPointAt(curves.at(-1)!, 1)];
     }
@@ -93,12 +98,32 @@ function quadrants(entity: CadEntity): CadPoint2[] {
       { x: entity.center.x - major.x, y: entity.center.y - major.y },
       { x: entity.center.x + minor.x, y: entity.center.y + minor.y },
       { x: entity.center.x - minor.x, y: entity.center.y - minor.y },
-    ];
+    ].filter((point) => (trimClosestPoint(entity, point)?.distance ?? Infinity) <= TRIM_EPSILON * Math.max(1, Math.hypot(major.x, major.y)));
   }
   return [];
 }
 
 function tangentPoints(entity: CadEntity, reference: CadPoint2): CadPoint2[] {
+  if (entity.kind === "ellipse") {
+    const majorLength = Math.hypot(entity.majorAxis.x, entity.majorAxis.y);
+    const minorLength = majorLength * entity.ratio;
+    if (!(majorLength > TRIM_EPSILON) || !(minorLength > TRIM_EPSILON)) return [];
+    const majorUnit = { x: entity.majorAxis.x / majorLength, y: entity.majorAxis.y / majorLength };
+    const minorUnit = { x: -majorUnit.y, y: majorUnit.x };
+    const relative = { x: reference.x - entity.center.x, y: reference.y - entity.center.y };
+    const normalizedX = (relative.x * majorUnit.x + relative.y * majorUnit.y) / majorLength;
+    const normalizedY = (relative.x * minorUnit.x + relative.y * minorUnit.y) / minorLength;
+    const normalizedDistance = Math.hypot(normalizedX, normalizedY);
+    if (normalizedDistance < 1 - TRIM_EPSILON || normalizedDistance === 0) return [];
+    const base = Math.atan2(normalizedY, normalizedX);
+    const offset = Math.acos(Math.min(1, 1 / normalizedDistance));
+    const angles = offset <= TRIM_EPSILON ? [base] : [base + offset, base - offset];
+    return angles.map((angle) => ({
+      x: entity.center.x + majorUnit.x * majorLength * Math.cos(angle) + minorUnit.x * minorLength * Math.sin(angle),
+      y: entity.center.y + majorUnit.y * majorLength * Math.cos(angle) + minorUnit.y * minorLength * Math.sin(angle),
+    })).filter((point) => (trimClosestPoint(entity, point)?.distance ?? Infinity) <= TRIM_EPSILON * Math.max(1, majorLength));
+  }
+  // A general NURBS tangent needs a derivative/root proof. Unsupported curves fail closed.
   if (entity.kind !== "circle" && entity.kind !== "arc") return [];
   const dx = reference.x - entity.center.x;
   const dy = reference.y - entity.center.y;
