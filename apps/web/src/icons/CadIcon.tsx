@@ -2,12 +2,13 @@ import type { ReactElement, SVGProps } from "react";
 
 export type CadIconName =
   | "app" | "new" | "open" | "save" | "export" | "undo" | "redo" | "print" | "settings"
-  | "view" | "share" | "menu" | "close" | "add" | "pin" | "float" | "autohide"
+  | "view" | "share" | "menu" | "close" | "add" | "remove" | "refresh" | "pin" | "float" | "autohide"
   | "line" | "polyline" | "rectangle" | "circle" | "arc" | "hatch" | "ellipse"
   | "move" | "copy" | "rotate" | "mirror" | "trim" | "offset" | "stretch" | "scale" | "fillet"
   | "text" | "dimension" | "leader" | "table" | "layer" | "lock" | "current" | "match"
   | "block" | "edit" | "attribute" | "group" | "ungroup" | "measure" | "count" | "paste"
-  | "chevronUp" | "chevronDown";
+  | "visible" | "hidden" | "freeze" | "unfreeze" | "plot" | "unplot"
+  | "chevronUp" | "chevronDown" | "chevronLeft" | "chevronRight";
 
 const paths: Record<CadIconName, ReactElement> = {
   app: <><path d="M4 3h9l7 7-7 7H4z" /><path d="M9 7v6m0-3h6" /></>,
@@ -24,6 +25,8 @@ const paths: Record<CadIconName, ReactElement> = {
   menu: <path d="M4 6h16M4 12h16M4 18h16" />,
   close: <path d="m6 6 12 12M18 6 6 18" />,
   add: <path d="M12 4v16M4 12h16" />,
+  remove: <path d="M4 12h16" />,
+  refresh: <><path d="M20 7v5h-5" /><path d="M19 12a7 7 0 1 1-2-5" /></>,
   pin: <><path d="m8 4 8 8m-6-6 6-2 4 4-2 6" /><path d="m12 12-7 7" /></>,
   float: <><rect x="4" y="5" width="13" height="12" rx="1" /><path d="M8 9h12v11H8" /></>,
   autohide: <><path d="M5 4h14v16H5z" /><path d="M9 4v16m5-11 3 3-3 3" /></>,
@@ -59,8 +62,16 @@ const paths: Record<CadIconName, ReactElement> = {
   measure: <><path d="m4 17 13-13 3 3L7 20z" /><path d="m10 14-2-2m5-1-2-2m5-1-2-2" /></>,
   count: <><path d="M8 3 6 21m9-18-2 18M3 9h18M2 15h18" /></>,
   paste: <><path d="M8 5h8v3H8z" /><path d="M6 6H4v15h16V6h-2M8 12h8m-8 4h6" /></>,
+  visible: <><path d="M3 12s3.4-5 9-5 9 5 9 5-3.4 5-9 5-9-5-9-5Z" /><circle cx="12" cy="12" r="2" /></>,
+  hidden: <><path d="M3 12s3.4-5 9-5 9 5 9 5-3.4 5-9 5-9-5-9-5Z" /><path d="M4 4 20 20" /></>,
+  freeze: <path d="M12 3v18M4.2 7.5l15.6 9M4.2 16.5l15.6-9M9 5l3 2 3-2M9 19l3-2 3 2M5 10l.2 3.5L2 15m17-1-.2-3.5L22 9" />,
+  unfreeze: <><circle cx="12" cy="12" r="5" /><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19m0-14-1.5 1.5m-11 11L5 19" /></>,
+  plot: <><path d="M6 8V3h12v5M6 18H4V9h16v9h-2" /><path d="M7 14h10v7H7z" /></>,
+  unplot: <><path d="M6 8V3h12v5M6 18H4V9h16v9h-2" /><path d="M7 14h10v7H7zM4 4l16 16" /></>,
   chevronUp: <path d="m6 15 6-6 6 6" />,
   chevronDown: <path d="m6 9 6 6 6-6" />,
+  chevronLeft: <path d="m15 6-6 6 6 6" />,
+  chevronRight: <path d="m9 6 6 6-6 6" />,
 };
 
 export function CadIcon({ name, ...props }: { name: CadIconName } & SVGProps<SVGSVGElement>) {

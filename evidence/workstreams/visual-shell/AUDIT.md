@@ -9,6 +9,7 @@ Audit environment: Chromium, 1920×1080, 100% zoom equivalent, Windows 96 DPI ta
 | 1 — shell extraction, scoped ribbon, SVG language | `before/` | `wave-1-after/` | 6 states captured, 0 console errors |
 | 2 — dock/float/auto-hide, saved workspaces, accessibility | `wave-1-after/` | `wave-2-after/` | 3 palette modes, 3 workspace presets, 200%, focus, contrast and reduced-motion checked |
 | 3 — command/layout/status component boundary and recovery state | `wave-2-after/` | `wave-3-after/` | 6 states recaptured, 0 console errors; visual baseline ratchet held |
+| 4 — remove remaining shell font-glyph icons | `wave-3-after/` | `wave-4-after/` | palette, context, layout and viewport controls use original Kuubik SVG paths; 6 states recaptured |
 
 ## Six audited states
 
@@ -19,7 +20,7 @@ Audit environment: Chromium, 1920×1080, 100% zoom equivalent, Windows 96 DPI ta
 5. `visual-shell-layout-paper-space.png` plus `visual-shell-layout-tools-open.png`
 6. `visual-shell-command-history.png` plus `visual-shell-context-menu.png`
 
-Each state exists in every applicable wave directory. `visual-shell-states.json` contains the DOM and interaction read-back; `visual-shell-zones.json` contains the primary zone geometry.
+Each state exists in every applicable wave directory. `visual-shell-states.json` contains the DOM and interaction read-back; `visual-shell-zones.json` contains the primary zone geometry. Port-specific reruns use `e2e/visual-shell.config.ts` on the reserved dev port 5205.
 
 ## Final measured read-back
 
