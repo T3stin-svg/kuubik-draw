@@ -102,6 +102,24 @@ describe("atomic document transaction", () => {
     expect(session.canRedo).toBe(true);
   });
 
+  it("restores an exported history state without merging it into another document", () => {
+    const first = new CadSession(createEmptyDocument({ documentId: "history-a" }));
+    first.commit(operation(), [{ type: "put", entity: line }]);
+    first.commit(
+      { ...operation(1), opId: "mark-1", commandId: "SCALE", targetHandles: ["10"], resultHandles: [] },
+      [{ type: "undo-mark" }],
+    );
+    const restored = new CadSession(first.document, ["op-1", "mark-1"], first.history);
+    expect(restored.nextUndoCommandId).toBe("SCALE");
+    restored.undo();
+    expect(restored.document.entities).toEqual([line]);
+    expect(restored.nextUndoCommandId).toBe("LINE");
+    expect(() => new CadSession(createEmptyDocument({ documentId: "history-b" }), [], {
+      ...first.history,
+      sequence: -1,
+    })).toThrow(/sequence/u);
+  });
+
   it("rejects an already-applied opId after session recovery", () => {
     const session = new CadSession(createEmptyDocument({ documentId: "d" }), ["op-1"]);
     expect(() => session.commit(operation(), [{ type: "put", entity: line }])).toThrow(DuplicateOperationError);

@@ -1,4 +1,4 @@
-import { CadSession, type CadChange, type CommittedOperation } from "@kuubik/cad-core";
+import { CadSession, type CadChange, type CadSessionHistoryState, type CommittedOperation } from "@kuubik/cad-core";
 import type { Viewport2D } from "@kuubik/cad-renderer";
 import type { CadOperation, KDrawDocumentV1 } from "@kuubik/cad-schema";
 
@@ -7,6 +7,8 @@ export interface OpenDocumentSessionOptions {
   selectedHandles?: readonly string[];
   viewport?: Viewport2D;
   appliedOperationIds?: Iterable<string>;
+  sessionHistory?: CadSessionHistoryState | null;
+  commandHistory?: readonly string[];
 }
 
 export interface DocumentSessionReadback {
@@ -20,6 +22,9 @@ export interface DocumentSessionReadback {
     viewport: Viewport2D;
     canUndo: boolean;
     canRedo: boolean;
+    nextUndoCommandId: string | null;
+    nextRedoCommandId: string | null;
+    commandHistory: string[];
   }>;
 }
 
@@ -28,6 +33,7 @@ interface DocumentSessionEntry {
   activeLayoutId: string;
   selectedHandles: string[];
   viewport: Viewport2D;
+  commandHistory: string[];
 }
 
 const DEFAULT_VIEWPORT: Viewport2D = Object.freeze({
@@ -69,6 +75,14 @@ function normalizedSelection(document: KDrawDocumentV1, handles: readonly string
   return selected;
 }
 
+function normalizedCommandHistory(history: readonly string[]): string[] {
+  return history.map((entry) => {
+    const normalized = entry.trim();
+    if (!normalized) throw new TypeError("Document command history entries must not be empty.");
+    return normalized;
+  });
+}
+
 export class DocumentSessionCoordinator {
   readonly #entries = new Map<string, DocumentSessionEntry>();
   #activeDocumentId: string | null = null;
@@ -83,12 +97,13 @@ export class DocumentSessionCoordinator {
     assertLayout(document, activeLayoutId);
     const viewport = structuredClone(options.viewport ?? DEFAULT_VIEWPORT);
     assertViewport(viewport);
-    const session = new CadSession(document, options.appliedOperationIds);
+    const session = new CadSession(document, options.appliedOperationIds, options.sessionHistory);
     this.#entries.set(document.documentId, {
       session,
       activeLayoutId,
       selectedHandles: normalizedSelection(document, options.selectedHandles ?? []),
       viewport,
+      commandHistory: normalizedCommandHistory(options.commandHistory ?? []),
     });
     this.#activeDocumentId = document.documentId;
   }
@@ -133,6 +148,10 @@ export class DocumentSessionCoordinator {
     entry.activeLayoutId = layoutId;
   }
 
+  recordCommand(documentId: string, command: string): void {
+    this.requireEntry(documentId).commandHistory.push(...normalizedCommandHistory([command]));
+  }
+
   commit(documentId: string, operation: CadOperation, changes: readonly CadChange[], now?: string): CommittedOperation {
     const entry = this.requireEntry(documentId);
     const candidate = entry.session.fork();
@@ -145,41 +164,41 @@ export class DocumentSessionCoordinator {
     documentId: string,
     operation: CadOperation,
     changes: readonly CadChange[],
-    persist: (document: KDrawDocumentV1, operation: CadOperation) => Promise<void>,
+    persist: (document: KDrawDocumentV1, operation: CadOperation, history: CadSessionHistoryState) => Promise<void>,
     now?: string,
   ): Promise<CommittedOperation> {
     const entry = this.requireEntry(documentId);
     const candidate = entry.session.fork();
     const committed = candidate.commit(operation, changes, now);
-    await persist(candidate.document, operation);
+    await persist(candidate.document, operation, candidate.history);
     this.acceptCandidate(entry, candidate);
     return committed;
   }
 
   async undoPersisted(
     documentId: string,
-    persist: (document: KDrawDocumentV1, operation: CadOperation) => Promise<void>,
+    persist: (document: KDrawDocumentV1, operation: CadOperation, history: CadSessionHistoryState) => Promise<void>,
     now?: string,
   ): Promise<CommittedOperation | null> {
     const entry = this.requireEntry(documentId);
     const candidate = entry.session.fork();
     const committed = candidate.undo(now);
     if (!committed) return null;
-    await persist(candidate.document, committed.operation);
+    await persist(candidate.document, committed.operation, candidate.history);
     this.acceptCandidate(entry, candidate);
     return committed;
   }
 
   async redoPersisted(
     documentId: string,
-    persist: (document: KDrawDocumentV1, operation: CadOperation) => Promise<void>,
+    persist: (document: KDrawDocumentV1, operation: CadOperation, history: CadSessionHistoryState) => Promise<void>,
     now?: string,
   ): Promise<CommittedOperation | null> {
     const entry = this.requireEntry(documentId);
     const candidate = entry.session.fork();
     const committed = candidate.redo(now);
     if (!committed) return null;
-    await persist(candidate.document, committed.operation);
+    await persist(candidate.document, committed.operation, candidate.history);
     this.acceptCandidate(entry, candidate);
     return committed;
   }
@@ -212,6 +231,9 @@ export class DocumentSessionCoordinator {
         viewport: structuredClone(entry.viewport),
         canUndo: entry.session.canUndo,
         canRedo: entry.session.canRedo,
+        nextUndoCommandId: entry.session.nextUndoCommandId,
+        nextRedoCommandId: entry.session.nextRedoCommandId,
+        commandHistory: [...entry.commandHistory],
       })),
     };
   }

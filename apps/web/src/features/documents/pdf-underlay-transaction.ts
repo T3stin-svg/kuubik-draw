@@ -49,8 +49,8 @@ export async function commitPdfUnderlayAttachment(
     placement,
   });
   let readback: StoredPdfUnderlayReadback | null = null;
-  await coordinator.commitPersisted(documentId, operation, changes, async (document, committedOperation) => {
-    await database.commitRevisionWithAttachment(document, committedOperation, prepared.attachment, prepared.bytes);
+  await coordinator.commitPersisted(documentId, operation, changes, async (document, committedOperation, history) => {
+    await database.commitRevisionWithAttachment(document, committedOperation, prepared.attachment, prepared.bytes, history);
     readback = await readStoredPdfUnderlay(database, document, placement.id);
   }, now);
   if (!readback) throw new TypeError(`PDF underlay ${placement.id} was not durably read back.`);
@@ -70,7 +70,7 @@ export async function commitPdfUnderlayDetach(
     documentId,
     operation,
     changes,
-    (document, committedOperation) => database.commitRevision(document, committedOperation),
+    (document, committedOperation, history) => database.commitRevision(document, committedOperation, history),
     now,
   );
   return coordinator.document(documentId);

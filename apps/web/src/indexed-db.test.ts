@@ -99,6 +99,7 @@ describe("versioned IndexedDB persistence", () => {
       ignoredOperationIds: [],
       corruptSnapshotKeys: [],
       uncleanSessionIds: ["session-crashed"],
+      sessionHistory: null,
     });
     await database.recordRecoveryClean("local", "session-crashed", 2, "2026-08-31T10:05:00Z");
     expect((await database.recoverDocument("local")).uncleanSessionIds).toEqual([]);

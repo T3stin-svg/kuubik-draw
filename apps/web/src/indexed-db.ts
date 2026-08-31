@@ -1,3 +1,4 @@
+import { assertCadSessionHistoryState, type CadSessionHistoryState } from "@kuubik/cad-core";
 import { assertKDrawDocumentV1, type CadAttachmentRef, type CadOperation, type KDrawDocumentV1 } from "@kuubik/cad-schema";
 
 const DATABASE_NAME = "kuubik-draw";
@@ -12,6 +13,8 @@ export interface StoredOperation {
   beforeSha256?: string | null;
   afterSha256?: string;
   afterDocument?: KDrawDocumentV1;
+  sessionHistory?: CadSessionHistoryState;
+  sessionHistorySha256?: string;
 }
 
 interface StoredSnapshot {
@@ -40,6 +43,7 @@ export interface DocumentRecoveryResult {
   ignoredOperationIds: string[];
   corruptSnapshotKeys: string[];
   uncleanSessionIds: string[];
+  sessionHistory: CadSessionHistoryState | null;
 }
 
 interface StoredAttachment {
@@ -61,6 +65,26 @@ async function sha256(bytes: Uint8Array): Promise<string> {
 
 async function documentSha256(document: KDrawDocumentV1): Promise<string> {
   return sha256(new TextEncoder().encode(JSON.stringify(document)));
+}
+
+async function sessionHistorySha256(history: CadSessionHistoryState): Promise<string> {
+  return sha256(new TextEncoder().encode(JSON.stringify(history)));
+}
+
+async function validSessionHistory(record: StoredOperation): Promise<boolean> {
+  if (record.sessionHistory === undefined && record.sessionHistorySha256 === undefined) return true;
+  if (record.sessionHistory === undefined || record.sessionHistorySha256 === undefined) return false;
+  try {
+    assertCadSessionHistoryState(record.sessionHistory);
+    return await sessionHistorySha256(record.sessionHistory) === record.sessionHistorySha256;
+  } catch {
+    return false;
+  }
+}
+
+function historyReferencesKnownOperations(record: StoredOperation, knownOperationIds: ReadonlySet<string>): boolean {
+  return !record.sessionHistory || [...record.sessionHistory.undo, ...record.sessionHistory.redo]
+    .every((committed) => knownOperationIds.has(committed.operation.opId));
 }
 
 function validDocument(candidate: unknown): candidate is KDrawDocumentV1 {
@@ -173,8 +197,12 @@ export class KDrawIndexedDb {
     await transactionDone(transaction);
   }
 
-  async commitRevision(document: KDrawDocumentV1, operation: CadOperation): Promise<void> {
-    await this.commitRevisionRecord(document, operation);
+  async commitRevision(
+    document: KDrawDocumentV1,
+    operation: CadOperation,
+    sessionHistory?: CadSessionHistoryState,
+  ): Promise<void> {
+    await this.commitRevisionRecord(document, operation, undefined, sessionHistory);
   }
 
   async commitRevisionWithAttachment(
@@ -182,6 +210,7 @@ export class KDrawIndexedDb {
     operation: CadOperation,
     attachment: CadAttachmentRef,
     bytes: Uint8Array,
+    sessionHistory?: CadSessionHistoryState,
   ): Promise<void> {
     const copy = Uint8Array.from(bytes);
     if ((await sha256(copy)) !== attachment.sha256.toLowerCase()) {
@@ -191,19 +220,22 @@ export class KDrawIndexedDb {
     if (!documentAttachment || JSON.stringify(documentAttachment) !== JSON.stringify(attachment)) {
       throw new TypeError(`Document ${document.documentId} does not contain the exact attachment ${attachment.id}.`);
     }
-    await this.commitRevisionRecord(document, operation, { attachment: structuredClone(attachment), bytes: copy });
+    await this.commitRevisionRecord(document, operation, { attachment: structuredClone(attachment), bytes: copy }, sessionHistory);
   }
 
   private async commitRevisionRecord(
     document: KDrawDocumentV1,
     operation: CadOperation,
     pendingAttachment?: PendingAttachmentWrite,
+    sessionHistory?: CadSessionHistoryState,
   ): Promise<void> {
     await this.open();
     assertKDrawDocumentV1(document);
     const expectedCurrent = await this.loadDocument(document.documentId);
     const beforeSha256 = expectedCurrent ? await documentSha256(expectedCurrent) : null;
     const afterSha256 = await documentSha256(document);
+    if (sessionHistory) assertCadSessionHistoryState(sessionHistory);
+    const historySha256 = sessionHistory ? await sessionHistorySha256(sessionHistory) : undefined;
     const transaction = this.#database!.transaction(
       pendingAttachment ? ["documents", "snapshots", "operations", "attachments"] : ["documents", "snapshots", "operations"],
       "readwrite",
@@ -239,6 +271,10 @@ export class KDrawIndexedDb {
       beforeSha256,
       afterSha256,
       afterDocument: structuredClone(document),
+      ...(sessionHistory ? {
+        sessionHistory: structuredClone(sessionHistory),
+        sessionHistorySha256: historySha256!,
+      } : {}),
     };
     transaction.objectStore("operations").add(record);
     if (pendingAttachment) {
@@ -357,12 +393,14 @@ export class KDrawIndexedDb {
       .flatMap((event) => event.ignoredOperationIds ?? []));
     const activeOperations = operations.filter((record) => !quarantinedOperationIds.has(record.opId));
     let replayed: KDrawDocumentV1 | null = null;
+    let replayedSessionHistory: CadSessionHistoryState | null = null;
     const hasEnhancedOperationRecords = activeOperations.some((record) => Boolean(record.afterDocument && record.afterSha256 && record.beforeSha256 !== undefined));
     let previousSha256: string | null = validSnapshots.find((snapshot) => snapshot.revision === 0)?.sha256 ?? null;
     let expectedRevision = 1;
     let failedIndex = activeOperations.length;
     for (let index = 0; index < activeOperations.length; index += 1) {
       const record = activeOperations[index]!;
+      const knownOperationIds = new Set(activeOperations.slice(0, index + 1).map((candidate) => candidate.opId));
       if (!record.afterDocument || !record.afterSha256 || record.beforeSha256 === undefined) {
         failedIndex = index; break;
       }
@@ -372,9 +410,12 @@ export class KDrawIndexedDb {
         && record.afterDocument.documentId === documentId
         && record.afterDocument.revision === expectedRevision
         && record.beforeSha256 === previousSha256
-        && await documentSha256(record.afterDocument) === record.afterSha256;
+        && await documentSha256(record.afterDocument) === record.afterSha256
+        && await validSessionHistory(record)
+        && historyReferencesKnownOperations(record, knownOperationIds);
       if (!valid) { failedIndex = index; break; }
       replayed = structuredClone(record.afterDocument);
+      replayedSessionHistory = record.sessionHistory ? structuredClone(record.sessionHistory) : null;
       previousSha256 = record.afterSha256;
       expectedRevision += 1;
     }
@@ -413,6 +454,7 @@ export class KDrawIndexedDb {
       ignoredOperationIds,
       corruptSnapshotKeys,
       uncleanSessionIds,
+      sessionHistory: source === "operation-log" ? replayedSessionHistory : null,
     };
   }
 
