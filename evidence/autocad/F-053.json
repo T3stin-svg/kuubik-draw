@@ -1,0 +1,271 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-053",
+  "benchmark": "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
+  "engine": "Autodesk AutoCAD 2024 desktop COM system-variable contract",
+  "engineVersion": "24.3s (LMS Tech)",
+  "installedUpdateIdentity": {
+    "displayName": "Autodesk AutoCAD 2024.1.2 Update",
+    "displayVersion": "24.3.152.0"
+  },
+  "automationProcessId": 57308,
+  "automationProcessOwned": true,
+  "automationProcessIdentity": {
+    "processId": 57308,
+    "executableName": "acad.exe",
+    "executableSha256": "0570749def2fa8dcfb62df1a6671f44245a9ef740dd61d9d0f9110794a76e70e",
+    "fileVersion": "R24.3.152.0.0",
+    "productVersion": "R24.3.152.0.0",
+    "startTimeSha256": "8c689acd651fd901a13ba511a71a754f965e0cf264a935bcc552f86297b05d57"
+  },
+  "observations": {
+    "baseline": {
+      "insunits": 4,
+      "lunits": 2,
+      "luprec": 4,
+      "aunits": 0,
+      "auprec": 4,
+      "angdir": 0,
+      "angbase": 0
+    },
+    "committed": {
+      "insunits": 6,
+      "lunits": 2,
+      "luprec": 8,
+      "aunits": 0,
+      "auprec": 8,
+      "angdir": 1,
+      "angbase": 1.0471975511965976
+    },
+    "undone": {
+      "insunits": 4,
+      "lunits": 2,
+      "luprec": 4,
+      "aunits": 0,
+      "auprec": 4,
+      "angdir": 0,
+      "angbase": 0
+    },
+    "redone": {
+      "insunits": 6,
+      "lunits": 2,
+      "luprec": 8,
+      "aunits": 0,
+      "auprec": 8,
+      "angdir": 1,
+      "angbase": 1.0471975511965976
+    },
+    "noOp": {
+      "settingsBefore": {
+        "insunits": 6,
+        "lunits": 2,
+        "luprec": 8,
+        "aunits": 0,
+        "auprec": 8,
+        "angdir": 1,
+        "angbase": 1.0471975511965976
+      },
+      "settingsAfter": {
+        "insunits": 6,
+        "lunits": 2,
+        "luprec": 8,
+        "aunits": 0,
+        "auprec": 8,
+        "angdir": 1,
+        "angbase": 1.0471975511965976
+      },
+      "dbmodBefore": 5,
+      "dbmodAfter": 5,
+      "dbmodUnchanged": true
+    },
+    "invalid": {
+      "luprec": {
+        "name": "LUPREC",
+        "value": 99,
+        "rejected": true,
+        "message": "Error setting system variable",
+        "stateUnchanged": true
+      },
+      "insunits": {
+        "name": "INSUNITS",
+        "value": 999,
+        "rejected": true,
+        "message": "Error setting system variable",
+        "stateUnchanged": true
+      },
+      "after": {
+        "insunits": 6,
+        "lunits": 2,
+        "luprec": 8,
+        "aunits": 0,
+        "auprec": 8,
+        "angdir": 1,
+        "angbase": 1.0471975511965976
+      }
+    },
+    "geometry": {
+      "baseline": {
+        "handle": "27F",
+        "start": [
+          -123456789.12345679,
+          1.23456789e-7,
+          0
+        ],
+        "end": [
+          987654321.9876543,
+          -9.87654321e-7,
+          0
+        ]
+      },
+      "committed": {
+        "handle": "27F",
+        "start": [
+          -123456789.12345679,
+          1.23456789e-7,
+          0
+        ],
+        "end": [
+          987654321.9876543,
+          -9.87654321e-7,
+          0
+        ]
+      },
+      "undone": {
+        "handle": "27F",
+        "start": [
+          -123456789.12345679,
+          1.23456789e-7,
+          0
+        ],
+        "end": [
+          987654321.9876543,
+          -9.87654321e-7,
+          0
+        ]
+      },
+      "redone": {
+        "handle": "27F",
+        "start": [
+          -123456789.12345679,
+          1.23456789e-7,
+          0
+        ],
+        "end": [
+          987654321.9876543,
+          -9.87654321e-7,
+          0
+        ]
+      },
+      "afterInvalid": {
+        "handle": "27F",
+        "start": [
+          -123456789.12345679,
+          1.23456789e-7,
+          0
+        ],
+        "end": [
+          987654321.9876543,
+          -9.87654321e-7,
+          0
+        ]
+      }
+    },
+    "blocked": [
+      {
+        "capability": "separateDrawingAndInsertionUnitFields",
+        "status": "NOT_RUN",
+        "reason": "AutoCAD UNITS exposes one drawing INSUNITS insertion-scale value; it does not provide the two independent Kuubik contract fields."
+      },
+      {
+        "capability": "modalUnitsDialogCancel",
+        "status": "NOT_RUN",
+        "reason": "COM system variables cannot prove modal UNITS Cancel without UI input simulation; no SendKeys or user-window automation was used."
+      }
+    ]
+  },
+  "checks": {
+    "baselineExact": true,
+    "committedExact": true,
+    "existingGeometryCoordinatesPreserved": true,
+    "atomicUndo": true,
+    "atomicRedo": true,
+    "noOpSettingsAndGeometryUnchanged": true,
+    "invalidLuprecRejected": true,
+    "invalidInsunitsRejected": true,
+    "invalidLeavesGeometryUnchanged": true
+  },
+  "dxfOutputSha256": "9fc4b83555e66216780ce755a6fd4fce0d461e9a0c73fe1b1a3dc8173a5e3dce",
+  "cmdNamesAfter": "",
+  "userDocument": {
+    "isolatedOwnedProcess": true,
+    "preExistingProcessCount": 1,
+    "initialOwnedDocumentCount": 1,
+    "scratchBlankVerified": true,
+    "scratchPathAfterSave": "C:\\temp\\KuubikDraw-F053-HQaJha\\F053-autocad.dxf",
+    "userDocumentTouched": false
+  },
+  "status": "PARTIAL",
+  "automationProcessTerminated": true,
+  "processSetRestored": true,
+  "preExistingProcesses": [
+    {
+      "processId": 64444,
+      "executablePath": "C:\\Program Files\\Autodesk\\AutoCAD 2024\\acad.exe",
+      "startTimeUtc": "2026-08-31T07:01:26.9479650Z"
+    }
+  ],
+  "dxfReadback": {
+    "sha256": "9fc4b83555e66216780ce755a6fd4fce0d461e9a0c73fe1b1a3dc8173a5e3dce",
+    "header": {
+      "$LUNITS": 2,
+      "$LUPREC": 8,
+      "$AUNITS": 0,
+      "$AUPREC": 8,
+      "$ANGBASE": 60,
+      "$ANGDIR": 1,
+      "$INSUNITS": 6
+    },
+    "lines": [
+      {
+        "handle": "27F",
+        "start": [
+          -123456789.1234568,
+          1.23456789e-7,
+          0
+        ],
+        "end": [
+          987654321.9876543,
+          -9.87654321e-7,
+          0
+        ]
+      }
+    ],
+    "requiredHeaderVariablesExact": true,
+    "geometryCoordinatesWithinEightUlps": true
+  },
+  "certificationAuthority": false,
+  "certificationScope": "Live AutoCAD 2024.1.2 COM system-variable and scratch DXF reference only; no parity score authority.",
+  "workflow": "new owned AutoCAD process + blank scratch document + COM UNITS variables + atomic Undo/Redo + independent raw DXF header/geometry read-back",
+  "implementationSha256": {
+    "tools/autocad/f053-units-matrix.ps1": "f370d3a6f59986e162ea7d5cf74c9a0737a6129cc3a868386da3c546d90e8ac5",
+    "tools/autocad/run-f053.mjs": "a2081de66a0e0bb9a0a710f3eb2ee9a73394b1d3268ae1c99121b38c02433212",
+    "tools/autocad/f053-dxf-readback.mjs": "d436705147be212bd34a29330d35d38cdd659ef4ba94b4e9ec33fca7543aa719",
+    "tools/autocad/f053-runner.test.mjs": "7d28d39ee4868b27b886db9312881d72a3fbb3fed3742d4b6f7f0ff17dd7ae65",
+    "tools/autocad/f053-dxf-readback.test.mjs": "a728aa5be1ee8e5176175af0103d4b8fd1562d41382e4dcf3b8de5a240432cce",
+    "tools/autocad/f053-content-address.test.mjs": "2384cf69b4d0c75c6047bdc322d86136de7352f3f0d98d93ec887cf5a0b88eac",
+    "tools/autocad/owned-desktop-matrix.mjs": "5b669dc220884b788e2457594aebc10f5e7cb6cf96d0a967424094d6d9dfc8b8",
+    "tools/autocad/process-ownership.mjs": "9f1d48d1b1058a631ef8d6df03c1beedc836688c06e0658a302ba424d654937d",
+    "packages/cad-dxf/test/fixtures/synthetic/F-053-units-header.dxf": "57ca083d0f49e91889557ae90204e227549f3c61d009e0f01bda8db5d280844d"
+  },
+  "remainingCertificationRequirements": [
+    {
+      "capability": "separateDrawingAndInsertionUnitFields",
+      "reason": "AutoCAD UNITS exposes one drawing INSUNITS insertion-scale value; it does not provide the two independent Kuubik contract fields."
+    },
+    {
+      "capability": "modalUnitsDialogCancel",
+      "reason": "COM system variables cannot prove modal UNITS Cancel without UI input simulation; no SendKeys or user-window automation was used."
+    }
+  ],
+  "observedAt": "2026-08-31T22:00:19.347Z"
+}
