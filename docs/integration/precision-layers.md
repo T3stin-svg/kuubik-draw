@@ -6,7 +6,7 @@ below. No new runtime dependency is required.
 
 ## Package exports
 
-The current integrated base `7bfa2bea649583129844444f9f5788a701ff21a4`
+The current integrated base `633d32ae052951ac475696e7e900cd3170cb59bd`
 already contains all required package exports. No shared `src/index.ts` file
 needs to change for this workstream.
 
@@ -78,8 +78,11 @@ the same request to preview, commit and Dynamic Input.
 1. Construct `PrecisionLayersShellContract(document, options)`. It owns one
    `CadSnapIndex`, one `CadSelectionIndex`, one `CadObjectTrack`, the typed
    precision state and the layer controller for that document.
-2. Convert the cursor aperture from pixels to document world units before
-   setting `options.settings.aperture` or preparing a pointer frame.
+2. Set `aperturePixels` and `worldUnitsPerCssPixel` together, or call
+   `setViewportSnapAperture()` whenever viewport zoom changes. The contract
+   converts CSS pixels to world units once and reuses that value for OSNAP,
+   OTRACK, preview and commit. Legacy callers may continue supplying only the
+   document-space `aperture` until their viewport wiring is migrated.
 3. For every pointer frame, call `preparePointer()` exactly once. Use the
    returned `PreparedPrecisionPointer.preview()`, `.commit()` and
    `.dynamicInput()` methods. The object owns a cloned immutable request, so a
@@ -181,8 +184,9 @@ read-back. This branch deliberately does not edit document storage, App or
 shell code and therefore does not claim a live persisted UI workflow.
 
 OSNAP priority is fixed as endpoint, midpoint, center, quadrant, intersection,
-extension, insertion, perpendicular, tangent, nearest, geometric center and
-parallel. Ties are deterministic by distance and stable semantic candidate ID.
+apparent intersection, extension, insertion, perpendicular, tangent, nearest,
+geometric center and parallel. Ties are deterministic by distance and stable
+semantic candidate ID.
 The ID contains mode, canonical entity/segment identity and exact point, but not
 priority, cursor distance or entity input order.
 
@@ -195,7 +199,13 @@ selection and pass the returned `candidateId` to `preparePointer()` as
 returns `request`, `snapCandidateIds` and `selectedSnapCandidateId` beside its
 preview, commit and Dynamic Input read-back. A stale explicit ID fails closed.
 
-Extension and Parallel can require a previously hovered/acquired object outside
+Apparent Intersection analytically intersects infinite supporting lines for
+line, ray, xline and straight polyline segments, and emits a candidate only
+when the point is not an exact intersection on both entities. Curved apparent
+intersections are unsupported and fail closed. Entity/segment metadata and IDs
+are canonical under entity input-order reversal.
+
+Extension, Apparent Intersection and Parallel can require a previously hovered/acquired object outside
 its finite R-tree bounds. Pass those handles as `referenceHandles` to
 `CadSnapIndex.query()`, or as `snapReferenceHandles` to `preparePointer()`.
 This avoids scanning all directional objects and preserves the 50,000-object
@@ -207,6 +217,9 @@ returns the exact stored point/time, while `releaseTracking()` and
 opposite angles onto one infinite line; IDs do not depend on angle-list or
 acquisition order. When POLAR is enabled, the shell contract derives OTRACK
 angles from the configured increment and additional angles.
+An acquired point is released automatically when any owning entity disappears
+or its layer becomes off/frozen. Locked owners remain valid because locked
+objects are selectable and snappable, but not editable.
 
 `DynamicInputModel` exposes unrounded `coordinate`, `delta`, `distanceValue`
 and normalized `[0, 2π)` `angleRad`, plus the normalized units snapshot and
@@ -383,6 +396,12 @@ exists, F-041/F-042/F-044 remain uncertified and their scores must not change.
   `VisualShellCommandAdapter`.
 - Send F3/F7/F8/F9/F10/F11/F12 to `handlePrecisionKey()` and command-line text
   to `executePrecisionCommand()`.
+- The visual owner must render GRID from `precisionModeReadback().grid`; F7 only
+  changes that visual state. F9 independently enables SNAP quantization. Do not
+  infer either state from DOM classes or duplicate grid rounding in React.
+- Feed the current CSS-pixel aperture and viewport world scale through
+  `setViewportSnapAperture()`. Markers/guides and committed geometry must use
+  the same returned `apertureWorld` and candidate list.
 - Use `preparePointer()` once per pointer frame; never separately reconstruct a
   precision request for commit.
 - Consume layer ribbon/menu requests with `takeLayerIntents()`, map each typed
