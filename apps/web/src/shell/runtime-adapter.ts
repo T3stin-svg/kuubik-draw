@@ -115,14 +115,19 @@ export class VisualShellLivePrompt {
     const snapshot = this.snapshot;
     if (snapshot.status !== "active" || !snapshot.currentFieldId) return null;
     const field = promptPlan(this.#request).fields.find((candidate) => candidate.id === snapshot.currentFieldId)!;
-    return { id: field.id, label: field.label, kind: field.valueKind, required: field.required, choices: [...("choices" in field ? field.choices ?? [] : [])] };
+    const dimStyleMode = this.#dimStyleMode(snapshot);
+    const branchRequired = (field.id === "style" && (dimStyleMode === "create" || dimStyleMode === "update"))
+      || (field.id === "styleId" && dimStyleMode === "apply");
+    return { id: field.id, label: field.label, kind: field.valueKind, required: field.required || branchRequired, choices: [...("choices" in field ? field.choices ?? [] : [])] };
   }
 
   answer(raw: string): CommandPromptSnapshot {
     const field = this.field;
     if (!field) throw new CommandEngineInputError("Käsu prompt on juba lõpetatud.");
-    if (!raw.trim() && !field.required) return this.#prompt.skip();
-    return this.#prompt.answer(promptValue(field.kind, raw));
+    const snapshot = !raw.trim() && !field.required
+      ? this.#prompt.skip()
+      : this.#prompt.answer(promptValue(field.kind, raw));
+    return this.#skipInactiveDimStyleFields(snapshot);
   }
 
   cancel(): CommandPromptSnapshot { return this.#adapter.cancel(); }
@@ -140,6 +145,24 @@ export class VisualShellLivePrompt {
     const committed = this.#candidate.commit(operation, prepared.changes, now);
     const readBack = readBackAnnotationBlockCommit(this.#candidate, prepared, committed);
     return { document: this.#candidate.document, session: this.#candidate, committed, readBack };
+  }
+
+  #dimStyleMode(snapshot: CommandPromptSnapshot): "create" | "update" | "apply" | null {
+    if (this.#request.commandId !== "DIM" || this.#request.dimensionCommandId !== "DIMSTYLE") return null;
+    const mode = snapshot.values.mode;
+    return mode === "create" || mode === "update" || mode === "apply" ? mode : null;
+  }
+
+  #skipInactiveDimStyleFields(snapshot: CommandPromptSnapshot): CommandPromptSnapshot {
+    const mode = this.#dimStyleMode(snapshot);
+    let routed = snapshot;
+    while (routed.status === "active") {
+      const skipStyle = mode === "apply" && routed.currentFieldId === "style";
+      const skipStyleId = (mode === "create" || mode === "update") && routed.currentFieldId === "styleId";
+      if (!skipStyle && !skipStyleId) break;
+      routed = this.#prompt.skip();
+    }
+    return routed;
   }
 }
 
