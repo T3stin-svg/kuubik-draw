@@ -11,6 +11,7 @@ import { BlocksPanel } from "./features/blocks/BlocksPanel.js";
 import type { BlockAction, BlockCommandId } from "./features/blocks/model.js";
 import { CommandEngineInputError } from "./features/command-system/command-engine.js";
 import { activateDocumentTab, closeDocumentTab, createDocumentTabsState, markDocumentTabPersisted, openDocumentTab, readBackDocumentTabs, setDocumentTabLayout, updateDocumentTab, type DocumentTabsState } from "./features/documents/document-tabs.js";
+import { createNewModelSpaceDocument } from "./features/documents/model-space.js";
 import { CadIcon } from "./icons/CadIcon.js";
 import { KDrawIndexedDb, StorageRevisionConflictError } from "./indexed-db.js";
 import { CadShell, DrawingViewport, type WorkspacePreset } from "./shell/CadShell.js";
@@ -53,6 +54,8 @@ const MODEL_VIEW_WORLD = Object.freeze({ minX: -500, minY: -500, maxX: 2500, max
 const MODEL_VIEW_REFERENCE_HEIGHT_PX = 793;
 const MODEL_VIEW_WORLD_UNITS_PER_PIXEL = (MODEL_VIEW_WORLD.maxY - MODEL_VIEW_WORLD.minY) / MODEL_VIEW_REFERENCE_HEIGHT_PX;
 const DRAWING_CONTEXT_MENU_SIZE = Object.freeze({ width: 200, height: 371 });
+const ANNOTATION_DEVELOPMENT_ROWS = new Set(["F-061", "F-062", "F-063", "F-064", "F-065", "F-066", "F-058", "F-060", "F-067", "F-068"]);
+const BLOCK_DEVELOPMENT_ROWS = new Set(["F-087", "F-088", "F-089", "F-090", "F-091"]);
 
 function modelViewport(widthPx: number, heightPx: number, devicePixelRatio: number): Viewport2D {
   if (heightPx <= MODEL_VIEW_REFERENCE_HEIGHT_PX) {
@@ -311,7 +314,7 @@ export function App() {
   const [runtimeIntent, setRuntimeIntent] = useState<{ kind: "annotation" | "block"; commandId: string; selectedHandles: string[] } | null>(null);
   const [commandHistoryOpen, setCommandHistoryOpen] = useState(false);
   const [commandHistory, setCommandHistory] = useState<string[]>(["Uus kohalik dokument"]);
-  const [precision, setPrecision] = useState<PrecisionToggleState>({ grid: true, ortho: false, osnap: true, otrack: true, dyn: true });
+  const [precision, setPrecision] = useState<PrecisionToggleState>(() => runtime.precisionState());
   const [precisionSource, setPrecisionSource] = useState("grid");
   const [cursorReadout, setCursorReadout] = useState<{
     pixel: { x: number; y: number };
@@ -889,6 +892,20 @@ export function App() {
   }, [matchSettings]);
 
   useEffect(() => {
+    const handlePrecisionShortcut = (event: KeyboardEvent) => {
+      const target = event.target;
+      const editableTarget = target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement || target instanceof HTMLSelectElement || (target instanceof HTMLElement && target.isContentEditable);
+      const result = runtime.handlePrecisionKey(event.key, editableTarget, event.repeat);
+      if (!result.handled) return;
+      event.preventDefault();
+      setPrecision(runtime.precisionState());
+      setStatus(`${result.message ?? result.command} · PrecisionCommandState`);
+    };
+    window.addEventListener("keydown", handlePrecisionShortcut);
+    return () => window.removeEventListener("keydown", handlePrecisionShortcut);
+  }, [runtime]);
+
+  useEffect(() => {
     const assigned = pageSetupLibrary.assignments[activeLayout.id] ?? "";
     setSelectedNamedPageSetupId(assigned);
   }, [activeLayout.id, pageSetupLibrary]);
@@ -1080,7 +1097,7 @@ export function App() {
     setStatus(`${commandId} salvestatud, revision ${next.revision}`);
   }
 
-  function beginRuntimeCommand(commandId: "LINE" | "RECTANGLE", prompt: string): void {
+  function beginRuntimeCommand(commandId: "LINE" | "PLINE" | "RECTANGLE" | "CIRCLE" | "ARC" | "MTEXT" | "LEADER", prompt: string): void {
     if (!runtime.commandRegistry.resolve(commandId)) {
       setStatus(`${commandId}: runtime adapter puudub`);
       return;
@@ -1092,10 +1109,23 @@ export function App() {
   }
 
   async function executeRuntimeCommand(rawOverride?: string): Promise<void> {
-    if (committing.current) return;
+    if (committing.current) {
+      setStatus("Eelmine commit on lõpetamisel · käsku ei käivitatud");
+      return;
+    }
     const raw = (rawOverride ?? commandInput).trim();
     if (!raw) {
       setStatus("Command: sisesta käsk");
+      return;
+    }
+    const precisionResult = runtime.executePrecisionCommand(raw);
+    if (precisionResult.handled) {
+      setPrecision(runtime.precisionState());
+      setRuntimeCommandHistory((current) => [...current.slice(-29), raw]);
+      setRuntimeHistoryIndex(runtimeCommandHistory.length + 1);
+      setCommandInput("");
+      setActiveCommandPrompt(null);
+      setStatus(`${precisionResult.message ?? precisionResult.command} · PrecisionCommandState`);
       return;
     }
     const commandName = raw.split(/\s+/u, 1)[0]!.replace(/^[_.]+/u, "").toLocaleUpperCase();
@@ -1107,14 +1137,28 @@ export function App() {
     try {
       const candidate = session.current.fork();
       const engine = runtime.commandEngine(candidate);
-      const result = engine.execute(raw);
-      if (result.kind === "cancel") {
-        setStatus("Command: *Cancel*");
-        return;
+      let resultKind: "commit" | "undo" | "redo";
+      let committed: ReturnType<CadSession["commit"]> | null;
+      if (["U", "UNDO", "REDO"].includes(commandName)) {
+        const result = engine.execute(raw);
+        if (result.kind === "cancel" || result.kind === "commit") throw new CommandEngineInputError(`Unexpected ${result.kind} result for ${commandName}.`);
+        resultKind = result.kind;
+        committed = result.committed;
+      } else {
+        const prepared = engine.preview(raw);
+        const operation = {
+          opId: crypto.randomUUID(),
+          baseRevision: candidate.document.revision,
+          commandId: prepared.commandId,
+          args: prepared.operationArgs,
+          targetHandles: prepared.targetHandles,
+          resultHandles: prepared.resultHandles,
+        };
+        committed = candidate.commit(operation, prepared.changes);
+        resultKind = "commit";
       }
-      const committed = result.committed;
       if (!committed) {
-        setStatus(`${commandName}: midagi pole ${result.kind === "undo" ? "tagasi võtta" : "uuesti teha"}`);
+        setStatus(`${commandName}: midagi pole ${resultKind === "undo" ? "tagasi võtta" : "uuesti teha"}`);
         return;
       }
       const next = candidate.document;
@@ -1126,7 +1170,7 @@ export function App() {
         document: next,
         activeLayoutId: next.layouts.some((layout) => layout.id === activeLayoutId) ? activeLayoutId : next.layouts[0]!.id,
       }), next.documentId, next.revision));
-      setSelectedHandles(result.kind === "commit" ? committed.operation.resultHandles : []);
+      setSelectedHandles(resultKind === "commit" ? committed.operation.resultHandles : []);
       setRuntimeCommandHistory((current) => [...current.slice(-29), raw]);
       setRuntimeHistoryIndex(runtimeCommandHistory.length + 1);
       setCommandInput("");
@@ -1160,9 +1204,17 @@ export function App() {
   function handleAnnotationAction(action: AnnotationAction): void {
     try {
       const intent = runtime.annotation(action.commandId, action.selectedHandles);
+      if (intent.commandId === "MTEXT") {
+        beginRuntimeCommand("MTEXT", "MTEXT · sisesta asukoht, kõrgus ja tekst");
+        return;
+      }
+      if (intent.commandId === "LEADER") {
+        beginRuntimeCommand("LEADER", "LEADER · sisesta kaks punkti ja soovi korral tekst");
+        return;
+      }
       setRuntimeIntent({ kind: "annotation", commandId: intent.commandId, selectedHandles: intent.selectedHandles });
       setActiveCommandPrompt(intent.commandId);
-      setStatus(`${intent.commandId}: typed annotation intent · ${intent.selectedHandles.length} eelvalitud`);
+      setStatus(`${intent.commandId}: Arenduses · commit-liides pole veel shelliga ühendatud`);
     } catch (error) {
       setStatus(`Annotatsiooni viga: ${error instanceof Error ? error.message : String(error)}`);
     }
@@ -1190,11 +1242,9 @@ export function App() {
   }
 
   function togglePrecision(mode: PrecisionToggleId): void {
-    setPrecision((current) => {
-      const next = { ...current, [mode]: !current[mode] };
-      setStatus(`${mode.toUpperCase()} ${next[mode] ? "ON" : "OFF"} · PrecisionFeatureModel`);
-      return next;
-    });
+    const result = runtime.togglePrecision(mode);
+    setPrecision(runtime.precisionState());
+    setStatus(`${result.message ?? mode.toUpperCase()} · PrecisionCommandState`);
   }
 
   function switchDocument(nextState: DocumentTabsState, documentId: string): void {
@@ -1225,7 +1275,8 @@ export function App() {
   function createOpenDocument(): void {
     let documentId = `drawing-${nextDocumentSequence.current++}`;
     while (documentTabs.tabs.some((tab) => tab.documentId === documentId)) documentId = `drawing-${nextDocumentSequence.current++}`;
-    const nextDocument = createEmptyDocument({ documentId });
+    const created = createNewModelSpaceDocument({ documentId, title: `${documentId}.kdraw` });
+    const nextDocument = created.document;
     sessions.current.set(document.documentId, session.current);
     const nextSession = new CadSession(nextDocument);
     sessions.current.set(documentId, nextSession);
@@ -1234,9 +1285,9 @@ export function App() {
     session.current = nextSession;
     setDocument(nextDocument);
     setDocumentTabs(nextState);
-    setActiveLayoutId("model");
+    setActiveLayoutId(created.activeLayoutId);
     setSelectedHandles([]);
-    setStatus(`${documentId}.kdraw loodud päris document-tabs mudelis`);
+    setStatus(`${documentId}.kdraw loodud ModelSpaceDocument + document-tabs mudelis`);
   }
 
   function closeOpenDocument(documentId: string): void {
@@ -1856,17 +1907,14 @@ export function App() {
     const rect = event.currentTarget.getBoundingClientRect();
     const pixel = { x: event.clientX - rect.left, y: event.clientY - rect.top };
     const cursorPoint = viewportScreenToWorld(modelViewport(rect.width, rect.height, window.devicePixelRatio || 1), pixel);
-    const resolved = runtime.precision.preview({
+    const precisionRequest = runtime.preparePrecisionRequest({
       basePoint: { x: 0, y: 0 },
       cursorPoint,
-      modes: {
-        ...(precision.ortho ? { ortho: true } : {}),
-        ...(precision.grid ? { grid: { spacingX: 25, spacingY: 25, origin: { x: 0, y: 0 } } } : {}),
-        aperture: precision.osnap || precision.otrack ? 12 : 0,
-      },
-      ...(precision.osnap ? { objectSnapCandidates: [] } : {}),
-      ...(precision.otrack ? { trackingCandidates: [] } : {}),
+      modes: { aperture: 0 },
+      objectSnapCandidates: [],
+      trackingCandidates: [],
     });
+    const resolved = runtime.precision.preview(precisionRequest);
     setPrecisionSource(resolved.source);
     setCursorReadout({
       pixel,
@@ -2554,24 +2602,24 @@ export function App() {
     let sequence = document.layers.length;
     while (document.layers.some((layer) => layer.name === `Layer ${sequence}`)) sequence += 1;
     const name = `Layer ${sequence}`;
-    await commitLayerPlan(runtime.layers(document).create(name), `${name} loodud päris LayerFeatureModeli kaudu`);
+    await commitLayerPlan(runtime.layerPlan(document, { type: "create", name }), `${name} loodud LayerManagerControlleri plaanist`);
   }
 
   async function toggleActiveLayerLock(): Promise<void> {
     const locked = !activeLayer.locked;
-    await commitLayerPlan(runtime.layers(document).toggle(activeLayer.id, "locked", locked), `${activeLayer.name} ${locked ? "lukustatud" : "avatud"}`);
+    await commitLayerPlan(runtime.layerPlan(document, { type: "toggle", layerId: activeLayer.id, property: "locked", value: locked }), `${activeLayer.name} ${locked ? "lukustatud" : "avatud"}`);
   }
 
   async function toggleLayer(layerId: string, property: CadLayerToggle, value: boolean): Promise<void> {
     const layer = document.layers.find((candidate) => candidate.id === layerId);
     if (!layer) return;
-    await commitLayerPlan(runtime.layers(document).toggle(layerId, property, value), `${layer.name}: ${property} ${value ? "ON" : "OFF"}`);
+    await commitLayerPlan(runtime.layerPlan(document, { type: "toggle", layerId, property, value }), `${layer.name}: ${property} ${value ? "ON" : "OFF"}`);
   }
 
   async function makeLayerCurrent(layerId: string): Promise<void> {
     const layer = document.layers.find((candidate) => candidate.id === layerId);
     if (!layer || layerId === document.currentLayerId) return;
-    await commitLayerPlan(runtime.layers(document).makeCurrent(layerId), `${layer.name} on aktiivne kiht`);
+    await commitLayerPlan(runtime.layerPlan(document, { type: "current", layerId }), `${layer.name} on aktiivne kiht`);
   }
 
   async function createLayout(): Promise<void> {
@@ -3302,9 +3350,9 @@ export function App() {
               <RibbonTool rowId="F-001" label="Line" icon="line" large available={runtime.canExecute("F-001")} pressed={activeCommandPrompt === "LINE"} onClick={() => beginRuntimeCommand("LINE", "LINE Specify first point · sisesta kaks punkti käsureale")} disabled={!modelSpaceEditing || activeLayer.locked} />
               <div className="ribbon-tool-grid ribbon-tool-grid-dense">
                 <RibbonTool rowId="F-003" label="Rectangle" icon="rectangle" available={runtime.canExecute("F-003")} pressed={activeCommandPrompt === "RECTANGLE"} onClick={() => beginRuntimeCommand("RECTANGLE", "RECTANGLE Specify two corner points on command line")} disabled={!modelSpaceEditing || activeLayer.locked} />
-                <RibbonTool rowId="F-002" label="Polyline" icon="polyline" />
-                <RibbonTool rowId="F-004" label="Circle" icon="circle" />
-                <RibbonTool rowId="F-005" label="Arc" icon="arc" />
+                <RibbonTool rowId="F-002" label="Polyline" icon="polyline" available={runtime.canExecute("F-002")} pressed={activeCommandPrompt === "PLINE"} onClick={() => beginRuntimeCommand("PLINE", "PLINE · sisesta vähemalt kaks punkti käsureale")} disabled={!modelSpaceEditing || activeLayer.locked} />
+                <RibbonTool rowId="F-004" label="Circle" icon="circle" available={runtime.canExecute("F-004")} pressed={activeCommandPrompt === "CIRCLE"} onClick={() => beginRuntimeCommand("CIRCLE", "CIRCLE · sisesta keskpunkt ja raadius")} disabled={!modelSpaceEditing || activeLayer.locked} />
+                <RibbonTool rowId="F-005" label="Arc" icon="arc" available={runtime.canExecute("F-005")} pressed={activeCommandPrompt === "ARC"} onClick={() => beginRuntimeCommand("ARC", "ARC · sisesta algus-, vahe- ja lõpp-punkt")} disabled={!modelSpaceEditing || activeLayer.locked} />
                 <RibbonTool rowId="F-067" label="Hatch" icon="hatch" available={runtime.canExecute("F-067")} pressed={activeCommandPrompt === "HATCH"} onClick={() => beginAnnotation("HATCH", selectedHandles)} disabled={!modelSpaceEditing || activeLayer.locked || selectedHandles.length === 0} />
                 <RibbonTool rowId="F-007" label="Ellipse" icon="ellipse" />
               </div>
@@ -4203,10 +4251,24 @@ export function App() {
           <section><h2>View</h2></section>
           <section><h2>Data</h2></section>
           <div className="runtime-tool-panels" aria-label="Runtime tool panels">
-            <AnnotationPanel selectedHandles={selectedHandles} onAction={handleAnnotationAction} />
-            <BlocksPanel selectedHandles={selectedHandles} onAction={handleBlockAction} />
+            <AnnotationPanel
+              selectedHandles={[]}
+              disabledRowIds={ANNOTATION_DEVELOPMENT_ROWS}
+              onAction={handleAnnotationAction}
+            />
+            <BlocksPanel selectedHandles={selectedHandles} disabledRowIds={BLOCK_DEVELOPMENT_ROWS} onAction={handleBlockAction} />
           </div>
-          <output className="runtime-intent-readback" aria-live="polite" data-runtime-intent-kind={runtimeIntent?.kind ?? "none"} data-runtime-command={runtimeIntent?.commandId ?? ""} data-runtime-selection={runtimeIntent?.selectedHandles.join(",") ?? ""}>
+          <output
+            className="runtime-intent-readback"
+            aria-live="polite"
+            data-runtime-intent-kind={runtimeIntent?.kind ?? "none"}
+            data-runtime-command={runtimeIntent?.commandId ?? ""}
+            data-runtime-selection={runtimeIntent?.selectedHandles.join(",") ?? ""}
+            data-runtime-document-id={document.documentId}
+            data-runtime-revision={document.revision}
+            data-runtime-layer-count={document.layers.length}
+            data-runtime-entity-kinds={document.entities.map((entity) => entity.kind).join(",")}
+          >
             {runtimeIntent ? `${runtimeIntent.kind}: ${runtimeIntent.commandId}` : "Runtime valmis"}
           </output>
         </PaletteFrame>

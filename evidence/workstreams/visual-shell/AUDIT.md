@@ -11,6 +11,7 @@ Audit environment: Chromium, 1920×1080, 100% zoom equivalent, Windows 96 DPI ta
 | 3 — command/layout/status component boundary and recovery state | `wave-2-after/` | `wave-3-after/` | 6 states recaptured, 0 console errors; visual baseline ratchet held |
 | 4 — remove remaining shell font-glyph icons | `wave-3-after/` | `wave-4-after/` | palette, context, layout and viewport controls use original Kuubik SVG paths; 6 states recaptured |
 | 5 — integrated runtime adapters | `wave-4-after/` | `integration-wave/` | real LINE, Undo/Redo, precision, layer and document workflows plus validated MTEXT/INSERT intents; 0 console errors |
+| 6 — live shell contracts | `integration-wave/` | `live-wave/` | LINE/PLINE/CIRCLE/ARC and MTEXT/LEADER committed; F8 + command precision, controller-planned layer, ModelSpaceDocument tabs and honest disabled rows; 0 console errors |
 
 ## Six audited states
 
@@ -21,7 +22,7 @@ Audit environment: Chromium, 1920×1080, 100% zoom equivalent, Windows 96 DPI ta
 5. `visual-shell-layout-paper-space.png` plus `visual-shell-layout-tools-open.png`
 6. `visual-shell-command-history.png` plus `visual-shell-context-menu.png`
 
-Each state exists in every applicable wave directory. `visual-shell-states.json` contains the DOM and interaction read-back; `visual-shell-zones.json` contains the primary zone geometry. The integrated runtime read-back is in `integration-wave/visual-shell-runtime-integration.json`. Port-specific reruns use `e2e/visual-shell.config.ts` on the reserved dev port 5215.
+Each state exists in every applicable wave directory. `visual-shell-states.json` contains the DOM and interaction read-back; `visual-shell-zones.json` contains the primary zone geometry. The newest runtime read-back is in `live-wave/visual-shell-runtime-integration.json`. Port-specific reruns use `e2e/visual-shell.config.ts` on the reserved dev port 5225.
 
 ## Final measured read-back
 
@@ -59,19 +60,21 @@ All five fixed categories were re-measured locally: shell zones; ribbon/palette 
 
 - `npm run typecheck` — PASS
 - `npm run lint` — PASS
-- `npm run test` — PASS, 114 files / 651 tests
+- `npm run test` — PASS, 128 files / 711 tests
 - `npm run build` — PASS
-- `npx playwright test e2e/visual-shell.spec.ts --config e2e/visual-shell.config.ts` — PASS, 3/3 at port 5215; includes 1920×1080 and 200% equivalent
-- `node tools/provenance/scan-public-tree.mjs` — PASS, 1370 files
+- `npx playwright test e2e/visual-shell.spec.ts --config e2e/visual-shell.config.ts` — PASS, 3/3 at port 5225; includes 1920×1080 and 200% equivalent
+- `node tools/provenance/scan-public-tree.mjs` — PASS, 1412 files
 - `npm run license:check` — PASS, 119 installed packages
 - `npm run visual:check` — PASS, baseline held at 60.7% / 1 of 6 paired states
 - `git diff --check` — PASS
+
+Wave 6 also has an independent in-app-browser read-back: revision 4 with `circle,mtext,line`, two layers, GRID off, ORTHO on, one surviving `local` tab, F-088 disabled with the `Arenduses` reason and zero browser-console errors.
 
 ## Honest boundaries
 
 - F-122, F-127, F-131 and F-132 are complete in this visual-shell workstream.
 - Selected commands with an existing application handler are enabled and expose their F-row.
-- Selected commands owned by geometry workstreams expose a typed shell intent only; status precision modes remain disabled until a real adapter exists. They are not counted as functionally complete here.
+- LINE/PLINE/RECTANGLE/CIRCLE/ARC, MTEXT/LEADER, visible precision state and the controller-planned layer actions now have real shell commit/read-back paths. Other selected geometry, annotation and block commands are not promoted by this wave.
 - No AutoCAD or Autodesk pixels, logos or proprietary icons were added. All new icons are original inline SVG paths in `apps/web/src/icons/CadIcon.tsx`.
 - No CAD core, DXF, print, document schema or geometry behavior was changed.
-- The integration wave does not change the 60.7% visual parity score or certify any F-row at 1.00. Annotation/block validation currently proves typed command intent, not committed annotation/block geometry.
+- The live wave does not change the 60.7% visual parity score or certify any F-row at 1.00. MTEXT/LEADER commit evidence does not certify the remaining annotation matrix, blocks, DXF parity or AutoCAD paired behavior.
