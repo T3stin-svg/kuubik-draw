@@ -17,7 +17,7 @@ interface RibbonToolProps {
 export function RibbonTool({ rowId, label, icon, large = false, pressed = false, available = false, disabled: stateDisabled = false, onClick }: RibbonToolProps) {
   const selected = isInReioScope(rowId);
   const disabled = !selected || !available || stateDisabled;
-  const reason = !selected ? UNSCOPED_COMMAND_MESSAGE : !available ? "Valitud sinu töövoogu · funktsiooniliides pole veel ühendatud" : stateDisabled ? "Käsk pole praeguses olekus saadaval" : "Valitud sinu töövoogu";
+  const reason = !selected ? UNSCOPED_COMMAND_MESSAGE : !available ? "Arenduses · commit-liides pole veel ühendatud" : stateDisabled ? "Käsk pole praeguses olekus saadaval" : "Valitud sinu töövoogu";
   return (
     <button
       type="button"
@@ -26,6 +26,7 @@ export function RibbonTool({ rowId, label, icon, large = false, pressed = false,
       aria-pressed={!disabled ? pressed : undefined}
       data-feature-row={rowId}
       data-scope-selected={selected ? "true" : "false"}
+      data-state-reason={reason}
       title={`${label} · ${reason}`}
       onClick={onClick}
       disabled={disabled}

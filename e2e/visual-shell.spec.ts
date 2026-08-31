@@ -179,11 +179,17 @@ test("AutoCAD-style shell keeps all eight primary zones visible at 1920x1080", a
   await expect(disabledRibbonTool).toBeDisabled();
   await expect(disabledRibbonTool).toHaveAttribute("data-scope-selected", "false");
   await expect(disabledRibbonTool).toHaveAttribute("title", /Pole sinu töövoogu valitud/u);
-  const selectedWithoutAdapter = page.getByRole("button", { name: "Ribbon Polyline unavailable" });
+  const selectedWithoutAdapter = page.getByRole("button", { name: "Ribbon Insert block unavailable" });
   await expect(selectedWithoutAdapter).toBeDisabled();
   await expect(selectedWithoutAdapter).toHaveAttribute("data-scope-selected", "true");
-  await expect(selectedWithoutAdapter).toHaveAttribute("title", /funktsiooniliides pole veel ühendatud/u);
-  await expect(selectedWithoutAdapter).toHaveAttribute("data-feature-row", "F-002");
+  await expect(selectedWithoutAdapter).toHaveAttribute("title", /Arenduses · commit-liides pole veel ühendatud/u);
+  await expect(selectedWithoutAdapter).toHaveAttribute("data-feature-row", "F-088");
+  await selectedWithoutAdapter.hover({ force: true });
+  const developmentTooltip = await selectedWithoutAdapter.evaluate((element) => ({
+    content: getComputedStyle(element, "::after").content,
+    display: getComputedStyle(element, "::after").display,
+  }));
+  expect(developmentTooltip).toMatchObject({ content: '"Arenduses · commit-liides pole veel ühendatud"', display: "block" });
   const disabledRibbonState = await disabledRibbonTool.evaluate((element) => ({
     color: getComputedStyle(element).color,
     backgroundColor: getComputedStyle(element).backgroundColor,
@@ -682,7 +688,8 @@ test("scoped shell persists workspace and palette states and remains accessible"
   const scopedTools = page.locator(".ribbon [data-feature-row]");
   const scopedIconCount = await scopedTools.locator(".ribbon-glyph > svg").count();
   expect(scopedIconCount).toBe(await scopedTools.count());
-  await expect(page.getByRole("button", { name: "Ribbon Polyline unavailable" })).toBeDisabled();
+  await expect(page.getByRole("button", { name: "Ribbon Polyline command" })).toBeEnabled();
+  await expect(page.getByRole("button", { name: "Ribbon Insert block unavailable" })).toBeDisabled();
   const unselected = page.getByRole("button", { name: "Ribbon Match properties unavailable" });
   await expect(unselected).toBeDisabled();
   await expect(unselected).toHaveAttribute("data-scope-selected", "false");
@@ -815,13 +822,36 @@ test("visual shell routes real runtime workflows without enabling unbound comman
   await redo.click();
   await expect(page.getByLabel("Käsu parameetrid")).toContainText("1 objekti");
   await expect(modelCanvas).toHaveAttribute("data-selected-handles", "");
+  await page.waitForTimeout(50);
+
+  await page.getByRole("button", { name: "Ribbon Polyline command" }).click();
+  await expect(commandInput).toHaveValue("PLINE ");
+  await commandInput.fill("PLINE 20,20 80,70 140,30");
+  await expect(commandInput).toHaveValue("PLINE 20,20 80,70 140,30");
+  await page.getByRole("button", { name: "Käivita käsk" }).click();
+  await expect(page.locator(".command-history")).toContainText("PLINE runtime salvestatud");
+
+  await page.getByRole("button", { name: "Ribbon Circle command" }).click();
+  await commandInput.fill("CIRCLE 220,120 35");
+  await page.getByRole("button", { name: "Käivita käsk" }).click();
+  await expect(page.locator(".command-history")).toContainText("CIRCLE runtime salvestatud");
+
+  await page.getByRole("button", { name: "Ribbon Arc command" }).click();
+  await commandInput.fill("ARC 300,80 340,140 390,90");
+  await page.getByRole("button", { name: "Käivita käsk" }).click();
+  await expect(page.locator(".command-history")).toContainText("ARC runtime salvestatud");
+  await expect(page.getByLabel("Käsu parameetrid")).toContainText("4 objekti");
 
   const grid = page.getByRole("button", { name: "GRID precision mode" });
   const ortho = page.getByRole("button", { name: "ORTHO precision mode" });
-  await grid.click();
-  await ortho.click();
+  await page.locator("body").focus();
+  await page.keyboard.press("F8");
+  await expect(ortho).toHaveAttribute("aria-pressed", "true");
+  await commandInput.fill("GRID OFF");
+  await page.getByRole("button", { name: "Käivita käsk" }).click();
   await expect(grid).toHaveAttribute("aria-pressed", "false");
   await expect(ortho).toHaveAttribute("aria-pressed", "true");
+  await expect(page.locator(".command-history")).toContainText("PrecisionCommandState");
   await modelCanvas.hover({ position: { x: 900, y: 420 } });
   await expect(page.locator(".statusbar")).toHaveAttribute("data-precision-source", "ortho");
 
@@ -829,25 +859,32 @@ test("visual shell routes real runtime workflows without enabling unbound comman
   await expect(layerRows).toHaveCount(1);
   await page.getByRole("button", { name: "Loo uus kiht" }).click();
   await expect(layerRows).toHaveCount(2);
-  await expect(page.locator(".command-history")).toContainText("LayerFeatureModeli kaudu");
+  await expect(page.locator(".command-history")).toContainText("LayerManagerControlleri plaanist");
   await expect(page.getByRole("button", { name: "Layer 1 lukustus" })).toBeEnabled();
 
   await page.getByRole("button", { name: "Mitmerealine tekst" }).click();
-  const intent = page.locator(".runtime-intent-readback");
-  await expect(intent).toHaveAttribute("data-runtime-intent-kind", "annotation");
-  await expect(intent).toHaveAttribute("data-runtime-command", "MTEXT");
-  const annotationIntent = { kind: await intent.getAttribute("data-runtime-intent-kind"), command: await intent.getAttribute("data-runtime-command") };
-  await page.getByRole("button", { name: "Sisesta plokk" }).click();
-  await expect(intent).toHaveAttribute("data-runtime-intent-kind", "block");
-  await expect(intent).toHaveAttribute("data-runtime-command", "INSERT");
-  const blockIntent = { kind: await intent.getAttribute("data-runtime-intent-kind"), command: await intent.getAttribute("data-runtime-command") };
+  await expect(commandInput).toHaveValue("MTEXT ");
+  await commandInput.fill('MTEXT 60,180 6 "Kuubik märkus"');
+  await page.getByRole("button", { name: "Käivita käsk" }).click();
+  await expect(page.locator(".command-history")).toContainText("MTEXT runtime salvestatud");
+  await page.getByRole("button", { name: "Viitjoon" }).click();
+  await commandInput.fill('LEADER 180,180 240,220 "Kontrollitud"');
+  await page.getByRole("button", { name: "Käivita käsk" }).click();
+  await expect(page.locator(".command-history")).toContainText("LEADER runtime salvestatud");
+  await expect(page.getByLabel("Käsu parameetrid")).toContainText("6 objekti");
+
+  const blockPanelCommand = page.getByRole("button", { name: "Sisesta plokk" });
+  await expect(blockPanelCommand).toBeDisabled();
+  await expect(page.getByRole("button", { name: "Ribbon Insert block unavailable" })).toBeDisabled();
+  const disabledBlockState = await blockPanelCommand.getAttribute("title");
 
   await page.getByRole("button", { name: "Uus joonis", exact: true }).click();
   await expect(page.locator("[data-document-id]")).toHaveCount(2);
   await expect(page.locator("[data-document-id='drawing-2']")).toHaveClass(/active/u);
+  await expect(page.locator(".command-history")).toContainText("ModelSpaceDocument + document-tabs");
   await page.getByRole("button", { name: "local.kdraw", exact: true }).click();
   await expect(page.locator("[data-document-id='local']")).toHaveClass(/active/u);
-  await expect(page.getByLabel("Käsu parameetrid")).toContainText("1 objekti");
+  await expect(page.getByLabel("Käsu parameetrid")).toContainText("6 objekti");
   await page.getByRole("button", { name: "Sulge drawing-2.kdraw" }).click();
   await expect(page.locator("[data-document-id]")).toHaveCount(1);
 
@@ -856,25 +893,26 @@ test("visual shell routes real runtime workflows without enabling unbound comman
     precisionSource: document.querySelector<HTMLElement>(".statusbar")?.dataset.precisionSource,
     layerIds: [...document.querySelectorAll<HTMLElement>("[data-layer-id]")].map((element) => element.dataset.layerId),
     tabs: [...document.querySelectorAll<HTMLElement>("[data-document-id]")].map((element) => ({ id: element.dataset.documentId, active: element.classList.contains("active") })),
-    runtimeIntent: {
-      kind: document.querySelector<HTMLElement>(".runtime-intent-readback")?.dataset.runtimeIntentKind,
-      command: document.querySelector<HTMLElement>(".runtime-intent-readback")?.dataset.runtimeCommand,
-    },
+    revision: Number(document.querySelector<HTMLElement>(".runtime-intent-readback")?.dataset.runtimeRevision),
+    entityKinds: document.querySelector<HTMLElement>(".runtime-intent-readback")?.dataset.runtimeEntityKinds?.split(","),
+    disabledRibbonRows: [...document.querySelectorAll<HTMLButtonElement>(".ribbon [data-scope-selected='true']:disabled")].map((element) => element.dataset.featureRow),
   }));
-  const readback = { ...domReadback, validatedIntents: { annotation: annotationIntent, block: blockIntent } };
+  const readback = { ...domReadback, disabledBlockState };
   expect(readback).toMatchObject({
     commandAdapter: "command-engine",
     precisionSource: "ortho",
     layerIds: ["0", "layer-layer-1"],
     tabs: [{ id: "local", active: true }],
-    validatedIntents: { annotation: { kind: "annotation", command: "MTEXT" }, block: { kind: "block", command: "INSERT" } },
+    revision: 9,
+    entityKinds: ["line", "polyline", "circle", "arc", "mtext", "leader"],
+    disabledRibbonRows: expect.arrayContaining(["F-061", "F-067", "F-087", "F-088", "F-090", "F-091"]),
   });
   if (captureRoot) {
     await writeFile(resolve(captureRoot, "visual-shell-runtime-integration.png"), await page.screenshot());
     await writeFile(resolve(captureRoot, "visual-shell-runtime-integration.json"), `${JSON.stringify({
       viewport: [1920, 1080],
       committedLineHandle,
-      workflows: ["LINE", "UNDO", "REDO", "ORTHO", "LAYER_CREATE", "MTEXT_INTENT", "INSERT_INTENT", "DOCUMENT_NEW", "DOCUMENT_ACTIVATE", "DOCUMENT_CLOSE"],
+      workflows: ["LINE", "UNDO", "REDO", "PLINE", "CIRCLE", "ARC", "F8_ORTHO", "GRID_COMMAND", "LAYER_CREATE", "MTEXT_COMMIT", "LEADER_COMMIT", "DOCUMENT_NEW", "DOCUMENT_ACTIVATE", "DOCUMENT_CLOSE"],
       readback,
       consoleErrors,
     }, null, 2)}\n`, "utf8");

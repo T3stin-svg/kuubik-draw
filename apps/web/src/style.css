@@ -108,6 +108,8 @@ button:focus-visible, select:focus-visible, input:focus-visible, summary:focus-v
 .ribbon .ribbon-tool.is-scope-unselected:disabled { color: #747d84; background: #343b45; border-color: #424b57; opacity: .78; }
 .ribbon .ribbon-tool.is-scope-unselected:disabled::after { position: fixed; z-index: 80; top: 154px; left: 50%; display: none; width: max-content; max-width: 320px; padding: 6px 9px; color: #edf3f7; content: "Pole sinu töövoogu valitud"; background: #202731; border: 1px solid #5d6a78; box-shadow: 0 4px 12px rgb(0 0 0 / 45%); transform: translateX(-50%); }
 .ribbon .ribbon-tool.is-scope-unselected:disabled:hover::after { display: block; }
+.ribbon .ribbon-tool.is-scope-selected:disabled::after { position: fixed; z-index: 80; top: 154px; left: 50%; display: none; width: max-content; max-width: 360px; padding: 6px 9px; color: #edf3f7; content: attr(data-state-reason); background: #202731; border: 1px solid #5d6a78; box-shadow: 0 4px 12px rgb(0 0 0 / 45%); transform: translateX(-50%); }
+.ribbon .ribbon-tool.is-scope-selected:disabled:hover::after { display: block; }
 .ribbon-glyph { display: inline-grid; min-width: 18px; place-items: center; color: #dce8ef; font-size: 16px; line-height: 1; }
 .ribbon-glyph svg { width: 17px; height: 17px; }
 .ribbon-tool-large .ribbon-glyph svg { width: 31px; height: 31px; stroke-width: 1.25; }
@@ -559,6 +561,7 @@ button:focus-visible, select:focus-visible, input:focus-visible, summary:focus-v
 .runtime-tool-panels button { min-height: 24px; padding: 3px 6px; color: #d7dfe5; background: #333d46; border: 1px solid #56636e; border-radius: 2px; font-size: 10px; }
 .runtime-tool-panels button:hover:not(:disabled) { color: #fff; background: #176a99; }
 .runtime-tool-panels button:disabled { color: #77838d; background: #2a3036; border-color: #3d464e; }
+.runtime-tool-panels button:disabled::after { content: " · Arenduses"; color: #98a4ad; font-size: 9px; }
 .runtime-intent-readback { display: block; min-height: 20px; padding: 4px 8px; color: #8fd2f5; background: #1a2229; border-top: 1px solid #45505a; font-size: 10px; }
 
 @media (max-width: 1180px) {
