@@ -36,11 +36,11 @@ test("AutoCAD-style shell keeps all eight primary zones visible at 1920x1080", a
     "ribbon-tabs": { x: 0, y: 30, width: 1920, height: 22 },
     ribbon: { x: 0, y: 52, width: 1920, height: 99 },
     "document-tabs": { x: 0, y: 151, width: 1920, height: 30 },
-    "command-line": { x: 688, y: 985, width: 600, height: 50 },
+    "command-line": { x: 468, y: 985, width: 600, height: 50 },
     "layout-status": { x: 0, y: 1043, width: 1920, height: 37 },
     statusbar: { x: 1260, y: 1047, width: 660, height: 32 },
   });
-  expect((zones as Record<string, { x: number; width: number; height: number }>)["properties-palette"]).toMatchObject({ x: 0, width: 680 });
+  expect((zones as Record<string, { x: number; width: number; height: number }>)["properties-palette"]).toMatchObject({ x: 0, width: 460 });
   const ribbonTabs = await page.locator("[data-ribbon-tab]").evaluateAll((elements) => Object.fromEntries(elements.map((element) => {
     const rect = element.getBoundingClientRect();
     return [element.getAttribute("data-ribbon-tab"), {
@@ -127,7 +127,7 @@ test("AutoCAD-style shell keeps all eight primary zones visible at 1920x1080", a
       borderBottomColor: "rgb(6, 150, 215)", borderBottomWidth: "1px",
     },
     commandLine: {
-      x: 688, y: 985, width: 600, height: 50, right: 1288, bottom: 1035,
+      x: 468, y: 985, width: 600, height: 50, right: 1068, bottom: 1035,
       backgroundColor: "rgba(34, 41, 51, 0.96)", borderTopColor: "rgb(78, 90, 104)", borderTopWidth: "1px",
       borderBottomColor: "rgb(78, 90, 104)", borderBottomWidth: "1px",
     },
@@ -482,19 +482,19 @@ test("AutoCAD-style shell keeps all eight primary zones visible at 1920x1080", a
     };
   });
   expect(selectedPropertiesGeometry).toMatchObject({
-    palette: { x: 0, y: 181, width: 680, height: 862, bottom: 1043 },
-    layerManager: { x: 0, y: 181, width: 678, height: 513, bottom: 694 },
-    propertiesHeader: { x: 0, y: 694, width: 678, height: 20, bottom: 714 },
-    selectionSummary: { x: 20, y: 727, width: 638, height: 22, bottom: 749 },
-    generalHeader: { x: 0, y: 753, width: 678, height: 20, bottom: 773 },
-    threeDHeader: { x: 0, y: 944, width: 678, height: 20, bottom: 964 },
-    materialRow: { x: 0, y: 964, width: 678, height: 19, bottom: 983 },
-    plotStyleHeader: { x: 0, y: 983, width: 678, height: 20, bottom: 1003 },
-    viewHeader: { x: 0, y: 1003, width: 678, height: 20, bottom: 1023 },
-    dataHeader: { x: 0, y: 1023, width: 678, height: 20, bottom: 1043 },
+    palette: { x: 0, y: 181, width: 460, height: 862, bottom: 1043 },
+    layerManager: { x: 0, y: 181, width: 458, height: 326, bottom: 507 },
+    propertiesHeader: { x: 0, y: 507, width: 458, height: 20, bottom: 527 },
+    selectionSummary: { x: 7, y: 531, width: 444, height: 22, bottom: 553 },
+    generalHeader: { x: 0, y: 557, width: 458, height: 20, bottom: 577 },
+    threeDHeader: { x: 0, y: 739, width: 458, height: 20, bottom: 759 },
+    materialRow: { x: 0, y: 759, width: 458, height: 18, bottom: 777 },
+    plotStyleHeader: { x: 0, y: 777, width: 458, height: 20, bottom: 797 },
+    viewHeader: { x: 0, y: 797, width: 458, height: 20, bottom: 817 },
+    dataHeader: { x: 0, y: 817, width: 458, height: 20, bottom: 837 },
   });
   expect(selectedPropertiesGeometry.generalRows).toHaveLength(9);
-  expect(selectedPropertiesGeometry.generalRows.every(({ height }) => height === 19)).toBe(true);
+  expect(selectedPropertiesGeometry.generalRows.every(({ height }) => height === 18)).toBe(true);
   expect(selectedPropertiesGeometry.surfaces).toEqual({
     palette: "rgb(59, 68, 83)", layerHeader: "rgb(46, 52, 64)", layerCurrent: "rgb(59, 68, 83)", layerToolbar: "rgb(59, 68, 83)",
     layerRail: "rgb(59, 68, 83)", layerGrid: "rgb(59, 68, 83)", layerGridHeader: "rgb(69, 79, 97)",
@@ -551,7 +551,7 @@ test("AutoCAD-style shell keeps all eight primary zones visible at 1920x1080", a
   if (captureRoot) await writeFile(resolve(captureRoot, "visual-shell-layer-manager.png"), await page.screenshot());
 
   await page.getByRole("button", { name: "Lisa paigutus" }).click();
-  await page.getByRole("button", { name: "Layout 1", exact: true }).click();
+  await page.getByRole("tab", { name: "Layout 1", exact: true }).click();
   await expect(page.getByTestId("paper-space-sheet")).toBeVisible();
   const layoutTools = page.getByTestId("layout-tools");
   await expect(layoutTools).not.toHaveAttribute("open", "");
@@ -711,7 +711,7 @@ test("scoped shell persists workspace and palette states and remains accessible"
   await expect.poll(() => palette.evaluate((element) => element.getBoundingClientRect().width)).toBe(32);
   await page.getByRole("button", { name: "Doki paletid" }).click();
   await expect(palette).toHaveAttribute("data-dock", "docked");
-  await expect.poll(() => palette.evaluate((element) => element.getBoundingClientRect().width)).toBe(680);
+  await expect.poll(() => palette.evaluate((element) => element.getBoundingClientRect().width)).toBe(460);
 
   const workspace = page.getByRole("combobox", { name: "Tööruum" });
   await workspace.selectOption("focus");
@@ -1224,5 +1224,148 @@ test("TABLE and dimension variants are visible shell workflows with atomic read-
       consoleErrors: errors,
     }, null, 2)}\n`, "utf8");
   }
+  expect(errors).toEqual([]);
+});
+
+test("POLYGON runs ribbon typed preview, keyboard commit and command-line edge read-back", async ({ page }) => {
+  const errors: string[] = [];
+  page.on("console", (message) => { if (message.type() === "error") errors.push(message.text()); });
+  page.on("pageerror", (error) => errors.push(error.message));
+  await page.setViewportSize({ width: 1920, height: 1080 });
+  await page.goto("/d/local");
+
+  const polygonTool = page.getByRole("button", { name: "Ribbon Polygon command" });
+  await polygonTool.focus();
+  await page.keyboard.press("Enter");
+  const prompt = page.getByTestId("polygon-prompt");
+  await expect(prompt).toBeVisible();
+  await expect(page.getByLabel("Polygon sides")).toBeFocused();
+  await expect(prompt).toHaveAttribute("data-preview-valid", "true");
+  await expect(page.getByLabel("Kuubik Draw joonestusala")).toHaveAttribute("data-polygon-preview", "true");
+  if (captureRoot) {
+    const geometry = await page.evaluate(() => Object.fromEntries([".properties-palette", ".layer-manager", ".polygon-prompt", ".layoutbar"].map((selector) => {
+      const element = document.querySelector<HTMLElement>(selector)!;
+      const rect = element.getBoundingClientRect();
+      return [selector, { x: rect.x, y: rect.y, width: rect.width, height: rect.height, right: rect.right, bottom: rect.bottom }];
+    })));
+    await writeFile(resolve(captureRoot, "visual-live-polygon-preview.png"), await page.screenshot());
+    await writeFile(resolve(captureRoot, "visual-live-polygon-preview.json"), `${JSON.stringify({ viewport: [1920, 1080], geometry, previewValid: true, consoleErrors: errors }, null, 2)}\n`, "utf8");
+  }
+
+  await page.keyboard.press("Control+A");
+  await page.keyboard.type("5");
+  for (let step = 0; step < 7; step += 1) await page.keyboard.press("Tab");
+  await expect(prompt.locator('button[type="submit"]')).toBeFocused();
+  await page.keyboard.press("Enter");
+  await expect(prompt).toBeHidden();
+  await expect(page.locator(".command-history")).toContainText("POLYGON · atomic commit/read-back");
+  const readback = page.getByTestId("live-contract-readback");
+  await expect(readback).toHaveAttribute("data-polygon-sides", "5");
+  await expect(readback).toHaveAttribute("data-polygon-mode", "center-inscribed");
+  await expect(readback).toHaveAttribute("data-polygon-rotation-input", "radius-point");
+  await expect(page.locator(".runtime-intent-readback")).toHaveAttribute("data-runtime-entity-kinds", /polyline/u);
+
+  const command = page.getByRole("textbox", { name: "Command input" });
+  await command.fill("POL 4 E 0,0 100,0 CW");
+  await command.press("Enter");
+  await expect(readback).toHaveAttribute("data-polygon-sides", "4");
+  await expect(readback).toHaveAttribute("data-polygon-mode", "edge");
+  await expect(readback).toHaveAttribute("data-polygon-orientation", "clockwise");
+  await expect(page.getByLabel("Kuubik Draw joonestusala")).toHaveAttribute("data-selected-handles", /.+/u);
+  expect(errors).toEqual([]);
+});
+
+test("F-133 recovery panel reports corrupt snapshot, incomplete tail, quarantine and repeated reload", async ({ page }) => {
+  const errors: string[] = [];
+  page.on("console", (message) => { if (message.type() === "error") errors.push(message.text()); });
+  page.on("pageerror", (error) => errors.push(error.message));
+  await page.setViewportSize({ width: 1920, height: 1080 });
+  await page.goto("/d/local");
+  const command = page.getByRole("textbox", { name: "Command input" });
+  await command.fill("LINE 0,0 100,0");
+  await command.press("Enter");
+  await expect(page.locator(".runtime-intent-readback")).toHaveAttribute("data-runtime-revision", "1");
+
+  const seeded = await page.evaluate(async () => {
+    const modulePath = "/src/indexed-db.ts";
+    const { KDrawIndexedDb } = await import(modulePath);
+    const database = new KDrawIndexedDb(indexedDB, "kuubik-draw");
+    const compaction = await database.compactDocument("local", { minimumOperations: 1 }, "2026-08-31T20:30:00.000Z");
+    database.close();
+    if (!compaction.snapshotKey) throw new Error("Compaction snapshot was not created.");
+    const raw = await new Promise<IDBDatabase>((resolveOpen, rejectOpen) => {
+      const request = indexedDB.open("kuubik-draw");
+      request.onsuccess = () => resolveOpen(request.result);
+      request.onerror = () => rejectOpen(request.error);
+    });
+    const transaction = raw.transaction(["snapshots", "operations"], "readwrite");
+    const snapshots = transaction.objectStore("snapshots");
+    const snapshot = await new Promise<Record<string, unknown>>((resolveGet, rejectGet) => {
+      const request = snapshots.get(compaction.snapshotKey!);
+      request.onsuccess = () => resolveGet(request.result as Record<string, unknown>);
+      request.onerror = () => rejectGet(request.error);
+    });
+    snapshot.sha256 = "0".repeat(64);
+    snapshots.put(snapshot);
+    transaction.objectStore("operations").add({
+      opId: "local-incomplete-browser-tail",
+      documentId: "local",
+      revision: compaction.revision + 1,
+      operation: { opId: "local-incomplete-browser-tail", baseRevision: compaction.revision, commandId: "LINE", args: {}, targetHandles: [], resultHandles: [] },
+      recordedAt: "2026-08-31T20:31:00.000Z",
+    });
+    await new Promise<void>((resolveTransaction, rejectTransaction) => {
+      transaction.oncomplete = () => resolveTransaction();
+      transaction.onerror = () => rejectTransaction(transaction.error);
+      transaction.onabort = () => rejectTransaction(transaction.error);
+    });
+    raw.close();
+    return { snapshotKey: compaction.snapshotKey, revision: compaction.revision };
+  });
+
+  await page.reload();
+  const panel = page.getByTestId("recovery-panel");
+  await expect(panel).toBeVisible();
+  await expect(panel).toHaveAttribute("data-recovery-code", "RECOVERY_DEGRADED");
+  await expect(panel).toHaveAttribute("data-recovery-revision", String(seeded.revision));
+  await expect(panel).toHaveAttribute("data-incomplete-tail", "true");
+  await expect(panel).toHaveAttribute("data-quarantined-count", "1");
+  await expect(panel).toHaveAttribute("data-corrupt-snapshot-count", "1");
+  await expect(panel).toHaveAttribute("data-corrupt-compaction-count", "1");
+  await expect(panel).toContainText("local-incomplete-browser-tail");
+  await expect(panel).toContainText(seeded.snapshotKey!);
+  await expect(panel).toContainText("Midagi ei kustutatud automaatselt");
+  await expect(panel).not.toContainText("PASS");
+  await expect(panel).toHaveAttribute("data-repeated-recovery", "false");
+
+  await page.reload();
+  await expect(panel).toBeVisible();
+  await expect(panel).toHaveAttribute("data-repeated-recovery", "true");
+  await expect(panel).toHaveAttribute("data-quarantined-count", "1");
+  if (captureRoot) {
+    const geometry = await panel.evaluate((element) => {
+      const rect = element.getBoundingClientRect();
+      return { x: rect.x, y: rect.y, width: rect.width, height: rect.height, right: rect.right, bottom: rect.bottom };
+    });
+    await writeFile(resolve(captureRoot, "visual-live-recovery-panel.png"), await page.screenshot());
+    await writeFile(resolve(captureRoot, "visual-live-recovery-panel.json"), `${JSON.stringify({ viewport: [1920, 1080], geometry, snapshotKey: seeded.snapshotKey, revision: seeded.revision, repeatedRecovery: true, quarantinedOperations: 1, consoleErrors: errors }, null, 2)}\n`, "utf8");
+  }
+  const operationCount = await page.evaluate(async () => {
+    const raw = await new Promise<IDBDatabase>((resolveOpen, rejectOpen) => {
+      const request = indexedDB.open("kuubik-draw");
+      request.onsuccess = () => resolveOpen(request.result);
+      request.onerror = () => rejectOpen(request.error);
+    });
+    const transaction = raw.transaction("operations", "readonly");
+    const index = transaction.objectStore("operations").index("byDocument");
+    const count = await new Promise<number>((resolveCount, rejectCount) => {
+      const request = index.count("local");
+      request.onsuccess = () => resolveCount(request.result);
+      request.onerror = () => rejectCount(request.error);
+    });
+    raw.close();
+    return count;
+  });
+  expect(operationCount).toBe(2);
   expect(errors).toEqual([]);
 });

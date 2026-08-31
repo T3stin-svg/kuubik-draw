@@ -15,7 +15,7 @@ import { createNewModelSpaceDocument } from "./features/documents/model-space.js
 import { DocumentLiveOrchestrator } from "./features/documents/document-live-orchestrator.js";
 import { DocumentWorkspaceShell, PgpAliasMapping } from "./features/documents/document-workspace-shell.js";
 import { CadIcon } from "./icons/CadIcon.js";
-import { KDrawIndexedDb, StorageRevisionConflictError } from "./indexed-db.js";
+import { KDrawIndexedDb, StorageRevisionConflictError, type RecoveryReceipt } from "./indexed-db.js";
 import { CadShell, DrawingViewport, type WorkspacePreset } from "./shell/CadShell.js";
 import { CommandLine } from "./shell/CommandLine.js";
 import { DocumentTabs } from "./shell/DocumentTabs.js";
@@ -23,12 +23,14 @@ import { DimensionMenu } from "./shell/DimensionMenu.js";
 import { LayoutBar } from "./shell/LayoutBar.js";
 import { LiveCommandPrompt } from "./shell/LiveCommandPrompt.js";
 import { PaletteFrame, type PaletteMode } from "./shell/PaletteFrame.js";
+import { PolygonPrompt, type PolygonFormState } from "./shell/PolygonPrompt.js";
+import { RecoveryPanel } from "./shell/RecoveryPanel.js";
 import { Ribbon } from "./shell/Ribbon.js";
 import { RibbonTabs } from "./shell/RibbonTabs.js";
 import { RibbonTool } from "./shell/RibbonTool.js";
 import { StatusBar } from "./shell/StatusBar.js";
 import { TitleBar } from "./shell/TitleBar.js";
-import { VISUAL_SHELL_COMMAND_DEFINITIONS, VisualShellRuntimeAdapter, type PrecisionToggleId, type PrecisionToggleState, type VisualShellLivePrompt, type VisualSnapCycleReadback } from "./shell/runtime-adapter.js";
+import { prepareVisualPolygon, VISUAL_SHELL_COMMAND_DEFINITIONS, VisualShellRuntimeAdapter, type PrecisionToggleId, type PrecisionToggleState, type VisualPolygonPrepared, type VisualShellLivePrompt, type VisualSnapCycleReadback } from "./shell/runtime-adapter.js";
 import { prepareAlign, prepareBreak, prepareChamfer, prepareCopy, prepareExtend, prepareFillet, prepareLengthen, prepareMatchProperties, prepareMirror, prepareMove, prepareOffset, prepareRotate, prepareScale, prepareStretch, prepareTrim, putEntities } from "./workflows/modify-command.js";
 import "./style.css";
 
@@ -53,13 +55,35 @@ const MATCH_PROPERTY_LABELS: Readonly<Record<keyof MatchPropertiesSettings, stri
   table: "Tabel",
   centerObject: "Keskobjekt",
 });
-const MODEL_SPACE_COMMANDS = new Set(["LINE", "RECTANGLE", "MOVE", "COPY", "ROTATE", "SCALE", "MIRROR", "OFFSET", "TRIM", "EXTEND", "FILLET", "CHAMFER", "BREAK", "STRETCH", "LENGTHEN", "ALIGN", "MATCHPROP", "ERASE"]);
+const MODEL_SPACE_COMMANDS = new Set(["LINE", "PLINE", "RECTANGLE", "CIRCLE", "ARC", "POLYGON", "MOVE", "COPY", "ROTATE", "SCALE", "MIRROR", "OFFSET", "TRIM", "EXTEND", "FILLET", "CHAMFER", "BREAK", "STRETCH", "LENGTHEN", "ALIGN", "MATCHPROP", "ERASE"]);
 const MODEL_VIEW_WORLD = Object.freeze({ minX: -500, minY: -500, maxX: 2500, maxY: 2500 });
 const MODEL_VIEW_REFERENCE_HEIGHT_PX = 793;
 const MODEL_VIEW_WORLD_UNITS_PER_PIXEL = (MODEL_VIEW_WORLD.maxY - MODEL_VIEW_WORLD.minY) / MODEL_VIEW_REFERENCE_HEIGHT_PX;
 const DRAWING_CONTEXT_MENU_SIZE = Object.freeze({ width: 200, height: 371 });
 const ANNOTATION_DEVELOPMENT_ROWS = new Set(["F-060"]);
 const BLOCK_DEVELOPMENT_ROWS = new Set<string>();
+const DEFAULT_POLYGON_FORM: PolygonFormState = Object.freeze({
+  sides: "6",
+  mode: "center-inscribed",
+  center: "900,700",
+  size: "240",
+  first: "650,700",
+  second: "1150,700",
+  rotationDeg: "0",
+  rotationInput: "radius-point",
+  orientation: "counter-clockwise",
+});
+
+function recoveryOutcomeFingerprint(receipt: RecoveryReceipt): string {
+  return JSON.stringify({
+    code: receipt.code,
+    recoveredRevision: receipt.recoveredRevision,
+    source: receipt.source,
+    ignoredOperationIds: receipt.ignoredOperationIds,
+    corruptSnapshotKeys: receipt.corruptSnapshotKeys,
+    corruptCompactionKeys: receipt.corruptCompactionKeys,
+  });
+}
 
 function modelViewport(widthPx: number, heightPx: number, devicePixelRatio: number): Viewport2D {
   if (heightPx <= MODEL_VIEW_REFERENCE_HEIGHT_PX) {
@@ -316,6 +340,9 @@ export function App() {
   const [pdfUnderlayReadback, setPdfUnderlayReadback] = useState<{ placementId: string; byteLength: number; sha256: string } | null>(null);
   const [status, setStatus] = useState("Uus kohalik dokument");
   const [storageState, setStorageState] = useState<"loading" | "ready" | "recovered" | "recovery">("loading");
+  const [recoveryReceipt, setRecoveryReceipt] = useState<RecoveryReceipt | null>(null);
+  const [recoveryRepeated, setRecoveryRepeated] = useState(false);
+  const [recoveryPanelOpen, setRecoveryPanelOpen] = useState(false);
   const [workspacePreset, setWorkspacePreset] = useState<WorkspacePreset>(() => {
     const stored = window.localStorage.getItem("kuubik-draw-workspace");
     return stored === "focus" || stored === "review" ? stored : "drafting";
@@ -325,6 +352,9 @@ export function App() {
     return stored === "floating" || stored === "auto-hide" ? stored : "docked";
   });
   const [activeCommandPrompt, setActiveCommandPrompt] = useState<string | null>(null);
+  const [polygonPromptOpen, setPolygonPromptOpen] = useState(false);
+  const [polygonForm, setPolygonForm] = useState<PolygonFormState>(DEFAULT_POLYGON_FORM);
+  const [polygonReadback, setPolygonReadback] = useState<VisualPolygonPrepared["normalized"] | null>(null);
   const [commandInput, setCommandInput] = useState("");
   const [runtimeCommandHistory, setRuntimeCommandHistory] = useState<string[]>([]);
   const [runtimeHistoryIndex, setRuntimeHistoryIndex] = useState(0);
@@ -866,6 +896,26 @@ export function App() {
       return null;
     }
   }, [document, matchSettings, matchSourceHandle, previewCommand, selectedHandles]);
+  const polygonPreview = useMemo((): { prepared: VisualPolygonPrepared | null; error: string | null } => {
+    if (!polygonPromptOpen) return { prepared: null, error: null };
+    try {
+      const sides = Number(polygonForm.sides);
+      const size = Number(polygonForm.size);
+      const rotationDeg = Number(polygonForm.rotationDeg);
+      if (!Number.isFinite(sides) || !Number.isFinite(size) || !Number.isFinite(rotationDeg)) throw new CommandEngineInputError("Külgede arv, suurus ja pööre peavad olema lõplikud arvud.");
+      return {
+        prepared: prepareVisualPolygon(document, {
+          ...polygonForm,
+          sides,
+          size,
+          rotationDeg,
+        }),
+        error: null,
+      };
+    } catch (error) {
+      return { prepared: null, error: error instanceof Error ? error.message : String(error) };
+    }
+  }, [document, polygonForm, polygonPromptOpen]);
 
   useEffect(() => {
     let active = true;
@@ -882,9 +932,22 @@ export function App() {
           document: session.current.document,
           activeLayoutId: current.tabs.find((tab) => tab.documentId === opened.document.documentId)?.activeLayoutId ?? "model",
         }), opened.document.documentId, opened.document.revision));
-        const recovered = opened.recovery.source !== "none" && opened.document.revision > 0;
-        setStatus(`${recovered ? "Taastatud" : "Avatud"} revision ${opened.document.revision} · DocumentLiveOrchestrator`);
-        setStorageState(recovered ? "recovered" : "ready");
+        const receipt = opened.recovery.receipt;
+        const showRecovery = receipt.status === "recovered" || receipt.status === "degraded";
+        setRecoveryReceipt(receipt);
+        setRecoveryPanelOpen(showRecovery);
+        if (showRecovery) {
+          const fingerprint = recoveryOutcomeFingerprint(receipt);
+          const key = `kuubik-draw.recovery-receipt.${receipt.documentId}`;
+          try {
+            setRecoveryRepeated(window.localStorage.getItem(key) === fingerprint);
+            window.localStorage.setItem(key, fingerprint);
+          } catch {
+            setRecoveryRepeated(false);
+          }
+        }
+        setStatus(`${receipt.summaryEt} · DocumentLiveOrchestrator`);
+        setStorageState(receipt.status === "degraded" ? "recovery" : showRecovery ? "recovered" : "ready");
       } catch (error) {
         if (!active) return;
         setStorageState("recovery");
@@ -1031,7 +1094,7 @@ export function App() {
         delete element.dataset.worldCenterY;
         delete element.dataset.worldUnitsPerPixel;
       }
-      renderer.render(context, viewport, document.layers, activeLayout.kind === "model" ? [...(movePreview?.entities ?? []), ...(copyPreview?.entities ?? []), ...(rotatePreview?.entities ?? []), ...(scalePreview?.entities ?? []), ...(mirrorPreview?.entities ?? []), ...(offsetPreview?.entities ?? []), ...(trimPreview?.entities ?? []), ...(extendPreview?.entities ?? []), ...(filletPreview?.entities ?? []), ...(chamferPreview?.entities ?? []), ...(breakPreview?.entities ?? []), ...(stretchPreview?.entities ?? []), ...(lengthenPreview?.entities ?? []), ...(alignPreview?.entities ?? []), ...(matchPropertiesPreview?.entities ?? [])] : [], [
+      renderer.render(context, viewport, document.layers, activeLayout.kind === "model" ? [...(polygonPreview.prepared?.previewEntities ?? []), ...(movePreview?.entities ?? []), ...(copyPreview?.entities ?? []), ...(rotatePreview?.entities ?? []), ...(scalePreview?.entities ?? []), ...(mirrorPreview?.entities ?? []), ...(offsetPreview?.entities ?? []), ...(trimPreview?.entities ?? []), ...(extendPreview?.entities ?? []), ...(filletPreview?.entities ?? []), ...(chamferPreview?.entities ?? []), ...(breakPreview?.entities ?? []), ...(stretchPreview?.entities ?? []), ...(lengthenPreview?.entities ?? []), ...(alignPreview?.entities ?? []), ...(matchPropertiesPreview?.entities ?? [])] : [], [
         ...(mirrorPreview?.eraseSource ? mirrorPreview.sourceHandles : []),
         ...(offsetPreview?.eraseSource ? offsetPreview.sourceHandles : []),
         ...(trimPreview?.sourceHandles ?? []),
@@ -1069,7 +1132,7 @@ export function App() {
     const observer = new ResizeObserver(render);
     observer.observe(element);
     return () => observer.disconnect();
-  }, [activeLayout, activePageSetup, activePaper, alignPreview, breakPreview, chamferPreview, copyPreview, document, extendPreview, filletPreview, lengthenPreview, matchPropertiesPreview, mirrorPreview, movePreview, offsetPreview, precision.grid, rotatePreview, scalePreview, selectedHandles, stretchPreview, trimPreview, workspace]);
+  }, [activeLayout, activePageSetup, activePaper, alignPreview, breakPreview, chamferPreview, copyPreview, document, extendPreview, filletPreview, lengthenPreview, matchPropertiesPreview, mirrorPreview, movePreview, offsetPreview, polygonPreview, precision.grid, rotatePreview, scalePreview, selectedHandles, stretchPreview, trimPreview, workspace]);
 
   async function recoverFromStorageConflict(error: unknown): Promise<void> {
     if (!(error instanceof StorageRevisionConflictError)) throw error;
@@ -1127,7 +1190,7 @@ export function App() {
     setStatus(`${commandId} salvestatud, revision ${next.revision}`);
   }
 
-  function beginRuntimeCommand(commandId: "LINE" | "PLINE" | "RECTANGLE" | "CIRCLE" | "ARC" | "MTEXT" | "LEADER", prompt: string): void {
+  function beginRuntimeCommand(commandId: "LINE" | "PLINE" | "RECTANGLE" | "CIRCLE" | "ARC" | "POLYGON" | "MTEXT" | "LEADER", prompt: string): void {
     if (!runtime.commandRegistry.resolve(commandId)) {
       setStatus(`${commandId}: runtime adapter puudub`);
       return;
@@ -1136,6 +1199,39 @@ export function App() {
     setActiveCommandPrompt(commandId);
     setCommandInput(`${commandId} `);
     setStatus(prompt);
+  }
+
+  function beginPolygonPrompt(): void {
+    setRuntimeIntent(null);
+    setCommandInput("");
+    setActiveCommandPrompt("POLYGON");
+    setPolygonPromptOpen(true);
+    setStatus("POLYGON · vali typed konstruktsioon; eelvaade kasutab sama core plannerit");
+  }
+
+  function cancelPolygonPrompt(): void {
+    setPolygonPromptOpen(false);
+    setActiveCommandPrompt(null);
+    setStatus("POLYGON: *Cancel*");
+  }
+
+  async function commitPolygonPrompt(): Promise<void> {
+    const prepared = polygonPreview.prepared;
+    if (!prepared || committing.current) return;
+    committing.current = true;
+    try {
+      await commitChanges(prepared.commandId, prepared.operationArgs, prepared.changes, prepared.resultHandles);
+      setSelectedHandles(prepared.resultHandles);
+      setPolygonReadback(prepared.normalized);
+      setPolygonPromptOpen(false);
+      setActiveCommandPrompt(null);
+      setStatus(`POLYGON · atomic commit/read-back revision ${session.current.document.revision} · ${prepared.normalized.sides} külge`);
+    } catch (error) {
+      if (error instanceof StorageRevisionConflictError) await recoverFromStorageConflict(error);
+      else setStatus(`POLYGON viga: ${error instanceof Error ? error.message : String(error)}`);
+    } finally {
+      committing.current = false;
+    }
   }
 
   async function executeRuntimeCommand(rawOverride?: string): Promise<void> {
@@ -1210,6 +1306,7 @@ export function App() {
         activeLayoutId: next.layouts.some((layout) => layout.id === activeLayoutId) ? activeLayoutId : next.layouts[0]!.id,
       }), next.documentId, next.revision));
       setSelectedHandles(committed.operation.resultHandles);
+      if (prepared.commandId === "POLYGON") setPolygonReadback((prepared as VisualPolygonPrepared).normalized);
       setRuntimeCommandHistory((current) => [...current.slice(-29), raw]);
       setRuntimeHistoryIndex(runtimeCommandHistory.length + 1);
       setCommandInput("");
@@ -1227,6 +1324,10 @@ export function App() {
   }
 
   function cancelRuntimeCommand(): void {
+    if (polygonPromptOpen) {
+      cancelPolygonPrompt();
+      return;
+    }
     if (livePrompt.current) {
       cancelLivePrompt();
       return;
@@ -1413,6 +1514,7 @@ export function App() {
     setSelectedHandles(workspaceState?.selectedHandles ?? []);
     setSelectedViewportId(null);
     setModelViewportId(null);
+    setPolygonPromptOpen(false);
     setActiveCommandPrompt(null);
     setRuntimeIntent(null);
     setCommandInput("");
@@ -3560,6 +3662,7 @@ export function App() {
                 <RibbonTool rowId="F-002" label="Polyline" icon="polyline" available={runtime.canExecute("F-002")} pressed={activeCommandPrompt === "PLINE"} onClick={() => beginRuntimeCommand("PLINE", "PLINE · sisesta vähemalt kaks punkti käsureale")} disabled={!modelSpaceEditing || activeLayer.locked} />
                 <RibbonTool rowId="F-004" label="Circle" icon="circle" available={runtime.canExecute("F-004")} pressed={activeCommandPrompt === "CIRCLE"} onClick={() => beginRuntimeCommand("CIRCLE", "CIRCLE · sisesta keskpunkt ja raadius")} disabled={!modelSpaceEditing || activeLayer.locked} />
                 <RibbonTool rowId="F-005" label="Arc" icon="arc" available={runtime.canExecute("F-005")} pressed={activeCommandPrompt === "ARC"} onClick={() => beginRuntimeCommand("ARC", "ARC · sisesta algus-, vahe- ja lõpp-punkt")} disabled={!modelSpaceEditing || activeLayer.locked} />
+                <RibbonTool rowId="F-006" label="Polygon" icon="polyline" available={runtime.canExecute("F-006")} pressed={activeCommandPrompt === "POLYGON"} onClick={beginPolygonPrompt} disabled={!modelSpaceEditing || activeLayer.locked} />
                 <RibbonTool rowId="F-067" label="Hatch" icon="hatch" available={runtime.canExecute("F-067")} pressed={activeCommandPrompt === "HATCH"} onClick={() => beginAnnotation("HATCH", selectedHandles)} disabled={!modelSpaceEditing || activeLayer.locked || selectedHandles.length === 0} />
                 <RibbonTool rowId="F-007" label="Ellipse" icon="ellipse" />
               </div>
@@ -4325,6 +4428,8 @@ export function App() {
               aria-label="Kuubik Draw joonestusala"
               tabIndex={0}
               data-preview-command={previewCommand ?? ""}
+              data-polygon-preview={polygonPreview.prepared ? "true" : "false"}
+              data-polygon-preview-handle={polygonPreview.prepared?.resultHandles[0] ?? ""}
               data-selected-handles={selectedHandles.join(",")}
               onPointerDown={(event) => { event.currentTarget.focus({ preventScroll: true }); selectModifyTargetFromCanvas(event); }}
               onPointerMove={updateModelPointer}
@@ -4518,9 +4623,24 @@ export function App() {
             data-pgp-aliases={Object.entries(workspaceReadback.aliases.importedAliases).map(([alias, commandId]) => `${alias}:${commandId}`).join(",")}
             data-pdf-placement={pdfUnderlayReadback?.placementId ?? ""}
             data-pdf-bytes={pdfUnderlayReadback?.byteLength ?? 0}
+            data-polygon-sides={polygonReadback?.sides ?? ""}
+            data-polygon-mode={polygonReadback?.mode ?? ""}
+            data-polygon-rotation-input={polygonReadback?.rotationInput ?? ""}
+            data-polygon-orientation={polygonReadback?.orientation ?? ""}
+            data-polygon-signed-area={polygonReadback?.signedArea ?? ""}
           >Precision/Layers + Documents live read-back{pdfUnderlayReadback ? ` · PDF ${pdfUnderlayReadback.byteLength} B` : ""}</output>
         </PaletteFrame>
       </DrawingViewport>
+      {recoveryPanelOpen && recoveryReceipt && <RecoveryPanel receipt={recoveryReceipt} repeated={recoveryRepeated} onDismiss={() => setRecoveryPanelOpen(false)} />}
+      {polygonPromptOpen && <PolygonPrompt
+        value={polygonForm}
+        previewValid={polygonPreview.prepared !== null}
+        normalizedSummary={polygonPreview.prepared ? `${polygonPreview.prepared.normalized.sides} külge · ${polygonPreview.prepared.normalized.mode} · pindala ${Math.abs(polygonPreview.prepared.normalized.signedArea).toFixed(2)}` : "Eelvaade pole valmis"}
+        error={polygonPreview.error}
+        onChange={setPolygonForm}
+        onCommit={() => void commitPolygonPrompt()}
+        onCancel={cancelPolygonPrompt}
+      />}
       {livePromptCommand && activeLivePromptField && <LiveCommandPrompt
         commandId={livePromptCommand}
         field={activeLivePromptField}

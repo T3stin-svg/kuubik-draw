@@ -2,6 +2,7 @@ import {
   allocateEntityHandles,
   createEmptyDocument,
   parseCartesianPoint,
+  prepareCompletePolygonCommand,
   prepareGeometryCommand,
   resolveCadCommand,
   CadSession,
@@ -38,7 +39,7 @@ export interface PrecisionToggleState {
 }
 
 const RUNTIME_ROWS = new Set([
-  "F-001", "F-002", "F-003", "F-004", "F-005",
+  "F-001", "F-002", "F-003", "F-004", "F-005", "F-006",
   "F-016", "F-017", "F-018", "F-019", "F-020", "F-021", "F-022", "F-024", "F-027", "F-030",
   "F-045", "F-047", "F-049", "F-050", "F-052",
   "F-057", "F-058", "F-059",
@@ -72,6 +73,26 @@ export interface VisualSnapCycleReadback {
   index: number;
   count: number;
   trackingCount: number;
+}
+
+export type VisualPolygonMode = "center-inscribed" | "center-circumscribed" | "edge";
+export type VisualPolygonOrientation = "counter-clockwise" | "clockwise";
+
+export interface VisualPolygonDraft {
+  sides: number;
+  mode: VisualPolygonMode;
+  center: string;
+  size: number;
+  first: string;
+  second: string;
+  rotationDeg: number;
+  rotationInput: "radius-point" | "numeric";
+  orientation: VisualPolygonOrientation;
+}
+
+export interface VisualPolygonPrepared extends PreparedEngineCommand {
+  previewEntities: KDrawDocumentV1["entities"];
+  normalized: ReturnType<typeof prepareCompletePolygonCommand>["normalized"];
 }
 
 function promptPlan(request: AnnotationBlockPromptRequest) {
@@ -127,9 +148,12 @@ export class VisualShellLivePrompt {
     if (snapshot.status !== "active" || !snapshot.currentFieldId) return null;
     const field = promptPlan(this.#request).fields.find((candidate) => candidate.id === snapshot.currentFieldId)!;
     const dimStyleMode = this.#dimStyleMode(snapshot);
+    const textStyleMode = this.#textStyleMode(snapshot);
     const tableMode = this.#tableMode(snapshot);
     const branchRequired = (field.id === "style" && (dimStyleMode === "create" || dimStyleMode === "update"))
       || (field.id === "styleId" && dimStyleMode === "apply")
+      || (field.id === "style" && (textStyleMode === "create" || textStyleMode === "update"))
+      || (field.id === "styleId" && textStyleMode === "apply")
       || (field.id === "definition" && tableMode === "create")
       || (field.id === "operations" && tableMode === "edit")
       || (field.id === "tableHandle" && tableMode === "edit" && (this.#request.context?.selectedHandles?.length ?? 0) !== 1)
@@ -175,19 +199,28 @@ export class VisualShellLivePrompt {
     return mode === "create" || mode === "edit" || mode === "style-create" || mode === "style-update" ? mode : null;
   }
 
+  #textStyleMode(snapshot: CommandPromptSnapshot): "create" | "update" | "apply" | null {
+    if (this.#request.commandId !== "STYLE") return null;
+    const mode = snapshot.values.mode;
+    return mode === "create" || mode === "update" || mode === "apply" ? mode : null;
+  }
+
   #skipInactiveBranchFields(snapshot: CommandPromptSnapshot): CommandPromptSnapshot {
     const dimStyleMode = this.#dimStyleMode(snapshot);
+    const textStyleMode = this.#textStyleMode(snapshot);
     const tableMode = this.#tableMode(snapshot);
     let routed = snapshot;
     while (routed.status === "active") {
       const skipDimStyle = dimStyleMode === "apply" && routed.currentFieldId === "style";
       const skipDimStyleId = (dimStyleMode === "create" || dimStyleMode === "update") && routed.currentFieldId === "styleId";
+      const skipTextStyle = textStyleMode === "apply" && routed.currentFieldId === "style";
+      const skipTextStyleId = (textStyleMode === "create" || textStyleMode === "update") && routed.currentFieldId === "styleId";
       const skipTableDefinition = tableMode !== null && tableMode !== "create" && routed.currentFieldId === "definition";
       const skipTableHandle = tableMode !== null && tableMode !== "edit" && routed.currentFieldId === "tableHandle";
       const skipSelectedTableHandle = tableMode === "edit" && (this.#request.context?.selectedHandles?.length ?? 0) === 1 && routed.currentFieldId === "tableHandle";
       const skipTableOperations = tableMode !== null && tableMode !== "edit" && routed.currentFieldId === "operations";
       const skipTableStyle = (tableMode === "create" || tableMode === "edit") && routed.currentFieldId === "style";
-      if (!skipDimStyle && !skipDimStyleId && !skipTableDefinition && !skipTableHandle && !skipSelectedTableHandle && !skipTableOperations && !skipTableStyle) break;
+      if (!skipDimStyle && !skipDimStyleId && !skipTextStyle && !skipTextStyleId && !skipTableDefinition && !skipTableHandle && !skipSelectedTableHandle && !skipTableOperations && !skipTableStyle) break;
       routed = this.#prompt.skip();
     }
     return routed;
@@ -285,6 +318,97 @@ function prepareArc(document: KDrawDocumentV1, invocation: CommandInvocation): P
   });
 }
 
+function polygonMode(raw: string): VisualPolygonMode {
+  const value = raw.trim().toLocaleUpperCase("en-US");
+  if (value === "I" || value === "INSCRIBED" || value === "CENTER-INSCRIBED") return "center-inscribed";
+  if (value === "C" || value === "CIRCUMSCRIBED" || value === "CENTER-CIRCUMSCRIBED") return "center-circumscribed";
+  if (value === "E" || value === "EDGE") return "edge";
+  throw new CommandEngineInputError("POLYGON mode must be I, C or E.");
+}
+
+function polygonOrientation(raw: string | undefined): VisualPolygonOrientation {
+  const value = raw?.trim().toLocaleUpperCase("en-US") ?? "CCW";
+  if (value === "CCW" || value === "COUNTER-CLOCKWISE") return "counter-clockwise";
+  if (value === "CW" || value === "CLOCKWISE") return "clockwise";
+  throw new CommandEngineInputError("POLYGON orientation must be CCW or CW.");
+}
+
+export function prepareVisualPolygon(document: KDrawDocumentV1, draft: VisualPolygonDraft): VisualPolygonPrepared {
+  const handle = allocateEntityHandles(document, 1)[0]!;
+  const common = {
+    command: "POLYGON" as const,
+    handle,
+    layerId: document.currentLayerId,
+    sides: draft.sides,
+  };
+  const construction = draft.mode === "edge"
+    ? {
+        mode: "edge" as const,
+        first: parseCartesianPoint(draft.first),
+        second: parseCartesianPoint(draft.second),
+        orientation: draft.orientation,
+      }
+    : draft.mode === "center-inscribed"
+      ? {
+          mode: "center-inscribed" as const,
+          center: parseCartesianPoint(draft.center),
+          radius: draft.size,
+          rotationRad: draft.rotationDeg * Math.PI / 180,
+          rotationInput: draft.rotationInput,
+          orientation: draft.orientation,
+        }
+      : {
+          mode: "center-circumscribed" as const,
+          center: parseCartesianPoint(draft.center),
+          apothem: draft.size,
+          rotationRad: draft.rotationDeg * Math.PI / 180,
+          rotationInput: draft.rotationInput,
+          orientation: draft.orientation,
+        };
+  const prepared = prepareCompletePolygonCommand({ ...common, construction });
+  return {
+    commandId: prepared.commandId,
+    changes: prepared.changes,
+    targetHandles: [],
+    resultHandles: prepared.resultHandles,
+    operationArgs: { ...common, construction, normalized: prepared.normalized },
+    previewEntities: prepared.entities,
+    normalized: prepared.normalized,
+  };
+}
+
+function preparePolygon(document: KDrawDocumentV1, invocation: CommandInvocation): VisualPolygonPrepared {
+  if (invocation.arguments.length < 4) {
+    throw new CommandEngineInputError("POLYGON expects: sides I|C center size [rotationDeg] [CCW|CW], or sides E first second [CCW|CW].");
+  }
+  const sides = requireFiniteNumber(invocation.arguments[0]!, "Polygon sides");
+  const mode = polygonMode(invocation.arguments[1]!);
+  if (mode === "edge") {
+    return prepareVisualPolygon(document, {
+      sides,
+      mode,
+      center: "0,0",
+      size: 1,
+      first: invocation.arguments[2]!,
+      second: invocation.arguments[3]!,
+      rotationDeg: 0,
+      rotationInput: "numeric",
+      orientation: polygonOrientation(invocation.arguments[4]),
+    });
+  }
+  return prepareVisualPolygon(document, {
+    sides,
+    mode,
+    center: invocation.arguments[2]!,
+    size: requireFiniteNumber(invocation.arguments[3]!, mode === "center-inscribed" ? "Polygon radius" : "Polygon apothem"),
+    first: "0,0",
+    second: "1,0",
+    rotationDeg: invocation.arguments[4] === undefined ? 0 : requireFiniteNumber(invocation.arguments[4], "Polygon rotation"),
+    rotationInput: invocation.arguments[4] === undefined ? "radius-point" : "numeric",
+    orientation: polygonOrientation(invocation.arguments[5]),
+  });
+}
+
 function prepareMText(document: KDrawDocumentV1, invocation: CommandInvocation): PreparedEngineCommand {
   if (invocation.arguments.length < 3) throw new CommandEngineInputError('MTEXT expects position, height and text, for example MTEXT 40,40 5 "Kuubik märkus".');
   const prepared = prepareAnnotationCommand(document, {
@@ -322,6 +446,7 @@ function createCommandRegistry(): CommandRegistry {
     { id: "RECTANGLE", aliases: ["REC", "RECTANG"], prepare: prepareRectangle },
     { id: "CIRCLE", aliases: ["C"], prepare: prepareCircle },
     { id: "ARC", aliases: ["A"], prepare: prepareArc },
+    { id: "POLYGON", aliases: ["POL"], prepare: preparePolygon },
     { id: "MTEXT", aliases: ["MT"], prepare: prepareMText },
     { id: "LEADER", aliases: ["LE"], prepare: prepareLeader },
   ]);
@@ -333,6 +458,7 @@ export const VISUAL_SHELL_COMMAND_DEFINITIONS = Object.freeze([
   { id: "RECTANGLE", aliases: ["REC", "RECTANG"] },
   { id: "CIRCLE", aliases: ["C"] },
   { id: "ARC", aliases: ["A"] },
+  { id: "POLYGON", aliases: ["POL"] },
   { id: "MTEXT", aliases: ["MT"] },
   { id: "LEADER", aliases: ["LE"] },
   { id: "UNDO", aliases: ["U"] },
