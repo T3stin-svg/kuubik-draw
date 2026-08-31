@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "wave": "array-pedit-selection",
+  "rows": ["F-031", "F-032", "F-034", "F-038"],
+  "status": "implemented-not-certified",
+  "implemented": {
+    "F-031": ["rectangular rows and columns", "polar item count", "fill angle", "rotate items"],
+    "F-032": ["Divide", "Measure", "start offset", "align items", "line, arc, ellipse, polyline and spline path sampling"],
+    "F-034": ["Open", "Close", "Join", "Width", "Reverse", "Decurve", "linetype generation", "insert/delete/edit vertex"],
+    "F-038": ["entire drawing", "current selection", "replace", "append", "exclude", "Select Similar criteria"]
+  },
+  "invariants": {
+    "previewEqualsCommit": "generic atomic workflow calls the same injected preparation adapter",
+    "atomicUndoRedo": "all ARRAY or PEDIT entity changes are one CadSession operation",
+    "selectionDoesNotMutateDocument": "Quick Select and Select Similar return selection handles only"
+  },
+  "tests": {
+    "unitGoldenMutation": "packages/cad-core/test/array-pedit-selection.test.ts",
+    "wiringPreviewCommitUndoRedo": "apps/web/src/features/draw-modify/atomic-command-workflow.test.ts",
+    "lastResult": "2 files passed; 13 tests passed"
+  },
+  "knownLimits": [
+    "ARRAY and ARRAYPATH are non-associative because KDraw v1 has no array entity",
+    "PEDIT Join accepts line and polyline sources; arc-to-bulge Join remains unimplemented",
+    "ARRAYPATH curve length and tangent are sampled for non-line paths"
+  ],
+  "certificationGaps": [
+    "AutoCAD live workflow comparison not run",
+    "Kuubik browser workflow not integrated in this branch",
+    "saved output read-back not run"
+  ]
+}

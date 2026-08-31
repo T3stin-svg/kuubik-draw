@@ -52,3 +52,36 @@ existing, tested core/workflow implementation. Integration should call the previ
 and commit functions directly; both pass through the same internal preparation
 matrix. The matrix commit produces one `CadSession` operation, while command-local
 Undo is an immutable input-prefix replay and does not mutate the document.
+
+## Wave 3 exports
+
+From `packages/cad-core/src/array-commands.ts`:
+
+- `prepareArrayCommand`
+- `ArrayCommandInputError`
+- ARRAYRECT, ARRAYPOLAR, ARRAYPATH input and prepared-result types
+
+From `packages/cad-core/src/pedit.ts`:
+
+- `preparePeditCommand`
+- `PeditInputError`
+- `PeditAction`, `PeditCommandInput`, and `PreparedPeditCommand`
+
+From `packages/cad-core/src/selection-query.ts`:
+
+- `quickSelect`
+- `selectSimilar`
+- Quick Select and Select Similar input/result types
+
+From `apps/web/src/features/draw-modify/atomic-command-workflow.ts`:
+
+- `createAtomicCommandWorkflow`
+- `PreparedAtomicCommand` and `AtomicCommandAdapter`
+
+The host should adapt `prepareArrayCommand` and `preparePeditCommand` to
+`PreparedAtomicCommand` and supply that adapter to the generic feature workflow.
+ARRAYPATH currently creates non-associative copies because the v1 document schema
+has no associative-array entity. PEDIT supports lines and polylines; unsupported Join
+targets are explicitly rejected rather than silently approximated. Quick Select and
+Select Similar update selection state only and therefore do not create document Undo
+records.
