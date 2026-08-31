@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "wave": "f012-spline-only",
+  "rows": ["F-012"],
+  "status": "implemented-partial-not-certified",
+  "wipSource": {
+    "commit": "0d9ca9a1d27d5e3c4e6382283b593b4d326a5b49",
+    "directlyAdaptedFile": "packages/cad-core/src/spline.ts",
+    "wholeCommitCherryPicked": false
+  },
+  "implemented": [
+    "Fit point natural cubic interpolation",
+    "Control Vertices with degree 1 through 10 and weights",
+    "Chord, square-root chord and uniform parameterization",
+    "Open endpoint tangents",
+    "Closed periodic Fit and CV splines",
+    "Object replacement for eligible open polylines"
+  ],
+  "invariants": {
+    "previewEqualsCommit": "prepareSplineCommand is pure and deterministic",
+    "atomicUndoRedo": "Object delete and SPLINE put are one CadSession operation",
+    "schemaCompatibility": "WIP-only Fit metadata is stored in extensionData"
+  },
+  "tests": {
+    "unitGoldenMutationWiringAtomic": "packages/cad-core/test/spline.test.ts",
+    "lastResult": "1 file passed; 10 tests passed"
+  },
+  "knownLimits": [
+    "Non-zero Fit tolerance is retained but does not yet alter the interpolated geometry",
+    "SPLINEDIT belongs to F-035 and was not imported",
+    "Shared barrels and command registry are intentionally unchanged"
+  ],
+  "certificationGaps": [
+    "AutoCAD live workflow comparison not run in this branch",
+    "Kuubik browser workflow not integrated in this branch",
+    "saved output read-back not run"
+  ]
+}

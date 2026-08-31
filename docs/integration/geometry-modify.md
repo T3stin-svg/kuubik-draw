@@ -85,3 +85,27 @@ has no associative-array entity. PEDIT supports lines and polylines; unsupported
 targets are explicitly rejected rather than silently approximated. Quick Select and
 Select Similar update selection state only and therefore do not create document Undo
 records.
+
+## Wave 4 exports (F-012 only)
+
+From `packages/cad-core/src/spline.ts`:
+
+- `createControlVertexSpline`
+- `createFitPointSpline`
+- `splinePointAtParameter`
+- `prepareSplineCommand`
+- SPLINE input, parameterization, and prepared-result types
+
+Only the F-012 creation kernel from WIP commit
+`0d9ca9a1d27d5e3c4e6382283b593b4d326a5b49` was adapted. No WIP commit or shared
+barrel/package change was imported. The current pinned schema lacks the WIP Fit
+fields, so Fit points, tolerance, parameterization, and tangents are stored under
+`extensionData.splineDefinition` while the actual evaluated NURBS remains a standard
+`CadSpline`.
+
+Integration should route `SPL`/`SPLINE` to `prepareSplineCommand` and use the generic
+atomic workflow. Fit, control-vertex, closed periodic, endpoint tangent, and Object
+replacement modes are available. Non-zero Fit tolerance is retained as editable
+metadata but currently uses exact interpolation rather than WIP's bounded
+approximation; it must stay visibly partial until that algorithm and live behavior are
+integrated.
