@@ -12,6 +12,7 @@ Audit environment: Chromium, 1920×1080, 100% zoom equivalent, Windows 96 DPI ta
 | 4 — remove remaining shell font-glyph icons | `wave-3-after/` | `wave-4-after/` | palette, context, layout and viewport controls use original Kuubik SVG paths; 6 states recaptured |
 | 5 — integrated runtime adapters | `wave-4-after/` | `integration-wave/` | real LINE, Undo/Redo, precision, layer and document workflows plus validated MTEXT/INSERT intents; 0 console errors |
 | 6 — live shell contracts | `integration-wave/` | `live-wave/` | LINE/PLINE/CIRCLE/ARC and MTEXT/LEADER committed; F8 + command precision, controller-planned layer, ModelSpaceDocument tabs and honest disabled rows; 0 console errors |
+| 7 — live CAD shell completion | `live-wave-4/` | `live-20260831/` | semantic snap cycling, persisted document workspaces, PGP aliases, complete dimension menu and TABLE style/create; 9/9 Chromium tests and 0 console errors |
 
 ## Six audited states
 
@@ -69,6 +70,8 @@ All five fixed categories were re-measured locally: shell zones; ribbon/palette 
 - `git diff --check` — PASS
 
 Wave 6 also has an independent in-app-browser read-back: revision 4 with `circle,mtext,line`, two layers, GRID off, ORTHO on, one surviving `local` tab, F-088 disabled with the `Arenduses` reason and zero browser-console errors.
+
+Wave 7 uses the reserved port 5205 via `e2e/visual-shell.playwright.config.ts`. Its measured read-back and current 172-file / 867-test gate are recorded in `live-20260831/REPORT.md`. The existing 60.7% visual score remains unchanged.
 
 ## Honest boundaries
 

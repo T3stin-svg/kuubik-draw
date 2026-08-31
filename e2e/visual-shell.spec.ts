@@ -951,7 +951,8 @@ test("DIM and HATCH use typed prompts with atomic durable read-back", async ({ p
   await answerLivePrompt(page, "");
   await expect(page.locator(".command-history")).toContainText("HATCH · atomic commit/read-back");
 
-  await page.getByRole("button", { name: "Ribbon Dimension command" }).click();
+  await page.getByTestId("dimension-menu").locator("summary").click();
+  await page.getByRole("menuitem", { name: "Linear" }).click();
   await answerLivePrompt(page, "0,0");
   await answerLivePrompt(page, "100,0");
   await answerLivePrompt(page, "0,20");
@@ -1040,5 +1041,188 @@ test("precision candidates, document tabs, recovery and PDF underlay use live or
   await expect(readBack).toHaveAttribute("data-pdf-placement", /underlay-/u);
   await expect(readBack).toHaveAttribute("data-pdf-bytes", String(pdf.byteLength));
   await expect(page.locator(".command-history")).toContainText("PDFATTACH");
+  expect(errors).toEqual([]);
+});
+
+test("OSNAP candidate stack cycles by keyboard and drives the committed pointer frame", async ({ page }) => {
+  const errors: string[] = [];
+  page.on("console", (message) => { if (message.type() === "error") errors.push(message.text()); });
+  page.on("pageerror", (error) => errors.push(error.message));
+  await page.setViewportSize({ width: 1920, height: 1080 });
+  await page.goto("/d/local");
+  const command = page.getByRole("textbox", { name: "Command input" });
+  const submit = page.getByRole("button", { name: "Käivita käsk" });
+  await command.fill("LINE 0,0 100,0");
+  await submit.click();
+  await command.fill("CIRCLE 0,0 25");
+  await submit.click();
+
+  const canvas = page.getByLabel("Kuubik Draw joonestusala");
+  const origin = await canvas.evaluate((element) => {
+    const rect = element.getBoundingClientRect();
+    const centerX = Number((element as HTMLElement).dataset.worldCenterX);
+    const centerY = Number((element as HTMLElement).dataset.worldCenterY);
+    const units = Number((element as HTMLElement).dataset.worldUnitsPerPixel);
+    return { x: rect.width / 2 - centerX / units, y: rect.height / 2 + centerY / units };
+  });
+  await canvas.hover({ position: origin });
+  const readback = page.getByTestId("live-contract-readback");
+  await expect.poll(async () => Number(await readback.getAttribute("data-snap-candidates"))).toBeGreaterThanOrEqual(2);
+  const firstId = await readback.getAttribute("data-snap-candidate-id");
+  await expect(page.getByTestId("cad-snap-marker")).toBeVisible();
+  await canvas.focus();
+  await page.keyboard.press("Tab");
+  await expect.poll(() => readback.getAttribute("data-snap-candidate-id")).not.toBe(firstId);
+  await expect(readback).toHaveAttribute("data-snap-candidate-index", "1");
+  await page.keyboard.press("Shift+Tab");
+  await expect(readback).toHaveAttribute("data-snap-candidate-id", firstId!);
+  await expect(page.locator(".command-history")).toContainText("OSNAP 1/");
+  if (captureRoot) {
+    await writeFile(resolve(captureRoot, "visual-live-snap-cycle.png"), await page.screenshot());
+    await writeFile(resolve(captureRoot, "visual-live-snap-cycle.json"), `${JSON.stringify({
+      viewport: [1920, 1080],
+      candidateCount: Number(await readback.getAttribute("data-snap-candidates")),
+      candidateId: await readback.getAttribute("data-snap-candidate-id"),
+      candidateMode: await readback.getAttribute("data-snap-candidate-mode"),
+      marker: await page.getByTestId("cad-snap-marker").evaluate((element) => {
+        const rect = element.getBoundingClientRect();
+        return { x: rect.x, y: rect.y, width: rect.width, height: rect.height };
+      }),
+      consoleErrors: errors,
+    }, null, 2)}\n`, "utf8");
+  }
+  expect(errors).toEqual([]);
+});
+
+test("PGP aliases and per-document workspace history remain isolated and durable", async ({ page }) => {
+  const errors: string[] = [];
+  page.on("console", (message) => { if (message.type() === "error") errors.push(message.text()); });
+  page.on("pageerror", (error) => errors.push(error.message));
+  await page.setViewportSize({ width: 1920, height: 1080 });
+  await page.goto("/d/local");
+
+  await page.getByRole("button", { name: "Ava käsuajalugu" }).click();
+  await page.getByLabel("Import PGP aliases").setInputFiles({ name: "reio.pgp", mimeType: "text/plain", buffer: Buffer.from("ZZ, *LINE\r\n") });
+  await expect(page.getByTestId("pgp-alias-count")).toHaveText("1 custom alias");
+  await page.getByRole("button", { name: "Sulge Kuubik Text Window" }).click();
+
+  const command = page.getByRole("textbox", { name: "Command input" });
+  await command.fill("ZZ 0,0 80,0");
+  await command.press("Enter");
+  const canvas = page.getByLabel("Kuubik Draw joonestusala");
+  const localSelection = await canvas.getAttribute("data-selected-handles");
+  expect(localSelection).toBeTruthy();
+  const readback = page.getByTestId("live-contract-readback");
+  await expect(readback).toHaveAttribute("data-pgp-aliases", "ZZ:LINE");
+  await expect(readback).toHaveAttribute("data-workspace-history", /ZZ 0,0 80,0/u);
+  await expect(readback).toHaveAttribute("data-workspace-selection", localSelection!);
+
+  await page.getByRole("button", { name: "Uus joonis", exact: true }).click();
+  await expect(readback).toHaveAttribute("data-workspace-active-document", "drawing-2");
+  await command.fill("CIRCLE 20,20 10");
+  await command.press("Enter");
+  await expect(canvas).toHaveAttribute("data-selected-handles", /.+/u);
+  const drawingSelection = await canvas.getAttribute("data-selected-handles");
+  expect(drawingSelection).toBeTruthy();
+  await expect(readback).toHaveAttribute("data-workspace-history", /CIRCLE 20,20 10/u);
+
+  await page.getByRole("button", { name: "local.kdraw", exact: true }).click();
+  await expect(readback).toHaveAttribute("data-workspace-active-document", "local");
+  await expect(canvas).toHaveAttribute("data-selected-handles", localSelection!);
+  await expect(readback).toHaveAttribute("data-workspace-history", /ZZ 0,0 80,0/u);
+  await page.getByRole("button", { name: "Kiirpääsu Undo" }).click();
+  await expect(readback).toHaveAttribute("data-workspace-can-redo", "true");
+  await page.getByRole("button", { name: "Kiirpääsu Redo" }).click();
+  await expect(readback).toHaveAttribute("data-workspace-can-undo", "true");
+  await expect(readback).toHaveAttribute("data-workspace-history", /ZZ 0,0 80,0\|U\|REDO/u);
+  if (captureRoot) {
+    await writeFile(resolve(captureRoot, "visual-live-workspace-history.png"), await page.screenshot());
+    await writeFile(resolve(captureRoot, "visual-live-workspace-history.json"), `${JSON.stringify({
+      viewport: [1920, 1080],
+      activeDocument: await readback.getAttribute("data-workspace-active-document"),
+      selection: await readback.getAttribute("data-workspace-selection"),
+      history: await readback.getAttribute("data-workspace-history"),
+      aliases: await readback.getAttribute("data-pgp-aliases"),
+      canUndo: await readback.getAttribute("data-workspace-can-undo"),
+      canRedo: await readback.getAttribute("data-workspace-can-redo"),
+      consoleErrors: errors,
+    }, null, 2)}\n`, "utf8");
+  }
+  expect(errors).toEqual([]);
+});
+
+test("TABLE and dimension variants are visible shell workflows with atomic read-back", async ({ page }) => {
+  const errors: string[] = [];
+  page.on("console", (message) => { if (message.type() === "error") errors.push(message.text()); });
+  page.on("pageerror", (error) => errors.push(error.message));
+  await page.setViewportSize({ width: 1920, height: 1080 });
+  await page.goto("/d/local");
+
+  await page.getByRole("button", { name: "Mõõdustiilid" }).click();
+  await answerLivePrompt(page, "create");
+  await answerLivePrompt(page, JSON.stringify({ id: "DIM", name: "Kuubik DIM", textHeight: 2.5, arrowSize: 2.5, extensionOffset: 0.5, scale: 1 }));
+
+  const dimensionMenu = page.getByTestId("dimension-menu");
+  await dimensionMenu.locator("summary").click();
+  for (const label of ["Linear", "Aligned", "Angular", "Radius", "Diameter", "Continue", "Baseline", "Dimension Style"]) {
+    await expect(page.getByRole("menuitem", { name: new RegExp(`^${label}`) })).toBeVisible();
+  }
+  await page.getByRole("menuitem", { name: "Aligned" }).click();
+  await answerLivePrompt(page, "0,0");
+  await answerLivePrompt(page, "100,40");
+  await answerLivePrompt(page, "20,50");
+  await answerLivePrompt(page, "ei");
+  await answerLivePrompt(page, "DIM");
+  await expect(page.locator(".command-history")).toContainText("DIM · atomic commit/read-back");
+
+  await dimensionMenu.locator("summary").click();
+  await page.getByRole("menuitem", { name: /^Continue/u }).click();
+  await answerLivePrompt(page, "0,0;50,0;100,0");
+  await answerLivePrompt(page, "0,20");
+  await answerLivePrompt(page, "horizontal");
+  await answerLivePrompt(page, "CHAIN-A");
+  await answerLivePrompt(page, "ei");
+  await answerLivePrompt(page, "DIM");
+  await expect(page.locator(".runtime-intent-readback")).toHaveAttribute("data-runtime-entity-kinds", /dimension/u);
+
+  await page.getByRole("button", { name: "Tekstistiilid" }).click();
+  await answerLivePrompt(page, "create");
+  await answerLivePrompt(page, JSON.stringify({ id: "TXT", name: "Kuubik", fontFamily: "Arial", widthFactor: 1, obliqueAngleRad: 0 }));
+  await expect(page.locator(".command-history")).toContainText("STYLE · atomic commit/read-back");
+
+  const table = page.getByRole("button", { name: "Ribbon Table command" });
+  await table.click();
+  await answerLivePrompt(page, "style-create");
+  await answerLivePrompt(page, JSON.stringify({ id: "TABLE-STD", name: "Standard", textStyleId: "TXT", textHeight: 2.5, cellMargin: 1, borderWidth: 0.25, horizontalAlignment: "left", verticalAlignment: "middle" }));
+  await expect(page.locator(".command-history")).toContainText("TABLE · atomic commit/read-back");
+  await table.click();
+  await answerLivePrompt(page, "create");
+  await answerLivePrompt(page, JSON.stringify({
+    origin: { x: 200, y: 100 }, rotationRad: 0, styleId: "TABLE-STD",
+    rows: [{ id: "R1", height: 8 }, { id: "R2", height: 10 }],
+    columns: [{ id: "C1", width: 30 }, { id: "C2", width: 40 }],
+    cells: [
+      { id: "A1", rowId: "R1", columnId: "C1", value: { kind: "text", text: "Mark" } },
+      { id: "A2", rowId: "R1", columnId: "C2", value: { kind: "text", text: "Value" } },
+      { id: "B1", rowId: "R2", columnId: "C1", value: { kind: "text", text: "A-01" } },
+      { id: "B2", rowId: "R2", columnId: "C2", value: { kind: "field", code: "%<SheetNumber>%", fallback: "1" } },
+    ],
+  }));
+  await expect(page.locator(".runtime-intent-readback")).toHaveAttribute("data-runtime-entity-kinds", /proxy/u);
+  await expect(page.locator(".command-history")).toContainText("TABLE · atomic commit/read-back");
+  if (captureRoot) {
+    await dimensionMenu.locator("summary").click();
+    await writeFile(resolve(captureRoot, "visual-live-table-dimensions.png"), await page.screenshot());
+    await writeFile(resolve(captureRoot, "visual-live-table-dimensions.json"), `${JSON.stringify({
+      viewport: [1920, 1080],
+      revision: await page.locator(".runtime-intent-readback").getAttribute("data-runtime-revision"),
+      entityKinds: await page.locator(".runtime-intent-readback").getAttribute("data-runtime-entity-kinds"),
+      tableButton: await table.evaluate((element) => {
+        const rect = element.getBoundingClientRect();
+        return { x: rect.x, y: rect.y, width: rect.width, height: rect.height, disabled: (element as HTMLButtonElement).disabled };
+      }),
+      consoleErrors: errors,
+    }, null, 2)}\n`, "utf8");
+  }
   expect(errors).toEqual([]);
 });

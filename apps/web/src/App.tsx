@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { DEFAULT_MATCH_PROPERTIES_SETTINGS, ISO_PAPER_MEDIA, MAX_PAGE_SETUP_TEMPLATE_BYTES, STANDARD_VIEWPORT_SCALE_DENOMINATORS, allocateEntityHandles, applyNamedPageSetup, buildLayoutPublishPlan, CadCommandInputError, CadSession, clearNamedPageSetupAssignment, createPageSetupTemplate, LayoutCommandError, LayoutPublishSettingsError, NoOpOperationError, PageSetupLibraryError, copyPaperLayout, createEmptyDocument, createPaperLayout, createPaperViewport, deleteNamedPageSetup, deletePaperLayout, deletePaperViewport, executeMatchViewportProperties, formatViewportScale, importPageSetupTemplate, metadataWithLayoutPublishSettings, movePaperLayout, panPaperViewportByPixels, paperDefinitionForPageSetup, parseCartesianPoint, parsePageSetupTemplate, renameNamedPageSetup, renamePaperLayout, replaceDrawingContentPreservingLayouts, resolveCadCommand, resolveLayoutPublishSettings, resolveMatchPropertiesSettings, resolveModelPageSetup, resolvePageSetup, resolvePageSetupLibrary, resolvePaperDefinition, sanitizePdfFileStem, saveNamedPageSetup, serializeKDraw, serializePageSetupTemplate, setModelLayoutPageSetup, setPaperLayoutPageSetup, setPaperViewportDisplayLocked, setPaperViewportView, viewportScaleDenominator, zoomPaperViewportAtModelPoint, type AlignRejectedTarget, type BreakMode, type BreakRejectedTarget, type CadChange, type CadLayerToggle, type ChamferRejectedTarget, type ChamferTrimMode, type CopyRejectedTarget, type ExtendRejectedTarget, type ExtendTargetAction, type FilletRejectedTarget, type FilletTrimMode, type LayoutPublishSettingsV1, type LengthenMeasurement, type LengthenMode, type LengthenRejectedTarget, type MatchPropertiesRejectedTarget, type MatchPropertiesSettings, type MatchViewportRef, type MirrorRejectedTarget, type MoveRejectedTarget, type OffsetLayerMode, type OffsetRejectedTarget, type RotateRejectedTarget, type ScaleRejectedTarget, type StretchRejectedTarget, type TrimEdgeMode, type TrimMode, type TrimProjectMode, type TrimRejectedTarget, type TrimTargetAction } from "@kuubik/cad-core";
 import { DxfImportError, MAX_DXF_IMPORT_BYTES, exportDxf, importDxf } from "@kuubik/cad-dxf";
 import { createPdfUnderlayPlacement, exportLayoutSvg, exportLayoutsVectorPdf, exportLayoutVectorPdf, exportModelSvg, exportModelVectorPdf, preparePdfUnderlay, type LayoutPlotOptions, type ModelPlotOptions } from "@kuubik/cad-print";
-import { CadCanvasRenderer, pickCadEntity, pannedViewportWorldCenter, selectCadEntityHitsByCrossingPolygon, selectCadEntityHitsByFence, viewportScreenToWorld, viewportScreenTransform, type Viewport2D } from "@kuubik/cad-renderer";
+import { CadCanvasRenderer, pickCadEntity, pannedViewportWorldCenter, selectCadEntityHitsByCrossingPolygon, selectCadEntityHitsByFence, viewportScreenToWorld, viewportScreenTransform, viewportWorldToScreen, type Viewport2D } from "@kuubik/cad-renderer";
 import type { CadEntity, CadLayout, CadPageSetup, CadPaperRect, CadPlotStyle, CadViewport, KDrawDocumentV1 } from "@kuubik/cad-schema";
 import { clampCadContextMenuPosition } from "./context-menu.js";
 import { AnnotationPanel } from "./features/annotation/AnnotationPanel.js";
@@ -13,11 +13,13 @@ import { CommandEngineInputError } from "./features/command-system/command-engin
 import { activateDocumentTab, closeDocumentTab, createDocumentTabsState, markDocumentTabPersisted, openDocumentTab, readBackDocumentTabs, setDocumentTabLayout, updateDocumentTab, type DocumentTabsState } from "./features/documents/document-tabs.js";
 import { createNewModelSpaceDocument } from "./features/documents/model-space.js";
 import { DocumentLiveOrchestrator } from "./features/documents/document-live-orchestrator.js";
+import { DocumentWorkspaceShell, PgpAliasMapping } from "./features/documents/document-workspace-shell.js";
 import { CadIcon } from "./icons/CadIcon.js";
 import { KDrawIndexedDb, StorageRevisionConflictError } from "./indexed-db.js";
 import { CadShell, DrawingViewport, type WorkspacePreset } from "./shell/CadShell.js";
 import { CommandLine } from "./shell/CommandLine.js";
 import { DocumentTabs } from "./shell/DocumentTabs.js";
+import { DimensionMenu } from "./shell/DimensionMenu.js";
 import { LayoutBar } from "./shell/LayoutBar.js";
 import { LiveCommandPrompt } from "./shell/LiveCommandPrompt.js";
 import { PaletteFrame, type PaletteMode } from "./shell/PaletteFrame.js";
@@ -26,7 +28,7 @@ import { RibbonTabs } from "./shell/RibbonTabs.js";
 import { RibbonTool } from "./shell/RibbonTool.js";
 import { StatusBar } from "./shell/StatusBar.js";
 import { TitleBar } from "./shell/TitleBar.js";
-import { VisualShellRuntimeAdapter, type PrecisionToggleId, type PrecisionToggleState, type VisualShellLivePrompt } from "./shell/runtime-adapter.js";
+import { VISUAL_SHELL_COMMAND_DEFINITIONS, VisualShellRuntimeAdapter, type PrecisionToggleId, type PrecisionToggleState, type VisualShellLivePrompt, type VisualSnapCycleReadback } from "./shell/runtime-adapter.js";
 import { prepareAlign, prepareBreak, prepareChamfer, prepareCopy, prepareExtend, prepareFillet, prepareLengthen, prepareMatchProperties, prepareMirror, prepareMove, prepareOffset, prepareRotate, prepareScale, prepareStretch, prepareTrim, putEntities } from "./workflows/modify-command.js";
 import "./style.css";
 
@@ -56,7 +58,7 @@ const MODEL_VIEW_WORLD = Object.freeze({ minX: -500, minY: -500, maxX: 2500, max
 const MODEL_VIEW_REFERENCE_HEIGHT_PX = 793;
 const MODEL_VIEW_WORLD_UNITS_PER_PIXEL = (MODEL_VIEW_WORLD.maxY - MODEL_VIEW_WORLD.minY) / MODEL_VIEW_REFERENCE_HEIGHT_PX;
 const DRAWING_CONTEXT_MENU_SIZE = Object.freeze({ width: 200, height: 371 });
-const ANNOTATION_DEVELOPMENT_ROWS = new Set(["F-062", "F-063", "F-064", "F-065", "F-060"]);
+const ANNOTATION_DEVELOPMENT_ROWS = new Set(["F-060"]);
 const BLOCK_DEVELOPMENT_ROWS = new Set<string>();
 
 function modelViewport(widthPx: number, heightPx: number, devicePixelRatio: number): Viewport2D {
@@ -291,6 +293,8 @@ export function App() {
   const pdfUnderlayInput = useRef<HTMLInputElement>(null);
   const database = useMemo(() => new KDrawIndexedDb(), []);
   const liveDocuments = useMemo(() => new DocumentLiveOrchestrator(database, `visual-shell-${crypto.randomUUID()}`), [database]);
+  const aliases = useMemo(() => new PgpAliasMapping(VISUAL_SHELL_COMMAND_DEFINITIONS), []);
+  const workspace = useMemo(() => new DocumentWorkspaceShell(liveDocuments, aliases), [aliases, liveDocuments]);
   const session = useRef(new CadSession(createEmptyDocument({ documentId: LOCAL_DOCUMENT_ID })));
   const sessions = useRef(new Map<string, CadSession>([[LOCAL_DOCUMENT_ID, session.current]]));
   const nextDocumentSequence = useRef(2);
@@ -305,7 +309,10 @@ export function App() {
   const [livePromptCommand, setLivePromptCommand] = useState<string | null>(null);
   const [livePromptValue, setLivePromptValue] = useState("");
   const [livePromptFieldVersion, setLivePromptFieldVersion] = useState(0);
-  const [precisionCandidateReadback, setPrecisionCandidateReadback] = useState({ snapCount: 0, trackingCount: 0, dynamic: false });
+  const lastPrecisionCursor = useRef<{ x: number; y: number } | null>(null);
+  const [precisionCandidateReadback, setPrecisionCandidateReadback] = useState<VisualSnapCycleReadback & { dynamic: boolean; pixel: { x: number; y: number } | null }>({
+    candidateId: null, candidateIds: [], mode: null, point: null, handle: null, index: -1, count: 0, trackingCount: 0, dynamic: false, pixel: null,
+  });
   const [pdfUnderlayReadback, setPdfUnderlayReadback] = useState<{ placementId: string; byteLength: number; sha256: string } | null>(null);
   const [status, setStatus] = useState("Uus kohalik dokument");
   const [storageState, setStorageState] = useState<"loading" | "ready" | "recovered" | "recovery">("loading");
@@ -564,8 +571,12 @@ export function App() {
   const activeSpace = modelSpaceEditing ? "MODEL" : "PAPER";
   const pendingViewportScale = Number(viewportScaleInput.trim().replace(",", "."));
   const selectedViewportPreset = String(STANDARD_VIEWPORT_SCALE_DENOMINATORS.find((candidate) => Math.abs(candidate - pendingViewportScale) <= Math.max(1, candidate) * 1e-9) ?? "custom");
-  const canUndoInActiveLayout = session.current.canUndo && (modelSpaceEditing || /^(LAYOUT|VIEWPORT|PAGESETUP|PUBLISH|MATCHPROP)/u.test(session.current.nextUndoCommandId ?? ""));
-  const canRedoInActiveLayout = session.current.canRedo && (modelSpaceEditing || /^(LAYOUT|VIEWPORT|PAGESETUP|PUBLISH|MATCHPROP)/u.test(session.current.nextRedoCommandId ?? ""));
+  const workspaceReadback = workspace.readBack();
+  const activeWorkspaceDocument = workspaceReadback.live.sessions.documents.find((entry) => entry.documentId === document.documentId);
+  const nextUndoCommandId = activeWorkspaceDocument?.nextUndoCommandId ?? session.current.nextUndoCommandId;
+  const nextRedoCommandId = activeWorkspaceDocument?.nextRedoCommandId ?? session.current.nextRedoCommandId;
+  const canUndoInActiveLayout = (activeWorkspaceDocument?.canUndo ?? session.current.canUndo) && (modelSpaceEditing || /^(LAYOUT|VIEWPORT|PAGESETUP|PUBLISH|MATCHPROP)/u.test(nextUndoCommandId ?? ""));
+  const canRedoInActiveLayout = (activeWorkspaceDocument?.canRedo ?? session.current.canRedo) && (modelSpaceEditing || /^(LAYOUT|VIEWPORT|PAGESETUP|PUBLISH|MATCHPROP)/u.test(nextRedoCommandId ?? ""));
   const paperLayouts = document.layouts.filter((layout) => layout.kind === "paper");
   const publishSettings = useMemo(() => resolveLayoutPublishSettings(document), [document]);
   const pageSetupLibrary = useMemo(() => resolvePageSetupLibrary(document), [document]);
@@ -861,7 +872,7 @@ export function App() {
     void (async () => {
       try {
         await database.open();
-        const opened = await liveDocuments.open({ documentId: LOCAL_DOCUMENT_ID, fallbackDocument: session.current.document, sourceFileName: "local.kdraw" });
+        const opened = await workspace.open({ documentId: LOCAL_DOCUMENT_ID, fallbackDocument: session.current.document, sourceFileName: "local.kdraw" });
         const operations = await database.operations(LOCAL_DOCUMENT_ID);
         if (!active) return;
         session.current = new CadSession(opened.document, operations.map((entry) => entry.opId));
@@ -884,7 +895,15 @@ export function App() {
       active = false;
       database.close();
     };
-  }, [database, liveDocuments]);
+  }, [database, workspace]);
+
+  useEffect(() => {
+    try {
+      workspace.setSelection(document.documentId, selectedHandles);
+    } catch {
+      // The first render precedes IndexedDB/open; selection is applied once the live document exists.
+    }
+  }, [document.documentId, selectedHandles, workspace]);
 
   useEffect(() => {
     setPublishBaseNameInput(publishSettings.baseFileName);
@@ -1006,6 +1025,7 @@ export function App() {
         element.dataset.worldCenterX = String(transform.worldCenter.x);
         element.dataset.worldCenterY = String(transform.worldCenter.y);
         element.dataset.worldUnitsPerPixel = String(transform.worldUnitsPerPixel);
+        try { workspace.setViewport(document.documentId, viewport); } catch { /* Live document may still be opening. */ }
       } else {
         delete element.dataset.worldCenterX;
         delete element.dataset.worldCenterY;
@@ -1049,7 +1069,7 @@ export function App() {
     const observer = new ResizeObserver(render);
     observer.observe(element);
     return () => observer.disconnect();
-  }, [activeLayout, activePageSetup, activePaper, alignPreview, breakPreview, chamferPreview, copyPreview, document, extendPreview, filletPreview, lengthenPreview, matchPropertiesPreview, mirrorPreview, movePreview, offsetPreview, precision.grid, rotatePreview, scalePreview, selectedHandles, stretchPreview, trimPreview]);
+  }, [activeLayout, activePageSetup, activePaper, alignPreview, breakPreview, chamferPreview, copyPreview, document, extendPreview, filletPreview, lengthenPreview, matchPropertiesPreview, mirrorPreview, movePreview, offsetPreview, precision.grid, rotatePreview, scalePreview, selectedHandles, stretchPreview, trimPreview, workspace]);
 
   async function recoverFromStorageConflict(error: unknown): Promise<void> {
     if (!(error instanceof StorageRevisionConflictError)) throw error;
@@ -1094,6 +1114,7 @@ export function App() {
     const committedAt = new Date().toISOString();
     candidate.commit(operation, changes, committedAt);
     const next = candidate.document;
+    liveDocuments.recordCommand(next.documentId, commandId);
     const persisted = await liveDocuments.commit(next.documentId, operation, changes, committedAt);
     if (JSON.stringify(persisted) !== JSON.stringify(next)) throw new Error(`${commandId}: DocumentLiveOrchestrator read-back erines kandidaadist.`);
     session.current = candidate;
@@ -1127,8 +1148,20 @@ export function App() {
       setStatus("Command: sisesta käsk");
       return;
     }
-    const precisionResult = runtime.executePrecisionCommand(raw);
+    let canonicalRaw: string;
+    let commandName: string;
+    try {
+      const requested = raw.split(/\s+/u, 1)[0]!;
+      const resolution = aliases.resolve(requested);
+      commandName = resolution.commandId;
+      canonicalRaw = `${commandName}${raw.slice(requested.length)}`;
+    } catch (error) {
+      setStatus(`Command viga: ${error instanceof Error ? error.message : String(error)}`);
+      return;
+    }
+    const precisionResult = runtime.executePrecisionCommand(canonicalRaw);
     if (precisionResult.handled) {
+      workspace.recordCommand(document.documentId, raw);
       setPrecision(runtime.precisionState());
       setRuntimeCommandHistory((current) => [...current.slice(-29), raw]);
       setRuntimeHistoryIndex(runtimeCommandHistory.length + 1);
@@ -1137,8 +1170,16 @@ export function App() {
       setStatus(`${precisionResult.message ?? precisionResult.command} · PrecisionCommandState`);
       return;
     }
-    const commandName = raw.split(/\s+/u, 1)[0]!.replace(/^[_.]+/u, "").toLocaleUpperCase();
-    if (!["U", "UNDO", "REDO"].includes(commandName) && (!modelSpaceEditing || activeLayer.locked)) {
+    if (commandName === "UNDO" || commandName === "REDO") {
+      setRuntimeCommandHistory((current) => [...current.slice(-29), raw]);
+      setRuntimeHistoryIndex(runtimeCommandHistory.length + 1);
+      setCommandInput("");
+      setActiveCommandPrompt(null);
+      if (commandName === "UNDO") await undoLast();
+      else await redoLast();
+      return;
+    }
+    if (!modelSpaceEditing || activeLayer.locked) {
       setStatus(`${commandName}: käsk pole praeguses mudeliruumi/kihi olekus saadaval`);
       return;
     }
@@ -1147,31 +1188,18 @@ export function App() {
       const candidate = session.current.fork();
       const engine = runtime.commandEngine(candidate);
       const committedAt = new Date().toISOString();
-      let resultKind: "commit" | "undo" | "redo";
-      let committed: ReturnType<CadSession["commit"]> | null;
-      if (["U", "UNDO", "REDO"].includes(commandName)) {
-        const result = engine.execute(raw, committedAt);
-        if (result.kind === "cancel" || result.kind === "commit") throw new CommandEngineInputError(`Unexpected ${result.kind} result for ${commandName}.`);
-        resultKind = result.kind;
-        committed = result.committed;
-      } else {
-        const prepared = engine.preview(raw);
-        const operation = {
-          opId: crypto.randomUUID(),
-          baseRevision: candidate.document.revision,
-          commandId: prepared.commandId,
-          args: prepared.operationArgs,
-          targetHandles: prepared.targetHandles,
-          resultHandles: prepared.resultHandles,
-        };
-        committed = candidate.commit(operation, prepared.changes, committedAt);
-        resultKind = "commit";
-      }
-      if (!committed) {
-        setStatus(`${commandName}: midagi pole ${resultKind === "undo" ? "tagasi võtta" : "uuesti teha"}`);
-        return;
-      }
+      const prepared = engine.preview(canonicalRaw);
+      const operation = {
+        opId: crypto.randomUUID(),
+        baseRevision: candidate.document.revision,
+        commandId: prepared.commandId,
+        args: { operationArgs: prepared.operationArgs, invokedAs: raw.split(/\s+/u, 1)[0] },
+        targetHandles: prepared.targetHandles,
+        resultHandles: prepared.resultHandles,
+      };
+      const committed = candidate.commit(operation, prepared.changes, committedAt);
       const next = candidate.document;
+      workspace.recordCommand(next.documentId, raw);
       const persisted = await liveDocuments.commit(next.documentId, committed.operation, committed.changes, committedAt);
       if (JSON.stringify(persisted) !== JSON.stringify(next)) throw new Error(`${committed.operation.commandId}: DocumentLiveOrchestrator read-back erines kandidaadist.`);
       session.current = candidate;
@@ -1181,7 +1209,7 @@ export function App() {
         document: next,
         activeLayoutId: next.layouts.some((layout) => layout.id === activeLayoutId) ? activeLayoutId : next.layouts[0]!.id,
       }), next.documentId, next.revision));
-      setSelectedHandles(resultKind === "commit" ? committed.operation.resultHandles : []);
+      setSelectedHandles(committed.operation.resultHandles);
       setRuntimeCommandHistory((current) => [...current.slice(-29), raw]);
       setRuntimeHistoryIndex(runtimeCommandHistory.length + 1);
       setCommandInput("");
@@ -1227,8 +1255,8 @@ export function App() {
         beginRuntimeCommand("LEADER", "LEADER · sisesta kaks punkti ja soovi korral tekst");
         return;
       }
-      if (intent.commandId === "DIMLINEAR") {
-        beginLivePrompt({ commandId: "DIM", dimensionCommandId: "DIMLINEAR", context: { activeLayerId: document.currentLayerId, selectedHandles: intent.selectedHandles } });
+      if (["DIMLINEAR", "DIMALIGNED", "DIMANGULAR", "DIMRADIUS", "DIMDIAMETER", "DIMCONTINUE", "DIMBASELINE"].includes(intent.commandId)) {
+        beginLivePrompt({ commandId: "DIM", dimensionCommandId: intent.commandId as "DIMLINEAR" | "DIMALIGNED" | "DIMANGULAR" | "DIMRADIUS" | "DIMDIAMETER" | "DIMCONTINUE" | "DIMBASELINE", context: { activeLayerId: document.currentLayerId, selectedHandles: intent.selectedHandles } });
         return;
       }
       if (intent.commandId === "HATCH") {
@@ -1241,6 +1269,10 @@ export function App() {
       }
       if (intent.commandId === "STYLE") {
         beginLivePrompt({ commandId: "STYLE" });
+        return;
+      }
+      if (intent.commandId === "TABLE") {
+        beginLivePrompt({ commandId: "TABLE", context: { activeLayerId: document.currentLayerId, selectedHandles: intent.selectedHandles } });
         return;
       }
       setRuntimeIntent({ kind: "annotation", commandId: intent.commandId, selectedHandles: intent.selectedHandles });
@@ -1271,7 +1303,7 @@ export function App() {
     setLivePromptValue("");
     setLivePromptFieldVersion((current) => current + 1);
     setActiveCommandPrompt(request.commandId === "DIM" ? request.dimensionCommandId ?? "DIM" : request.commandId);
-    setRuntimeIntent({ kind: request.commandId === "DIM" || request.commandId === "HATCH" ? "annotation" : "block", commandId: request.commandId, selectedHandles: [...(request.context?.selectedHandles ?? [])] });
+    setRuntimeIntent({ kind: request.commandId === "DIM" || request.commandId === "HATCH" || request.commandId === "TABLE" || request.commandId === "STYLE" ? "annotation" : "block", commandId: request.commandId, selectedHandles: [...(request.context?.selectedHandles ?? [])] });
     setStatus(`${request.commandId}: ${livePrompt.current.field?.label ?? "valmis commitiks"}`);
   }
 
@@ -1289,6 +1321,7 @@ export function App() {
       committing.current = true;
       const committedAt = new Date().toISOString();
       const result = prompt.commit(committedAt);
+      liveDocuments.recordCommand(document.documentId, result.readBack.commandId);
       const persisted = await liveDocuments.commit(document.documentId, result.committed.operation, result.committed.changes, committedAt);
       if (JSON.stringify(persisted) !== JSON.stringify(result.document)) throw new Error(`${result.committed.operation.commandId}: durable read-back erines adapteri read-backist.`);
       session.current = result.session;
@@ -1373,10 +1406,11 @@ export function App() {
     const targetSession = sessions.current.get(documentId) ?? new CadSession(tab.document);
     sessions.current.set(documentId, targetSession);
     session.current = targetSession;
+    const workspaceState = workspace.readBack().live.sessions.documents.find((entry) => entry.documentId === documentId);
     setDocument(targetSession.document);
     setDocumentTabs(nextState);
     setActiveLayoutId(tab.activeLayoutId);
-    setSelectedHandles([]);
+    setSelectedHandles(workspaceState?.selectedHandles ?? []);
     setSelectedViewportId(null);
     setModelViewportId(null);
     setActiveCommandPrompt(null);
@@ -1387,7 +1421,7 @@ export function App() {
 
   function activateOpenDocument(documentId: string): void {
     if (documentId === document.documentId) return;
-    liveDocuments.activate(documentId);
+    workspace.activate(documentId);
     const synchronized = updateDocumentTab(documentTabs, { document, activeLayoutId });
     switchDocument(activateDocumentTab(synchronized, documentId), documentId);
   }
@@ -1397,7 +1431,7 @@ export function App() {
     while (documentTabs.tabs.some((tab) => tab.documentId === documentId)) documentId = `drawing-${nextDocumentSequence.current++}`;
     const created = createNewModelSpaceDocument({ documentId, title: `${documentId}.kdraw` });
     const nextDocument = created.document;
-    await liveDocuments.open({ documentId, fallbackDocument: nextDocument, sourceFileName: `${documentId}.kdraw`, activeLayoutId: created.activeLayoutId });
+    await workspace.open({ documentId, fallbackDocument: nextDocument, sourceFileName: `${documentId}.kdraw`, activeLayoutId: created.activeLayoutId });
     sessions.current.set(document.documentId, session.current);
     const nextSession = new CadSession(nextDocument);
     sessions.current.set(documentId, nextSession);
@@ -2028,20 +2062,48 @@ export function App() {
   function updateModelPointer(event: React.PointerEvent<HTMLCanvasElement>): void {
     const rect = event.currentTarget.getBoundingClientRect();
     const pixel = { x: event.clientX - rect.left, y: event.clientY - rect.top };
-    const cursorPoint = viewportScreenToWorld(modelViewport(rect.width, rect.height, window.devicePixelRatio || 1), pixel);
-    const candidates = runtime.precisionCandidates(document, cursorPoint);
+    const viewport = modelViewport(rect.width, rect.height, window.devicePixelRatio || 1);
+    const cursorPoint = viewportScreenToWorld(viewport, pixel);
+    lastPrecisionCursor.current = cursorPoint;
+    const cycle = runtime.updateSnapCycle(document, cursorPoint);
     const resolved = runtime.precisionPointer(document, {
       basePoint: { x: 0, y: 0 },
       cursorPoint,
       trackingAnglesRad: [0, Math.PI / 2, Math.PI, Math.PI * 1.5],
+      ...(cycle.candidateId ? { snapCandidateId: cycle.candidateId } : {}),
     });
     setPrecisionSource(resolved.preview.source);
-    setPrecisionCandidateReadback({ ...candidates, dynamic: precision.dyn });
+    setPrecisionCandidateReadback({
+      ...cycle,
+      dynamic: precision.dyn,
+      pixel: cycle.point ? viewportWorldToScreen(viewport, cycle.point) : null,
+    });
     setCursorReadout({
       pixel,
       world: { x: Number(resolved.commit.point.x.toFixed(6)), y: Number(resolved.commit.point.y.toFixed(6)) },
     });
     updateStretchDrag(event);
+  }
+
+  function cycleModelSnap(event: React.KeyboardEvent<HTMLCanvasElement>): void {
+    if (event.key !== "Tab" || !lastPrecisionCursor.current || precisionCandidateReadback.count < 2) return;
+    event.preventDefault();
+    const rect = event.currentTarget.getBoundingClientRect();
+    const viewport = modelViewport(rect.width, rect.height, window.devicePixelRatio || 1);
+    const cycle = runtime.cycleSnap(document, lastPrecisionCursor.current, event.shiftKey ? -1 : 1);
+    const resolved = runtime.precisionPointer(document, {
+      basePoint: { x: 0, y: 0 },
+      cursorPoint: lastPrecisionCursor.current,
+      trackingAnglesRad: [0, Math.PI / 2, Math.PI, Math.PI * 1.5],
+      ...(cycle.candidateId ? { snapCandidateId: cycle.candidateId } : {}),
+    });
+    setPrecisionSource(resolved.preview.source);
+    setPrecisionCandidateReadback({ ...cycle, dynamic: precision.dyn, pixel: cycle.point ? viewportWorldToScreen(viewport, cycle.point) : null });
+    setCursorReadout((current) => current ? {
+      ...current,
+      world: { x: Number(resolved.commit.point.x.toFixed(6)), y: Number(resolved.commit.point.y.toFixed(6)) },
+    } : current);
+    setStatus(`OSNAP ${cycle.index + 1}/${cycle.count} · ${cycle.mode ?? "candidate"} · Tab cycles`);
   }
 
   function finishStretchDrag(event: React.PointerEvent<HTMLCanvasElement>): void {
@@ -2662,11 +2724,10 @@ export function App() {
     committing.current = true;
     try {
       const committedAt = new Date().toISOString();
-      const committed = session.current.undo(committedAt);
-      if (!committed) return;
-      const next = session.current.document;
-      const persisted = await liveDocuments.commit(next.documentId, committed.operation, committed.changes, committedAt);
-      if (JSON.stringify(persisted) !== JSON.stringify(next)) throw new Error("UNDO DocumentLiveOrchestrator read-back erines kandidaadist.");
+      const next = await workspace.undo(document.documentId, committedAt);
+      if (!next) return;
+      const operations = await database.operations(next.documentId);
+      session.current = new CadSession(next, operations.map((entry) => entry.opId));
       sessions.current.set(next.documentId, session.current);
       setDocument(next);
       setDocumentTabs((current) => markDocumentTabPersisted(updateDocumentTab(current, {
@@ -2688,11 +2749,10 @@ export function App() {
     committing.current = true;
     try {
       const committedAt = new Date().toISOString();
-      const committed = session.current.redo(committedAt);
-      if (!committed) return;
-      const next = session.current.document;
-      const persisted = await liveDocuments.commit(next.documentId, committed.operation, committed.changes, committedAt);
-      if (JSON.stringify(persisted) !== JSON.stringify(next)) throw new Error("REDO DocumentLiveOrchestrator read-back erines kandidaadist.");
+      const next = await workspace.redo(document.documentId, committedAt);
+      if (!next) return;
+      const operations = await database.operations(next.documentId);
+      session.current = new CadSession(next, operations.map((entry) => entry.opId));
       sessions.current.set(next.documentId, session.current);
       setDocument(next);
       setDocumentTabs((current) => markDocumentTabPersisted(updateDocumentTab(current, {
@@ -3452,6 +3512,26 @@ export function App() {
     setStatus(`KDraw eksporditud: revision ${document.revision}`);
   }
 
+  async function importPgpAliases(file: File): Promise<void> {
+    try {
+      const result = await aliases.importPgp(new Uint8Array(await file.arrayBuffer()));
+      setStatus(`PGP imporditud: ${result.mappingCount} aliast · ${result.conflicts.length} konflikt(i) · SHA-256 ${result.sha256.slice(0, 12)}`);
+    } catch (error) {
+      setStatus(`PGP impordi viga: ${error instanceof Error ? error.message : String(error)}`);
+    }
+  }
+
+  function exportPgpAliases(): void {
+    const bytes = aliases.exportPgp();
+    const url = URL.createObjectURL(new Blob([bytes as Uint8Array<ArrayBuffer>], { type: "text/plain;charset=utf-8" }));
+    const anchor = window.document.createElement("a");
+    anchor.href = url;
+    anchor.download = "kuubik-draw.pgp";
+    anchor.click();
+    URL.revokeObjectURL(url);
+    setStatus(`PGP eksporditud: ${aliases.readBack().byteLength} B`);
+  }
+
   const documentName = `${document.metadata.title || document.documentId}.kdraw`;
 
   return (
@@ -3504,9 +3584,9 @@ export function App() {
             <div className="ribbon-panel-tools">
               <RibbonTool rowId="F-057" label="Text" icon="text" large available={runtime.canExecute("F-057")} pressed={activeCommandPrompt === "MTEXT"} onClick={() => beginAnnotation("MTEXT")} disabled={!modelSpaceEditing || activeLayer.locked} />
               <div className="ribbon-tool-grid ribbon-tool-grid-dense">
-                <RibbonTool rowId="F-061" label="Dimension" icon="dimension" available={runtime.canExecute("F-061")} pressed={activeCommandPrompt === "DIMLINEAR"} onClick={() => beginAnnotation("DIMLINEAR", selectedHandles)} disabled={!modelSpaceEditing || activeLayer.locked} />
+                <DimensionMenu activeCommand={activeCommandPrompt} available={(rowId) => runtime.canExecute(rowId)} modelSpaceEditing={modelSpaceEditing} activeLayerLocked={activeLayer.locked} selectedHandles={selectedHandles} onCommand={beginAnnotation} />
                 <RibbonTool rowId="F-059" label="Leader" icon="leader" available={runtime.canExecute("F-059")} pressed={activeCommandPrompt === "LEADER"} onClick={() => beginAnnotation("LEADER")} disabled={!modelSpaceEditing || activeLayer.locked} />
-                <RibbonTool rowId="F-068" label="Table" icon="table" />
+                <RibbonTool rowId="F-068" label="Table" icon="table" available={runtime.canExecute("F-068")} pressed={activeCommandPrompt === "TABLE"} onClick={() => beginAnnotation("TABLE", selectedHandles)} disabled={!modelSpaceEditing || activeLayer.locked} />
               </div>
             </div>
             <strong>Annotation</strong>
@@ -4243,10 +4323,12 @@ export function App() {
             <canvas
               ref={canvas}
               aria-label="Kuubik Draw joonestusala"
+              tabIndex={0}
               data-preview-command={previewCommand ?? ""}
               data-selected-handles={selectedHandles.join(",")}
-              onPointerDown={selectModifyTargetFromCanvas}
+              onPointerDown={(event) => { event.currentTarget.focus({ preventScroll: true }); selectModifyTargetFromCanvas(event); }}
               onPointerMove={updateModelPointer}
+              onKeyDown={cycleModelSnap}
               onPointerUp={finishStretchDrag}
               onPointerCancel={() => setStretchDrag(null)}
               onPointerLeave={() => { if (!stretchDrag) setCursorReadout(null); }}
@@ -4260,6 +4342,16 @@ export function App() {
               style={{ left: cursorReadout.pixel.x, top: cursorReadout.pixel.y }}
               aria-hidden="true"
             ><i className="cad-crosshair-horizontal" /><i className="cad-crosshair-vertical" /><i className="cad-pickbox" /></div>}
+            {cursorReadout && precisionCandidateReadback.pixel && precisionCandidateReadback.candidateId && <div
+              className={`cad-snap-marker snap-${precisionCandidateReadback.mode ?? "candidate"}`}
+              data-testid="cad-snap-marker"
+              data-candidate-id={precisionCandidateReadback.candidateId}
+              data-candidate-index={precisionCandidateReadback.index}
+              data-candidate-count={precisionCandidateReadback.count}
+              data-candidate-mode={precisionCandidateReadback.mode ?? ""}
+              style={{ left: precisionCandidateReadback.pixel.x, top: precisionCandidateReadback.pixel.y }}
+              aria-hidden="true"
+            ><span /></div>}
             <div className="view-orientation-indicator" data-testid="view-orientation-indicator" role="img" aria-label="Top view, world coordinate system">
               <span className="view-north">N</span><span className="view-east">E</span><span className="view-south">S</span><span className="view-west">W</span>
               <strong>TOP</strong><small>WCS</small>
@@ -4409,11 +4501,21 @@ export function App() {
             {runtimeIntent ? `${runtimeIntent.kind}: ${runtimeIntent.commandId}` : "Runtime valmis"}
           </output>
           <output className="live-contract-readback" aria-live="polite" data-testid="live-contract-readback"
-            data-snap-candidates={precisionCandidateReadback.snapCount}
+            data-snap-candidates={precisionCandidateReadback.count}
+            data-snap-candidate-id={precisionCandidateReadback.candidateId ?? ""}
+            data-snap-candidate-index={precisionCandidateReadback.index}
+            data-snap-candidate-mode={precisionCandidateReadback.mode ?? ""}
             data-tracking-candidates={precisionCandidateReadback.trackingCount}
             data-dynamic-input={precisionCandidateReadback.dynamic ? "true" : "false"}
-            data-live-tabs={liveDocuments.readBack().tabs.tabOrder.join(",")}
-            data-live-recovery={liveDocuments.readBack().recoveries.map((item) => `${item.documentId}:${item.source}`).join(",")}
+            data-live-tabs={workspaceReadback.live.tabs.tabOrder.join(",")}
+            data-live-recovery={workspaceReadback.live.recoveries.map((item) => `${item.documentId}:${item.source}`).join(",")}
+            data-workspace-active-document={workspaceReadback.live.sessions.activeDocumentId ?? ""}
+            data-workspace-selection={activeWorkspaceDocument?.selectedHandles.join(",") ?? ""}
+            data-workspace-can-undo={activeWorkspaceDocument?.canUndo ? "true" : "false"}
+            data-workspace-can-redo={activeWorkspaceDocument?.canRedo ? "true" : "false"}
+            data-workspace-history={(activeWorkspaceDocument?.commandHistory ?? []).join("|")}
+            data-pgp-alias-count={Object.keys(workspaceReadback.aliases.importedAliases).length}
+            data-pgp-aliases={Object.entries(workspaceReadback.aliases.importedAliases).map(([alias, commandId]) => `${alias}:${commandId}`).join(",")}
             data-pdf-placement={pdfUnderlayReadback?.placementId ?? ""}
             data-pdf-bytes={pdfUnderlayReadback?.byteLength ?? 0}
           >Precision/Layers + Documents live read-back{pdfUnderlayReadback ? ` · PDF ${pdfUnderlayReadback.byteLength} B` : ""}</output>
@@ -4427,7 +4529,7 @@ export function App() {
         onNext={() => void advanceLivePrompt()}
         onCancel={cancelLivePrompt}
       />}
-      <CommandLine status={status} activeCommand={activeCommandPrompt} input={commandInput} historyOpen={commandHistoryOpen} history={commandHistory} documentName={documentName} onInputChange={setCommandInput} onSubmit={() => void executeRuntimeCommand()} onCancel={cancelRuntimeCommand} onHistoryNavigate={navigateRuntimeHistory} onHistoryOpenChange={setCommandHistoryOpen} />
+      <CommandLine status={status} activeCommand={activeCommandPrompt} input={commandInput} historyOpen={commandHistoryOpen} history={activeWorkspaceDocument?.commandHistory ?? commandHistory} documentName={documentName} aliasCount={Object.keys(workspaceReadback.aliases.importedAliases).length} onInputChange={setCommandInput} onSubmit={() => void executeRuntimeCommand()} onCancel={cancelRuntimeCommand} onHistoryNavigate={navigateRuntimeHistory} onHistoryOpenChange={setCommandHistoryOpen} onAliasImport={(file) => void importPgpAliases(file)} onAliasExport={exportPgpAliases} />
       <LayoutBar layouts={document.layouts} activeLayoutId={activeLayout.id} activeSpace={activeSpace} onActivate={activateLayout} onCreate={() => void createLayout()}>
         <details className="layout-tools" data-testid="layout-tools">
           <summary aria-label="Layout tools"><CadIcon name="settings" /><span>Layout</span></summary>
