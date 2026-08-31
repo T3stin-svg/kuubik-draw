@@ -1,6 +1,6 @@
 import type { CadAppearance, CadLayer, KDrawDocumentV1 } from "@kuubik/cad-schema";
 import { createCadLayerPropertyIndex, resolveCadEntityLayerProperties } from "./layer-policy.js";
-import { assertCadAppearance } from "./plot-style.js";
+import { assertCadAppearance, validateCadTransparency } from "./plot-style.js";
 import type { CadChange } from "./transaction.js";
 
 export const CAD_ZERO_LAYER_NAME = "0";
@@ -148,7 +148,10 @@ function validateAppearancePatch(document: KDrawDocumentV1, patch: CadLayerAppea
   if (patch.aciIndex !== undefined && patch.aciIndex !== null && (!Number.isInteger(patch.aciIndex) || patch.aciIndex < 1 || patch.aciIndex > 255)) throw new CadLayerError("ACI color must be 1..255.");
   if (patch.linetypeId !== undefined && patch.linetypeId !== null && !document.linetypes.some((linetype) => linetype.id === patch.linetypeId)) throw new CadLayerError(`Linetype ${patch.linetypeId} does not exist.`);
   if (patch.lineweightMm !== undefined && patch.lineweightMm !== null && (!Number.isFinite(patch.lineweightMm) || patch.lineweightMm < 0)) throw new CadLayerError("Lineweight must be finite and non-negative.");
-  if (patch.transparency !== undefined && patch.transparency !== null && (!Number.isFinite(patch.transparency) || patch.transparency < 0 || patch.transparency > 90)) throw new CadLayerError("Transparency must be 0..90 percent.");
+  if (patch.transparency !== undefined && patch.transparency !== null) {
+    try { validateCadTransparency(patch.transparency, "Transparency"); }
+    catch { throw new CadLayerError("Transparency must be 0..90 percent."); }
+  }
 }
 
 function patchedAppearance(current: CadAppearance | undefined, patch: CadLayerAppearancePatch, clearOverrides = false): CadAppearance | undefined {
