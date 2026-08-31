@@ -982,14 +982,33 @@ test("BLOCK INSERT ATTRIB BEDIT and EXPLODE stay atomic through the live adapter
   await answerLivePrompt(page, JSON.stringify(attributes));
   await expect(page.locator(".command-history")).toContainText("BLOCK · atomic commit/read-back");
 
+  const runtimeReadback = page.locator(".runtime-intent-readback");
+  const insertHandle = await page.getByLabel("Kuubik Draw joonestusala").getAttribute("data-selected-handles");
+  expect(insertHandle).toBeTruthy();
+  const beforeAttribRevision = Number(await runtimeReadback.getAttribute("data-runtime-revision"));
   await page.getByRole("button", { name: "Ribbon Attributes command" }).click();
+  await answerLivePrompt(page, "edit");
   await answerLivePrompt(page, JSON.stringify({ MARK: "B9" }));
   await expect(page.locator(".command-history")).toContainText("ATTRIB · atomic commit/read-back");
+  await expect(runtimeReadback).toHaveAttribute("data-runtime-revision", String(beforeAttribRevision + 1));
+  const attribReadback = await page.evaluate(async (handle) => {
+    const { KDrawIndexedDb } = await import("/src/indexed-db.ts");
+    const database = new KDrawIndexedDb(indexedDB, "kuubik-draw");
+    try {
+      const document = await database.loadDocument("local");
+      const insert = document?.entities.find((entity) => entity.handle === handle);
+      return insert?.kind === "blockRef" ? { revision: document!.revision, attributes: insert.attributes } : null;
+    } finally {
+      database.close();
+    }
+  }, insertHandle!);
+  expect(attribReadback).toEqual({ revision: beforeAttribRevision + 1, attributes: { MARK: "B9" } });
 
   await page.getByRole("button", { name: "Ribbon Edit block command" }).click();
   await answerLivePrompt(page, "0,0");
   await answerLivePrompt(page, JSON.stringify([{ kind: "line", handle: "BM2", layerId: "0", start: { x: 0, y: 0 }, end: { x: 120, y: 0 } }]));
   await answerLivePrompt(page, JSON.stringify(attributes));
+  await answerLivePrompt(page, "ei");
   await expect(page.locator(".command-history")).toContainText("BEDIT · atomic commit/read-back");
 
   await page.getByLabel("Kuubik Draw joonestusala").click({ button: "right", position: { x: 900, y: 600 } });
@@ -1005,6 +1024,7 @@ test("BLOCK INSERT ATTRIB BEDIT and EXPLODE stay atomic through the live adapter
 
   await page.getByRole("button", { name: "Ribbon Explode command" }).click();
   await answerLivePrompt(page, "jah");
+  await answerLivePrompt(page, "preserve");
   await expect(page.locator(".command-history")).toContainText("EXPLODE · atomic commit/read-back");
   expect(errors).toEqual([]);
 });
