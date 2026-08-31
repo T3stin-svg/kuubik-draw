@@ -152,3 +152,41 @@ Repository-wide fourth-wave verification passed: 143 Vitest files / 756 tests,
 build, public-tree scan of 1,423 files, license audit of 119 installed packages
 and `git diff --check`. The focused precision/layers/print matrix passed 29
 files / 74 tests.
+
+## Integrated-base fifth wave
+
+- Integrated base: `6490e7ce9a7c187d79c2d749ae65ee651996d7f9`.
+- Branch: `work5/reio-precision-live`.
+- The candidate engine covers Endpoint, Midpoint, Center, Quadrant,
+  Intersection, Extension, Insertion, Perpendicular, Tangent, Nearest,
+  GeometricCenter and Parallel in one fixed priority order.
+- Candidate IDs exclude priority/distance and canonicalize intersection entity
+  order. Selection cycling retains the active semantic ID across fresh queries.
+- Extension supports straight terminal continuation and analytical trimmed-arc
+  continuation. Explicit reference handles make far Extension/Parallel queries
+  index-safe instead of forcing a whole-document scan.
+- GeometricCenter covers straight closed polylines and area-weighted hatch loops
+  with hole subtraction. Unsupported curved polygon centroids fail closed.
+- OTRACK has exact acquisition/release/clear read-back, canonical polar lines,
+  two-line intersections and IDs independent of acquisition/angle order.
+- Prepared pointer read-back contains the immutable request, full candidate ID
+  list and explicit selected ID. Preview, commit and Dynamic Input use that one
+  cloned request.
+- Dynamic Input exposes unrounded coordinate, delta, distance and normalized
+  angle values. Units/precision are validated and cloned; formatting does not
+  round stored geometry.
+- Seeded coverage includes 2,000 full-mode candidate sets, 1,000 OTRACK order
+  permutations and 2,000 double-precision pointer frames.
+- The 50,000-object profile runs all 12 OSNAP modes, 100 paired queries and the
+  shared normal/locked/off/frozen participation predicate. Results are recorded
+  in `spatial-profile-wave5-20260831.json`.
+
+This wave does not modify `App.tsx`, visual shell/worker, package files, scope,
+parity scores, security evidence or deployment. No Chromium-integrated or
+AutoCAD live read-back was run, so F-048–F-053 remain uncertified.
+
+Repository-wide fifth-wave verification passed: typecheck, lint, 157 Vitest
+files / 793 tests, DXF gate 17 files / 52 tests, PDF gate 7 files / 22 tests,
+build, public-tree scan of 1,462 files, license audit of 119 installed packages
+and `git diff --check`. The focused precision/layers matrix passed 25 files /
+79 tests.
