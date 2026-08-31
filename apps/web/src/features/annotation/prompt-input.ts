@@ -86,7 +86,18 @@ export function buildAnnotationPromptInput(
       if (linked.anchors && linked.anchors.length !== points.length) throw new RangeError("Associative continued DIM requires one stable anchor per point.");
       return { commandId, args: { handles, layerId, styleId: required<string>(values, "styleId"), points, dimensionLinePoint: required<CadPoint2>(values, "dimensionLinePoint"), axis: required<"horizontal" | "vertical">(values, "axis"), chainId: required<string>(values, "chainId"), ...(linked.anchors ? { anchors: linked.anchors } : {}) }, ...(linked.targetHandles ? { targetHandles: linked.targetHandles } : {}) };
     }
-    case "DIMSTYLE": return { commandId, mode: required<"create" | "update">(values, "mode"), style: required<CadDimensionStyle>(values, "style") };
+    case "DIMBASELINE": {
+      const points = required<CadPoint2[]>(values, "points");
+      const handles = allocateDocumentHandles(document, points.length - 1);
+      const linked = association(values, context);
+      if (linked.anchors && linked.anchors.length !== points.length) throw new RangeError("Associative baseline DIM requires one stable anchor per point.");
+      return { commandId, args: { handles, layerId, styleId: required<string>(values, "styleId"), points, dimensionLinePoints: required<CadPoint2[]>(values, "dimensionLinePoints"), axis: required<"horizontal" | "vertical">(values, "axis"), chainId: required<string>(values, "chainId"), ...(linked.anchors ? { anchors: linked.anchors } : {}) }, ...(linked.targetHandles ? { targetHandles: linked.targetHandles } : {}) };
+    }
+    case "DIMSTYLE": {
+      const mode = required<"create" | "update" | "apply">(values, "mode");
+      if (mode === "apply") return { commandId, mode, styleId: required<string>(values, "styleId"), targetHandles: [...new Set(context.selectedHandles ?? [])] };
+      return { commandId, mode, style: required<CadDimensionStyle>(values, "style") };
+    }
     case "TEXT": {
       const rotationRad = optional<number>(values, "rotationRad");
       const styleId = optional<string>(values, "styleId");

@@ -71,3 +71,26 @@ Final fourth-wave regression on 2026-08-31 passed 132 Vitest files / 732 tests. 
 passed 15 DXF files / 50 tests and 7 PDF files / 22 tests. Repository typecheck, lint, production
 build, public-tree scan (1409 files), license gate (119 installed packages) and
 `git diff --check` also passed.
+
+Fifth-wave F-061..F-066 additions:
+
+- DIM BASELINE complements continued chains with an immutable common origin, stable association
+  handles and explicit chain mode;
+- dimension style create/update/apply preserves style IDs and entity handles, including atomic
+  multi-dimension Undo/Redo;
+- the namespaced style profile covers drawing/display units, linear/angular precision, rounding,
+  four tolerance modes, annotation scale, arrow form, extension distance and text gap;
+- deterministic presentation derives exact formatted text, dimension/extension lines, arrow
+  tips/directions and angular arc geometry from model coordinates plus the referenced style;
+- locked layers and orphan stable-handle associations expose fail-closed capability results;
+- golden, deterministic-property, mutation and DOM-independent prompt/planner/commit/read-back
+  tests cover the added behavior.
+
+Targeted fifth-wave verification passed 7 files / 44 tests before the full repository regression.
+No adapter was changed, no annotation DXF/PDF was produced or reopened, no AutoCAD workflow was
+run and no F-score promotion is claimed.
+
+Final fifth-wave regression on 2026-08-31 passed 142 Vitest files / 763 tests. Dedicated gates
+passed 16 DXF files / 51 tests and 7 PDF files / 22 tests. Repository typecheck, lint, production
+build, public-tree scan (1442 files), license gate (119 installed packages) and
+`git diff --check` also passed.

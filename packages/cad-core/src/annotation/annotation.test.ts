@@ -33,7 +33,7 @@ describe("F-061..F-066 dimensions", () => {
     expect(createRadialDimension(document, { handle: "D3", layerId: "0", styleId: "DIM-ISO", center: { x: 10, y: 10 }, circumferencePoint: { x: 20, y: 10 }, textPoint: { x: 25, y: 10 } }).dimensionKind).toBe("radial");
     expect(createRadialDimension(document, { handle: "D4", layerId: "0", styleId: "DIM-ISO", center: { x: 10, y: 10 }, circumferencePoint: { x: 20, y: 10 }, textPoint: { x: 25, y: 10 }, diameter: true }).dimensionKind).toBe("diameter");
     const chain = createContinuedDimensions(document, { handles: ["D5", "D6"], layerId: "0", styleId: "DIM-ISO", points: [{ x: 0, y: 0 }, { x: 50, y: 0 }, { x: 100, y: 0 }], dimensionLinePoint: { x: 0, y: 20 }, axis: "horizontal", chainId: "CHAIN-1" });
-    expect(readDimensionAssociation(chain[1]!)?.chain).toEqual({ id: "CHAIN-1", index: 1, previousDimensionHandle: "D5" });
+    expect(readDimensionAssociation(chain[1]!)?.chain).toEqual({ id: "CHAIN-1", index: 1, mode: "continued", previousDimensionHandle: "D5" });
   });
 
   it("updates stable-handle associations without changing dimension handle or style and commits as one Undo step", () => {

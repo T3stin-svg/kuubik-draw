@@ -10,7 +10,9 @@ export type AnnotationBlockDxfCapabilityId =
   | "dimension-diameter"
   | "dimension-ordinate"
   | "dimension-style"
+  | "dimension-style-profile"
   | "dimension-association"
+  | "dimension-chain"
   | "text-style"
   | "mtext-layout"
   | "leader"
@@ -76,7 +78,9 @@ function requirementMetadata(capability: AnnotationBlockDxfCapabilityId): Pick<A
     case "dimension-diameter":
     case "dimension-ordinate": return { rowIds: ["F-063"], minimumVersion: "AC1018" };
     case "dimension-style": return { rowIds: ["F-066"], minimumVersion: "AC1018" };
+    case "dimension-style-profile": return { rowIds: ["F-066"], minimumVersion: "AC1018" };
     case "dimension-association": return { rowIds: ["F-065"], minimumVersion: "AC1018" };
+    case "dimension-chain": return { rowIds: ["F-064", "F-065"], minimumVersion: "AC1018" };
     case "text-style": return { rowIds: ["F-058"], minimumVersion: "AC1018" };
     case "mtext-layout": return { rowIds: ["F-057"], minimumVersion: "AC1018" };
     case "leader": return { rowIds: ["F-059"], minimumVersion: "AC1018" };
@@ -100,11 +104,14 @@ export function requiredAnnotationBlockDxfCapabilities(document: KDrawDocumentV1
     handles.set(capability, items);
   };
   if (document.dimensionStyles.length) add("dimension-style", "$DIMSTYLE");
+  for (const style of document.dimensionStyles) if (style.overrides?.["kuubik.dimensionStyle.v1"] !== undefined) add("dimension-style-profile", `$DIMSTYLE:${style.id}`);
   if (document.textStyles.length) add("text-style", "$TEXTSTYLE");
   for (const entity of document.entities) {
     if (entity.kind === "dimension") {
       add(`dimension-${entity.dimensionKind}` as AnnotationBlockDxfCapabilityId, entity.handle);
-      if (readDimensionAssociation(entity)?.associative) add("dimension-association", entity.handle);
+      const association = readDimensionAssociation(entity);
+      if (association?.associative) add("dimension-association", entity.handle);
+      if (association?.chain) add("dimension-chain", entity.handle);
     }
     if (entity.kind === "mtext") add("mtext-layout", entity.handle);
     if (entity.kind === "leader") add(extensionKind(entity) === "mleader" ? "mleader" : "leader", entity.handle);
