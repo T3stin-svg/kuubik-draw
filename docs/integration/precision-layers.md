@@ -6,7 +6,7 @@ below. No new runtime dependency is required.
 
 ## Package exports
 
-The current integrated base `6490e7ce9a7c187d79c2d749ae65ee651996d7f9`
+The current integrated base `e5b65b566912c969320989f5cbb7365e34fe1a1d`
 already contains all required package exports. No shared `src/index.ts` file
 needs to change for this workstream.
 
@@ -93,6 +93,49 @@ the same request to preview, commit and Dynamic Input.
 6. Explicit absolute/relative Cartesian input bypasses cursor aids. Direct
    distance follows the constrained cursor direction and then the shared
    GRID/OSNAP/OTRACK stages.
+
+## Typed input and constraint pipeline
+
+The sixth-wave parser is still the existing exported
+`parseCadPrecisionInput()` core entry point; no second command-line or Dynamic
+Input parser exists. `PrecisionLayersShellContract.preparePointer()` parses a
+string once, stores the typed value in the immutable request and sends that
+same request to preview, commit and Dynamic Input.
+
+Supported forms are:
+
+- absolute Cartesian `x,y` or `#x,y`;
+- relative Cartesian `@dx,dy`;
+- absolute polar `distance<angle` and relative polar `@distance<angle`;
+- direct distance `distance`.
+
+Length tokens may use `mm`, `cm`, `m`, `in` or `ft`; returned values are always
+converted to the document's linear unit. Polar angles default to degrees and
+accept `deg`, `°` or `rad`. Dot-decimal input accepts comma or semicolon between
+Cartesian values. Comma-decimal input requires semicolon, for example
+`@1,5m;-250,25mm`, so `1,5` is unambiguously one scalar. Malformed, non-finite,
+mixed unitless/physical and ambiguous locale input fails closed.
+
+Signed and zero distance are accepted without rounding. A zero direct distance
+first resolves to the exact base point and then, like every direct-distance
+entry, continues through active GRID, OSNAP and OTRACK stages. Explicit
+Cartesian and polar coordinates bypass cursor aids and therefore avoid spatial
+queries entirely.
+
+For cursor/direct-distance frames, candidate generation is centered on the
+provisional result from the same core resolver after ORTHO/POLAR and GRID, not
+on the raw pointer. This keeps an intersection at the constrained target
+eligible and preserves the fixed OSNAP-before-OTRACK priority. The layer list
+used by pointer queries is snapshotted when spatial indexes are rebuilt; a
+pointer frame no longer clones the full document.
+
+Set locale/default input behavior through
+`PrecisionLayersShellContractOptions.inputFormat`. Use the exported
+`PRECISION_TOGGLE_SHORTCUTS` contract for F3 and F7–F12. F-047 intentionally
+has two distinct capabilities: F7 controls GRID display and F9 controls model
+SNAP quantization. Row-only dispatch maps F-047 to GRID; the shell must route
+F9 through the shortcut capability instead of treating the parity row as a
+unique toggle identifier.
 
 OSNAP priority is fixed as endpoint, midpoint, center, quadrant, intersection,
 extension, insertion, perpendicular, tangent, nearest, geometric center and

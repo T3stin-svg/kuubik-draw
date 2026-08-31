@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-08-31T16:34:57.140Z",
+  "node": "v26.7.0",
+  "command": "npx vite-node evidence/workstreams/precision-layers/precision-profile-wave6.ts",
+  "profile": {
+    "entityCount": 50000,
+    "queryIterations": 100,
+    "buildMs": 281.93550000000005,
+    "p50QueryMs": 0.07319999999992888,
+    "p95QueryMs": 0.19069999999999254,
+    "maxQueryMs": 2.700900000000047
+  },
+  "contracts": {
+    "previewCommitDynamicEqual": true,
+    "directDistanceSource": "osnap",
+    "directDistancePoint": {
+      "x": 0,
+      "y": 0
+    },
+    "localeParsedInput": {
+      "kind": "relative-cartesian",
+      "delta": {
+        "x": 1500,
+        "y": -250.25
+      }
+    },
+    "localeCommittedPoint": {
+      "x": 1600,
+      "y": -150.25
+    },
+    "explicitInputSnapCandidates": 0
+  }
+}

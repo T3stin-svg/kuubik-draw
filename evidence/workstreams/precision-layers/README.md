@@ -190,3 +190,39 @@ files / 793 tests, DXF gate 17 files / 52 tests, PDF gate 7 files / 22 tests,
 build, public-tree scan of 1,462 files, license audit of 119 installed packages
 and `git diff --check`. The focused precision/layers matrix passed 25 files /
 79 tests.
+
+## Integrated-base sixth wave
+
+- Integrated base: `e5b65b566912c969320989f5cbb7365e34fe1a1d`.
+- Branch: `work6/reio-precision-live`.
+- The shared double-precision parser now covers absolute/relative Cartesian,
+  absolute/relative polar and direct-distance input with physical-unit suffixes.
+- Dot- and comma-decimal forms are deterministic: comma decimals require a
+  semicolon Cartesian separator. Negative and zero values are explicit golden
+  cases; non-finite, malformed and unitless/physical mixtures fail closed.
+- Explicit coordinates bypass all cursor aids. Direct distance uses the exact
+  ORTHO-before-POLAR, GRID, OSNAP-before-OTRACK pipeline for preview, commit and
+  Dynamic Input.
+- Spatial candidates are queried around the provisional constrained/grid point,
+  so an intersection at the resolved target is not lost merely because the raw
+  cursor was outside the aperture.
+- The F3/F7–F12 shortcut contract maps keys, commands, toggles and parity rows
+  in one exported table. F-047 keeps GRID display and SNAP quantization as two
+  distinct toggles.
+- Seeded coverage includes 3,000 locale round-trips, 5,000 malformed-input fuzz
+  cases and the existing 2,000 immutable pointer frames, plus golden, mutation
+  and DOM-free wiring tests.
+- The 50,000-object/100-frame profile measured build `281.9355 ms`, query p50
+  `0.0732 ms`, p95 `0.1907 ms` and max `2.7009 ms`; exact output is in
+  `precision-profile-wave6-20260831.json`.
+
+This wave does not modify App/style/shell, documents, annotation, blocks,
+geometry, command-system, package, scope, parity-score or deployment files.
+No AutoCAD or Chromium live read-back was run, so F-041, F-042 and F-044–F-047
+remain uncertified and their scores are unchanged.
+
+Repository-wide sixth-wave verification passed: typecheck, lint, 168 Vitest
+files / 838 tests, DXF gate 18 files / 53 tests, PDF gate 7 files / 22 tests,
+build, public-tree scan of 1,499 files, license audit of 119 installed packages
+and `git diff --check`. The focused precision matrix passed 16 files / 43
+tests.
