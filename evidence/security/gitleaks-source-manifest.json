@@ -10,8 +10,8 @@
   "ciArtifactsExcluded": [
     "results.sarif"
   ],
-  "fileCount": 1174,
-  "sourceTreeSha256": "7485ed4d536a3cc777a267e35eb9b62206e70adb471a046c4d0b24c44f98c494",
+  "fileCount": 1185,
+  "sourceTreeSha256": "40c74065438d84b6f8debb3347a734da6d69429ae42cca65c3b1629b53df81e1",
   "files": [
     {
       "path": ".gitattributes",
@@ -44,6 +44,11 @@
       "sha256": "eca74960936f1241303d6522a33575834cb07a8bd47dd8987d1052cd00e114af"
     },
     {
+      "path": "apps/web/scope.html",
+      "size": 434,
+      "sha256": "b4e2bcb53e11cd4f4d8f2bdcb7d078b396a8214dcd384c71461b4f025a416a38"
+    },
+    {
       "path": "apps/web/src/App.tsx",
       "size": 252550,
       "sha256": "37ea55f32aa3a28b83ea4cfe476ba7d15721326e29a32ebcfb6625bf84a4dd71"
@@ -74,6 +79,41 @@
       "sha256": "f0b0790cfa19ffe76fbcedb5705f8b341e3d79e76cb75b5480d95b22d04e3aa4"
     },
     {
+      "path": "apps/web/src/scope/catalog.test.ts",
+      "size": 977,
+      "sha256": "44c19b0d3c2439347cd7d84bd88acd3ff0c0203ecce30225ec79d3815ba50a83"
+    },
+    {
+      "path": "apps/web/src/scope/catalog.ts",
+      "size": 7044,
+      "sha256": "f80a5df77815e63867f8737bf1d688b36830a75202d49be87bc2160d5707fda9"
+    },
+    {
+      "path": "apps/web/src/scope/main.tsx",
+      "size": 348,
+      "sha256": "ec67482dcb21f7081152c83568a322b55dcf9518d33561e2ab1403efb28406d0"
+    },
+    {
+      "path": "apps/web/src/scope/model.test.ts",
+      "size": 2163,
+      "sha256": "34ea5acfeb14eec83d6225479ba74462804695a2d6a8c0eedae803662901df28"
+    },
+    {
+      "path": "apps/web/src/scope/model.ts",
+      "size": 6760,
+      "sha256": "a09d8c363b01ee017febc911c50ed8d6baeca06a1afbe87983d07f12f5be1254"
+    },
+    {
+      "path": "apps/web/src/scope/scope.css",
+      "size": 12986,
+      "sha256": "3b2221bd33d0937d44789145698169fbd2adf79de59a92be684cf1767e43a3ea"
+    },
+    {
+      "path": "apps/web/src/scope/Selector.tsx",
+      "size": 14354,
+      "sha256": "a3a9ad3a7f059648342501fe6dca3b9587a312af34338af568e2b671096615ad"
+    },
+    {
       "path": "apps/web/src/style.css",
       "size": 30689,
       "sha256": "f4543a27eb6bae5858da62a5b0ddd64b858a8ad3c0badf62cbf3393d66e65f51"
@@ -95,8 +135,8 @@
     },
     {
       "path": "apps/web/vite.config.ts",
-      "size": 225,
-      "sha256": "55218d1428e108bfa4c4c64aee095ed3030a7aefa12e89e08bd4f66e110dcf7f"
+      "size": 528,
+      "sha256": "6e98a50b823f3a5a5e0c682f7f82e2fe9aeab98f4e49aa1b210bd289a2d64dcc"
     },
     {
       "path": "ARCHITECTURE_ROADMAP.md",
@@ -132,6 +172,11 @@
       "path": "docs/adr/0005-native-dwg-boundary.md",
       "size": 799,
       "sha256": "870e8afaa32ed79c42ae7cb10c675b789a27abc047a8b289c2ba0b66b0f57aa9"
+    },
+    {
+      "path": "docs/REIO_SCOPE_SELECTOR.md",
+      "size": 798,
+      "sha256": "079b7ceb8d9fb4180a138b3bc831440a87b0e625abf00fe22fa1b9da0f067dde"
     },
     {
       "path": "e2e/f003-rectangle.spec.ts",
@@ -302,6 +347,11 @@
       "path": "e2e/local-document.spec.ts",
       "size": 1004,
       "sha256": "08b933cfe03eafb1becf407bb56b98e2f5e66316f067936e0092800ecaf5f7a0"
+    },
+    {
+      "path": "e2e/scope-selector.spec.ts",
+      "size": 4904,
+      "sha256": "a4bb55b1ea0cb08bb5a15d2f7aed6de0238d2b477af81c46ac298a4a912afe7c"
     },
     {
       "path": "e2e/visual-shell.spec.ts",
@@ -3625,8 +3675,8 @@
     },
     {
       "path": "package.json",
-      "size": 16494,
-      "sha256": "5259f9eca959b85f4505ab44d800beb5b47fbd2fb6d331af0d6c539f570b908a"
+      "size": 16545,
+      "sha256": "f86c0deed35efd89b99c3038e7af967b9ed685d98d8e2d3ab7c171efb5f4e648"
     },
     {
       "path": "packages/cad-core/package.json",
@@ -4062,6 +4112,11 @@
       "path": "packages/cad-renderer/tsconfig.json",
       "size": 170,
       "sha256": "316d5e6eefcb05736e253b4e315aef5e4bcb94b97b0e0084e3af5cfc96c54495"
+    },
+    {
+      "path": "parity/autocad-2024-2d.manifest.d.mts",
+      "size": 411,
+      "sha256": "69299aaea7e56156d6ad00355cbf84a030a178e11fbf92d62bf97a10e0212bc5"
     },
     {
       "path": "parity/autocad-2024-2d.manifest.mjs",

@@ -14,6 +14,7 @@
     "typecheck": "npm run typecheck -w @kuubik/cad-core && npm run typecheck -w @kuubik/cad-renderer && npm run typecheck -w @kuubik/cad-dxf && npm run typecheck -w @kuubik/cad-print && npm run typecheck -w @kuubik/draw-web",
     "lint": "npm run lint -w @kuubik/cad-core && npm run lint -w @kuubik/cad-renderer && npm run lint -w @kuubik/cad-dxf && npm run lint -w @kuubik/cad-print && npm run lint -w @kuubik/draw-web",
     "test": "vitest run",
+    "test:scope": "vitest run apps/web/src/scope",
     "test:mutation": "vitest run packages/cad-core/test/mutation-proven.test.ts packages/cad-core/test/f022-mutation-proven.test.ts packages/cad-core/test/f023-mutation-proven.test.ts packages/cad-core/test/f024-mutation-proven.test.ts packages/cad-core/test/f025-mutation-proven.test.ts packages/cad-core/test/f026-mutation-proven.test.ts packages/cad-core/test/f027-mutation-proven.test.ts packages/cad-core/test/f028-mutation-proven.test.ts packages/cad-core/test/f029-mutation-proven.test.ts packages/cad-core/test/f030-mutation-proven.test.ts packages/cad-core/test/f107-mutation-proven.test.ts packages/cad-dxf/test/f109-mutation-proven.test.ts packages/cad-dxf/test/f111-mutation-proven.test.ts packages/cad-print/test/f104-mutation-proven.test.ts packages/cad-print/test/f105-mutation-proven.test.ts packages/cad-print/test/f106-mutation-proven.test.ts packages/cad-print/test/f114-mutation-proven.test.ts",
     "test:e2e": "playwright test",
     "test:oracles": "node tools/oracles/run-oracles.mjs",
