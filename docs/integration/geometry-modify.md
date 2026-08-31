@@ -358,3 +358,44 @@ parameters, colour, lineweight, and linetype scale. DXF ELLIPSE does not round-t
 Kuubik `appearance.thickness`. F-007 remains uncertified until the AutoCAD 2024.1.2
 live command matrix and Kuubik browser workflow are run with output read-back. No
 parity score or certification record was changed.
+
+## Wave 13 exports (F-011 complete REVCLOUD matrix)
+
+From `packages/cad-core/src/revcloud-command.ts`:
+
+- `prepareRevcloudCommand`
+- `startInteractiveRevcloudCommand`, `applyInteractiveRevcloudAction`, and
+  `revcloudInputFromInteractiveState`
+- `RevcloudCommandInputError`
+- `RevcloudCommandInput`, `RevcloudConstruction`, `RevcloudArcLengths`,
+  `RevcloudArcDirection`, `RevcloudStyle`, `InteractiveRevcloudState`,
+  `InteractiveRevcloudAction`, `NormalizedRevcloudDefinition`, and
+  `PreparedRevcloudCommand`
+
+From `apps/web/src/features/draw-modify/revcloud-command-adapter.ts`:
+
+- `revcloudCommandAdapter`
+
+The integration owner should export the core symbols through the shared cad-core barrel and
+route the REVCLOUD command-system parser to `revcloudCommandAdapter`. The adapter prepares one
+atomic change and therefore uses exactly the same deterministic geometry for preview and commit.
+Do not call the legacy `prepareGeometryCommand` REVCLOUD branch after this migration.
+
+Creation supports Rectangular, Polygonal, and Freehand outlines. Rectangular input completes on
+the second corner; Polygonal and Freehand require explicit Close and retain command-local Undo.
+Object mode converts a closed lightweight polyline (including bulged segments), circle, full
+ellipse, or closed spline in place. It preserves the source handle, layer, appearance, and
+extension data; creation rejects duplicate handles. Creation and conversion both reject a
+missing or locked target layer before producing an `EntityChange`.
+
+The pinned F-011 interface retains minimum and maximum chord-length settings and rejects a
+maximum greater than three times the minimum. Generated revision bumps use deterministic
+LWPOLYLINE bulges. Reverse changes the sign of every bump without reversing vertex order;
+Calligraphy adds deterministic tapered vertex widths. `kuubikRevcloud` extension metadata marks
+the prepared polyline in the native document. Standard DXF preserves the closed LWPOLYLINE,
+bulges, widths, handle, layer, and common appearance, but not Kuubik extension metadata.
+
+F-011 has unit, versioned golden, property, mutation, prepared-wiring, feature-adapter, and DXF
+roundtrip coverage. It remains uncertified until the AutoCAD 2024.1.2 live REVCLOUD matrix and
+the Kuubik browser workflow are run with output read-back. No parity score or certification
+record was changed.
