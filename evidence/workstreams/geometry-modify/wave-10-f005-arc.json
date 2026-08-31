@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "wave": "f005-complete-arc-matrix",
+  "rows": ["F-005"],
+  "status": "implemented-kernel-and-dxf-readback-not-browser-or-autocad-certified",
+  "sourceAuthority": "C:/Users/Olav/Downloads/kuubik-draw-reio-scope-v1.json",
+  "implemented": {
+    "F-005": [
+      "3-Point with picked-point traversal",
+      "Start-Center-End, Angle and chord Length",
+      "Start-End-Angle, tangent Direction and Radius",
+      "Center-Start-End, Angle and chord Length",
+      "Ctrl clockwise direction semantics",
+      "minor and major arc construction",
+      "both Start-End-Radius centers and directed traversals",
+      "near-center, through-point and explicit-index candidate selection",
+      "fail-closed ambiguity and geometric degeneracies",
+      "one prepared global Commit, Undo and Redo operation"
+    ]
+  },
+  "invariants": {
+    "previewEqualsCommit": "preview and commit both call prepareCompleteArcCommand with the same immutable input",
+    "atomicUndoRedo": "the selected arc is one CadSession operation",
+    "exactIdentityAndProperties": "handle, layer, appearance and extension data are cloned into the prepared arc",
+    "ambiguityDoesNotGuess": "multiple or equidistant Start-End-Radius solutions require an explicit geometric or directional selection",
+    "degeneracyIsAtomic": "invalid identity, points, angles, lengths, radii, collinearity, direction or selection throw before changes exist",
+    "dxfReadback": "production export/import preserves the clockwise arc locus through standard CCW endpoint normalization plus handle, layer, center, radius, colour, lineweight, linetype scale and thickness"
+  },
+  "tests": {
+    "unitGoldenPropertyAtomic": "packages/cad-core/test/f005-arc-command.test.ts",
+    "mutation": "packages/cad-core/test/f005-arc-mutation-proven.test.ts",
+    "roundtrip": "packages/cad-dxf/test/f005-arc-roundtrip.test.ts",
+    "targetedResult": "3 files passed; 17 tests passed; 64 deterministic directed-angle property cases inside the property test",
+    "fullVitestResult": "159 files passed; 826 tests passed",
+    "dxfGateResult": "19 files passed; 54 tests passed",
+    "pdfGateResult": "7 files passed; 22 tests passed",
+    "typecheckLintBuild": "PASS",
+    "publicTree": "PASS; 1472 files scanned",
+    "license": "PASS; 119 installed packages audited",
+    "diffCheck": "PASS"
+  },
+  "knownLimits": [
+    "the typed ARC parser is not wired into the shared registry or browser shell in this file-ownership lane",
+    "standard DXF ARC normalizes clockwise arcs to equivalent counter-clockwise arcs with swapped endpoints"
+  ],
+  "certificationGaps": [
+    "AutoCAD 2024.1.2 live ARC command-matrix comparison not run",
+    "Kuubik browser ARC workflow not run",
+    "F-005 parity score and certification records were intentionally not changed"
+  ]
+}
