@@ -3,7 +3,25 @@ import type { CadOsnapMode } from "../../../../../packages/cad-renderer/src/snap
 import type { PrecisionModes, PrecisionRequest } from "../../../../../packages/cad-core/src/precision.js";
 
 export type PrecisionToggle = "ortho" | "polar" | "grid" | "snap" | "osnap" | "otrack" | "dynamicInput";
-export type PrecisionShellRow = "F-045" | "F-049" | "F-050" | "F-052";
+export type PrecisionShellRow = "F-045" | "F-046" | "F-047" | "F-049" | "F-050" | "F-051" | "F-052";
+
+export interface PrecisionToggleShortcut {
+  key: "F3" | "F7" | "F8" | "F9" | "F10" | "F11" | "F12";
+  command: "OSNAP" | "GRID" | "ORTHO" | "SNAP" | "POLAR" | "OTRACK" | "DYNMODE";
+  toggle: PrecisionToggle;
+  rowIds: readonly PrecisionShellRow[];
+}
+
+/** One authoritative shortcut/command/capability contract for shell wiring. */
+export const PRECISION_TOGGLE_SHORTCUTS: readonly PrecisionToggleShortcut[] = Object.freeze([
+  { key: "F3", command: "OSNAP", toggle: "osnap", rowIds: ["F-049", "F-050"] },
+  { key: "F7", command: "GRID", toggle: "grid", rowIds: ["F-047"] },
+  { key: "F8", command: "ORTHO", toggle: "ortho", rowIds: ["F-045"] },
+  { key: "F9", command: "SNAP", toggle: "snap", rowIds: ["F-047"] },
+  { key: "F10", command: "POLAR", toggle: "polar", rowIds: ["F-046"] },
+  { key: "F11", command: "OTRACK", toggle: "otrack", rowIds: ["F-051"] },
+  { key: "F12", command: "DYNMODE", toggle: "dynamicInput", rowIds: ["F-052"] },
+]);
 
 export interface PrecisionState {
   ortho: boolean;
@@ -51,26 +69,14 @@ const DEFAULT_OSNAP_MODES: readonly CadOsnapMode[] = Object.freeze([
   "perpendicular", "tangent", "nearest", "geometricCenter", "parallel",
 ]);
 
-const KEY_TOGGLES: Readonly<Record<string, PrecisionToggle>> = Object.freeze({
-  F3: "osnap",
-  F7: "grid",
-  F8: "ortho",
-  F9: "snap",
-  F10: "polar",
-  F11: "otrack",
-  F12: "dynamicInput",
-});
+const KEY_TOGGLES = Object.freeze(Object.fromEntries(
+  PRECISION_TOGGLE_SHORTCUTS.map(({ key, toggle }) => [key, toggle]),
+)) as Readonly<Record<string, PrecisionToggle>>;
 
-const COMMAND_TOGGLES: Readonly<Record<string, PrecisionToggle>> = Object.freeze({
-  ORTHO: "ortho",
-  POLAR: "polar",
-  GRID: "grid",
-  SNAP: "snap",
-  OSNAP: "osnap",
-  OTRACK: "otrack",
+const COMMAND_TOGGLES = Object.freeze({
+  ...Object.fromEntries(PRECISION_TOGGLE_SHORTCUTS.map(({ command, toggle }) => [command, toggle])),
   DYN: "dynamicInput",
-  DYNMODE: "dynamicInput",
-});
+}) as Readonly<Record<string, PrecisionToggle>>;
 
 const OSNAP_ALIASES: Readonly<Record<string, CadOsnapMode>> = Object.freeze({
   END: "endpoint", ENDPOINT: "endpoint",
@@ -89,8 +95,11 @@ const OSNAP_ALIASES: Readonly<Record<string, CadOsnapMode>> = Object.freeze({
 
 const SHELL_ROWS: Readonly<Record<PrecisionShellRow, PrecisionToggle>> = Object.freeze({
   "F-045": "ortho",
+  "F-046": "polar",
+  "F-047": "grid",
   "F-049": "osnap",
   "F-050": "osnap",
+  "F-051": "otrack",
   "F-052": "dynamicInput",
 });
 
