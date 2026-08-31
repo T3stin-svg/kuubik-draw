@@ -424,6 +424,9 @@ Rows, columns, cells and merges have stable IDs. Exactly one cell exists for eve
 coordinate. A merge references contiguous row and column IDs, covers at least two cells and cannot
 overlap another merge. Covered cell values are preserved; unmerge therefore restores them without
 data reconstruction. Deleting a merged row/column fails until the merge is explicitly removed.
+Handle and row/column/cell/merge/style identity lookup is case-insensitive, while the first stored
+canonical spelling is retained. Cell storage is normalized to deterministic row-major order after
+row/column insertion or deletion; surviving cell IDs are never regenerated.
 
 Cell values are either literal text or inert fields. A field stores its code and explicit fallback
 verbatim; `tableCellDisplayText` returns only the fallback and never evaluates or executes the
@@ -440,11 +443,27 @@ entity rewrites.
 `TABLE create`, batched `edit`, `style-create` and `style-update` all use the same planner preview
 and commit path. One edit may set cells, merge/unmerge, insert/delete/resize rows or columns and
 apply a style, but produces one immutable entity replacement and one Undo/Redo step. The table and
-unaffected cell IDs remain unchanged. Locked table layers fail before mutation.
+unaffected cell IDs remain unchanged. Editing retains the proxy handle, layer, appearance, raw
+adapter payload and all unrelated extension fields. Setting an optional alignment or format to
+`null` clears only that override. Locked, off and frozen table layers fail before mutation.
+
+The reader validates the complete runtime graph before it becomes editable: non-empty and unique
+case-insensitive IDs, positive finite row/column sizes, exactly one cell per coordinate, valid inert
+field/text payloads, valid format/alignment values, contiguous non-overlapping merges and a live
+table-style reference. A malformed TABLE remains identifiable as a proxy but its capability is
+`malformed-contract`; edit and DXF capability derivation fail closed without changing revision.
 
 The core derives a `table` DXF capability requirement for every table and for the style registry.
-This is a fail-closed contract only: the current workstream does not modify the DXF adapter and does
-not claim that a native TABLE has been written or reopened.
+This is a fail-closed contract only. Autodesk documents native TABLE as `ACAD_TABLE` with insertion
+point, TABLESTYLE hard pointer, row/column counts and repeated row/cell data in the
+[TABLE DXF reference](https://help.autodesk.com/cloudhelp/2024/ENU/AutoCAD-DXF/files/GUID-D8CCD2F0-18A3-42BB-A64D-539114A07DA0.htm),
+while style data lives in a separate
+[TABLESTYLE object](https://help.autodesk.com/cloudhelp/2024/ENU/AutoCAD-DXF/files/GUID-0DBCA057-9F6C-4DEB-A66F-8A9B3C62FB1A.htm).
+The current adapter implements neither semantic path. Export reports the Kuubik TABLE proxy as
+skipped and emits no false `ACAD_TABLE`; import with `preserveUnsupported` retains an incoming
+native `ACAD_TABLE` only as an inert forensic proxy, and re-export refuses it again. Therefore the
+supported editable native DXF subset is empty and capability must remain `unsupported` until the
+adapter owner maps TABLE plus TABLESTYLE and independently reopens the result.
 
 ## Namespaced block-definition payload
 
@@ -604,7 +623,9 @@ hash and independent DXF/PDF read-back. PDF evidence cannot substitute for edita
 4. SOLID and ANSI31-like line HATCH: outer loop, hole, nested island, angle, scale, origin and
    boundary source handles; mutate a boundary and verify same hatch handle after update.
 5. TABLE: origin/rotation, row/column sizes and order, cell IDs and literal/field values, fallback,
-   merges, alignment, format, style reference, insert/delete/resize and atomic Undo/Redo.
+   merges, alignment, format, style reference, insert/delete/resize, handle/layer/appearance
+   retention and atomic Undo/Redo. Compare AutoCAD `TABLE`/`TABLESTYLE`, merge/unmerge and row/column
+   editing in the paired live workflow; current proxy preservation is not editable file parity.
 6. BLOCK/INSERT: base point, member handles, insert handle, layer, rotation, positive/negative
    non-zero scales and nested acyclic block. Exercise both `preserve` and `recursive` EXPLODE and
    verify deterministic new handles plus exact composed model-space geometry.

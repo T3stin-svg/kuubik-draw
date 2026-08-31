@@ -224,3 +224,34 @@ this contract and this evidence folder, then harden off/frozen policy, runtime s
 stable row/column/cell/merge IDs, browser-ready edit/style Undo/Redo and an explicit native/proxy DXF
 read-back boundary. It must not change App/global CSS, shared indexes, package/lock, scope/parity,
 security or score files.
+
+Eleventh-wave (work13) F-068 TABLE hardening completed that bounded plan:
+
+- create/edit preserve the table handle, layer, appearance, raw proxy payload and unrelated
+  extension data; the typed contract remains a separate immutable replacement under the same
+  entity identity;
+- row/column/cell/merge/style lookup is case-insensitive while canonical stored IDs remain stable;
+  inserted/deleted grids normalize cells to deterministic row-major order without regenerating
+  surviving cell IDs;
+- batched set-cell, merge/unmerge, insert/delete/resize and apply-style operations remain one
+  preview-identical commit and one Undo/Redo step; a late invalid operation leaves the document
+  unchanged;
+- locked, off and frozen target layers fail before create/edit; malformed runtime graphs, invalid
+  values/formats, duplicate IDs, missing coordinates and overlapping/non-contiguous merges fail
+  closed in reader, capability and edit paths;
+- TABLESTYLE update preserves its canonical ID and does not rewrite existing table entities;
+- the real `cad-dxf` boundary test proves the current adapter emits no false native TABLE, reports
+  the Kuubik proxy as skipped, imports a native `ACAD_TABLE` only as an inert forensic proxy with
+  `preserveUnsupported`, and refuses that proxy again on export. No adapter source was changed.
+
+Targeted F-068 verification passed 9 files / 27 tests, including the frozen golden, 128 seeded
+property corpora, 160 malformed-contract fuzz corpora, mutation ratchets, browser-ready wiring and
+DXF proxy read-back. Final repository regression passed 265 Vitest files / 1179 tests; dedicated
+gates passed 30 DXF files / 74 tests and 7 PDF files / 22 tests. Repository typecheck, lint,
+production build, public-tree scan (1777 files), license gate (119 installed packages) and
+`git diff --check` passed. The build retained the known Vite warning for a minified chunk larger
+than 500 kB.
+
+No AutoCAD 2024.1.2 plus Kuubik paired live TABLE workflow, integrated browser session, native
+TABLE/TABLESTYLE file output or physical reopen was run. F-068 remains below `1.00`; no scope,
+parity, security or score file was changed, and no preview/production deploy is claimed.
