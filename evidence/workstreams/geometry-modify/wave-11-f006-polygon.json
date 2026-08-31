@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "wave": "f006-complete-polygon-matrix",
+  "rows": ["F-006"],
+  "status": "implemented-kernel-and-dxf-readback-not-browser-or-autocad-certified",
+  "sourceAuthority": "C:/Users/Olav/Downloads/kuubik-draw-reio-scope-v1.json",
+  "behaviorAuthority": "https://help.autodesk.com/cloudhelp/2027/ENG/AutoCAD-Core/files/GUID-E5CD464D-C0DC-4464-BFDF-50C4ABEC8B91.htm",
+  "implemented": {
+    "F-006": [
+      "integer side count from 3 through 1024",
+      "center-inscribed construction",
+      "center-circumscribed construction with apothem semantics",
+      "first-edge construction with exact picked endpoints",
+      "radius-point and numeric snap-axis rotation references",
+      "counter-clockwise and clockwise orientation",
+      "stable center-relative area and deterministic vertex generation",
+      "immutable handle, layer, appearance and extension data",
+      "fail-closed invalid and degenerate input",
+      "one prepared global Commit, Undo and Redo operation"
+    ]
+  },
+  "invariants": {
+    "previewEqualsCommit": "preview and commit both call prepareCompletePolygonCommand with the same immutable input",
+    "atomicUndoRedo": "the closed polygon polyline is one CadSession operation",
+    "exactIdentityAndProperties": "handle, layer, appearance and extension data are cloned into the prepared polyline",
+    "orientation": "signed area matches requested winding and edge construction selects the corresponding interior side",
+    "circumscribedDefinition": "apothem reaches the first edge midpoint rather than a vertex",
+    "numericRadiusRotation": "numeric center input places the bottom edge on the requested snap rotation axis",
+    "degeneracyIsAtomic": "invalid identity, side count, point, size, rotation, orientation, edge or numeric result throws before changes exist",
+    "dxfReadback": "production export/import preserves closed vertex order, handle, layer, colour, lineweight, linetype scale and thickness"
+  },
+  "tests": {
+    "unitGoldenProperty": "packages/cad-core/test/f006-polygon-command.test.ts",
+    "mutation": "packages/cad-core/test/f006-polygon-mutation-proven.test.ts",
+    "preparedWiringAtomic": "packages/cad-core/test/f006-polygon-wiring.test.ts",
+    "roundtrip": "packages/cad-dxf/test/f006-polygon-roundtrip.test.ts",
+    "targetedResult": "4 files passed; 14 tests passed; 64 deterministic regularity cases inside the property test",
+    "fullVitestResult": "176 files passed; 881 tests passed",
+    "dxfGateResult": "20 files passed; 55 tests passed",
+    "pdfGateResult": "7 files passed; 22 tests passed",
+    "typecheckLintBuild": "PASS",
+    "publicTree": "PASS; 1514 files scanned",
+    "license": "PASS; 119 installed packages audited",
+    "diffCheck": "PASS"
+  },
+  "knownLimits": [
+    "the typed POLYGON parser is not wired into the browser shell in this file-ownership lane",
+    "PLINETYPE legacy 2D polyline selection is outside the pinned lightweight-polyline schema"
+  ],
+  "certificationGaps": [
+    "AutoCAD 2024.1.2 live POLYGON construction matrix not run",
+    "Kuubik browser POLYGON workflow not run",
+    "F-006 parity score and certification records were intentionally not changed"
+  ]
+}
