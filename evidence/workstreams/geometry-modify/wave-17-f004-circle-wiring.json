@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "wave": "f004-circle-document-command-wiring",
+  "rows": ["F-004"],
+  "status": "implemented-and-locally-tested-live-autocad-and-browser-not-run",
+  "sourceAuthority": "C:/Users/Olav/Downloads/kuubik-draw-reio-scope-v1.json",
+  "baseCommit": "45aaf17ca1b644a9662e50d3e41e7d4c00338866",
+  "implemented": [
+    "document-aware layer existence, locked, off and frozen fail-closed policy",
+    "model-space handle collision rejection before changes exist",
+    "scale-relative 3P degeneracy and final finite-circle guards",
+    "dedicated browser atomic adapter preserving handle, layer, appearance and extension data",
+    "typed CIRCLE/C registry wiring for 2P, 3P, TTR, TTT and DIAMETER/D",
+    "versioned golden, malformed non-finite fuzz, mutation, property, wiring and exact DXF read-back tests",
+    "prepared AutoCAD Core Console six-variant plus Undo/Redo read-back fixture"
+  ],
+  "invariants": {
+    "previewEqualsCommit": "both browser paths invoke prepareCompleteCircleDocumentCommand with cloned equivalent input",
+    "atomicUndoRedo": "one circle put is one CadSession operation",
+    "failClosed": "identity, layer state, handle collision, non-finite, degenerate, no-solution and ambiguous-solution failures return no changes",
+    "properties": "stable handle, target layer, appearance and extension data survive preparation and production DXF round-trip"
+  },
+  "tests": {
+    "targeted": "7 files passed; 30 tests passed",
+    "full": "270 files passed; 1206 tests passed",
+    "dxfGate": "30 files passed; 76 tests passed",
+    "typecheck": "PASS for cad-core, cad-renderer, cad-dxf, cad-print and draw-web",
+    "lint": "PASS for cad-core, cad-renderer, cad-dxf, cad-print and draw-web",
+    "build": "PASS; Vite 154 modules transformed with the pre-existing chunk-size warning",
+    "publicTree": "PASS; 1814 files scanned",
+    "license": "PASS; 119 installed packages audited",
+    "diffCheck": "PASS"
+  },
+  "liveEvidence": {
+    "autoCAD2024_1_2": "NOT_RUN: explicitly reserved for another worker/session",
+    "kuubikBrowser": "NOT_RUN: no integrated App/E2E visual workflow in this lane",
+    "secondaryOracle": "NOT_RUN: not required for the deterministic analytic circle kernel"
+  },
+  "certification": {
+    "scoreChanged": false,
+    "localCertificationChanged": false,
+    "claim": "F-004 remains below 1.00 and uncertified"
+  }
+}

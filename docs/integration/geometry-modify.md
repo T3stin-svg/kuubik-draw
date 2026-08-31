@@ -252,12 +252,35 @@ equidistant or missing picks fail with `AMBIGUOUS_TANGENT_SOLUTION`. Empty,
 concentric, parallel, collinear, non-finite, and zero-radius degeneracies fail before
 an `EntityChange` exists.
 
-Preview and commit must call `prepareCompleteCircleCommand` with the same immutable
-input and commit its single returned change once through `CadSession`. The F-004
-matrix has golden/property/mutation coverage and production DXF export/import
+Preview and commit must call `prepareCompleteCircleDocumentCommand` with the same
+immutable input and commit its single returned change once through `CadSession`.
+The pure `prepareCompleteCircleCommand` remains available to geometry-only
+consumers. The F-004 matrix has golden/property/mutation coverage and production DXF export/import
 read-back for exact handle, layer, center, radius, appearance, linetype scale, and
 thickness. It remains an uncertified extension until the AutoCAD 2024.1.2 tangent
 matrix and Kuubik browser workflow are run live; parity scores were not changed.
+
+### Wave 17 F-004 document and command-system wiring
+
+`prepareCompleteCircleDocumentCommand(document, input)` is the browser-facing
+export. It applies the same complete construction kernel only after proving that the
+result layer exists, is on, thawed and unlocked, and that the requested handle does
+not collide with an existing model-space entity. `circleCommandAdapter` in
+`apps/web/src/features/draw-modify/circle-command-adapter.ts` maps that prepared
+result to the shared atomic workflow without changing identity, appearance,
+extension data or operation arguments.
+
+The typed command registry now uses `CompleteCircleCommandInput`, keeps aliases
+`CIRCLE`/`C`, and exposes `2P`, `3P`, `TTR`, `TTT` and `DIAMETER`/`D`. Preview and
+commit both cross the document-aware gate, and one commit remains one global
+Undo/Redo unit. The scale-relative 3P degeneracy guard and final finite-circle guard
+reject numerically undefined constructions before an `EntityChange` exists.
+
+Integration does not require a new shared `src/index.ts` edit: the circle module was
+already exported by `packages/cad-core/src/index.ts` at the pinned base. The prepared
+AutoCAD Core Console fixture and runner are intentionally `NOT_RUN`; they must not be
+used to raise F-004 to 1.00 until the live AutoCAD and Kuubik browser workflows and
+their read-backs both pass.
 
 ## Wave 10 exports (F-005 complete ARC matrix)
 

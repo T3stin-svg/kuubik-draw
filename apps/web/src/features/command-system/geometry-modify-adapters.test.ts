@@ -54,11 +54,38 @@ describe("typed geometry/modify command adapters", () => {
     expect(definitions.map((definition) => definition.id)).toEqual(GEOMETRY_MODIFY_DOCUMENT_COMMAND_IDS);
     const registry = new CommandRegistry(definitions);
     expect(registry.resolve("L")?.id).toBe("LINE");
+    const circle = registry.resolve("C");
+    expect(circle?.id).toBe("CIRCLE");
+    expect(circle?.options?.map((candidate) => candidate.id)).toEqual(["2P", "3P", "TTR", "TTT", "DIAMETER"]);
     expect(registry.resolve("ARRAY")?.id).toBe("ARRAYRECT");
     expect(registry.resolve("PE")?.id).toBe("PEDIT");
     expect(registry.resolve("SPL")?.id).toBe("SPLINE");
     expect(registry.resolve("BO")?.id).toBe("BOUNDARY");
     expect(registry.resolve("TR")?.id).toBe("TRIM");
+  });
+
+  it("routes the full CIRCLE contract through document guards and atomic command history", () => {
+    const session = new CadSession(createEmptyDocument({ documentId: "adapter-circle" }));
+    const engine = new CommandLineEngine(session, new CommandRegistry(createGeometryModifyCommandDefinitions(parsers())));
+    const input = {
+      command: "CIRCLE" as const, handle: "C4", layerId: "0",
+      construction: {
+        mode: "ttr" as const,
+        first: { kind: "line" as const, start: { x: 0, y: -100 }, end: { x: 0, y: 100 }, pickPoint: { x: 0, y: 4 } },
+        second: { kind: "line" as const, start: { x: -100, y: 0 }, end: { x: 100, y: 0 }, pickPoint: { x: 4, y: 0 } },
+        radius: 4,
+      },
+    };
+    const command = `C '${JSON.stringify(input)}'`;
+    const preview = engine.preview(command);
+    const executed = engine.execute(command);
+    if (executed.kind !== "commit") throw new Error("Expected CIRCLE commit.");
+    expect(executed.committed.changes).toEqual(preview.changes);
+    expect(session.document.entities).toEqual([expect.objectContaining({ kind: "circle", handle: "C4", center: { x: 4, y: 4 }, radius: 4 })]);
+    engine.execute("U");
+    expect(session.document.entities).toEqual([]);
+    engine.execute("REDO");
+    expect(session.document.entities).toEqual([expect.objectContaining({ handle: "C4" })]);
   });
 
   it("wires LINE preview and commit through the same typed adapter with atomic Undo/Redo", () => {
