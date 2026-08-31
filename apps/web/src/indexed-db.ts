@@ -103,11 +103,16 @@ export class StorageRevisionConflictError extends Error {
 export class KDrawIndexedDb {
   #database: IDBDatabase | null = null;
 
-  constructor(private readonly factory: IDBFactory = indexedDB) {}
+  constructor(
+    private readonly factory: IDBFactory = indexedDB,
+    private readonly databaseName = DATABASE_NAME,
+  ) {
+    if (!databaseName.trim()) throw new TypeError("IndexedDB database name is required.");
+  }
 
   async open(): Promise<void> {
     if (this.#database) return;
-    const request = this.factory.open(DATABASE_NAME, DATABASE_VERSION);
+    const request = this.factory.open(this.databaseName, DATABASE_VERSION);
     request.onupgradeneeded = () => {
       const database = request.result;
       if (!database.objectStoreNames.contains("documents")) database.createObjectStore("documents", { keyPath: "documentId" });
