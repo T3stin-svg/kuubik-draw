@@ -12,15 +12,22 @@ import {
   createRadialDimension,
   createText,
   createTextStyle,
+  createTable,
+  createTableStyle,
   applyDimensionStyle,
+  editTable,
   updateDimensionStyle,
   updateTextStyle,
+  updateTableStyle,
   type CadChange,
   type CadSession,
   type DimensionBaseArgs,
   type HatchArgs,
   type MTextArgs,
   type TextArgs,
+  type CreateTableArgs,
+  type TableEditOperation,
+  type TableStyle,
 } from "@kuubik/cad-core";
 import type { CadDimensionStyle, CadTextStyle, KDrawDocumentV1 } from "@kuubik/cad-schema";
 import { createAtomicCommandWorkflow, type AtomicCommandAdapter, type PreparedAtomicCommand } from "../draw-modify/atomic-command-workflow.js";
@@ -49,7 +56,10 @@ export type AnnotationCommandInput =
   | { commandId: "STYLE"; mode: "create" | "update"; style: CadTextStyle }
   | ({ commandId: "LEADER"; args: LeaderArgs } & WithTargets)
   | ({ commandId: "MLEADER"; args: MLeaderArgs } & WithTargets)
-  | ({ commandId: "HATCH"; args: HatchArgs } & WithTargets);
+  | ({ commandId: "HATCH"; args: HatchArgs } & WithTargets)
+  | { commandId: "TABLE"; mode: "create"; args: CreateTableArgs }
+  | { commandId: "TABLE"; mode: "edit"; handle: string; operations: TableEditOperation[] }
+  | { commandId: "TABLE"; mode: "style-create" | "style-update"; style: TableStyle };
 
 function result(commandId: string, changes: CadChange[], targetHandles: readonly string[], resultHandles: readonly string[], operationArgs: unknown): PreparedAtomicCommand {
   if (!changes.length) throw new RangeError(`${commandId} prepared no document change.`);
@@ -57,7 +67,7 @@ function result(commandId: string, changes: CadChange[], targetHandles: readonly
 }
 
 export function prepareAnnotationCommand(document: KDrawDocumentV1, input: AnnotationCommandInput): PreparedAtomicCommand {
-  const targets = input.commandId === "STYLE" ? [] : input.commandId === "DIMSTYLE" ? (input.mode === "apply" ? input.targetHandles : []) : input.targetHandles ?? [];
+  const targets = input.commandId === "STYLE" || input.commandId === "TABLE" ? [] : input.commandId === "DIMSTYLE" ? (input.mode === "apply" ? input.targetHandles : []) : input.targetHandles ?? [];
   switch (input.commandId) {
     case "DIMLINEAR": {
       const entity = createLinearDimension(document, input.args);
@@ -118,6 +128,18 @@ export function prepareAnnotationCommand(document: KDrawDocumentV1, input: Annot
     case "HATCH": {
       const entity = createHatch(document, input.args);
       return result(input.commandId, [{ type: "put", entity }], input.targetHandles ?? input.args.boundaryHandles, [entity.handle], input.args);
+    }
+    case "TABLE": {
+      if (input.mode === "create") {
+        const entity = createTable(document, input.args);
+        return result(input.commandId, [{ type: "put", entity }], [], [entity.handle], input.args);
+      }
+      if (input.mode === "edit") {
+        const change = editTable(document, input.handle, input.operations);
+        return result(input.commandId, [change], [input.handle], [input.handle], input);
+      }
+      const change = input.mode === "style-create" ? createTableStyle(document, input.style) : updateTableStyle(document, input.style);
+      return result(input.commandId, [change], [], [], input);
     }
   }
 }

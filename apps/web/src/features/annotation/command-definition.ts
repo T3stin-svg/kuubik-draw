@@ -3,7 +3,7 @@ import { CommandEngineInputError } from "../command-system/command-engine.js";
 import { prepareAnnotationCommand, type AnnotationCommandInput } from "./command-adapter.js";
 
 export type AnnotationCommandPlanner = typeof prepareAnnotationCommand;
-export type AnnotationEngineCommandId = "TEXT" | "MTEXT" | "LEADER" | "MLEADER" | "DIM" | "STYLE" | "HATCH";
+export type AnnotationEngineCommandId = "TEXT" | "MTEXT" | "LEADER" | "MLEADER" | "DIM" | "STYLE" | "HATCH" | "TABLE";
 
 const DIMENSION_OPTIONS = Object.freeze({
   LINEAR: "DIMLINEAR",
@@ -67,6 +67,7 @@ export function createAnnotationCommandDefinitions(planner: AnnotationCommandPla
     },
     directDefinition("STYLE", "STYLE", planner),
     directDefinition("HATCH", "HATCH", planner),
+    directDefinition("TABLE", "TABLE", planner),
   ];
 }
 

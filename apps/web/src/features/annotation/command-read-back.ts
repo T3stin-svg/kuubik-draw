@@ -1,5 +1,5 @@
 import type { CadChange, CadSession, CommittedOperation } from "@kuubik/cad-core";
-import type { CadBlockDefinition, CadDimensionStyle, CadEntity, CadTextStyle } from "@kuubik/cad-schema";
+import type { CadBlockDefinition, CadDimensionStyle, CadDocumentMetadata, CadEntity, CadTextStyle } from "@kuubik/cad-schema";
 import type { PreparedEngineCommand } from "../command-system/command-engine.js";
 
 export interface AnnotationBlockCommandReadBack {
@@ -12,6 +12,7 @@ export interface AnnotationBlockCommandReadBack {
   blocks: CadBlockDefinition[];
   textStyles: CadTextStyle[];
   dimensionStyles: CadDimensionStyle[];
+  metadata: CadDocumentMetadata | null;
 }
 
 function assertExact(actual: unknown, expected: unknown, label: string): void {
@@ -42,6 +43,10 @@ function materializedChange(session: CadSession, change: CadChange, readBack: An
       readBack.dimensionStyles.push(structuredClone(change.dimensionStyle));
       return;
     }
+    case "set-metadata":
+      assertExact({ ...session.document.metadata, updatedAt: change.metadata.updatedAt }, change.metadata, "Document metadata");
+      readBack.metadata = structuredClone(session.document.metadata);
+      return;
     case "replace-drawing-content":
       assertExact(session.document.units, change.units, "Drawing units");
       assertExact(session.document.currentLayerId, change.currentLayerId, "Current layer");
@@ -81,6 +86,7 @@ export function readBackAnnotationBlockCommit(
     blocks: [],
     textStyles: [],
     dimensionStyles: [],
+    metadata: null,
   };
   for (const change of committed.changes) materializedChange(session, change, readBack);
   return structuredClone(readBack);

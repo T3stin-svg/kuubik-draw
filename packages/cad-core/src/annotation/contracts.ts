@@ -52,7 +52,50 @@ export interface MLeaderContract {
   landingGap: number;
 }
 
-export type AnnotationExtension = DimensionAssociation | HatchAssociation | MTextContract | MLeaderContract;
+export type TableHorizontalAlignment = "left" | "center" | "right";
+export type TableVerticalAlignment = "top" | "middle" | "bottom";
+
+export type TableCellValue =
+  | { kind: "text"; text: string }
+  | { kind: "field"; code: string; fallback: string };
+
+export interface TableCellFormat {
+  textStyleId?: string;
+  textHeight?: number;
+  bold?: boolean;
+  italic?: boolean;
+  color?: string;
+}
+
+export interface TableCellContract {
+  id: string;
+  rowId: string;
+  columnId: string;
+  value: TableCellValue;
+  horizontalAlignment?: TableHorizontalAlignment;
+  verticalAlignment?: TableVerticalAlignment;
+  format?: TableCellFormat;
+}
+
+export interface TableMergeContract {
+  id: string;
+  rowIds: string[];
+  columnIds: string[];
+}
+
+export interface TableContract {
+  kind: "table";
+  version: 1;
+  origin: CadPoint2;
+  rotationRad: number;
+  styleId: string;
+  rows: Array<{ id: string; height: number }>;
+  columns: Array<{ id: string; width: number }>;
+  cells: TableCellContract[];
+  merges: TableMergeContract[];
+}
+
+export type AnnotationExtension = DimensionAssociation | HatchAssociation | MTextContract | MLeaderContract | TableContract;
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -61,6 +104,26 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 function isPoint(value: unknown): value is CadPoint2 {
   return isRecord(value) && typeof value.x === "number" && Number.isFinite(value.x)
     && typeof value.y === "number" && Number.isFinite(value.y);
+}
+
+function isStringArray(value: unknown): value is string[] {
+  return Array.isArray(value) && value.every((item) => typeof item === "string");
+}
+
+function isTableCellValue(value: unknown): boolean {
+  return isRecord(value) && (value.kind === "text"
+    ? typeof value.text === "string"
+    : value.kind === "field" && typeof value.code === "string" && typeof value.fallback === "string");
+}
+
+function isTableCellFormat(value: unknown): boolean {
+  if (value === undefined) return true;
+  return isRecord(value)
+    && (value.textStyleId === undefined || typeof value.textStyleId === "string")
+    && (value.textHeight === undefined || typeof value.textHeight === "number" && Number.isFinite(value.textHeight))
+    && (value.bold === undefined || typeof value.bold === "boolean")
+    && (value.italic === undefined || typeof value.italic === "boolean")
+    && (value.color === undefined || typeof value.color === "string");
 }
 
 export function withAnnotationExtension<T extends CadEntity>(entity: T, value: AnnotationExtension): T {
@@ -122,4 +185,21 @@ export function readHatchAssociation(entity: CadEntity): HatchAssociation | null
     },
     boundaryHandles: [...value.boundaryHandles] as string[],
   };
+}
+
+export function readTableContract(entity: CadEntity): TableContract | null {
+  const value = entity.extensionData?.[ANNOTATION_EXTENSION_KEY];
+  if (entity.kind !== "proxy" || entity.originalType !== "TABLE" || !isRecord(value) || value.kind !== "table" || value.version !== 1) return null;
+  if (!isPoint(value.origin) || !Number.isFinite(value.rotationRad) || typeof value.styleId !== "string") return null;
+  if (!Array.isArray(value.rows) || !Array.isArray(value.columns) || !Array.isArray(value.cells) || !Array.isArray(value.merges)) return null;
+  if (!value.rows.every((row) => isRecord(row) && typeof row.id === "string" && typeof row.height === "number" && Number.isFinite(row.height))) return null;
+  if (!value.columns.every((column) => isRecord(column) && typeof column.id === "string" && typeof column.width === "number" && Number.isFinite(column.width))) return null;
+  if (!value.cells.every((cell) => isRecord(cell)
+    && typeof cell.id === "string" && typeof cell.rowId === "string" && typeof cell.columnId === "string"
+    && isTableCellValue(cell.value)
+    && (cell.horizontalAlignment === undefined || ["left", "center", "right"].includes(String(cell.horizontalAlignment)))
+    && (cell.verticalAlignment === undefined || ["top", "middle", "bottom"].includes(String(cell.verticalAlignment)))
+    && isTableCellFormat(cell.format))) return null;
+  if (!value.merges.every((merge) => isRecord(merge) && typeof merge.id === "string" && isStringArray(merge.rowIds) && isStringArray(merge.columnIds))) return null;
+  return structuredClone(value) as unknown as TableContract;
 }

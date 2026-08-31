@@ -1,4 +1,4 @@
-import { CadSession, createEmptyDocument, hatchBoundaryPolyline, readDimensionAssociation } from "@kuubik/cad-core";
+import { CadSession, createEmptyDocument, hatchBoundaryPolyline, readDimensionAssociation, readTableContract } from "@kuubik/cad-core";
 import type { KDrawDocumentV1 } from "@kuubik/cad-schema";
 import { describe, expect, it } from "vitest";
 import { prepareBlockCommand } from "../blocks/command-adapter.js";
@@ -26,6 +26,7 @@ function content(document: KDrawDocumentV1) {
     blocks: document.blocks,
     textStyles: document.textStyles,
     dimensionStyles: document.dimensionStyles,
+    metadataExtensions: document.metadata.extensions ?? {},
   });
 }
 
@@ -123,6 +124,30 @@ describe("DOM-independent annotation/block live workflow", () => {
 
     const hatch = runPrompt(shell, session, { commandId: "HATCH" }, { boundaryHandles: ["P1"], pattern: "ANSI31", angleRad: Math.PI / 4, scale: 2, associative: true, origin: { x: 1, y: 2 } });
     expect(hatch.readBack.entities[0]).toMatchObject({ handle: hatch.prepared.resultHandles[0], kind: "hatch", pattern: "ANSI31", associative: true, extensionData: { "kuubik.annotation.v1": { boundaryHandles: ["P1"], pattern: { angleRad: Math.PI / 4, scale: 2, origin: { x: 1, y: 2 } } } } });
+
+    const tableStyle = runPrompt(shell, session, { commandId: "TABLE" }, { mode: "style-create", style: { id: "TABLE-STD", name: "Standard", textStyleId: "TXT2", textHeight: 2.5, cellMargin: 1, borderWidth: 0.25, horizontalAlignment: "left", verticalAlignment: "middle" } });
+    expect(tableStyle.readBack.metadata?.extensions?.["kuubik.tableStyles.v1"]).toEqual([{ id: "TABLE-STD", name: "Standard", textStyleId: "TXT2", textHeight: 2.5, cellMargin: 1, borderWidth: 0.25, horizontalAlignment: "left", verticalAlignment: "middle" }]);
+    const table = runPrompt(shell, session, { commandId: "TABLE" }, { mode: "create", definition: {
+      origin: { x: 200, y: 100 }, rotationRad: 0, styleId: "TABLE-STD",
+      rows: [{ id: "R1", height: 8 }, { id: "R2", height: 10 }], columns: [{ id: "C1", width: 30 }, { id: "C2", width: 40 }],
+      cells: [
+        { id: "A1", rowId: "R1", columnId: "C1", value: { kind: "text", text: "Mark" } },
+        { id: "A2", rowId: "R1", columnId: "C2", value: { kind: "text", text: "Väärtus" } },
+        { id: "B1", rowId: "R2", columnId: "C1", value: { kind: "text", text: "A-01" } },
+        { id: "B2", rowId: "R2", columnId: "C2", value: { kind: "field", code: "%<SheetNumber>%", fallback: "1" } },
+      ],
+    } });
+    const tableHandle = table.prepared.resultHandles[0]!;
+    expect(table.readBack.entities[0]).toMatchObject({ handle: tableHandle, kind: "proxy", originalType: "TABLE" });
+    const tableEdit = runPrompt(shell, session, { commandId: "TABLE", context: { selectedHandles: [tableHandle] } }, { mode: "edit", operations: [
+      { type: "set-cell", cellId: "B2", value: { kind: "field", code: "%<ProjectNumber>%", fallback: "P-001" }, horizontalAlignment: "right" },
+      { type: "merge", merge: { id: "M1", rowIds: ["R1"], columnIds: ["C1", "C2"] } },
+      { type: "resize-column", columnId: "C2", width: 55 },
+    ] });
+    expect(tableEdit.prepared.targetHandles).toEqual([tableHandle]);
+    const tableContract = readTableContract(tableEdit.readBack.entities[0]!);
+    expect(tableContract?.cells.find((cell) => cell.id === "B2")).toMatchObject({ id: "B2", value: { kind: "field", code: "%<ProjectNumber>%", fallback: "P-001" }, horizontalAlignment: "right" });
+    expect(tableContract?.merges).toEqual([{ id: "M1", rowIds: ["R1"], columnIds: ["C1", "C2"] }]);
   });
 
   it("runs BLOCK/INSERT/ATTRIB/BEDIT/EXPLODE with stable inserts and exact property read-back", () => {

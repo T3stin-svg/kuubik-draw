@@ -20,7 +20,7 @@ describe("AnnotationBlockShellAdapter contract", () => {
   it("publishes a stable command registry and user-visible capability state", () => {
     const shell = adapter();
     expect(shell.commandDefinitions.map((definition) => definition.id)).toEqual([
-      "TEXT", "MTEXT", "LEADER", "MLEADER", "DIM", "STYLE", "HATCH",
+      "TEXT", "MTEXT", "LEADER", "MLEADER", "DIM", "STYLE", "HATCH", "TABLE",
       "BLOCK", "INSERT", "BEDIT", "EXPLODE", "ATTRIB",
     ]);
     expect(shell.commandDefinitions.find((definition) => definition.id === "DIM")?.options?.map((option) => option.id)).toEqual(["LINEAR", "ALIGNED", "ANGULAR", "RADIUS", "DIAMETER", "CONTINUE", "BASELINE", "STYLE"]);

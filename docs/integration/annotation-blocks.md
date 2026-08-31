@@ -220,9 +220,68 @@ because it binds handles to loops. Association updates replace loop coordinates 
 retaining hatch handle, layer, appearance, pattern and extension payload. Missing/open/degenerate
 boundaries report a broken association and cause no partial hatch mutation.
 
+Creation and association propagation reject a locked hatch layer before mutation.
+`evaluateHatchCapability` reports `missing-hatch`, `locked-layer` or `orphan-boundary`; it never
+substitutes a nearby boundary for a missing handle. Nested loops use deterministic even/odd depth,
+so outer/hole/island roles remain `[filled, hole, filled]` under model-coordinate translation.
+
 DXF guidance: emit HATCH loop source handles where the format permits them, plus pattern name,
 solid flag, angle, scale and origin. Read-back must compare loop count, hole/island parity,
 source handles and pattern fields, not only rendered fill pixels.
+
+### TABLE
+
+The pinned public schema has no native `CadTable`. Until session 4 adds a schema and adapter path,
+TABLE is represented honestly as one `CadProxyEntity` with `originalType="TABLE"`, one stable
+entity handle and a typed authoritative payload at `extensionData["kuubik.annotation.v1"]`:
+
+```json
+{
+  "kind": "table",
+  "version": 1,
+  "origin": { "x": 10, "y": 50 },
+  "rotationRad": 0,
+  "styleId": "TABLE-STD",
+  "rows": [{ "id": "R1", "height": 8 }],
+  "columns": [{ "id": "C1", "width": 30 }],
+  "cells": [{
+    "id": "A1",
+    "rowId": "R1",
+    "columnId": "C1",
+    "value": { "kind": "field", "code": "%<SheetNumber>%", "fallback": "1" },
+    "horizontalAlignment": "center",
+    "verticalAlignment": "middle",
+    "format": { "textStyleId": "TXT-ISO", "textHeight": 2.5, "bold": true }
+  }],
+  "merges": []
+}
+```
+
+Rows, columns, cells and merges have stable IDs. Exactly one cell exists for every row/column
+coordinate. A merge references contiguous row and column IDs, covers at least two cells and cannot
+overlap another merge. Covered cell values are preserved; unmerge therefore restores them without
+data reconstruction. Deleting a merged row/column fails until the merge is explicitly removed.
+
+Cell values are either literal text or inert fields. A field stores its code and explicit fallback
+verbatim; `tableCellDisplayText` returns only the fallback and never evaluates or executes the
+field code. Per-cell alignment/format overrides retain optional text-style references, text height,
+bold/italic flags and `#RRGGBB` colour. Invalid, overlong or NUL-bearing text/field values fail
+before commit.
+
+Table styles are immutable ID-referenced resources stored in
+`document.metadata.extensions["kuubik.tableStyles.v1"]`. Styles retain name, optional text-style
+reference, text height, margin, border width and default horizontal/vertical alignment.
+Create/update keeps the style ID stable; existing tables follow the updated resource without
+entity rewrites.
+
+`TABLE create`, batched `edit`, `style-create` and `style-update` all use the same planner preview
+and commit path. One edit may set cells, merge/unmerge, insert/delete/resize rows or columns and
+apply a style, but produces one immutable entity replacement and one Undo/Redo step. The table and
+unaffected cell IDs remain unchanged. Locked table layers fail before mutation.
+
+The core derives a `table` DXF capability requirement for every table and for the style registry.
+This is a fail-closed contract only: the current workstream does not modify the DXF adapter and does
+not claim that a native TABLE has been written or reopened.
 
 ## Namespaced block-definition payload
 
@@ -305,6 +364,7 @@ only the capability contract; it does not prove that a DXF file was written or r
 - Preserve document array order for entities, styles, definitions and definition members.
 - Preserve continued-dimension order by `chain.index`; reject duplicate or negative indices.
 - Preserve hatch boundary/loop pairing by array position.
+- Preserve TABLE row/column order and all table, cell, merge and style IDs.
 - Preserve block attribute definition order; instance object keys are emitted in definition order.
 - Reject duplicate handles across model entities and all block members.
 - Reject duplicate block/style IDs and case-insensitive names where the core planner does.
@@ -322,12 +382,14 @@ only the capability contract; it does not prove that a DXF file was written or r
 3. LEADER and MLEADER: vertices, content placement, both style references and native/lossy status.
 4. SOLID and ANSI31-like line HATCH: outer loop, hole, nested island, angle, scale, origin and
    boundary source handles; mutate a boundary and verify same hatch handle after update.
-5. BLOCK/INSERT: base point, member handles, insert handle, rotation, positive/negative non-zero
+5. TABLE: origin/rotation, row/column sizes and order, cell IDs and literal/field values, fallback,
+   merges, alignment, format, style reference, insert/delete/resize and atomic Undo/Redo.
+6. BLOCK/INSERT: base point, member handles, insert handle, rotation, positive/negative non-zero
    scales and nested acyclic block.
-6. Redefine: open/reload and verify two pre-existing inserts retain exact transforms/attributes but
+7. Redefine: open/reload and verify two pre-existing inserts retain exact transforms/attributes but
    render the new definition.
-7. Attributes: default, overridden, constant and invisible values; edit, Undo, Redo and reload.
-8. Cycle, dangling handle/style, duplicate handle and unsupported transform mutants must fail before
+8. Attributes: default, overridden, constant and invisible values; edit, Undo, Redo and reload.
+9. Cycle, dangling handle/style, duplicate handle and unsupported transform mutants must fail before
    download or document mutation.
 
 The F-row remains below `1.00` until the same visible workflow is proven in AutoCAD 2024.1.2 and
@@ -342,4 +404,4 @@ the namespaced style profile at its adapter boundary, then fail closed for any f
 round-trip. Documents carrying those semantics derive explicit `dimension-chain` and
 `dimension-style-profile` requirements in addition to the native dimension requirements. A
 passing core receipt or `gate:dxf` regression is necessary integration evidence, but
-is not AutoCAD or generated-file evidence and cannot promote F-061..F-066 to `1.00`.
+is not AutoCAD or generated-file evidence and cannot promote F-061..F-068 to `1.00`.

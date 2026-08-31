@@ -91,7 +91,7 @@ describe("F-057..F-060 text and leaders", () => {
   });
 });
 
-describe("F-067..F-068 hatch", () => {
+describe("F-067 hatch", () => {
   it("builds solid/line patterns, classifies islands and holes and records stable boundary handles", () => {
     const document = fixture();
     document.entities.push(

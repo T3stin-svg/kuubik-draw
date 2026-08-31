@@ -38,6 +38,7 @@ describe("F-057..F-068 typed annotation command adapter", () => {
     { commandId: "LEADER", args: { handle: "L1", layerId: "0", vertices: [{ x: 0, y: 0 }, { x: 10, y: 10 }], text: "L" } },
     { commandId: "MLEADER", args: { handle: "ML1", layerId: "0", vertices: [{ x: 0, y: 0 }, { x: 10, y: 10 }], text: "ML", textPosition: { x: 12, y: 10 }, styleId: "MLS", textStyleId: "TXT", textHeight: 2.5 } },
     { commandId: "HATCH", args: { handle: "H1", layerId: "0", boundaryHandles: ["20"], pattern: "ANSI31", angleRad: Math.PI / 4, scale: 2, associative: true } },
+    { commandId: "TABLE", mode: "style-create", style: { id: "TS", name: "Table", textStyleId: "TXT", textHeight: 2.5, cellMargin: 1, borderWidth: 0.25, horizontalAlignment: "left", verticalAlignment: "middle" } },
   ])("prepares $commandId through the typed matrix", (input) => {
     const prepared = prepareAnnotationCommand(fixture(), input);
     expect(prepared.commandId).toBe(input.commandId);
@@ -59,7 +60,7 @@ describe("F-057..F-068 typed annotation command adapter", () => {
   });
 });
 
-describe("F-065/F-068 associative geometry integration", () => {
+describe("F-065/F-067 associative geometry integration", () => {
   it("updates dimension and hatch with the same handles in the geometry command's one commit", () => {
     const document = fixture();
     document.entities.push(createAlignedDimension(document, { handle: "D1", layerId: "0", styleId: "DIM", first: { x: 0, y: 0 }, second: { x: 100, y: 20 }, dimensionLinePoint: { x: 0, y: 40 }, anchors: [

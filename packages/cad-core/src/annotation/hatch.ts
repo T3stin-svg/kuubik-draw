@@ -57,9 +57,15 @@ export interface HatchArgs {
   associative?: boolean;
 }
 
+export type HatchCapability =
+  | { executable: true; code: "ready" }
+  | { executable: false; code: "missing-hatch" | "locked-layer" | "orphan-boundary"; handle: string };
+
 export function createHatch(document: KDrawDocumentV1, args: HatchArgs): CadHatch {
   if (!args.handle.trim() || [...document.entities, ...document.blocks.flatMap((block) => block.entities)].some((entity) => entity.handle === args.handle)) throw new RangeError(`Invalid or duplicate hatch handle: ${args.handle}.`);
-  if (!document.layers.some((layer) => layer.id === args.layerId)) throw new RangeError(`Unknown layer: ${args.layerId}.`);
+  const layer = document.layers.find((candidate) => candidate.id === args.layerId);
+  if (!layer) throw new RangeError(`Unknown layer: ${args.layerId}.`);
+  if (layer.locked) throw new RangeError(`Layer is locked: ${args.layerId}.`);
   const boundaryHandles = [...new Set(args.boundaryHandles)];
   if (!boundaryHandles.length) throw new RangeError("HATCH requires at least one boundary.");
   const polygons = boundaryHandles.map((handle) => {
@@ -98,6 +104,7 @@ export function updateAssociativeHatches(document: KDrawDocumentV1, changedHandl
     if (entity.kind !== "hatch" || !entity.associative) continue;
     const association = readHatchAssociation(entity);
     if (!association || !association.boundaryHandles.some((handle) => changed.has(handle))) continue;
+    if (document.layers.find((layer) => layer.id === entity.layerId)?.locked) throw new RangeError(`Associative hatch ${entity.handle} is on locked layer ${entity.layerId}.`);
     const polygons: CadPoint2[][] = [];
     for (const handle of association.boundaryHandles) {
       const boundary = document.entities.find((candidate) => candidate.handle === handle);
@@ -115,7 +122,25 @@ export function updateAssociativeHatches(document: KDrawDocumentV1, changedHandl
   return { changes, updatedHandles, broken };
 }
 
+export function evaluateHatchCapability(document: KDrawDocumentV1, hatchHandle: string): HatchCapability {
+  const entity = document.entities.find((candidate) => candidate.handle === hatchHandle);
+  if (!entity || entity.kind !== "hatch") return { executable: false, code: "missing-hatch", handle: hatchHandle };
+  if (document.layers.find((layer) => layer.id === entity.layerId)?.locked) return { executable: false, code: "locked-layer", handle: entity.layerId };
+  const association = readHatchAssociation(entity);
+  if (entity.associative && !association) return { executable: false, code: "orphan-boundary", handle: "$association" };
+  if (entity.associative && association) {
+    const orphan = association.boundaryHandles.find((handle) => {
+      const boundary = document.entities.find((candidate) => candidate.handle === handle);
+      return !boundary || boundaryVertices(boundary) === null;
+    });
+    if (orphan) return { executable: false, code: "orphan-boundary", handle: orphan };
+  }
+  return { executable: true, code: "ready" };
+}
+
 export function hatchBoundaryPolyline(handle: string, layerId: string, vertices: CadPoint2[]): CadPolyline {
   if (vertices.length < 3) throw new RangeError("Boundary requires at least three vertices.");
   return { kind: "polyline", handle, layerId, closed: true, vertices: vertices.map((point) => ({ ...point })) };
 }
+
+export * from "./table.js";
