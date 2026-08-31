@@ -3,6 +3,13 @@ import { describe, expect, it } from "vitest";
 import { createEmptyDocument } from "@kuubik/cad-core";
 import { KDrawIndexedDb } from "./indexed-db.js";
 
+function rawRequest<T>(request: IDBRequest<T>): Promise<T> {
+  return new Promise((resolve, reject) => {
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}
+
 describe("versioned IndexedDB persistence", () => {
   it("stores snapshots and an append-only operation log without localStorage", async () => {
     const database = new KDrawIndexedDb(new IDBFactory());
@@ -70,6 +77,81 @@ describe("versioned IndexedDB persistence", () => {
     expect(await database.loadAttachment("local", "pdf-1")).toEqual({ attachment, bytes });
     await expect(database.saveAttachment("local", attachment, bytes)).rejects.toThrow();
     await expect(database.saveAttachment("local", { ...attachment, id: "pdf-2", sha256: "0".repeat(64) }, bytes)).rejects.toThrow(/checksum mismatch/u);
+    database.close();
+  });
+
+  it("replays SHA-chained autosave records and reports an unclean crash session", async () => {
+    const database = new KDrawIndexedDb(new IDBFactory());
+    await database.recordRecoveryOpen("local", "session-crashed", "2026-08-31T10:00:00Z");
+    const first = createEmptyDocument({ documentId: "local" });
+    first.revision = 1;
+    first.entities = [{ kind: "line", handle: "10", layerId: "0", start: { x: 0, y: 0 }, end: { x: 1, y: 1 } }];
+    await database.commitRevision(first, { opId: "op-1", baseRevision: 0, commandId: "LINE", args: {}, targetHandles: [], resultHandles: ["10"] });
+    const second = structuredClone(first);
+    second.revision = 2;
+    second.entities.push({ kind: "circle", handle: "11", layerId: "0", center: { x: 5, y: 5 }, radius: 2 });
+    await database.commitRevision(second, { opId: "op-2", baseRevision: 1, commandId: "CIRCLE", args: {}, targetHandles: [], resultHandles: ["11"] });
+
+    expect(await database.recoverDocument("local")).toEqual({
+      document: second,
+      source: "operation-log",
+      recoveredRevision: 2,
+      ignoredOperationIds: [],
+      corruptSnapshotKeys: [],
+      uncleanSessionIds: ["session-crashed"],
+    });
+    await database.recordRecoveryClean("local", "session-crashed", 2, "2026-08-31T10:05:00Z");
+    expect((await database.recoverDocument("local")).uncleanSessionIds).toEqual([]);
+    await database.recordRecoveryOpen("local", "session-crashed", "2026-08-31T10:06:00Z");
+    expect((await database.recoverDocument("local")).uncleanSessionIds).toEqual(["session-crashed"]);
+    await expect(database.recordRecoveryClean("local", "session-crashed", 1)).rejects.toThrow(/revision conflict/u);
+    database.close();
+  });
+
+  it("fails closed at the last valid operation when the append-only tail is corrupt", async () => {
+    const factory = new IDBFactory();
+    const database = new KDrawIndexedDb(factory);
+    const first = createEmptyDocument({ documentId: "local" }); first.revision = 1;
+    await database.commitRevision(first, { opId: "op-1", baseRevision: 0, commandId: "LINE", args: {}, targetHandles: [], resultHandles: [] });
+    const second = structuredClone(first); second.revision = 2;
+    await database.commitRevision(second, { opId: "op-2", baseRevision: 1, commandId: "LINE", args: {}, targetHandles: [], resultHandles: [] });
+
+    const raw = await rawRequest(factory.open("kuubik-draw", 2));
+    const transaction = raw.transaction("operations", "readwrite");
+    const store = transaction.objectStore("operations");
+    const corrupt = await rawRequest(store.get("op-2"));
+    corrupt.afterSha256 = "0".repeat(64);
+    store.put(corrupt);
+    await new Promise<void>((resolve, reject) => {
+      transaction.oncomplete = () => resolve();
+      transaction.onerror = () => reject(transaction.error);
+    });
+    raw.close();
+
+    expect(await database.recoverDocument("local")).toEqual(expect.objectContaining({
+      document: first,
+      source: "operation-log",
+      recoveredRevision: 1,
+      ignoredOperationIds: ["op-2"],
+    }));
+
+    const rawAgain = await rawRequest(factory.open("kuubik-draw", 2));
+    const firstTransaction = rawAgain.transaction("operations", "readwrite");
+    const firstStore = firstTransaction.objectStore("operations");
+    const corruptFirst = await rawRequest(firstStore.get("op-1"));
+    corruptFirst.afterSha256 = "f".repeat(64);
+    firstStore.put(corruptFirst);
+    await new Promise<void>((resolve, reject) => {
+      firstTransaction.oncomplete = () => resolve();
+      firstTransaction.onerror = () => reject(firstTransaction.error);
+    });
+    rawAgain.close();
+    expect(await database.recoverDocument("local")).toEqual(expect.objectContaining({
+      document: null,
+      source: "none",
+      recoveredRevision: null,
+      ignoredOperationIds: ["op-1", "op-2"],
+    }));
     database.close();
   });
 });
