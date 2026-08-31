@@ -26,11 +26,14 @@ describe("50,000 object snap/selection performance", () => {
     const result = profileCadSpatialIndexes(entities, {
       selectionPoint: { x: 5, y: 0 }, selectionTolerance: 6,
       snap: { modes: ["endpoint", "midpoint", "nearest", "intersection"], cursor: { x: 5, y: 0 }, aperture: 6 },
+      queryIterations: 100,
     });
     expect(result.selection[0]?.handle).toBe("0");
     expect(result.snaps.length).toBeLessThan(20);
-    expect(result.profile).toMatchObject({ entityCount: 50_000, selectionHits: 1, snapCandidates: result.snaps.length });
+    expect(result.profile).toMatchObject({ entityCount: 50_000, queryIterations: 100, selectionHits: 1, snapCandidates: result.snaps.length });
     expect(result.profile.selectionBuildMs + result.profile.snapBuildMs).toBeLessThan(5_000);
-    expect(result.profile.queryMs).toBeLessThan(100);
+    expect(result.profile.queryMs).toBeLessThan(5_000);
+    expect(result.profile.p95QueryMs).toBeLessThan(100);
+    expect(result.profile.maxQueryMs).toBeLessThan(200);
   });
 });

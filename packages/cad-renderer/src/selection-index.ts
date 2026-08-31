@@ -48,6 +48,9 @@ export interface CadSpatialPerformanceProfile {
   selectionBuildMs: number;
   snapBuildMs: number;
   queryMs: number;
+  queryIterations: number;
+  p95QueryMs: number;
+  maxQueryMs: number;
   selectionHits: number;
   snapCandidates: number;
 }
@@ -57,6 +60,7 @@ export interface CadSpatialPerformanceOptions {
   selectionTolerance: number;
   snap: CadSnapGenerationOptions;
   eligible?: (entity: CadEntity) => boolean;
+  queryIterations?: number;
   now?: () => number;
 }
 
@@ -66,6 +70,10 @@ export function profileCadSpatialIndexes(
   options: CadSpatialPerformanceOptions,
 ): { profile: CadSpatialPerformanceProfile; selection: CadPickHit[]; snaps: CadSnapCandidate[] } {
   const now = options.now ?? (() => globalThis.performance.now());
+  const queryIterations = options.queryIterations ?? 1;
+  if (!Number.isSafeInteger(queryIterations) || queryIterations < 1 || queryIterations > 10_000) {
+    throw new RangeError("Spatial profile queryIterations must be an integer from 1 to 10000.");
+  }
   const selection = new CadSelectionIndex();
   const snap = new CadSnapIndex();
   const selectionStarted = now();
@@ -74,16 +82,28 @@ export function profileCadSpatialIndexes(
   const snapStarted = now();
   snap.setEntities(entities);
   const snapBuildMs = now() - snapStarted;
-  const queryStarted = now();
-  const selectionHits = selection.pick(options.selectionPoint, options.selectionTolerance, options.eligible);
-  const snaps = snap.query(options.snap, options.eligible);
-  const queryMs = now() - queryStarted;
+  const querySamples: number[] = [];
+  let selectionHits: CadPickHit[] = [];
+  let snaps: CadSnapCandidate[] = [];
+  for (let index = 0; index < queryIterations; index += 1) {
+    const queryStarted = now();
+    selectionHits = selection.pick(options.selectionPoint, options.selectionTolerance, options.eligible);
+    snaps = snap.query(options.snap, options.eligible);
+    querySamples.push(now() - queryStarted);
+  }
+  const orderedSamples = [...querySamples].sort((first, second) => first - second);
+  const queryMs = querySamples.reduce((sum, value) => sum + value, 0);
+  const p95QueryMs = orderedSamples[Math.max(0, Math.ceil(orderedSamples.length * 0.95) - 1)]!;
+  const maxQueryMs = orderedSamples.at(-1)!;
   return {
     profile: {
       entityCount: entities.length,
       selectionBuildMs,
       snapBuildMs,
       queryMs,
+      queryIterations,
+      p95QueryMs,
+      maxQueryMs,
       selectionHits: selectionHits.length,
       snapCandidates: snaps.length,
     },
