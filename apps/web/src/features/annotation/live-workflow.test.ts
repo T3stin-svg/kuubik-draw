@@ -184,11 +184,18 @@ describe("DOM-independent annotation/block live workflow", () => {
     expect(attrib.readBack.entities[0]).toMatchObject({ handle: secondInsertHandle, attributes: { MARK: "B9" } });
 
     const insertsBeforeBedit = structuredClone(session.document.entities.filter((entity) => entity.kind === "blockRef"));
-    const bedit = runPrompt(shell, session, { commandId: "BEDIT", context: { selectedHandles: [firstInsertHandle] } }, { basePoint: { x: 200, y: 0 }, entities: [{ kind: "line", handle: "BM2", layerId: "0", start: { x: 200, y: 0 }, end: { x: 280, y: 0 } }], attributes: attributeDefinitions });
+    const redefinedAttributes = [...attributeDefinitions, { tag: "CODE", prompt: "Kood", defaultValue: "A", position: { x: 210, y: 10 }, height: 2.5, constant: true }];
+    const bedit = runPrompt(shell, session, { commandId: "BEDIT", context: { selectedHandles: [firstInsertHandle] } }, { basePoint: { x: 200, y: 0 }, entities: [{ kind: "line", handle: "BM2", layerId: "0", start: { x: 200, y: 0 }, end: { x: 280, y: 0 } }], attributes: redefinedAttributes, syncAttributes: false });
     expect(bedit.readBack.blocks.find((definition) => definition.id === "B")?.entities).toEqual([{ kind: "line", handle: "BM2", layerId: "0", start: { x: 200, y: 0 }, end: { x: 280, y: 0 } }]);
     expect(session.document.entities.filter((entity) => entity.kind === "blockRef")).toEqual(insertsBeforeBedit);
 
-    const explode = runPrompt(shell, session, { commandId: "EXPLODE", context: { selectedHandles: [firstInsertHandle] } }, { confirm: true });
+    const attSync = runPrompt(shell, session, { commandId: "ATTRIB", context: { selectedHandles: [firstInsertHandle] } }, { mode: "sync" });
+    expect(attSync.prepared.targetHandles).toEqual([firstInsertHandle, secondInsertHandle]);
+    expect(attSync.readBack.entities.map((entity) => entity.handle)).toEqual([firstInsertHandle, secondInsertHandle]);
+    expect(attSync.readBack.entities.find((entity) => entity.handle === firstInsertHandle)).toMatchObject({ attributes: { MARK: "B1", CODE: "A" } });
+    expect(attSync.readBack.entities.find((entity) => entity.handle === secondInsertHandle)).toMatchObject({ attributes: { MARK: "B9", CODE: "A" } });
+
+    const explode = runPrompt(shell, session, { commandId: "EXPLODE", context: { selectedHandles: [firstInsertHandle] } }, { confirm: true, nestedMode: "recursive" });
     expect(explode.readBack.deletedHandles).toContain(firstInsertHandle);
     expect(explode.readBack.entities.length).toBeGreaterThan(0);
     expect(session.document.entities.some((entity) => entity.handle === secondInsertHandle)).toBe(true);

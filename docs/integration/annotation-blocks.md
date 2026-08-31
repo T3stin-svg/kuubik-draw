@@ -378,19 +378,37 @@ The insert stores instance values in native `CadBlockReference.attributes`; keys
 the definition's canonical tag spelling. Constant attributes always take the definition default.
 Unknown instance tags are rejected.
 
-`BLOCK` moves selected entity values into a new definition and replaces them in model space with
-one independent `blockRef`. The source entity handles may remain in the definition because they
-no longer exist in model space. The insert needs its own globally unique handle.
+`BLOCK` moves selected entity values into a new immutable definition and replaces them in model
+space with one independent `blockRef`. The source entity handles may remain in the definition
+because they no longer exist in model space. The insert needs its own globally unique handle.
+Block IDs and names are case-insensitively unique, and member handles are globally unique across
+model space and all definitions. A locked selected/member layer or any direct/transitive proxy
+child rejects the whole command before mutation.
 
 `INSERT` stores `blockId`, model-coordinate insertion, two finite non-zero scales, rotation in
-radians and instance attributes. `BEDIT`/redefine creates a new immutable definition value with
-the same block ID/name. Existing inserts, transforms, handles and attribute values are untouched.
+radians, target layer and instance attributes. Definition and insert are separate values:
+`BEDIT`/redefine replaces the immutable definition under the same block ID/name and never replaces
+an insert merely to update block geometry. Every existing insert keeps its handle, insertion,
+scale, rotation and layer. Without explicit attribute sync its values are also untouched; removing
+a still-valued tag fails closed.
 
-`EXPLODE` expands one level. Newly materialized model entities receive new collision-free handles
-because definition-member handles remain globally present inside the definition. Nested inserts
-remain inserts after one explode. A transform that the current 2D schema cannot represent
-(for example rotated nested content under a shear-producing non-uniform transform) fails before
-mutation. Visible attributes become ordinary TEXT entities; invisible attributes do not.
+`EXPLODE.nestedMode` is explicit: `preserve` expands one level and retains transformed nested
+inserts, while `recursive` expands the complete acyclic graph. Newly materialized model entities
+receive deterministic collision-free handles because definition-member handles remain globally
+present inside the definition. Nested insert transforms are composed in model coordinates. A
+transform that the current 2D schema cannot represent (for example rotated nested content under
+a shear-producing non-uniform transform), a missing definition, a locked source/member layer or a
+proxy child fails before mutation. Visible attributes become ordinary TEXT entities; invisible
+attributes do not. Delete plus all materialized entities are one `CadSession.commit` and one
+Undo/Redo step.
+
+`ATTRIB.mode = "edit"` edits one insert. `ATTRIB.mode = "sync"` is the deterministic ATTSYNC-like
+operation for every insert that references the selected insert's `blockId`. Output keys follow
+definition order and canonical tag spelling; matching non-constant values survive case-
+insensitively, new tags take defaults, removed tags disappear, and constants always take their
+definition default. Insert handles, transforms and layers are byte-for-byte preserved. Standalone
+sync emits one atomic batch; `BEDIT.syncAttributes = true` performs definition replacement and the
+same sync in one drawing-content change. Locked affected inserts reject the whole operation.
 
 Before define, redefine, import or deserialize, construct the complete block-reference graph and
 run `assertAcyclicBlocks`. Direct and indirect cycles are hard errors. Missing nested definitions
@@ -399,7 +417,10 @@ are hard errors. Never rely on renderer recursion guards as document validation.
 DXF guidance: definitions map to BLOCK/ENDBLK records and references to INSERT. Attribute
 definitions map to ATTDEF; values map to ATTRIB/SEQEND. Redefinition keeps the same definition
 identity so all existing INSERT references resolve to the new content. Import must validate the
-complete graph before exposing any partial document.
+complete graph before exposing any partial document. Export must declare block-definition,
+block-nesting, insert-transform and block-attributes capabilities as `exact` before writing. These
+core contracts do not prove native DXF support: session 4 must serialize, reopen with an
+independent parser and AutoCAD, then compare the required read-back fields and hashes.
 
 ## Fail-closed DXF capability gate
 
@@ -452,13 +473,17 @@ only the capability contract; it does not prove that a DXF file was written or r
    boundary source handles; mutate a boundary and verify same hatch handle after update.
 5. TABLE: origin/rotation, row/column sizes and order, cell IDs and literal/field values, fallback,
    merges, alignment, format, style reference, insert/delete/resize and atomic Undo/Redo.
-6. BLOCK/INSERT: base point, member handles, insert handle, rotation, positive/negative non-zero
-   scales and nested acyclic block.
+6. BLOCK/INSERT: base point, member handles, insert handle, layer, rotation, positive/negative
+   non-zero scales and nested acyclic block. Exercise both `preserve` and `recursive` EXPLODE and
+   verify deterministic new handles plus exact composed model-space geometry.
 7. Redefine: open/reload and verify two pre-existing inserts retain exact transforms/attributes but
    render the new definition.
-8. Attributes: default, overridden, constant and invisible values; edit, Undo, Redo and reload.
-9. Cycle, dangling handle/style/leader anchor, duplicate handle and unsupported transform mutants must fail before
-   download or document mutation.
+8. Attributes: default, overridden, constant and invisible values; standalone sync and redefine+
+   sync; canonical definition order; removed/new tags; edit, Undo, Redo and reload. Verify all
+   existing insert handles/transforms/layers before and after sync.
+9. Cycle, dangling definition/handle/style/leader anchor, duplicate case-insensitive block name,
+   duplicate global handle, locked layer, proxy child and unsupported transform mutants must fail
+   before download or document mutation.
 
 The F-row remains below `1.00` until the same visible workflow is proven in AutoCAD 2024.1.2 and
 Kuubik and the produced file is independently read back.

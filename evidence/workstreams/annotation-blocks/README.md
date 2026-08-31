@@ -139,3 +139,30 @@ and 7 PDF files / 22 tests. Repository typecheck, lint, production build, public
 (1509 files), license gate (119 installed packages) and `git diff --check` also passed. The build
 retained the known Vite warning for a minified chunk larger than 500 kB. No native annotation DXF
 or PDF was produced/reopened, no AutoCAD live workflow was run and no F-score promotion is claimed.
+
+Eighth-wave F-087..F-091 additions:
+
+- BLOCK validates case-insensitive ID/name uniqueness, global member handles, selected/member
+  layers, the complete nested graph and direct/transitive proxy children before one atomic change;
+- INSERT preserves its independent handle, layer and full model-space transform, and rejects
+  orphan/cyclic/proxy definitions, zero scale, duplicate handles and locked target layers;
+- EXPLODE exposes explicit one-level `preserve` and full-graph `recursive` modes, composes nested
+  transforms, materializes visible attributes, allocates deterministic fresh handles and remains
+  one Undo/Redo step;
+- BEDIT replaces only the immutable definition and preserves every existing insert handle,
+  insertion, signed scale, rotation and layer;
+- deterministic ATTSYNC-like behavior is available through `ATTRIB.mode = "sync"` and optional
+  `BEDIT.syncAttributes`: matching values survive, new defaults appear, removed tags disappear,
+  constants reset to defaults and definition order/canonical spelling wins;
+- locked affected inserts, missing definitions, duplicate handles/names, cycles, unsupported
+  nested transforms and proxy children fail before a partial document change;
+- the session 4 integration contract now specifies exact serialization, independent read-back and
+  AutoCAD verification expectations without claiming native adapter support.
+
+Eighth-wave targeted verification passed 5 files / 26 tests. Final repository regression passed
+199 Vitest files / 982 tests; dedicated gates passed 21 DXF files / 56 tests and 7 PDF files /
+22 tests. Repository typecheck, lint, production build, public-tree scan (1602 files), license gate
+(119 installed packages) and `git diff --check` passed. The build retained the known Vite warning
+for a minified chunk larger than 500 kB. The commit SHA is recorded in the delivery report. No
+DXF/PDF adapter, global shell, App/style/package/parity file or F-score was changed. No native file
+was produced or reopened, no AutoCAD live workflow was run and no F-score promotion is claimed.
