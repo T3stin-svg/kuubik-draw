@@ -12,6 +12,7 @@ const result = profileCadSpatialIndexes(entities, {
   selectionPoint: { x: 5, y: 0 },
   selectionTolerance: 6,
   snap: { modes: ["endpoint", "midpoint", "nearest", "intersection"], cursor: { x: 5, y: 0 }, aperture: 6 },
+  queryIterations: 100,
 });
 
 process.stdout.write(`${JSON.stringify({
