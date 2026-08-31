@@ -10,8 +10,8 @@
   "ciArtifactsExcluded": [
     "results.sarif"
   ],
-  "fileCount": 1789,
-  "sourceTreeSha256": "e623adf45d15665d7587991aa60943be70c59f2875f68fb1681cfc98cac633e1",
+  "fileCount": 1796,
+  "sourceTreeSha256": "17c4a81891eeaca2e38e803d64c2a5912a278641f6fee1383c23949a965502d7",
   "files": [
     {
       "path": ".gitattributes",
@@ -769,14 +769,39 @@
       "sha256": "c84f285ce98eba9aab2c2877914871c346cf410228b1986eaa03930bd448f643"
     },
     {
+      "path": "apps/web/src/features/precision/units-command-adapter.mutation.test.ts",
+      "size": 3588,
+      "sha256": "989fe81ed28a20bcb33f1c5de6c85f7122bf9aa53e532e9cd1fe11ac87cf8234"
+    },
+    {
+      "path": "apps/web/src/features/precision/units-command-adapter.performance.test.ts",
+      "size": 1845,
+      "sha256": "1158020220604b5d328b64e5b87d5053c524c7a824df47071d70da7aa41db632"
+    },
+    {
+      "path": "apps/web/src/features/precision/units-command-adapter.property.test.ts",
+      "size": 3272,
+      "sha256": "ec3e45c0e8268ec5be031eaa49a3311c822fefcca48801106bc7747aea1b2fc3"
+    },
+    {
+      "path": "apps/web/src/features/precision/units-command-adapter.test.ts",
+      "size": 5179,
+      "sha256": "f4afeccc2ccb1ed7c867b672b8548eb240fb397dbc389160c144ba94e877cedc"
+    },
+    {
+      "path": "apps/web/src/features/precision/units-command-adapter.ts",
+      "size": 11448,
+      "sha256": "48b93f99c3d2383275fde9c519ede242515548baff5b7600b66dcf17554d09b8"
+    },
+    {
       "path": "apps/web/src/features/precision/units-contract.ts",
       "size": 1025,
       "sha256": "1126d188a89fec394ec1f046dc26778e3e5bfd25cec45be78be6ba9eef85de95"
     },
     {
       "path": "apps/web/src/features/precision/units-contract.wiring.test.ts",
-      "size": 2669,
-      "sha256": "674a0778a025deb756c513745d7963c8bd529c81d1cdbffff76831cb04ba1fbe"
+      "size": 5104,
+      "sha256": "bfe36ae9fb8a2eb14972461b2b50887b622f8337faa09a47836cc06393dc2554"
     },
     {
       "path": "apps/web/src/icons/CadIcon.tsx",
@@ -1005,8 +1030,8 @@
     },
     {
       "path": "docs/integration/precision-layers.md",
-      "size": 27361,
-      "sha256": "292c8ee3c145d487cc9cf49cfbc199628ccfabca2b95b3e115a071f342880256"
+      "size": 29890,
+      "sha256": "210e63ca508e6a22e9a3bced31fb181d942c1687e1e0cd5a35ff1736e0942f21"
     },
     {
       "path": "docs/integration/visual-shell.md",
@@ -4770,8 +4795,8 @@
     },
     {
       "path": "evidence/workstreams/precision-layers/README.md",
-      "size": 21270,
-      "sha256": "efe704d706ad16f344e91397fd69c98ca98543e9f7e84a576d2459b3350e0040"
+      "size": 22994,
+      "sha256": "a17e11f1fd9482be38ec56144e3359bbdd97e4a95fc16c37b20a12afb1458f19"
     },
     {
       "path": "evidence/workstreams/precision-layers/spatial-profile-20260831.json",
@@ -4800,8 +4825,8 @@
     },
     {
       "path": "evidence/workstreams/precision-layers/test-matrix.json",
-      "size": 12554,
-      "sha256": "391265196a97dc214be48a760e86a8c61d61c90da3b85647c51dbd188ae1e010"
+      "size": 13806,
+      "sha256": "1c377589795c95599cc8873e5de67aad6f39f27daf50a4d728a1642f0aecb584"
     },
     {
       "path": "evidence/workstreams/precision-layers/transparency-draw-order-wave10-20260831.json",
@@ -4812,6 +4837,16 @@
       "path": "evidence/workstreams/precision-layers/transparency-draw-order-wave10.ts",
       "size": 3437,
       "sha256": "625f95ce43f5fbeb1a7a0566fdc89051105ebee17c357ebbb64c87befdf8cdb0"
+    },
+    {
+      "path": "evidence/workstreams/precision-layers/units-persistence-wave14-20260901.json",
+      "size": 2358,
+      "sha256": "7845d98472b20ac87289a5736d605a477bdf3790607e05f1db94bae4fba29c4f"
+    },
+    {
+      "path": "evidence/workstreams/precision-layers/units-persistence-wave14.ts",
+      "size": 3823,
+      "sha256": "7b209bba8e9facc7e7bbf9e93b84c57cd813b6eddcf3a8b65f667189efc13113"
     },
     {
       "path": "evidence/workstreams/precision-layers/units-readback-wave7-20260831.json",
