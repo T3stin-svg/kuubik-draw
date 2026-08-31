@@ -2,6 +2,7 @@ export * from "./container.js";
 export * from "./arc-command.js";
 export * from "./commands.js";
 export * from "./document.js";
+export * from "./ellipse-command.js";
 export * from "./fillet.js";
 export * from "./chamfer.js";
 export * from "./circle-command.js";
