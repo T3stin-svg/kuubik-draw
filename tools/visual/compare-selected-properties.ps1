@@ -1,5 +1,6 @@
 param(
   [Parameter(Mandatory = $true)][string]$ReferenceImage,
+  [Parameter(Mandatory = $true)][string]$KuubikImage,
   [Parameter(Mandatory = $true)][string]$KuubikStateJson,
   [Parameter(Mandatory = $true)][string]$ExpectedReferenceSha256,
   [Parameter(Mandatory = $true)][string]$OutputJson
@@ -27,8 +28,10 @@ $actualReferenceSha = Get-ImageSha256 $ReferenceImage
 if ($actualReferenceSha -ne $expectedSha) { throw 'Private AutoCAD reference SHA-256 mismatch.' }
 
 $reference = [System.Drawing.Bitmap]::FromFile((Resolve-Path -LiteralPath $ReferenceImage))
+$kuubik = [System.Drawing.Bitmap]::FromFile((Resolve-Path -LiteralPath $KuubikImage))
 try {
   if ($reference.Width -ne 1920 -or $reference.Height -ne 1080) { throw 'Selected-properties comparison requires a 1920x1080 AutoCAD reference.' }
+  if ($kuubik.Width -ne 1920 -or $kuubik.Height -ne 1080) { throw 'Selected-properties comparison requires a 1920x1080 Kuubik screenshot.' }
   $state = Get-Content -Raw -LiteralPath $KuubikStateJson | ConvertFrom-Json
   $waveName = Split-Path -Leaf (Split-Path -Parent $KuubikStateJson)
   if (@($state.viewport)[0] -ne 1920 -or @($state.viewport)[1] -ne 1080) { throw 'Selected-properties comparison requires a 1920x1080 Kuubik read-back.' }
@@ -106,6 +109,53 @@ try {
   Assert-Close ([double]$fixture.text.heightPx) $expectedFixture.text.heightPx 1 'Selected TEXT height'
   if ([int]$state.states.staleMovePreviewPixels -ne 0) { throw 'Idle mixed selection rendered a stale MOVE preview.' }
 
+  $viewIndicator = $state.states.modelNavigation.viewIndicatorGeometry
+  $expectedViewIndicator = [ordered]@{
+    x = 1794; y = 228; width = 76; height = 155
+    face = [ordered]@{
+      top = '38px'; left = '12px'; width = '52px'; height = '52px'
+      backgroundColor = 'rgba(86, 96, 105, 0.12)'
+      borderColor = 'rgba(122, 130, 137, 0.46)'
+      transform = 'none'
+    }
+  }
+  foreach ($propertyName in @('x', 'y', 'width', 'height')) {
+    Assert-Close ([double]$viewIndicator.$propertyName) ([double]$expectedViewIndicator[$propertyName]) 1 "View indicator $propertyName"
+  }
+  foreach ($propertyName in $expectedViewIndicator.face.Keys) {
+    if ([string]$viewIndicator.face.$propertyName -ne [string]$expectedViewIndicator.face[$propertyName]) {
+      throw "View indicator face $propertyName differs from the measured AutoCAD Top-view treatment."
+    }
+  }
+
+  $paletteIconography = @($state.states.paletteIconography)
+  if ($paletteIconography.Count -ne 20 -or @($paletteIconography | Where-Object { [int]$_.pathCount -lt 1 }).Count -ne 0) {
+    throw 'Layer Manager and Properties must expose 20 non-empty original vector icons in the measured two-layer state.'
+  }
+  $expectedPaletteGroups = [ordered]@{ toolbar = @(6, 16); 'filter-rail' = @(2, 13); 'layer-row' = @(9, 13); 'properties-tools' = @(3, 15) }
+  foreach ($surface in $expectedPaletteGroups.Keys) {
+    $expectedCount = [int]$expectedPaletteGroups[$surface][0]
+    $expectedSize = [double]$expectedPaletteGroups[$surface][1]
+    $matches = @($paletteIconography | Where-Object { $_.surface -eq $surface -and [double]$_.width -eq $expectedSize -and [double]$_.height -eq $expectedSize })
+    if ($matches.Count -ne $expectedCount) { throw "Palette icon group $surface is outside its measured count/size contract." }
+  }
+
+  $gripCenters = @(
+    @(785, 376), @(1298, 376), @(1812, 376),
+    @(785, 684), @(1298, 684), @(1812, 684),
+    @(785, 992), @(1298, 992), @(1812, 992),
+    @(1175, 684), @(1422, 684), @(1298, 561), @(1298, 808),
+    @(1032, 315)
+  )
+  $gripReadback = foreach ($point in $gripCenters) {
+    $referenceColor = Get-RgbHex $reference.GetPixel([int]$point[0], [int]$point[1])
+    $kuubikColor = Get-RgbHex $kuubik.GetPixel([int]$point[0], [int]$point[1])
+    if ($referenceColor -ne '#007fff' -or $kuubikColor -ne '#007fff') {
+      throw "Selected grip fill mismatch at $($point -join ','): AutoCAD=$referenceColor Kuubik=$kuubikColor."
+    }
+    [ordered]@{ x = [int]$point[0]; y = [int]$point[1]; autoCad = $referenceColor; kuubik = $kuubikColor }
+  }
+
   $result = [ordered]@{
     reference = [ordered]@{
       product = 'AutoCAD 2024.1.2'
@@ -117,6 +167,7 @@ try {
     kuubik = [ordered]@{
       stateArtifact = "evidence/artifacts/$waveName/visual-shell-states.json"
       screenshot = "evidence/artifacts/$waveName/visual-shell-selected-properties.png"
+      screenshotSha256 = Get-ImageSha256 $KuubikImage
     }
     viewport = @(1920, 1080)
     browserZoomPercent = 100
@@ -127,6 +178,16 @@ try {
     expectedFixture = $expectedFixture
     actualFixture = $fixture
     staleMovePreviewPixels = [int]$state.states.staleMovePreviewPixels
+    selectionFeedback = [ordered]@{
+      expectedSelectionColor = '#0478ec'
+      expectedGripFill = '#007fff'
+      expectedGripStroke = '#283747'
+      gripCenters = @($gripReadback)
+    }
+    expectedViewIndicator = $expectedViewIndicator
+    actualViewIndicator = $viewIndicator
+    paletteIconography = $paletteIconography
+    paletteIconSource = 'original-kuubik-inline-svg'
     tolerancePx = 1
     scope = 'Selected-object TEXT/POLYLINE/CIRCLE fixture, projected geometry, Properties and Layer Properties Manager split, density, repeated rows and sampled palette surfaces; the five-category visual score remains separately gated.'
     status = 'PASS'
@@ -137,4 +198,5 @@ try {
   [System.IO.File]::WriteAllText([System.IO.Path]::GetFullPath($OutputJson), "$json`n", [System.Text.UTF8Encoding]::new($false))
 } finally {
   $reference.Dispose()
+  $kuubik.Dispose()
 }

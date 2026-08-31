@@ -14,7 +14,9 @@ test("AutoCAD-style shell keeps all eight primary zones visible at 1920x1080", a
   await page.goto("/d/local");
   await expect(page.getByRole("navigation", { name: "Ribbon vahelehed" })).toBeVisible();
   await expect(page.getByRole("complementary", { name: "Properties palette" })).toBeVisible();
-  await expect(page.getByRole("region", { name: "Käsurida" })).toBeVisible();
+  const commandLine = page.locator(".command-line");
+  await expect(commandLine).toBeHidden();
+  await expect(commandLine).toHaveAttribute("data-display-mode", "hidden");
 
   const zones = await page.locator("[data-visual-zone]").evaluateAll((elements) => Object.fromEntries(elements.map((element) => {
     const rect = element.getBoundingClientRect();
@@ -27,7 +29,6 @@ test("AutoCAD-style shell keeps all eight primary zones visible at 1920x1080", a
     "ribbon-tabs": { x: 0, y: 30, width: 1920, height: 22 },
     ribbon: { x: 0, y: 52, width: 1920, height: 99 },
     "document-tabs": { x: 0, y: 151, width: 1920, height: 30 },
-    "command-line": { x: 688, y: 985, width: 600, height: 50 },
     "layout-status": { x: 0, y: 1043, width: 1920, height: 37 },
     statusbar: { x: 1260, y: 1047, width: 660, height: 32 },
   });
@@ -118,11 +119,18 @@ test("AutoCAD-style shell keeps all eight primary zones visible at 1920x1080", a
       borderBottomColor: "rgb(6, 150, 215)", borderBottomWidth: "1px",
     },
     commandLine: {
-      x: 688, y: 985, width: 600, height: 50, right: 1288, bottom: 1035,
+      x: 0, y: 0, width: 0, height: 0, right: 0, bottom: 0,
       backgroundColor: "rgba(34, 41, 51, 0.96)", borderTopColor: "rgb(78, 90, 104)", borderTopWidth: "1px",
       borderBottomColor: "rgb(78, 90, 104)", borderBottomWidth: "1px",
     },
   });
+  await page.keyboard.press("Control+9");
+  await expect(commandLine).toBeVisible();
+  await expect(commandLine).toHaveAttribute("data-display-mode", "shown");
+  await expect(commandLine).toHaveCSS("width", "600px");
+  await expect(commandLine).toHaveCSS("height", "50px");
+  await page.keyboard.press("Control+9");
+  await expect(commandLine).toBeHidden();
   const statusControls = await page.locator("[data-status-control]").evaluateAll((elements) => Object.fromEntries(elements.map((element) => {
     const control = element as HTMLButtonElement;
     const rect = control.getBoundingClientRect();
@@ -169,6 +177,32 @@ test("AutoCAD-style shell keeps all eight primary zones visible at 1920x1080", a
     clipboard: { x: 1529, width: 91, right: 1620, height: 99, backgroundColor: "rgb(59, 68, 83)" },
     view: { x: 1620, width: 53, right: 1673, height: 99, backgroundColor: "rgb(59, 68, 83)" },
   });
+  const ribbonIconography = await page.locator("[data-cad-icon]").evaluateAll((elements) => elements.map((element) => {
+    const rect = element.getBoundingClientRect();
+    const style = getComputedStyle(element);
+    return {
+      kind: element.getAttribute("data-cad-icon"),
+      width: rect.width,
+      height: rect.height,
+      stroke: style.stroke,
+      strokeWidth: style.strokeWidth,
+      pathCount: element.querySelectorAll("path,polyline,rect,circle").length,
+    };
+  }));
+  expect(ribbonIconography).toHaveLength(35);
+  expect(ribbonIconography.map(({ kind }) => kind)).toEqual([
+    "line", "rectangle", "polyline", "circle", "arc", "hatch", "spline",
+    "move", "copy", "rotate", "mirror", "trim", "offset", "stretch", "scale", "fillet",
+    "text", "dimension", "leader", "table", "new-layer", "layer-lock", "make-current", "match-layer",
+    "insert", "create-block", "edit-block", "attributes", "match-properties", "group", "ungroup",
+    "measure", "count", "paste", "base-view",
+  ]);
+  expect(ribbonIconography[0]).toMatchObject({ kind: "line", width: 34, height: 34, stroke: "rgb(241, 244, 246)", pathCount: 3 });
+  const largeRibbonIconKinds = new Set(["line", "text", "insert", "match-properties", "paste", "base-view"]);
+  expect(ribbonIconography.every(({ kind, width, height, pathCount }) => {
+    const expectedSize = largeRibbonIconKinds.has(kind ?? "") ? 34 : 18;
+    return width === expectedSize && height === expectedSize && pathCount >= 1;
+  })).toBe(true);
   const commandPanel = await page.getByLabel("Käsu parameetrid").evaluate((element) => {
     const rect = element.getBoundingClientRect();
     return { x: rect.x, width: rect.width, right: rect.right, height: rect.height, backgroundColor: getComputedStyle(element).backgroundColor };
@@ -221,7 +255,25 @@ test("AutoCAD-style shell keeps all eight primary zones visible at 1920x1080", a
     },
     coordinateReadout: await page.getByTestId("coordinate-readout").textContent(),
     viewIndicator: await page.getByTestId("view-orientation-indicator").getAttribute("aria-label"),
+    viewIndicatorGeometry: await page.getByTestId("view-orientation-indicator").evaluate((element) => {
+      const rect = element.getBoundingClientRect();
+      const face = getComputedStyle(element, "::before");
+      return {
+        x: rect.x, y: rect.y, width: rect.width, height: rect.height,
+        face: {
+          top: face.top, left: face.left, width: face.width, height: face.height,
+          backgroundColor: face.backgroundColor, borderColor: face.borderColor, transform: face.transform,
+        },
+      };
+    }),
   };
+  expect(modelNavigation.viewIndicatorGeometry).toEqual({
+    x: 1794, y: 228, width: 76, height: 155,
+    face: {
+      top: "38px", left: "12px", width: "52px", height: "52px",
+      backgroundColor: "rgba(86, 96, 105, 0.12)", borderColor: "rgba(122, 130, 137, 0.46)", transform: "none",
+    },
+  });
   const modelDisplayReadback = await modelCanvas.evaluate((canvas) => {
     const element = canvas as HTMLCanvasElement;
     const context = element.getContext("2d", { willReadFrequently: true })!;
@@ -272,6 +324,34 @@ test("AutoCAD-style shell keeps all eight primary zones visible at 1920x1080", a
     await writeFile(resolve(captureRoot, "visual-shell-zones.json"), `${JSON.stringify({ viewport: [1920, 1080], zones, consoleErrors }, null, 2)}\n`, "utf8");
   }
 
+  const activeSceneViewport = await modelCanvas.evaluate((canvas) => {
+    const element = canvas as HTMLCanvasElement;
+    return {
+      width: element.clientWidth,
+      height: element.clientHeight,
+      worldCenter: { x: Number(element.dataset.worldCenterX), y: Number(element.dataset.worldCenterY) },
+      worldUnitsPerPixel: Number(element.dataset.worldUnitsPerPixel),
+    };
+  });
+  const activeSceneWorldPoint = (x: number, y: number) => ({
+    x: activeSceneViewport.worldCenter.x + (x - activeSceneViewport.width / 2) * activeSceneViewport.worldUnitsPerPixel,
+    y: activeSceneViewport.worldCenter.y - (y - activeSceneViewport.height / 2) * activeSceneViewport.worldUnitsPerPixel,
+  });
+  const activeSceneDocument = createEmptyDocument({ documentId: "visual-shell-active", now: "2026-08-31T11:05:00.000Z" });
+  const activeOuterTopLeft = activeSceneWorldPoint(785, 195);
+  const activeOuterBottomRight = activeSceneWorldPoint(1812, 811);
+  const activeCircleCenter = activeSceneWorldPoint(1298, 503);
+  activeSceneDocument.entities = [
+    {
+      kind: "polyline", handle: "B1", layerId: "0", closed: true,
+      vertices: [activeOuterTopLeft, { x: activeOuterBottomRight.x, y: activeOuterTopLeft.y }, activeOuterBottomRight, { x: activeOuterTopLeft.x, y: activeOuterBottomRight.y }],
+    },
+    { kind: "circle", handle: "B2", layerId: "0", center: activeCircleCenter, radius: 123.5 * activeSceneViewport.worldUnitsPerPixel },
+    { kind: "text", handle: "B3", layerId: "0", position: activeSceneWorldPoint(1032, 134), text: "KUUBIK AUDIT", height: 75 * activeSceneViewport.worldUnitsPerPixel, rotationRad: 0 },
+  ];
+  await page.getByLabel("DXF import").setInputFiles({ name: "visual-shell-active.dxf", mimeType: "application/dxf", buffer: Buffer.from(exportDxf(activeSceneDocument).bytes) });
+  await expect(commandLine).toContainText("DXF imporditud: 3 objekti · 1 kihti · mm");
+
   await lineRibbonTool.click();
   await expect(lineRibbonTool).toHaveAttribute("aria-pressed", "true");
   const activeRibbonState = await lineRibbonTool.evaluate((element) => ({
@@ -279,7 +359,93 @@ test("AutoCAD-style shell keeps all eight primary zones visible at 1920x1080", a
     backgroundColor: getComputedStyle(element).backgroundColor,
     borderColor: getComputedStyle(element).borderColor,
   }));
-  await expect(page.getByText("LINE Specify first point")).toBeVisible();
+  await expect(commandLine).toContainText("LINE Specify first point");
+  await modelCanvas.hover({ position: { x: 846, y: 803 } });
+  await expect(commandLine).toContainText("LINE Specify first point");
+  const activeModelDisplayReadback = await modelCanvas.evaluate((canvas) => {
+    const element = canvas as HTMLCanvasElement;
+    const context = element.getContext("2d", { willReadFrequently: true })!;
+    const pixel = (x: number, y: number) => Array.from(context.getImageData(x, y, 1, 1).data);
+    const runs = (axis: "x" | "y", fixed: number, start: number, end: number) => {
+      const hits: number[] = [];
+      for (let value = start; value <= end; value += 1) {
+        const rgba = axis === "x" ? pixel(value, fixed) : pixel(fixed, value);
+        if (rgba[3] >= 32) hits.push(value);
+      }
+      const output: Array<[number, number]> = [];
+      for (const value of hits) {
+        const last = output.at(-1);
+        if (last && value <= last[1] + 1) last[1] = value;
+        else output.push([value, value]);
+      }
+      return output;
+    };
+    return {
+      verticalGridRuns: runs("x", 219, 680, element.width - 1),
+      horizontalGridRuns: runs("y", 700, 0, element.height - 1),
+      clearPixelRgba: pixel(707, 25),
+      majorGridPixelRgba: pixel(682, 219),
+      xAxisPixelRgba: pixel(900, 812),
+      yAxisPixelRgba: pixel(785, 100),
+    };
+  });
+  expect(activeModelDisplayReadback.verticalGridRuns).toHaveLength(121);
+  expect(activeModelDisplayReadback.verticalGridRuns.slice(0, 10).map(([start, end]) => Math.round((start + end) / 2))).toEqual([682, 692, 703, 713, 723, 733, 744, 754, 764, 775]);
+  expect(activeModelDisplayReadback.horizontalGridRuns).toHaveLength(84);
+  expect(activeModelDisplayReadback.clearPixelRgba[3]).toBe(0);
+  expect(activeModelDisplayReadback.majorGridPixelRgba[3]).toBeGreaterThan(140);
+  expect(activeModelDisplayReadback.xAxisPixelRgba.slice(0, 3)).toEqual([170, 130, 132]);
+  expect(activeModelDisplayReadback.yAxisPixelRgba.slice(0, 3)).toEqual([139, 175, 145]);
+  const activeFixture = await modelCanvas.evaluate(async (canvas) => {
+    const database = await new Promise<IDBDatabase>((resolveOpen, rejectOpen) => {
+      const request = indexedDB.open("kuubik-draw", 1);
+      request.onsuccess = () => resolveOpen(request.result);
+      request.onerror = () => rejectOpen(request.error);
+    });
+    const document = await new Promise<any>((resolveRead, rejectRead) => {
+      const request = database.transaction("documents", "readonly").objectStore("documents").get("local");
+      request.onsuccess = () => resolveRead(request.result);
+      request.onerror = () => rejectRead(request.error);
+    });
+    database.close();
+    const element = canvas as HTMLCanvasElement;
+    const center = { x: Number(element.dataset.worldCenterX), y: Number(element.dataset.worldCenterY) };
+    const scale = Number(element.dataset.worldUnitsPerPixel);
+    const project = (point: { x: number; y: number }) => ({
+      x: (point.x - center.x) / scale + element.clientWidth / 2,
+      y: (center.y - point.y) / scale + element.clientHeight / 2,
+    });
+    const polyline = document.entities.find((entity: any) => entity.kind === "polyline");
+    const circle = document.entities.find((entity: any) => entity.kind === "circle");
+    const text = document.entities.find((entity: any) => entity.kind === "text");
+    const crosshair = globalThis.document.querySelector<HTMLElement>('[data-testid="cad-crosshair"]')!;
+    const crosshairRect = crosshair.getBoundingClientRect();
+    return {
+      entityKinds: document.entities.map((entity: any) => entity.kind).sort(),
+      handles: document.entities.map((entity: any) => entity.handle).sort(),
+      selectedHandles: (element.dataset.selectedHandles ?? "").split(",").filter(Boolean).sort(),
+      previewCommand: element.dataset.previewCommand ?? "",
+      entityCount: Number(element.dataset.entityCount),
+      polyline: { closed: polyline.closed, vertices: polyline.vertices.map(project) },
+      circle: { center: project(circle.center), radiusPx: circle.radius / scale },
+      text: { value: text.text, insertion: project(text.position), heightPx: text.height / scale },
+      crosshair: { x: crosshairRect.x, y: crosshairRect.y, width: crosshairRect.width, height: crosshairRect.height, centerX: crosshairRect.x + crosshairRect.width / 2, centerY: crosshairRect.y + crosshairRect.height / 2 },
+    };
+  });
+  expect(activeFixture.entityKinds).toEqual(["circle", "polyline", "text"]);
+  expect(activeFixture.handles).toEqual(["B1", "B2", "B3"]);
+  expect(activeFixture).toMatchObject({ selectedHandles: [], previewCommand: "LINE", entityCount: 3, crosshair: { width: 23, height: 23, centerX: 846.5, centerY: 984.5 } });
+  expect(activeFixture.polyline.vertices[0]!.x).toBeCloseTo(785, 6);
+  expect(activeFixture.polyline.vertices[0]!.y).toBeCloseTo(195, 6);
+  expect(activeFixture.polyline.vertices[2]!.x).toBeCloseTo(1812, 6);
+  expect(activeFixture.polyline.vertices[2]!.y).toBeCloseTo(811, 6);
+  expect(activeFixture.circle.center.x).toBeCloseTo(1298, 6);
+  expect(activeFixture.circle.center.y).toBeCloseTo(503, 6);
+  expect(activeFixture.circle.radiusPx).toBeCloseTo(123.5, 6);
+  expect(activeFixture.text.value).toBe("KUUBIK AUDIT");
+  expect(activeFixture.text.insertion.x).toBeCloseTo(1032, 6);
+  expect(activeFixture.text.insertion.y).toBeCloseTo(134, 6);
+  expect(activeFixture.text.heightPx).toBeCloseTo(75, 6);
   if (captureRoot) await writeFile(resolve(captureRoot, "visual-shell-active-command.png"), await page.screenshot());
 
   await modelCanvas.click({ button: "right", position: { x: 1200, y: 320 } });
@@ -322,7 +488,7 @@ test("AutoCAD-style shell keeps all eight primary zones visible at 1920x1080", a
   await modelCanvas.click({ button: "right", position: { x: 1200, y: 320 } });
   await page.getByRole("menu", { name: "Drawing context menu" }).getByRole("menuitem", { name: /Cancel LINE/u }).click();
   await expect(page.getByRole("button", { name: "Ribbon Line command" })).toHaveAttribute("aria-pressed", "false");
-  await expect(page.getByText("Command: *Cancel* (LINE)")).toBeVisible();
+  await expect(commandLine).toContainText("Command: *Cancel* (LINE)");
 
   await page.reload();
   const selectedSceneViewport = await modelCanvas.evaluate((canvas) => {
@@ -371,7 +537,7 @@ test("AutoCAD-style shell keeps all eight primary zones visible at 1920x1080", a
   ];
   const selectedSceneDxf = Buffer.from(exportDxf(selectedSceneDocument).bytes);
   await page.getByLabel("DXF import").setInputFiles({ name: "visual-shell-selected.dxf", mimeType: "application/dxf", buffer: selectedSceneDxf });
-  await expect(page.getByText("DXF imporditud: 3 objekti · 1 kihti · mm")).toBeVisible();
+  await expect(commandLine).toContainText("DXF imporditud: 3 objekti · 1 kihti · mm");
   await page.getByRole("button", { name: "Vali kõik", exact: true }).click();
   await expect(page.getByRole("complementary", { name: "Properties palette" }).getByText("3 selected")).toBeVisible();
   await expect(page.getByRole("complementary", { name: "Properties palette" }).getByText("All (3)", { exact: true })).toBeVisible();
@@ -526,17 +692,52 @@ test("AutoCAD-style shell keeps all eight primary zones visible at 1920x1080", a
   await expect(page.getByRole("complementary", { name: "Properties palette" }).getByText("3 selected")).toBeVisible();
   await page.getByLabel("Kuubik Draw joonestusala").click({ button: "right", position: { x: 1200, y: 320 } });
   await page.getByRole("menu", { name: "Drawing context menu" }).getByRole("menuitem", { name: "Count" }).click();
-  await expect(page.getByText("Count: 3 objects")).toBeVisible();
+  await expect(commandLine).toContainText("Count: 3 objects");
   await expect(page.getByRole("complementary", { name: "Properties palette" }).getByText("3 selected")).toBeVisible();
 
-  await page.getByRole("button", { name: "Uus kiht", exact: true }).click();
+  await page.getByLabel("Layer Properties Manager").getByRole("button", { name: "Uus kiht", exact: true }).click();
   await expect(page.getByRole("table", { name: "Kihtide loend" }).getByText("Layer 1")).toBeVisible();
+  const paletteIconography = await page.locator("[data-palette-icon]").evaluateAll((elements) => elements.map((element) => {
+    const rect = element.getBoundingClientRect();
+    const surface = element.closest(".layer-toolbar") ? "toolbar"
+      : element.closest(".layer-filter-rail") ? "filter-rail"
+        : element.closest(".layer-grid-row") ? "layer-row"
+          : element.closest(".properties-selection-tools") ? "properties-tools"
+            : "unknown";
+    return {
+      kind: element.getAttribute("data-palette-icon"),
+      surface,
+      width: rect.width,
+      height: rect.height,
+      pathCount: element.querySelectorAll("path,polyline,rect,circle").length,
+    };
+  }));
+  expect(paletteIconography).toHaveLength(20);
+  expect(paletteIconography.filter(({ surface, width, height }) => surface === "toolbar" && width === 16 && height === 16)).toHaveLength(6);
+  expect(paletteIconography.filter(({ surface, width, height }) => surface === "filter-rail" && width === 13 && height === 13)).toHaveLength(2);
+  expect(paletteIconography.filter(({ surface, width, height }) => surface === "layer-row" && width === 13 && height === 13)).toHaveLength(9);
+  expect(paletteIconography.filter(({ surface, width, height }) => surface === "properties-tools" && width === 15 && height === 15)).toHaveLength(3);
+  expect(paletteIconography.every(({ pathCount }) => pathCount >= 1)).toBe(true);
   if (captureRoot) await writeFile(resolve(captureRoot, "visual-shell-layer-manager.png"), await page.screenshot());
 
   await page.getByRole("button", { name: "Lisa paigutus" }).click();
   await page.getByRole("button", { name: "Layout 1", exact: true }).click();
-  await expect(page.getByTestId("paper-space-sheet")).toBeVisible();
   const layoutTools = page.getByTestId("layout-tools");
+  await page.getByLabel("Layout tools").click();
+  await page.getByLabel("Paigutuse nimi").fill("Layout1");
+  await page.getByRole("button", { name: "Nimeta paigutus" }).click();
+  await expect(page.getByRole("button", { name: "Layout1", exact: true })).toHaveAttribute("aria-pressed", "true");
+  await page.waitForTimeout(100);
+  await page.getByLabel("Layout tools").click();
+  await page.getByRole("button", { name: "Lisa paigutus" }).click();
+  await expect(page.getByRole("button", { name: "Layout 1", exact: true })).toHaveAttribute("aria-pressed", "true");
+  await page.getByLabel("Layout tools").click();
+  await page.getByLabel("Paigutuse nimi").fill("Layout2");
+  await page.getByRole("button", { name: "Nimeta paigutus" }).click();
+  await expect(page.getByRole("button", { name: "Layout2", exact: true })).toHaveAttribute("aria-pressed", "true");
+  await page.getByLabel("Layout tools").click();
+  await page.getByRole("button", { name: "Layout1", exact: true }).click();
+  await expect(page.getByTestId("paper-space-sheet")).toBeVisible();
   await expect(layoutTools).not.toHaveAttribute("open", "");
   await expect(page.getByTestId("page-setup-controls")).toBeHidden();
   await expect(page.getByTestId("paper-printable-area")).toBeVisible();
@@ -549,6 +750,7 @@ test("AutoCAD-style shell keeps all eight primary zones visible at 1920x1080", a
       desk: bounds("[data-testid='paper-space-desk']"),
       sheet: bounds("[data-testid='paper-space-sheet']"),
       printable: bounds("[data-testid='paper-printable-area']"),
+      viewportFrame: bounds("[data-testid='paper-space-viewport']"),
       palette: bounds(".layer-manager"),
       layoutbar: bounds(".layoutbar"),
     };
@@ -561,7 +763,82 @@ test("AutoCAD-style shell keeps all eight primary zones visible at 1920x1080", a
   expect(layoutGeometry.printable.right).toBeLessThan(layoutGeometry.sheet.right);
   expect(layoutGeometry.printable.y).toBeGreaterThan(layoutGeometry.sheet.y);
   expect(layoutGeometry.printable.bottom).toBeLessThan(layoutGeometry.sheet.bottom);
+  expect(layoutGeometry.sheet).toMatchObject({ x: 727.828125, y: 212, width: 1141.328125, height: 807 });
+  expect(layoutGeometry.printable).toMatchObject({ x: 803.046875, y: 237.90625, width: 992.234375, height: 752.3125 });
+  expect(layoutGeometry.viewportFrame).toMatchObject({ x: 902.40625, y: 314.59375, width: 792.15625, height: 601.828125 });
   expect(layoutGeometry.layoutbar.height).toBe(37);
+  const layoutReadback = await page.getByTestId("paper-space-viewport").evaluate(async (viewportElement) => {
+    const database = await new Promise<IDBDatabase>((resolveOpen, rejectOpen) => {
+      const request = indexedDB.open("kuubik-draw", 1);
+      request.onsuccess = () => resolveOpen(request.result);
+      request.onerror = () => rejectOpen(request.error);
+    });
+    const document = await new Promise<any>((resolveRead, rejectRead) => {
+      const request = database.transaction("documents", "readonly").objectStore("documents").get("local");
+      request.onsuccess = () => resolveRead(request.result);
+      request.onerror = () => rejectRead(request.error);
+    });
+    database.close();
+    const paper = document.layouts.find((layout: any) => layout.kind === "paper");
+    const viewport = paper.viewports[0];
+    const canvas = viewportElement.querySelector("canvas")!;
+    const worldWidth = viewport.viewHeight * (viewport.width / viewport.height);
+    const worldUnitsPerPixel = Math.max(worldWidth / canvas.clientWidth, viewport.viewHeight / canvas.clientHeight);
+    const project = (point: { x: number; y: number }) => ({
+      x: (point.x - viewport.viewCenter.x) / worldUnitsPerPixel + canvas.clientWidth / 2,
+      y: (viewport.viewCenter.y - point.y) / worldUnitsPerPixel + canvas.clientHeight / 2,
+    });
+    const polyline = document.entities.find((entity: any) => entity.kind === "polyline");
+    const circle = document.entities.find((entity: any) => entity.kind === "circle");
+    const text = document.entities.find((entity: any) => entity.kind === "text");
+    return {
+      entityKinds: document.entities.map((entity: any) => entity.kind).sort(),
+      paper: paper.paper,
+      viewport,
+      canvas: { width: canvas.clientWidth, height: canvas.clientHeight },
+      renderedViewCenter: viewportElement.getAttribute("data-view-center"),
+      renderedViewHeight: Number(viewportElement.getAttribute("data-view-height")),
+      projectedFixture: {
+        polyline: { closed: polyline.closed, vertices: polyline.vertices.map(project) },
+        circle: { center: project(circle.center), radiusPx: circle.radius / worldUnitsPerPixel },
+        text: { value: text.text, insertion: project(text.position), heightPx: text.height / worldUnitsPerPixel },
+      },
+    };
+  });
+  expect(layoutReadback.entityKinds).toEqual(["circle", "polyline", "text"]);
+  expect(layoutReadback.paper).toEqual({ widthMm: 297, heightMm: 210, marginsMm: { top: 6.5, right: 19, bottom: 7.25, left: 19.35 } });
+  expect(layoutReadback.viewport).toMatchObject({ center: { x: 148.5, y: 105 }, width: 206.5, height: 157, twistAngleRad: 0, locked: false });
+  expect(layoutReadback.canvas).toEqual({ width: 790, height: 600 });
+  expect(layoutReadback.renderedViewCenter).toBe(`${layoutReadback.viewport.viewCenter.x},${layoutReadback.viewport.viewCenter.y}`);
+  expect(layoutReadback.renderedViewHeight).toBe(layoutReadback.viewport.viewHeight);
+  expect(layoutReadback.projectedFixture.polyline.closed).toBe(true);
+  expect(layoutReadback.projectedFixture.text.value).toBe("KUUBIK AUDIT");
+  const layoutTabGeometry = await page.evaluate(() => {
+    const box = (element: Element) => {
+      const rect = element.getBoundingClientRect();
+      const style = getComputedStyle(element);
+      return { x: rect.x, y: rect.y, width: rect.width, height: rect.height, right: rect.right, bottom: rect.bottom, backgroundColor: style.backgroundColor, color: style.color };
+    };
+    const tabs = Array.from(document.querySelectorAll<HTMLElement>(".layout-tab"));
+    return {
+      menu: box(document.querySelector(".layout-tab-menu")!),
+      divider: box(document.querySelector(".layout-tab-divider")!),
+      tabs: Object.fromEntries(tabs.map((tab) => [tab.textContent?.trim() ?? "", box(tab)])),
+      add: box(document.querySelector(".layout-add")!),
+      tools: box(document.querySelector(".layout-tools > summary")!),
+    };
+  });
+  expect(Object.keys(layoutTabGeometry.tabs)).toEqual(["Model", "Layout1", "Layout2"]);
+  expect(layoutTabGeometry).toMatchObject({
+    menu: { x: 8, y: 1047, width: 28, height: 32, right: 36, bottom: 1079 },
+    divider: { x: 36, y: 1047, width: 10, height: 32, right: 46, bottom: 1079 },
+    tabs: {
+      Model: { x: 48, y: 1047, width: 64, height: 32, right: 112, bottom: 1079, backgroundColor: "rgba(0, 0, 0, 0)" },
+      Layout1: { x: 112, y: 1047, width: 68, height: 32, right: 180, bottom: 1079, backgroundColor: "rgb(59, 68, 83)" },
+      Layout2: { x: 180, y: 1047, width: 64, height: 32, right: 244, bottom: 1079, backgroundColor: "rgba(0, 0, 0, 0)" },
+    },
+    add: { x: 244, y: 1047, width: 38, height: 32, right: 282, bottom: 1079 },
+  });
   if (captureRoot) await writeFile(resolve(captureRoot, "visual-shell-layout-paper-space.png"), await page.screenshot());
   await page.getByLabel("Layout tools").click();
   await expect(layoutTools).toHaveAttribute("open", "");
@@ -613,6 +890,8 @@ test("AutoCAD-style shell keeps all eight primary zones visible at 1920x1080", a
       states: {
         emptyWorkspace: true,
         activeDrawingCommand: true,
+        activeFixture,
+        activeModelDisplayReadback,
         topChrome: {
           title: titleChrome,
           ribbonTabs,
@@ -623,6 +902,7 @@ test("AutoCAD-style shell keeps all eight primary zones visible at 1920x1080", a
         ribbon: {
           panels: ribbonPanels,
           commandPanel,
+          iconography: ribbonIconography,
           disabled: disabledRibbonState,
           hover: hoverRibbonState,
           active: activeRibbonState,
@@ -630,6 +910,7 @@ test("AutoCAD-style shell keeps all eight primary zones visible at 1920x1080", a
         modelNavigation,
         modelDisplayReadback,
         selectedProperties: { visible: true, geometry: selectedPropertiesGeometry },
+        paletteIconography,
         selectedFixture,
         selectionPixels,
         staleMovePreviewPixels,
@@ -645,6 +926,8 @@ test("AutoCAD-style shell keeps all eight primary zones visible at 1920x1080", a
         layerManagerRows: await page.getByRole("table", { name: "Kihtide loend" }).getByRole("row").count(),
         layoutPaperSpace: await page.getByTestId("paper-space-sheet").isVisible(),
         layoutGeometry,
+        layoutReadback,
+        layoutTabGeometry,
         layoutTools: { compactByDefault: true, openStateVerified: true, pageSetupStillReachable: true },
         commandHistory: await page.getByRole("log", { name: "Käsuajalugu" }).isVisible(),
         commandHistoryGeometry,

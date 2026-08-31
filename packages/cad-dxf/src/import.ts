@@ -661,7 +661,9 @@ function parseSpline(record: DxfRecord, base: Omit<Extract<CadEntity, { kind: "s
   if (!Number.isInteger(degree) || degree < 1 || degree > 16) throw new DxfImportError(`${label} degree is outside 1..16.`);
   if (!Number.isInteger(controlPointCount) || controlPointCount <= degree || controlPointCount > MAX_DXF_ENTITY_VERTICES) throw new DxfImportError(`${label} control-point count is invalid.`);
   if (knotCount !== controlPointCount + degree + 1) throw new DxfImportError(`${label} knot count does not match control points plus degree plus one.`);
-  if (fitPointCount !== 0) throw new DxfImportError(`${label} fit points are outside the audited control-point subset.`);
+  if (!Number.isInteger(fitPointCount) || fitPointCount < 0 || fitPointCount > MAX_DXF_ENTITY_VERTICES || (fitPointCount > 0 && fitPointCount < 3)) {
+    throw new DxfImportError(`${label} fit-point count must be zero or at least three.`);
+  }
   const numericPairs = (code: number, field: string): number[] => record.pairs.filter((pair) => pair.code === code).map((pair) => {
     const value = Number(pair.value.trim());
     if (!Number.isFinite(value)) throw new DxfImportError(`${label} ${field} contains a non-finite value at line ${pair.line + 1}.`);
@@ -679,9 +681,41 @@ function parseSpline(record: DxfRecord, base: Omit<Extract<CadEntity, { kind: "s
   const rational = (flags & 4) !== 0;
   if ((rational && weights.length !== controlPointCount) || (!rational && weights.length !== 0) || weights.some((weight) => !(weight > 0))) throw new DxfImportError(`${label} rational flag and positive weights are inconsistent.`);
   const controlPoints = x.map((xCoordinate, index) => ({ x: xCoordinate, y: y[index]! }));
+  const fitX = numericPairs(11, "fit-point X values");
+  const fitY = numericPairs(21, "fit-point Y values");
+  const fitZ = numericPairs(31, "fit-point Z values");
+  if (fitX.length !== fitPointCount || fitY.length !== fitPointCount || (fitZ.length !== 0 && fitZ.length !== fitPointCount)) {
+    throw new DxfImportError(`${label} fit-point groups do not match group 74.`);
+  }
+  if (fitZ.some((value) => Math.abs(value) > 1e-9)) throw new DxfImportError(`${label} contains non-planar fit points.`);
+  const optionalVector = (xCode: number, yCode: number, zCode: number, field: string): CadPoint2 | undefined => {
+    const xValues = numericPairs(xCode, `${field} X`);
+    const yValues = numericPairs(yCode, `${field} Y`);
+    const zValues = numericPairs(zCode, `${field} Z`);
+    if (xValues.length === 0 && yValues.length === 0 && zValues.length === 0) return undefined;
+    if (xValues.length !== 1 || yValues.length !== 1 || (zValues.length !== 0 && zValues.length !== 1)) {
+      throw new DxfImportError(`${label} ${field} groups are incomplete or duplicated.`);
+    }
+    if (zValues.length === 1 && Math.abs(zValues[0]!) > 1e-9) throw new DxfImportError(`${label} ${field} is non-planar.`);
+    const vector = { x: xValues[0]!, y: yValues[0]! };
+    if (!(Math.hypot(vector.x, vector.y) > 0)) throw new DxfImportError(`${label} ${field} must be non-zero.`);
+    return vector;
+  };
+  const fitPoints = fitX.map((xCoordinate, index) => ({ x: xCoordinate, y: fitY[index]! }));
+  const startTangent = optionalVector(12, 22, 32, "start tangent");
+  const endTangent = optionalVector(13, 23, 33, "end tangent");
+  const fitTolerance = singletonNumberValue(record.pairs, 44, `${label} fit tolerance`, false) ?? 0;
+  if (fitTolerance < 0) throw new DxfImportError(`${label} fit tolerance must be non-negative.`);
   return {
     kind: "spline", ...base, degree, controlPoints, knots,
     ...(rational ? { weights } : {}),
+    ...(fitPoints.length > 0 ? {
+      definitionMethod: "fit-points" as const,
+      fitPoints,
+      fitTolerance,
+      ...(startTangent ? { startTangent } : {}),
+      ...(endTangent ? { endTangent } : {}),
+    } : {}),
     closed: (flags & 1) !== 0,
     periodic: (flags & 2) !== 0,
   };

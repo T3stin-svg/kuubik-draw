@@ -10,8 +10,8 @@
   "ciArtifactsExcluded": [
     "results.sarif"
   ],
-  "fileCount": 1174,
-  "sourceTreeSha256": "7485ed4d536a3cc777a267e35eb9b62206e70adb471a046c4d0b24c44f98c494",
+  "fileCount": 1480,
+  "sourceTreeSha256": "ed64325322a6b0517187fa133acf0122c45974ef3846d69ebb4122ec7a5d5c14",
   "files": [
     {
       "path": ".gitattributes",
@@ -41,12 +41,12 @@
     {
       "path": "apps/web/package.json",
       "size": 817,
-      "sha256": "eca74960936f1241303d6522a33575834cb07a8bd47dd8987d1052cd00e114af"
+      "sha256": "63bd320170089143235cf3416eb0a7c51143c26db775c953468f86fb19a20aaf"
     },
     {
       "path": "apps/web/src/App.tsx",
-      "size": 252550,
-      "sha256": "37ea55f32aa3a28b83ea4cfe476ba7d15721326e29a32ebcfb6625bf84a4dd71"
+      "size": 294585,
+      "sha256": "a91caf95099dafa3bc51636bfca58488899b55d44ee74eb82493398365cddb3e"
     },
     {
       "path": "apps/web/src/context-menu.test.ts",
@@ -75,8 +75,8 @@
     },
     {
       "path": "apps/web/src/style.css",
-      "size": 30689,
-      "sha256": "f4543a27eb6bae5858da62a5b0ddd64b858a8ad3c0badf62cbf3393d66e65f51"
+      "size": 33340,
+      "sha256": "9ae2de8417055b5cd20d72be36fa051b163505f75a7b8a37935430f55203f63e"
     },
     {
       "path": "apps/web/src/workflows/modify-command.test.ts",
@@ -137,6 +137,11 @@
       "path": "e2e/f003-rectangle.spec.ts",
       "size": 2289,
       "sha256": "efffd70e665800a8527305e8964dcd9386f6e867a80b4ca4e9cdc0bdcc784620"
+    },
+    {
+      "path": "e2e/f012-spline.spec.ts",
+      "size": 40533,
+      "sha256": "5311c951328fe94ddabd2d39738dcc30ed52bcc5111a7e2e4b3aabaea0b9b029"
     },
     {
       "path": "e2e/f015-erase.spec.ts",
@@ -305,8 +310,8 @@
     },
     {
       "path": "e2e/visual-shell.spec.ts",
-      "size": 38066,
-      "sha256": "a91f8c80e1b3d7acdb3ffe88d3634ba724d9e2bcff5ad6fba8138533302a507f"
+      "size": 55758,
+      "sha256": "a749c0993f59dc994cf830eea8a1bf2be38e6e5aeb4635b98e02f48f78e5cbca"
     },
     {
       "path": "evidence/artifacts/F-003-autocad-readback.json",
@@ -327,6 +332,36 @@
       "path": "evidence/artifacts/F-003-kuubik.dxf",
       "size": 3290,
       "sha256": "5c3b5038eb0fa2782f97509924dedab08a9b452d6047d92fd27a599adbad5601"
+    },
+    {
+      "path": "evidence/artifacts/F-012-autocad-core-readback.json",
+      "size": 12849,
+      "sha256": "eccd51725b7e665a3816b32e0da8cde132b1dfa37a23bb0497da727d36c43231"
+    },
+    {
+      "path": "evidence/artifacts/F-012-autocad-readback.json",
+      "size": 76115,
+      "sha256": "35bdfef5614ef05e3ccbb807566aa84be5f407c2b7d4afb69a4e552883959718"
+    },
+    {
+      "path": "evidence/artifacts/F-012-independent-readback.json",
+      "size": 21808,
+      "sha256": "5effe172c4a25d48150af78c4e875fe85375c28760df3ebfed286c371bc98749"
+    },
+    {
+      "path": "evidence/artifacts/F-012-kuubik.dxf",
+      "size": 9835,
+      "sha256": "2e28bce4864940f5f0e68f11b2a1f522dd58729bcc6e7ff458121c4010bb1c93"
+    },
+    {
+      "path": "evidence/artifacts/F-012-kuubik.kdraw",
+      "size": 10069,
+      "sha256": "1f92ecf5b6db30fcdd1b7c224dc59cd45143a32a16f58bf311d3321a3a28cd1c"
+    },
+    {
+      "path": "evidence/artifacts/F-012-oracles.json",
+      "size": 32661,
+      "sha256": "492ed139e199e780d62e776d3c47717d5b69ad86ee63c765aec5a8fd8b2890d8"
     },
     {
       "path": "evidence/artifacts/F-015-autocad-readback.json",
@@ -2759,6 +2794,286 @@
       "sha256": "b48a2d2ce58b75bdc54d9581294d3a70e157b76e9427200571a41161b92209c8"
     },
     {
+      "path": "evidence/artifacts/visual-shell-wave-15/visual-shell-active-command.png",
+      "size": 92037,
+      "sha256": "ced4fa9625479fdf7391c99389e2c8e89d2cb36ffba94c188d8fbc64befaaffd"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-15/visual-shell-command-history.png",
+      "size": 20457,
+      "sha256": "9f81271d1756e3a2607235e564ddfc1ff0da38acbd93437f4d343f5fa3363ea5"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-15/visual-shell-context-menu.png",
+      "size": 103349,
+      "sha256": "7edda67408c9f6165282d03f089e5c1cee7270ef80e41f5b7acd1926b707a47e"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-15/visual-shell-empty-workspace.png",
+      "size": 75855,
+      "sha256": "8c8470e12e46dd5d0d7362151fa27e6784a291b08c486000e36c41080d810719"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-15/visual-shell-layer-manager.png",
+      "size": 96477,
+      "sha256": "013b17aedb4d6334f227969dd8731e2d4d20d0641f34287dd84fe709e7b8f411"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-15/visual-shell-layout-paper-space.png",
+      "size": 83499,
+      "sha256": "bc7db1286bed8ad34cc04cb7e926c3b19cb691aafa116a04dbd1762ad28af05a"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-15/visual-shell-layout-tools-open.png",
+      "size": 89086,
+      "sha256": "45b152cc5c86a939f4080684b7ffc77acdb3c04e382813c84891a8c2e91dea18"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-15/visual-shell-selected-properties.png",
+      "size": 95550,
+      "sha256": "e4ebca3ad0a2ac7bb94d714c466cbb5b874a9f29299c1af1b15b26203d957974"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-15/visual-shell-states.json",
+      "size": 16879,
+      "sha256": "d595e1cd5e9234beb42b7961fbcd4208dc6b65aaf70d2772eb3e97fb49f3a11e"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-15/visual-shell-zones.json",
+      "size": 870,
+      "sha256": "b48a2d2ce58b75bdc54d9581294d3a70e157b76e9427200571a41161b92209c8"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-16/autocad-active-drawing-readback.json",
+      "size": 3919,
+      "sha256": "df156e318a9b6bc6aa6033a4353a0021158d6d7496c6b42b8adf5ce415e17439"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-16/autocad-bottom-chrome-readback.json",
+      "size": 3293,
+      "sha256": "61d1384644cd1bf1cec261387f70316fcab1484284dda2525a0df36ba0a51ade"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-16/autocad-light-model-readback.json",
+      "size": 3023,
+      "sha256": "bd4905f4a5f19ff4c87f1a748f028e49a478c7ae30c1f992c61d1705608226cb"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-16/autocad-ribbon-readback.json",
+      "size": 4020,
+      "sha256": "ed91b33adc124b77981ec2dd8febfdd5a3d5854abd05ff75d8aac7e436a27c0d"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-16/autocad-selected-properties-readback.json",
+      "size": 8424,
+      "sha256": "e4e636f8d1e9764e43e5a19af529e25b71002d5a244747c36d54786271cff075"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-16/autocad-top-chrome-readback.json",
+      "size": 2598,
+      "sha256": "15d54c2cead8ffdfbe1b2abfdf3700c98e1de3880145880dedc59d1391c0e053"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-16/visual-shell-active-command.png",
+      "size": 161145,
+      "sha256": "568d854dea8bb5f74ce4f56ebedda3d316d7401b84689e6c216af15441776e91"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-16/visual-shell-command-history.png",
+      "size": 20457,
+      "sha256": "9f81271d1756e3a2607235e564ddfc1ff0da38acbd93437f4d343f5fa3363ea5"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-16/visual-shell-context-menu.png",
+      "size": 174103,
+      "sha256": "218d6eadfd7ade27b425349a71c62ed7d0c6a6a46710a351a64f1edd7aa4943f"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-16/visual-shell-empty-workspace.png",
+      "size": 72349,
+      "sha256": "a0ae0fa603cdcb4ef6b08b031fc3d1cdfbe73a20353f3c9193a6c807eb9b173a"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-16/visual-shell-layer-manager.png",
+      "size": 164111,
+      "sha256": "6fa7db11af5efd3a42c61675e9de49f56e0267d7bde1942ddbb3f5c270359b74"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-16/visual-shell-layout-paper-space.png",
+      "size": 80949,
+      "sha256": "383009acd9e768c13356a0ac2d05b5454e3e15591bdcfd463f2d0e07de51bda3"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-16/visual-shell-layout-tools-open.png",
+      "size": 86247,
+      "sha256": "b945da9a2928403af10e501e63cc01f3993d5ff4ff39136b2ef5d59076e8c735"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-16/visual-shell-selected-properties.png",
+      "size": 163444,
+      "sha256": "297de2720bb07618ea18b090a271848c071fb63874c542daab3bc9f5bf1283d3"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-16/visual-shell-states.json",
+      "size": 28852,
+      "sha256": "98492e9d991c4ee38a7446ea4f7220349e9e853441059a8f0f942b5111fab3f0"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-16/visual-shell-zones.json",
+      "size": 863,
+      "sha256": "9825a43170c6384fdbc669abfcfa3d08e03c858a447704b7d44402969dc2e259"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-17/visual-shell-active-command.png",
+      "size": 161145,
+      "sha256": "568d854dea8bb5f74ce4f56ebedda3d316d7401b84689e6c216af15441776e91"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-17/visual-shell-command-history.png",
+      "size": 20457,
+      "sha256": "9f81271d1756e3a2607235e564ddfc1ff0da38acbd93437f4d343f5fa3363ea5"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-17/visual-shell-context-menu.png",
+      "size": 174103,
+      "sha256": "218d6eadfd7ade27b425349a71c62ed7d0c6a6a46710a351a64f1edd7aa4943f"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-17/visual-shell-empty-workspace.png",
+      "size": 72349,
+      "sha256": "a0ae0fa603cdcb4ef6b08b031fc3d1cdfbe73a20353f3c9193a6c807eb9b173a"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-17/visual-shell-layer-manager.png",
+      "size": 164111,
+      "sha256": "6fa7db11af5efd3a42c61675e9de49f56e0267d7bde1942ddbb3f5c270359b74"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-17/visual-shell-layout-paper-space.png",
+      "size": 79431,
+      "sha256": "510fa7f9baeaa7a59ce447be1245cbd0cb96e6a58b28b79db9ca92589408e637"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-17/visual-shell-layout-tools-open.png",
+      "size": 85285,
+      "sha256": "ca30155b5dfaebec5709e4571dd954de0e48e49b26a769ceaa0f31bef818c083"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-17/visual-shell-selected-properties.png",
+      "size": 163444,
+      "sha256": "297de2720bb07618ea18b090a271848c071fb63874c542daab3bc9f5bf1283d3"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-17/visual-shell-states.json",
+      "size": 28872,
+      "sha256": "5a25212d1f40af5a80888ee8976da71c64fd488edc7f3ac4c8221451bbe457b9"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-17/visual-shell-zones.json",
+      "size": 863,
+      "sha256": "9825a43170c6384fdbc669abfcfa3d08e03c858a447704b7d44402969dc2e259"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-18/visual-shell-active-command.png",
+      "size": 161145,
+      "sha256": "568d854dea8bb5f74ce4f56ebedda3d316d7401b84689e6c216af15441776e91"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-18/visual-shell-command-history.png",
+      "size": 20457,
+      "sha256": "9f81271d1756e3a2607235e564ddfc1ff0da38acbd93437f4d343f5fa3363ea5"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-18/visual-shell-context-menu.png",
+      "size": 174103,
+      "sha256": "218d6eadfd7ade27b425349a71c62ed7d0c6a6a46710a351a64f1edd7aa4943f"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-18/visual-shell-empty-workspace.png",
+      "size": 72349,
+      "sha256": "a0ae0fa603cdcb4ef6b08b031fc3d1cdfbe73a20353f3c9193a6c807eb9b173a"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-18/visual-shell-layer-manager.png",
+      "size": 164111,
+      "sha256": "6fa7db11af5efd3a42c61675e9de49f56e0267d7bde1942ddbb3f5c270359b74"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-18/visual-shell-layout-paper-space.png",
+      "size": 128697,
+      "sha256": "d71f05a2a375ad8a6d1d3aa7f333972114ec89c22a6826b6b48163ea2ae053df"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-18/visual-shell-layout-tools-open.png",
+      "size": 134549,
+      "sha256": "02f96e1e426994f4c4c094d511cf70ee7683743ee9c6f56c5e4ad359043a801c"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-18/visual-shell-selected-properties.png",
+      "size": 163444,
+      "sha256": "297de2720bb07618ea18b090a271848c071fb63874c542daab3bc9f5bf1283d3"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-18/visual-shell-states.json",
+      "size": 28867,
+      "sha256": "f2bbba67fd160db463ed280447a628c4e7979078c441177795eea324e17651b4"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-18/visual-shell-zones.json",
+      "size": 863,
+      "sha256": "9825a43170c6384fdbc669abfcfa3d08e03c858a447704b7d44402969dc2e259"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-19/visual-shell-active-command.png",
+      "size": 161145,
+      "sha256": "568d854dea8bb5f74ce4f56ebedda3d316d7401b84689e6c216af15441776e91"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-19/visual-shell-command-history.png",
+      "size": 20457,
+      "sha256": "9f81271d1756e3a2607235e564ddfc1ff0da38acbd93437f4d343f5fa3363ea5"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-19/visual-shell-context-menu.png",
+      "size": 174103,
+      "sha256": "218d6eadfd7ade27b425349a71c62ed7d0c6a6a46710a351a64f1edd7aa4943f"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-19/visual-shell-empty-workspace.png",
+      "size": 72349,
+      "sha256": "a0ae0fa603cdcb4ef6b08b031fc3d1cdfbe73a20353f3c9193a6c807eb9b173a"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-19/visual-shell-layer-manager.png",
+      "size": 164111,
+      "sha256": "6fa7db11af5efd3a42c61675e9de49f56e0267d7bde1942ddbb3f5c270359b74"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-19/visual-shell-layout-paper-space.png",
+      "size": 226944,
+      "sha256": "5317377efae317ae599752030922a683f50fa313ba4692df56065aa01731de90"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-19/visual-shell-layout-tools-open.png",
+      "size": 232489,
+      "sha256": "b77c9fd690f5bf0e4c556faa520d2ea4e63509cfd6357f103a21eea5114f76d4"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-19/visual-shell-selected-properties.png",
+      "size": 163444,
+      "sha256": "297de2720bb07618ea18b090a271848c071fb63874c542daab3bc9f5bf1283d3"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-19/visual-shell-states.json",
+      "size": 28869,
+      "sha256": "adc96a4bd5646bf4838fe854669f444d466dbb661711d86d8433c3ad2cc39ed2"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-19/visual-shell-zones.json",
+      "size": 863,
+      "sha256": "9825a43170c6384fdbc669abfcfa3d08e03c858a447704b7d44402969dc2e259"
+    },
+    {
       "path": "evidence/artifacts/visual-shell-wave-2/autocad-reference-readback.json",
       "size": 1647,
       "sha256": "97e8d49a2b683cc0d61a9e9a67763e8f5d66826467d93aa909f06bedd48ade67"
@@ -2804,6 +3119,501 @@
       "sha256": "06ce51919fe1133f70402789831e87e6aecfd4e21607983aa1d56e1b4c6dd95e"
     },
     {
+      "path": "evidence/artifacts/visual-shell-wave-20/visual-shell-active-command.png",
+      "size": 161145,
+      "sha256": "568d854dea8bb5f74ce4f56ebedda3d316d7401b84689e6c216af15441776e91"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-20/visual-shell-command-history.png",
+      "size": 20457,
+      "sha256": "9f81271d1756e3a2607235e564ddfc1ff0da38acbd93437f4d343f5fa3363ea5"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-20/visual-shell-context-menu.png",
+      "size": 174103,
+      "sha256": "218d6eadfd7ade27b425349a71c62ed7d0c6a6a46710a351a64f1edd7aa4943f"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-20/visual-shell-empty-workspace.png",
+      "size": 72349,
+      "sha256": "a0ae0fa603cdcb4ef6b08b031fc3d1cdfbe73a20353f3c9193a6c807eb9b173a"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-20/visual-shell-layer-manager.png",
+      "size": 164111,
+      "sha256": "6fa7db11af5efd3a42c61675e9de49f56e0267d7bde1942ddbb3f5c270359b74"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-20/visual-shell-layout-paper-space.png",
+      "size": 229982,
+      "sha256": "4820397de25912de278f1286585459950ee34ec164b55ea023376d5d8b65a65e"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-20/visual-shell-layout-tools-open.png",
+      "size": 235432,
+      "sha256": "43d00e1e39081651e011488291cd42e0ec89f980096a0ad64f71401e4536d416"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-20/visual-shell-selected-properties.png",
+      "size": 163444,
+      "sha256": "297de2720bb07618ea18b090a271848c071fb63874c542daab3bc9f5bf1283d3"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-20/visual-shell-states.json",
+      "size": 28869,
+      "sha256": "adc96a4bd5646bf4838fe854669f444d466dbb661711d86d8433c3ad2cc39ed2"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-20/visual-shell-zones.json",
+      "size": 863,
+      "sha256": "9825a43170c6384fdbc669abfcfa3d08e03c858a447704b7d44402969dc2e259"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-21/visual-shell-active-command.png",
+      "size": 161145,
+      "sha256": "568d854dea8bb5f74ce4f56ebedda3d316d7401b84689e6c216af15441776e91"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-21/visual-shell-command-history.png",
+      "size": 20457,
+      "sha256": "9f81271d1756e3a2607235e564ddfc1ff0da38acbd93437f4d343f5fa3363ea5"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-21/visual-shell-context-menu.png",
+      "size": 174103,
+      "sha256": "218d6eadfd7ade27b425349a71c62ed7d0c6a6a46710a351a64f1edd7aa4943f"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-21/visual-shell-empty-workspace.png",
+      "size": 72349,
+      "sha256": "a0ae0fa603cdcb4ef6b08b031fc3d1cdfbe73a20353f3c9193a6c807eb9b173a"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-21/visual-shell-layer-manager.png",
+      "size": 164111,
+      "sha256": "6fa7db11af5efd3a42c61675e9de49f56e0267d7bde1942ddbb3f5c270359b74"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-21/visual-shell-layout-paper-space.png",
+      "size": 227734,
+      "sha256": "a7791059ca8c65b6fc2fc77e8a669fa6660a00a62b113da408975fe8609961c5"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-21/visual-shell-layout-tools-open.png",
+      "size": 233217,
+      "sha256": "50e627c7578941515fd164fb46f562ae3d743fcb86a577e689cba57ac78c6017"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-21/visual-shell-selected-properties.png",
+      "size": 163444,
+      "sha256": "297de2720bb07618ea18b090a271848c071fb63874c542daab3bc9f5bf1283d3"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-21/visual-shell-states.json",
+      "size": 28869,
+      "sha256": "adc96a4bd5646bf4838fe854669f444d466dbb661711d86d8433c3ad2cc39ed2"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-21/visual-shell-zones.json",
+      "size": 863,
+      "sha256": "9825a43170c6384fdbc669abfcfa3d08e03c858a447704b7d44402969dc2e259"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-22/visual-shell-active-command.png",
+      "size": 161145,
+      "sha256": "568d854dea8bb5f74ce4f56ebedda3d316d7401b84689e6c216af15441776e91"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-22/visual-shell-context-menu.png",
+      "size": 174103,
+      "sha256": "218d6eadfd7ade27b425349a71c62ed7d0c6a6a46710a351a64f1edd7aa4943f"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-22/visual-shell-empty-workspace.png",
+      "size": 72349,
+      "sha256": "a0ae0fa603cdcb4ef6b08b031fc3d1cdfbe73a20353f3c9193a6c807eb9b173a"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-22/visual-shell-layer-manager.png",
+      "size": 164111,
+      "sha256": "6fa7db11af5efd3a42c61675e9de49f56e0267d7bde1942ddbb3f5c270359b74"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-22/visual-shell-selected-properties.png",
+      "size": 163444,
+      "sha256": "297de2720bb07618ea18b090a271848c071fb63874c542daab3bc9f5bf1283d3"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-22/visual-shell-zones.json",
+      "size": 863,
+      "sha256": "9825a43170c6384fdbc669abfcfa3d08e03c858a447704b7d44402969dc2e259"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-23/visual-shell-active-command.png",
+      "size": 161145,
+      "sha256": "568d854dea8bb5f74ce4f56ebedda3d316d7401b84689e6c216af15441776e91"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-23/visual-shell-command-history.png",
+      "size": 20457,
+      "sha256": "9f81271d1756e3a2607235e564ddfc1ff0da38acbd93437f4d343f5fa3363ea5"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-23/visual-shell-context-menu.png",
+      "size": 174103,
+      "sha256": "218d6eadfd7ade27b425349a71c62ed7d0c6a6a46710a351a64f1edd7aa4943f"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-23/visual-shell-empty-workspace.png",
+      "size": 72349,
+      "sha256": "a0ae0fa603cdcb4ef6b08b031fc3d1cdfbe73a20353f3c9193a6c807eb9b173a"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-23/visual-shell-layer-manager.png",
+      "size": 164111,
+      "sha256": "6fa7db11af5efd3a42c61675e9de49f56e0267d7bde1942ddbb3f5c270359b74"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-23/visual-shell-layout-paper-space.png",
+      "size": 209585,
+      "sha256": "0d3532389dcd2fb158fe68ff8bded75e5ed007fc7ff5efbc8371c66f46384bb7"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-23/visual-shell-layout-tools-open.png",
+      "size": 215307,
+      "sha256": "0ce699d8d70cda5435afabb4f0c6e157dca6d9edad84d75294e9c5a3521152a7"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-23/visual-shell-selected-properties.png",
+      "size": 163444,
+      "sha256": "297de2720bb07618ea18b090a271848c071fb63874c542daab3bc9f5bf1283d3"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-23/visual-shell-states.json",
+      "size": 29942,
+      "sha256": "375f23c18c59269a41a0a7defdf568e9adbe966ee13bca0dace5b20f75a8f8eb"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-23/visual-shell-zones.json",
+      "size": 863,
+      "sha256": "9825a43170c6384fdbc669abfcfa3d08e03c858a447704b7d44402969dc2e259"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-24/autocad-active-drawing-readback.json",
+      "size": 3919,
+      "sha256": "9654b5e12ccb255dafae4784e95726eb079d937042bbe3db4d82b1106ea5f834"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-24/autocad-bottom-chrome-readback.json",
+      "size": 3293,
+      "sha256": "131ef8562702c70736d2256bb99013026709985add7e9b73ca390499e887acbe"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-24/autocad-layout-paper-space-readback.json",
+      "size": 3488,
+      "sha256": "b17fda02a1c779cf610b732cd06f297f755727e6eb3f338654d296cc794baea9"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-24/autocad-light-model-readback.json",
+      "size": 3023,
+      "sha256": "d4b9d72ad09574f812d0168d089ae4b9d4231b7c47493d6dd6be7c1df6647b57"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-24/autocad-ribbon-readback.json",
+      "size": 4020,
+      "sha256": "23ccc5146fc5693d2466d3ce59e26008f43c24a76d463b924bff9faf3f0a24cd"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-24/autocad-selected-properties-readback.json",
+      "size": 8424,
+      "sha256": "c926a38a7f31902a9228b58dd52aa7b57647ff0bbe6a75cb6e4d2df34060c3cf"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-24/autocad-top-chrome-readback.json",
+      "size": 2598,
+      "sha256": "3df527c6bda2fb87f4042208567072a0db958c150b9c9697abc4c742d734845b"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-24/visual-shell-active-command.png",
+      "size": 161145,
+      "sha256": "568d854dea8bb5f74ce4f56ebedda3d316d7401b84689e6c216af15441776e91"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-24/visual-shell-command-history.png",
+      "size": 20457,
+      "sha256": "9f81271d1756e3a2607235e564ddfc1ff0da38acbd93437f4d343f5fa3363ea5"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-24/visual-shell-context-menu.png",
+      "size": 174103,
+      "sha256": "218d6eadfd7ade27b425349a71c62ed7d0c6a6a46710a351a64f1edd7aa4943f"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-24/visual-shell-empty-workspace.png",
+      "size": 72349,
+      "sha256": "a0ae0fa603cdcb4ef6b08b031fc3d1cdfbe73a20353f3c9193a6c807eb9b173a"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-24/visual-shell-layer-manager.png",
+      "size": 164111,
+      "sha256": "6fa7db11af5efd3a42c61675e9de49f56e0267d7bde1942ddbb3f5c270359b74"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-24/visual-shell-layout-paper-space.png",
+      "size": 209585,
+      "sha256": "0d3532389dcd2fb158fe68ff8bded75e5ed007fc7ff5efbc8371c66f46384bb7"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-24/visual-shell-layout-tools-open.png",
+      "size": 215307,
+      "sha256": "0ce699d8d70cda5435afabb4f0c6e157dca6d9edad84d75294e9c5a3521152a7"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-24/visual-shell-selected-properties.png",
+      "size": 163444,
+      "sha256": "297de2720bb07618ea18b090a271848c071fb63874c542daab3bc9f5bf1283d3"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-24/visual-shell-states.json",
+      "size": 30884,
+      "sha256": "49d919800ed44b2ea0cac5ccdcaa2c333604ad6c9d94e14830238515ae603c79"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-24/visual-shell-zones.json",
+      "size": 863,
+      "sha256": "9825a43170c6384fdbc669abfcfa3d08e03c858a447704b7d44402969dc2e259"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-25/visual-shell-active-command.png",
+      "size": 160948,
+      "sha256": "4d6fcccb8a5f89bbd7be71ef90f97121b230877b54af70f2f6f22aad09aa04d4"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-25/visual-shell-context-menu.png",
+      "size": 173825,
+      "sha256": "cc2b326396dfec0508e7c3cc41484fa402fe3f157d84ea34383301700322ccec"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-25/visual-shell-empty-workspace.png",
+      "size": 72075,
+      "sha256": "bfd80a539cd10bc7bb125c0773ef4fa1c757cfdb7d7cb8bcd51c77c9cebe576a"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-25/visual-shell-layer-manager.png",
+      "size": 163833,
+      "sha256": "e3d7da857b5008730b0ae8d472766fa8d5202fc778f4606e7af4665de6a86597"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-25/visual-shell-selected-properties.png",
+      "size": 163275,
+      "sha256": "19438e768f7cf87a2634ff51c4fe9ca22adb45eab12ce2d5a45154ceda7a34b1"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-25/visual-shell-zones.json",
+      "size": 863,
+      "sha256": "9825a43170c6384fdbc669abfcfa3d08e03c858a447704b7d44402969dc2e259"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-26/visual-shell-active-command.png",
+      "size": 160946,
+      "sha256": "8fc1e9d74cb5132fb5419802b467fac61afab62fd699ccff4838c94614b1a3ce"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-26/visual-shell-command-history.png",
+      "size": 25845,
+      "sha256": "403a1e27935e06c2554ad31b0d5df3c4f29e0c25b022b43db0ba8459b26afa5a"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-26/visual-shell-context-menu.png",
+      "size": 173823,
+      "sha256": "4d74c758fc3d507b9850908a625e9cc49ce3bed25cd1b0711fd966adb6dabfeb"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-26/visual-shell-empty-workspace.png",
+      "size": 72073,
+      "sha256": "c3fdf3b93b282e1f8617c5e761a8ac0f02db8fe229a698e0548fcd72873ecd30"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-26/visual-shell-layer-manager.png",
+      "size": 163831,
+      "sha256": "75418e45b8279764674b698779cbab473a7fa1cb81bfdbdab96ea61a46b43d88"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-26/visual-shell-layout-paper-space.png",
+      "size": 210167,
+      "sha256": "ae6824cf70c719cc18d1e84fb8070bac1579c161492ff2e9a2e2219ad73a4a11"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-26/visual-shell-layout-tools-open.png",
+      "size": 215526,
+      "sha256": "728597fac860bd6660b786eaae54fc2629ee11b03e70bfba17359b6d1a5d1beb"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-26/visual-shell-selected-properties.png",
+      "size": 163273,
+      "sha256": "878daa9ff785b59b47b5de94c0ec6a9fdfe11e4aa7c519e079773af8471f0112"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-26/visual-shell-states.json",
+      "size": 30884,
+      "sha256": "86f4e3595b69cbb616447d3724d4526c67bbca4497a93a693a2c46be5b4b5d59"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-26/visual-shell-zones.json",
+      "size": 863,
+      "sha256": "9825a43170c6384fdbc669abfcfa3d08e03c858a447704b7d44402969dc2e259"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-27/visual-shell-active-command.png",
+      "size": 160946,
+      "sha256": "8fc1e9d74cb5132fb5419802b467fac61afab62fd699ccff4838c94614b1a3ce"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-27/visual-shell-command-history.png",
+      "size": 25845,
+      "sha256": "403a1e27935e06c2554ad31b0d5df3c4f29e0c25b022b43db0ba8459b26afa5a"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-27/visual-shell-context-menu.png",
+      "size": 173823,
+      "sha256": "4d74c758fc3d507b9850908a625e9cc49ce3bed25cd1b0711fd966adb6dabfeb"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-27/visual-shell-empty-workspace.png",
+      "size": 72073,
+      "sha256": "c3fdf3b93b282e1f8617c5e761a8ac0f02db8fe229a698e0548fcd72873ecd30"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-27/visual-shell-layer-manager.png",
+      "size": 163831,
+      "sha256": "75418e45b8279764674b698779cbab473a7fa1cb81bfdbdab96ea61a46b43d88"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-27/visual-shell-layout-paper-space.png",
+      "size": 210167,
+      "sha256": "ae6824cf70c719cc18d1e84fb8070bac1579c161492ff2e9a2e2219ad73a4a11"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-27/visual-shell-layout-tools-open.png",
+      "size": 215526,
+      "sha256": "728597fac860bd6660b786eaae54fc2629ee11b03e70bfba17359b6d1a5d1beb"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-27/visual-shell-selected-properties.png",
+      "size": 163273,
+      "sha256": "878daa9ff785b59b47b5de94c0ec6a9fdfe11e4aa7c519e079773af8471f0112"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-27/visual-shell-states.json",
+      "size": 32666,
+      "sha256": "cf0f5ac6cdcfaaf38df27a32c7a80f44ba25dd0961a149cfe87e2238c0186721"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-27/visual-shell-zones.json",
+      "size": 863,
+      "sha256": "9825a43170c6384fdbc669abfcfa3d08e03c858a447704b7d44402969dc2e259"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-28/visual-shell-active-command.png",
+      "size": 160871,
+      "sha256": "fa5eaba8cf3f83a081e52c40217303def011ed47728f7639d067cff47d89fb4e"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-28/visual-shell-command-history.png",
+      "size": 25845,
+      "sha256": "403a1e27935e06c2554ad31b0d5df3c4f29e0c25b022b43db0ba8459b26afa5a"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-28/visual-shell-context-menu.png",
+      "size": 173886,
+      "sha256": "0882900ec9492b664f37effc3bc67166e7a3ed1b1a156b82d66b51525ac9d472"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-28/visual-shell-empty-workspace.png",
+      "size": 72127,
+      "sha256": "cc2158776e649527b4a1a74848bf11a10e99c9501e731cd0bd03cbc951c995f5"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-28/visual-shell-layer-manager.png",
+      "size": 163892,
+      "sha256": "6d7b147ac3010032c431cdd63cfcc3b526fdcf78d7fbc8974a4b68f2354473d0"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-28/visual-shell-layout-paper-space.png",
+      "size": 210097,
+      "sha256": "01ebd86ea14edbfc3e7d80e55b1e6a570729cadb798e6159c4dcbe0e672a0a05"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-28/visual-shell-layout-tools-open.png",
+      "size": 215570,
+      "sha256": "73ab6bca24102dbfd8d2741be827f7332e7319f429baa74e7ac5b29f3eb79b3a"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-28/visual-shell-selected-properties.png",
+      "size": 163171,
+      "sha256": "4c8ca19a279592df3ee6d039df82b79ada666a078ce466ace67c0ab7f23a08ed"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-28/visual-shell-states.json",
+      "size": 32666,
+      "sha256": "f486c449bffd048240ded90c8878292e50e96d36976e1899802c7d9dbced6b43"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-28/visual-shell-zones.json",
+      "size": 863,
+      "sha256": "9825a43170c6384fdbc669abfcfa3d08e03c858a447704b7d44402969dc2e259"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-29/visual-shell-active-command.png",
+      "size": 160854,
+      "sha256": "068b29bc4dda27f66b616b6645216fa72b379b5b4a3c81c1ddcd584f63199dc2"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-29/visual-shell-command-history.png",
+      "size": 25845,
+      "sha256": "403a1e27935e06c2554ad31b0d5df3c4f29e0c25b022b43db0ba8459b26afa5a"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-29/visual-shell-context-menu.png",
+      "size": 173868,
+      "sha256": "166fe877239301c103ab17135aa476e24bba8fef3ad025d9fb28004f2f63b34c"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-29/visual-shell-empty-workspace.png",
+      "size": 72113,
+      "sha256": "1558019179fc31057e703fc342b16b23d2f4e520c7508ecb065d7123b6dafe2b"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-29/visual-shell-layer-manager.png",
+      "size": 163876,
+      "sha256": "433b86fc2cc01863e62f9920c3c09761dfc9df9f186c587bd5bbb062243b84ab"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-29/visual-shell-layout-paper-space.png",
+      "size": 210067,
+      "sha256": "e6c303fde69e214afadf055aae5b05467002149148888ab43af530d2900f875d"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-29/visual-shell-layout-tools-open.png",
+      "size": 215423,
+      "sha256": "edfc340ed90b9076cf4dcab8ba8dcab509c639cc544f4b649cba8c6468034530"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-29/visual-shell-selected-properties.png",
+      "size": 163155,
+      "sha256": "9a0134144f46ec4f5a88496016b1cc47e161c1bac13725a04f9e6e18b8eb3a30"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-29/visual-shell-states.json",
+      "size": 32668,
+      "sha256": "294023b5577b31baeecb03fd71baca1eb34bb51a1bd938b3d5f2e23a4b75056f"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-29/visual-shell-zones.json",
+      "size": 863,
+      "sha256": "9825a43170c6384fdbc669abfcfa3d08e03c858a447704b7d44402969dc2e259"
+    },
+    {
       "path": "evidence/artifacts/visual-shell-wave-3/autocad-reference-readback.json",
       "size": 1769,
       "sha256": "6472a1c9a0fdaedda5d15341842befdc2e8fe483e1ab94c4e0a302ed62ce8cca"
@@ -2847,6 +3657,636 @@
       "path": "evidence/artifacts/visual-shell-wave-3/visual-shell-zones.json",
       "size": 766,
       "sha256": "06ce51919fe1133f70402789831e87e6aecfd4e21607983aa1d56e1b4c6dd95e"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-30/autocad-active-drawing-readback.json",
+      "size": 3919,
+      "sha256": "b2403f1767c7aa610a83b46c2a488a35026e5e262a61a3b9c35a87c15a735e26"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-30/autocad-bottom-chrome-readback.json",
+      "size": 3293,
+      "sha256": "c8bb1584c3497577a4adfcf69043070a7690e405dda2e7bab2a433e7548745cb"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-30/autocad-layout-paper-space-readback.json",
+      "size": 5616,
+      "sha256": "a902ffaf73aba0f91a8c21360d49a5a821211a6f81429850e4a5b9bdeba8ef42"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-30/autocad-light-model-readback.json",
+      "size": 3023,
+      "sha256": "6a2cfaec4182af205d158da1018e62e015f0650b16055a088f8d6e18b5b832d9"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-30/autocad-ribbon-readback.json",
+      "size": 4020,
+      "sha256": "a90bcd31e37632adcca6a3216b5a4a8cdc6538355064ea157107956bf2c4b848"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-30/autocad-selected-properties-readback.json",
+      "size": 8424,
+      "sha256": "457e832f11a28708d71c6f32f3a1ab685d6e02d79d23119342ae5916fd93c97d"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-30/autocad-top-chrome-readback.json",
+      "size": 2598,
+      "sha256": "351b959a438cebc347c056450fbf54e2f5aa2bdeab4b854557631f4544624196"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-30/visual-shell-active-command.png",
+      "size": 160854,
+      "sha256": "068b29bc4dda27f66b616b6645216fa72b379b5b4a3c81c1ddcd584f63199dc2"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-30/visual-shell-command-history.png",
+      "size": 25845,
+      "sha256": "403a1e27935e06c2554ad31b0d5df3c4f29e0c25b022b43db0ba8459b26afa5a"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-30/visual-shell-context-menu.png",
+      "size": 173868,
+      "sha256": "166fe877239301c103ab17135aa476e24bba8fef3ad025d9fb28004f2f63b34c"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-30/visual-shell-empty-workspace.png",
+      "size": 72113,
+      "sha256": "1558019179fc31057e703fc342b16b23d2f4e520c7508ecb065d7123b6dafe2b"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-30/visual-shell-layer-manager.png",
+      "size": 163876,
+      "sha256": "433b86fc2cc01863e62f9920c3c09761dfc9df9f186c587bd5bbb062243b84ab"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-30/visual-shell-layout-paper-space.png",
+      "size": 210067,
+      "sha256": "e6c303fde69e214afadf055aae5b05467002149148888ab43af530d2900f875d"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-30/visual-shell-layout-tools-open.png",
+      "size": 215423,
+      "sha256": "edfc340ed90b9076cf4dcab8ba8dcab509c639cc544f4b649cba8c6468034530"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-30/visual-shell-selected-properties.png",
+      "size": 163155,
+      "sha256": "9a0134144f46ec4f5a88496016b1cc47e161c1bac13725a04f9e6e18b8eb3a30"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-30/visual-shell-states.json",
+      "size": 32668,
+      "sha256": "294023b5577b31baeecb03fd71baca1eb34bb51a1bd938b3d5f2e23a4b75056f"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-30/visual-shell-zones.json",
+      "size": 863,
+      "sha256": "9825a43170c6384fdbc669abfcfa3d08e03c858a447704b7d44402969dc2e259"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-31/autocad-active-drawing-readback.json",
+      "size": 3919,
+      "sha256": "e245fef7b5be2eb0d623df7b148584af54429d3ec4befcccfa904f8b52046112"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-31/autocad-bottom-chrome-readback.json",
+      "size": 3293,
+      "sha256": "67089942428e8173c3dc93db007c7bd9b5015b1615f37053752c39818824007f"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-31/autocad-layout-paper-space-readback.json",
+      "size": 5616,
+      "sha256": "cdc8377961cfbfab38976231a2d54f3569a584269fc7ef7d35d7518206188d50"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-31/autocad-light-model-readback.json",
+      "size": 3023,
+      "sha256": "1bac42964f2d4bbfcab3fb15e91da186951386d82cf3a76ae701c640703f44a8"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-31/autocad-ribbon-readback.json",
+      "size": 4020,
+      "sha256": "b8ecc86adef0b8832c296ba9504309e28e568bd81927bfbd42a539d52cecd99a"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-31/autocad-selected-properties-readback.json",
+      "size": 10250,
+      "sha256": "dc5cc211fdae6dff7a7c5a9862fa9c885654bc1901d5345e2e0e4157bfe0feef"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-31/autocad-top-chrome-readback.json",
+      "size": 2598,
+      "sha256": "98f47c33c588e99b7e004da481e7a3eb3db054a2e4e6066b838708177fb71143"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-31/visual-shell-active-command.png",
+      "size": 160854,
+      "sha256": "068b29bc4dda27f66b616b6645216fa72b379b5b4a3c81c1ddcd584f63199dc2"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-31/visual-shell-command-history.png",
+      "size": 25845,
+      "sha256": "403a1e27935e06c2554ad31b0d5df3c4f29e0c25b022b43db0ba8459b26afa5a"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-31/visual-shell-context-menu.png",
+      "size": 174266,
+      "sha256": "dc6f8d09a5f34bd078da92300b5af79cb85deedb0904e7135b0fd85694519bff"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-31/visual-shell-empty-workspace.png",
+      "size": 72113,
+      "sha256": "1558019179fc31057e703fc342b16b23d2f4e520c7508ecb065d7123b6dafe2b"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-31/visual-shell-layer-manager.png",
+      "size": 164314,
+      "sha256": "5508474731ab3099398fcce09aebc0e824485f741e858390d15e0357e88190f3"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-31/visual-shell-layout-paper-space.png",
+      "size": 210067,
+      "sha256": "e6c303fde69e214afadf055aae5b05467002149148888ab43af530d2900f875d"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-31/visual-shell-layout-tools-open.png",
+      "size": 215423,
+      "sha256": "edfc340ed90b9076cf4dcab8ba8dcab509c639cc544f4b649cba8c6468034530"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-31/visual-shell-selected-properties.png",
+      "size": 163656,
+      "sha256": "fc243f1c71c11ad4d1f18be4966531064768fe7f91d0d88b1937e92df128d8bf"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-31/visual-shell-states.json",
+      "size": 32666,
+      "sha256": "ce8a4b2d0cbd4590f07374293342882c7b14b63109e110ea94849b21fa6c72c6"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-31/visual-shell-zones.json",
+      "size": 863,
+      "sha256": "9825a43170c6384fdbc669abfcfa3d08e03c858a447704b7d44402969dc2e259"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-32/autocad-active-drawing-readback.json",
+      "size": 3919,
+      "sha256": "87882da86538072652e937d11ef41fab9a0b80227f0c0f3f11330dcea4c0809f"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-32/autocad-bottom-chrome-readback.json",
+      "size": 3293,
+      "sha256": "ecaf521c99d8df4964e284759a886c1a20d2ee26477c9e3482a09ff61830ffdb"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-32/autocad-layout-paper-space-readback.json",
+      "size": 5616,
+      "sha256": "4bffe0b9d4abe513c11909ef20128b9e93bda2c7289d78eb03d61e99ca0cd4e5"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-32/autocad-light-model-readback.json",
+      "size": 3023,
+      "sha256": "a45a2d6270f664d9eae9b40125e09553277de066bd47cf40ddd96e925ae77d3d"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-32/autocad-ribbon-readback.json",
+      "size": 4020,
+      "sha256": "c5de99cd063c72d9b20f6c9b596b2078b190adc5e25d4e2b46a705331b4f8bd6"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-32/autocad-selected-properties-readback.json",
+      "size": 10922,
+      "sha256": "2080b4b293f75c054daf7a55a8050bf62cc4d7359e13915d9ecc387323d41e26"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-32/autocad-top-chrome-readback.json",
+      "size": 2598,
+      "sha256": "a2b4565df47434776a67686d0f0e2671655271fe4a607f00b81843183de7140c"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-32/visual-shell-active-command.png",
+      "size": 159204,
+      "sha256": "bb4bb9fbced7a35b01461b1a40ea3075b91360176df24981040d919a1048723f"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-32/visual-shell-command-history.png",
+      "size": 25845,
+      "sha256": "403a1e27935e06c2554ad31b0d5df3c4f29e0c25b022b43db0ba8459b26afa5a"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-32/visual-shell-context-menu.png",
+      "size": 172669,
+      "sha256": "2c50bf3e3a97ba44e85124b01c77063885662e365fa43b86f827f6376e905d78"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-32/visual-shell-empty-workspace.png",
+      "size": 70888,
+      "sha256": "ec7311d4194552c8c9acd924c33ee23b8207a3f5bb9c7a0afa0eb94723e634e8"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-32/visual-shell-layer-manager.png",
+      "size": 162713,
+      "sha256": "f403e9c153ba2a30146d2dd93064e67cabfd6b58f00faff34d1b8f8ddbde39dc"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-32/visual-shell-layout-paper-space.png",
+      "size": 210067,
+      "sha256": "e6c303fde69e214afadf055aae5b05467002149148888ab43af530d2900f875d"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-32/visual-shell-layout-tools-open.png",
+      "size": 215423,
+      "sha256": "edfc340ed90b9076cf4dcab8ba8dcab509c639cc544f4b649cba8c6468034530"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-32/visual-shell-selected-properties.png",
+      "size": 162013,
+      "sha256": "dd42b31f6423980ddc5969e74b43e290ece440134644ed4822d8fd3f0292d495"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-32/visual-shell-states.json",
+      "size": 33063,
+      "sha256": "af44831a7d83e9a2d8df67f855b7a686f6ab70a3cd4366471ed38464ddc96d19"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-32/visual-shell-zones.json",
+      "size": 863,
+      "sha256": "9825a43170c6384fdbc669abfcfa3d08e03c858a447704b7d44402969dc2e259"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-33/visual-shell-active-command.png",
+      "size": 162467,
+      "sha256": "f24809708f8b5a2b1a3466a719c74eb68cf3e72e0909cafdda81dd10a7076998"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-33/visual-shell-command-history.png",
+      "size": 25845,
+      "sha256": "403a1e27935e06c2554ad31b0d5df3c4f29e0c25b022b43db0ba8459b26afa5a"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-33/visual-shell-context-menu.png",
+      "size": 175907,
+      "sha256": "beafc60ebfb49ebdb0c735a219f77340dd51233f213ad24b23c234a3d3840f84"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-33/visual-shell-empty-workspace.png",
+      "size": 74339,
+      "sha256": "89efc13f644962048c870910cce8ac0bea90e32a6f6c17bff5c9309b637f7a8a"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-33/visual-shell-layer-manager.png",
+      "size": 165965,
+      "sha256": "2e34ddb134c47f9f9d092d23ef57e0e85b68afebc140ede02fd625bebc104fc8"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-33/visual-shell-layout-paper-space.png",
+      "size": 213327,
+      "sha256": "66fa20fe6d90162305f17b87d2a8fd155981220dc9ea44fe19072b0067e32829"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-33/visual-shell-layout-tools-open.png",
+      "size": 218687,
+      "sha256": "be9364c3be4b5e70e8d7b87a174dd975d13c049a4dfe3d552c64ab53dcd7d06b"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-33/visual-shell-selected-properties.png",
+      "size": 165281,
+      "sha256": "6819b22cf456f85828c6a2855672ef5ecafd3b3c2f29018ed8083a536986a00f"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-33/visual-shell-states.json",
+      "size": 33063,
+      "sha256": "af44831a7d83e9a2d8df67f855b7a686f6ab70a3cd4366471ed38464ddc96d19"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-33/visual-shell-zones.json",
+      "size": 863,
+      "sha256": "9825a43170c6384fdbc669abfcfa3d08e03c858a447704b7d44402969dc2e259"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-34/autocad-active-drawing-readback.json",
+      "size": 3919,
+      "sha256": "cace01812cbb6ff86fde33786fbfc4cd30ae79f811c0ed61dc5331869f7b776f"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-34/autocad-bottom-chrome-readback.json",
+      "size": 3293,
+      "sha256": "dccd2391325d9e9927aef7198505774ba34602ac293c0e831a40766e8c89cfc6"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-34/autocad-layout-paper-space-readback.json",
+      "size": 5616,
+      "sha256": "f437823095ceb77148131c5e92c8aa2c958b819a095e4d95b2d457f4f8fee79b"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-34/autocad-light-model-readback.json",
+      "size": 3023,
+      "sha256": "e66a89075a293fed5e61a30488306b63aae56e3b39f4c0f05a9f2bb344abddae"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-34/autocad-ribbon-readback.json",
+      "size": 6794,
+      "sha256": "4772844d5e326a9f58428a6296a339c998c4950ab72fd188ea3052a56aeb14dd"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-34/autocad-selected-properties-readback.json",
+      "size": 10922,
+      "sha256": "a5fbd85d1d38970090a2cb05d8248ffa546cc4ac3b7ed5406fcfef8e33a70c09"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-34/autocad-top-chrome-readback.json",
+      "size": 2598,
+      "sha256": "d75338a5ebf34d7ebebba460fe24e557daa6f1788635a94351ed6c146cda04eb"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-34/visual-shell-active-command.png",
+      "size": 162467,
+      "sha256": "f24809708f8b5a2b1a3466a719c74eb68cf3e72e0909cafdda81dd10a7076998"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-34/visual-shell-command-history.png",
+      "size": 25845,
+      "sha256": "403a1e27935e06c2554ad31b0d5df3c4f29e0c25b022b43db0ba8459b26afa5a"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-34/visual-shell-context-menu.png",
+      "size": 175907,
+      "sha256": "beafc60ebfb49ebdb0c735a219f77340dd51233f213ad24b23c234a3d3840f84"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-34/visual-shell-empty-workspace.png",
+      "size": 74339,
+      "sha256": "89efc13f644962048c870910cce8ac0bea90e32a6f6c17bff5c9309b637f7a8a"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-34/visual-shell-layer-manager.png",
+      "size": 165965,
+      "sha256": "2e34ddb134c47f9f9d092d23ef57e0e85b68afebc140ede02fd625bebc104fc8"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-34/visual-shell-layout-paper-space.png",
+      "size": 213327,
+      "sha256": "66fa20fe6d90162305f17b87d2a8fd155981220dc9ea44fe19072b0067e32829"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-34/visual-shell-layout-tools-open.png",
+      "size": 218687,
+      "sha256": "be9364c3be4b5e70e8d7b87a174dd975d13c049a4dfe3d552c64ab53dcd7d06b"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-34/visual-shell-selected-properties.png",
+      "size": 165281,
+      "sha256": "6819b22cf456f85828c6a2855672ef5ecafd3b3c2f29018ed8083a536986a00f"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-34/visual-shell-states.json",
+      "size": 36255,
+      "sha256": "2e713057d4fe18032a008e826b7e16a3737bddfa1080af16eb8db1b38bfd3830"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-34/visual-shell-zones.json",
+      "size": 863,
+      "sha256": "9825a43170c6384fdbc669abfcfa3d08e03c858a447704b7d44402969dc2e259"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-35/visual-shell-active-command.png",
+      "size": 165458,
+      "sha256": "89e4c08cd463cbe1621a97787a7d95d30669a927512e048ef4ad717e90bf37ef"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-35/visual-shell-context-menu.png",
+      "size": 178724,
+      "sha256": "de9a60c52a65347c3a385290051121f3f3bf104fd1b52fb72935809151350855"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-35/visual-shell-empty-workspace.png",
+      "size": 77512,
+      "sha256": "bf5a280b69fbc57a73fc9641f0b0850c474d5ed301e426437d2683d637d005dc"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-35/visual-shell-selected-properties.png",
+      "size": 168141,
+      "sha256": "79f213c7e26f2907740858ad50615ba0d6e1b1407148a7a503c298933bcb4960"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-35/visual-shell-zones.json",
+      "size": 863,
+      "sha256": "9825a43170c6384fdbc669abfcfa3d08e03c858a447704b7d44402969dc2e259"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-36/visual-shell-active-command.png",
+      "size": 165458,
+      "sha256": "89e4c08cd463cbe1621a97787a7d95d30669a927512e048ef4ad717e90bf37ef"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-36/visual-shell-command-history.png",
+      "size": 25845,
+      "sha256": "403a1e27935e06c2554ad31b0d5df3c4f29e0c25b022b43db0ba8459b26afa5a"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-36/visual-shell-context-menu.png",
+      "size": 178724,
+      "sha256": "de9a60c52a65347c3a385290051121f3f3bf104fd1b52fb72935809151350855"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-36/visual-shell-empty-workspace.png",
+      "size": 77512,
+      "sha256": "bf5a280b69fbc57a73fc9641f0b0850c474d5ed301e426437d2683d637d005dc"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-36/visual-shell-layer-manager.png",
+      "size": 169419,
+      "sha256": "bb02d8528525406378255f1f9ea05fd64ec613f35817bd6edc46b8c8efb00ae2"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-36/visual-shell-layout-paper-space.png",
+      "size": 217010,
+      "sha256": "859c16e38c22c606e30c5123622074b403194dcd28badf179d0896a04350b7f4"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-36/visual-shell-layout-tools-open.png",
+      "size": 222277,
+      "sha256": "5e68ba56beaf8e04edcf60a8d2bf5792bbde16fdad7c2c084278b2195e3f2eb8"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-36/visual-shell-selected-properties.png",
+      "size": 168141,
+      "sha256": "79f213c7e26f2907740858ad50615ba0d6e1b1407148a7a503c298933bcb4960"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-36/visual-shell-states.json",
+      "size": 36255,
+      "sha256": "2e713057d4fe18032a008e826b7e16a3737bddfa1080af16eb8db1b38bfd3830"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-36/visual-shell-zones.json",
+      "size": 863,
+      "sha256": "9825a43170c6384fdbc669abfcfa3d08e03c858a447704b7d44402969dc2e259"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-37/autocad-active-drawing-readback.json",
+      "size": 4470,
+      "sha256": "c2b1b28fea7f324089c3220dda74bf421c6cdad4e7bb1a96b9122db384461ee8"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-37/autocad-bottom-chrome-readback.json",
+      "size": 3293,
+      "sha256": "49b0fe1cb5cea0d47f2d062862bed2bdbc1287472e09886373249b291abc0790"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-37/autocad-layout-paper-space-readback.json",
+      "size": 5803,
+      "sha256": "efabc71a84249559cc7359b77ced68af30cf0a34c5979b84fbac38dfb19b787f"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-37/autocad-light-model-readback.json",
+      "size": 3023,
+      "sha256": "a1ac0756bcf397f2a3e6195b22d32d7dfbbb156dbe4be9460546604164543c9d"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-37/autocad-ribbon-readback.json",
+      "size": 6794,
+      "sha256": "32397f2e3f482dd7088cac0a0394a7eebfa4680730fcfaf66b81225b934e6367"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-37/autocad-selected-properties-readback.json",
+      "size": 13588,
+      "sha256": "5f2465560eb0554b61d7d07e8733a27893afc39a6a12721ed88a40d7c3aa59e7"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-37/autocad-top-chrome-readback.json",
+      "size": 2598,
+      "sha256": "958e7e5a41114d22975ec67c89665efa3f551a03f77a8d1f03b34348f68fac11"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-37/visual-shell-active-command.png",
+      "size": 165458,
+      "sha256": "89e4c08cd463cbe1621a97787a7d95d30669a927512e048ef4ad717e90bf37ef"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-37/visual-shell-command-history.png",
+      "size": 25845,
+      "sha256": "403a1e27935e06c2554ad31b0d5df3c4f29e0c25b022b43db0ba8459b26afa5a"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-37/visual-shell-context-menu.png",
+      "size": 178724,
+      "sha256": "de9a60c52a65347c3a385290051121f3f3bf104fd1b52fb72935809151350855"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-37/visual-shell-empty-workspace.png",
+      "size": 77512,
+      "sha256": "bf5a280b69fbc57a73fc9641f0b0850c474d5ed301e426437d2683d637d005dc"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-37/visual-shell-layer-manager.png",
+      "size": 169419,
+      "sha256": "bb02d8528525406378255f1f9ea05fd64ec613f35817bd6edc46b8c8efb00ae2"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-37/visual-shell-layout-paper-space.png",
+      "size": 217010,
+      "sha256": "859c16e38c22c606e30c5123622074b403194dcd28badf179d0896a04350b7f4"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-37/visual-shell-layout-tools-open.png",
+      "size": 222277,
+      "sha256": "5e68ba56beaf8e04edcf60a8d2bf5792bbde16fdad7c2c084278b2195e3f2eb8"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-37/visual-shell-selected-properties.png",
+      "size": 168141,
+      "sha256": "79f213c7e26f2907740858ad50615ba0d6e1b1407148a7a503c298933bcb4960"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-37/visual-shell-states.json",
+      "size": 39152,
+      "sha256": "1703e43d2666879e1d11127b6e19e7258029e53dc606cda9807b25e0050318d7"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-37/visual-shell-zones.json",
+      "size": 863,
+      "sha256": "9825a43170c6384fdbc669abfcfa3d08e03c858a447704b7d44402969dc2e259"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-38/autocad-active-drawing-readback.json",
+      "size": 4470,
+      "sha256": "501062c6e33b91dc0c82bbe20fe62a7f557b0eee0c3910563351c0819d48b52e"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-38/autocad-layout-paper-space-readback.json",
+      "size": 5803,
+      "sha256": "0691d74ad8be2736b99b459bc486ca46ac2860ede2202e936083f53d9a19dd75"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-38/autocad-light-model-readback.json",
+      "size": 3023,
+      "sha256": "7007d5b71e5efb25834e13a95e99b9906befa798b71f1024bcc1fee44ec9f672"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-38/autocad-ribbon-readback.json",
+      "size": 10078,
+      "sha256": "4ab8584de61cdba2c3522b285211cd2548fe8231c508bbc84f91d70e5c205747"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-38/autocad-selected-properties-readback.json",
+      "size": 13588,
+      "sha256": "1e8a2bd6a37205905fd75b35fbf7fc224529aecba1767f798cb3b376ef802733"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-38/autocad-top-chrome-readback.json",
+      "size": 2598,
+      "sha256": "2c53c2f1f7254c72deb566d79a18ef1a2361615cfd54500918088712f65d73f8"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-38/visual-shell-active-command.png",
+      "size": 169628,
+      "sha256": "9c3b548ed9d51ea67711c4f6c1a06f48b3137c933d040fe693daa23ac86e87d6"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-38/visual-shell-command-history.png",
+      "size": 25845,
+      "sha256": "403a1e27935e06c2554ad31b0d5df3c4f29e0c25b022b43db0ba8459b26afa5a"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-38/visual-shell-context-menu.png",
+      "size": 182787,
+      "sha256": "5290f429164c870fe8c596d4bb7f76e705e6a591585e98f41f95a479bcfd29f0"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-38/visual-shell-empty-workspace.png",
+      "size": 81977,
+      "sha256": "9f447cb6db9186aa93a656370aa99732ec4960a39a8728ec2a3c31c340961ae4"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-38/visual-shell-layer-manager.png",
+      "size": 173720,
+      "sha256": "6a3e0341910b755efb2d066293f22cb67d344c3034135bcbc0483d9609896b0c"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-38/visual-shell-layout-paper-space.png",
+      "size": 221227,
+      "sha256": "3c4e0a4f71a82b36286b0d412f0209a3f846439c56791cf4d3181ecf9621f022"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-38/visual-shell-layout-tools-open.png",
+      "size": 226310,
+      "sha256": "8f2045779df71a0fcad0347a39800640d6c7f765832fe62365efcb1d9e95de26"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-38/visual-shell-selected-properties.png",
+      "size": 172446,
+      "sha256": "e21fec2fce1d708763a587c2866d9948a5beb8c67b5e76299a170866f845d134"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-38/visual-shell-states.json",
+      "size": 42958,
+      "sha256": "c5869da9c3b524dd8787f54729dafdba875ff2abbf6a806ecd3a1d57e2e32311"
+    },
+    {
+      "path": "evidence/artifacts/visual-shell-wave-38/visual-shell-zones.json",
+      "size": 863,
+      "sha256": "9825a43170c6384fdbc669abfcfa3d08e03c858a447704b7d44402969dc2e259"
     },
     {
       "path": "evidence/artifacts/visual-shell-wave-4/autocad-reference-readback.json",
@@ -3621,17 +5061,17 @@
     {
       "path": "package-lock.json",
       "size": 84871,
-      "sha256": "da1dcf889d8fbf35f6a8e4403b29ed34666b13176a2b98307a0c23e25fa06a53"
+      "sha256": "95ef52c9c0b0a00fc39b358a6af96d29f45c09ff71044a9d506665ffed20e02b"
     },
     {
       "path": "package.json",
-      "size": 16494,
-      "sha256": "5259f9eca959b85f4505ab44d800beb5b47fbd2fb6d331af0d6c539f570b908a"
+      "size": 16935,
+      "sha256": "a085d439338e952128eba9a8ef8ae631c91e145979b25f34c1e98c8680f2a343"
     },
     {
       "path": "packages/cad-core/package.json",
       "size": 508,
-      "sha256": "2aa8b6e3e87867acd7b954970b5c838240e04588679b58dc2444a27a49aeb93f"
+      "sha256": "dbdc2ad923b1eebd841484b5a3eae7e975910c8e2839aba0a3f958e47da9908a"
     },
     {
       "path": "packages/cad-core/src/aci-palette.ts",
@@ -3650,8 +5090,8 @@
     },
     {
       "path": "packages/cad-core/src/commands.ts",
-      "size": 114531,
-      "sha256": "540e6f79dafb8d71f0e3ba5d43a1dcd39bd9f5809c03ea383c070de3636609fc"
+      "size": 126376,
+      "sha256": "e4c39a3d349dfd77a7f556ef03a8e14d413419044c708e570c47f779671af48a"
     },
     {
       "path": "packages/cad-core/src/container.ts",
@@ -3670,13 +5110,13 @@
     },
     {
       "path": "packages/cad-core/src/index.ts",
-      "size": 568,
-      "sha256": "681d425d328d1938f98e2821886e13b68097a86ee26de483efd7ba31dfc362fc"
+      "size": 597,
+      "sha256": "b5eb72e3b2a98ac7155baed0f9746c36882a096ace0f3a8067343d3e52e1e825"
     },
     {
       "path": "packages/cad-core/src/layouts.ts",
-      "size": 33632,
-      "sha256": "0ea7b5f9bdbcfb1236eb3e6d5405c338ce85e4d05d699259e4e60dc84c0804d6"
+      "size": 33640,
+      "sha256": "2685d9ee7c0087b5167d153a868ee3d484be544ba7f75ba99b4473fd7b799f95"
     },
     {
       "path": "packages/cad-core/src/legacy-import.ts",
@@ -3714,9 +5154,14 @@
       "sha256": "b90890bbcbe114dd4847ef5dcfc4c16dede0d7b6e98c388b2ba5ce4ca2be13c5"
     },
     {
+      "path": "packages/cad-core/src/spline.ts",
+      "size": 53039,
+      "sha256": "647b2128368bea838d981b3a1ecf2dd4bd45432f8bb9904faacb090b8939f513"
+    },
+    {
       "path": "packages/cad-core/src/stretch.ts",
-      "size": 25755,
-      "sha256": "5e76f375057f553ef91c38df96b28686d1e56cf57e1debd51b71bae8a2739944"
+      "size": 25823,
+      "sha256": "1a86f689da16374f8b000b706c16c88f89c06c4dc3fb63b18310b6e7e517240a"
     },
     {
       "path": "packages/cad-core/src/transaction.ts",
@@ -3757,6 +5202,11 @@
       "path": "packages/cad-core/test/extend.test.ts",
       "size": 12891,
       "sha256": "61dfff95ea8f8079e3720520aa2e9781fa0de60215ab48582ab09c8b1f457bd2"
+    },
+    {
+      "path": "packages/cad-core/test/f012-mutation-proven.test.ts",
+      "size": 14953,
+      "sha256": "2dadb9474d258f5821ab1c6004d93712de30a5687b91efb06eb36a86e988186a"
     },
     {
       "path": "packages/cad-core/test/f022-mutation-proven.test.ts",
@@ -3815,8 +5265,8 @@
     },
     {
       "path": "packages/cad-core/test/layouts.test.ts",
-      "size": 25747,
-      "sha256": "350ce4b27c91af1e307a6d14f61f50b2e9843153a0b56546d226d40527566d75"
+      "size": 25753,
+      "sha256": "7c29ce3a4271e2db5c3b2a0236605664c8f764428522bcb7214d03c6fdd559a5"
     },
     {
       "path": "packages/cad-core/test/legacy-import.test.ts",
@@ -3859,6 +5309,11 @@
       "sha256": "ce4505d983d82ba2e8c61738608e57a6ff3623b48a3686442793452f335b6067"
     },
     {
+      "path": "packages/cad-core/test/spline.test.ts",
+      "size": 45545,
+      "sha256": "4a2e622823f4d4b4bcf9e1d5c064afe3daca3f63002e35dbe00921841a0b3e17"
+    },
+    {
       "path": "packages/cad-core/test/stretch.test.ts",
       "size": 21602,
       "sha256": "9503a9e94fcfbd88cd554b7604c70bcfcc39eeea894fd52cf6d495a3f68fd390"
@@ -3881,17 +5336,22 @@
     {
       "path": "packages/cad-dxf/package.json",
       "size": 536,
-      "sha256": "08ccf0c936fbfddcb6da70b25e11649657605e6f70cc589a4adf2f3cc5dd70a3"
+      "sha256": "0ab6ba4abeca7c1e89f3acee8c6312692f0545803222acedec147efc8ac39bd4"
     },
     {
       "path": "packages/cad-dxf/src/import.ts",
-      "size": 43799,
-      "sha256": "2f375b882304f0d3f9461b84b69d97e09bec8326863b6253f100e42cd9214a59"
+      "size": 45962,
+      "sha256": "ce6aeb7450c2c32815a7521169a7a48dddc7f6ff511b3024de2a10fc42e80bf1"
     },
     {
       "path": "packages/cad-dxf/src/index.ts",
-      "size": 40230,
-      "sha256": "e01ff7bd77cf6dfef6da8d86f00c13d87dc847bb0135dbd1d79ece80717edc13"
+      "size": 41330,
+      "sha256": "01b5c30202a2eb048ae89ebc374722d9423716ba1bf71d11311388e0640af5cb"
+    },
+    {
+      "path": "packages/cad-dxf/test/f012-spline-fit-roundtrip.test.ts",
+      "size": 4300,
+      "sha256": "b491e1f1a1a0a4f01efcc25389b3b158cfddb73bf3b84c99645b9043eddd9f21"
     },
     {
       "path": "packages/cad-dxf/test/f022-trim-roundtrip.test.ts",
@@ -3971,7 +5431,7 @@
     {
       "path": "packages/cad-print/package.json",
       "size": 538,
-      "sha256": "1acefddafd17ba0d039c4f0b9cedddc895f7e638f3aec9ca8fea204427c152fb"
+      "sha256": "ee6007b8687c25a9ad54fe14066b2ed490e134e21097c8e027f84924092ee16c"
     },
     {
       "path": "packages/cad-print/src/index.ts",
@@ -4016,12 +5476,12 @@
     {
       "path": "packages/cad-renderer/package.json",
       "size": 541,
-      "sha256": "d514c6c9a13d248b4b9df2057ff74efc806d2ce312de6f5fb3aa4fccb2374f7b"
+      "sha256": "6fe52e2ac3b13afc6486954e4532adf2bc1aa481b9585a7b97201466312b3e3d"
     },
     {
       "path": "packages/cad-renderer/src/bounds.ts",
-      "size": 4688,
-      "sha256": "c2e589c3c8be0642582eaa95ffba295dccf377fa8cfefc835a16e6d2e7c68c06"
+      "size": 5404,
+      "sha256": "a8da7778426f858d8e2ee5e79f1af8280130f43ce5e0c3b3c2be9214fe409427"
     },
     {
       "path": "packages/cad-renderer/src/index.ts",
@@ -4030,8 +5490,8 @@
     },
     {
       "path": "packages/cad-renderer/src/renderer.ts",
-      "size": 32350,
-      "sha256": "55eadfec98379878d8488a2fca1624d49cfa1a9d686b55ecf294f1ef20ce4b79"
+      "size": 32329,
+      "sha256": "ba615037a6d8addbef7a4c530296f2cf3768c86a2bb342e71336fce19443b209"
     },
     {
       "path": "packages/cad-renderer/src/rtree.ts",
@@ -4045,8 +5505,8 @@
     },
     {
       "path": "packages/cad-renderer/test/renderer.test.ts",
-      "size": 20076,
-      "sha256": "e45a3797b2a8c32e9c21929c92a3c8a7564bf384e6275d52c5d0ab6a240c4da6"
+      "size": 22938,
+      "sha256": "b4472ba0c12da1760256d72e467fc756bcada2024abe0f22db88c1e3e590c388"
     },
     {
       "path": "packages/cad-renderer/test/rtree.test.ts",
@@ -4070,13 +5530,18 @@
     },
     {
       "path": "parity/autocad-2024-visual.manifest.mjs",
-      "size": 5428,
-      "sha256": "5feeba1d6c6d1426d49565e35d06bee3dfea261319b10abe6c7b4fce891868f9"
+      "size": 5607,
+      "sha256": "bbf49dc6812b56f057c591633a02b34e0e2fa4e8ab4529b6d6695834410d31ca"
     },
     {
       "path": "parity/autocad/F-003.scr",
       "size": 601,
       "sha256": "5d1b061fdad8c550282b33f08f9ae28889e6666f6b98740bff5d4e872775ba63"
+    },
+    {
+      "path": "parity/autocad/F-012.scr",
+      "size": 18783,
+      "sha256": "0e36d9599d1730870f1e0a2b800e37be3bd89e1999ec6a672ba2ff5e1fe50210"
     },
     {
       "path": "parity/autocad/F-015.scr",
@@ -4200,8 +5665,8 @@
     },
     {
       "path": "parity/check-visual.mjs",
-      "size": 10359,
-      "sha256": "bef3615b71a50503b04427c74301c7c949c1b58da0c7592377274a0f58a14706"
+      "size": 16456,
+      "sha256": "df20e624e966b86207e2c513199dc357426ef80ae433109610e846230258d6ed"
     },
     {
       "path": "parity/content-addresses.json",
@@ -4257,6 +5722,11 @@
       "path": "parity/expected/F-114.json",
       "size": 1729,
       "sha256": "d310217fee5accecc3898c3a7d4f0fad4543b1b837c9a48f5598f425a298f571"
+    },
+    {
+      "path": "parity/F-012-scope.md",
+      "size": 8510,
+      "sha256": "b0eb6ccb336b2eeed731e0b16c5bcdc0a1faa5d4e689bc80f64c1b6836eb469a"
     },
     {
       "path": "parity/F-016-scope.md",
@@ -4480,8 +5950,8 @@
     },
     {
       "path": "parity/rows.mjs",
-      "size": 21678,
-      "sha256": "037f9c3d3ecd9f73d45571e7f436aac9f610b8658aa11c1321f365e55cb5fd78"
+      "size": 22850,
+      "sha256": "ee55aa9f7b3a3d75f860623f3978f99038db7be43a0916a7553fa002b47e4c8d"
     },
     {
       "path": "parity/snapshot-lock.json",
@@ -4490,8 +5960,8 @@
     },
     {
       "path": "playwright.config.ts",
-      "size": 547,
-      "sha256": "934bf27906ceb40f12c8a629df2865a03b197a6ea7b6d5d27386c9b3c47046c5"
+      "size": 682,
+      "sha256": "af1f2681b785eeeb004cd09735cd1b02033f1389b327dd21f85041e0eba10705"
     },
     {
       "path": "README.md",
@@ -4512,6 +5982,31 @@
       "path": "THIRD_PARTY_NOTICES.md",
       "size": 1165,
       "sha256": "3808f3d84aab5eb8a1fdeb18c83e9316fa2a7806243403f52cac549c199fb58d"
+    },
+    {
+      "path": "tools/autocad/capture-visual-layer-manager.ps1",
+      "size": 6188,
+      "sha256": "55ca01a152ec9b6d2164a2bfb1e00a727e0ce936efd8553191b435d63d6d5f92"
+    },
+    {
+      "path": "tools/autocad/f012-core-evidence.mjs",
+      "size": 15447,
+      "sha256": "029e0c4a97adf4ad5b7d863014f55f9e8c9bdd3dfa518da69c1f3f45890bf2ea"
+    },
+    {
+      "path": "tools/autocad/f012-core-runner.test.mjs",
+      "size": 11518,
+      "sha256": "68a101a0771050f32312c226d02552e11a8e6d4d11d5d37ee6c52268cf471e94"
+    },
+    {
+      "path": "tools/autocad/f012-runner.test.mjs",
+      "size": 2399,
+      "sha256": "009841e4f5ca9d9c4cf2304bde0cef9057b1f7701c15e33b4a29f2a019f60e69"
+    },
+    {
+      "path": "tools/autocad/f012-standard-matrix.ps1",
+      "size": 34906,
+      "sha256": "41c2234c66221fb8da2c35202e45e629d8dfc21aa5863974b76ecd333d0025e1"
     },
     {
       "path": "tools/autocad/f016-runner.test.mjs",
@@ -4809,6 +6304,16 @@
       "sha256": "27f61e6129c12cc865b396e8e8dc5bc2419ba6d3cfd85b8f2d14b6e7325d0163"
     },
     {
+      "path": "tools/autocad/run-f012-core.mjs",
+      "size": 3348,
+      "sha256": "19172d413d86e45e5bc540cd017c9b0124fcdd21fa1fc69e4e6015ef7d878793"
+    },
+    {
+      "path": "tools/autocad/run-f012.mjs",
+      "size": 6121,
+      "sha256": "10cc7f9a0cd78bfa76898645eed8f468db89cdab5312cca51ff641f4e3e6cb3d"
+    },
+    {
       "path": "tools/autocad/run-f015.mjs",
       "size": 3143,
       "sha256": "e1fbb6d35fff1b80a8fb1de8027ef2c35e01bf754028cfb8f6a0e0d57140ec22"
@@ -5009,6 +6514,11 @@
       "sha256": "7781f14cf685eb22e4b187153dc205ace723fe08aeb8fc789652854bff4e5f68"
     },
     {
+      "path": "tools/oracles/freecad-f012-headless.py",
+      "size": 1788,
+      "sha256": "0d91361b16db305c6b175c1ac18c4f5c98a214262ee69a34301e046e9444b58f"
+    },
+    {
       "path": "tools/oracles/freecad-f024-headless.py",
       "size": 1567,
       "sha256": "906a1c5e3311e5fb46d6e5b1e0e20ded5b91cda02e1cda71525d7e81929234a2"
@@ -5072,6 +6582,11 @@
       "path": "tools/oracles/README.md",
       "size": 2245,
       "sha256": "39eb36ae24de996db2251674272071bf175d97d012ce878c315b62ed0e7bbe87"
+    },
+    {
+      "path": "tools/oracles/run-f012-oracles.mjs",
+      "size": 9088,
+      "sha256": "92e71b35d0204794ebc16c17e10b2be9309b179afaf04a7b6f0d4ef78716dc10"
     },
     {
       "path": "tools/oracles/run-f022-oracles.mjs",
@@ -5140,8 +6655,8 @@
     },
     {
       "path": "tools/parity-kit/core.test.mjs",
-      "size": 34491,
-      "sha256": "025c29a9f954930dd783de9cee3528d82517b1d0766b915bbcd021ba2ff9d283"
+      "size": 34650,
+      "sha256": "2cf4aaa608d0238858f8e811b8f2c843b51fc2cc1d75614a066c3140a6eb2d70"
     },
     {
       "path": "tools/parity-kit/evidence-receipt.test.mjs",
@@ -5654,6 +7169,11 @@
       "sha256": "f9cdcd4c37b494f722b35014e1d3fd554ad858c32fed32b1aa2d9885946274a0"
     },
     {
+      "path": "tools/parity/run-f012-readback.mjs",
+      "size": 27119,
+      "sha256": "1dbc832970d70c80b153712e4e09b89293f37c68ec985cfac07f8efa961d8976"
+    },
+    {
       "path": "tools/parity/run-f015-readback.mjs",
       "size": 3576,
       "sha256": "93f2a84b1959c5e135bfbe1e927afd5d23f769ab7e7cf4778b1fde42049e0607"
@@ -5825,8 +7345,8 @@
     },
     {
       "path": "tools/provenance/scan-public-tree.mjs",
-      "size": 9679,
-      "sha256": "69f46d5eb6655afbc0142a1492158b513f613776b788dea5ee36ccfec7726248"
+      "size": 9763,
+      "sha256": "4eb3f9a460e41665ec2b18f3c3deea640a21f994257832c20a1d4cf79705dbae"
     },
     {
       "path": "tools/visual/capture-autocad-command-history.ps1",
@@ -5839,9 +7359,19 @@
       "sha256": "5db078c994d252c599c72d25f7d0abd725d8cdefdd365c3d71c776b4cd6a7237"
     },
     {
+      "path": "tools/visual/compare-active-drawing.ps1",
+      "size": 9504,
+      "sha256": "a6a250ea2e13cd76d1399cb9f278a242c77da854c548153c662a81df8b4541f6"
+    },
+    {
       "path": "tools/visual/compare-bottom-chrome.ps1",
       "size": 5120,
       "sha256": "6908833aa25dc1ec0380cd2512b5b068df67d41431261b8ae562398743542757"
+    },
+    {
+      "path": "tools/visual/compare-layout-paper-space.ps1",
+      "size": 9332,
+      "sha256": "10b4547fb9dc465c0243b71397c0d0753c667bd1da5077b81166ea909020b1a3"
     },
     {
       "path": "tools/visual/compare-light-model-surface.ps1",
@@ -5850,13 +7380,13 @@
     },
     {
       "path": "tools/visual/compare-ribbon-surface.ps1",
-      "size": 4556,
-      "sha256": "e9a9909b64745b65de19be3882346d33709741a4598ade4b2c8fca5818abb5e8"
+      "size": 6154,
+      "sha256": "7ddc5dec1e3c7c62d169036e399c5f904c766d267ffaf4eff4320577ea2e3fd3"
     },
     {
       "path": "tools/visual/compare-selected-properties.ps1",
-      "size": 9284,
-      "sha256": "ccdda90bdaa67a6542df3bb6fb96c5ce69377322c24012eb2eea341aacd6944f"
+      "size": 12569,
+      "sha256": "869e20f7ab121bb3fee117bf7df75092afa6f197de3d4f206cb788c07a501f7f"
     },
     {
       "path": "tools/visual/compare-top-chrome.ps1",
@@ -5865,8 +7395,8 @@
     },
     {
       "path": "tools/visual/visual-reference-runner.test.mjs",
-      "size": 9385,
-      "sha256": "57b8212203ad4a9e1f179b22ecfec7523b20f53c454db29e4d251221dc8183d1"
+      "size": 13861,
+      "sha256": "cfd64e6fc01c5117fd40d76980a1778480962c5cfa81fe78d1be26ed07a8e70f"
     },
     {
       "path": "tsconfig.base.json",

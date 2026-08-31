@@ -57,6 +57,28 @@ try {
   $kuubikSurface = [string]$panels.draw.backgroundColor
   if ($referenceSurface -ne '#3b4453' -or $kuubikSurface -ne 'rgb(59, 68, 83)') { throw 'AutoCAD and Kuubik ribbon surfaces do not match.' }
 
+  $iconography = @($state.states.ribbon.iconography)
+  $expectedIconKinds = @(
+    'line', 'rectangle', 'polyline', 'circle', 'arc', 'hatch', 'spline',
+    'move', 'copy', 'rotate', 'mirror', 'trim', 'offset', 'stretch', 'scale', 'fillet',
+    'text', 'dimension', 'leader', 'table', 'new-layer', 'layer-lock', 'make-current', 'match-layer',
+    'insert', 'create-block', 'edit-block', 'attributes', 'match-properties', 'group', 'ungroup',
+    'measure', 'count', 'paste', 'base-view'
+  )
+  if ($iconography.Count -ne $expectedIconKinds.Count -or (@($iconography.kind) -join ',') -ne ($expectedIconKinds -join ',')) {
+    throw 'Kuubik Home ribbon must expose the fixed original vector-icon set.'
+  }
+  if ([double]$iconography[0].width -ne 34 -or [double]$iconography[0].height -ne 34 -or [int]$iconography[0].pathCount -lt 1) {
+    throw 'Primary LINE vector icon is outside the measured large-tool density contract.'
+  }
+  $largeIconKinds = @('line', 'text', 'insert', 'match-properties', 'paste', 'base-view')
+  foreach ($icon in $iconography) {
+    $expectedSize = if ($largeIconKinds -contains [string]$icon.kind) { 34 } else { 18 }
+    if ([double]$icon.width -ne $expectedSize -or [double]$icon.height -ne $expectedSize -or [int]$icon.pathCount -lt 1) {
+      throw "Ribbon vector icon $($icon.kind) is outside the measured $expectedSize px density contract."
+    }
+  }
+
   $boundarySamples = foreach ($x in @(225, 475, 664, 937, 1098, 1360, 1432, 1529, 1620)) {
     $pixel = $reference.GetPixel($x, 100)
     [ordered]@{ x = $x; color = Get-RgbHex $pixel }
@@ -80,8 +102,10 @@ try {
     autoCadBoundarySamples = @($boundarySamples)
     panels = @($comparisons)
     commandPanel = $state.states.ribbon.commandPanel
+    iconography = $iconography
+    iconSource = 'original-kuubik-inline-svg'
     tolerancePx = 2
-    scope = 'Home ribbon surface and ten measured panel boundaries only; command controls remain a Kuubik extension and this does not authorize a five-category score increase.'
+    scope = 'Home ribbon surface, ten measured panel boundaries and the original Kuubik 34/18 px SVG icon hierarchy across Draw, Modify, Annotation, Layers, Block, Properties, Groups, Utilities, Clipboard and View; command controls remain a Kuubik extension and this does not authorize a five-category score increase.'
     status = 'PASS'
   }
   $directory = Split-Path -Parent $OutputJson

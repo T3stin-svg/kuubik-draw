@@ -42,6 +42,24 @@ function transformedBlockPoint(point: CadPoint2, block: CadBlockDefinition, refe
   };
 }
 
+function textBounds(entity: Extract<CadEntity, { kind: "text" | "mtext" }>): Bounds2 {
+  const lines = entity.text.split(/\r?\n/u);
+  const width = Math.max(1, ...lines.map((line) => line.length)) * entity.height * 0.66;
+  const height = Math.max(1, lines.length) * entity.height;
+  const alignEnd = entity.extensionData?.kuubikMirrorTextAlign === "end";
+  const minX = alignEnd ? -width : 0;
+  const maxX = alignEnd ? 0 : width;
+  const cosine = Math.cos(entity.rotationRad);
+  const sine = Math.sin(entity.rotationRad);
+  const point = (x: number, y: number): CadPoint2 => ({
+    x: entity.position.x + x * cosine - y * sine,
+    y: entity.position.y + x * sine + y * cosine,
+  });
+  return boundsFromPoints([
+    point(minX, 0), point(maxX, 0), point(maxX, height), point(minX, height),
+  ])!;
+}
+
 export function entityBounds(
   entity: CadEntity,
   blocks: ReadonlyMap<string, CadBlockDefinition> = new Map(),
@@ -71,7 +89,7 @@ export function entityBounds(
     }
     case "spline": return boundsFromPoints(entity.controlPoints);
     case "text":
-    case "mtext": return { minX: entity.position.x, minY: entity.position.y, maxX: entity.position.x, maxY: entity.position.y };
+    case "mtext": return textBounds(entity);
     case "leader": return boundsFromPoints(entity.vertices);
     case "dimension": return boundsFromPoints(entity.definitionPoints);
     case "hatch": return boundsFromPoints(entity.loops.flatMap((loop) => loop.vertices));

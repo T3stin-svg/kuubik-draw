@@ -1,0 +1,840 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-012",
+  "benchmark": "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
+  "engine": "Autodesk AutoCAD Core Console 2024",
+  "certificationAuthority": true,
+  "certificationScope": "SPLINE Fit creation, pointer tangents, zero/non-zero Fit Tolerance and mirrored bound probes, PEDIT spline-fit polyline Object conversion, plus SPLINEDIT Reverse/Open/Close/Fit Kink/CV Add/CV Elevate/Convert to Polyline/command-local Undo subset; not the complete F-012 matrix",
+  "workflow": "synthetic scratch DXF; command-line SPLINE and repeated SPLINEDIT prompts; no user document",
+  "engineVersion": "24.3",
+  "created": {
+    "entityType": "SPLINE",
+    "flags": 1064,
+    "start": [
+      0,
+      0
+    ],
+    "end": [
+      100,
+      0
+    ]
+  },
+  "reversed": {
+    "start": [
+      100,
+      0
+    ],
+    "end": [
+      0,
+      0
+    ]
+  },
+  "closed": {
+    "flags": 3115,
+    "seamDistance": 0
+  },
+  "opened": {
+    "flags": 1064
+  },
+  "commandUndo": {
+    "start": [
+      100,
+      0
+    ],
+    "expectedStart": [
+      100,
+      0
+    ]
+  },
+  "tolerance": {
+    "zeroToleranceControlPoints": [
+      [
+        0,
+        400
+      ],
+      [
+        5.704234,
+        437.945278
+      ],
+      [
+        18.416633,
+        522.509754
+      ],
+      [
+        58.912127,
+        323.192733
+      ],
+      [
+        97.321842,
+        505.646542
+      ],
+      [
+        126.312478,
+        433.882422
+      ],
+      [
+        140,
+        400
+      ]
+    ],
+    "zeroToleranceKnots": [
+      0,
+      0,
+      0,
+      0,
+      72.801098893,
+      162.243817993,
+      242.866395476,
+      314.977420985,
+      314.977420985,
+      314.977420985,
+      314.977420985
+    ],
+    "value": 10,
+    "fitPointCount": 5,
+    "controlPointCount": 7,
+    "controlPoints": [
+      [
+        0,
+        200
+      ],
+      [
+        6.47813,
+        243.093333
+      ],
+      [
+        17.766115,
+        337.250668
+      ],
+      [
+        58.07736,
+        134.454316
+      ],
+      [
+        100.929316,
+        320.7384
+      ],
+      [
+        124.693437,
+        237.890236
+      ],
+      [
+        140,
+        200
+      ]
+    ],
+    "knots": [
+      0,
+      0,
+      0,
+      0,
+      82.678060426,
+      171.544116251,
+      252.185414622,
+      332.826160606,
+      332.826160606,
+      332.826160606,
+      332.826160606
+    ],
+    "closestPoints": [
+      [
+        0,
+        200
+      ],
+      [
+        25.608384,
+        272.551138
+      ],
+      [
+        59.801596,
+        199.995552
+      ],
+      [
+        94.491337,
+        263.36963
+      ],
+      [
+        140,
+        200
+      ]
+    ],
+    "deviations": [
+      0,
+      6.161353047,
+      9.997521353,
+      6.457536368,
+      0
+    ]
+  },
+  "toleranceMirror": {
+    "controlPoints": [
+      [
+        0,
+        -200
+      ],
+      [
+        6.47813,
+        -243.093333
+      ],
+      [
+        17.766115,
+        -337.250668
+      ],
+      [
+        58.07736,
+        -134.454316
+      ],
+      [
+        100.929316,
+        -320.7384
+      ],
+      [
+        124.693437,
+        -237.890236
+      ],
+      [
+        140,
+        -200
+      ]
+    ],
+    "knots": [
+      0,
+      0,
+      0,
+      0,
+      82.678060426,
+      171.544116251,
+      252.185414622,
+      332.826160606,
+      332.826160606,
+      332.826160606,
+      332.826160606
+    ],
+    "closestPoints": [
+      [
+        0,
+        -200
+      ],
+      [
+        25.608384,
+        -272.551138
+      ],
+      [
+        59.801596,
+        -199.995552
+      ],
+      [
+        94.491337,
+        -263.36963
+      ],
+      [
+        140,
+        -200
+      ]
+    ],
+    "deviations": [
+      0,
+      6.161353047,
+      9.997521353,
+      6.457536368,
+      0
+    ]
+  },
+  "pointerTangents": {
+    "startTangent": [
+      -1,
+      0
+    ],
+    "endTangent": [
+      0.83205,
+      -0.5547
+    ],
+    "controlPoints": [
+      [
+        0,
+        -500
+      ],
+      [
+        -26.874192,
+        -500
+      ],
+      [
+        63.182883,
+        -366.822917
+      ],
+      [
+        74.429584,
+        -482.953056
+      ],
+      [
+        100,
+        -500
+      ]
+    ],
+    "knots": [
+      0,
+      0,
+      0,
+      0,
+      80.622577483,
+      172.818022056,
+      172.818022056,
+      172.818022056,
+      172.818022056
+    ],
+    "startPoint": [
+      0,
+      -500
+    ],
+    "endPoint": [
+      100,
+      -500
+    ]
+  },
+  "fitKink": {
+    "handleBefore": "7E",
+    "handleAfter": "7E",
+    "targetPoint": [
+      63.011061,
+      -747.379098
+    ],
+    "pointAfter": [
+      63.011061,
+      -747.379098
+    ],
+    "fitPointCountBefore": 5,
+    "fitPointCountAfter": 0,
+    "flagsAfter": 1288,
+    "degreeAfter": 3,
+    "targetParameter": 184.848555628,
+    "controlPoints": [
+      [
+        0,
+        -700
+      ],
+      [
+        10.42422,
+        -663.808278
+      ],
+      [
+        35.725684,
+        -575.96444
+      ],
+      [
+        53.529643,
+        -715.374801
+      ],
+      [
+        63.011061,
+        -747.379098
+      ],
+      [
+        65.394603,
+        -755.424686
+      ],
+      [
+        78.461093,
+        -782.939052
+      ],
+      [
+        95.935974,
+        -581.312014
+      ],
+      [
+        135.598733,
+        -668.384572
+      ],
+      [
+        150,
+        -700
+      ]
+    ],
+    "fitPoints": [],
+    "knots": [
+      0,
+      0,
+      0,
+      0,
+      76.157731059,
+      184.848555628,
+      184.848555628,
+      184.848555628,
+      212.172436146,
+      338.663542553,
+      410.774568062,
+      410.774568062,
+      410.774568062,
+      410.774568062
+    ],
+    "leftDerivative": [
+      0.261699,
+      -0.883368
+    ],
+    "rightDerivative": [
+      0.261699,
+      -0.883347
+    ],
+    "sampleDeviations": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "maximumDeviation": 0
+  },
+  "cvRefine": {
+    "handleBefore": "8E",
+    "handleAfterAdd": "8E",
+    "handleAfterElevate": "8E",
+    "sourceDegree": 3,
+    "sourceControlPointCount": 4,
+    "sourceKnotCount": 8,
+    "sourceControlPoints": [
+      [
+        0,
+        -900
+      ],
+      [
+        30,
+        -830
+      ],
+      [
+        80,
+        -920
+      ],
+      [
+        120,
+        -900
+      ]
+    ],
+    "sourceKnots": [
+      0,
+      0,
+      0,
+      0,
+      1,
+      1,
+      1,
+      1
+    ],
+    "targetParameter": 0.5,
+    "targetPoint": [
+      56.25,
+      -881.25
+    ],
+    "pointAfterAdd": [
+      56.25,
+      -881.25
+    ],
+    "addDegree": 3,
+    "addControlPointCount": 5,
+    "addKnotCount": 9,
+    "addControlPoints": [
+      [
+        0,
+        -900
+      ],
+      [
+        15,
+        -865
+      ],
+      [
+        55,
+        -875
+      ],
+      [
+        100,
+        -910
+      ],
+      [
+        120,
+        -900
+      ]
+    ],
+    "addKnots": [
+      0,
+      0,
+      0,
+      0,
+      0.5,
+      1,
+      1,
+      1,
+      1
+    ],
+    "addSampleDeviations": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "addMaximumDeviation": 0,
+    "elevatedOrder": 5,
+    "elevatedDegree": 4,
+    "elevatedControlPointCount": 7,
+    "elevatedKnotCount": 12,
+    "elevatedControlPoints": [
+      [
+        0,
+        -900
+      ],
+      [
+        11.25,
+        -873.75
+      ],
+      [
+        25,
+        -867.5
+      ],
+      [
+        55.625,
+        -878.125
+      ],
+      [
+        88.75,
+        -901.25
+      ],
+      [
+        105,
+        -907.5
+      ],
+      [
+        120,
+        -900
+      ]
+    ],
+    "elevatedKnots": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0.5,
+      0.5,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "elevatedSampleDeviations": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "elevatedMaximumDeviation": 0
+  },
+  "objectConversion": {
+    "sourceType": "POLYLINE",
+    "sourceHandle": "8F",
+    "sourceAfter": "ERASED",
+    "resultType": "SPLINE",
+    "resultHandle": "9E",
+    "resultFlags": 8,
+    "resultControlPointCount": 4,
+    "resultFitPointCount": 0,
+    "resultControlPoints": [
+      [
+        200,
+        0
+      ],
+      [
+        230,
+        50
+      ],
+      [
+        270,
+        -20
+      ],
+      [
+        320,
+        0
+      ]
+    ],
+    "resultKnots": [
+      0,
+      0,
+      0,
+      0,
+      1,
+      1,
+      1,
+      1
+    ]
+  },
+  "polylineConversion": {
+    "sourceHandle": "9F",
+    "sourceAfter": "ERASED",
+    "resultType": "LWPOLYLINE",
+    "resultHandle": "A0",
+    "vertexCount": 41,
+    "vertices": [
+      [
+        200,
+        -300
+      ],
+      [
+        208.875135,
+        -272.445829
+      ],
+      [
+        213.337396,
+        -259.626306
+      ],
+      [
+        217.82929,
+        -247.955859
+      ],
+      [
+        222.360695,
+        -237.817511
+      ],
+      [
+        224.6443,
+        -233.442571
+      ],
+      [
+        226.941487,
+        -229.594289
+      ],
+      [
+        229.253491,
+        -226.320546
+      ],
+      [
+        231.581545,
+        -223.669218
+      ],
+      [
+        233.926886,
+        -221.688184
+      ],
+      [
+        236.290746,
+        -220.425322
+      ],
+      [
+        238.674363,
+        -219.92851
+      ],
+      [
+        240,
+        -220
+      ],
+      [
+        243.50542,
+        -221.368783
+      ],
+      [
+        245.954255,
+        -223.243601
+      ],
+      [
+        248.425947,
+        -225.806007
+      ],
+      [
+        250.920981,
+        -228.993579
+      ],
+      [
+        255.98301,
+        -236.994525
+      ],
+      [
+        261.144217,
+        -246.747052
+      ],
+      [
+        266.408473,
+        -257.751773
+      ],
+      [
+        277.261636,
+        -281.520245
+      ],
+      [
+        282.85829,
+        -293.285222
+      ],
+      [
+        288.57349,
+        -304.304843
+      ],
+      [
+        294.411112,
+        -314.079721
+      ],
+      [
+        300.375029,
+        -322.110468
+      ],
+      [
+        303.405558,
+        -325.315734
+      ],
+      [
+        306.469114,
+        -327.897696
+      ],
+      [
+        310,
+        -330
+      ],
+      [
+        312.697018,
+        -330.952512
+      ],
+      [
+        315.860511,
+        -331.385526
+      ],
+      [
+        319.055028,
+        -331.129211
+      ],
+      [
+        322.278936,
+        -330.219847
+      ],
+      [
+        325.530602,
+        -328.693715
+      ],
+      [
+        328.808394,
+        -326.587095
+      ],
+      [
+        332.110679,
+        -323.936268
+      ],
+      [
+        338.782194,
+        -317.147114
+      ],
+      [
+        345.532087,
+        -308.616497
+      ],
+      [
+        352.347293,
+        -298.634661
+      ],
+      [
+        359.21475,
+        -287.491849
+      ],
+      [
+        366.121395,
+        -275.478306
+      ],
+      [
+        380,
+        -250
+      ]
+    ],
+    "sampleDeviations": [
+      0,
+      0.065090284,
+      0.037751837,
+      0.059696276,
+      0.025145246,
+      0.067044033,
+      0.053960912,
+      0.044814758,
+      0.038039331,
+      0.003794237,
+      0.027041009,
+      0.070298943,
+      0.005910291,
+      0.060800988,
+      0.070002352,
+      0.15513614,
+      0.012460132,
+      0.060209369,
+      0.036679558,
+      0.065365515,
+      0
+    ],
+    "maximumDeviation": 0.15513614,
+    "systemVariablesRestored": true
+  },
+  "done": true,
+  "checks": {
+    "exactAutoCad2024CommandEngine": true,
+    "splineCreated": true,
+    "reverseSwapsEndpoints": true,
+    "closeCreatesPeriodicClosedSpline": true,
+    "openRestoresOpenFitSpline": true,
+    "commandLocalUndoRestoresDirection": true,
+    "nonZeroFitToleranceStored": true,
+    "toleranceChangesEvaluatedGeometry": true,
+    "mirroredToleranceIsBounded": true,
+    "pointerTangentsFollowSpecifiedDirections": true,
+    "fitKinkPreservesGeometryAndCreatesC0Capacity": true,
+    "cvAddAndElevatePreserveGeometry": true,
+    "objectConversionCreatesSpline": true,
+    "convertToPolylineCreatesBoundedLinearApproximation": true,
+    "scriptCompleted": true
+  },
+  "executableSha256": "31e0d1e73acba026bd435a9b4861a3a5f0132f6d42618b3208f5a3f64c07d71f",
+  "fixtureSha256": "c5dbe35f3ea8fa8f26dee00edace96f0de5f033ec128e8e90ed34ed46d2d1bf6",
+  "scriptSha256": "0e36d9599d1730870f1e0a2b800e37be3bd89e1999ec6a672ba2ff5e1fe50210",
+  "runnerSha256": "19172d413d86e45e5bc540cd017c9b0124fcdd21fa1fc69e4e6015ef7d878793",
+  "parserSha256": "029e0c4a97adf4ad5b7d863014f55f9e8c9bdd3dfa518da69c1f3f45890bf2ea",
+  "observedAt": "2026-08-31T06:14:06.418Z",
+  "status": "PASS"
+}

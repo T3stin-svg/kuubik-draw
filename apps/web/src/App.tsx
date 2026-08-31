@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { DEFAULT_MATCH_PROPERTIES_SETTINGS, ISO_PAPER_MEDIA, MAX_PAGE_SETUP_TEMPLATE_BYTES, STANDARD_VIEWPORT_SCALE_DENOMINATORS, allocateEntityHandles, applyNamedPageSetup, buildLayoutPublishPlan, CadCommandInputError, CadSession, clearNamedPageSetupAssignment, createPageSetupTemplate, LayoutCommandError, LayoutPublishSettingsError, NoOpOperationError, PageSetupLibraryError, copyPaperLayout, createEmptyDocument, createPaperLayout, createPaperViewport, deleteNamedPageSetup, deletePaperLayout, deletePaperViewport, executeMatchViewportProperties, formatViewportScale, importPageSetupTemplate, metadataWithLayoutPublishSettings, movePaperLayout, panPaperViewportByPixels, paperDefinitionForPageSetup, parseCartesianPoint, parsePageSetupTemplate, renameNamedPageSetup, renamePaperLayout, replaceDrawingContentPreservingLayouts, resolveCadCommand, resolveLayoutPublishSettings, resolveMatchPropertiesSettings, resolveModelPageSetup, resolvePageSetup, resolvePageSetupLibrary, resolvePaperDefinition, sanitizePdfFileStem, saveNamedPageSetup, serializeKDraw, serializePageSetupTemplate, setModelLayoutPageSetup, setPaperLayoutPageSetup, setPaperViewportDisplayLocked, setPaperViewportView, viewportScaleDenominator, zoomPaperViewportAtModelPoint, type AlignRejectedTarget, type BreakMode, type BreakRejectedTarget, type CadChange, type ChamferRejectedTarget, type ChamferTrimMode, type CopyRejectedTarget, type ExtendRejectedTarget, type ExtendTargetAction, type FilletRejectedTarget, type FilletTrimMode, type LayoutPublishSettingsV1, type LengthenMeasurement, type LengthenMode, type LengthenRejectedTarget, type MatchPropertiesRejectedTarget, type MatchPropertiesSettings, type MatchViewportRef, type MirrorRejectedTarget, type MoveRejectedTarget, type OffsetLayerMode, type OffsetRejectedTarget, type RotateRejectedTarget, type ScaleRejectedTarget, type StretchRejectedTarget, type TrimEdgeMode, type TrimMode, type TrimProjectMode, type TrimRejectedTarget, type TrimTargetAction } from "@kuubik/cad-core";
+import { DEFAULT_MATCH_PROPERTIES_SETTINGS, ISO_PAPER_MEDIA, MAX_PAGE_SETUP_TEMPLATE_BYTES, STANDARD_VIEWPORT_SCALE_DENOMINATORS, allocateEntityHandles, applyNamedPageSetup, buildLayoutPublishPlan, CadCommandInputError, CadSession, clearNamedPageSetupAssignment, createPageSetupTemplate, LayoutCommandError, LayoutPublishSettingsError, NoOpOperationError, PageSetupLibraryError, copyPaperLayout, createEmptyDocument, createPaperLayout, createPaperViewport, deleteNamedPageSetup, deletePaperLayout, deletePaperViewport, executeMatchViewportProperties, formatViewportScale, importPageSetupTemplate, metadataWithLayoutPublishSettings, movePaperLayout, panPaperViewportByPixels, paperDefinitionForPageSetup, parseCartesianPoint, parsePageSetupTemplate, renameNamedPageSetup, renamePaperLayout, replaceDrawingContentPreservingLayouts, resolveCadCommand, resolveLayoutPublishSettings, resolveMatchPropertiesSettings, resolveModelPageSetup, resolvePageSetup, resolvePageSetupLibrary, resolvePaperDefinition, sanitizePdfFileStem, saveNamedPageSetup, serializeKDraw, serializePageSetupTemplate, setModelLayoutPageSetup, setPaperLayoutPageSetup, setPaperViewportDisplayLocked, setPaperViewportView, viewportScaleDenominator, zoomPaperViewportAtModelPoint, type AlignRejectedTarget, type BreakMode, type BreakRejectedTarget, type CadChange, type ChamferRejectedTarget, type ChamferTrimMode, type CopyRejectedTarget, type ExtendRejectedTarget, type ExtendTargetAction, type FilletRejectedTarget, type FilletTrimMode, type LayoutPublishSettingsV1, type LengthenMeasurement, type LengthenMode, type LengthenRejectedTarget, type MatchPropertiesRejectedTarget, type MatchPropertiesSettings, type MatchViewportRef, type MirrorRejectedTarget, type MoveRejectedTarget, type OffsetLayerMode, type OffsetRejectedTarget, type RotateRejectedTarget, type ScaleRejectedTarget, type SplineEditAction, type StretchRejectedTarget, type TrimEdgeMode, type TrimMode, type TrimProjectMode, type TrimRejectedTarget, type TrimTargetAction } from "@kuubik/cad-core";
 import { DxfImportError, MAX_DXF_IMPORT_BYTES, exportDxf, importDxf } from "@kuubik/cad-dxf";
 import { exportLayoutSvg, exportLayoutsVectorPdf, exportLayoutVectorPdf, exportModelSvg, exportModelVectorPdf, type LayoutPlotOptions, type ModelPlotOptions } from "@kuubik/cad-print";
-import { CadCanvasRenderer, pickCadEntity, pannedViewportWorldCenter, selectCadEntityHitsByCrossingPolygon, selectCadEntityHitsByFence, viewportScreenToWorld, viewportScreenTransform, type Viewport2D } from "@kuubik/cad-renderer";
+import { CadCanvasRenderer, entityBounds, pickCadEntity, pannedViewportWorldCenter, selectCadEntityHitsByCrossingPolygon, selectCadEntityHitsByFence, unionBounds, viewportScreenToWorld, viewportScreenTransform, type Viewport2D } from "@kuubik/cad-renderer";
 import type { CadEntity, CadLayout, CadPageSetup, CadPaperRect, CadPlotStyle, CadViewport, KDrawDocumentV1 } from "@kuubik/cad-schema";
 import { clampCadContextMenuPosition } from "./context-menu.js";
 import { KDrawIndexedDb, StorageRevisionConflictError } from "./indexed-db.js";
@@ -30,11 +30,84 @@ const MATCH_PROPERTY_LABELS: Readonly<Record<keyof MatchPropertiesSettings, stri
   table: "Tabel",
   centerObject: "Keskobjekt",
 });
-const MODEL_SPACE_COMMANDS = new Set(["LINE", "RECTANGLE", "MOVE", "COPY", "ROTATE", "SCALE", "MIRROR", "OFFSET", "TRIM", "EXTEND", "FILLET", "CHAMFER", "BREAK", "STRETCH", "LENGTHEN", "ALIGN", "MATCHPROP", "ERASE"]);
+const MODEL_SPACE_COMMANDS = new Set(["LINE", "RECTANGLE", "SPLINE", "SPLINEDIT", "MOVE", "COPY", "ROTATE", "SCALE", "MIRROR", "OFFSET", "TRIM", "EXTEND", "FILLET", "CHAMFER", "BREAK", "STRETCH", "LENGTHEN", "ALIGN", "MATCHPROP", "ERASE"]);
 const MODEL_VIEW_WORLD = Object.freeze({ minX: -500, minY: -500, maxX: 2500, maxY: 2500 });
 const MODEL_VIEW_REFERENCE_HEIGHT_PX = 793;
 const MODEL_VIEW_WORLD_UNITS_PER_PIXEL = (MODEL_VIEW_WORLD.maxY - MODEL_VIEW_WORLD.minY) / MODEL_VIEW_REFERENCE_HEIGHT_PX;
 const DRAWING_CONTEXT_MENU_SIZE = Object.freeze({ width: 200, height: 371 });
+
+type CadRibbonIconKind = "line" | "rectangle" | "polyline" | "circle" | "arc" | "hatch" | "spline"
+  | "move" | "copy" | "rotate" | "mirror" | "trim" | "offset" | "stretch" | "scale" | "fillet"
+  | "text" | "dimension" | "leader" | "table" | "new-layer" | "layer-lock" | "make-current" | "match-layer"
+  | "insert" | "create-block" | "edit-block" | "attributes" | "match-properties" | "group" | "ungroup"
+  | "measure" | "count" | "paste" | "base-view";
+type CadPaletteIconKind = "filter" | "new-layer" | "delete" | "set-current" | "refresh" | "settings"
+  | "visible" | "freeze" | "lock" | "plot" | "add-selection" | "select-object" | "quick-select";
+
+/** Original Kuubik vector language: CAD-familiar geometry without upstream icon assets. */
+function CadRibbonIcon({ kind, large = false }: { kind: CadRibbonIconKind; large?: boolean }) {
+  const shape = (() => {
+    switch (kind) {
+      case "line": return <><path d="M4 20 20 4" /><circle className="cad-icon-accent" cx="4" cy="20" r="1.6" /><circle className="cad-icon-accent" cx="20" cy="4" r="1.6" /></>;
+      case "rectangle": return <><rect x="4" y="5" width="16" height="14" /><circle className="cad-icon-accent" cx="4" cy="5" r="1.2" /></>;
+      case "polyline": return <><polyline points="3,18 8,8 15,13 21,5" /><circle className="cad-icon-accent" cx="8" cy="8" r="1.3" /><circle className="cad-icon-accent" cx="15" cy="13" r="1.3" /></>;
+      case "circle": return <><circle cx="12" cy="12" r="8" /><path className="cad-icon-accent" d="M12 3v3M12 18v3M3 12h3M18 12h3" /></>;
+      case "arc": return <><path d="M4 18A14 14 0 0 1 20 5" /><circle className="cad-icon-accent" cx="4" cy="18" r="1.4" /><circle className="cad-icon-accent" cx="20" cy="5" r="1.4" /></>;
+      case "hatch": return <><rect x="4" y="4" width="16" height="16" /><path className="cad-icon-accent" d="m5 10 5-5m-5 11L16 5M9 20 20 9m-5 11 5-5" /></>;
+      case "spline": return <><path d="M3 16C7 4 10 20 14 9s6-2 7-5" /><circle className="cad-icon-accent" cx="3" cy="16" r="1.3" /><circle className="cad-icon-accent" cx="21" cy="4" r="1.3" /></>;
+      case "move": return <><path d="M12 3v18M3 12h18M12 3 9 6m3-3 3 3m6 6-3-3m3 3-3 3M12 21l-3-3m3 3 3-3M3 12l3-3m-3 3 3 3" /></>;
+      case "copy": return <><rect x="4" y="7" width="12" height="12" /><rect className="cad-icon-accent" x="8" y="3" width="12" height="12" /></>;
+      case "rotate": return <><path d="M19 8a8 8 0 1 0 1 7" /><path className="cad-icon-accent" d="m15 4 4 4 1-6" /></>;
+      case "mirror": return <><path className="cad-icon-accent" d="M12 3v18" /><path d="m9 5-5 7 5 7m6-14 5 7-5 7" /></>;
+      case "trim": return <><path d="M4 5 20 19M5 20 19 4" /><path className="cad-icon-accent" d="m4 5 5 4m6 6 5 4" /></>;
+      case "offset": return <><path d="M4 8c5-5 11-5 16 0M4 16c5-5 11-5 16 0" /><path className="cad-icon-accent" d="M12 9v5m-2-2 2 2 2-2" /></>;
+      case "stretch": return <><rect x="4" y="8" width="9" height="10" /><path className="cad-icon-accent" d="M12 12h8m-3-3 3 3-3 3" /></>;
+      case "scale": return <><rect x="4" y="11" width="9" height="9" /><rect className="cad-icon-accent" x="10" y="4" width="10" height="10" /><path d="m8 16 8-8" /></>;
+      case "fillet": return <><path d="M4 4v7a9 9 0 0 0 9 9h7" /><path className="cad-icon-accent" d="M4 11a9 9 0 0 0 9 9" /></>;
+      case "text": return <><path d="M5 20 11 4h2l6 16M8 13h8" /><path className="cad-icon-accent" d="M4 20h6m4 0h6" /></>;
+      case "dimension": return <><path d="M4 5v14M20 5v14M4 12h16M7 9l-3 3 3 3m10-6 3 3-3 3" /><path className="cad-icon-accent" d="M8 6h8" /></>;
+      case "leader": return <><path d="m4 19 6-7 5 2 5-9" /><path className="cad-icon-accent" d="m4 19 1-5 3 3M15 5h6" /></>;
+      case "table": return <><rect x="3" y="4" width="18" height="16" /><path d="M3 9h18M3 14h18M9 4v16M15 4v16" /><path className="cad-icon-accent" d="M3 9h18" /></>;
+      case "new-layer": return <><path d="m3 13 8-4 8 4-8 4zM3 9l8-4 8 4" /><path className="cad-icon-accent" d="M19 15v6m-3-3h6" /></>;
+      case "layer-lock": return <><path d="m3 13 8-4 8 4-8 4zM3 9l8-4 8 4" /><rect className="cad-icon-accent" x="15" y="14" width="7" height="6" rx="1" /><path className="cad-icon-accent" d="M17 14v-2a2 2 0 0 1 4 0v2" /></>;
+      case "make-current": return <><path d="m3 13 8-4 8 4-8 4zM3 9l8-4 8 4" /><path className="cad-icon-accent" d="m15 17 2 2 4-5" /></>;
+      case "match-layer": return <><path d="m3 7 7-3 7 3-7 3zM3 12l7-3 7 3-7 3zM3 17l7-3 7 3-7 3z" /><path className="cad-icon-accent" d="m17 13 4 4m0-4-4 4" /></>;
+      case "insert": return <><path d="m4 8 8-4 8 4-8 4zM4 8v9l8 4 8-4V8M12 12v9" /><path className="cad-icon-accent" d="M12 3v7m-3-3 3 3 3-3" /></>;
+      case "create-block": return <><rect x="4" y="8" width="12" height="12" /><path className="cad-icon-accent" d="M18 3v8m-4-4h8" /></>;
+      case "edit-block": return <><rect x="4" y="5" width="13" height="14" /><path className="cad-icon-accent" d="m11 17 8-8 2 2-8 8-3 1z" /></>;
+      case "attributes": return <><path d="M5 4v16M12 4l-3 16M3 9h13M2 15h13" /><path className="cad-icon-accent" d="M17 6h5M17 12h5M17 18h5" /></>;
+      case "match-properties": return <><path d="M4 5h9l2 2-9 9-3 1 1-3 9-9" /><path className="cad-icon-accent" d="M14 11h7M14 16h7M17 7l4 4" /></>;
+      case "group": return <><rect x="4" y="4" width="7" height="7" /><rect x="13" y="13" width="7" height="7" /><path className="cad-icon-accent" d="M11 7h6v6M7 11v6h6" /></>;
+      case "ungroup": return <><rect x="3" y="3" width="7" height="7" /><rect x="14" y="14" width="7" height="7" /><path className="cad-icon-accent" d="m10 10 4 4M15 7h6M18 4v6M3 15h6M6 12v6" /></>;
+      case "measure": return <><path d="M4 17 17 4l3 3L7 20z" /><path d="m8 15 2 2m1-6 2 2m1-6 2 2" /><path className="cad-icon-accent" d="M3 4h8M3 7V4" /></>;
+      case "count": return <><path d="M7 3 5 21M15 3l-2 18M3 9h17M2 15h17" /><circle className="cad-icon-accent" cx="19" cy="5" r="2" /></>;
+      case "paste": return <><path d="M7 6H4v15h14V6h-3M8 3h6v5H8z" /><path className="cad-icon-accent" d="M8 12h6M8 16h6" /></>;
+      case "base-view": return <><path d="M4 6h10v10H4zM10 10h10v10H10z" /><path className="cad-icon-accent" d="M4 16h6M14 6v4" /></>;
+    }
+  })();
+  return <svg className={large ? "cad-ribbon-icon large" : "cad-ribbon-icon"} data-cad-icon={kind} viewBox="0 0 24 24" aria-hidden="true" focusable="false">{shape}</svg>;
+}
+
+function CadPaletteIcon({ kind }: { kind: CadPaletteIconKind }) {
+  const shape = (() => {
+    switch (kind) {
+      case "filter": return <><path d="M3 5h14l-5 6v5l-4 2v-7z" /><path className="cad-icon-accent" d="M5 3h14l-2 2H3z" /></>;
+      case "new-layer": return <><path d="m3 12 7-4 7 4-7 4zM3 8l7-4 7 4" /><path className="cad-icon-accent" d="M17 13v6m-3-3h6" /></>;
+      case "delete": return <><path d="M6 6h10l-1 12H7zM5 6h12M8 3h6" /><path className="cad-icon-accent" d="M9 9v6m4-6v6" /></>;
+      case "set-current": return <><path d="m3 12 7-4 7 4-7 4zM3 8l7-4 7 4" /><path className="cad-icon-accent" d="m14 16 2 2 4-5" /></>;
+      case "refresh": return <><path d="M17 7a7 7 0 1 0 1 7" /><path className="cad-icon-accent" d="m13 3 4 4 1-6" /></>;
+      case "settings": return <><circle cx="10" cy="10" r="3" /><path d="M10 2v3m0 10v3M2 10h3m10 0h3M4.3 4.3l2.1 2.1m7.2 7.2 2.1 2.1m0-11.4-2.1 2.1m-7.2 7.2-2.1 2.1" /></>;
+      case "visible": return <><path d="M2 10s3-5 8-5 8 5 8 5-3 5-8 5-8-5-8-5Z" /><circle className="cad-icon-accent" cx="10" cy="10" r="2.3" /></>;
+      case "freeze": return <><path d="M10 2v16M3 6l14 8M3 14l14-8" /><circle className="cad-icon-accent" cx="10" cy="10" r="2" /></>;
+      case "lock": return <><rect x="5" y="9" width="10" height="8" rx="1" /><path className="cad-icon-accent" d="M7 9V6a3 3 0 0 1 6 0v3" /></>;
+      case "plot": return <><rect x="4" y="7" width="12" height="9" /><path d="M7 4h6v3M7 13h6" /><circle className="cad-icon-accent" cx="14" cy="10" r="1" /></>;
+      case "add-selection": return <><path d="M3 4h8v8H3z" /><path className="cad-icon-accent" d="M15 10v8m-4-4h8" /></>;
+      case "select-object": return <><path d="M3 3v12l4-4 3 6 2-1-3-6h6z" /><path className="cad-icon-accent" d="M13 4h5v5" /></>;
+      case "quick-select": return <><path d="M3 4h12v12H3zM6 7h6M6 10h6M6 13h3" /><path className="cad-icon-accent" d="m14 12 4 4m0-4-4 4" /></>;
+    }
+  })();
+  return <svg className="cad-palette-icon" data-palette-icon={kind} viewBox="0 0 20 20" aria-hidden="true" focusable="false">{shape}</svg>;
+}
 
 function modelViewport(widthPx: number, heightPx: number, devicePixelRatio: number): Viewport2D {
   if (heightPx <= MODEL_VIEW_REFERENCE_HEIGHT_PX) {
@@ -161,10 +234,22 @@ function PaperViewportCanvas({
       element.height = Math.max(1, Math.round(heightPx * devicePixelRatio));
       context.clearRect(0, 0, element.width, element.height);
       if (renderViewport.on === false) return;
-      renderer.render(context, viewportRender2D(renderViewport, widthPx, heightPx, devicePixelRatio), document.layers, null, [], plotStyle ? {
-        plotStyle,
-        pixelsPerMillimeter: widthPx / viewport.width,
-      } : {});
+      renderer.render(context, viewportRender2D(renderViewport, widthPx, heightPx, devicePixelRatio), document.layers, null, [], {
+        ...(plotStyle ? { plotStyle, pixelsPerMillimeter: widthPx / viewport.width } : {}),
+        displayTheme: "light",
+        grid: {
+          enabled: true,
+          spacingWorld: renderViewport.viewHeight / 60,
+          majorEvery: 10,
+          minorColor: "rgba(85, 98, 110, 0.42)",
+          majorColor: "rgba(55, 66, 76, 0.62)",
+          xAxisColor: "rgba(120, 80, 80, 0.75)",
+          yAxisColor: "rgba(78, 120, 82, 0.75)",
+          minorLineWidthPx: 0.65,
+          majorLineWidthPx: 0.9,
+          axisLineWidthPx: 0.9,
+        },
+      });
     };
     render();
     const observer = new ResizeObserver(render);
@@ -271,6 +356,7 @@ export function App() {
   const [document, setDocument] = useState<KDrawDocumentV1>(session.current.document);
   const [status, setStatus] = useState("Uus kohalik dokument");
   const [activeCommandPrompt, setActiveCommandPrompt] = useState<string | null>(null);
+  const [commandLineVisible, setCommandLineVisible] = useState(false);
   const [commandHistoryOpen, setCommandHistoryOpen] = useState(false);
   const [commandHistory, setCommandHistory] = useState<string[]>(["Uus kohalik dokument"]);
   const [gridEnabled, setGridEnabled] = useState(true);
@@ -316,6 +402,25 @@ export function App() {
   const [publishCommitting, setPublishCommitting] = useState(false);
   const [firstCornerInput, setFirstCornerInput] = useState("100,200");
   const [otherCornerInput, setOtherCornerInput] = useState("600,900");
+  const [splineMethod, setSplineMethod] = useState<"fit" | "control-vertices" | "object">("fit");
+  const [splinePointsInput, setSplinePointsInput] = useState("0,0; 40,70; 100,0");
+  const [splineDegreeInput, setSplineDegreeInput] = useState("3");
+  const [splineKnotParameterization, setSplineKnotParameterization] = useState<"chord" | "sqrt-chord" | "uniform">("chord");
+  const [splineClosed, setSplineClosed] = useState(false);
+  const [splineFitToleranceInput, setSplineFitToleranceInput] = useState("0");
+  const [splineStartTangentInput, setSplineStartTangentInput] = useState("");
+  const [splineEndTangentInput, setSplineEndTangentInput] = useState("");
+  const [splineCanvasPoints, setSplineCanvasPoints] = useState<Array<{ x: number; y: number }>>([]);
+  const [splineHoverPoint, setSplineHoverPoint] = useState<{ x: number; y: number } | null>(null);
+  const [splineTangentPickMode, setSplineTangentPickMode] = useState<"none" | "start" | "end">("none");
+  const [splineEditMode, setSplineEditMode] = useState<"reverse" | "fit-add" | "fit-kink" | "fit-delete" | "fit-move" | "fit-properties" | "fit-purge" | "cv-add" | "cv-delete" | "cv-elevate" | "cv-move" | "cv-weight" | "open" | "close" | "join" | "convert-polyline">("reverse");
+  const [splineEditIndexInput, setSplineEditIndexInput] = useState("1");
+  const [splineEditPointInput, setSplineEditPointInput] = useState("50,50");
+  const [splineEditWeightInput, setSplineEditWeightInput] = useState("1");
+  const [splineEditOrderInput, setSplineEditOrderInput] = useState("5");
+  const [splineEditPrecisionInput, setSplineEditPrecisionInput] = useState("10");
+  const [splineEditJoinHandlesInput, setSplineEditJoinHandlesInput] = useState("");
+  const [splineEditDraftActions, setSplineEditDraftActions] = useState<SplineEditAction[]>([]);
   const [selectedHandles, setSelectedHandles] = useState<string[]>([]);
   const [moveBaseInput, setMoveBaseInput] = useState("100,200");
   const [moveDestinationInput, setMoveDestinationInput] = useState("600,950");
@@ -456,6 +561,13 @@ export function App() {
         setCommandHistoryOpen((open) => !open);
         return;
       }
+      if (event.ctrlKey && event.key === "9" && !event.repeat) {
+        event.preventDefault();
+        setDrawingContextMenu(null);
+        setCommandHistoryOpen(false);
+        setCommandLineVisible((visible) => !visible);
+        return;
+      }
       if (event.key === "Escape" && drawingContextMenu) {
         event.preventDefault();
         setDrawingContextMenu(null);
@@ -510,6 +622,40 @@ export function App() {
   const publishSettings = useMemo(() => resolveLayoutPublishSettings(document), [document]);
   const pageSetupLibrary = useMemo(() => resolvePageSetupLibrary(document), [document]);
   const activePaperIndex = paperLayouts.findIndex((layout) => layout.id === activeLayout.id);
+  const splinePreview = useMemo((): { entity: CadEntity; committedPointCount: number; previewPointCount: number } | null => {
+    if (activeCommandPrompt !== "SPLINE" || splineMethod === "object" || splineCanvasPoints.length === 0) return null;
+    const last = splineCanvasPoints.at(-1);
+    const includeHover = splineTangentPickMode === "none" && splineHoverPoint && (!last || Math.hypot(splineHoverPoint.x - last.x, splineHoverPoint.y - last.y) > 1e-9);
+    const points = includeHover ? [...splineCanvasPoints, splineHoverPoint] : splineCanvasPoints;
+    try {
+      const command = resolveCadCommand("SPLINE");
+      if (!command || command.id !== "SPLINE") return null;
+      const args = splineMethod === "fit"
+        ? {
+          handle: "F012PREVIEW", layerId: document.currentLayerId, method: "fit" as const, points,
+          fitTolerance: Number(splineFitToleranceInput), knotParameterization: splineKnotParameterization, closed: splineClosed,
+          ...(splineStartTangentInput.trim() ? { startTangent: parseCartesianPoint(splineStartTangentInput) } : {}),
+          ...(splineEndTangentInput.trim() ? { endTangent: parseCartesianPoint(splineEndTangentInput) } : {}),
+        }
+        : { handle: "F012PREVIEW", layerId: document.currentLayerId, method: "control-vertices" as const, points, degree: Number(splineDegreeInput), closed: splineClosed };
+      const change = command.execute(args)[0];
+      return change?.type === "put" ? { entity: change.entity, committedPointCount: splineCanvasPoints.length, previewPointCount: points.length } : null;
+    } catch {
+      return null;
+    }
+  }, [activeCommandPrompt, document.currentLayerId, splineCanvasPoints, splineClosed, splineDegreeInput, splineEndTangentInput, splineFitToleranceInput, splineHoverPoint, splineKnotParameterization, splineMethod, splineStartTangentInput, splineTangentPickMode]);
+  const splineEditPreview = useMemo((): { entity: CadEntity; sourceHandle: string } | null => {
+    if (activeCommandPrompt !== "SPLINEDIT" || selectedHandles.length !== 1 || splineEditDraftActions.length === 0) return null;
+    try {
+      const command = resolveCadCommand("SPLINEDIT");
+      if (!command || command.id !== "SPLINEDIT") return null;
+      const result = command.execute(document, { targetHandle: selectedHandles[0]!, actions: splineEditDraftActions });
+      const change = result.changes.find((candidate) => candidate.type === "put");
+      return change?.type === "put" ? { entity: change.entity, sourceHandle: selectedHandles[0]! } : null;
+    } catch {
+      return null;
+    }
+  }, [activeCommandPrompt, document, selectedHandles, splineEditDraftActions]);
   const movePreview = useMemo((): { entities: CadEntity[]; delta: { x: number; y: number } } | null => {
     if (previewCommand !== "MOVE" || selectedHandles.length === 0) return null;
     try {
@@ -923,7 +1069,8 @@ export function App() {
         delete element.dataset.worldCenterY;
         delete element.dataset.worldUnitsPerPixel;
       }
-      renderer.render(context, viewport, document.layers, activeLayout.kind === "model" ? [...(movePreview?.entities ?? []), ...(copyPreview?.entities ?? []), ...(rotatePreview?.entities ?? []), ...(scalePreview?.entities ?? []), ...(mirrorPreview?.entities ?? []), ...(offsetPreview?.entities ?? []), ...(trimPreview?.entities ?? []), ...(extendPreview?.entities ?? []), ...(filletPreview?.entities ?? []), ...(chamferPreview?.entities ?? []), ...(breakPreview?.entities ?? []), ...(stretchPreview?.entities ?? []), ...(lengthenPreview?.entities ?? []), ...(alignPreview?.entities ?? []), ...(matchPropertiesPreview?.entities ?? [])] : [], [
+      renderer.render(context, viewport, document.layers, activeLayout.kind === "model" ? [...(splinePreview ? [splinePreview.entity] : []), ...(splineEditPreview ? [splineEditPreview.entity] : []), ...(movePreview?.entities ?? []), ...(copyPreview?.entities ?? []), ...(rotatePreview?.entities ?? []), ...(scalePreview?.entities ?? []), ...(mirrorPreview?.entities ?? []), ...(offsetPreview?.entities ?? []), ...(trimPreview?.entities ?? []), ...(extendPreview?.entities ?? []), ...(filletPreview?.entities ?? []), ...(chamferPreview?.entities ?? []), ...(breakPreview?.entities ?? []), ...(stretchPreview?.entities ?? []), ...(lengthenPreview?.entities ?? []), ...(alignPreview?.entities ?? []), ...(matchPropertiesPreview?.entities ?? [])] : [], [
+        ...(splineEditPreview ? [splineEditPreview.sourceHandle] : []),
         ...(mirrorPreview?.eraseSource ? mirrorPreview.sourceHandles : []),
         ...(offsetPreview?.eraseSource ? offsetPreview.sourceHandles : []),
         ...(trimPreview?.sourceHandles ?? []),
@@ -947,8 +1094,18 @@ export function App() {
           displayTheme: "light" as const,
           grid: {
             enabled: gridEnabled,
-            spacingWorld: 662.67,
-            originWorld: { x: 177.5, y: -45.35 },
+            ...(document.entities.length === 0 ? {
+              spacingWorld: 662.67,
+              originWorld: { x: 177.5, y: -45.35 },
+              majorEvery: 5,
+            } : {
+              spacingWorld: 38.8398486759143,
+              originWorld: { x: 337.957124842371, y: -571.8789407314 },
+              majorEvery: 15,
+              xAxisColor: "#af7575",
+              yAxisColor: "#84b884",
+              axisLineWidthPx: 1,
+            }),
             minorColor: "#9b9ea6",
             majorColor: "#9b9fa8",
             minorLineWidthPx: 1,
@@ -961,7 +1118,7 @@ export function App() {
     const observer = new ResizeObserver(render);
     observer.observe(element);
     return () => observer.disconnect();
-  }, [activeLayout, activePageSetup, activePaper, alignPreview, breakPreview, chamferPreview, copyPreview, document, extendPreview, filletPreview, gridEnabled, lengthenPreview, matchPropertiesPreview, mirrorPreview, movePreview, offsetPreview, rotatePreview, scalePreview, selectedHandles, stretchPreview, trimPreview]);
+  }, [activeLayout, activePageSetup, activePaper, alignPreview, breakPreview, chamferPreview, copyPreview, document, extendPreview, filletPreview, gridEnabled, lengthenPreview, matchPropertiesPreview, mirrorPreview, movePreview, offsetPreview, rotatePreview, scalePreview, selectedHandles, splineEditPreview, splinePreview, stretchPreview, trimPreview]);
 
   async function recoverFromStorageConflict(error: unknown): Promise<void> {
     if (!(error instanceof StorageRevisionConflictError)) throw error;
@@ -1040,6 +1197,222 @@ export function App() {
       } else {
         throw error;
       }
+    } finally {
+      committing.current = false;
+    }
+  }
+
+  async function addSpline(): Promise<void> {
+    if (committing.current) return;
+    committing.current = true;
+    try {
+      const command = resolveCadCommand("SPLINE");
+      if (!command || command.id !== "SPLINE") throw new Error("SPLINE command is missing from the registry.");
+      const handle = nextInteractiveHandle(document);
+      const points = splineCanvasPoints.length > 0
+        ? splineCanvasPoints
+        : splinePointsInput.split(/[;\r\n]+/u).map((token) => token.trim()).filter(Boolean).map(parseCartesianPoint);
+      const args = splineMethod === "object"
+        ? { handle, method: "object" as const, sourceHandle: selectedHandles[0] ?? "" }
+        : splineMethod === "fit"
+        ? {
+          handle, layerId: document.currentLayerId, method: "fit" as const, points,
+          fitTolerance: Number(splineFitToleranceInput), knotParameterization: splineKnotParameterization, closed: splineClosed,
+          ...(splineStartTangentInput.trim() ? { startTangent: parseCartesianPoint(splineStartTangentInput) } : {}),
+          ...(splineEndTangentInput.trim() ? { endTangent: parseCartesianPoint(splineEndTangentInput) } : {}),
+        }
+        : { handle, layerId: document.currentLayerId, method: "control-vertices" as const, points, degree: Number(splineDegreeInput), closed: splineClosed };
+      const changes = command.execute(args, document);
+      await commitChanges(command.id, args, changes, [handle], args.method === "object" ? [args.sourceHandle] : []);
+      if (args.method === "object") setSelectedHandles([handle]);
+      setActiveCommandPrompt(null);
+      setSplineCanvasPoints([]);
+      setSplineHoverPoint(null);
+      setSplineTangentPickMode("none");
+      setStatus(`SPLINE ${splineMethod === "fit" ? "Fit" : splineMethod === "object" ? "Object" : "CV"} salvestatud handle'iga ${handle}`);
+    } catch (error) {
+      if (error instanceof StorageRevisionConflictError) await recoverFromStorageConflict(error);
+      else if (error instanceof CadCommandInputError) setStatus(`SPLINE viga: ${error.message}`);
+      else throw error;
+    } finally {
+      committing.current = false;
+    }
+  }
+
+  function beginSplineCommand(): void {
+    setActiveCommandPrompt("SPLINE");
+    setPreviewCommand(null);
+    setSplineCanvasPoints([]);
+    setSplineHoverPoint(null);
+    setSplineTangentPickMode("none");
+    setSplinePointsInput("");
+    setStatus(splineMethod === "object" ? "SPLINE Object: vali üks avatud PEDIT spline-fit polüjoon" : `SPLINE ${splineMethod === "fit" ? "Fit" : "CV"}: määra esimene punkt`);
+  }
+
+  function undoSplinePoint(): void {
+    if (splineTangentPickMode !== "none") {
+      if (splineTangentPickMode === "end") {
+        setSplineStartTangentInput("");
+        setSplineTangentPickMode("start");
+        setStatus("SPLINE Undo: algtangendi punkt eemaldatud; vali algtangent uuesti");
+      } else {
+        setSplineTangentPickMode("none");
+        setStatus("SPLINE Undo: tangendiprompt lõpetatud; fit-punktid säilisid");
+      }
+      setSplineHoverPoint(null);
+      return;
+    }
+    if (splineCanvasPoints.length === 0) {
+      setActiveCommandPrompt(null);
+      setSplineHoverPoint(null);
+      setStatus("SPLINE Undo: käsk on täielikult tagasi võetud; globaalset UNDO sammu ei loodud");
+      return;
+    }
+    const points = splineCanvasPoints.slice(0, -1);
+    setSplineCanvasPoints(points);
+    setSplinePointsInput(points.map((point) => `${point.x},${point.y}`).join("; "));
+    setSplineHoverPoint(null);
+    setStatus(points.length ? `SPLINE Undo: viimane punkt eemaldatud; ${points.length} jääb` : "SPLINE Undo: kõik punktid eemaldatud");
+  }
+
+  function beginSplineTangentPick(): void {
+    try {
+      if (splineMethod !== "fit" || splineClosed) throw new CadCommandInputError("Pointer tangents require an open Fit SPLINE.");
+      const points = splineCanvasPoints.length > 0
+        ? splineCanvasPoints
+        : splinePointsInput.split(/[;\r\n]+/u).map((token) => token.trim()).filter(Boolean).map(parseCartesianPoint);
+      if (points.length < 3) throw new CadCommandInputError("Pointer tangents require at least three Fit points.");
+      setSplineCanvasPoints(points);
+      setActiveCommandPrompt("SPLINE");
+      setPreviewCommand(null);
+      setSplineHoverPoint(null);
+      setSplineStartTangentInput("");
+      setSplineEndTangentInput("");
+      setSplineTangentPickMode("start");
+      setStatus("SPLINE Fit: määra canvasel algtangendi suunapunkt");
+    } catch (error) {
+      setStatus(`SPLINE tangendiviga: ${error instanceof Error ? error.message : String(error)}`);
+    }
+  }
+
+  function splineEditActionFromInputs(): SplineEditAction {
+    const index = Number(splineEditIndexInput);
+    if (splineEditMode === "fit-add" || splineEditMode === "fit-kink" || splineEditMode === "fit-move" || splineEditMode === "cv-add" || splineEditMode === "cv-move") {
+      if (splineEditMode === "fit-kink") return { type: splineEditMode, point: parseCartesianPoint(splineEditPointInput) };
+      if (splineEditMode === "cv-add") return { type: splineEditMode, point: parseCartesianPoint(splineEditPointInput) };
+      return { type: splineEditMode, index, point: parseCartesianPoint(splineEditPointInput) };
+    }
+    if (splineEditMode === "fit-delete" || splineEditMode === "cv-delete") return { type: splineEditMode, index };
+    if (splineEditMode === "cv-weight") return { type: splineEditMode, index, weight: Number(splineEditWeightInput) };
+    if (splineEditMode === "cv-elevate") return { type: splineEditMode, order: Number(splineEditOrderInput) };
+    if (splineEditMode === "join") return { type: splineEditMode, targetHandles: splineEditJoinHandlesInput.split(/[;,\s]+/u).filter(Boolean) };
+    if (splineEditMode === "convert-polyline") return { type: splineEditMode, precision: Number(splineEditPrecisionInput) };
+    if (splineEditMode === "fit-properties") {
+      return {
+        type: splineEditMode,
+        fitTolerance: Number(splineFitToleranceInput),
+        knotParameterization: splineKnotParameterization,
+        startTangent: splineStartTangentInput.trim() ? parseCartesianPoint(splineStartTangentInput) : null,
+        endTangent: splineEndTangentInput.trim() ? parseCartesianPoint(splineEndTangentInput) : null,
+      };
+    }
+    return { type: splineEditMode };
+  }
+
+  async function editSelectedSpline(): Promise<void> {
+    if (committing.current) return;
+    if (selectedHandles.length !== 1) {
+      setStatus("SPLINEDIT vajab täpselt ühte valitud SPLINE objekti");
+      return;
+    }
+    committing.current = true;
+    try {
+      const command = resolveCadCommand("SPLINEDIT");
+      if (!command || command.id !== "SPLINEDIT") throw new Error("SPLINEDIT command is missing from the registry.");
+      const action = splineEditActionFromInputs();
+      const args = { targetHandle: selectedHandles[0]!, actions: [action] };
+      const result = command.execute(document, args);
+      if (result.rejected.length) {
+        setStatus(`SPLINEDIT keeldus: ${result.rejected.map(({ reason }) => reason).join(", ")}`);
+        return;
+      }
+      if (result.changes.length === 0) {
+        setStatus("SPLINEDIT: muudatus puudub");
+        return;
+      }
+      await commitChanges(command.id, args, result.changes, result.editedHandles, [args.targetHandle]);
+      setSelectedHandles(result.editedHandles);
+      setStatus(`SPLINEDIT ${splineEditMode} salvestatud handle'ile ${args.targetHandle}`);
+    } catch (error) {
+      if (error instanceof StorageRevisionConflictError) await recoverFromStorageConflict(error);
+      else if (error instanceof CadCommandInputError) setStatus(`SPLINEDIT viga: ${error.message}`);
+      else throw error;
+    } finally {
+      committing.current = false;
+    }
+  }
+
+  function beginSplineEditCommand(): void {
+    if (selectedHandles.length !== 1) {
+      setStatus("SPLINEDIT Begin vajab täpselt ühte valitud SPLINE objekti");
+      return;
+    }
+    setActiveCommandPrompt("SPLINEDIT");
+    setPreviewCommand(null);
+    setSplineEditDraftActions([]);
+    setStatus(`SPLINEDIT ${selectedHandles[0]}: vali tegevus ja Stage`);
+  }
+
+  function stageSplineEditAction(): void {
+    if (activeCommandPrompt !== "SPLINEDIT" || selectedHandles.length !== 1) {
+      setStatus("SPLINEDIT Stage vajab aktiivset Begin käsku ja ühte valitud SPLINE objekti");
+      return;
+    }
+    try {
+      const command = resolveCadCommand("SPLINEDIT");
+      if (!command || command.id !== "SPLINEDIT") throw new Error("SPLINEDIT command is missing from the registry.");
+      const actions = [...splineEditDraftActions, splineEditActionFromInputs()];
+      const result = command.execute(document, { targetHandle: selectedHandles[0]!, actions });
+      if (result.rejected.length) {
+        setStatus(`SPLINEDIT Stage keeldus: ${result.rejected.map(({ reason }) => reason).join(", ")}`);
+        return;
+      }
+      setSplineEditDraftActions(actions);
+      setStatus(`SPLINEDIT Stage: ${actions.length} tegevust preview's; Commit, Undo või lisa järgmine`);
+    } catch (error) {
+      if (error instanceof CadCommandInputError) setStatus(`SPLINEDIT Stage viga: ${error.message}`);
+      else throw error;
+    }
+  }
+
+  function undoStagedSplineEditAction(): void {
+    if (activeCommandPrompt !== "SPLINEDIT" || splineEditDraftActions.length === 0) {
+      setStatus("SPLINEDIT Undo: staged tegevusi pole");
+      return;
+    }
+    const actions = splineEditDraftActions.slice(0, -1);
+    setSplineEditDraftActions(actions);
+    setStatus(`SPLINEDIT Undo: ${actions.length} staged tegevust jääb; dokumenti ei muudetud`);
+  }
+
+  async function commitStagedSplineEdit(): Promise<void> {
+    if (committing.current || activeCommandPrompt !== "SPLINEDIT" || selectedHandles.length !== 1 || splineEditDraftActions.length === 0) return;
+    committing.current = true;
+    try {
+      const command = resolveCadCommand("SPLINEDIT");
+      if (!command || command.id !== "SPLINEDIT") throw new Error("SPLINEDIT command is missing from the registry.");
+      const args = { targetHandle: selectedHandles[0]!, actions: splineEditDraftActions };
+      const result = command.execute(document, args);
+      if (result.rejected.length || result.changes.length !== 1) throw new CadCommandInputError(`staged commit refused: ${result.rejected.map(({ reason }) => reason).join(", ") || "no change"}`);
+      await commitChanges(command.id, args, result.changes, result.editedHandles, [args.targetHandle]);
+      setSplineEditDraftActions([]);
+      setActiveCommandPrompt(null);
+      setSelectedHandles(result.editedHandles);
+      setStatus(`SPLINEDIT staged commit: ${args.actions.length} tegevust ühe Undo-sammuna`);
+    } catch (error) {
+      if (error instanceof StorageRevisionConflictError) await recoverFromStorageConflict(error);
+      else if (error instanceof CadCommandInputError) setStatus(`SPLINEDIT commit viga: ${error.message}`);
+      else throw error;
     } finally {
       committing.current = false;
     }
@@ -1414,6 +1787,85 @@ export function App() {
       return Number((Math.abs(value - integer) <= 1e-4 ? integer : value).toFixed(6));
     };
     const pickPoint = { x: cleanCoordinate(point.x), y: cleanCoordinate(point.y) };
+    if (activeCommandPrompt === "SPLINE") {
+      if (splineTangentPickMode !== "none") {
+        const endpoint = splineTangentPickMode === "start" ? splineCanvasPoints[0] : splineCanvasPoints.at(-1);
+        if (!endpoint) {
+          setStatus("SPLINE tangendiviga: Fit-punktid puuduvad");
+          return;
+        }
+        const cleanTangentComponent = (value: number): number => {
+          const integer = Math.round(value);
+          return Number((Math.abs(value - integer) <= 1e-3 ? integer : value).toFixed(6));
+        };
+        const direction = splineTangentPickMode === "start"
+          ? { x: endpoint.x - pickPoint.x, y: endpoint.y - pickPoint.y }
+          : { x: pickPoint.x - endpoint.x, y: pickPoint.y - endpoint.y };
+        const length = Math.hypot(direction.x, direction.y);
+        if (!(length > 1e-9)) {
+          setStatus(`SPLINE ${splineTangentPickMode === "start" ? "alg" : "lõpp"}tangent peab olema nullist erinev`);
+          return;
+        }
+        const tangent = {
+          x: cleanTangentComponent(direction.x / length),
+          y: cleanTangentComponent(direction.y / length),
+        };
+        if (splineTangentPickMode === "start") {
+          setSplineStartTangentInput(`${tangent.x},${tangent.y}`);
+          setSplineTangentPickMode("end");
+          setStatus("SPLINE Fit: algtangent määratud; määra canvasel lõpptangendi suunapunkt");
+        } else {
+          setSplineEndTangentInput(`${tangent.x},${tangent.y}`);
+          setSplineTangentPickMode("none");
+          setStatus("SPLINE Fit: mõlemad tangendid määratud; lõpeta SPLINE");
+        }
+        setSplineHoverPoint(null);
+        return;
+      }
+      const points = [...splineCanvasPoints, pickPoint];
+      setSplineCanvasPoints(points);
+      setSplinePointsInput(points.map((value) => `${value.x},${value.y}`).join("; "));
+      setSplineHoverPoint(null);
+      const minimum = splineMethod === "fit" ? 3 : Number(splineDegreeInput) + 1;
+      setStatus(points.length >= minimum
+        ? `SPLINE ${splineMethod === "fit" ? "Fit" : "CV"}: punkt ${points.length}; vali veel, Undo või lõpeta SPLINE`
+        : `SPLINE ${splineMethod === "fit" ? "Fit" : "CV"}: punkt ${points.length}; vaja vähemalt ${minimum}`);
+      return;
+    }
+    if (activeCommandPrompt === "SPLINEDIT" && (splineEditMode === "fit-kink" || splineEditMode === "cv-add")) {
+      setSplineEditPointInput(`${pickPoint.x},${pickPoint.y}`);
+      setStatus(`SPLINEDIT ${splineEditMode === "fit-kink" ? "Fit Kink" : "CV Add"}: punkt ${pickPoint.x},${pickPoint.y} projitseeritakse SPLINE'ile; vali Stage või SPLINEDIT`);
+      return;
+    }
+    if (activeCommandPrompt === "SPLINEDIT" && splineEditMode === "cv-delete") {
+      const selected = selectedHandles.length === 1
+        ? document.entities.find((entity) => entity.handle === selectedHandles[0])
+        : undefined;
+      if (!selected || selected.kind !== "spline" || selected.definitionMethod === "fit-points" || selected.fitPoints) {
+        setStatus("SPLINEDIT CV Delete vajab ühte valitud CV SPLINE objekti");
+        return;
+      }
+      const visibleCount = selected.closed && selected.periodic
+        ? selected.controlPoints.length - selected.degree
+        : selected.controlPoints.length;
+      const threshold = 12 * viewportScreenTransform(viewport).worldUnitsPerPixel;
+      let closestIndex = -1;
+      let closestDistance = Number.POSITIVE_INFINITY;
+      selected.controlPoints.slice(0, visibleCount).forEach((controlPoint, index) => {
+        const distance = Math.hypot(controlPoint.x - pickPoint.x, controlPoint.y - pickPoint.y);
+        if (distance < closestDistance) {
+          closestIndex = index;
+          closestDistance = distance;
+        }
+      });
+      if (closestIndex < 0 || closestDistance > threshold) {
+        setStatus("SPLINEDIT CV Delete: klõpsa nähtaval CV gripil");
+        return;
+      }
+      setSplineEditIndexInput(String(closestIndex));
+      setStatus(`SPLINEDIT CV Delete: CV ${closestIndex} valitud; vali Stage või SPLINEDIT`);
+      return;
+    }
     if (previewCommand === "STRETCH") {
       const startPx = { x: event.clientX - rect.left, y: event.clientY - rect.top };
       if (stretchSelectionMode === "crossing-polygon") {
@@ -1593,6 +2045,11 @@ export function App() {
     const command = activeCommandPrompt;
     setActiveCommandPrompt(null);
     setPreviewCommand(null);
+    if (command === "SPLINE") {
+      setSplineCanvasPoints([]);
+      setSplineHoverPoint(null);
+    }
+    if (command === "SPLINEDIT") setSplineEditDraftActions([]);
     closeDrawingContextMenu();
     setStatus(command ? `Command: *Cancel* (${command})` : "Command: *Cancel*");
   }
@@ -1625,6 +2082,7 @@ export function App() {
       pixel,
       world: { x: Number(world.x.toFixed(6)), y: Number(world.y.toFixed(6)) },
     });
+    if (activeCommandPrompt === "SPLINE") setSplineHoverPoint(splineTangentPickMode === "none" ? { x: Number(world.x.toFixed(6)), y: Number(world.y.toFixed(6)) } : null);
     updateStretchDrag(event);
   }
 
@@ -2323,7 +2781,33 @@ export function App() {
     if (committing.current) return;
     committing.current = true;
     try {
-      const result = createPaperLayout(document);
+      const blockMap = new Map(document.blocks.map((block) => [block.id, block]));
+      const finiteBounds = document.entities.flatMap((entity) => {
+        const bounds = entityBounds(entity, blockMap);
+        return bounds ? [bounds] : [];
+      });
+      const viewportWidthMm = 206.5;
+      const viewportHeightMm = 157;
+      const viewportAspect = viewportWidthMm / viewportHeightMm;
+      const usedViewportIds = new Set(document.layouts.flatMap((layout) => layout.viewports.map((viewport) => viewport.id)));
+      let viewportSequence = 1;
+      while (usedViewportIds.has(`viewport-${viewportSequence}`)) viewportSequence += 1;
+      const fittedViewport = finiteBounds.length > 0 ? (() => {
+        const bounds = unionBounds(finiteBounds);
+        const width = Math.max(bounds.maxX - bounds.minX, 1);
+        const height = Math.max(bounds.maxY - bounds.minY, 1);
+        return {
+          id: `viewport-${viewportSequence}`,
+          center: { x: 148.5, y: 105 },
+          width: viewportWidthMm,
+          height: viewportHeightMm,
+          viewCenter: { x: (bounds.minX + bounds.maxX) / 2, y: (bounds.minY + bounds.maxY) / 2 },
+          viewHeight: Math.max(height * 1.035, width / viewportAspect),
+          twistAngleRad: 0,
+          locked: false,
+        } satisfies CadViewport;
+      })() : undefined;
+      const result = createPaperLayout(document, fittedViewport ? { viewports: [fittedViewport] } : {});
       await commitChanges("LAYOUT_CREATE", { name: result.layouts.find((layout) => layout.id === result.layoutId)!.name }, result.changes, []);
       setActiveLayoutId(result.layoutId);
       setLayoutRenameInput(result.layouts.find((layout) => layout.id === result.layoutId)!.name);
@@ -3063,39 +3547,39 @@ export function App() {
         <div className="ribbon-primary" aria-label="Home ribbon">
           <section className="ribbon-panel ribbon-panel-draw" aria-label="Draw panel" data-ribbon-panel="draw">
             <div className="ribbon-panel-tools">
-              <button type="button" className="ribbon-tool ribbon-tool-large" aria-label="Ribbon Line command" aria-pressed={activeCommandPrompt === "LINE"} onClick={() => { setActiveCommandPrompt("LINE"); setStatus("LINE Specify first point"); }} disabled={!modelSpaceEditing || activeLayer.locked}><span className="ribbon-glyph">╱</span><span>Line</span></button>
+              <button type="button" className="ribbon-tool ribbon-tool-large" aria-label="Ribbon Line command" aria-pressed={activeCommandPrompt === "LINE"} onClick={() => { setActiveCommandPrompt("LINE"); setStatus("LINE Specify first point"); }} disabled={!modelSpaceEditing || activeLayer.locked}><CadRibbonIcon kind="line" large /><span>Line</span></button>
               <div className="ribbon-tool-grid ribbon-tool-grid-dense">
-                <button type="button" className="ribbon-tool" aria-label="Ribbon Rectangle command" aria-pressed={activeCommandPrompt === "RECTANGLE"} onClick={() => { setActiveCommandPrompt("RECTANGLE"); setStatus("RECTANGLE Specify first corner point"); }} disabled={!modelSpaceEditing || activeLayer.locked}><span className="ribbon-glyph">□</span><span>Rectangle</span></button>
-                <button type="button" className="ribbon-tool" aria-label="Ribbon Polyline unavailable" disabled><span className="ribbon-glyph">⌁</span><span>Polyline</span></button>
-                <button type="button" className="ribbon-tool" aria-label="Ribbon Circle unavailable" disabled><span className="ribbon-glyph">○</span><span>Circle</span></button>
-                <button type="button" className="ribbon-tool" aria-label="Ribbon Arc unavailable" disabled><span className="ribbon-glyph">◜</span><span>Arc</span></button>
-                <button type="button" className="ribbon-tool" aria-label="Ribbon Hatch unavailable" disabled><span className="ribbon-glyph">▧</span><span>Hatch</span></button>
-                <button type="button" className="ribbon-tool" aria-label="Ribbon Ellipse unavailable" disabled><span className="ribbon-glyph">⬭</span><span>Ellipse</span></button>
+                <button type="button" className="ribbon-tool" aria-label="Ribbon Rectangle command" aria-pressed={activeCommandPrompt === "RECTANGLE"} onClick={() => { setActiveCommandPrompt("RECTANGLE"); setStatus("RECTANGLE Specify first corner point"); }} disabled={!modelSpaceEditing || activeLayer.locked}><CadRibbonIcon kind="rectangle" /><span>Rectangle</span></button>
+                <button type="button" className="ribbon-tool" aria-label="Ribbon Polyline unavailable" disabled><CadRibbonIcon kind="polyline" /><span>Polyline</span></button>
+                <button type="button" className="ribbon-tool" aria-label="Ribbon Circle unavailable" disabled><CadRibbonIcon kind="circle" /><span>Circle</span></button>
+                <button type="button" className="ribbon-tool" aria-label="Ribbon Arc unavailable" disabled><CadRibbonIcon kind="arc" /><span>Arc</span></button>
+                <button type="button" className="ribbon-tool" aria-label="Ribbon Hatch unavailable" disabled><CadRibbonIcon kind="hatch" /><span>Hatch</span></button>
+                <button type="button" className="ribbon-tool" aria-label="Ribbon Spline command" aria-pressed={activeCommandPrompt === "SPLINE"} onClick={beginSplineCommand} disabled={!modelSpaceEditing || activeLayer.locked}><CadRibbonIcon kind="spline" /><span>Spline</span></button>
               </div>
             </div>
             <strong>Draw</strong>
           </section>
           <section className="ribbon-panel ribbon-panel-modify" aria-label="Modify panel" data-ribbon-panel="modify">
             <div className="ribbon-panel-tools ribbon-tool-grid ribbon-tool-grid-dense">
-              <button type="button" className="ribbon-tool" aria-label="Ribbon Move command" aria-pressed={activeCommandPrompt === "MOVE"} onClick={() => { setActiveCommandPrompt("MOVE"); setPreviewCommand("MOVE"); setStatus("MOVE Select objects"); }} disabled={!modelSpaceEditing}><span className="ribbon-glyph">✥</span><span>Move</span></button>
-              <button type="button" className="ribbon-tool" aria-label="Ribbon Copy command" aria-pressed={activeCommandPrompt === "COPY"} onClick={() => { setActiveCommandPrompt("COPY"); setPreviewCommand("COPY"); setStatus("COPY Select objects"); }} disabled={!modelSpaceEditing}><span className="ribbon-glyph">▣</span><span>Copy</span></button>
-              <button type="button" className="ribbon-tool" aria-label="Ribbon Rotate command" aria-pressed={activeCommandPrompt === "ROTATE"} onClick={() => { setActiveCommandPrompt("ROTATE"); setPreviewCommand("ROTATE"); setStatus("ROTATE Select objects"); }} disabled={!modelSpaceEditing}><span className="ribbon-glyph">↻</span><span>Rotate</span></button>
-              <button type="button" className="ribbon-tool" aria-label="Ribbon Mirror command" aria-pressed={activeCommandPrompt === "MIRROR"} onClick={() => { setActiveCommandPrompt("MIRROR"); setPreviewCommand("MIRROR"); setStatus("MIRROR Select objects"); }} disabled={!modelSpaceEditing}><span className="ribbon-glyph">◫</span><span>Mirror</span></button>
-              <button type="button" className="ribbon-tool" aria-label="Ribbon Trim command" aria-pressed={activeCommandPrompt === "TRIM"} onClick={() => { setActiveCommandPrompt("TRIM"); setPreviewCommand("TRIM"); setStatus("TRIM Select cutting edges or objects to trim"); }} disabled={!modelSpaceEditing}><span className="ribbon-glyph">⌁</span><span>Trim</span></button>
-              <button type="button" className="ribbon-tool" aria-label="Ribbon Offset command" aria-pressed={activeCommandPrompt === "OFFSET"} onClick={() => { setActiveCommandPrompt("OFFSET"); setPreviewCommand("OFFSET"); setStatus("OFFSET Specify offset distance or Through"); }} disabled={!modelSpaceEditing}><span className="ribbon-glyph">≋</span><span>Offset</span></button>
-              <button type="button" className="ribbon-tool" aria-label="Ribbon Stretch unavailable" disabled><span className="ribbon-glyph">↗</span><span>Stretch</span></button>
-              <button type="button" className="ribbon-tool" aria-label="Ribbon Scale unavailable" disabled><span className="ribbon-glyph">⌗</span><span>Scale</span></button>
-              <button type="button" className="ribbon-tool" aria-label="Ribbon Fillet unavailable" disabled><span className="ribbon-glyph">◝</span><span>Fillet</span></button>
+              <button type="button" className="ribbon-tool" aria-label="Ribbon Move command" aria-pressed={activeCommandPrompt === "MOVE"} onClick={() => { setActiveCommandPrompt("MOVE"); setPreviewCommand("MOVE"); setStatus("MOVE Select objects"); }} disabled={!modelSpaceEditing}><CadRibbonIcon kind="move" /><span>Move</span></button>
+              <button type="button" className="ribbon-tool" aria-label="Ribbon Copy command" aria-pressed={activeCommandPrompt === "COPY"} onClick={() => { setActiveCommandPrompt("COPY"); setPreviewCommand("COPY"); setStatus("COPY Select objects"); }} disabled={!modelSpaceEditing}><CadRibbonIcon kind="copy" /><span>Copy</span></button>
+              <button type="button" className="ribbon-tool" aria-label="Ribbon Rotate command" aria-pressed={activeCommandPrompt === "ROTATE"} onClick={() => { setActiveCommandPrompt("ROTATE"); setPreviewCommand("ROTATE"); setStatus("ROTATE Select objects"); }} disabled={!modelSpaceEditing}><CadRibbonIcon kind="rotate" /><span>Rotate</span></button>
+              <button type="button" className="ribbon-tool" aria-label="Ribbon Mirror command" aria-pressed={activeCommandPrompt === "MIRROR"} onClick={() => { setActiveCommandPrompt("MIRROR"); setPreviewCommand("MIRROR"); setStatus("MIRROR Select objects"); }} disabled={!modelSpaceEditing}><CadRibbonIcon kind="mirror" /><span>Mirror</span></button>
+              <button type="button" className="ribbon-tool" aria-label="Ribbon Trim command" aria-pressed={activeCommandPrompt === "TRIM"} onClick={() => { setActiveCommandPrompt("TRIM"); setPreviewCommand("TRIM"); setStatus("TRIM Select cutting edges or objects to trim"); }} disabled={!modelSpaceEditing}><CadRibbonIcon kind="trim" /><span>Trim</span></button>
+              <button type="button" className="ribbon-tool" aria-label="Ribbon Offset command" aria-pressed={activeCommandPrompt === "OFFSET"} onClick={() => { setActiveCommandPrompt("OFFSET"); setPreviewCommand("OFFSET"); setStatus("OFFSET Specify offset distance or Through"); }} disabled={!modelSpaceEditing}><CadRibbonIcon kind="offset" /><span>Offset</span></button>
+              <button type="button" className="ribbon-tool" aria-label="Ribbon Stretch unavailable" disabled><CadRibbonIcon kind="stretch" /><span>Stretch</span></button>
+              <button type="button" className="ribbon-tool" aria-label="Ribbon Scale unavailable" disabled><CadRibbonIcon kind="scale" /><span>Scale</span></button>
+              <button type="button" className="ribbon-tool" aria-label="Ribbon Fillet unavailable" disabled><CadRibbonIcon kind="fillet" /><span>Fillet</span></button>
             </div>
             <strong>Modify</strong>
           </section>
           <section className="ribbon-panel ribbon-panel-annotation" aria-label="Annotation panel" data-ribbon-panel="annotation">
             <div className="ribbon-panel-tools">
-              <button type="button" className="ribbon-tool ribbon-tool-large" aria-label="Ribbon Text unavailable" disabled><span className="ribbon-glyph ribbon-letter">A</span><span>Text</span></button>
+              <button type="button" className="ribbon-tool ribbon-tool-large" aria-label="Ribbon Text unavailable" disabled><CadRibbonIcon kind="text" large /><span>Text</span></button>
               <div className="ribbon-tool-grid ribbon-tool-grid-dense">
-                <button type="button" className="ribbon-tool" aria-label="Ribbon Dimension unavailable" disabled><span className="ribbon-glyph">↔</span><span>Dimension</span></button>
-                <button type="button" className="ribbon-tool" aria-label="Ribbon Leader unavailable" disabled><span className="ribbon-glyph">⌁</span><span>Leader</span></button>
-                <button type="button" className="ribbon-tool" aria-label="Ribbon Table unavailable" disabled><span className="ribbon-glyph">▦</span><span>Table</span></button>
+                <button type="button" className="ribbon-tool" aria-label="Ribbon Dimension unavailable" disabled><CadRibbonIcon kind="dimension" /><span>Dimension</span></button>
+                <button type="button" className="ribbon-tool" aria-label="Ribbon Leader unavailable" disabled><CadRibbonIcon kind="leader" /><span>Leader</span></button>
+                <button type="button" className="ribbon-tool" aria-label="Ribbon Table unavailable" disabled><CadRibbonIcon kind="table" /><span>Table</span></button>
               </div>
             </div>
             <strong>Annotation</strong>
@@ -3104,28 +3588,28 @@ export function App() {
             <div className="ribbon-layer-tools">
               <span className="ribbon-layer-current"><span aria-hidden="true">●</span>{activeLayer.name}</span>
               <div className="ribbon-layer-actions">
-                <button type="button" className="ribbon-tool" aria-label="Ribbon New layer command" onClick={() => void createLayer()}><span className="ribbon-glyph">▤</span><span>New Layer</span></button>
-                <button type="button" className="ribbon-tool" aria-label="Ribbon Layer lock command" onClick={() => void toggleActiveLayerLock()}><span className="ribbon-glyph">{activeLayer.locked ? "▣" : "□"}</span><span>{activeLayer.locked ? "Unlock" : "Lock"}</span></button>
-                <button type="button" className="ribbon-tool" aria-label="Ribbon Make current unavailable" disabled><span className="ribbon-glyph">✓</span><span>Make Current</span></button>
-                <button type="button" className="ribbon-tool" aria-label="Ribbon Match layer unavailable" disabled><span className="ribbon-glyph">≡</span><span>Match Layer</span></button>
+                <button type="button" className="ribbon-tool" aria-label="Ribbon New layer command" onClick={() => void createLayer()}><CadRibbonIcon kind="new-layer" /><span>New Layer</span></button>
+                <button type="button" className="ribbon-tool" aria-label="Ribbon Layer lock command" onClick={() => void toggleActiveLayerLock()}><CadRibbonIcon kind="layer-lock" /><span>{activeLayer.locked ? "Unlock" : "Lock"}</span></button>
+                <button type="button" className="ribbon-tool" aria-label="Ribbon Make current unavailable" disabled><CadRibbonIcon kind="make-current" /><span>Make Current</span></button>
+                <button type="button" className="ribbon-tool" aria-label="Ribbon Match layer unavailable" disabled><CadRibbonIcon kind="match-layer" /><span>Match Layer</span></button>
               </div>
             </div>
             <strong>Layers</strong>
           </section>
           <section className="ribbon-panel ribbon-panel-block" aria-label="Block panel" data-ribbon-panel="block">
             <div className="ribbon-panel-tools">
-              <button type="button" className="ribbon-tool ribbon-tool-large" aria-label="Ribbon Insert block unavailable" disabled><span className="ribbon-glyph">◇</span><span>Insert</span></button>
+              <button type="button" className="ribbon-tool ribbon-tool-large" aria-label="Ribbon Insert block unavailable" disabled><CadRibbonIcon kind="insert" large /><span>Insert</span></button>
               <div className="ribbon-tool-grid ribbon-tool-grid-dense">
-                <button type="button" className="ribbon-tool" aria-label="Ribbon Create block unavailable" disabled><span className="ribbon-glyph">＋</span><span>Create</span></button>
-                <button type="button" className="ribbon-tool" aria-label="Ribbon Edit block unavailable" disabled><span className="ribbon-glyph">✎</span><span>Edit</span></button>
-                <button type="button" className="ribbon-tool" aria-label="Ribbon Edit attributes unavailable" disabled><span className="ribbon-glyph">#</span><span>Attributes</span></button>
+                <button type="button" className="ribbon-tool" aria-label="Ribbon Create block unavailable" disabled><CadRibbonIcon kind="create-block" /><span>Create</span></button>
+                <button type="button" className="ribbon-tool" aria-label="Ribbon Edit block unavailable" disabled><CadRibbonIcon kind="edit-block" /><span>Edit</span></button>
+                <button type="button" className="ribbon-tool" aria-label="Ribbon Edit attributes unavailable" disabled><CadRibbonIcon kind="attributes" /><span>Attributes</span></button>
               </div>
             </div>
             <strong>Block</strong>
           </section>
           <section className="ribbon-panel ribbon-panel-properties" aria-label="Properties panel" data-ribbon-panel="properties">
             <div className="ribbon-panel-tools">
-              <button type="button" className="ribbon-tool ribbon-tool-large" aria-label="Ribbon Match properties unavailable" disabled><span className="ribbon-glyph">✎</span><span>Match</span></button>
+              <button type="button" className="ribbon-tool ribbon-tool-large" aria-label="Ribbon Match properties unavailable" disabled><CadRibbonIcon kind="match-properties" large /><span>Match</span></button>
               <div className="ribbon-property-stack">
                 <span><i className="property-swatch" />ByLayer</span>
                 <span>— ByLayer</span>
@@ -3136,27 +3620,27 @@ export function App() {
           </section>
           <section className="ribbon-panel ribbon-panel-groups" aria-label="Groups panel" data-ribbon-panel="groups">
             <div className="ribbon-panel-tools ribbon-tool-grid ribbon-tool-grid-dense">
-              <button type="button" className="ribbon-tool" aria-label="Ribbon Group unavailable" disabled><span className="ribbon-glyph">◈</span><span>Group</span></button>
-              <button type="button" className="ribbon-tool" aria-label="Ribbon Ungroup unavailable" disabled><span className="ribbon-glyph">◇</span><span>Ungroup</span></button>
+              <button type="button" className="ribbon-tool" aria-label="Ribbon Group unavailable" disabled><CadRibbonIcon kind="group" /><span>Group</span></button>
+              <button type="button" className="ribbon-tool" aria-label="Ribbon Ungroup unavailable" disabled><CadRibbonIcon kind="ungroup" /><span>Ungroup</span></button>
             </div>
             <strong>Groups</strong>
           </section>
           <section className="ribbon-panel ribbon-panel-utilities" aria-label="Utilities panel" data-ribbon-panel="utilities">
             <div className="ribbon-panel-tools ribbon-tool-grid ribbon-tool-grid-dense">
-              <button type="button" className="ribbon-tool" aria-label="Ribbon Measure unavailable" disabled><span className="ribbon-glyph">⌁</span><span>Measure</span></button>
-              <button type="button" className="ribbon-tool" aria-label="Ribbon Count unavailable" disabled><span className="ribbon-glyph">#</span><span>Count</span></button>
+              <button type="button" className="ribbon-tool" aria-label="Ribbon Measure unavailable" disabled><CadRibbonIcon kind="measure" /><span>Measure</span></button>
+              <button type="button" className="ribbon-tool" aria-label="Ribbon Count unavailable" disabled><CadRibbonIcon kind="count" /><span>Count</span></button>
             </div>
             <strong>Utilities</strong>
           </section>
           <section className="ribbon-panel ribbon-panel-clipboard" aria-label="Clipboard panel" data-ribbon-panel="clipboard">
             <div className="ribbon-panel-tools">
-              <button type="button" className="ribbon-tool ribbon-tool-large" aria-label="Ribbon Paste unavailable" disabled><span className="ribbon-glyph">▣</span><span>Paste</span></button>
+              <button type="button" className="ribbon-tool ribbon-tool-large" aria-label="Ribbon Paste unavailable" disabled><CadRibbonIcon kind="paste" large /><span>Paste</span></button>
             </div>
             <strong>Clipboard</strong>
           </section>
           <section className="ribbon-panel ribbon-panel-view" aria-label="View panel" data-ribbon-panel="view">
             <div className="ribbon-panel-tools">
-              <button type="button" className="ribbon-tool ribbon-tool-large" aria-label="Ribbon Base view unavailable" disabled><span className="ribbon-glyph">◩</span><span>Base</span></button>
+              <button type="button" className="ribbon-tool ribbon-tool-large" aria-label="Ribbon Base view unavailable" disabled><CadRibbonIcon kind="base-view" large /><span>Base</span></button>
             </div>
             <strong>View</strong>
           </section>
@@ -3172,6 +3656,98 @@ export function App() {
           <input aria-label="Teine nurk" value={otherCornerInput} onChange={(event) => setOtherCornerInput(event.target.value)} placeholder="x,y" />
         </label>
         <button type="button" onClick={() => void addRectangle()} disabled={!modelSpaceEditing || activeLayer.locked}>RECTANGLE</button>
+        <label className="coordinate-input">
+          <span>SPLINE meetod</span>
+          <select aria-label="SPLINE meetod" value={splineMethod} onFocus={() => setActiveCommandPrompt("SPLINE")} onChange={(event) => { setActiveCommandPrompt("SPLINE"); setSplineMethod(event.target.value as typeof splineMethod); }}>
+            <option value="fit">Fit</option>
+            <option value="control-vertices">CV</option>
+            <option value="object">Object (PEDIT spline-fit)</option>
+          </select>
+        </label>
+        {splineMethod !== "object" && <label className="coordinate-input">
+          <span>SPLINE punktid</span>
+          <input aria-label="SPLINE punktid" value={splinePointsInput} onFocus={() => setActiveCommandPrompt("SPLINE")} onChange={(event) => { setActiveCommandPrompt("SPLINE"); setSplineCanvasPoints([]); setSplineHoverPoint(null); setSplinePointsInput(event.target.value); }} placeholder="x,y; x,y; x,y" />
+        </label>}
+        {splineMethod === "fit" ? <label className="coordinate-input">
+          <span>SPLINE knot</span>
+          <select aria-label="SPLINE knot" value={splineKnotParameterization} onFocus={() => setActiveCommandPrompt("SPLINE")} onChange={(event) => { setActiveCommandPrompt("SPLINE"); setSplineKnotParameterization(event.target.value as "chord" | "sqrt-chord" | "uniform"); }}>
+            <option value="chord">Chord</option>
+            <option value="sqrt-chord">Square root</option>
+            <option value="uniform">Uniform</option>
+          </select>
+        </label> : splineMethod === "control-vertices" ? <label className="coordinate-input">
+          <span>SPLINE degree</span>
+          <input aria-label="SPLINE degree" value={splineDegreeInput} onFocus={() => setActiveCommandPrompt("SPLINE")} onChange={(event) => { setActiveCommandPrompt("SPLINE"); setSplineDegreeInput(event.target.value); }} inputMode="numeric" />
+        </label> : null}
+        {splineMethod === "fit" && <label className="coordinate-input">
+          <span>SPLINE tolerance</span>
+          <input aria-label="SPLINE tolerance" value={splineFitToleranceInput} onFocus={() => setActiveCommandPrompt("SPLINE")} onChange={(event) => { setActiveCommandPrompt("SPLINE"); setSplineFitToleranceInput(event.target.value); }} inputMode="decimal" />
+        </label>}
+        {splineMethod === "fit" && !splineClosed && <>
+          <label className="coordinate-input">
+            <span>SPLINE start tangent</span>
+            <input aria-label="SPLINE start tangent" value={splineStartTangentInput} onFocus={() => setActiveCommandPrompt("SPLINE")} onChange={(event) => { setActiveCommandPrompt("SPLINE"); setSplineStartTangentInput(event.target.value); }} placeholder="dx,dy (optional)" />
+          </label>
+          <label className="coordinate-input">
+            <span>SPLINE end tangent</span>
+            <input aria-label="SPLINE end tangent" value={splineEndTangentInput} onFocus={() => setActiveCommandPrompt("SPLINE")} onChange={(event) => { setActiveCommandPrompt("SPLINE"); setSplineEndTangentInput(event.target.value); }} placeholder="dx,dy (optional)" />
+          </label>
+          <button type="button" onClick={beginSplineTangentPick}>SPLINE Tangents from canvas</button>
+        </>}
+        {splineMethod !== "object" && <label className="toggle-input"><input aria-label="SPLINE Close" type="checkbox" checked={splineClosed} onChange={(event) => { setActiveCommandPrompt("SPLINE"); setSplineClosed(event.target.checked); if (event.target.checked) { setSplineStartTangentInput(""); setSplineEndTangentInput(""); } }} />Close</label>}
+        <button type="button" onClick={() => void addSpline()} disabled={!modelSpaceEditing || activeLayer.locked || (splineMethod === "object" && selectedHandles.length !== 1)}>SPLINE</button>
+        <button type="button" onClick={undoSplinePoint} disabled={!modelSpaceEditing}>SPLINE Undo</button>
+        <label className="coordinate-input">
+          <span>SPLINEDIT valik</span>
+          <select aria-label="SPLINEDIT valik" value={splineEditMode} onChange={(event) => setSplineEditMode(event.target.value as typeof splineEditMode)}>
+            <option value="reverse">Reverse</option>
+            <option value="fit-add">Fit Add</option>
+            <option value="fit-kink">Fit Kink</option>
+            <option value="fit-delete">Fit Delete</option>
+            <option value="fit-move">Fit Move</option>
+            <option value="fit-properties">Fit Tangents/Tolerance</option>
+            <option value="fit-purge">Fit Purge</option>
+            <option value="cv-add">CV Add</option>
+            <option value="cv-delete">CV Delete</option>
+            <option value="cv-elevate">CV Elevate Order</option>
+            <option value="cv-move">CV Move</option>
+            <option value="cv-weight">CV Weight</option>
+            <option value="open">Open</option>
+            <option value="close">Close</option>
+            <option value="join">Join</option>
+            <option value="convert-polyline">Convert to Polyline</option>
+          </select>
+        </label>
+        {(splineEditMode === "fit-add" || splineEditMode === "fit-delete" || splineEditMode === "fit-move" || splineEditMode === "cv-delete" || splineEditMode === "cv-move" || splineEditMode === "cv-weight") && <label className="coordinate-input">
+          <span>SPLINEDIT indeks</span>
+          <input aria-label="SPLINEDIT indeks" value={splineEditIndexInput} onChange={(event) => setSplineEditIndexInput(event.target.value)} inputMode="numeric" />
+        </label>}
+        {(splineEditMode === "fit-add" || splineEditMode === "fit-kink" || splineEditMode === "fit-move" || splineEditMode === "cv-add" || splineEditMode === "cv-move") && <label className="coordinate-input">
+          <span>SPLINEDIT punkt</span>
+          <input aria-label="SPLINEDIT punkt" value={splineEditPointInput} onChange={(event) => setSplineEditPointInput(event.target.value)} placeholder="x,y" />
+        </label>}
+        {splineEditMode === "cv-weight" && <label className="coordinate-input">
+          <span>SPLINEDIT weight</span>
+          <input aria-label="SPLINEDIT weight" value={splineEditWeightInput} onChange={(event) => setSplineEditWeightInput(event.target.value)} inputMode="decimal" />
+        </label>}
+        {splineEditMode === "cv-elevate" && <label className="coordinate-input">
+          <span>SPLINEDIT order</span>
+          <input aria-label="SPLINEDIT order" value={splineEditOrderInput} onChange={(event) => setSplineEditOrderInput(event.target.value)} inputMode="numeric" />
+        </label>}
+        {splineEditMode === "convert-polyline" && <label className="coordinate-input">
+          <span>SPLINEDIT precision</span>
+          <input aria-label="SPLINEDIT precision" value={splineEditPrecisionInput} onChange={(event) => setSplineEditPrecisionInput(event.target.value)} inputMode="numeric" />
+        </label>}
+        {splineEditMode === "join" && <label className="coordinate-input">
+          <span>SPLINEDIT join handles</span>
+          <input aria-label="SPLINEDIT join handles" value={splineEditJoinHandlesInput} onChange={(event) => setSplineEditJoinHandlesInput(event.target.value)} placeholder="e.g. 20, 21" />
+        </label>}
+        <button type="button" onClick={() => void editSelectedSpline()} disabled={!modelSpaceEditing || selectedHandles.length !== 1}>SPLINEDIT</button>
+        <button type="button" onClick={beginSplineEditCommand} disabled={!modelSpaceEditing || selectedHandles.length !== 1}>SPLINEDIT Begin</button>
+        <button type="button" onClick={stageSplineEditAction} disabled={activeCommandPrompt !== "SPLINEDIT"}>SPLINEDIT Stage</button>
+        <button type="button" onClick={undoStagedSplineEditAction} disabled={activeCommandPrompt !== "SPLINEDIT" || splineEditDraftActions.length === 0}>SPLINEDIT Undo</button>
+        <button type="button" onClick={() => void commitStagedSplineEdit()} disabled={activeCommandPrompt !== "SPLINEDIT" || splineEditDraftActions.length === 0}>SPLINEDIT Commit</button>
+        {activeCommandPrompt === "SPLINEDIT" && <span data-testid="spline-edit-preview" data-action-count={splineEditDraftActions.length}>SPLINEDIT preview · {splineEditDraftActions.length} tegevust</span>}
         <button type="button" onClick={() => void createLayer()}>Uus kiht</button>
         <button type="button" onClick={() => void toggleActiveLayerLock()}>{activeLayer.locked ? "Ava aktiivne" : "Lukusta aktiivne"}</button>
         <button type="button" onClick={selectAll} disabled={!modelSpaceEditing || document.entities.length === 0}>Vali kõik</button>
@@ -3667,6 +4243,7 @@ export function App() {
         <button type="button" onClick={downloadDxf}>DXF eksport</button>
         <button type="button" onClick={() => void downloadKDraw()}>KDraw eksport</button>
         <span>{document.entities.length} objekti · {selectedHandles.length} valitud · {activeLayer.name}{activeLayer.locked ? " 🔒" : ""}</span>
+        {splinePreview && <span data-testid="spline-preview" data-committed-point-count={splinePreview.committedPointCount} data-preview-point-count={splinePreview.previewPointCount}>SPLINE eelvaade: {splineMethod === "fit" ? "Fit" : `CV degree ${splineDegreeInput}`} · {splinePreview.previewPointCount} punkti{splineClosed ? " · Close" : ""}</span>}
         {movePreview && <span data-testid="move-preview">MOVE eelvaade: {movePreview.entities.length} · Δ{movePreview.delta.x},{movePreview.delta.y}</span>}
         {copyPreview && <span data-testid="copy-preview">COPY eelvaade: {copyPreview.entities.length} · {copyPreview.deltas.length} paigutust</span>}
         {rotatePreview && <span data-testid="rotate-preview">ROTATE eelvaade: {rotatePreview.entities.length} · {rotatePreview.deltaAngleDeg}°</span>}
@@ -3836,13 +4413,16 @@ export function App() {
             <canvas
               ref={canvas}
               aria-label="Kuubik Draw joonestusala"
-              data-preview-command={previewCommand ?? ""}
+              data-preview-command={activeCommandPrompt ?? previewCommand ?? ""}
+              data-spline-point-count={splineCanvasPoints.length}
+              data-spline-tangent-phase={splineTangentPickMode}
               data-selected-handles={selectedHandles.join(",")}
+              data-entity-count={document.entities.length}
               onPointerDown={selectModifyTargetFromCanvas}
               onPointerMove={updateModelPointer}
               onPointerUp={finishStretchDrag}
               onPointerCancel={() => setStretchDrag(null)}
-              onPointerLeave={() => { if (!stretchDrag) setCursorReadout(null); }}
+              onPointerLeave={() => { if (!stretchDrag) setCursorReadout(null); if (activeCommandPrompt === "SPLINE") setSplineHoverPoint(null); }}
               onContextMenu={openDrawingContextMenu}
             />
             {cursorReadout && <div
@@ -3913,19 +4493,30 @@ export function App() {
           <section className="layer-manager" aria-label="Layer Properties Manager">
             <header><strong>LAYER PROPERTIES MANAGER</strong><span>×</span></header>
             <div className="layer-current"><span>Current layer: <strong>{activeLayer.name}</strong></span><label>Search for layer<input aria-label="Search for layer" value={layerFilterInput} onChange={(event) => setLayerFilterInput(event.target.value)} /></label></div>
-            <div className="layer-toolbar" aria-label="Layer tools"><span>▤</span><span>＋</span><span>−</span><span>✓</span><span>↻</span><span>⚙</span></div>
+            <div className="layer-toolbar" aria-label="Layer tools">
+              <span className="layer-toolbar-group">
+                <button type="button" aria-label="Uus kihi filter unavailable" disabled><CadPaletteIcon kind="filter" /></button>
+                <button type="button" aria-label="Uus kiht" onClick={() => void createLayer()}><CadPaletteIcon kind="new-layer" /></button>
+                <button type="button" aria-label="Kustuta kiht unavailable" disabled><CadPaletteIcon kind="delete" /></button>
+              </span>
+              <span className="layer-toolbar-group layer-toolbar-actions">
+                <button type="button" aria-label="Määra aktiivseks unavailable" disabled><CadPaletteIcon kind="set-current" /></button>
+                <button type="button" aria-label="Värskenda kihte unavailable" disabled><CadPaletteIcon kind="refresh" /></button>
+                <button type="button" aria-label="Kihisätted unavailable" disabled><CadPaletteIcon kind="settings" /></button>
+              </span>
+            </div>
             <div className="layer-manager-body">
               <aside className="layer-filter-rail" aria-label="Layer filters">
                 <strong>Filters</strong>
-                <button type="button" className="active">All</button>
-                <button type="button">All Used Layers</button>
+                <button type="button" className="active"><CadPaletteIcon kind="filter" />All</button>
+                <button type="button"><CadPaletteIcon kind="filter" />All Used Layers</button>
                 <label><input type="checkbox" /> Invert filter</label>
               </aside>
               <div className="layer-grid" role="table" aria-label="Kihtide loend">
                 <div className="layer-grid-header" role="row"><span>Status</span><span>Name</span><span>On</span><span>Freeze</span><span>Lock</span><span>Plot</span><span>Color</span></div>
                 {visiblePaletteLayers.map((layer) => (
                   <div className={layer.id === activeLayer.id ? "layer-grid-row active" : "layer-grid-row"} role="row" key={layer.id}>
-                    <span>{layer.id === activeLayer.id ? "✓" : ""}</span><span>{layer.name}</span><span>{layer.visible ? "●" : "○"}</span><span>{layer.frozen ? "❄" : "☀"}</span><span>{layer.locked ? "■" : "□"}</span><span>{layer.plottable ? "▣" : "□"}</span><span><i className="layer-color-swatch" style={{ background: layer.appearance?.color ?? "#ffffff" }} />{layer.appearance?.color ?? "White"}</span>
+                    <span>{layer.id === activeLayer.id ? <CadPaletteIcon kind="set-current" /> : null}</span><span>{layer.name}</span><span className={layer.visible ? "layer-state-on" : "layer-state-off"}><CadPaletteIcon kind="visible" /></span><span className={layer.frozen ? "layer-state-off" : "layer-state-on"}><CadPaletteIcon kind="freeze" /></span><span className={layer.locked ? "layer-state-on" : "layer-state-off"}><CadPaletteIcon kind="lock" /></span><span className={layer.plottable ? "layer-state-on" : "layer-state-off"}><CadPaletteIcon kind="plot" /></span><span><i className="layer-color-swatch" style={{ background: layer.appearance?.color ?? "#ffffff" }} />{layer.appearance?.color ?? "White"}</span>
                   </div>
                 ))}
                 {visiblePaletteLayers.length === 0 && <div className="layer-grid-empty">No matching layers</div>}
@@ -3937,7 +4528,14 @@ export function App() {
             <strong>PROPERTIES</strong>
             <span>{selectedHandles.length === 0 ? "No selection" : `${selectedHandles.length} selected`}</span>
           </header>
-          <div className="properties-selection-summary">{selectedHandles.length === 0 ? "No selection" : selectedHandles.length === 1 ? primarySelectedEntity?.kind.toUpperCase() ?? "Object" : `All (${selectedHandles.length})`}</div>
+          <div className="properties-selection-summary">
+            <span>{selectedHandles.length === 0 ? "No selection" : selectedHandles.length === 1 ? primarySelectedEntity?.kind.toUpperCase() ?? "Object" : `All (${selectedHandles.length})`}</span>
+            <span className="properties-selection-tools" aria-label="Properties selection tools">
+              <button type="button" aria-label="Lisa valik unavailable" disabled><CadPaletteIcon kind="add-selection" /></button>
+              <button type="button" aria-label="Vali objekt unavailable" disabled><CadPaletteIcon kind="select-object" /></button>
+              <button type="button" aria-label="Kiirvalik unavailable" disabled><CadPaletteIcon kind="quick-select" /></button>
+            </span>
+          </div>
           <section>
             <h2>General</h2>
             <dl>
@@ -3963,7 +4561,13 @@ export function App() {
           <section><h2>Data</h2></section>
         </aside>
       </section>
-      <section className="command-line" aria-label="Käsurida" data-visual-zone="command-line">
+      <section
+        className="command-line"
+        aria-label="Käsurida"
+        data-visual-zone="command-line"
+        data-display-mode={commandLineVisible ? "shown" : "hidden"}
+        hidden={!commandLineVisible && !commandHistoryOpen}
+      >
         {commandHistoryOpen && (
           <section className="command-history-window" role="dialog" aria-modal="true" aria-labelledby="command-text-window-title" data-testid="command-text-window">
             <header className="command-text-titlebar">
@@ -3988,18 +4592,21 @@ export function App() {
         </div>
       </section>
       <section className="layoutbar" aria-label="Model ja Layout vahelehed" data-visual-zone="layout-status">
+        <span className="layout-tab-menu" aria-hidden="true">☰</span>
+        <span className="layout-tab-divider" aria-hidden="true">/</span>
         {document.layouts.map((layout) => (
           <button
             key={layout.id}
             type="button"
             className={layout.id === activeLayout.id ? "layout-tab active" : "layout-tab"}
+            data-layout-kind={layout.kind}
             aria-pressed={layout.id === activeLayout.id}
             onClick={() => activateLayout(layout.id)}
           >
             {layout.name}
           </button>
         ))}
-        <button type="button" className="layout-action" aria-label="Lisa paigutus" onClick={() => void createLayout()}>+</button>
+        <button type="button" className="layout-action layout-add" aria-label="Lisa paigutus" onClick={() => void createLayout()}>+</button>
         <details className="layout-tools" data-testid="layout-tools">
           <summary aria-label="Layout tools"><span aria-hidden="true">⚙</span><span>Layout</span></summary>
           <div className="layout-tools-popover">

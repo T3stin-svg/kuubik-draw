@@ -1,6 +1,6 @@
 import type { CadBlockDefinition, CadEntity, CadLayer, CadLinetype, CadPoint2, CadSpline } from "@kuubik/cad-schema";
 import type { CadPlotStyle } from "@kuubik/cad-schema";
-import { resolveCadAppearance, resolveEntityPlotAppearance } from "@kuubik/cad-core";
+import { resolveCadAppearance, resolveEntityPlotAppearance, splinePointAtParameter } from "@kuubik/cad-core";
 import { entityBounds, entityHasUnboundedGeometry, type Bounds2 } from "./bounds.js";
 import { RTreeIndex } from "./rtree.js";
 
@@ -72,11 +72,22 @@ export interface ViewportGridOptions {
   /** World-space SNAPBASE-compatible origin for exact grid alignment. */
   originWorld?: CadPoint2;
   majorEvery?: number;
+  /** Optional AutoCAD-style UCS axis colours drawn through the grid origin. */
+  xAxisColor?: string;
+  yAxisColor?: string;
+  axisLineWidthPx?: number;
 }
 
-const SELECTION_COLOR = "#4ea9f3";
-const GRIP_FILL = "#00a8ff";
-const GRIP_STROKE = "#0b2438";
+// Measured from the owned AutoCAD 2024.1.2 selected-object reference at
+// 1920×1080 / 100% zoom. Keep these separate from the Kuubik accent tokens:
+// selection feedback is part of the CAD viewport contract, not branding.
+const SELECTION_COLOR = "#0478ec";
+const GRIP_FILL = "#007fff";
+const GRIP_STROKE = "#283747";
+// CAD TEXT height is a cap-height-like drawing measurement, while Canvas2D's
+// CSS font size is an em box. Segoe/Arial-compatible glyphs need this stable
+// conversion to match the measured AutoCAD 2024 light-model reference.
+const CAD_TEXT_HEIGHT_TO_CANVAS_EM = 1.15;
 
 /** Selects a stable 1/2/5 decade spacing close to the requested screen density. */
 export function viewportGridSpacing(viewport: Viewport2D, targetSpacingPx = 20): number {
@@ -151,6 +162,26 @@ function drawViewportGrid(
   };
   drawPass(false);
   drawPass(true);
+  const axisLineWidthPx = options.axisLineWidthPx ?? 1;
+  if (!Number.isFinite(axisLineWidthPx) || axisLineWidthPx <= 0) throw new TypeError("Grid axis line width must be positive.");
+  if (options.xAxisColor) {
+    context.beginPath();
+    context.moveTo(origin.x, origin.y);
+    context.lineTo(visibleBounds.maxX, origin.y);
+    context.strokeStyle = options.xAxisColor;
+    context.lineWidth = axisLineWidthPx / scale;
+    context.globalAlpha = 1;
+    context.stroke();
+  }
+  if (options.yAxisColor) {
+    context.beginPath();
+    context.moveTo(origin.x, origin.y);
+    context.lineTo(origin.x, visibleBounds.maxY);
+    context.strokeStyle = options.yAxisColor;
+    context.lineWidth = axisLineWidthPx / scale;
+    context.globalAlpha = 1;
+    context.stroke();
+  }
 }
 
 function midpoint(first: CadPoint2, second: CadPoint2): CadPoint2 {
@@ -408,52 +439,16 @@ function drawCadPolyline(
   }
 }
 
-function splinePoint(entity: CadSpline, parameter: number): CadPoint2 | null {
-  const degree = entity.degree;
-  const last = entity.controlPoints.length - 1;
-  if (degree < 1 || last < degree || entity.knots.length !== last + degree + 2) return null;
-  const start = entity.knots[degree]!;
-  const end = entity.knots[last + 1]!;
-  const u = Math.min(end, Math.max(start, parameter));
-  let span = last;
-  if (u < end) {
-    span = degree;
-    while (span < last && !(u >= entity.knots[span]! && u < entity.knots[span + 1]!)) span += 1;
-  }
-  const values = Array.from({ length: degree + 1 }, (_, index) => {
-    const sourceIndex = span - degree + index;
-    const point = entity.controlPoints[sourceIndex]!;
-    const weight = entity.weights?.[sourceIndex] ?? 1;
-    return { x: point.x * weight, y: point.y * weight, weight };
-  });
-  for (let level = 1; level <= degree; level += 1) {
-    for (let index = degree; index >= level; index -= 1) {
-      const sourceIndex = span - degree + index;
-      const denominator = entity.knots[sourceIndex + degree - level + 1]! - entity.knots[sourceIndex]!;
-      const alpha = denominator === 0 ? 0 : (u - entity.knots[sourceIndex]!) / denominator;
-      const before = values[index - 1]!;
-      const current = values[index]!;
-      values[index] = {
-        x: before.x * (1 - alpha) + current.x * alpha,
-        y: before.y * (1 - alpha) + current.y * alpha,
-        weight: before.weight * (1 - alpha) + current.weight * alpha,
-      };
-    }
-  }
-  const result = values[degree]!;
-  return result.weight === 0 ? null : { x: result.x / result.weight, y: result.y / result.weight };
-}
-
 function drawSpline(context: Canvas2DContext, entity: CadSpline): boolean {
   const start = entity.knots[entity.degree];
   const end = entity.knots[entity.controlPoints.length];
   if (start === undefined || end === undefined || !(end > start)) return false;
   const segments = Math.max(32, Math.min(256, entity.controlPoints.length * 16));
-  const first = splinePoint(entity, start);
+  const first = splinePointAtParameter(entity, start);
   if (!first) return false;
   context.moveTo(first.x, first.y);
   for (let index = 1; index <= segments; index += 1) {
-    const point = splinePoint(entity, start + ((end - start) * index) / segments);
+    const point = splinePointAtParameter(entity, start + ((end - start) * index) / segments);
     if (!point) return false;
     context.lineTo(point.x, point.y);
   }
@@ -542,7 +537,7 @@ function drawEntity(
       context.translate(entity.position.x, entity.position.y);
       context.rotate(entity.rotationRad);
       context.scale(1, -1);
-      context.font = `${entity.height}px sans-serif`;
+      context.font = `${entity.height * CAD_TEXT_HEIGHT_TO_CANVAS_EM}px Arial, sans-serif`;
       context.textAlign = entity.extensionData?.kuubikMirrorTextAlign === "end" ? "right" : "left";
       context.fillText(entity.text, 0, 0);
       context.restore();
@@ -663,9 +658,11 @@ export class CadCanvasRenderer {
       context.fillStyle = appearance.color;
       // Canvas ignores lineWidth=0. Preview the PDF/SVG hairline as one device
       // pixel while retaining the shared semantic lineweight of exactly zero.
-      const previewWidthPx = appearance.lineweightMm === 0
-        ? 1 / viewport.devicePixelRatio
-        : appearance.lineweightMm * previewScale;
+      const previewWidthPx = options.plotStyle
+        ? appearance.lineweightMm === 0
+          ? 1 / viewport.devicePixelRatio
+          : appearance.lineweightMm * previewScale
+        : Math.max(1 / viewport.devicePixelRatio, appearance.lineweightMm);
       context.lineWidth = previewWidthPx / scale;
       context.setLineDash?.(lineDashForEntity(entity, layers, this.#linetypes));
       if (drawEntity(context, entity, this.#blocks, clipBounds)) drawnEntities += 1;

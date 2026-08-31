@@ -419,21 +419,30 @@ function emitEntity(context: Context, entity: CadEntity): { text: string | null;
     }
     case "spline": {
       const last = entity.controlPoints.length - 1;
+      const fitPoints = entity.definitionMethod === "fit-points" ? entity.fitPoints : undefined;
       if (
         !Number.isInteger(entity.degree) || entity.degree < 1 || last < entity.degree
         || entity.knots.length !== last + entity.degree + 2
         || entity.controlPoints.some((value) => !Number.isFinite(value.x) || !Number.isFinite(value.y))
         || entity.knots.some((value, index) => !Number.isFinite(value) || (index > 0 && value < entity.knots[index - 1]!))
         || (entity.weights !== undefined && (entity.weights.length !== entity.controlPoints.length || entity.weights.some((value) => !Number.isFinite(value) || !(value > 0))))
+        || (entity.definitionMethod !== undefined && entity.definitionMethod !== "control-vertices" && entity.definitionMethod !== "fit-points")
+        || (fitPoints !== undefined && (entity.degree !== 3 || fitPoints.length < 3 || fitPoints.some((value) => !Number.isFinite(value.x) || !Number.isFinite(value.y))))
+        || (entity.definitionMethod === "fit-points" && fitPoints === undefined)
+        || (entity.fitTolerance !== undefined && (!Number.isFinite(entity.fitTolerance) || entity.fitTolerance < 0))
+        || [entity.startTangent, entity.endTangent].some((value) => value !== undefined && (!Number.isFinite(value.x) || !Number.isFinite(value.y) || !(Math.hypot(value.x, value.y) > 0)))
       ) throw new TypeError(`DXF SPLINE ${entity.handle} has invalid degree, knots, control points or weights.`);
       const flags = (entity.closed ? 1 : 0) | (entity.periodic ? 2 : 0) | (entity.weights ? 4 : 0) | 8;
       let text = header(context, "SPLINE", entity) + pair(100, "AcDbSpline") + pair(210, 0) + pair(220, 0) + pair(230, 1)
-        + pair(70, flags) + pair(71, entity.degree) + pair(72, entity.knots.length) + pair(73, entity.controlPoints.length) + pair(74, 0)
-        + pair(42, 1e-7) + pair(43, 1e-7) + pair(44, 1e-10);
+        + pair(70, flags) + pair(71, entity.degree) + pair(72, entity.knots.length) + pair(73, entity.controlPoints.length) + pair(74, fitPoints?.length ?? 0)
+        + pair(42, 1e-7) + pair(43, 1e-7) + pair(44, entity.fitTolerance ?? 0);
       for (const knot of entity.knots) text += pair(40, num(knot));
       if (entity.weights) for (const weight of entity.weights) text += pair(41, num(weight));
       for (const controlPoint of entity.controlPoints) text += point(10, 20, controlPoint);
-      return { text, points: entity.controlPoints };
+      if (fitPoints) for (const fitPoint of fitPoints) text += point(11, 21, fitPoint);
+      if (entity.startTangent) text += point(12, 22, entity.startTangent);
+      if (entity.endTangent) text += point(13, 23, entity.endTangent);
+      return { text, points: [...entity.controlPoints, ...(fitPoints ?? [])] };
     }
     case "text":
     case "mtext": {

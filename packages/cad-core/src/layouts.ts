@@ -7,7 +7,7 @@ export const MAX_LAYOUT_NAME_LENGTH = 255;
 export const DEFAULT_PAPER_DEFINITION = Object.freeze({
   widthMm: 297,
   heightMm: 210,
-  marginsMm: Object.freeze({ top: 10, right: 10, bottom: 10, left: 10 }),
+  marginsMm: Object.freeze({ top: 6.5, right: 19, bottom: 7.25, left: 19.35 }),
 });
 export const ISO_PAPER_MEDIA = Object.freeze([
   { mediaName: "ISO_A4", portraitWidthMm: 210, portraitHeightMm: 297 },
@@ -622,10 +622,10 @@ export function createPaperLayout(
   const defaultViewport: CadViewport = {
     id: uniqueId("viewport", usedViewportIds),
     center: { x: 148.5, y: 105 },
-    width: 277,
-    height: 190,
+    width: 206.5,
+    height: 157,
     viewCenter: { x: 0, y: 0 },
-    viewHeight: 190,
+    viewHeight: 157,
     twistAngleRad: 0,
     locked: false,
   };

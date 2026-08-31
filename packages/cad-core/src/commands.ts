@@ -21,6 +21,27 @@ import {
 } from "./fillet.js";
 import { offsetCadEntity, type OffsetGeometryMode, type OffsetGeometryRejectReason } from "./offset.js";
 import { stretchCadEntity, validateStretchRegions, type StretchGeometryRejectReason, type StretchRegion } from "./stretch.js";
+import {
+  addSplineFitKink,
+  addSplineFitPoint,
+  addSplineControlVertex,
+  createControlVertexSpline,
+  createFitPointSpline,
+  convertSplineToPolyline,
+  deleteSplineControlVertex,
+  deleteSplineFitPoint,
+  elevateSplineOrder,
+  joinSplineWithLine,
+  moveSplineControlVertex,
+  moveSplineFitPoint,
+  purgeSplineFitData,
+  reverseSpline,
+  setSplineClosed,
+  setSplineControlVertexWeight,
+  setSplineFitProperties,
+  transformSplineDefinition,
+  type SplineKnotParameterization,
+} from "./spline.js";
 import { executeMatchProperties, type MatchPropertiesArgs, type MatchPropertiesResult } from "./match-properties.js";
 import {
   lengthenCadEntity,
@@ -50,6 +71,75 @@ export interface RectangleCommandDefinition {
   id: "RECTANGLE";
   aliases: readonly string[];
   execute(args: RectangleCommandArgs): EntityChange[];
+}
+
+export interface SplinePointCommandArgs {
+  handle: string;
+  layerId: string;
+  method: "fit" | "control-vertices";
+  points: readonly CadPoint2[];
+  degree?: number;
+  weights?: readonly number[];
+  fitTolerance?: number;
+  knotParameterization?: SplineKnotParameterization;
+  closed?: boolean;
+  startTangent?: CadPoint2;
+  endTangent?: CadPoint2;
+}
+
+export interface SplineObjectCommandArgs {
+  handle: string;
+  method: "object";
+  sourceHandle: string;
+}
+
+export type SplineCommandArgs = SplinePointCommandArgs | SplineObjectCommandArgs;
+
+export interface SplineCommandDefinition {
+  id: "SPLINE";
+  aliases: readonly string[];
+  execute(args: SplineCommandArgs, document?: KDrawDocumentV1): EntityChange[];
+}
+
+export type SplineEditAction =
+  | { type: "reverse" }
+  | { type: "fit-add"; index: number; point: CadPoint2 }
+  | { type: "fit-kink"; point: CadPoint2 }
+  | { type: "fit-delete"; index: number }
+  | { type: "fit-move"; index: number; point: CadPoint2 }
+  | { type: "fit-properties"; fitTolerance?: number; knotParameterization?: SplineKnotParameterization; startTangent?: CadPoint2 | null; endTangent?: CadPoint2 | null }
+  | { type: "fit-purge" }
+  | { type: "cv-move"; index: number; point: CadPoint2 }
+  | { type: "cv-add"; point: CadPoint2 }
+  | { type: "cv-delete"; index: number }
+  | { type: "cv-elevate"; order: number }
+  | { type: "cv-weight"; index: number; weight: number }
+  | { type: "open" }
+  | { type: "close" }
+  | { type: "join"; targetHandles: readonly string[] }
+  | { type: "convert-polyline"; precision: number };
+
+export interface SplineEditCommandArgs {
+  targetHandle: string;
+  actions: readonly SplineEditAction[];
+}
+
+export interface SplineEditRejectedTarget {
+  handle: string;
+  reason: "missing" | "locked-layer" | "unsupported-target" | "requires-fit-definition" | "requires-control-vertex-definition" | "join-target-missing" | "join-target-locked-layer" | "join-target-unsupported";
+}
+
+export interface SplineEditCommandResult {
+  changes: EntityChange[];
+  editedHandles: string[];
+  rejected: SplineEditRejectedTarget[];
+  appliedActions: SplineEditAction[];
+}
+
+export interface SplineEditCommandDefinition {
+  id: "SPLINEDIT";
+  aliases: readonly string[];
+  execute(document: KDrawDocumentV1, args: SplineEditCommandArgs): SplineEditCommandResult;
 }
 
 export interface EraseCommandArgs {
@@ -955,6 +1045,136 @@ export function executeRectangle(args: RectangleCommandArgs): EntityChange[] {
   return [{ type: "put", entity }];
 }
 
+export function executeSpline(args: SplineCommandArgs, document?: KDrawDocumentV1): EntityChange[] {
+  if (!args.handle) throw new CadCommandInputError("SPLINE handle is required.");
+  if (args.method === "object") {
+    if (!document) throw new CadCommandInputError("SPLINE Object requires the current document.");
+    const sourceHandle = args.sourceHandle.trim();
+    const source = document.entities.find((entity) => entity.handle === sourceHandle);
+    if (!source) throw new CadCommandInputError("SPLINE Object source does not exist.");
+    if (document.layers.find((layer) => layer.id === source.layerId)?.locked) throw new CadCommandInputError("SPLINE Object source is on a locked layer.");
+    if (source.kind !== "polyline" || source.closed || source.vertices.length < 4) {
+      throw new CadCommandInputError("SPLINE Object requires an open spline-fit polyline with at least four vertices.");
+    }
+    if (source.vertices.some((vertex) => Math.abs(vertex.bulge ?? 0) > 1e-12 || Math.abs(vertex.startWidth ?? 0) > 1e-12 || Math.abs(vertex.endWidth ?? 0) > 1e-12)) {
+      throw new CadCommandInputError("SPLINE Object requires PEDIT spline-fit vertices without bulges or widths.");
+    }
+    const { kind: _kind, handle: _sourceHandle, vertices: _vertices, closed: _closed, ...metadata } = source;
+    const converted = createControlVertexSpline({
+      handle: args.handle,
+      layerId: source.layerId,
+      controlPoints: source.vertices.map(({ x, y }) => ({ x, y })),
+      degree: 3,
+    });
+    const entity: CadSpline = { ...metadata, ...converted };
+    return [{ type: "delete", handle: sourceHandle }, { type: "put", entity }];
+  }
+  if (!args.layerId) throw new CadCommandInputError("SPLINE layer is required.");
+  try {
+    const entity = args.method === "fit"
+      ? createFitPointSpline({
+        handle: args.handle,
+        layerId: args.layerId,
+        fitPoints: args.points,
+        ...(args.fitTolerance === undefined ? {} : { fitTolerance: args.fitTolerance }),
+        ...(args.knotParameterization === undefined ? {} : { knotParameterization: args.knotParameterization }),
+        ...(args.closed === undefined ? {} : { closed: args.closed }),
+        ...(args.startTangent === undefined ? {} : { startTangent: args.startTangent }),
+        ...(args.endTangent === undefined ? {} : { endTangent: args.endTangent }),
+      })
+      : createControlVertexSpline({
+        handle: args.handle,
+        layerId: args.layerId,
+        controlPoints: args.points,
+        ...(args.degree === undefined ? {} : { degree: args.degree }),
+        ...(args.weights === undefined ? {} : { weights: args.weights }),
+        ...(args.closed === undefined ? {} : { closed: args.closed }),
+      });
+    return [{ type: "put", entity }];
+  } catch (error) {
+    if (error instanceof TypeError) throw new CadCommandInputError(error.message);
+    throw error;
+  }
+}
+
+export function executeSplineEdit(document: KDrawDocumentV1, args: SplineEditCommandArgs): SplineEditCommandResult {
+  const handle = args.targetHandle.trim();
+  if (!handle) throw new CadCommandInputError("SPLINEDIT target handle is required.");
+  if (args.actions.length === 0) throw new CadCommandInputError("SPLINEDIT requires at least one action.");
+  const entity = document.entities.find((candidate) => candidate.handle === handle);
+  if (!entity) return { changes: [], editedHandles: [], rejected: [{ handle, reason: "missing" }], appliedActions: [] };
+  if (document.layers.find((layer) => layer.id === entity.layerId)?.locked) {
+    return { changes: [], editedHandles: [], rejected: [{ handle, reason: "locked-layer" }], appliedActions: [] };
+  }
+  if (entity.kind !== "spline") return { changes: [], editedHandles: [], rejected: [{ handle, reason: "unsupported-target" }], appliedActions: [] };
+  let edited: CadSpline = structuredClone(entity);
+  let converted: CadPolyline | undefined;
+  const joinedHandles: string[] = [];
+  const appliedActions: SplineEditAction[] = [];
+  try {
+    for (const [actionIndex, action] of args.actions.entries()) {
+      if (action.type === "convert-polyline") {
+        if (actionIndex !== args.actions.length - 1) throw new TypeError("SPLINEDIT Convert to Polyline must be the final staged action.");
+        converted = convertSplineToPolyline(edited, allocateEntityHandles(document, 1)[0]!, action.precision);
+        appliedActions.push(structuredClone(action));
+        continue;
+      }
+      if (action.type === "join") {
+        const targetHandles = [...new Set(action.targetHandles.map((value) => value.trim()).filter(Boolean))];
+        if (targetHandles.length === 0 || targetHandles.includes(handle)) throw new TypeError("SPLINEDIT Join requires at least one other target handle.");
+        for (const targetHandle of targetHandles) {
+          const target = document.entities.find((candidate) => candidate.handle === targetHandle);
+          if (!target) return { changes: [], editedHandles: [], rejected: [{ handle: targetHandle, reason: "join-target-missing" }], appliedActions: [] };
+          if (document.layers.find((layer) => layer.id === target.layerId)?.locked) return { changes: [], editedHandles: [], rejected: [{ handle: targetHandle, reason: "join-target-locked-layer" }], appliedActions: [] };
+          if (target.kind !== "line") return { changes: [], editedHandles: [], rejected: [{ handle: targetHandle, reason: "join-target-unsupported" }], appliedActions: [] };
+          edited = joinSplineWithLine(edited, target);
+          joinedHandles.push(targetHandle);
+        }
+        appliedActions.push(structuredClone(action));
+        continue;
+      }
+      const fitAction = action.type === "fit-add" || action.type === "fit-kink" || action.type === "fit-delete" || action.type === "fit-move" || action.type === "fit-properties" || action.type === "fit-purge";
+      const cvAction = action.type === "cv-add" || action.type === "cv-delete" || action.type === "cv-elevate" || action.type === "cv-move" || action.type === "cv-weight";
+      if (fitAction && (edited.definitionMethod !== "fit-points" || !edited.fitPoints)) {
+        return { changes: [], editedHandles: [], rejected: [{ handle, reason: "requires-fit-definition" }], appliedActions: [] };
+      }
+      if (cvAction && (edited.definitionMethod === "fit-points" || edited.fitPoints)) {
+        return { changes: [], editedHandles: [], rejected: [{ handle, reason: "requires-control-vertex-definition" }], appliedActions: [] };
+      }
+      switch (action.type) {
+        case "reverse": edited = reverseSpline(edited); break;
+        case "fit-add": edited = addSplineFitPoint(edited, action.index, action.point); break;
+        case "fit-kink": edited = addSplineFitKink(edited, action.point); break;
+        case "fit-delete": edited = deleteSplineFitPoint(edited, action.index); break;
+        case "fit-move": edited = moveSplineFitPoint(edited, action.index, action.point); break;
+        case "fit-properties": edited = setSplineFitProperties(edited, action); break;
+        case "fit-purge": edited = purgeSplineFitData(edited); break;
+        case "cv-add": edited = addSplineControlVertex(edited, action.point); break;
+        case "cv-delete": edited = deleteSplineControlVertex(edited, action.index); break;
+        case "cv-elevate": edited = elevateSplineOrder(edited, action.order); break;
+        case "cv-move": edited = moveSplineControlVertex(edited, action.index, action.point); break;
+        case "cv-weight": edited = setSplineControlVertexWeight(edited, action.index, action.weight); break;
+        case "open": edited = setSplineClosed(edited, false); break;
+        case "close": edited = setSplineClosed(edited, true); break;
+      }
+      appliedActions.push(structuredClone(action));
+    }
+  } catch (error) {
+    if (error instanceof TypeError) throw new CadCommandInputError(error.message);
+    throw error;
+  }
+  if (converted) {
+    return {
+      changes: [{ type: "delete", handle }, { type: "put", entity: converted }],
+      editedHandles: [converted.handle],
+      rejected: [],
+      appliedActions,
+    };
+  }
+  if (JSON.stringify(edited) === JSON.stringify(entity)) return { changes: [], editedHandles: [], rejected: [], appliedActions };
+  return { changes: [...joinedHandles.map((joinedHandle): EntityChange => ({ type: "delete", handle: joinedHandle })), { type: "put", entity: edited }], editedHandles: [handle], rejected: [], appliedActions };
+}
+
 export function executeErase(document: KDrawDocumentV1, args: EraseCommandArgs): EraseCommandResult {
   const requested = [...new Set(args.targetHandles.map((handle) => handle.trim()).filter(Boolean))];
   const entities = new Map(document.entities.map((entity) => [entity.handle, entity]));
@@ -992,7 +1212,7 @@ export function translateCadEntity(entity: CadEntity, delta: CadPoint2): CadEnti
     case "circle":
     case "arc":
     case "ellipse": return { ...entity, center: movedPoint(entity.center, delta) };
-    case "spline": return { ...entity, controlPoints: entity.controlPoints.map((point) => movedPoint(point, delta)) };
+    case "spline": return transformSplineDefinition(entity, (point) => movedPoint(point, delta));
     case "text":
     case "mtext": return { ...entity, position: movedPoint(entity.position, delta) };
     case "leader": return { ...entity, vertices: entity.vertices.map((point) => movedPoint(point, delta)) };
@@ -1146,7 +1366,11 @@ export function rotateCadEntity(entity: CadEntity, basePoint: CadPoint2, angleRa
       center: rotateCadPoint(entity.center, basePoint, angleRad),
       majorAxis: rotateCadVector(entity.majorAxis, angleRad),
     };
-    case "spline": return { ...entity, controlPoints: entity.controlPoints.map((point) => rotateCadPoint(point, basePoint, angleRad)) };
+    case "spline": return transformSplineDefinition(
+      entity,
+      (point) => rotateCadPoint(point, basePoint, angleRad),
+      (vector) => rotateCadVector(vector, angleRad),
+    );
     case "text":
     case "mtext": return {
       ...entity,
@@ -1260,7 +1484,11 @@ export function scaleCadEntity(entity: CadEntity, basePoint: CadPoint2, factor: 
         y: scaleFiniteScalar(entity.majorAxis.y, factor, "ellipse major-axis y"),
       },
     };
-    case "spline": return { ...entity, controlPoints: entity.controlPoints.map((point) => scaleCadPoint(point, basePoint, factor)) };
+    case "spline": return transformSplineDefinition(
+      entity,
+      (point) => scaleCadPoint(point, basePoint, factor),
+      (vector) => ({ x: vector.x * factor, y: vector.y * factor }),
+    );
     case "text":
     case "mtext": return {
       ...entity,
@@ -1431,7 +1659,7 @@ export function mirrorCadEntity(entity: CadEntity, axisStart: CadPoint2, axisEnd
       majorAxis: mirrorCadVector(entity.majorAxis, axisStart, axisEnd),
       ...reflectedEllipseParameters(entity.startParameter, entity.endParameter),
     };
-    case "spline": return { ...entity, controlPoints: entity.controlPoints.map(point) };
+    case "spline": return transformSplineDefinition(entity, point, (vector) => mirrorCadVector(vector, axisStart, axisEnd));
     case "text":
     case "mtext": {
       const readable = readableReflectedTextAngle(entity.rotationRad, axis.angleRad);
@@ -1751,8 +1979,11 @@ function transformedTrimBoundaries(entity: CadEntity, matrix: TrimAffine2): CadE
     loops: entity.loops.map((loop) => ({ ...structuredClone(loop), vertices: loop.vertices.map((point) => trimAffinePoint(matrix, point)) })),
   }];
   if (entity.kind === "spline") return [{
-    ...structuredClone(entity),
-    controlPoints: entity.controlPoints.map((point) => trimAffinePoint(matrix, point)),
+    ...transformSplineDefinition(
+      structuredClone(entity),
+      (point) => trimAffinePoint(matrix, point),
+      (vector) => trimAffinePoint(matrix, vector, true),
+    ),
   }];
   const scale = conformalTrimScale(matrix);
   if (entity.kind === "circle") {
@@ -2624,6 +2855,18 @@ const rectangleCommand: RectangleCommandDefinition = Object.freeze({
   execute: executeRectangle,
 });
 
+const splineCommand: SplineCommandDefinition = Object.freeze({
+  id: "SPLINE",
+  aliases: Object.freeze(["SPL", "SPLINE"]),
+  execute: executeSpline,
+});
+
+const splineEditCommand: SplineEditCommandDefinition = Object.freeze({
+  id: "SPLINEDIT",
+  aliases: Object.freeze(["SPE", "SPLINEDIT"]),
+  execute: executeSplineEdit,
+});
+
 const eraseCommand: EraseCommandDefinition = Object.freeze({
   id: "ERASE",
   aliases: Object.freeze(["E", "DEL", "ERASE", "DELETE"]),
@@ -2720,9 +2963,9 @@ const matchPropertiesCommand: MatchPropertiesCommandDefinition = Object.freeze({
   execute: executeMatchProperties,
 });
 
-export const cadCommandRegistry = Object.freeze([rectangleCommand, eraseCommand, moveCommand, copyCommand, rotateCommand, scaleCommand, mirrorCommand, offsetCommand, trimCommand, extendCommand, filletCommand, chamferCommand, breakCommand, stretchCommand, lengthenCommand, alignCommand, matchPropertiesCommand]);
+export const cadCommandRegistry = Object.freeze([rectangleCommand, splineCommand, splineEditCommand, eraseCommand, moveCommand, copyCommand, rotateCommand, scaleCommand, mirrorCommand, offsetCommand, trimCommand, extendCommand, filletCommand, chamferCommand, breakCommand, stretchCommand, lengthenCommand, alignCommand, matchPropertiesCommand]);
 
-export function resolveCadCommand(token: string): RectangleCommandDefinition | EraseCommandDefinition | MoveCommandDefinition | CopyCommandDefinition | RotateCommandDefinition | ScaleCommandDefinition | MirrorCommandDefinition | OffsetCommandDefinition | TrimCommandDefinition | ExtendCommandDefinition | FilletCommandDefinition | ChamferCommandDefinition | BreakCommandDefinition | StretchCommandDefinition | LengthenCommandDefinition | AlignCommandDefinition | MatchPropertiesCommandDefinition | null {
+export function resolveCadCommand(token: string): RectangleCommandDefinition | SplineCommandDefinition | SplineEditCommandDefinition | EraseCommandDefinition | MoveCommandDefinition | CopyCommandDefinition | RotateCommandDefinition | ScaleCommandDefinition | MirrorCommandDefinition | OffsetCommandDefinition | TrimCommandDefinition | ExtendCommandDefinition | FilletCommandDefinition | ChamferCommandDefinition | BreakCommandDefinition | StretchCommandDefinition | LengthenCommandDefinition | AlignCommandDefinition | MatchPropertiesCommandDefinition | null {
   const normalized = token.trim().toUpperCase();
   return cadCommandRegistry.find((command) => command.aliases.includes(normalized)) ?? null;
 }

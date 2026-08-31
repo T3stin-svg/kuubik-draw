@@ -1,0 +1,1033 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-012",
+  "status": "PASS",
+  "observedAt": "2026-08-31T07:37:36.540Z",
+  "source": "production SPL/SPLINE + SPE/SPLINEDIT registry -> CadSession -> production DXF/KDRAW1 -> strict importer + dxf-parser + raw group audit -> atomic Undo/Redo",
+  "checks": {
+    "registry": true,
+    "openFitAndTangents": true,
+    "closedPeriodicFit": true,
+    "rationalControlVertices": true,
+    "objectConversion": true,
+    "convertToPolyline": true,
+    "fitKink": true,
+    "cvAddAndElevate": true,
+    "cvDelete": true,
+    "cvDeleteVariants": true,
+    "splineEditAtomic": true,
+    "evaluatedEndpoints": {
+      "openStart": true,
+      "openEnd": true,
+      "closedSeam": true,
+      "cvStart": true,
+      "cvEnd": true,
+      "objectStart": true,
+      "objectEnd": true,
+      "polylineStart": true,
+      "polylineEnd": true,
+      "kinkStart": true,
+      "kinkEnd": true,
+      "cvRefineStart": true,
+      "cvRefineEnd": true,
+      "cvDeleteStart": true,
+      "cvDeleteEnd": true,
+      "rationalRepeatedStart": true,
+      "rationalRepeatedEnd": true,
+      "minimumStart": true,
+      "minimumEnd": true,
+      "periodicSeam": true,
+      "quadraticStart": true,
+      "quadraticEnd": true
+    },
+    "strictDxf": true,
+    "independentDxf": {
+      "openFitCount": true,
+      "openFitPoints": true,
+      "openTolerance": true,
+      "openStartTangent": true,
+      "openEndTangent": true,
+      "closedFlags": true,
+      "closedFitCount": true,
+      "cvRationalFlags": true,
+      "cvWeightCount": true,
+      "cvMovedAndWeighted": true,
+      "objectControlVertices": true,
+      "polylineConversion": true,
+      "fitKink": true,
+      "cvAddAndElevate": true,
+      "cvDelete": true,
+      "cvDeleteRationalRepeated": true,
+      "cvDeleteMinimumDegree": true,
+      "cvDeletePeriodic": true,
+      "cvDeleteQuadratic": true
+    },
+    "kdrawChecksum": true,
+    "atomicUndoRedo": true
+  },
+  "implementationSha256": {
+    "apps/web/src/App.tsx": "5ac5200de83ab88eb800dfc9c6c9582344d43cb1e234bdbdb211578ac0f559fe",
+    "packages/cad-core/src/commands.ts": "45303b5fff7d878e57b0d3e54e259fa44c9353cc1fcd9d9595a25b678a6a7509",
+    "packages/cad-core/src/spline.ts": "86f0fafdd79ccf90a877905010cf37f9fc85459ab4924f86832067c2102be4e5",
+    "packages/cad-core/src/transaction.ts": "ab5734699108451ed63290424d56f69b8b0031efb22969f9fef5bd2dd20ac388",
+    "packages/cad-core/test/spline.test.ts": "09b5d5ec63f887b10087de52161ba719a0827de1420468240bc6356d3309b3ff",
+    "packages/cad-core/test/f012-mutation-proven.test.ts": "be0a5ff83e0e99f419cb85294b5ee921668bc9f77ec993109e9982ed362117bd",
+    "packages/cad-dxf/src/import.ts": "ce6aeb7450c2c32815a7521169a7a48dddc7f6ff511b3024de2a10fc42e80bf1",
+    "packages/cad-dxf/src/index.ts": "01b5c30202a2eb048ae89ebc374722d9423716ba1bf71d11311388e0640af5cb",
+    "packages/cad-dxf/test/f012-spline-fit-roundtrip.test.ts": "b491e1f1a1a0a4f01efcc25389b3b158cfddb73bf3b84c99645b9043eddd9f21",
+    "e2e/f012-spline.spec.ts": "e3cc9c73125b3f4d92dc56073305e72e4c674e9a0493505bae6483655a63f424",
+    "tools/parity/run-f012-readback.mjs": "1dbc832970d70c80b153712e4e09b89293f37c68ec985cfac07f8efa961d8976"
+  },
+  "committedDocument": {
+    "schemaVersion": 1,
+    "documentId": "F-012-readback",
+    "revision": 22,
+    "units": {
+      "linear": "mm",
+      "displayPrecision": 4,
+      "angularPrecision": 6
+    },
+    "currentLayerId": "0",
+    "entities": [
+      {
+        "kind": "spline",
+        "handle": "10",
+        "layerId": "0",
+        "definitionMethod": "fit-points",
+        "degree": 3,
+        "controlPoints": [
+          {
+            "x": 140,
+            "y": 0
+          },
+          {
+            "x": 139.92801842492514,
+            "y": 0.04198925212700585
+          },
+          {
+            "x": 115.33637583950542,
+            "y": 6.26117280917547
+          },
+          {
+            "x": 100,
+            "y": 15
+          },
+          {
+            "x": 84.66362416049458,
+            "y": 23.73882719082453
+          },
+          {
+            "x": 78.58251506690343,
+            "y": 34.997298015425116
+          },
+          {
+            "x": 70,
+            "y": 55
+          },
+          {
+            "x": 61.41748493309657,
+            "y": 75.00270198457488
+          },
+          {
+            "x": 50.33356389288085,
+            "y": 103.74963512912404
+          },
+          {
+            "x": 35,
+            "y": 85
+          },
+          {
+            "x": 19.666436107119146,
+            "y": 66.25036487087594
+          },
+          {
+            "x": 0.08322936157315297,
+            "y": 0.004161468078663688
+          },
+          {
+            "x": 0,
+            "y": 0
+          }
+        ],
+        "knots": [
+          0,
+          0,
+          0,
+          0,
+          0.25,
+          0.25,
+          0.25,
+          0.5,
+          0.5,
+          0.5,
+          0.75,
+          0.75,
+          0.75,
+          1,
+          1,
+          1,
+          1
+        ],
+        "fitPoints": [
+          {
+            "x": 140,
+            "y": 0
+          },
+          {
+            "x": 100,
+            "y": 15
+          },
+          {
+            "x": 70,
+            "y": 55
+          },
+          {
+            "x": 35,
+            "y": 85
+          },
+          {
+            "x": 0,
+            "y": 0
+          }
+        ],
+        "fitTolerance": 0.25,
+        "knotParameterization": "uniform",
+        "startTangent": {
+          "x": -0.8637789008984335,
+          "y": 0.5038710255240861
+        },
+        "endTangent": {
+          "x": -0.9987523388778446,
+          "y": -0.04993761694389223
+        },
+        "closed": false,
+        "periodic": false
+      },
+      {
+        "kind": "spline",
+        "handle": "20",
+        "layerId": "0",
+        "definitionMethod": "fit-points",
+        "degree": 3,
+        "controlPoints": [
+          {
+            "x": 0,
+            "y": 200
+          },
+          {
+            "x": 27.30496547886534,
+            "y": 182.9333732284329
+          },
+          {
+            "x": 73.28893931254292,
+            "y": 195.52253907553555
+          },
+          {
+            "x": 90,
+            "y": 225
+          },
+          {
+            "x": 105.6221650756786,
+            "y": 252.55670445978876
+          },
+          {
+            "x": 95.6619848516516,
+            "y": 294.87252066340375
+          },
+          {
+            "x": 70,
+            "y": 310
+          },
+          {
+            "x": 42.120076678286964,
+            "y": 326.4349315297783
+          },
+          {
+            "x": -4.2931242366879,
+            "y": 310.7787113476656
+          },
+          {
+            "x": -20,
+            "y": 280
+          },
+          {
+            "x": -33.65284030058713,
+            "y": 253.24631346043475
+          },
+          {
+            "x": -24.10534604214017,
+            "y": 215.0667447068962
+          },
+          {
+            "x": 0,
+            "y": 200
+          }
+        ],
+        "knots": [
+          0,
+          0,
+          0,
+          0,
+          0.26087210475734174,
+          0.26087210475734174,
+          0.26087210475734174,
+          0.5047457379383761,
+          0.5047457379383761,
+          0.5047457379383761,
+          0.7696971137801094,
+          0.7696971137801094,
+          0.7696971137801094,
+          1,
+          1,
+          1,
+          1
+        ],
+        "fitPoints": [
+          {
+            "x": 0,
+            "y": 200
+          },
+          {
+            "x": 90,
+            "y": 225
+          },
+          {
+            "x": 70,
+            "y": 310
+          },
+          {
+            "x": -20,
+            "y": 280
+          }
+        ],
+        "fitTolerance": 0,
+        "knotParameterization": "chord",
+        "closed": true,
+        "periodic": true
+      },
+      {
+        "kind": "spline",
+        "handle": "30",
+        "layerId": "0",
+        "definitionMethod": "control-vertices",
+        "degree": 3,
+        "controlPoints": [
+          {
+            "x": 220,
+            "y": 0
+          },
+          {
+            "x": 255,
+            "y": 95
+          },
+          {
+            "x": 310,
+            "y": -20
+          },
+          {
+            "x": 360,
+            "y": 0
+          }
+        ],
+        "knots": [
+          0,
+          0,
+          0,
+          0,
+          1,
+          1,
+          1,
+          1
+        ],
+        "weights": [
+          1,
+          2.5,
+          1.3,
+          1
+        ],
+        "closed": false,
+        "periodic": false
+      },
+      {
+        "layerId": "0",
+        "appearance": {
+          "color": "#00ff00"
+        },
+        "extensionData": {
+          "source": "PEDIT-spline-fit"
+        },
+        "kind": "spline",
+        "handle": "50",
+        "definitionMethod": "control-vertices",
+        "degree": 3,
+        "controlPoints": [
+          {
+            "x": 420,
+            "y": 0
+          },
+          {
+            "x": 450,
+            "y": 80
+          },
+          {
+            "x": 510,
+            "y": -20
+          },
+          {
+            "x": 560,
+            "y": 0
+          }
+        ],
+        "knots": [
+          0,
+          0,
+          0,
+          0,
+          1,
+          1,
+          1,
+          1
+        ],
+        "closed": false,
+        "periodic": false
+      },
+      {
+        "kind": "polyline",
+        "handle": "61",
+        "layerId": "0",
+        "closed": false,
+        "vertices": [
+          {
+            "x": 200,
+            "y": -300
+          },
+          {
+            "x": 209.73918592791938,
+            "y": -269.88637145623625
+          },
+          {
+            "x": 214.64138065088918,
+            "y": -256.0937607523248
+          },
+          {
+            "x": 219.582697484671,
+            "y": -243.81819432997796
+          },
+          {
+            "x": 224.57617713286902,
+            "y": -233.5653536163839
+          },
+          {
+            "x": 229.63486029908708,
+            "y": -225.8409200387307
+          },
+          {
+            "x": 232.19272842133,
+            "y": -223.0848813718783
+          },
+          {
+            "x": 234.7717876869294,
+            "y": -221.1505750242067
+          },
+          {
+            "x": 237.3736681838359,
+            "y": -220.10121117411444
+          },
+          {
+            "x": 239.99999999999994,
+            "y": -220
+          },
+          {
+            "x": 241.93052788718228,
+            "y": -220.55045185946787
+          },
+          {
+            "x": 243.87515907634466,
+            "y": -221.60627884022946
+          },
+          {
+            "x": 247.80772157821303,
+            "y": -225.10641258525928
+          },
+          {
+            "x": 251.79966794081153,
+            "y": -230.2451100743399
+          },
+          {
+            "x": 255.85297859934673,
+            "y": -236.7670801467219
+          },
+          {
+            "x": 264.1516145450531,
+            "y": -252.93967339839196
+          },
+          {
+            "x": 272.7194728969845,
+            "y": -271.5818630542737
+          },
+          {
+            "x": 281.5723971367927,
+            "y": -290.6513198283713
+          },
+          {
+            "x": 290.72623074612994,
+            "y": -308.10571443468865
+          },
+          {
+            "x": 295.4209396523882,
+            "y": -315.58903552305617
+          },
+          {
+            "x": 300.19681720664835,
+            "y": -321.90271758723026
+          },
+          {
+            "x": 305.0558438441168,
+            "y": -326.7914694664613
+          },
+          {
+            "x": 310,
+            "y": -330
+          },
+          {
+            "x": 314.09453477248576,
+            "y": -331.2317098438106
+          },
+          {
+            "x": 318.24335313739357,
+            "y": -331.25728229849665
+          },
+          {
+            "x": 322.44283618856196,
+            "y": -330.15712652333303
+          },
+          {
+            "x": 326.68936501982967,
+            "y": -328.0116516775947
+          },
+          {
+            "x": 330.979320725035,
+            "y": -324.9012669205567
+          },
+          {
+            "x": 335.3090843980166,
+            "y": -320.9063814114938
+          },
+          {
+            "x": 344.0735600226625,
+            "y": -310.5847447743939
+          },
+          {
+            "x": 352.9538406444755,
+            "y": -297.6900150404948
+          },
+          {
+            "x": 361.92097501416407,
+            "y": -282.8654654839962
+          },
+          {
+            "x": 380,
+            "y": -250
+          }
+        ]
+      },
+      {
+        "kind": "spline",
+        "handle": "70",
+        "layerId": "0",
+        "definitionMethod": "control-vertices",
+        "degree": 3,
+        "controlPoints": [
+          {
+            "x": -2.1907857004593535e-15,
+            "y": -500.0000000000001
+          },
+          {
+            "x": 10.42422019036024,
+            "y": -463.8082784400845
+          },
+          {
+            "x": 35.72568359992095,
+            "y": -375.9644395672248
+          },
+          {
+            "x": 53.5296427956515,
+            "y": -515.3748005239364
+          },
+          {
+            "x": 63.01106068916445,
+            "y": -547.3790981820207
+          },
+          {
+            "x": 65.39460254461639,
+            "y": -555.4246862870001
+          },
+          {
+            "x": 78.46109321175489,
+            "y": -582.9390517841568
+          },
+          {
+            "x": 95.93597362374047,
+            "y": -381.31201398214705
+          },
+          {
+            "x": 135.59873327830888,
+            "y": -468.384571814762
+          },
+          {
+            "x": 150,
+            "y": -500
+          }
+        ],
+        "knots": [
+          0,
+          0,
+          0,
+          0,
+          0.18540030707826755,
+          0.44999999999999984,
+          0.44999999999999984,
+          0.44999999999999984,
+          0.516517945955128,
+          0.8244510952820374,
+          1,
+          1,
+          1,
+          1
+        ],
+        "closed": false,
+        "periodic": false
+      },
+      {
+        "kind": "spline",
+        "handle": "80",
+        "layerId": "0",
+        "definitionMethod": "control-vertices",
+        "degree": 4,
+        "controlPoints": [
+          {
+            "x": 0,
+            "y": -700
+          },
+          {
+            "x": 11.250000000000002,
+            "y": -673.7499999999993
+          },
+          {
+            "x": 25,
+            "y": -667.5000000000005
+          },
+          {
+            "x": 55.62500000000003,
+            "y": -678.1249999999999
+          },
+          {
+            "x": 88.7499999999999,
+            "y": -701.2499999999994
+          },
+          {
+            "x": 105.00000000000011,
+            "y": -707.5000000000003
+          },
+          {
+            "x": 120,
+            "y": -700
+          }
+        ],
+        "knots": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0.5000000000000001,
+          0.5000000000000001,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "closed": false,
+        "periodic": false
+      },
+      {
+        "kind": "spline",
+        "handle": "90",
+        "layerId": "0",
+        "definitionMethod": "control-vertices",
+        "degree": 3,
+        "controlPoints": [
+          {
+            "x": 0,
+            "y": -900
+          },
+          {
+            "x": 15,
+            "y": -865
+          },
+          {
+            "x": 100,
+            "y": -910
+          },
+          {
+            "x": 120,
+            "y": -900
+          }
+        ],
+        "knots": [
+          0,
+          0,
+          0,
+          0,
+          1,
+          1,
+          1,
+          1
+        ],
+        "closed": false,
+        "periodic": false
+      },
+      {
+        "kind": "spline",
+        "handle": "91",
+        "layerId": "0",
+        "definitionMethod": "control-vertices",
+        "degree": 3,
+        "controlPoints": [
+          {
+            "x": 180,
+            "y": -900
+          },
+          {
+            "x": 198,
+            "y": -858
+          },
+          {
+            "x": 263.125,
+            "y": -896.8749999999999
+          },
+          {
+            "x": 282.22222222222223,
+            "y": -908.8888888888889
+          },
+          {
+            "x": 300,
+            "y": -900
+          }
+        ],
+        "knots": [
+          0,
+          0,
+          0,
+          0,
+          0.4999999999999998,
+          1,
+          1,
+          1,
+          1
+        ],
+        "weights": [
+          1,
+          1.25,
+          2,
+          2.25,
+          2.5
+        ],
+        "closed": false,
+        "periodic": false
+      },
+      {
+        "kind": "spline",
+        "handle": "92",
+        "layerId": "0",
+        "definitionMethod": "control-vertices",
+        "degree": 2,
+        "controlPoints": [
+          {
+            "x": 360,
+            "y": -900
+          },
+          {
+            "x": 390,
+            "y": -830
+          },
+          {
+            "x": 480,
+            "y": -900
+          }
+        ],
+        "knots": [
+          0,
+          0,
+          0,
+          1,
+          1,
+          1
+        ],
+        "weights": [
+          1,
+          1.25,
+          1
+        ],
+        "closed": false,
+        "periodic": false
+      },
+      {
+        "kind": "spline",
+        "handle": "93",
+        "layerId": "0",
+        "definitionMethod": "control-vertices",
+        "degree": 3,
+        "controlPoints": [
+          {
+            "x": 540,
+            "y": -900
+          },
+          {
+            "x": 570,
+            "y": -830
+          },
+          {
+            "x": 660,
+            "y": -920
+          },
+          {
+            "x": 610,
+            "y": -960
+          },
+          {
+            "x": 555,
+            "y": -945
+          },
+          {
+            "x": 540,
+            "y": -900
+          },
+          {
+            "x": 570,
+            "y": -830
+          },
+          {
+            "x": 660,
+            "y": -920
+          }
+        ],
+        "knots": [
+          0,
+          0.08333333333333337,
+          0.16666666666666663,
+          0.25,
+          0.3333333333333333,
+          0.5,
+          0.5833333333333334,
+          0.6666666666666666,
+          0.75,
+          0.8333333333333333,
+          1,
+          1.0833333333333335
+        ],
+        "closed": true,
+        "periodic": true
+      },
+      {
+        "kind": "spline",
+        "handle": "94",
+        "layerId": "0",
+        "definitionMethod": "control-vertices",
+        "degree": 2,
+        "controlPoints": [
+          {
+            "x": 720,
+            "y": -900
+          },
+          {
+            "x": 750,
+            "y": -830
+          },
+          {
+            "x": 845,
+            "y": -930
+          },
+          {
+            "x": 880,
+            "y": -900
+          }
+        ],
+        "knots": [
+          0,
+          0,
+          0,
+          0.3333333333333333,
+          1,
+          1,
+          1
+        ],
+        "closed": false,
+        "periodic": false
+      }
+    ],
+    "layers": [
+      {
+        "id": "0",
+        "name": "0",
+        "visible": true,
+        "frozen": false,
+        "locked": false,
+        "plottable": true
+      }
+    ],
+    "linetypes": [],
+    "textStyles": [],
+    "dimensionStyles": [],
+    "blocks": [],
+    "layouts": [
+      {
+        "id": "model",
+        "name": "Model",
+        "kind": "model",
+        "viewports": [],
+        "entities": []
+      }
+    ],
+    "attachments": [],
+    "metadata": {
+      "createdAt": "2026-08-31T07:10:00.000Z",
+      "updatedAt": "2026-08-31T07:10:04.000Z"
+    }
+  },
+  "evaluatedEndpointsByHandle": {
+    "10": {
+      "start": {
+        "x": 140,
+        "y": 0
+      },
+      "end": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    "20": {
+      "start": {
+        "x": 0,
+        "y": 200
+      },
+      "end": {
+        "x": 0,
+        "y": 200
+      }
+    },
+    "30": {
+      "start": {
+        "x": 220,
+        "y": 0
+      },
+      "end": {
+        "x": 360,
+        "y": 0
+      }
+    },
+    "50": {
+      "start": {
+        "x": 420,
+        "y": 0
+      },
+      "end": {
+        "x": 560,
+        "y": 0
+      }
+    },
+    "70": {
+      "start": {
+        "x": -2.1907857004593535e-15,
+        "y": -500.0000000000001
+      },
+      "end": {
+        "x": 150,
+        "y": -500
+      }
+    },
+    "80": {
+      "start": {
+        "x": 0,
+        "y": -700
+      },
+      "end": {
+        "x": 120,
+        "y": -700
+      }
+    },
+    "90": {
+      "start": {
+        "x": 0,
+        "y": -900
+      },
+      "end": {
+        "x": 120,
+        "y": -900
+      }
+    },
+    "91": {
+      "start": {
+        "x": 180,
+        "y": -900
+      },
+      "end": {
+        "x": 300,
+        "y": -900
+      }
+    },
+    "92": {
+      "start": {
+        "x": 360,
+        "y": -900
+      },
+      "end": {
+        "x": 480,
+        "y": -900
+      }
+    },
+    "93": {
+      "start": {
+        "x": 576.25,
+        "y": -852.9166666666666
+      },
+      "end": {
+        "x": 576.25,
+        "y": -852.9166666666666
+      }
+    },
+    "94": {
+      "start": {
+        "x": 720,
+        "y": -900
+      },
+      "end": {
+        "x": 880,
+        "y": -900
+      }
+    }
+  },
+  "dxf": {
+    "sha256": "2b4655db5c683467008e282aa06544aab27c553166d17ca4c89a2a9e5bb43fe0",
+    "byteLength": 11725,
+    "emittedHandles": [
+      "10",
+      "20",
+      "30",
+      "50",
+      "61",
+      "70",
+      "80",
+      "90",
+      "91",
+      "92",
+      "93",
+      "94"
+    ]
+  },
+  "kdraw": {
+    "sha256": "1f92ecf5b6db30fcdd1b7c224dc59cd45143a32a16f58bf311d3321a3a28cd1c",
+    "byteLength": 10069
+  }
+}

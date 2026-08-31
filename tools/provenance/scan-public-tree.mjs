@@ -16,6 +16,8 @@ const blockedCad = /\.(dwg|dwt|dws|dxf|pdf|fcstd|kdraw)$/i;
 const syntheticCadAllowlist = new Set([
   "parity/fixtures/F-003-empty-mm.dxf",
   "evidence/artifacts/F-003-kuubik.dxf",
+  "evidence/artifacts/F-012-kuubik.dxf",
+  "evidence/artifacts/F-012-kuubik.kdraw",
   "parity/fixtures/F-015-empty-mm.dxf",
   "evidence/artifacts/F-015-kuubik.dxf",
   "evidence/artifacts/F-015-browser-empty.dxf",

@@ -51,6 +51,13 @@ if (shellState.supplementalComparisonReadback && shellState.supplementalMeasured
   const panelNames = Object.keys(ribbon.panels);
   const boundaryMatch = ribbonComparison.panels.length === 10
     && ribbonComparison.panels.every(({ rightDeltaPx }) => Math.abs(rightDeltaPx) <= VISUAL_ACCEPTANCE.zoneTolerancePx);
+  const largeIconKinds = new Set(["line", "text", "insert", "match-properties", "paste", "base-view"]);
+  const iconographyExact = ribbonComparison.iconSource === "original-kuubik-inline-svg"
+    && ribbonComparison.iconography.length === 35
+    && ribbonComparison.iconography.every(({ kind, width, height, pathCount }) => {
+      const expectedSize = largeIconKinds.has(kind) ? 34 : 18;
+      return width === expectedSize && height === expectedSize && pathCount >= 1;
+    });
   const surfaceMatch = ribbonComparison.surface.autoCad === "#3b4453"
     && ribbonComparison.surface.kuubik === "rgb(59, 68, 83)"
     && panelNames.length === 10
@@ -62,7 +69,7 @@ if (shellState.supplementalComparisonReadback && shellState.supplementalMeasured
     && ribbon.hover.backgroundColor === "rgb(72, 81, 90)"
     && ribbon.active.backgroundColor === "rgb(23, 111, 159)"
     && ribbon.hover.backgroundColor !== ribbon.active.backgroundColor;
-  if (!boundaryMatch || !surfaceMatch || !commandExtensionBounded || !interactionStatesDistinct || ribbonComparison.status !== "PASS") {
+  if (!boundaryMatch || !surfaceMatch || !iconographyExact || !commandExtensionBounded || !interactionStatesDistinct || ribbonComparison.status !== "PASS") {
     throw new Error("Home ribbon supplement is outside the measured AutoCAD reference tolerance");
   }
 }
@@ -114,6 +121,83 @@ if (shellState.bottomComparisonReadback && shellState.supplementalMeasuredReadba
       && bottomComparison.statusControls[name].pressed === null);
   if (!geometryBounded || !surfacesExact || !controlsHonest || bottomComparison.status !== "PASS") {
     throw new Error("Shared bottom chrome is outside the measured AutoCAD reference tolerance");
+  }
+}
+
+const activeDrawingState = VISUAL_STATES.find(({ id }) => id === "active-drawing-command");
+if (activeDrawingState.comparisonReadback) {
+  const browserReadback = JSON.parse(await readFile(resolve(activeDrawingState.measuredReadback), "utf8"));
+  const activeComparison = JSON.parse(await readFile(resolve(activeDrawingState.comparisonReadback), "utf8"));
+  const fixture = browserReadback.states.activeFixture;
+  const grid = browserReadback.states.activeModelDisplayReadback;
+  const fixtureExact = fixture.previewCommand === "LINE"
+    && fixture.entityCount === 3
+    && fixture.handles.join(",") === "B1,B2,B3"
+    && fixture.selectedHandles.length === 0
+    && Math.abs(fixture.crosshair.centerX - 846.5) <= VISUAL_ACCEPTANCE.repeatedControlTolerancePx
+    && Math.abs(fixture.crosshair.centerY - 984.5) <= VISUAL_ACCEPTANCE.repeatedControlTolerancePx;
+  const gridExact = grid.verticalGridRuns.length === 121 && grid.horizontalGridRuns.length === 84;
+  const activeUiExact = activeComparison.activeUi?.ribbon?.backgroundColor === "rgb(23, 111, 159)"
+    && activeComparison.activeUi?.ribbon?.borderColor === "rgb(104, 180, 223)"
+    && activeComparison.activeUi?.commandLine?.width === 0
+    && activeComparison.activeUi?.commandLine?.height === 0;
+  if (!fixtureExact || !gridExact || !activeUiExact || activeComparison.status !== "PASS") {
+    throw new Error("Active LINE fixture is outside the measured AutoCAD reference tolerance");
+  }
+}
+
+const selectedPropertiesState = VISUAL_STATES.find(({ id }) => id === "selected-properties");
+if (selectedPropertiesState.status === "PASS") {
+  const browserReadback = JSON.parse(await readFile(resolve(selectedPropertiesState.measuredReadback), "utf8"));
+  const selectedComparison = JSON.parse(await readFile(resolve(selectedPropertiesState.comparisonReadback), "utf8"));
+  const fixture = browserReadback.states.selectedFixture;
+  const geometry = browserReadback.states.selectedProperties?.geometry;
+  const fixtureExact = fixture.handles.join(",") === "A1,A2,A3"
+    && fixture.selectedHandles.join(",") === "A1,A2,A3"
+    && fixture.entityKinds.join(",") === "circle,polyline,text"
+    && fixture.polyline.closed
+    && Math.abs(fixture.circle.center.x - 1298) <= VISUAL_ACCEPTANCE.repeatedControlTolerancePx
+    && Math.abs(fixture.circle.center.y - 503) <= VISUAL_ACCEPTANCE.repeatedControlTolerancePx
+    && Math.abs(fixture.circle.radiusPx - 123.5) <= VISUAL_ACCEPTANCE.repeatedControlTolerancePx;
+  const paletteExact = geometry.generalRows.length === 9
+    && Math.abs(geometry.palette.width - 680) <= VISUAL_ACCEPTANCE.repeatedControlTolerancePx
+    && Math.abs(geometry.layerManager.height - 513) <= VISUAL_ACCEPTANCE.repeatedControlTolerancePx
+    && Math.abs(geometry.propertiesHeader.y - 694) <= VISUAL_ACCEPTANCE.repeatedControlTolerancePx
+    && Math.abs(geometry.dataHeader.bottom - 1043) <= VISUAL_ACCEPTANCE.repeatedControlTolerancePx;
+  const gripsExact = selectedComparison.selectionFeedback?.expectedSelectionColor === "#0478ec"
+    && selectedComparison.selectionFeedback?.expectedGripFill === "#007fff"
+    && selectedComparison.selectionFeedback?.expectedGripStroke === "#283747"
+    && selectedComparison.selectionFeedback?.gripCenters?.length === 14
+    && selectedComparison.selectionFeedback.gripCenters.every(({ autoCad, kuubik }) => autoCad === "#007fff" && kuubik === "#007fff");
+  const viewIndicatorExact = JSON.stringify(selectedComparison.actualViewIndicator) === JSON.stringify(selectedComparison.expectedViewIndicator);
+  const paletteIconsExact = selectedComparison.paletteIconSource === "original-kuubik-inline-svg"
+    && selectedComparison.paletteIconography.length === 20
+    && selectedComparison.paletteIconography.every(({ pathCount }) => pathCount >= 1);
+  if (!fixtureExact || !paletteExact || !gripsExact || !viewIndicatorExact || !paletteIconsExact || selectedComparison.status !== "PASS") {
+    throw new Error("Selected-object and Properties state is outside the measured AutoCAD reference tolerance");
+  }
+}
+
+const layoutState = VISUAL_STATES.find(({ id }) => id === "layout-paper-space");
+if (layoutState.comparisonReadback) {
+  const browserReadback = JSON.parse(await readFile(resolve(layoutState.measuredReadback), "utf8"));
+  const layoutComparison = JSON.parse(await readFile(resolve(layoutState.comparisonReadback), "utf8"));
+  const geometry = browserReadback.states.layoutGeometry;
+  const fixture = browserReadback.states.layoutReadback?.projectedFixture;
+  const geometryBounded = Math.abs(geometry.sheet.x - 727) <= VISUAL_ACCEPTANCE.zoneTolerancePx
+    && Math.abs(geometry.sheet.y - 212) <= VISUAL_ACCEPTANCE.zoneTolerancePx
+    && Math.abs(geometry.printable.x - 803) <= VISUAL_ACCEPTANCE.zoneTolerancePx
+    && Math.abs(geometry.printable.y - 238) <= VISUAL_ACCEPTANCE.zoneTolerancePx
+    && Math.abs(geometry.viewportFrame.x - 902) <= VISUAL_ACCEPTANCE.zoneTolerancePx
+    && Math.abs(geometry.viewportFrame.y - 314) <= VISUAL_ACCEPTANCE.zoneTolerancePx;
+  const fixtureLive = fixture?.polyline?.closed === true
+    && fixture?.text?.value === "KUUBIK AUDIT"
+    && Math.abs(fixture.circle.radiusPx - 95) <= VISUAL_ACCEPTANCE.zoneTolerancePx;
+  const layoutToolsExact = layoutComparison.layoutTools?.compactByDefault === true
+    && layoutComparison.layoutTools?.openStateVerified === true
+    && layoutComparison.layoutTools?.pageSetupStillReachable === true;
+  if (!geometryBounded || !fixtureLive || !layoutToolsExact || layoutComparison.status !== "PASS") {
+    throw new Error("Layout/paper-space fixture is outside the measured AutoCAD reference tolerance");
   }
 }
 

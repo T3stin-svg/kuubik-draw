@@ -1,0 +1,163 @@
+{
+  "reference": {
+    "product": "AutoCAD 2024.1.2",
+    "workspace": "Drafting & Annotation",
+    "ref": "private://autocad-2024/layout-paper-space",
+    "sha256": "bda16d92411c9f257c6a481ba901d7cf3f974747652cf6012d0199129c013ada",
+    "redistributablePixelsIncluded": false
+  },
+  "kuubik": {
+    "stateArtifact": "evidence/artifacts/visual-shell-wave-24/visual-shell-states.json",
+    "screenshot": "evidence/artifacts/visual-shell-wave-24/visual-shell-layout-paper-space.png",
+    "screenshotSha256": "0d3532389dcd2fb158fe68ff8bded75e5ed007fc7ff5efbc8371c66f46384bb7"
+  },
+  "viewport": [
+    1920,
+    1080
+  ],
+  "browserZoomPercent": 100,
+  "windowsDpiScalePercent": 100,
+  "expectedGeometry": {
+    "sheet": {
+      "x": 727,
+      "y": 212,
+      "right": 1869,
+      "bottom": 1018
+    },
+    "printable": {
+      "x": 803,
+      "y": 238,
+      "right": 1795,
+      "bottom": 990
+    },
+    "viewportFrame": {
+      "x": 902,
+      "y": 314,
+      "right": 1695,
+      "bottom": 916
+    },
+    "layoutbar": {
+      "y": 1043,
+      "height": 37
+    }
+  },
+  "actualGeometry": {
+    "desk": {
+      "x": 0,
+      "y": 179,
+      "width": 1920,
+      "height": 862,
+      "right": 1920,
+      "bottom": 1041
+    },
+    "sheet": {
+      "x": 727.828125,
+      "y": 212,
+      "width": 1141.328125,
+      "height": 807,
+      "right": 1869.15625,
+      "bottom": 1019
+    },
+    "printable": {
+      "x": 803.046875,
+      "y": 237.90625,
+      "width": 992.234375,
+      "height": 752.3125,
+      "right": 1795.28125,
+      "bottom": 990.21875
+    },
+    "viewportFrame": {
+      "x": 902.40625,
+      "y": 314.59375,
+      "width": 792.15625,
+      "height": 601.828125,
+      "right": 1694.5625,
+      "bottom": 916.421875
+    },
+    "palette": {
+      "x": 0,
+      "y": 179,
+      "width": 678,
+      "height": 513,
+      "right": 678,
+      "bottom": 692
+    },
+    "layoutbar": {
+      "x": 0,
+      "y": 1041,
+      "width": 1920,
+      "height": 37,
+      "right": 1920,
+      "bottom": 1078
+    }
+  },
+  "expectedFixture": {
+    "polyline": {
+      "topLeft": {
+        "x": 903,
+        "y": 432
+      },
+      "bottomRight": {
+        "x": 1694,
+        "y": 905
+      }
+    },
+    "circle": {
+      "center": {
+        "x": 1298,
+        "y": 668
+      },
+      "radiusPx": 95
+    },
+    "text": {
+      "insertion": {
+        "x": 1094,
+        "y": 385
+      },
+      "heightPx": 58
+    }
+  },
+  "actualFixture": {
+    "polyline": {
+      "topLeft": {
+        "x": 903.8202627388534,
+        "y": 431.1718669568156
+      },
+      "bottomRight": {
+        "x": 1692.9922372611466,
+        "y": 904.5213667676554
+      }
+    },
+    "circle": {
+      "center": {
+        "x": 1298.0220377436597,
+        "y": 667.8466168622351
+      },
+      "radiusPx": 94.900427315972
+    },
+    "text": {
+      "insertion": {
+        "x": 1093.6211173707982,
+        "y": 384.2979716833397
+      },
+      "heightPx": 57.631838450995154
+    }
+  },
+  "referenceTextPixels": {
+    "left": 1099,
+    "top": 337,
+    "right": 1553,
+    "bottom": 385,
+    "darkPixels": 6713
+  },
+  "kuubikTextPixels": {
+    "left": 1099,
+    "top": 337,
+    "right": 1555,
+    "bottom": 385,
+    "darkPixels": 6011
+  },
+  "tolerancePx": 2,
+  "scope": "Layout/paper-space state only: sheet, printable boundary, viewport frame, owned DXF fixture projection, grid-bearing viewport render and live IndexedDB read-back. This does not independently raise the five-category visual score.",
+  "status": "PASS"
+}

@@ -1,0 +1,211 @@
+{
+  "reference": {
+    "product": "AutoCAD 2024.1.2",
+    "workspace": "Drafting & Annotation",
+    "ref": "private://autocad-2024/line-active",
+    "sha256": "08505f04ee81f68e2adf76aa2cd06a0d5f9d12778ff1391bcd167ddb4cbaf4bc",
+    "redistributablePixelsIncluded": false
+  },
+  "kuubik": {
+    "stateArtifact": "evidence/artifacts/visual-shell-wave-38/visual-shell-states.json",
+    "screenshot": "evidence/artifacts/visual-shell-wave-38/visual-shell-active-command.png",
+    "screenshotSha256": "9c3b548ed9d51ea67711c4f6c1a06f48b3137c933d040fe693daa23ac86e87d6"
+  },
+  "viewport": [
+    1920,
+    1080
+  ],
+  "browserZoomPercent": 100,
+  "windowsDpiScalePercent": 100,
+  "expectedFixture": {
+    "polyline": {
+      "topLeft": {
+        "x": 785,
+        "y": 195
+      },
+      "bottomRight": {
+        "x": 1812,
+        "y": 811
+      }
+    },
+    "circle": {
+      "center": {
+        "x": 1298,
+        "y": 503
+      },
+      "radiusPx": 123.5
+    },
+    "text": {
+      "value": "KUUBIK AUDIT",
+      "insertion": {
+        "x": 1032,
+        "y": 134
+      },
+      "heightPx": 75
+    },
+    "crosshair": {
+      "centerX": 846.5,
+      "centerY": 984.5,
+      "width": 23,
+      "height": 23
+    }
+  },
+  "actualFixture": {
+    "entityKinds": [
+      "circle",
+      "polyline",
+      "text"
+    ],
+    "handles": [
+      "B1",
+      "B2",
+      "B3"
+    ],
+    "selectedHandles": [],
+    "previewCommand": "LINE",
+    "entityCount": 3,
+    "polyline": {
+      "closed": true,
+      "vertices": [
+        {
+          "x": 785.0000000000001,
+          "y": 195.00000000000082
+        },
+        {
+          "x": 1811.9999999999986,
+          "y": 195.00000000000082
+        },
+        {
+          "x": 1811.9999999999986,
+          "y": 811
+        },
+        {
+          "x": 785.0000000000001,
+          "y": 811
+        }
+      ]
+    },
+    "circle": {
+      "center": {
+        "x": 1297.9999999999989,
+        "y": 502.9999999999999
+      },
+      "radiusPx": 123.4999999999999
+    },
+    "text": {
+      "value": "KUUBIK AUDIT",
+      "insertion": {
+        "x": 1032.0000000000007,
+        "y": 134.00000000000108
+      },
+      "heightPx": 74.99999999999997
+    },
+    "crosshair": {
+      "x": 835,
+      "y": 973,
+      "width": 23,
+      "height": 23,
+      "centerX": 846.5,
+      "centerY": 984.5
+    }
+  },
+  "referencePixels": {
+    "text": {
+      "left": 1037,
+      "top": 253,
+      "right": 1631,
+      "bottom": 315,
+      "width": 595,
+      "height": 63,
+      "darkPixels": 11602
+    },
+    "circle": {
+      "left": 1175,
+      "top": 561,
+      "right": 1421,
+      "bottom": 807,
+      "width": 247,
+      "height": 247,
+      "darkPixels": 595
+    },
+    "rectangleTop": {
+      "left": 785,
+      "right": 1811,
+      "count": 1027
+    },
+    "rectangleBottom": {
+      "left": 781,
+      "right": 1811,
+      "count": 1028
+    }
+  },
+  "kuubikPixels": {
+    "text": {
+      "left": 1038,
+      "top": 253,
+      "right": 1633,
+      "bottom": 315,
+      "width": 596,
+      "height": 63,
+      "darkPixels": 11091
+    },
+    "circle": {
+      "left": 1174,
+      "top": 560,
+      "right": 1421,
+      "bottom": 807,
+      "width": 248,
+      "height": 248,
+      "darkPixels": 445
+    },
+    "rectangleTop": {
+      "left": 784,
+      "right": 1811,
+      "count": 3
+    },
+    "rectangleBottom": {
+      "left": 785,
+      "right": 1811,
+      "count": 66
+    }
+  },
+  "grid": {
+    "verticalRuns": 121,
+    "horizontalRuns": 84,
+    "firstVerticalCenters": [
+      682.0,
+      692.0,
+      703.0,
+      713.0,
+      723.0,
+      733.0,
+      744.0,
+      754.0,
+      764.0,
+      775.0
+    ]
+  },
+  "activeUi": {
+    "ribbon": {
+      "color": "rgb(255, 255, 255)",
+      "backgroundColor": "rgb(23, 111, 159)",
+      "borderColor": "rgb(104, 180, 223)"
+    },
+    "commandLine": {
+      "x": 0,
+      "y": 0,
+      "width": 0,
+      "height": 0,
+      "right": 0,
+      "bottom": 0,
+      "backgroundColor": "rgba(34, 41, 51, 0.96)",
+      "borderTopColor": "rgb(78, 90, 104)",
+      "borderTopWidth": "1px",
+      "borderBottomColor": "rgb(78, 90, 104)",
+      "borderBottomWidth": "1px"
+    }
+  },
+  "tolerancePx": 2,
+  "scope": "Active LINE state: owned TEXT/POLYLINE/CIRCLE fixture, light-model grid and UCS phase, object ink, cursor placement, active ribbon feedback, hidden Ctrl+9 command line and live browser/document read-back. This does not independently raise the five-category visual score.",
+  "status": "PASS"
+}

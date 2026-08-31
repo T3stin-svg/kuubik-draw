@@ -6,6 +6,7 @@ import {
   trimPointAt,
   type TrimLineCurve,
 } from "./trim.js";
+import { editedControlVertexSpline, transformSplineDefinition } from "./spline.js";
 
 export interface StretchRegion {
   kind: "crossing-window" | "crossing-polygon";
@@ -119,7 +120,7 @@ function translateEntity(entity: CadEntity, delta: CadPoint2): CadEntity | null 
     case "circle":
     case "arc":
     case "ellipse": return { ...entity, center: movedPoint(entity.center, delta) };
-    case "spline": return { ...entity, controlPoints: entity.controlPoints.map((point) => movedPoint(point, delta)) };
+    case "spline": return transformSplineDefinition(entity, (point) => movedPoint(point, delta));
     case "text":
     case "mtext": return { ...entity, position: movedPoint(entity.position, delta) };
     case "leader": return { ...entity, vertices: entity.vertices.map((point) => movedPoint(point, delta)) };
@@ -461,7 +462,7 @@ export function stretchCadEntity(
     if (!selected) return { entity: null, mode: null, movedPointCount: 0, selected: false, reason: "not-selected" };
     if (zeroDelta) return noOp();
     return {
-      entity: { ...entity, controlPoints: entity.controlPoints.map((point) => inside(point) ? movedPoint(point, delta) : point) },
+      entity: editedControlVertexSpline(entity, entity.controlPoints.map((point) => inside(point) ? movedPoint(point, delta) : point)),
       mode: "stretch", movedPointCount: entity.controlPoints.filter(inside).length, selected: true, reason: null,
     };
   }

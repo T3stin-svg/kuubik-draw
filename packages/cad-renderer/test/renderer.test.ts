@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { CadCanvasRenderer, displayColor, entityGripPoints, pannedViewportWorldCenter, viewportGridSpacing, viewportScreenToWorld, viewportVisibleWorldBounds, viewportWorldToScreen, type Canvas2DContext } from "../src/index.js";
+import { CadCanvasRenderer, displayColor, entityBounds, entityGripPoints, pannedViewportWorldCenter, viewportGridSpacing, viewportScreenToWorld, viewportVisibleWorldBounds, viewportWorldToScreen, type Canvas2DContext } from "../src/index.js";
 
 function fakeContext() {
   const calls: Array<[string, ...number[]]> = [];
@@ -53,6 +53,19 @@ describe("Canvas2D parity invariants", () => {
     expect(displayColor({ color: "#ff0000", colorMethod: "aci", aciIndex: 1 }, "light")).toBe("#ff0000");
   });
 
+  it("includes declared text height and width in zoom-extents bounds", () => {
+    expect(entityBounds({
+      kind: "text", handle: "T1", layerId: "0", position: { x: 10, y: 20 },
+      text: "KUUBIK AUDIT", height: 10, rotationRad: 0,
+    })).toEqual({ minX: 10, minY: 20, maxX: 89.2, maxY: 30 });
+    const rotated = entityBounds({
+      kind: "mtext", handle: "T2", layerId: "0", position: { x: 10, y: 20 },
+      text: "AB", height: 10, rotationRad: Math.PI / 2,
+    })!;
+    expect(rotated.minX).toBeCloseTo(0, 12);
+    expect(rotated.maxY).toBeCloseTo(33.2, 12);
+  });
+
   it("draws the model grid as two display-only minor/major passes", () => {
     const renderer = new CadCanvasRenderer();
     renderer.setEntities([]);
@@ -84,6 +97,25 @@ describe("Canvas2D parity invariants", () => {
     expect(calls).toContainEqual(["move", 0, -13]);
   });
 
+  it("draws optional UCS axes through SNAPBASE after the minor and major grid", () => {
+    const renderer = new CadCanvasRenderer();
+    renderer.setEntities([]);
+    const { context, calls } = fakeContext();
+    const strokes: string[] = [];
+    context.stroke = () => { calls.push(["stroke"]); strokes.push(String(context.strokeStyle)); };
+    renderer.render(
+      context,
+      { world: { minX: 0, minY: 0, maxX: 100, maxY: 100 }, widthPx: 100, heightPx: 100, devicePixelRatio: 1 },
+      [],
+      null,
+      [],
+      { grid: { enabled: true, spacingWorld: 10, originWorld: { x: 20, y: 30 }, xAxisColor: "#aa0000", yAxisColor: "#00aa00" } },
+    );
+    expect(strokes.slice(-2)).toEqual(["#aa0000", "#00aa00"]);
+    expect(calls).toContainEqual(["move", 20, 30]);
+    expect(calls.filter(([call, x, y]) => call === "move" && x === 20 && y === 30)).toHaveLength(2);
+  });
+
   it("uses light-model ACI 7 without changing TrueColor white", () => {
     const renderer = new CadCanvasRenderer();
     renderer.setEntities([
@@ -102,6 +134,36 @@ describe("Canvas2D parity invariants", () => {
       { displayTheme: "light" },
     );
     expect(strokes).toEqual(["#000000", "#ffffff"]);
+  });
+
+  it("keeps model-space entities at least one device pixel wide", () => {
+    const renderer = new CadCanvasRenderer();
+    renderer.setEntities([{ kind: "line", handle: "hairline", layerId: "0", start: { x: 0, y: 0 }, end: { x: 10, y: 0 }, appearance: { lineweightMm: 0.25 } }]);
+    const { context } = fakeContext();
+    renderer.render(
+      context,
+      { world: { minX: 0, minY: 0, maxX: 20, maxY: 20 }, widthPx: 200, heightPx: 200, devicePixelRatio: 1 },
+      [{ id: "0", name: "0", visible: true, frozen: false, locked: false, plottable: true }],
+      null,
+      [],
+      { displayTheme: "light" },
+    );
+    expect(context.lineWidth).toBeCloseTo(0.1, 12);
+  });
+
+  it("converts CAD text height to the Canvas em box used by AutoCAD-like glyph metrics", () => {
+    const renderer = new CadCanvasRenderer();
+    renderer.setEntities([{ kind: "text", handle: "label", layerId: "0", position: { x: 0, y: 0 }, text: "KUUBIK AUDIT", height: 75, rotationRad: 0 }]);
+    const { context } = fakeContext();
+    renderer.render(
+      context,
+      { world: { minX: -10, minY: -10, maxX: 100, maxY: 100 }, widthPx: 110, heightPx: 110, devicePixelRatio: 1 },
+      [{ id: "0", name: "0", visible: true, frozen: false, locked: false, plottable: true }],
+      null,
+      [],
+      { displayTheme: "light" },
+    );
+    expect(context.font).toBe("86.25px Arial, sans-serif");
   });
 
   it("uses the shared F-103 plot resolver for ByLayer ink, physical width and solid-hatch alpha", () => {
@@ -334,8 +396,8 @@ describe("Canvas2D parity invariants", () => {
       [],
       { selectedHandles: ["10"] },
     );
-    expect(strokes).toContainEqual({ color: "#4ea9f3", width: 0.625 });
-    expect(strokes.filter(({ color }) => color === "#0b2438")).toHaveLength(8);
+    expect(strokes).toContainEqual({ color: "#0478ec", width: 0.625 });
+    expect(strokes.filter(({ color }) => color === "#283747")).toHaveLength(8);
     expect(calls.filter(([name]) => name === "fill")).toHaveLength(8);
   });
 

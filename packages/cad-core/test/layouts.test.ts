@@ -121,7 +121,7 @@ describe("F-097 layout transactions", () => {
     expect(resolvePaperDefinition(paper)).toEqual({
       widthMm: 297,
       heightMm: 210,
-      marginsMm: { top: 10, right: 10, bottom: 10, left: 10 },
+      marginsMm: { top: 6.5, right: 19, bottom: 7.25, left: 19.35 },
     });
     expect(resolvePaperDefinition({ ...paper, paper: undefined })).toEqual(resolvePaperDefinition(paper));
     expect(() => resolvePaperDefinition({
