@@ -143,6 +143,14 @@ From `apps/web/src/features/command-system/command-engine.ts`:
 - `CommandEngineInputError`
 - command definition, invocation, preparation, option, and result types
 
+From `apps/web/src/features/command-system/geometry-modify-adapters.ts`:
+
+- `prepareGeometryModifyDocumentCommand`
+- `prepareGeometryModifySelectionCommand`
+- `createGeometryModifyCommandDefinitions`
+- `GEOMETRY_MODIFY_DOCUMENT_COMMAND_IDS`
+- typed document/selection request maps and invocation parser map
+
 The integration owner should register adapters for every exported geometry/modify
 preparation function, then mount one `CommandLineEngine` beside the application-owned
 `CadSession`. The engine resolves canonical names and aliases, canonicalizes `/Option`
@@ -151,5 +159,12 @@ and built-in atomic `U`/`UNDO`/`REDO`. PGP-style alias text uses
 `ALIAS, *COMMAND` lines.
 
 The engine does not provide a React command palette or mutate application CSS. That
-UI and command-specific prompt orchestration remain integration work because
+UI and command-specific prompt parsing remain integration work because
 `App.tsx` and `style.css` are outside this workstream's file ownership.
+
+The typed adapter covers LINE, PLINE, CIRCLE, ARC, POLYGON, ELLIPSE, REVCLOUD,
+ARRAYRECT, ARRAYPOLAR, ARRAYPATH, PEDIT, SPLINE, BOUNDARY, REGION, TRIM, EXTEND,
+FILLET, and STRETCH through one `PreparedAtomicCommand` contract. QSELECT and
+SELECTSIMILAR have a separate selection-only adapter so they never create a fake
+document transaction. The visual worker supplies typed `CommandInvocation` parsers
+and may register the resulting definitions directly in `CommandRegistry`.

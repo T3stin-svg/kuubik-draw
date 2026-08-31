@@ -4,22 +4,26 @@
   "rows": ["F-123", "F-129", "F-130"],
   "status": "implemented-kernel-not-integrated-not-certified",
   "implemented": {
-    "F-123": ["shared registry", "case-insensitive resolution", "option keywords", "quoted arguments", "history", "completion", "repeat", "cancel"],
+    "F-123": ["shared registry", "typed adapters for 18 geometry/modify document commands", "selection-only QSELECT/SELECTSIMILAR adapter", "case-insensitive resolution", "option keywords", "quoted arguments", "history", "completion", "repeat", "cancel"],
     "F-129": ["atomic CadSession commit", "U and UNDO", "REDO", "multi-change command grouping"],
     "F-130": ["canonical names", "built-in aliases", "PGP-style alias parser", "underscore and dot command prefixes", "keyboard Enter, Space, Escape, Backspace and history keys"]
   },
   "invariants": {
     "previewEqualsCommit": "preview and execute call the same registered preparation handler",
     "atomicUndoRedo": "one prepared command creates one CadSession operation regardless of change count",
-    "aliasSafety": "conflicts, malformed lines, unknown commands and unknown options fail before mutation"
+    "aliasSafety": "conflicts, malformed lines, unknown commands and unknown options fail before mutation",
+    "typedAdapterSafety": "a parser mutant that returns another canonical command is rejected before CadSession commit"
   },
   "tests": {
-    "unitGoldenMutationWiringAtomic": "apps/web/src/features/command-system/command-engine.test.ts",
-    "lastResult": "1 file passed; 8 tests passed"
+    "unitGoldenMutationWiringAtomic": [
+      "apps/web/src/features/command-system/command-engine.test.ts",
+      "apps/web/src/features/command-system/geometry-modify-adapters.test.ts"
+    ],
+    "lastTargetedResult": "3 files passed; 14 tests passed"
   },
   "knownLimits": [
     "no React command-line UI is wired because App.tsx and style.css are forbidden",
-    "command-specific multi-step prompts must be supplied by integration adapters",
+    "command-specific multi-step prompt parsers must be supplied by the visual integration worker",
     "no user alias persistence file is wired"
   ],
   "certificationGaps": [
