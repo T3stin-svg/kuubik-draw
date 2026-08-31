@@ -258,3 +258,33 @@ matrix has golden/property/mutation coverage and production DXF export/import
 read-back for exact handle, layer, center, radius, appearance, linetype scale, and
 thickness. It remains an uncertified extension until the AutoCAD 2024.1.2 tangent
 matrix and Kuubik browser workflow are run live; parity scores were not changed.
+
+## Wave 10 exports (F-005 complete ARC matrix)
+
+From `packages/cad-core/src/arc-command.ts`:
+
+- `prepareCompleteArcCommand`
+- `solveStartEndRadiusArc`
+- `ArcCommandInputError`
+- `CompleteArcCommandInput`, `CompleteArcConstruction`, `ArcSolutionSelection`,
+  `ArcConstructionSolution`, and `PreparedCompleteArcCommand`
+
+The integration owner should migrate the existing ARC parser to this typed kernel.
+It retains 3-Point and adds Start-Center-End/Angle/Length,
+Start-End-Angle/Direction/Radius, and Center-Start-End/Angle/Length. The optional
+`clockwiseCtrl` flag models the AutoCAD Ctrl direction switch. Angle and length
+forms preserve minor/major intent; Start-End-Radius enumerates both possible centers
+and both directed traversals. An ambiguous result requires an explicit direction
+plus minor/major pair, a near-center pick, a through-point pick, or a candidate index.
+
+Preview and commit must call `prepareCompleteArcCommand` with the same immutable
+input. Commit its single returned change once through `CadSession`. Collinear 3P,
+collapsed endpoints, zero/invalid radius or length, infinite-radius direction,
+full-circle angle, impossible radius, and ambiguous picks fail before a change exists.
+
+DXF ARC is counter-clockwise by definition. Export therefore swaps the start/end
+angles of a clockwise Kuubik arc; import reads it back as CCW with swapped endpoints.
+This preserves the exact geometric locus, handle, layer, radius, center, and common
+appearance properties, but not the original command-direction flag. F-005 remains
+uncertified until AutoCAD 2024.1.2 live command-matrix and Kuubik browser workflow
+read-back are completed. No parity score or certification record was changed.
