@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-110",
+  "kind": "autocad",
+  "authority": "autocad-2024.1.2-desktop",
+  "status": "PASS",
+  "artifactSha256": "9f4a0d601552debab8d2840f4cc56c070ae13753394d5baa1fe049ff1a9456cb",
+  "observedAt": "2026-08-31T21:13:35.207Z",
+  "workflow": "Two separately owned licensed AutoCAD 2024.1.2 Desktop processes opened the source, performed native semantic read-back, saved a distinct scratch DXF, reopened it, repeated read-back and ran AUDIT with repairs disabled.",
+  "result": "The Desktop SaveAs produced a new 86099-byte DXF. Reopen preserved 11 model-space types and handles, millimetre units, named block SYMBOL, dimension handle/style/measurement and anonymous-block handle 700; AUDIT found 0 errors, fixed 0 and erased 0 objects.",
+  "artifact": "evidence/artifacts/F-110-autocad-readback.json"
+}

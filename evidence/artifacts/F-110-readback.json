@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-110",
+  "authority": "independent-and-kuubik-readback",
+  "status": "PASS",
+  "observedAt": "2026-08-31T21:13:35.207Z",
+  "workflow": "The exact AutoCAD Desktop SaveAs output was read independently with ezdxf 1.4.3 and with the production Kuubik DXF parser. Both compared the source and saved semantic manifests; the production Chromium export was then reopened by the Kuubik parser.",
+  "desktopSourceSha256": "99e40e4537e1788a6ebd2d9d6092b4501f3e7fc96fb7fe1769dbeaae549bb0d3",
+  "desktopSavedSha256": "8540f77da4b011c39f38fee5cdeb285ca854e918398fa1fd8944eab31cd4cb4f",
+  "ezdxf": {
+    "artifact": "evidence/artifacts/F-110-ezdxf-readback.json",
+    "sha256": "2806eb0c917cfb69c7032885e37737816d4e14fbecbfed7308858648e7c4e061",
+    "version": "1.4.3",
+    "errors": 0,
+    "fixes": 0
+  },
+  "kuubik": {
+    "artifact": "evidence/artifacts/F-110-kuubik-readback.json",
+    "sha256": "684daff6361ff04445e8932a8625403cdd177d0b57fca38c704ef128e0b8e688",
+    "skipped": 0,
+    "semanticComparison": "exact after 12-decimal numeric normalization"
+  },
+  "browserExport": {
+    "artifact": "packages/cad-dxf/test/fixtures/synthetic/F-110-browser-roundtrip.dxf",
+    "bytes": 7634,
+    "sha256": "90f0ce92ff2c263cec219ed625b2f0d4bc7fec03fd194764b767e0ff177fb6e0",
+    "semanticReadback": "PASS"
+  },
+  "preserved": {
+    "units": "mm",
+    "modelHandles": ["10", "20", "30", "40", "50", "60", "70", "80", "90", "A0", "B0"],
+    "blockEntityHandles": ["C0", "C1"],
+    "text": "TÕEND ŠŽ€",
+    "namedBlock": "SYMBOL",
+    "dimensionStyle": "DIM-ISO"
+  }
+}

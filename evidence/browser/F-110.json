@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-110",
+  "kind": "browser",
+  "authority": "kuubik-draw-production-chromium",
+  "status": "PASS",
+  "artifactSha256": "159f4a6415cdb2b8cbb6c7aeb4d50e24b07b635fcf739fc37e8efa38b951aece",
+  "observedAt": "2026-08-31T21:13:35.207Z",
+  "workflow": "Production Chromium at 1920x1080 on dev port 5204 used the visible DXF import control for the exact AutoCAD Desktop-saved SHA, selected and moved all 11 model objects, used visible Undo/Redo, reloaded IndexedDB revision 4 and used the visible DXF export control.",
+  "result": "The production UI preserved millimetres, all 11 model handles, both block-entity handles, UTF-8 text and editable geometry through MOVE, Undo, Redo, reload and export with zero console or page errors. A separate in-app Browser read-back confirmed that DXF import/export, MOVE, UNDO and REDO are visible production controls, not a harness.",
+  "test": "e2e/f110-desktop-roundtrip.spec.ts",
+  "artifact": "evidence/artifacts/F-110-browser-readback.json"
+}

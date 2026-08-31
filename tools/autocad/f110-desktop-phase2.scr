@@ -1,0 +1,17 @@
+FILEDIA
+0
+CMDECHO
+1
+(defun f110-write-manifest (path phase / file selection index entity data record name block-data) (setq file (open path "w")) (write-line (strcat "PHASE=" phase) file) (write-line (strcat "ACADVER=" (getvar "ACADVER")) file) (write-line (strcat "DWGNAME=" (getvar "DWGNAME")) file) (write-line (strcat "INSUNITS=" (itoa (getvar "INSUNITS"))) file) (setq selection (ssget "_X" '((410 . "Model")))) (write-line (strcat "ENTITY_COUNT=" (itoa (if selection (sslength selection) 0))) file) (setq index 0) (if selection (repeat (sslength selection) (setq entity (ssname selection index) data (entget entity)) (write-line (strcat "ENTITY=" (cdr (assoc 0 data)) "|" (cdr (assoc 5 data)) "|" (cdr (assoc 8 data))) file) (if (= (cdr (assoc 0 data)) "DIMENSION") (write-line (strcat "DIMENSION=" (cdr (assoc 5 data)) "|" (cdr (assoc 2 data)) "|" (itoa (cdr (assoc 70 data))) "|" (cdr (assoc 3 data)) "|" (rtos (cdr (assoc 42 data)) 2 12)) file)) (setq index (1+ index)))) (setq record (tblnext "BLOCK" T)) (while record (setq name (cdr (assoc 2 record)) block-data (entget (tblobjname "BLOCK" name))) (write-line (strcat "BLOCK=" name "|" (cdr (assoc 5 block-data))) file) (setq record (tblnext "BLOCK"))) (close file) (princ))
+_.LOGFILEON
+_.AUDIT
+_N
+(setq f110-logfile (getvar "LOGFILENAME"))
+(f110-write-manifest (strcat (getvar "DWGPREFIX") "F-110-desktop-post.txt") "post")
+(setq f110-file (open (strcat (getvar "DWGPREFIX") "F-110-desktop-post.txt") "a"))
+(write-line "AUDIT_DONE=1" f110-file)
+(write-line (strcat "LOGFILE=" f110-logfile) f110-file)
+(close f110-file)
+(princ "\nF110_AUDIT_DONE=1")
+_.LOGFILEOFF
+_.QUIT

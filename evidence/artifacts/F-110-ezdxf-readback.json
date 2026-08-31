@@ -1,0 +1,633 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-110",
+  "authority": "ezdxf-1.4.3",
+  "status": "PASS",
+  "source": {
+    "path": "packages\\cad-dxf\\test\\fixtures\\synthetic\\F-110-desktop-source.dxf",
+    "bytes": 7587,
+    "sha256": "99e40e4537e1788a6ebd2d9d6092b4501f3e7fc96fb7fe1769dbeaae549bb0d3",
+    "semantic": {
+      "dxfVersion": "AC1018",
+      "insunits": 4,
+      "entityCount": 11,
+      "entities": [
+        {
+          "type": "LINE",
+          "handle": "10",
+          "layer": "GEOMETRY"
+        },
+        {
+          "type": "LWPOLYLINE",
+          "handle": "20",
+          "layer": "GEOMETRY"
+        },
+        {
+          "type": "CIRCLE",
+          "handle": "30",
+          "layer": "GEOMETRY"
+        },
+        {
+          "type": "ARC",
+          "handle": "40",
+          "layer": "GEOMETRY"
+        },
+        {
+          "type": "ELLIPSE",
+          "handle": "50",
+          "layer": "GEOMETRY"
+        },
+        {
+          "type": "SPLINE",
+          "handle": "60",
+          "layer": "GEOMETRY"
+        },
+        {
+          "type": "TEXT",
+          "handle": "70",
+          "layer": "GEOMETRY"
+        },
+        {
+          "type": "MTEXT",
+          "handle": "80",
+          "layer": "GEOMETRY"
+        },
+        {
+          "type": "HATCH",
+          "handle": "90",
+          "layer": "GEOMETRY"
+        },
+        {
+          "type": "DIMENSION",
+          "handle": "A0",
+          "layer": "GEOMETRY"
+        },
+        {
+          "type": "INSERT",
+          "handle": "B0",
+          "layer": "GEOMETRY"
+        }
+      ],
+      "line": {
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "end": [
+          100.0,
+          25.0,
+          0.0
+        ],
+        "color": 3,
+        "trueColor": 65280,
+        "linetype": "DASHED",
+        "linetypeScale": 0.5
+      },
+      "polyline": {
+        "closed": true,
+        "points": [
+          [
+            0.0,
+            0.0,
+            1.0,
+            2.0,
+            0.0
+          ],
+          [
+            50.0,
+            0.0,
+            0.0,
+            0.0,
+            0.5
+          ],
+          [
+            50.0,
+            50.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        ]
+      },
+      "circle": {
+        "center": [
+          20.0,
+          20.0,
+          0.0
+        ],
+        "radius": 8.0
+      },
+      "arc": {
+        "center": [
+          40.0,
+          40.0,
+          0.0
+        ],
+        "radius": 12.0,
+        "startAngle": 14.323944878271,
+        "endAngle": 143.239448782706
+      },
+      "ellipse": {
+        "center": [
+          75.0,
+          20.0,
+          0.0
+        ],
+        "majorAxis": [
+          16.0,
+          4.0,
+          0.0
+        ],
+        "ratio": 0.4,
+        "startParam": 0.0,
+        "endParam": 4.712388980385
+      },
+      "spline": {
+        "degree": 2,
+        "flags": 12,
+        "knots": [
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "controlPoints": [
+          [
+            0.0,
+            80.0,
+            0.0
+          ],
+          [
+            40.0,
+            110.0,
+            0.0
+          ],
+          [
+            80.0,
+            80.0,
+            0.0
+          ]
+        ],
+        "weights": [
+          1.0,
+          0.75,
+          1.0
+        ]
+      },
+      "text": {
+        "value": "TÕEND ŠŽ€",
+        "insert": [
+          0.0,
+          125.0,
+          0.0
+        ],
+        "height": 4.0,
+        "rotation": 5.729577951308,
+        "style": "ISO"
+      },
+      "mtext": {
+        "value": "Rida 1\nRida 2",
+        "insert": [
+          0.0,
+          140.0,
+          0.0
+        ],
+        "height": 3.5,
+        "width": 60.0,
+        "attachment": 5,
+        "rotation": 11.459155902616,
+        "style": "ISO"
+      },
+      "hatch": {
+        "pattern": "SOLID",
+        "solid": 1,
+        "associative": 0,
+        "loops": [
+          [
+            [
+              100.0,
+              0.0
+            ],
+            [
+              130.0,
+              0.0
+            ],
+            [
+              130.0,
+              30.0
+            ],
+            [
+              100.0,
+              30.0
+            ]
+          ]
+        ]
+      },
+      "dimension": {
+        "type": 33,
+        "anonymousBlockHandle": "700",
+        "text": "100.00",
+        "style": "DIM-ISO",
+        "actualMeasurement": 103.077640640442,
+        "measured": 100.0,
+        "defpoint": [
+          0.0,
+          35.0,
+          0.0
+        ],
+        "defpoint2": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "defpoint3": [
+          100.0,
+          25.0,
+          0.0
+        ],
+        "textMidpoint": [
+          50.0,
+          35.0,
+          0.0
+        ]
+      },
+      "insert": {
+        "name": "SYMBOL",
+        "point": [
+          150.0,
+          50.0,
+          0.0
+        ],
+        "scale": [
+          2.0,
+          0.5,
+          1.0
+        ],
+        "rotation": 30.0
+      },
+      "blocks": {
+        "anonymous": {
+          "handle": "700",
+          "entityTypes": []
+        },
+        "SYMBOL": {
+          "handle": "900",
+          "entities": [
+            {
+              "type": "LINE",
+              "handle": "C0"
+            },
+            {
+              "type": "CIRCLE",
+              "handle": "C1"
+            }
+          ]
+        }
+      },
+      "tables": {
+        "layers": [
+          "0",
+          "GEOMETRY",
+          "Defpoints"
+        ],
+        "linetypes": [
+          "ByBlock",
+          "ByLayer",
+          "Continuous",
+          "DASHED"
+        ],
+        "textStyles": [
+          "Standard",
+          "ISO"
+        ],
+        "dimensionStyles": [
+          "Standard",
+          "DIM-ISO"
+        ]
+      },
+      "audit": {
+        "errors": 0,
+        "fixes": 0
+      }
+    }
+  },
+  "desktopSaved": {
+    "path": "packages\\cad-dxf\\test\\fixtures\\synthetic\\F-110-desktop-saved.dxf",
+    "bytes": 86099,
+    "sha256": "8540f77da4b011c39f38fee5cdeb285ca854e918398fa1fd8944eab31cd4cb4f",
+    "semantic": {
+      "dxfVersion": "AC1032",
+      "insunits": 4,
+      "entityCount": 11,
+      "entities": [
+        {
+          "type": "LINE",
+          "handle": "10",
+          "layer": "GEOMETRY"
+        },
+        {
+          "type": "LWPOLYLINE",
+          "handle": "20",
+          "layer": "GEOMETRY"
+        },
+        {
+          "type": "CIRCLE",
+          "handle": "30",
+          "layer": "GEOMETRY"
+        },
+        {
+          "type": "ARC",
+          "handle": "40",
+          "layer": "GEOMETRY"
+        },
+        {
+          "type": "ELLIPSE",
+          "handle": "50",
+          "layer": "GEOMETRY"
+        },
+        {
+          "type": "SPLINE",
+          "handle": "60",
+          "layer": "GEOMETRY"
+        },
+        {
+          "type": "TEXT",
+          "handle": "70",
+          "layer": "GEOMETRY"
+        },
+        {
+          "type": "MTEXT",
+          "handle": "80",
+          "layer": "GEOMETRY"
+        },
+        {
+          "type": "HATCH",
+          "handle": "90",
+          "layer": "GEOMETRY"
+        },
+        {
+          "type": "DIMENSION",
+          "handle": "A0",
+          "layer": "GEOMETRY"
+        },
+        {
+          "type": "INSERT",
+          "handle": "B0",
+          "layer": "GEOMETRY"
+        }
+      ],
+      "line": {
+        "start": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "end": [
+          100.0,
+          25.0,
+          0.0
+        ],
+        "color": 3,
+        "trueColor": 65280,
+        "linetype": "DASHED",
+        "linetypeScale": 0.5
+      },
+      "polyline": {
+        "closed": true,
+        "points": [
+          [
+            0.0,
+            0.0,
+            1.0,
+            2.0,
+            0.0
+          ],
+          [
+            50.0,
+            0.0,
+            0.0,
+            0.0,
+            0.5
+          ],
+          [
+            50.0,
+            50.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        ]
+      },
+      "circle": {
+        "center": [
+          20.0,
+          20.0,
+          0.0
+        ],
+        "radius": 8.0
+      },
+      "arc": {
+        "center": [
+          40.0,
+          40.0,
+          0.0
+        ],
+        "radius": 12.0,
+        "startAngle": 14.323944878271,
+        "endAngle": 143.239448782706
+      },
+      "ellipse": {
+        "center": [
+          75.0,
+          20.0,
+          0.0
+        ],
+        "majorAxis": [
+          16.0,
+          4.0,
+          0.0
+        ],
+        "ratio": 0.4,
+        "startParam": 0.0,
+        "endParam": 4.712388980385
+      },
+      "spline": {
+        "degree": 2,
+        "flags": 12,
+        "knots": [
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "controlPoints": [
+          [
+            0.0,
+            80.0,
+            0.0
+          ],
+          [
+            40.0,
+            110.0,
+            0.0
+          ],
+          [
+            80.0,
+            80.0,
+            0.0
+          ]
+        ],
+        "weights": [
+          1.0,
+          0.75,
+          1.0
+        ]
+      },
+      "text": {
+        "value": "TÕEND ŠŽ€",
+        "insert": [
+          0.0,
+          125.0,
+          0.0
+        ],
+        "height": 4.0,
+        "rotation": 5.729577951308,
+        "style": "ISO"
+      },
+      "mtext": {
+        "value": "Rida 1\nRida 2",
+        "insert": [
+          0.0,
+          140.0,
+          0.0
+        ],
+        "height": 3.5,
+        "width": 60.0,
+        "attachment": 5,
+        "rotation": 11.459155902616,
+        "style": "ISO"
+      },
+      "hatch": {
+        "pattern": "SOLID",
+        "solid": 1,
+        "associative": 0,
+        "loops": [
+          [
+            [
+              100.0,
+              0.0
+            ],
+            [
+              130.0,
+              0.0
+            ],
+            [
+              130.0,
+              30.0
+            ],
+            [
+              100.0,
+              30.0
+            ]
+          ]
+        ]
+      },
+      "dimension": {
+        "type": 33,
+        "anonymousBlockHandle": "700",
+        "text": "100.00",
+        "style": "DIM-ISO",
+        "actualMeasurement": 103.077640640442,
+        "measured": 100.0,
+        "defpoint": [
+          0.0,
+          35.0,
+          0.0
+        ],
+        "defpoint2": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "defpoint3": [
+          100.0,
+          25.0,
+          0.0
+        ],
+        "textMidpoint": [
+          50.0,
+          35.0,
+          0.0
+        ]
+      },
+      "insert": {
+        "name": "SYMBOL",
+        "point": [
+          150.0,
+          50.0,
+          0.0
+        ],
+        "scale": [
+          2.0,
+          0.5,
+          1.0
+        ],
+        "rotation": 30.0
+      },
+      "blocks": {
+        "anonymous": {
+          "handle": "700",
+          "entityTypes": []
+        },
+        "SYMBOL": {
+          "handle": "900",
+          "entities": [
+            {
+              "type": "LINE",
+              "handle": "C0"
+            },
+            {
+              "type": "CIRCLE",
+              "handle": "C1"
+            }
+          ]
+        }
+      },
+      "tables": {
+        "layers": [
+          "0",
+          "GEOMETRY",
+          "Defpoints"
+        ],
+        "linetypes": [
+          "ByBlock",
+          "ByLayer",
+          "Continuous",
+          "DASHED"
+        ],
+        "textStyles": [
+          "Standard",
+          "ISO"
+        ],
+        "dimensionStyles": [
+          "Standard",
+          "DIM-ISO"
+        ]
+      },
+      "audit": {
+        "errors": 0,
+        "fixes": 0
+      }
+    }
+  },
+  "allowedNormalization": {
+    "dxfVersion": "AC1018 -> AC1032",
+    "anonymousDimensionBlock": "*D1 -> *D0",
+    "anonymousBlockHandlePreserved": "700"
+  }
+}
