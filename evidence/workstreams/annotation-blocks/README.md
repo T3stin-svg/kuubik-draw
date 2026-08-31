@@ -50,3 +50,24 @@ AutoCAD round trip or F-score promotion is claimed.
 Final third-wave regression on 2026-08-31 passed 120 Vitest files / 690 tests. Repository
 typecheck, lint, production build, public-tree scan (1370 files), license gate (119 installed
 packages) and `git diff --check` also passed.
+
+Fourth-wave live-readiness additions:
+
+- prompt values now build the real typed planner inputs with deterministic free handles;
+- the DOM-independent workflow covers TEXT, MTEXT, LEADER, native AC1021 MLEADER, DIM, STYLE,
+  HATCH and the complete BLOCK → INSERT → ATTRIB → BEDIT → EXPLODE sequence;
+- every tested command performs preview, one CadSession commit, exact read-back, Undo and Redo;
+- associative DIM keeps stable target handles; hatch keeps boundary handles, pattern and origin;
+- BEDIT preserves both existing insert handles, transforms and attribute values while replacing
+  only the immutable definition;
+- corrupt prompt/payload and tampered committed-change mutants fail before a false success;
+- the JSON-round-tripped DXF capability receipt rejects handle drift and AC1021 → AC1018 MLEADER
+  downgrade without modifying a DXF adapter.
+
+The wave still contains no App/shell integration, produced annotation/block DXF, AutoCAD live
+workflow or score promotion.
+
+Final fourth-wave regression on 2026-08-31 passed 132 Vitest files / 732 tests. Dedicated gates
+passed 15 DXF files / 50 tests and 7 PDF files / 22 tests. Repository typecheck, lint, production
+build, public-tree scan (1409 files), license gate (119 installed packages) and
+`git diff --check` also passed.
