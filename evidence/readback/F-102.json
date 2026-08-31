@@ -4,7 +4,7 @@
   "kind": "readback",
   "authority": "independent-parser",
   "status": "PASS",
-  "artifactSha256": "7439acdc0d451d5373255258d62222e2953883807cd038fb91c0985da369be0f",
+  "artifactSha256": "ea5ef19036c91fba39f26a4572c265bc82a42b324c8cce0adafbe2d5f13d770c",
   "observedAt": "2026-08-29T10:45:55.514Z",
   "workflow": "Production cad-core and cad-print commit/read Window, Extents, arbitrary Window, explicit current-view Display and normalized Layout states; independent readers validate KDRAW1, SVG placement and PDF MediaBox/page/xref.",
   "result": "Independent read-back proved exact A4 Window 1:2 placement, atomic Undo/Redo, unrestricted finite Window coordinates, the exact captured Chromium Display window with separately parsed SVG/PDF vectors and normalized Layout 1:1. The final document reached revision 7 without changing the viewport paper coordinates.",

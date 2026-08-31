@@ -32,7 +32,7 @@ if (VISUAL_BASELINE.claimedScore > VISUAL_BASELINE.baselineScore && !allStatesPa
 }
 
 for (const state of VISUAL_STATES) {
-  for (const evidencePath of [state.kuubikEvidence, state.supplementalKuubikEvidence, state.measuredReadback, state.supplementalMeasuredReadback, state.comparisonReadback, state.supplementalComparisonReadback]) {
+  for (const evidencePath of [state.kuubikEvidence, state.supplementalKuubikEvidence, state.measuredReadback, state.supplementalMeasuredReadback, state.comparisonReadback, state.supplementalComparisonReadback, state.chromeComparisonReadback]) {
     if (evidencePath) await access(resolve(evidencePath));
   }
 }
@@ -57,13 +57,39 @@ if (shellState.supplementalComparisonReadback && shellState.supplementalMeasured
     && panelNames.every((name) => ribbon.panels[name].backgroundColor === "rgb(59, 68, 83)");
   const commandExtensionBounded = ribbon.commandPanel.x === 1673
     && ribbon.commandPanel.right === VISUAL_BASELINE.viewport.width
-    && ribbon.commandPanel.height === 92;
+    && ribbon.commandPanel.height === 99;
   const interactionStatesDistinct = ribbon.disabled.color === "rgb(126, 135, 142)"
     && ribbon.hover.backgroundColor === "rgb(72, 81, 90)"
     && ribbon.active.backgroundColor === "rgb(23, 111, 159)"
     && ribbon.hover.backgroundColor !== ribbon.active.backgroundColor;
   if (!boundaryMatch || !surfaceMatch || !commandExtensionBounded || !interactionStatesDistinct || ribbonComparison.status !== "PASS") {
     throw new Error("Home ribbon supplement is outside the measured AutoCAD reference tolerance");
+  }
+}
+
+if (shellState.chromeComparisonReadback && shellState.supplementalMeasuredReadback) {
+  const browserReadback = JSON.parse(await readFile(resolve(shellState.supplementalMeasuredReadback), "utf8"));
+  const chromeComparison = JSON.parse(await readFile(resolve(shellState.chromeComparisonReadback), "utf8"));
+  const chrome = browserReadback.states.topChrome;
+  const zoneNames = ["titlebar", "ribbonTabs", "ribbon", "documentTabs"];
+  const zonesBounded = zoneNames.every((name) => Math.abs(chromeComparison.actualZones[name].y - chromeComparison.expectedZones[name].y) <= 1
+    && Math.abs(chromeComparison.actualZones[name].height - chromeComparison.expectedZones[name].height) <= 1);
+  const surfacesExact = chromeComparison.surfaces.titlebar.autoCad === "#222933"
+    && chromeComparison.surfaces.titlebar.kuubik === "rgb(34, 41, 51)"
+    && chromeComparison.surfaces.ribbonTabs.autoCad === "#222933"
+    && chromeComparison.surfaces.ribbon.autoCad === "#3b4453"
+    && chromeComparison.surfaces.ribbon.kuubik === "rgb(59, 68, 83)"
+    && chromeComparison.surfaces.documentTabs.autoCad === "#222933";
+  const controlsBounded = chrome.title.applicationMark.x === 15
+    && chrome.title.applicationMark.width === 24
+    && Math.abs(chrome.title.workspace.x - 574) <= VISUAL_ACCEPTANCE.zoneTolerancePx
+    && Math.abs(chrome.title.workspace.width - 180) <= VISUAL_ACCEPTANCE.zoneTolerancePx
+    && chrome.ribbonTabs.home.x === 0
+    && chrome.ribbonTabs.home.right === 55
+    && chrome.documentTabs.drawing.x === 90
+    && Math.abs(chrome.documentTabs.drawing.right - 185) <= VISUAL_ACCEPTANCE.zoneTolerancePx;
+  if (!zonesBounded || !surfacesExact || !controlsBounded || chromeComparison.status !== "PASS") {
+    throw new Error("Top application chrome supplement is outside the measured AutoCAD reference tolerance");
   }
 }
 

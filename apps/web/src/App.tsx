@@ -242,6 +242,7 @@ export function App() {
   const canvas = useRef<HTMLCanvasElement>(null);
   const paperDesk = useRef<HTMLDivElement>(null);
   const paperSheet = useRef<HTMLDivElement>(null);
+  const dxfImportInput = useRef<HTMLInputElement>(null);
   const database = useMemo(() => new KDrawIndexedDb(), []);
   const session = useRef(new CadSession(createEmptyDocument({ documentId: LOCAL_DOCUMENT_ID })));
   const committing = useRef(false);
@@ -3012,24 +3013,39 @@ export function App() {
     <main className="app-shell">
       <header className="titlebar" data-visual-zone="titlebar">
         <span className="application-mark" aria-label="Kuubik Draw rakenduse menüü">K</span>
-        <span className="product-name">Kuubik Draw</span>
         <span className="quick-access" aria-label="Kiirpääsuriba">
+          <button type="button" aria-label="Kiirpääsu uus joonis unavailable" disabled>＋</button>
+          <button type="button" aria-label="Kiirpääsu DXF avamine" onClick={() => dxfImportInput.current?.click()}>⌑</button>
+          <button type="button" aria-label="Kiirpääsu KDraw salvestamine" onClick={() => void downloadKDraw()}>▣</button>
+          <button type="button" aria-label="Kiirpääsu DXF-väljund" onClick={downloadDxf}>⇩</button>
+          <i aria-hidden="true" />
           <button type="button" aria-label="Kiirpääsu Undo" onClick={() => void undoLast()} disabled={!canUndoInActiveLayout}>↶</button>
           <button type="button" aria-label="Kiirpääsu Redo" onClick={() => void redoLast()} disabled={!canRedoInActiveLayout}>↷</button>
+          <button type="button" aria-label="Kiirpääsu printimine unavailable" disabled>▧</button>
+          <button type="button" aria-label="Kiirpääsuriba seaded unavailable" disabled>⌄</button>
+        </span>
+        <span className="title-display-controls" aria-label="Vaate kiirjuhtelemendid">
+          <button type="button" aria-label="Vaateaken unavailable" disabled>▣</button>
+          <button type="button" aria-label="Visuaalstiil unavailable" disabled>⌁</button>
+          <button type="button" aria-label="Vaate jagamine unavailable" disabled>↗</button>
         </span>
         <strong className="document-title">{document.metadata.title || document.documentId}.kdraw — Kuubik Draw</strong>
         <span className="workspace-name">2D Drafting &amp; Annotation</span>
-        <span className="product-badge">GPL · experimental</span>
+        <span className="product-badge"><span>Kuubik Draw</span><span aria-hidden="true"> · GPL</span></span>
       </header>
       <nav className="ribbon-tabs" aria-label="Ribbon vahelehed" data-visual-zone="ribbon-tabs">
-        <button type="button" className="application-tab">File</button>
-        <button type="button" className="active" aria-current="page">Home</button>
-        <button type="button" disabled>Insert</button>
-        <button type="button" disabled>Annotate</button>
-        <button type="button" disabled>Parametric</button>
-        <button type="button" disabled>View</button>
-        <button type="button" disabled>Manage</button>
-        <button type="button" disabled>Output</button>
+        <button type="button" className="active tab-home" aria-current="page" data-ribbon-tab="home">Home</button>
+        <button type="button" className="tab-insert" data-ribbon-tab="insert" disabled>Insert</button>
+        <button type="button" className="tab-annotate" data-ribbon-tab="annotate" disabled>Annotate</button>
+        <button type="button" className="tab-parametric" data-ribbon-tab="parametric" disabled>Parametric</button>
+        <button type="button" className="tab-view" data-ribbon-tab="view" disabled>View</button>
+        <button type="button" className="tab-manage" data-ribbon-tab="manage" disabled>Manage</button>
+        <button type="button" className="tab-output" data-ribbon-tab="output" disabled>Output</button>
+        <button type="button" className="tab-addins" data-ribbon-tab="add-ins" disabled>Add-ins</button>
+        <button type="button" className="tab-collaborate" data-ribbon-tab="collaborate" disabled>Collaborate</button>
+        <button type="button" className="tab-express" data-ribbon-tab="express-tools" disabled>Express Tools</button>
+        <button type="button" className="tab-featured" data-ribbon-tab="featured-apps" disabled>Featured Apps</button>
+        <button type="button" className="tab-prodlib" data-ribbon-tab="prodlib" disabled>ProdLib</button>
       </nav>
       <section className="ribbon" aria-label="Joonestustööriistad" data-visual-zone="ribbon">
         <div className="ribbon-primary" aria-label="Home ribbon">
@@ -3630,6 +3646,7 @@ export function App() {
           <span>DXF import</span>
           <input
             aria-label="DXF import"
+            ref={dxfImportInput}
             type="file"
             accept=".dxf,application/dxf,text/plain"
             onChange={(event) => void importDxfFile(event.target.files?.[0], event.currentTarget)}
@@ -3731,10 +3748,10 @@ export function App() {
         </div>
       </section>
       <nav className="document-tabs" aria-label="Joonise vahelehed" data-visual-zone="document-tabs">
-        <button type="button" className="document-menu" aria-label="Jooniste menüü">☰</button>
-        <button type="button" className="start-tab" disabled>Start</button>
-        <button type="button" className="drawing-tab active" aria-current="page">{document.metadata.title || document.documentId}.kdraw<span aria-hidden="true">×</span></button>
-        <button type="button" className="new-drawing-tab" aria-label="Uus joonis" disabled>＋</button>
+        <button type="button" className="document-menu" aria-label="Jooniste menüü" data-document-tab="menu">☰</button>
+        <button type="button" className="start-tab" data-document-tab="start" disabled>Start</button>
+        <button type="button" className="drawing-tab active" data-document-tab="drawing" aria-current="page">{document.metadata.title || document.documentId}.kdraw<span aria-hidden="true">×</span></button>
+        <button type="button" className="new-drawing-tab" aria-label="Uus joonis" data-document-tab="new" disabled>＋</button>
       </nav>
       <section className={`drawing-area ${activePaper ? "paper-mode" : "model-mode"}`} data-mode={activePaper ? "paper" : "model"}>
         {activePaper ? (

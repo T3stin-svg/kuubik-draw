@@ -7,6 +7,10 @@
   --cad-ribbon-control: #4e5a6e;
   --cad-ribbon-divider: #222933;
   --cad-ribbon-label: #d9d9d9;
+  --cad-titlebar-height: 30px;
+  --cad-ribbon-tabs-height: 22px;
+  --cad-ribbon-height: 99px;
+  --cad-document-tabs-height: 30px;
   --cad-palette-width: 680px;
   --cad-paper-center-span: calc(100vw - 1400px);
   --cad-layoutbar-height: 30px;
@@ -19,7 +23,7 @@ button { font: inherit; }
 
 .app-shell {
   display: grid;
-  grid-template-rows: 30px 29px 92px 30px minmax(0, 1fr) 52px 30px 24px;
+  grid-template-rows: var(--cad-titlebar-height) var(--cad-ribbon-tabs-height) var(--cad-ribbon-height) var(--cad-document-tabs-height) minmax(0, 1fr) 52px 30px 24px;
   width: 100%;
   height: 100%;
   background: var(--cad-shell-surface);
@@ -32,25 +36,40 @@ button { font: inherit; }
   border-color: #11161b;
 }
 
-.titlebar { position: relative; gap: 7px; color: #dce2e7; background: var(--cad-shell-surface); border-bottom: 1px solid #101214; font-size: 11px; }
-.application-mark { display: grid; width: 28px; height: 24px; place-items: center; color: #fff; background: #1b74a8; border-radius: 2px; font-size: 15px; font-weight: 700; }
-.product-name { color: #cdd5db; font-size: 10px; }
+.titlebar { position: relative; gap: 8px; padding: 0 15px; color: #dce2e7; background: var(--cad-shell-surface); border-bottom: 0; font-size: 11px; }
+.application-mark { display: grid; width: 24px; height: 24px; flex: 0 0 24px; place-items: center; color: #fff; background: #1b74a8; border-radius: 1px; font-size: 15px; font-weight: 700; }
 .quick-access { display: flex; align-items: center; gap: 1px; }
 .quick-access button { width: 24px; height: 22px; padding: 0; color: #cbd3da; background: transparent; border: 1px solid transparent; border-radius: 2px; }
 .quick-access button:hover:not(:disabled) { background: #3b4248; border-color: #59636c; }
 .quick-access button:disabled { opacity: .35; }
-.document-title { position: absolute; left: 50%; max-width: 42%; overflow: hidden; transform: translateX(-50%); text-overflow: ellipsis; white-space: nowrap; font-size: 11px; font-weight: 400; }
-.workspace-name { margin-left: auto; padding: 3px 8px; color: #c7d0d7; border: 1px solid #4c555d; border-radius: 2px; }
-.product-badge { color: #818b94; font-size: 10px; }
+.quick-access > i { width: 1px; height: 18px; margin: 0 3px; background: #4b5562; }
+.title-display-controls { position: absolute; left: 760px; display: flex; height: 24px; align-items: center; }
+.title-display-controls button { width: 28px; height: 22px; padding: 0; color: #aeb9c4; background: transparent; border: 0; }
+.title-display-controls button:disabled { opacity: .55; }
+.document-title { position: absolute; right: 10px; max-width: 190px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 10px; font-weight: 400; }
+.workspace-name { position: absolute; left: 574px; display: flex; width: 180px; height: 24px; padding: 0 8px; align-items: center; color: #f1f4f6; background: var(--cad-ribbon-surface); border: 1px solid #546174; border-radius: 1px; }
+.product-badge { position: absolute; right: 220px; color: #f0f3f6; font-size: 10px; }
 .ribbon-tabs { gap: 0; background: var(--cad-shell-surface); border-bottom: 1px solid #111416; }
-.ribbon-tabs button { align-self: stretch; min-width: 62px; padding: 0 14px; color: #cbd2d8; background: transparent; border: 0; border-bottom: 2px solid transparent; font-size: 11px; }
+.ribbon-tabs { padding: 0; align-items: stretch; }
+.ribbon-tabs button { align-self: stretch; min-width: 0; padding: 0; color: #d9dfe4; background: transparent; border: 0; border-bottom: 1px solid transparent; font-size: 11px; }
 .ribbon-tabs button:hover:not(:disabled) { color: #fff; background: #383e43; }
-.ribbon-tabs button.active { color: #fff; background: var(--cad-ribbon-surface); border-bottom-color: #55a9df; }
-.ribbon-tabs button.application-tab { min-width: 52px; color: #fff; background: #176b9c; }
-.ribbon-tabs button:disabled { opacity: .68; }
+.ribbon-tabs button.active { color: #fff; background: var(--cad-ribbon-surface); border-bottom-color: var(--cad-ribbon-surface); }
+.ribbon-tabs button:disabled { color: #b6c0c9; opacity: 1; }
+.ribbon-tabs .tab-home { flex: 0 0 55px; }
+.ribbon-tabs .tab-insert { flex: 0 0 52px; }
+.ribbon-tabs .tab-annotate { flex: 0 0 71px; }
+.ribbon-tabs .tab-parametric { flex: 0 0 86px; }
+.ribbon-tabs .tab-view { flex: 0 0 49px; }
+.ribbon-tabs .tab-manage { flex: 0 0 64px; }
+.ribbon-tabs .tab-output { flex: 0 0 62px; }
+.ribbon-tabs .tab-addins { flex: 0 0 63px; }
+.ribbon-tabs .tab-collaborate { flex: 0 0 85px; }
+.ribbon-tabs .tab-express { flex: 0 0 87px; }
+.ribbon-tabs .tab-featured { flex: 0 0 106px; }
+.ribbon-tabs .tab-prodlib { flex: 0 0 65px; }
 .ribbon { display: flex; padding: 0; overflow: hidden; background: var(--cad-ribbon-surface); border-bottom: 1px solid #171a1d; }
-.ribbon-primary { display: flex; flex: 0 0 1673px; min-width: 0; height: 92px; overflow: hidden; }
-.ribbon-panel { position: relative; display: grid; grid-template-rows: minmax(0, 1fr) 15px; flex: 0 0 auto; min-width: 0; height: 92px; padding: 4px 5px 0; background: var(--cad-ribbon-surface); border-right: 1px solid var(--cad-ribbon-divider); box-shadow: 1px 0 #536072; }
+.ribbon-primary { display: flex; flex: 0 0 1673px; min-width: 0; height: var(--cad-ribbon-height); overflow: hidden; }
+.ribbon-panel { position: relative; display: grid; grid-template-rows: minmax(0, 1fr) 15px; flex: 0 0 auto; min-width: 0; height: var(--cad-ribbon-height); padding: 4px 5px 0; background: var(--cad-ribbon-surface); border-right: 1px solid var(--cad-ribbon-divider); box-shadow: 1px 0 #536072; }
 .ribbon-panel-draw { flex-basis: 225px; }
 .ribbon-panel-modify { flex-basis: 250px; }
 .ribbon-panel-annotation { flex-basis: 189px; }
@@ -81,7 +100,7 @@ button { font: inherit; }
 .ribbon-property-stack { display: grid; width: 196px; gap: 1px; }
 .ribbon-property-stack span { display: flex; align-items: center; }
 .property-swatch { width: 12px; height: 12px; margin-right: 6px; background: #fff; border: 1px solid #111; }
-.ribbon-parameters { position: relative; display: flex; flex: 1 1 247px; min-width: 0; height: 92px; align-items: flex-start; gap: 5px; padding: 7px 7px 18px; overflow-x: auto; overflow-y: hidden; background: var(--cad-ribbon-surface); border-left: 1px solid var(--cad-ribbon-divider); scrollbar-width: none; }
+.ribbon-parameters { position: relative; display: flex; flex: 1 1 247px; min-width: 0; height: var(--cad-ribbon-height); align-items: flex-start; gap: 5px; padding: 7px 7px 18px; overflow-x: auto; overflow-y: hidden; background: var(--cad-ribbon-surface); border-left: 1px solid var(--cad-ribbon-divider); scrollbar-width: none; }
 .ribbon-parameters::-webkit-scrollbar { display: none; }
 .ribbon-parameters::after { position: absolute; right: 0; bottom: 2px; left: 0; color: var(--cad-ribbon-label); content: "Command"; font-size: 9px; text-align: center; pointer-events: none; }
 .ribbon button { min-height: 24px; padding: 0 9px; color: #edf1f4; background: #41474d; border: 1px solid #555e66; border-radius: 1px; font-size: 9px; }
@@ -129,12 +148,16 @@ button { font: inherit; }
 .coordinate-input { display: flex; flex: 0 0 auto; align-items: center; gap: 4px; color: #9da7ae; font-size: 8px; }
 .coordinate-input input, .coordinate-input select { width: 84px; height: 24px; padding: 0 5px; color: #edf3f8; background: #24292e; border: 1px solid #59636b; border-radius: 1px; font: inherit; }
 .coordinate-input input:focus { outline: 1px solid #5da9e9; border-color: #5da9e9; }
-.document-tabs { display: flex; align-items: stretch; min-width: 0; height: 30px; padding: 0 8px; overflow: hidden; background: var(--cad-shell-surface); border-bottom: 1px solid #101315; }
-.document-tabs button { min-width: 38px; padding: 0 12px; color: #c9d1d7; background: transparent; border: 0; border-right: 1px solid #171b1e; font-size: 10px; }
+.document-tabs { display: flex; align-items: stretch; min-width: 0; height: var(--cad-document-tabs-height); padding: 0; overflow: hidden; background: var(--cad-shell-surface); border-bottom: 4px solid var(--cad-ribbon-surface); }
+.document-tabs button { min-width: 0; padding: 0; color: #c9d1d7; background: transparent; border: 0; border-right: 1px solid #171b1e; font-size: 10px; }
 .document-tabs button:hover:not(:disabled) { background: #363d43; }
 .document-tabs button:disabled { opacity: .55; }
-.document-tabs .drawing-tab.active { color: #fff; background: #30373d; border-bottom: 2px solid #4fa7da; }
-.document-tabs .drawing-tab span { margin-left: 22px; color: #929ca4; }
+.document-tabs .drawing-tab.active { color: #fff; background: var(--cad-ribbon-surface); border-bottom: 0; }
+.document-tabs .drawing-tab span { margin-left: 18px; color: #929ca4; }
+.document-menu { flex: 0 0 42px; }
+.start-tab { flex: 0 0 48px; }
+.drawing-tab { flex: 0 0 95px; }
+.new-drawing-tab { flex: 0 0 47px; }
 .document-menu, .new-drawing-tab { padding: 0 !important; font-size: 15px !important; }
 .drawing-area { position: relative; min-height: 0; padding: 0; overflow: hidden; background: #111416; box-shadow: inset 0 1px #090b0c; }
 .drawing-area canvas { display: block; width: 100%; height: 100%; background: #1e2225; }

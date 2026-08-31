@@ -24,6 +24,7 @@ $reference = [System.Drawing.Bitmap]::FromFile((Resolve-Path -LiteralPath $Refer
 try {
   if ($reference.Width -ne 1920 -or $reference.Height -ne 1080) { throw 'Ribbon comparison requires a 1920x1080 AutoCAD reference.' }
   $state = Get-Content -Raw -LiteralPath $KuubikStateJson | ConvertFrom-Json
+  $waveName = Split-Path -Leaf (Split-Path -Parent $KuubikStateJson)
   if (@($state.viewport)[0] -ne 1920 -or @($state.viewport)[1] -ne 1080) { throw 'Ribbon comparison requires a 1920x1080 Kuubik read-back.' }
 
   $expectedPanels = @(
@@ -69,8 +70,8 @@ try {
       redistributablePixelsIncluded = $false
     }
     kuubik = [ordered]@{
-      artifact = 'evidence/artifacts/visual-shell-wave-9/visual-shell-states.json'
-      screenshot = 'evidence/artifacts/visual-shell-wave-9/visual-shell-empty-workspace.png'
+      artifact = "evidence/artifacts/$waveName/visual-shell-states.json"
+      screenshot = "evidence/artifacts/$waveName/visual-shell-empty-workspace.png"
     }
     viewport = @(1920, 1080)
     browserZoomPercent = 100

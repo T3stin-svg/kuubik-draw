@@ -5,17 +5,17 @@
   "sourceSha256": {
     "nativeCore": "9d78be45bd52ef93844f57a3bb6e9df24da0a8b1798c42a9b42fd5f9201712e5",
     "nativeDesktop": "bd844c4dce757b684cfea2f642ee055e3ed260078019b0362abb31840e1e4596",
-    "browser": "a7f3a2498ddd0424321f34169318c1f6e8b5096d32cd512d9b2803370dfd47ae",
+    "browser": "9829ce4ddafcfaa1558c14671a5017d6b75ed9490b0237775ac5819dd4726bc2",
     "browserEllipseDxf": "90d2859a7dbbfe6388bd75dceee843501c93291abe7f17b8d828dfa378f68082",
-    "browserEllipseKdraw": "b1be5c8c1bca2bbd3ab8243c17a5487b3f7af9b2ed69ab073ed17bdbe7091b1e",
-    "readback": "467e72a36b34fd70009a770b32d4a27dff183596f9f640fcc0ce0d8c0d5f52c2",
+    "browserEllipseKdraw": "12a504db7a6a3586d175f8b990a0fff031f40c1dd8286b7e8085eaa03fe8889e",
+    "readback": "2dc211e76ee323a4f0233b8d9ca9afc6815058ceedc81f86e0f5e3c94307a788",
     "productionDxf": "4d88f09e9dd10ffc9493d253b5dca30ef51403808bab6b76185e99c8f99397a7",
     "productionKdraw": "00cd3b9bb11efba51782f8886315a535fc16097fbb29f29bfd1405c8b99e9b60",
-    "oracles": "14d54eb1cd3d443322dea3ed42933ed1d5301a997ecee85a9ecddcbe51454f75"
+    "oracles": "4db089825c582f63d89f44d0ea1d2513d59e1d4ed8970ba902d759b91108bb8a"
   },
   "implementationSha256": {
-    "apps/web/src/App.tsx": "4a644af235f85cc452c33c038b9f43b86fe89fc71b4299e3939062a4b2899db3",
-    "apps/web/src/style.css": "7aa2ceca4fe7a454a192be2f874fc6384e219092b1cbd51f873e41b5717197cf",
+    "apps/web/src/App.tsx": "cb6be3db4a8f0cd038806c86ff2fdda091c4cd15c0c98d7b254b4b89e78bfd2a",
+    "apps/web/src/style.css": "c79397f56dc2c1d50ef322df51194e604924eb521cf29e3ba344b39f6da614cd",
     "apps/web/src/workflows/modify-command.ts": "9d1f7d0b1d3e308eac2a5d4055436626e3a497cbaaf116c05957e1fde15616c7",
     "apps/web/src/workflows/modify-command.test.ts": "aac0694d3a93a08ed5c6b98ea5456e62ba7c0f05777780a47d99dcabdf2e12b9",
     "packages/cad-core/src/stretch.ts": "5e76f375057f553ef91c38df96b28686d1e56cf57e1debd51b71bae8a2739944",
@@ -53,13 +53,13 @@
   "nestedReceipts": {
     "browserArtifacts": {
       "evidence/artifacts/F-027-browser-matrix.json": {
-        "expected": "a45262b31fa2e15fe2a8be397033ae9d7d9e8ad739bc607ab03e46d331c896bb",
-        "actual": "a45262b31fa2e15fe2a8be397033ae9d7d9e8ad739bc607ab03e46d331c896bb",
+        "expected": "43ae0a08cd577fc7d76d552a8d1c76093d3c3f9b157192a3819c94783560609d",
+        "actual": "43ae0a08cd577fc7d76d552a8d1c76093d3c3f9b157192a3819c94783560609d",
         "byteLength": 12528
       },
       "evidence/artifacts/F-027-browser-native-edge-matrix.json": {
-        "expected": "133030ad88b80c2da6eabfdd2e5def0f9e19271ad584f18df7722b3cbdfbde60",
-        "actual": "133030ad88b80c2da6eabfdd2e5def0f9e19271ad584f18df7722b3cbdfbde60",
+        "expected": "0a31b56a04c43479595dd90b96ee30c088c398eac150c6a0eb57a7b3487eab6f",
+        "actual": "0a31b56a04c43479595dd90b96ee30c088c398eac150c6a0eb57a7b3487eab6f",
         "byteLength": 4671
       },
       "evidence/artifacts/F-027-browser-locked.json": {
@@ -78,8 +78,8 @@
         "byteLength": 319
       },
       "evidence/artifacts/F-027-browser-ellipse.json": {
-        "expected": "9974117db95231b1a1ab275dd5cd091b0a89001bd79e3afb7a0f338231907142",
-        "actual": "9974117db95231b1a1ab275dd5cd091b0a89001bd79e3afb7a0f338231907142",
+        "expected": "f916dfafa45587d7231da91399d75f6036598f564f77ca77147ffd534723ab5c",
+        "actual": "f916dfafa45587d7231da91399d75f6036598f564f77ca77147ffd534723ab5c",
         "byteLength": 4345
       },
       "evidence/artifacts/F-027-browser-ellipse.dxf": {
@@ -88,8 +88,8 @@
         "byteLength": 3966
       },
       "evidence/artifacts/F-027-browser-ellipse.kdraw": {
-        "expected": "b1be5c8c1bca2bbd3ab8243c17a5487b3f7af9b2ed69ab073ed17bdbe7091b1e",
-        "actual": "b1be5c8c1bca2bbd3ab8243c17a5487b3f7af9b2ed69ab073ed17bdbe7091b1e",
+        "expected": "12a504db7a6a3586d175f8b990a0fff031f40c1dd8286b7e8085eaa03fe8889e",
+        "actual": "12a504db7a6a3586d175f8b990a0fff031f40c1dd8286b7e8085eaa03fe8889e",
         "byteLength": 1440
       },
       "evidence/artifacts/F-027-browser.dxf": {
@@ -98,21 +98,21 @@
         "byteLength": 4319
       },
       "evidence/artifacts/F-027-browser.kdraw": {
-        "expected": "daa1448ceb603f4cce770294d4ccf22a2c8b134062774eb867e5e0524a73892f",
-        "actual": "daa1448ceb603f4cce770294d4ccf22a2c8b134062774eb867e5e0524a73892f",
+        "expected": "10b8fe81109157173d4d4c42d60d134bd268402438e374be01dba37699855a26",
+        "actual": "10b8fe81109157173d4d4c42d60d134bd268402438e374be01dba37699855a26",
         "byteLength": 1849
       }
     },
     "browserSources": {
       "apps/web/src/App.tsx": {
-        "expected": "4a644af235f85cc452c33c038b9f43b86fe89fc71b4299e3939062a4b2899db3",
-        "actual": "4a644af235f85cc452c33c038b9f43b86fe89fc71b4299e3939062a4b2899db3",
-        "byteLength": 249142
+        "expected": "cb6be3db4a8f0cd038806c86ff2fdda091c4cd15c0c98d7b254b4b89e78bfd2a",
+        "actual": "cb6be3db4a8f0cd038806c86ff2fdda091c4cd15c0c98d7b254b4b89e78bfd2a",
+        "byteLength": 251223
       },
       "apps/web/src/style.css": {
-        "expected": "7aa2ceca4fe7a454a192be2f874fc6384e219092b1cbd51f873e41b5717197cf",
-        "actual": "7aa2ceca4fe7a454a192be2f874fc6384e219092b1cbd51f873e41b5717197cf",
-        "byteLength": 28213
+        "expected": "c79397f56dc2c1d50ef322df51194e604924eb521cf29e3ba344b39f6da614cd",
+        "actual": "c79397f56dc2c1d50ef322df51194e604924eb521cf29e3ba344b39f6da614cd",
+        "byteLength": 29673
       },
       "apps/web/src/workflows/modify-command.ts": {
         "expected": "9d1f7d0b1d3e308eac2a5d4055436626e3a497cbaaf116c05957e1fde15616c7",
@@ -313,8 +313,8 @@
         "byteLength": 5220
       },
       "evidence/artifacts/F-027-independent-readback.json": {
-        "expected": "467e72a36b34fd70009a770b32d4a27dff183596f9f640fcc0ce0d8c0d5f52c2",
-        "actual": "467e72a36b34fd70009a770b32d4a27dff183596f9f640fcc0ce0d8c0d5f52c2",
+        "expected": "2dc211e76ee323a4f0233b8d9ca9afc6815058ceedc81f86e0f5e3c94307a788",
+        "actual": "2dc211e76ee323a4f0233b8d9ca9afc6815058ceedc81f86e0f5e3c94307a788",
         "byteLength": 23615
       },
       "tools/oracles/freecad-f027-headless.py": {

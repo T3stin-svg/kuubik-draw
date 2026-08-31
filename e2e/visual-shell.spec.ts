@@ -22,13 +22,71 @@ test("AutoCAD-style shell keeps all eight primary zones visible at 1920x1080", a
   })));
   expect(zones).toMatchObject({
     titlebar: { x: 0, y: 0, width: 1920, height: 30 },
-    "ribbon-tabs": { x: 0, y: 30, width: 1920, height: 29 },
-    ribbon: { x: 0, y: 59, width: 1920, height: 92 },
+    "ribbon-tabs": { x: 0, y: 30, width: 1920, height: 22 },
+    ribbon: { x: 0, y: 52, width: 1920, height: 99 },
     "document-tabs": { x: 0, y: 151, width: 1920, height: 30 },
     "command-line": { x: 0, width: 1920, height: 52 },
     statusbar: { x: 0, width: 1920, height: 24 },
   });
   expect((zones as Record<string, { x: number; width: number; height: number }>)["properties-palette"]).toMatchObject({ x: 0, width: 680 });
+  const ribbonTabs = await page.locator("[data-ribbon-tab]").evaluateAll((elements) => Object.fromEntries(elements.map((element) => {
+    const rect = element.getBoundingClientRect();
+    return [element.getAttribute("data-ribbon-tab"), {
+      x: rect.x, width: rect.width, right: rect.right, height: rect.height,
+      backgroundColor: getComputedStyle(element).backgroundColor,
+    }];
+  })));
+  expect(ribbonTabs).toEqual({
+    home: { x: 0, width: 55, right: 55, height: 21, backgroundColor: "rgb(59, 68, 83)" },
+    insert: { x: 55, width: 52, right: 107, height: 21, backgroundColor: "rgba(0, 0, 0, 0)" },
+    annotate: { x: 107, width: 71, right: 178, height: 21, backgroundColor: "rgba(0, 0, 0, 0)" },
+    parametric: { x: 178, width: 86, right: 264, height: 21, backgroundColor: "rgba(0, 0, 0, 0)" },
+    view: { x: 264, width: 49, right: 313, height: 21, backgroundColor: "rgba(0, 0, 0, 0)" },
+    manage: { x: 313, width: 64, right: 377, height: 21, backgroundColor: "rgba(0, 0, 0, 0)" },
+    output: { x: 377, width: 62, right: 439, height: 21, backgroundColor: "rgba(0, 0, 0, 0)" },
+    "add-ins": { x: 439, width: 63, right: 502, height: 21, backgroundColor: "rgba(0, 0, 0, 0)" },
+    collaborate: { x: 502, width: 85, right: 587, height: 21, backgroundColor: "rgba(0, 0, 0, 0)" },
+    "express-tools": { x: 587, width: 87, right: 674, height: 21, backgroundColor: "rgba(0, 0, 0, 0)" },
+    "featured-apps": { x: 674, width: 106, right: 780, height: 21, backgroundColor: "rgba(0, 0, 0, 0)" },
+    prodlib: { x: 780, width: 65, right: 845, height: 21, backgroundColor: "rgba(0, 0, 0, 0)" },
+  });
+  const documentTabs = await page.locator("[data-document-tab]").evaluateAll((elements) => Object.fromEntries(elements.map((element) => {
+    const rect = element.getBoundingClientRect();
+    return [element.getAttribute("data-document-tab"), {
+      x: rect.x, width: rect.width, right: rect.right, height: rect.height,
+      backgroundColor: getComputedStyle(element).backgroundColor,
+    }];
+  })));
+  expect(documentTabs).toEqual({
+    menu: { x: 0, width: 42, right: 42, height: 26, backgroundColor: "rgba(0, 0, 0, 0)" },
+    start: { x: 42, width: 48, right: 90, height: 26, backgroundColor: "rgba(0, 0, 0, 0)" },
+    drawing: { x: 90, width: 95, right: 185, height: 26, backgroundColor: "rgb(59, 68, 83)" },
+    new: { x: 185, width: 47, right: 232, height: 26, backgroundColor: "rgba(0, 0, 0, 0)" },
+  });
+  const titleChrome = await page.locator(".titlebar").evaluate((element) => {
+    const box = (selector: string) => {
+      const target = element.querySelector<HTMLElement>(selector)!;
+      const rect = target.getBoundingClientRect();
+      return { x: rect.x, y: rect.y, width: rect.width, height: rect.height };
+    };
+    return {
+      backgroundColor: getComputedStyle(element).backgroundColor,
+      applicationMark: box(".application-mark"),
+      quickAccess: box(".quick-access"),
+      workspace: box(".workspace-name"),
+      displayControls: box(".title-display-controls"),
+    };
+  });
+  expect(titleChrome).toMatchObject({
+    backgroundColor: "rgb(34, 41, 51)",
+    applicationMark: { x: 15, y: 3, width: 24, height: 24 },
+    workspace: { x: 574, y: 3, width: 180, height: 24 },
+    displayControls: { x: 760, y: 3, width: 84, height: 24 },
+  });
+  await expect(page.getByRole("button", { name: "Kiirpääsu DXF avamine" })).toBeEnabled();
+  await expect(page.getByRole("button", { name: "Kiirpääsu KDraw salvestamine" })).toBeEnabled();
+  await expect(page.getByRole("button", { name: "Kiirpääsu DXF-väljund" })).toBeEnabled();
+  await expect(page.getByRole("button", { name: "Kiirpääsu uus joonis unavailable" })).toBeDisabled();
   const palette = page.getByRole("complementary", { name: "Properties palette" });
   await expect(palette.getByRole("complementary", { name: "Layer filters" })).toBeVisible();
   await expect(palette.getByRole("row").first().locator("span")).toHaveCount(7);
@@ -47,22 +105,22 @@ test("AutoCAD-style shell keeps all eight primary zones visible at 1920x1080", a
     }];
   })));
   expect(ribbonPanels).toEqual({
-    draw: { x: 0, width: 225, right: 225, height: 92, backgroundColor: "rgb(59, 68, 83)" },
-    modify: { x: 225, width: 250, right: 475, height: 92, backgroundColor: "rgb(59, 68, 83)" },
-    annotation: { x: 475, width: 189, right: 664, height: 92, backgroundColor: "rgb(59, 68, 83)" },
-    layers: { x: 664, width: 273, right: 937, height: 92, backgroundColor: "rgb(59, 68, 83)" },
-    block: { x: 937, width: 161, right: 1098, height: 92, backgroundColor: "rgb(59, 68, 83)" },
-    properties: { x: 1098, width: 262, right: 1360, height: 92, backgroundColor: "rgb(59, 68, 83)" },
-    groups: { x: 1360, width: 72, right: 1432, height: 92, backgroundColor: "rgb(59, 68, 83)" },
-    utilities: { x: 1432, width: 97, right: 1529, height: 92, backgroundColor: "rgb(59, 68, 83)" },
-    clipboard: { x: 1529, width: 91, right: 1620, height: 92, backgroundColor: "rgb(59, 68, 83)" },
-    view: { x: 1620, width: 53, right: 1673, height: 92, backgroundColor: "rgb(59, 68, 83)" },
+    draw: { x: 0, width: 225, right: 225, height: 99, backgroundColor: "rgb(59, 68, 83)" },
+    modify: { x: 225, width: 250, right: 475, height: 99, backgroundColor: "rgb(59, 68, 83)" },
+    annotation: { x: 475, width: 189, right: 664, height: 99, backgroundColor: "rgb(59, 68, 83)" },
+    layers: { x: 664, width: 273, right: 937, height: 99, backgroundColor: "rgb(59, 68, 83)" },
+    block: { x: 937, width: 161, right: 1098, height: 99, backgroundColor: "rgb(59, 68, 83)" },
+    properties: { x: 1098, width: 262, right: 1360, height: 99, backgroundColor: "rgb(59, 68, 83)" },
+    groups: { x: 1360, width: 72, right: 1432, height: 99, backgroundColor: "rgb(59, 68, 83)" },
+    utilities: { x: 1432, width: 97, right: 1529, height: 99, backgroundColor: "rgb(59, 68, 83)" },
+    clipboard: { x: 1529, width: 91, right: 1620, height: 99, backgroundColor: "rgb(59, 68, 83)" },
+    view: { x: 1620, width: 53, right: 1673, height: 99, backgroundColor: "rgb(59, 68, 83)" },
   });
   const commandPanel = await page.getByLabel("Käsu parameetrid").evaluate((element) => {
     const rect = element.getBoundingClientRect();
     return { x: rect.x, width: rect.width, right: rect.right, height: rect.height, backgroundColor: getComputedStyle(element).backgroundColor };
   });
-  expect(commandPanel).toEqual({ x: 1673, width: 247, right: 1920, height: 92, backgroundColor: "rgb(59, 68, 83)" });
+  expect(commandPanel).toEqual({ x: 1673, width: 247, right: 1920, height: 99, backgroundColor: "rgb(59, 68, 83)" });
   const disabledRibbonTool = page.getByRole("button", { name: "Ribbon Polyline unavailable" });
   await expect(disabledRibbonTool).toBeDisabled();
   const disabledRibbonState = await disabledRibbonTool.evaluate((element) => ({
@@ -336,6 +394,11 @@ test("AutoCAD-style shell keeps all eight primary zones visible at 1920x1080", a
       states: {
         emptyWorkspace: true,
         activeDrawingCommand: true,
+        topChrome: {
+          title: titleChrome,
+          ribbonTabs,
+          documentTabs,
+        },
         ribbon: {
           panels: ribbonPanels,
           commandPanel,
