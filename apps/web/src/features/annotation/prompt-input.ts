@@ -1,4 +1,4 @@
-import type { StableEntityAnchor } from "@kuubik/cad-core";
+import type { CreateTableArgs, StableEntityAnchor, TableEditOperation, TableStyle } from "@kuubik/cad-core";
 import type { CadDimensionStyle, CadPoint2, CadTextStyle, KDrawDocumentV1 } from "@kuubik/cad-schema";
 import type { AnnotationCommandInput } from "./command-adapter.js";
 import type { AnnotationCommandId } from "./model.js";
@@ -124,6 +124,19 @@ export function buildAnnotationPromptInput(
       const boundaryHandles = required<string[]>(values, "boundaryHandles");
       const origin = optional<CadPoint2>(values, "origin");
       return { commandId, args: { handle: allocateDocumentHandles(document, 1)[0]!, layerId, boundaryHandles, pattern: required<string>(values, "pattern"), angleRad: required<number>(values, "angleRad"), scale: required<number>(values, "scale"), associative: required<boolean>(values, "associative"), ...(origin ? { origin } : {}) }, targetHandles: boundaryHandles };
+    }
+    case "TABLE": {
+      const mode = required<"create" | "edit" | "style-create" | "style-update">(values, "mode");
+      if (mode === "create") {
+        const definition = required<Omit<CreateTableArgs, "handle" | "layerId">>(values, "definition");
+        return { commandId, mode, args: { ...definition, handle: allocateDocumentHandles(document, 1)[0]!, layerId } };
+      }
+      if (mode === "edit") {
+        const selected = [...new Set(context.selectedHandles ?? [])];
+        const handle = selected.length === 1 ? selected[0]! : required<string>(values, "tableHandle");
+        return { commandId, mode, handle, operations: required<TableEditOperation[]>(values, "operations") };
+      }
+      return { commandId, mode, style: required<TableStyle>(values, "style") };
     }
   }
 }

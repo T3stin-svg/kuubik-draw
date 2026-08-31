@@ -1,4 +1,4 @@
-export type AnnotationCommandId = "DIMLINEAR" | "DIMALIGNED" | "DIMANGULAR" | "DIMRADIUS" | "DIMDIAMETER" | "DIMCONTINUE" | "DIMBASELINE" | "DIMSTYLE" | "TEXT" | "MTEXT" | "STYLE" | "LEADER" | "MLEADER" | "HATCH";
+export type AnnotationCommandId = "DIMLINEAR" | "DIMALIGNED" | "DIMANGULAR" | "DIMRADIUS" | "DIMDIAMETER" | "DIMCONTINUE" | "DIMBASELINE" | "DIMSTYLE" | "TEXT" | "MTEXT" | "STYLE" | "LEADER" | "MLEADER" | "HATCH" | "TABLE";
 
 export interface AnnotationTool {
   rowIds: string[];
@@ -21,7 +21,8 @@ export const ANNOTATION_TOOLS: readonly AnnotationTool[] = Object.freeze([
   { rowIds: ["F-058"], id: "STYLE", label: "Tekstistiilid", selection: "none" },
   { rowIds: ["F-059"], id: "LEADER", label: "Viitjoon", selection: "none" },
   { rowIds: ["F-060"], id: "MLEADER", label: "Multiviide", selection: "none" },
-  { rowIds: ["F-067", "F-068"], id: "HATCH", label: "Viirutus", selection: "required" },
+  { rowIds: ["F-067"], id: "HATCH", label: "Viirutus", selection: "required" },
+  { rowIds: ["F-068"], id: "TABLE", label: "Tabel", selection: "optional" },
 ]);
 
 export interface AnnotationAction {
@@ -144,6 +145,13 @@ export const ANNOTATION_PROMPT_PLANS: Readonly<Record<AnnotationCommandId, Annot
     { id: "scale", label: "Mõõtkava", valueKind: "number", required: true },
     { id: "associative", label: "Assotsiatiivne", valueKind: "boolean", required: true },
     { id: "origin", label: "Mustri alguspunkt", valueKind: "point", required: false },
+  ] },
+  TABLE: { commandId: "TABLE", fields: [
+    { id: "mode", label: "Tegevus", valueKind: "select", required: true, choices: ["create", "edit", "style-create", "style-update"] },
+    { id: "definition", label: "Tabeli definitsioon", valueKind: "attributes", required: false },
+    { id: "tableHandle", label: "Tabeli handle", valueKind: "string", required: false },
+    { id: "operations", label: "Tabeli muudatused", valueKind: "attributes", required: false },
+    { id: "style", label: "Tabelistiil", valueKind: "attributes", required: false },
   ] },
 });
 

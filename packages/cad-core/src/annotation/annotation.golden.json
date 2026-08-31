@@ -37,5 +37,21 @@
     "kind": "hatch",
     "pattern": { "type": "line", "angleRad": 0.7853981633974483, "scale": 2, "origin": { "x": 5, "y": 5 } },
     "boundaryHandles": ["20", "21"]
+  },
+  "tableContract": {
+    "kind": "table",
+    "version": 1,
+    "origin": { "x": 10, "y": 50 },
+    "rotationRad": 0,
+    "styleId": "TABLE-STD",
+    "rows": [{ "id": "R1", "height": 8 }, { "id": "R2", "height": 10 }],
+    "columns": [{ "id": "C1", "width": 30 }, { "id": "C2", "width": 40 }],
+    "cells": [
+      { "id": "A1", "rowId": "R1", "columnId": "C1", "value": { "kind": "text", "text": "Mark" }, "horizontalAlignment": "center" },
+      { "id": "A2", "rowId": "R1", "columnId": "C2", "value": { "kind": "text", "text": "Väärtus" } },
+      { "id": "B1", "rowId": "R2", "columnId": "C1", "value": { "kind": "text", "text": "A-01" } },
+      { "id": "B2", "rowId": "R2", "columnId": "C2", "value": { "kind": "field", "code": "%<SheetNumber>%", "fallback": "1" } }
+    ],
+    "merges": []
   }
 }

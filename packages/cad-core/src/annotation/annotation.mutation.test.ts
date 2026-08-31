@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 import { createEmptyDocument } from "../document.js";
 import { DIMENSION_STYLE_OVERRIDE_KEY, createAlignedDimension, createLinearDimension, deriveDimensionPresentation, updateAssociativeDimensions } from "./dimensions.js";
 import { createHatch, hatchBoundaryPolyline, updateAssociativeHatches } from "./hatch.js";
+import { createTable, createTableStyle, editTable } from "./table.js";
+import { readTableContract } from "./contracts.js";
 
 describe("annotation mutation ratchet", () => {
   it("kills handle/style-loss and stale-association mutants", () => {
@@ -42,5 +44,18 @@ describe("annotation mutation ratchet", () => {
     expect(hatch.loops.map((loop) => loop.isHole)).toEqual([false, true]);
     document.entities[1] = hatchBoundaryPolyline("11", "0", [{ x: 25, y: 25 }, { x: 30, y: 25 }, { x: 30, y: 30 }, { x: 25, y: 30 }]);
     expect(updateAssociativeHatches(document, ["11"]).changes[0]).toMatchObject({ entity: { handle: "H", loops: [{ isHole: false }, { isHole: false }] } });
+  });
+
+  it("kills TABLE cell-handle, field-evaluation and merge-overlap mutants", () => {
+    const document = createEmptyDocument({ documentId: "table-mutation" });
+    const style = createTableStyle(document, { id: "TS", name: "TS", textHeight: 2.5, cellMargin: 1, borderWidth: 0.25, horizontalAlignment: "left", verticalAlignment: "middle" });
+    if (style.type !== "set-metadata") throw new Error("Expected metadata change.");
+    document.metadata = style.metadata;
+    const table = createTable(document, { handle: "T1", layerId: "0", origin: { x: 0, y: 0 }, styleId: "TS", rows: [{ id: "R1", height: 8 }, { id: "R2", height: 8 }], columns: [{ id: "C1", width: 20 }, { id: "C2", width: 20 }] });
+    document.entities.push(table);
+    const change = editTable(document, "T1", [{ type: "set-cell", cellId: "R2:C2", value: { kind: "field", code: "%<TrustedField>%", fallback: "SAFE" } }]);
+    if (change.type !== "put") throw new Error("Expected TABLE put change.");
+    expect(readTableContract(change.entity)?.cells.find((cell) => cell.id === "R2:C2")).toMatchObject({ id: "R2:C2", value: { kind: "field", code: "%<TrustedField>%", fallback: "SAFE" } });
+    expect(() => editTable(document, "T1", [{ type: "merge", merge: { id: "M1", rowIds: ["R1"], columnIds: ["C1", "C2"] } }, { type: "merge", merge: { id: "M2", rowIds: ["R1", "R2"], columnIds: ["C2"] } }])).toThrow(/overlaps/u);
   });
 });

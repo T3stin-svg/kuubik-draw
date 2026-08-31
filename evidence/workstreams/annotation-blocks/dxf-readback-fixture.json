@@ -11,6 +11,7 @@
     "units": "mm",
     "textStyles": ["TXT-ISO"],
     "dimensionStyles": ["DIM-ISO"],
+    "tableStyles": ["TABLE-STD"],
     "entities": [
       { "handle": "D1", "kind": "dimension", "dimensionKind": "linear", "associativeTargets": ["10", "11"] },
       { "handle": "D2", "kind": "dimension", "dimensionKind": "aligned", "chainId": "CHAIN-1", "chainIndex": 0 },
@@ -22,6 +23,7 @@
       { "handle": "ML1", "kind": "mleader", "minimumVersion": "AC1021" },
       { "handle": "H1", "kind": "hatch", "pattern": "SOLID", "loopRoles": ["outer", "hole", "island"], "associativeTargets": ["20", "21", "22"] },
       { "handle": "H2", "kind": "hatch", "pattern": "ANSI31", "angleRad": 0.7853981633974483, "scale": 2 },
+      { "handle": "TB1", "kind": "table", "styleId": "TABLE-STD", "rowIds": ["R1", "R2"], "columnIds": ["C1", "C2"], "cellIds": ["A1", "A2", "B1", "B2"], "mergeIds": ["M1"], "field": { "code": "%<SheetNumber>%", "fallback": "1" } },
       { "handle": "I1", "kind": "blockRef", "blockId": "DOOR", "scale": [2, 0.5], "rotationRad": 1.5707963267948966, "attributes": { "MARK": "D7" } }
     ],
     "blocks": [
@@ -36,6 +38,7 @@
     "MTEXT Unicode, line breaks, width, attachment and spacing",
     "LEADER/MLEADER vertices, content placement and native-versus-lossy status",
     "HATCH pattern, angle, scale, outer/hole/island parity and source handles",
+    "TABLE handle, row/column/cell/merge ids, sizes, values, field fallback, alignment, format and style reference",
     "BLOCK member handles and acyclic nested graph",
     "INSERT transform and ATTRIB values",
     "reopen result after redefine with existing INSERT handles unchanged"
@@ -45,6 +48,7 @@
     "lossy MLEADER claimed as exact",
     "dropped dimension or hatch association handle",
     "changed hatch hole/island parity",
+    "evaluated TABLE field, dropped fallback, changed cell handle or overlapping merge",
     "duplicate or changed block/member handle",
     "cyclic or dangling nested block",
     "dropped ATTRIB value or text/dimension style reference"

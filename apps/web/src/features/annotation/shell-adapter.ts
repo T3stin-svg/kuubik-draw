@@ -65,7 +65,7 @@ export interface AnnotationBlockShellAdapter {
   redo(now?: string): CommittedOperation | null;
 }
 
-const ANNOTATION_COMMANDS: readonly AnnotationEngineCommandId[] = ["TEXT", "MTEXT", "LEADER", "MLEADER", "DIM", "STYLE", "HATCH"];
+const ANNOTATION_COMMANDS: readonly AnnotationEngineCommandId[] = ["TEXT", "MTEXT", "LEADER", "MLEADER", "DIM", "STYLE", "HATCH", "TABLE"];
 const BLOCK_COMMANDS: readonly BlockEngineCommandId[] = ["BLOCK", "INSERT", "BEDIT", "EXPLODE", "ATTRIB"];
 
 function engineCommandId(input: AnnotationCommandInput | BlockCommandInput): AnnotationBlockShellCommandId {
