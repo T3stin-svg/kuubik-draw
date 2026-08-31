@@ -1,12 +1,20 @@
 import type { CadEntity, KDrawDocumentV1 } from "@kuubik/cad-schema";
-import { entityParticipates, type CadLayerPurpose } from "../../../../../packages/cad-core/src/layer-policy.js";
+import {
+  createCadLayerPropertyIndex,
+  entityParticipates,
+  resolveCadEntityLayerProperties,
+  type CadLayerPurpose,
+} from "../../../../../packages/cad-core/src/layer-policy.js";
 import {
   planCreateLayer,
   planDeleteLayer,
   planRenameLayer,
   planSetCurrentLayer,
+  planSetEntityLayerProperties,
   planSetLayerAppearance,
   planSetLayerToggle,
+  readCadLayerContract,
+  type CadEntityLayerPropertiesPatch,
   type CadLayerAppearancePatch,
   type CadLayerPlan,
   type CadLayerToggle,
@@ -22,6 +30,9 @@ export class LayerFeatureModel {
   makeCurrent(layerId: string): CadLayerPlan { return planSetCurrentLayer(this.document, layerId); }
   toggle(layerId: string, property: CadLayerToggle, value: boolean): CadLayerPlan { return planSetLayerToggle(this.document, layerId, property, value); }
   appearance(layerId: string, patch: CadLayerAppearancePatch): CadLayerPlan { return planSetLayerAppearance(this.document, layerId, patch); }
+  entityProperties(handles: readonly string[], patch: CadEntityLayerPropertiesPatch) { return planSetEntityLayerProperties(this.document, handles, patch); }
+  readContract() { return readCadLayerContract(this.document); }
+  resolve(entity: CadEntity) { return resolveCadEntityLayerProperties(entity, createCadLayerPropertyIndex(this.document.layers, this.document.linetypes)); }
   drawOrder(handles: readonly string[], action: CadDrawOrderAction, referenceHandle?: string) { return planDrawOrderChanges(this.document, handles, action, referenceHandle); }
 
   participates(entity: CadEntity, purpose: CadLayerPurpose): boolean {

@@ -1,17 +1,17 @@
 import type { PrecisionShellRow, VisualShellCommandAdapter } from "../precision/command-adapter.js";
 
 export type LayerShellRow = "F-072" | "F-073" | "F-074" | "F-075" | "F-076" | "F-077" | "F-078" | "F-079" | "F-080";
-export type LayerShellAction = "create" | "current" | "lock" | "visibility" | "freeze" | "color" | "linetype" | "lineweight" | "manager";
+export type LayerShellAction = "create" | "current" | "lock" | "visibility" | "freeze" | "color" | "linetype" | "lineweight" | "plot" | "manager";
 
 const LAYER_ROWS: Readonly<Record<LayerShellRow, LayerShellAction>> = Object.freeze({
   "F-072": "create",
-  "F-073": "current",
+  "F-073": "visibility",
   "F-074": "lock",
-  "F-075": "visibility",
-  "F-076": "freeze",
-  "F-077": "color",
-  "F-078": "linetype",
-  "F-079": "lineweight",
+  "F-075": "freeze",
+  "F-076": "color",
+  "F-077": "linetype",
+  "F-078": "lineweight",
+  "F-079": "plot",
   "F-080": "manager",
 });
 

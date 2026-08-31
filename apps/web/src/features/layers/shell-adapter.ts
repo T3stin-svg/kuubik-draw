@@ -6,9 +6,12 @@ import {
   type LayerManagerCommit,
   type LayerManagerPropertyPatch,
 } from "./controller.js";
+import type { CadEntityLayerPropertiesPatch } from "../../../../../packages/cad-core/src/layers.js";
 
 export const LAYER_MANAGER_CAPABILITY = Object.freeze({
   create: "layers.create",
+  rename: "layers.rename",
+  delete: "layers.delete",
   current: "layers.current",
   visibility: "layers.visibility",
   freeze: "layers.freeze",
@@ -19,6 +22,7 @@ export const LAYER_MANAGER_CAPABILITY = Object.freeze({
   transparency: "layers.transparency",
   plot: "layers.plot",
   properties: "layers.properties",
+  entityProperties: "layers.entity-properties",
   drawOrder: "layers.draw-order",
 } as const);
 
@@ -31,16 +35,19 @@ export type LayerManagerCapability = typeof LAYER_MANAGER_CAPABILITY[keyof typeo
  */
 export const LAYER_MANAGER_CAPABILITY_ROWS: Readonly<Record<LayerManagerCapability, readonly string[]>> = Object.freeze({
   "layers.create": ["F-072"],
-  "layers.current": ["F-073"],
+  "layers.rename": ["F-072"],
+  "layers.delete": ["F-072"],
+  "layers.current": ["F-072"],
   "layers.lock": ["F-074"],
-  "layers.visibility": ["F-075"],
-  "layers.freeze": ["F-076"],
-  "layers.color": ["F-077"],
-  "layers.linetype": ["F-078"],
-  "layers.lineweight": ["F-079"],
+  "layers.visibility": ["F-073"],
+  "layers.freeze": ["F-075"],
+  "layers.color": ["F-076"],
+  "layers.linetype": ["F-077"],
+  "layers.lineweight": ["F-078"],
   "layers.transparency": ["F-080"],
-  "layers.plot": ["F-080"],
+  "layers.plot": ["F-079"],
   "layers.properties": ["F-080"],
+  "layers.entity-properties": ["F-072", "F-076", "F-077", "F-078"],
   "layers.draw-order": ["F-086"],
 });
 
@@ -50,6 +57,8 @@ interface LayerIdsCommand {
 
 export type LayerManagerShellCommand =
   | { capability: "layers.create"; name: string; requestedId?: string }
+  | { capability: "layers.rename"; layerId: string; name: string }
+  | { capability: "layers.delete"; layerId: string }
   | { capability: "layers.current"; layerId: string }
   | ({ capability: "layers.visibility"; visible: boolean } & LayerIdsCommand)
   | ({ capability: "layers.freeze"; frozen: boolean } & LayerIdsCommand)
@@ -60,6 +69,7 @@ export type LayerManagerShellCommand =
   | ({ capability: "layers.transparency"; transparency: number | null } & LayerIdsCommand)
   | ({ capability: "layers.plot"; plottable: boolean } & LayerIdsCommand)
   | ({ capability: "layers.properties"; patch: LayerManagerPropertyPatch } & LayerIdsCommand)
+  | { capability: "layers.entity-properties"; handles: readonly string[]; patch: CadEntityLayerPropertiesPatch }
   | { capability: "layers.draw-order"; handles: readonly string[]; action: CadDrawOrderAction; referenceHandle?: string };
 
 export interface LayerManagerShellCommit extends LayerManagerCommit {
@@ -107,6 +117,14 @@ export class LayerManagerShellAdapter {
         });
         affectedLayerIds = committed.document.layers.filter((layer) => !priorLayerIds!.has(layer.id)).map((layer) => layer.id);
         break;
+      case "layers.rename":
+        committed = this.#controller.execute({ type: "rename", layerId: command.layerId, name: command.name });
+        affectedLayerIds = [command.layerId];
+        break;
+      case "layers.delete":
+        committed = this.#controller.execute({ type: "delete", layerId: command.layerId });
+        affectedLayerIds = [command.layerId];
+        break;
       case "layers.current":
         committed = this.#controller.execute({ type: "current", layerId: command.layerId });
         affectedLayerIds = [command.layerId];
@@ -150,6 +168,12 @@ export class LayerManagerShellAdapter {
         affectedLayerIds = unique(command.layerIds);
         committed = this.#controller.execute({ type: "batch-properties", layerIds: affectedLayerIds, patch: structuredClone(command.patch) });
         break;
+      case "layers.entity-properties": {
+        committed = this.#controller.execute({ type: "entity-properties", handles: [...command.handles], patch: structuredClone(command.patch) });
+        const changed = new Set(committed.committed.operation.resultHandles);
+        affectedLayerIds = unique(committed.document.entities.filter((entity) => changed.has(entity.handle)).map((entity) => entity.layerId));
+        break;
+      }
       case "layers.draw-order":
         committed = this.#controller.execute({
           type: "draw-order", handles: [...command.handles], action: command.action,
@@ -185,7 +209,7 @@ export class LayerManagerShellAdapter {
   }
 
   eligibility(purpose: CadLayerPurpose): (entity: CadEntity) => boolean {
-    const layers = this.document.layers;
+    const layers = new Map(this.document.layers.map((layer) => [layer.id, layer]));
     return (entity) => entityParticipates(entity, layers, purpose).participates;
   }
 }

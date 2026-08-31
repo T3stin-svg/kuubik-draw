@@ -5,10 +5,13 @@ import {
   planDeleteLayer,
   planRenameLayer,
   planSetCurrentLayer,
+  planSetEntityLayerProperties,
   planSetLayerAppearance,
   planSetLayerToggle,
+  readCadLayerContract,
   CadLayerError,
   type CadLayerAppearancePatch,
+  type CadEntityLayerPropertiesPatch,
   type CadLayerPlan,
   type CadLayerToggle,
 } from "../../../../../packages/cad-core/src/layers.js";
@@ -29,6 +32,7 @@ export type LayerManagerCommand =
   | { type: "toggle"; layerId: string; property: CadLayerToggle; value: boolean }
   | { type: "appearance"; layerId: string; patch: CadLayerAppearancePatch }
   | { type: "batch-properties"; layerIds: readonly string[]; patch: LayerManagerPropertyPatch }
+  | { type: "entity-properties"; handles: readonly string[]; patch: CadEntityLayerPropertiesPatch }
   | { type: "draw-order"; handles: readonly string[]; action: CadDrawOrderAction; referenceHandle?: string };
 
 export interface LayerManagerPlan {
@@ -128,6 +132,7 @@ export class LayerManagerController {
   #sequence = 0;
 
   constructor(document: KDrawDocumentV1, options: LayerManagerControllerOptions = {}) {
+    readCadLayerContract(document);
     this.#session = new CadSession(document);
     this.#opIdPrefix = options.opIdPrefix ?? "layer-manager";
     this.#now = options.now ?? (() => new Date().toISOString());
@@ -151,6 +156,16 @@ export class LayerManagerController {
         targetHandles: [...new Set(command.handles)],
         resultHandles: [...new Set(command.handles)],
         orderedHandles: planned.orderedHandles,
+      };
+    }
+    if (command.type === "entity-properties") {
+      const planned = planSetEntityLayerProperties(document, command.handles, command.patch);
+      return {
+        commandId: planned.commandId,
+        args: planned.args,
+        changes: planned.changes,
+        targetHandles: planned.targetHandles,
+        resultHandles: planned.resultHandles,
       };
     }
     let planned: CadLayerPlan;
