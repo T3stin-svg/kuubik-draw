@@ -31,6 +31,7 @@ describe("F-057..F-068 typed annotation command adapter", () => {
     { commandId: "DIMDIAMETER", args: { handle: "D5", layerId: "0", styleId: "DIM", center: { x: 0, y: 0 }, circumferencePoint: { x: 10, y: 0 }, textPoint: { x: 15, y: 0 } } },
     { commandId: "DIMCONTINUE", args: { handles: ["D6", "D7"], layerId: "0", styleId: "DIM", points: [{ x: 0, y: 0 }, { x: 50, y: 0 }, { x: 100, y: 0 }], dimensionLinePoint: { x: 0, y: 20 }, axis: "horizontal", chainId: "C1" } },
     { commandId: "DIMSTYLE", mode: "create", style: { id: "DIM2", name: "DIM2", textStyleId: "TXT", textHeight: 3, arrowSize: 3, extensionOffset: 0.75, scale: 10 } },
+    { commandId: "TEXT", args: { handle: "T0", layerId: "0", position: { x: 0, y: 0 }, text: "Üks rida", height: 2.5, styleId: "TXT" } },
     { commandId: "MTEXT", args: { handle: "T1", layerId: "0", position: { x: 0, y: 0 }, text: "Kaks\nrida", height: 2.5, width: 60, styleId: "TXT" } },
     { commandId: "STYLE", mode: "create", style: { id: "TXT2", name: "TXT2", fontFamily: "Arial", widthFactor: 0.9, obliqueAngleRad: 0 } },
     { commandId: "LEADER", args: { handle: "L1", layerId: "0", vertices: [{ x: 0, y: 0 }, { x: 10, y: 10 }], text: "L" } },

@@ -9,6 +9,7 @@ import {
   createMLeader,
   createMText,
   createRadialDimension,
+  createText,
   createTextStyle,
   updateDimensionStyle,
   updateTextStyle,
@@ -17,6 +18,7 @@ import {
   type DimensionBaseArgs,
   type HatchArgs,
   type MTextArgs,
+  type TextArgs,
 } from "@kuubik/cad-core";
 import type { CadDimensionStyle, CadTextStyle, KDrawDocumentV1 } from "@kuubik/cad-schema";
 import { createAtomicCommandWorkflow, type AtomicCommandAdapter, type PreparedAtomicCommand } from "../draw-modify/atomic-command-workflow.js";
@@ -37,6 +39,7 @@ export type AnnotationCommandInput =
   | ({ commandId: "DIMDIAMETER"; args: RadialArgs } & WithTargets)
   | ({ commandId: "DIMCONTINUE"; args: ContinueArgs } & WithTargets)
   | { commandId: "DIMSTYLE"; mode: "create" | "update"; style: CadDimensionStyle }
+  | ({ commandId: "TEXT"; args: TextArgs } & WithTargets)
   | ({ commandId: "MTEXT"; args: MTextArgs } & WithTargets)
   | { commandId: "STYLE"; mode: "create" | "update"; style: CadTextStyle }
   | ({ commandId: "LEADER"; args: LeaderArgs } & WithTargets)
@@ -78,6 +81,10 @@ export function prepareAnnotationCommand(document: KDrawDocumentV1, input: Annot
     case "DIMSTYLE": {
       const change = input.mode === "create" ? createDimensionStyle(document, input.style) : updateDimensionStyle(document, input.style);
       return result(input.commandId, [change], [], [], input);
+    }
+    case "TEXT": {
+      const entity = createText(document, input.args);
+      return result(input.commandId, [{ type: "put", entity }], targets, [entity.handle], input.args);
     }
     case "MTEXT": {
       const entity = createMText(document, input.args);

@@ -6,7 +6,7 @@ import { CadSession } from "../transaction.js";
 import { readDimensionAssociation, readHatchAssociation } from "./contracts.js";
 import { createAlignedDimension, createAngularDimension, createContinuedDimensions, createDimensionStyle, createLinearDimension, createRadialDimension, updateAssociativeDimensions, updateDimensionStyle } from "./dimensions.js";
 import { createHatch, hatchBoundaryPolyline, updateAssociativeHatches } from "./hatch.js";
-import { createLeader, createMLeader, createMText, createTextStyle, editMLeaderText, updateTextStyle } from "./text.js";
+import { createLeader, createMLeader, createMText, createText, createTextStyle, editMLeaderText, updateTextStyle } from "./text.js";
 import { updateAssociativeAnnotations } from "./update.js";
 
 function fixture(): KDrawDocumentV1 {
@@ -72,6 +72,7 @@ describe("F-061..F-066 dimensions", () => {
 describe("F-057..F-060 text and leaders", () => {
   it("preserves MTEXT model coordinates and text-style references and supports LEADER/MLEADER editing", () => {
     const document = fixture();
+    expect(createText(document, { handle: "T0", layerId: "0", position: { x: -2, y: 8 }, text: "Üks rida", height: 2.5, rotationRad: 0.25, styleId: "TXT-ISO" })).toMatchObject({ kind: "text", handle: "T0", position: { x: -2, y: 8 }, styleId: "TXT-ISO" });
     const mtext = createMText(document, { handle: "T1", layerId: "0", position: { x: 1234.5, y: -55 }, text: "Rida 1\nRida 2", height: 2.5, width: 80, styleId: "TXT-ISO", lineSpacingFactor: 1.2 });
     expect(mtext).toMatchObject({ kind: "mtext", position: { x: 1234.5, y: -55 }, styleId: "TXT-ISO" });
     expect(createLeader(document, { handle: "L1", layerId: "0", vertices: [{ x: 0, y: 0 }, { x: 10, y: 10 }], text: "Viide" })).toMatchObject({ kind: "leader", text: "Viide" });
