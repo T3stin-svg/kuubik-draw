@@ -270,7 +270,12 @@ export class PrecisionUnitsCommandAdapter {
     history: CadSessionHistoryState,
   ): Promise<void> {
     await this.persistence.commitRevision(document, operation, history);
-    const stored = await this.persistence.loadDocument(document.documentId);
+    let stored: KDrawDocumentV1 | null;
+    try {
+      stored = await this.persistence.loadDocument(document.documentId);
+    } catch (error) {
+      throw new PrecisionUnitsPersistenceError("READBACK_MISSING", `Document ${document.documentId} UNITS revision ${document.revision} could not be read back: ${errorMessage(error)}`);
+    }
     if (!stored) {
       throw new PrecisionUnitsPersistenceError("READBACK_MISSING", `Document ${document.documentId} vanished after UNITS revision ${document.revision}.`);
     }

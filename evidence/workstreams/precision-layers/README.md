@@ -21,10 +21,10 @@ Branch: `work/reio-precision-layers`
 - IndexedDB reopen restores the append-only operation history. The evidence
   revision sequence is commit `1`, Undo `2`, Redo `3`, reopen+Undo `4`; recovery
   is clean from the operation log and all geometry SHA-256 values are identical.
-- Targeted coverage passed 5 files / 11 tests: golden/unit, 2,000 property
+- Targeted coverage passed 5 files / 12 tests: golden/unit, 2,000 property
   previews, 1,000 invalid fuzz patches, mutation, IndexedDB wiring and a 50,000
   object coordinate-preservation performance case.
-- Repository-wide verification passed: 257 Vitest files / 1,161 tests, DXF 28
+- Repository-wide verification passed: 257 Vitest files / 1,162 tests, DXF 28
   files / 70 tests, PDF 7 files / 22 tests, typecheck, lint, 154-module build,
   public-tree scan of 1,772 files, 119-package license audit and diff-check.
 - App/CSS integration, integrated Kuubik browser read-back and AutoCAD 2024.1.2
