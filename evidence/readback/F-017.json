@@ -4,8 +4,8 @@
   "kind": "readback",
   "authority": "independent-parser",
   "status": "PASS",
-  "artifactSha256": "8b0f9caf9b43e2c961e355967d39c66ce0b33e0b5a145feb9063e23a02a0d6c2",
-  "observedAt": "2026-08-31T01:26:53.678Z",
+  "artifactSha256": "c83f22206df8234880e5824f8ea02d9c59c19b6248fa2275a87d0d53bf49a0dd",
+  "observedAt": "2026-08-31T02:00:04.067Z",
   "workflow": "Production cad-core COPY and cad-dxf output are parsed with dxf-parser@1.1.2; the full 12-family result is serialized by the production .kdraw writer and independently decoded with manifest byte-length and SHA-256 checks before atomic UNDO",
   "result": "The independent DXF read-back found the two originals plus four exact LINE/LWPOLYLINE copies, while independent .kdraw decoding found 14 originals plus 24 copies with exact handles/properties; locked/proxy rejects were explicit and one UNDO restored the original document.",
   "artifact": "evidence/artifacts/F-017-independent-readback.json"

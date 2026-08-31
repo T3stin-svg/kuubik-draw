@@ -4,7 +4,7 @@
   "kind": "browser",
   "authority": "kuubik-draw-browser",
   "status": "PASS",
-  "artifactSha256": "0ed8a950da42da8b5082b251d1eec27d93655921b1f4f67534825033f9813dfc",
+  "artifactSha256": "7fd0cf920ef7b5459671aea586534efdfef28a3da253810fbf12f2ce54514964",
   "observedAt": "2026-08-29T10:43:59.899Z",
   "workflow": "Chromium at 1920x1080 opens /d/local with a seeded A3 viewport, enters MODEL, locks it, separately attempts real wheel, pointer pan and direct scale/center/twist Apply, adds a model LINE while locked, unlocks and performs wheel/pan, relocks and repeats refused navigation, then performs lock undo/redo, downloads production KDRAW1 and reloads IndexedDB.",
   "result": "All three locked navigation paths created zero revisions and left exact post-attempt camera snapshots; direct Apply was disabled, while the model LINE committed at revision 2 and the viewport stayed locked. Unlock enabled navigation, relock froze the resulting custom 1:4.545 camera, undo/redo restored false/true atomically, and revision 8 with two model entities plus locked viewport survived independent KDRAW1 decode and reload with zero console or page errors.",

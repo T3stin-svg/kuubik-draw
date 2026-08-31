@@ -1,6 +1,8 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { expect, test } from "@playwright/test";
+import { createEmptyDocument } from "../packages/cad-core/src/index.js";
+import { exportDxf } from "../packages/cad-dxf/src/index.js";
 
 const captureRoot = process.env.PARITY_CAPTURE_DIR;
 
@@ -323,15 +325,103 @@ test("AutoCAD-style shell keeps all eight primary zones visible at 1920x1080", a
   await expect(page.getByText("Command: *Cancel* (LINE)")).toBeVisible();
 
   await page.reload();
-  for (const [firstCorner, secondCorner] of [["250,-600", "4125,1730"], ["1600,300", "2500,1200"], ["1200,1900", "3500,2200"]]) {
-    await page.getByLabel("Esimene nurk").fill(firstCorner);
-    await page.getByLabel("Teine nurk").fill(secondCorner);
-    await page.getByRole("button", { name: "RECTANGLE", exact: true }).click();
-  }
+  const selectedSceneViewport = await modelCanvas.evaluate((canvas) => {
+    const element = canvas as HTMLCanvasElement;
+    return {
+      width: element.clientWidth,
+      height: element.clientHeight,
+      worldCenter: {
+        x: Number(element.dataset.worldCenterX),
+        y: Number(element.dataset.worldCenterY),
+      },
+      worldUnitsPerPixel: Number(element.dataset.worldUnitsPerPixel),
+    };
+  });
+  expect(selectedSceneViewport).toMatchObject({ width: 1920, height: 862 });
+  expect(Number.isFinite(selectedSceneViewport.worldCenter.x)).toBe(true);
+  expect(Number.isFinite(selectedSceneViewport.worldCenter.y)).toBe(true);
+  expect(selectedSceneViewport.worldUnitsPerPixel).toBeGreaterThan(0);
+  const selectedSceneWorldPoint = (x: number, y: number) => ({
+    x: selectedSceneViewport.worldCenter.x + (x - selectedSceneViewport.width / 2) * selectedSceneViewport.worldUnitsPerPixel,
+    y: selectedSceneViewport.worldCenter.y - (y - selectedSceneViewport.height / 2) * selectedSceneViewport.worldUnitsPerPixel,
+  });
+  const selectedSceneDocument = createEmptyDocument({ documentId: "visual-shell-selected", now: "2026-08-31T01:00:00.000Z" });
+  const outerTopLeft = selectedSceneWorldPoint(785, 195);
+  const outerBottomRight = selectedSceneWorldPoint(1812, 811);
+  const circleCenter = selectedSceneWorldPoint(1298, 503);
+  const textInsertion = selectedSceneWorldPoint(1032, 134);
+  selectedSceneDocument.entities = [
+    {
+      kind: "polyline", handle: "A1", layerId: "0", closed: true,
+      vertices: [
+        outerTopLeft,
+        { x: outerBottomRight.x, y: outerTopLeft.y },
+        outerBottomRight,
+        { x: outerTopLeft.x, y: outerBottomRight.y },
+      ],
+    },
+    {
+      kind: "circle", handle: "A2", layerId: "0", center: circleCenter,
+      radius: 123.5 * selectedSceneViewport.worldUnitsPerPixel,
+    },
+    {
+      kind: "text", handle: "A3", layerId: "0", position: textInsertion,
+      text: "KUUBIK AUDIT", height: 75 * selectedSceneViewport.worldUnitsPerPixel, rotationRad: 0,
+    },
+  ];
+  const selectedSceneDxf = Buffer.from(exportDxf(selectedSceneDocument).bytes);
+  await page.getByLabel("DXF import").setInputFiles({ name: "visual-shell-selected.dxf", mimeType: "application/dxf", buffer: selectedSceneDxf });
+  await expect(page.getByText("DXF imporditud: 3 objekti · 1 kihti · mm")).toBeVisible();
   await page.getByRole("button", { name: "Vali kõik", exact: true }).click();
   await expect(page.getByRole("complementary", { name: "Properties palette" }).getByText("3 selected")).toBeVisible();
   await expect(page.getByRole("complementary", { name: "Properties palette" }).getByText("All (3)", { exact: true })).toBeVisible();
   await expect(page.getByLabel("Kuubik Draw joonestusala")).toHaveAttribute("data-selected-handles", /.+/);
+  const selectedFixture = await modelCanvas.evaluate(async (canvas) => {
+    const database = await new Promise<IDBDatabase>((resolveOpen, rejectOpen) => {
+      const request = indexedDB.open("kuubik-draw", 1);
+      request.onsuccess = () => resolveOpen(request.result);
+      request.onerror = () => rejectOpen(request.error);
+    });
+    const document = await new Promise<any>((resolveRead, rejectRead) => {
+      const request = database.transaction("documents", "readonly").objectStore("documents").get("local");
+      request.onsuccess = () => resolveRead(request.result);
+      request.onerror = () => rejectRead(request.error);
+    });
+    database.close();
+    const element = canvas as HTMLCanvasElement;
+    const center = { x: Number(element.dataset.worldCenterX), y: Number(element.dataset.worldCenterY) };
+    const scale = Number(element.dataset.worldUnitsPerPixel);
+    const project = (point: { x: number; y: number }) => ({
+      x: (point.x - center.x) / scale + element.clientWidth / 2,
+      y: (center.y - point.y) / scale + element.clientHeight / 2,
+    });
+    const polyline = document.entities.find((entity: any) => entity.kind === "polyline");
+    const circle = document.entities.find((entity: any) => entity.kind === "circle");
+    const text = document.entities.find((entity: any) => entity.kind === "text");
+    return {
+      entityKinds: document.entities.map((entity: any) => entity.kind).sort(),
+      handles: document.entities.map((entity: any) => entity.handle).sort(),
+      selectedHandles: (element.dataset.selectedHandles ?? "").split(",").filter(Boolean).sort(),
+      polyline: { closed: polyline.closed, vertices: polyline.vertices.map(project) },
+      circle: { center: project(circle.center), radiusPx: circle.radius / scale },
+      text: { value: text.text, insertion: project(text.position), heightPx: text.height / scale },
+    };
+  });
+  expect(selectedFixture.entityKinds).toEqual(["circle", "polyline", "text"]);
+  expect(selectedFixture.handles).toEqual(["A1", "A2", "A3"]);
+  expect(selectedFixture.selectedHandles).toEqual(["A1", "A2", "A3"]);
+  expect(selectedFixture.polyline.closed).toBe(true);
+  expect(selectedFixture.polyline.vertices[0]!.x).toBeCloseTo(785, 6);
+  expect(selectedFixture.polyline.vertices[0]!.y).toBeCloseTo(195, 6);
+  expect(selectedFixture.polyline.vertices[2]!.x).toBeCloseTo(1812, 6);
+  expect(selectedFixture.polyline.vertices[2]!.y).toBeCloseTo(811, 6);
+  expect(selectedFixture.circle.center.x).toBeCloseTo(1298, 6);
+  expect(selectedFixture.circle.center.y).toBeCloseTo(503, 6);
+  expect(selectedFixture.circle.radiusPx).toBeCloseTo(123.5, 6);
+  expect(selectedFixture.text.value).toBe("KUUBIK AUDIT");
+  expect(selectedFixture.text.insertion.x).toBeCloseTo(1032, 6);
+  expect(selectedFixture.text.insertion.y).toBeCloseTo(134, 6);
+  expect(selectedFixture.text.heightPx).toBeCloseTo(75, 6);
   const selectedPropertiesGeometry = await page.getByRole("complementary", { name: "Properties palette" }).evaluate((element) => {
     const bounds = (target: Element) => {
       const rect = target.getBoundingClientRect();
@@ -527,6 +617,7 @@ test("AutoCAD-style shell keeps all eight primary zones visible at 1920x1080", a
         modelNavigation,
         modelDisplayReadback,
         selectedProperties: { visible: true, geometry: selectedPropertiesGeometry },
+        selectedFixture,
         selectionPixels,
         contextMenu: {
           activeCommand: true,

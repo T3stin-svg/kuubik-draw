@@ -4,8 +4,8 @@
   "kind": "readback",
   "authority": "independent-parser",
   "status": "PASS",
-  "artifactSha256": "c41f3343dd7467458702875654a2c689a05af29841437e82c9b08a816be3d03d",
-  "observedAt": "2026-08-31T01:27:50.149Z",
+  "artifactSha256": "9b3c602c060b8c7ca149e515211ebde5b646a2fdad9cd8781ad143b1ee9047fc",
+  "observedAt": "2026-08-31T02:01:00.284Z",
   "workflow": "Production cad-core MIRROR and cad-dxf output are parsed with dxf-parser@1.1.2; the source-retaining twelve-family result is serialized by the production .kdraw writer and independently decoded with manifest byte-length and SHA-256 verification, while erase Yes and both Undo paths are checked separately.",
   "result": "Independent DXF parsing found exact source and reflected LINE coordinates. Independent .kdraw decoding matched all twelve source and mirror entities, fresh/stable handle rules, reversed handedness, preserved properties and locked/proxy rejection; both source modes restored atomically and a coincident axis produced no mutation.",
   "artifact": "evidence/artifacts/F-020-independent-readback.json"

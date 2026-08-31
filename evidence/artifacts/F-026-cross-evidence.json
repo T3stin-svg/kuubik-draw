@@ -27,28 +27,28 @@
     "atPointCapabilityExact": true
   },
   "evidenceSha256": {
-    "evidence/artifacts/F-026-browser-readback.json": "b356dfb26feebca99570d9ac15e30ce4f737aa33ef7b1130c9e8d4e728c9eac8",
-    "evidence/artifacts/F-026-browser-matrix.json": "6dce39ebc2fe26f8211a24be176380f70c8c4ea9ce4154c5c6a7bcf97c16d446",
-    "evidence/artifacts/F-026-independent-readback.json": "82b056dc93e8f3183dd467b65c6cf015e9625638ddf128c245d1154132441779",
+    "evidence/artifacts/F-026-browser-readback.json": "35348e942be5a580b9cd99a48256acc33c4ea49800926269dd6b248569137926",
+    "evidence/artifacts/F-026-browser-matrix.json": "7ddc0b365af9815ff590656ab3d86a323fac50f8327954e36ecedc15bccec448",
+    "evidence/artifacts/F-026-independent-readback.json": "729a34e62c801003190f3445d54dd2880b4930223ce0e2d4850020dde5a99229",
     "evidence/artifacts/F-026-autocad-readback.json": "879be7531123b0aec5dbf544bd7bdf4611c8d34c4e1bcec63f4f6215abe1db09",
     "evidence/artifacts/F-026-autocad-core.json": "39de05789a2aac5cdf9eac093053877d0b9dfe07a7e81c8d343ff85314c80c4a",
-    "evidence/artifacts/F-026-oracles.json": "375e0106913e2926fc8712983245dd4ed1c8d4a7be5ed6f6252753c7c8d66ad7"
+    "evidence/artifacts/F-026-oracles.json": "88a658bdc259d12925ecee4c69ee141abc8554d536c0fb93e1250cb5deba8f20"
   },
   "nestedReceipts": {
     "browserArtifacts": {
       "evidence/artifacts/F-026-browser-matrix.json": {
-        "expected": "6dce39ebc2fe26f8211a24be176380f70c8c4ea9ce4154c5c6a7bcf97c16d446",
-        "actual": "6dce39ebc2fe26f8211a24be176380f70c8c4ea9ce4154c5c6a7bcf97c16d446",
+        "expected": "7ddc0b365af9815ff590656ab3d86a323fac50f8327954e36ecedc15bccec448",
+        "actual": "7ddc0b365af9815ff590656ab3d86a323fac50f8327954e36ecedc15bccec448",
         "byteLength": 10034
       },
       "evidence/artifacts/F-026-browser-canvas.json": {
-        "expected": "07456914dd6eb33d6bfddbff2f28ff8d575d4bd7765ef87a51a60161e4080889",
-        "actual": "07456914dd6eb33d6bfddbff2f28ff8d575d4bd7765ef87a51a60161e4080889",
+        "expected": "6c42a3662aa4a8584e740cd15f2b29e5a500e95a70eed58fb4e904af4cf3824f",
+        "actual": "6c42a3662aa4a8584e740cd15f2b29e5a500e95a70eed58fb4e904af4cf3824f",
         "byteLength": 3438
       },
       "evidence/artifacts/F-026-browser-at-point.json": {
-        "expected": "e65ea1d581675d05519936a4a69ddbe1da826f18322f8cc1e9fd002cca17e28c",
-        "actual": "e65ea1d581675d05519936a4a69ddbe1da826f18322f8cc1e9fd002cca17e28c",
+        "expected": "afcb27efdc9efc45a158fd0ddcb3922fbfa3a61d494eec5450ec8f8bade4934c",
+        "actual": "afcb27efdc9efc45a158fd0ddcb3922fbfa3a61d494eec5450ec8f8bade4934c",
         "byteLength": 9938
       },
       "evidence/artifacts/F-026-browser.dxf": {
@@ -57,8 +57,8 @@
         "byteLength": 4160
       },
       "evidence/artifacts/F-026-browser.kdraw": {
-        "expected": "c7c8a6cc252b98af472f4e1bf2994f5093327d0ff5726c00928427e54b731029",
-        "actual": "c7c8a6cc252b98af472f4e1bf2994f5093327d0ff5726c00928427e54b731029",
+        "expected": "7d5732541be2fa17b4a3fcde28139ba663f2e42f97c34764bddd2c66f435fe5f",
+        "actual": "7d5732541be2fa17b4a3fcde28139ba663f2e42f97c34764bddd2c66f435fe5f",
         "byteLength": 1717
       }
     },
@@ -267,8 +267,8 @@
         "byteLength": 5494
       },
       "evidence/artifacts/F-026-independent-readback.json": {
-        "expected": "82b056dc93e8f3183dd467b65c6cf015e9625638ddf128c245d1154132441779",
-        "actual": "82b056dc93e8f3183dd467b65c6cf015e9625638ddf128c245d1154132441779",
+        "expected": "729a34e62c801003190f3445d54dd2880b4930223ce0e2d4850020dde5a99229",
+        "actual": "729a34e62c801003190f3445d54dd2880b4930223ce0e2d4850020dde5a99229",
         "byteLength": 27199
       },
       "tools/oracles/freecad-f026-headless.py": {
@@ -299,7 +299,7 @@
     }
   },
   "browserDxfSha256": "28651cb1560005165e4b83f1b8730cffb4327e0dced7b0f2424a287712dc45e5",
-  "browserKdrawSha256": "c7c8a6cc252b98af472f4e1bf2994f5093327d0ff5726c00928427e54b731029",
+  "browserKdrawSha256": "7d5732541be2fa17b4a3fcde28139ba663f2e42f97c34764bddd2c66f435fe5f",
   "productionDxfSha256": "c3e8b4e15a5ad9e6e65bd8bc64916e7c5671f12f6e97f6f4ae8dde5b80a90085",
   "productionKdrawSha256": "4d7259927f1815d144d949e49f609aa89b397ba01784ef787201c229d3e456a6",
   "certificationAuthorities": {

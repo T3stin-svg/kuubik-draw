@@ -213,7 +213,7 @@
     "metadata": {
       "title": "F-016 standard entity matrix",
       "createdAt": "2026-08-28T11:30:00.000Z",
-      "updatedAt": "2026-08-31T01:32:41.406Z",
+      "updatedAt": "2026-08-31T02:05:25.260Z",
       "source": "synthetic parity fixture"
     }
   },
@@ -372,7 +372,7 @@
     "metadata": {
       "title": "F-016 standard entity matrix",
       "createdAt": "2026-08-28T11:30:00.000Z",
-      "updatedAt": "2026-08-31T01:32:41.972Z",
+      "updatedAt": "2026-08-31T02:05:25.825Z",
       "source": "synthetic parity fixture"
     }
   },
@@ -588,13 +588,13 @@
     "metadata": {
       "title": "F-016 standard entity matrix",
       "createdAt": "2026-08-28T11:30:00.000Z",
-      "updatedAt": "2026-08-31T01:32:42.571Z",
+      "updatedAt": "2026-08-31T02:05:26.426Z",
       "source": "synthetic parity fixture"
     }
   },
   "operations": [
     {
-      "opId": "1570b65c-0d76-4af0-84d6-ac3b04411342",
+      "opId": "36e9f028-8e19-49c7-9c03-bb98e9195e8b",
       "baseRevision": 0,
       "commandId": "LAYOUT_CREATE",
       "args": {
@@ -604,7 +604,7 @@
       "resultHandles": []
     },
     {
-      "opId": "ef0261c6-d0c6-4d9d-afec-78382aad463e",
+      "opId": "b782874a-7979-4788-8ebc-1ecdf5491bf6",
       "baseRevision": 1,
       "commandId": "LAYOUT_RENAME",
       "args": {
@@ -615,7 +615,7 @@
       "resultHandles": []
     },
     {
-      "opId": "8f183e37-35fb-4db9-9d47-5f26649d0319",
+      "opId": "a3886dc4-ca19-4040-a709-7bb10f35e79e",
       "baseRevision": 2,
       "commandId": "LAYOUT_CREATE",
       "args": {
@@ -625,27 +625,27 @@
       "resultHandles": []
     },
     {
-      "opId": "8f183e37-35fb-4db9-9d47-5f26649d0319:undo:1",
+      "opId": "a3886dc4-ca19-4040-a709-7bb10f35e79e:undo:1",
       "baseRevision": 3,
       "commandId": "UNDO",
       "args": {
-        "originalOpId": "8f183e37-35fb-4db9-9d47-5f26649d0319"
+        "originalOpId": "a3886dc4-ca19-4040-a709-7bb10f35e79e"
       },
       "targetHandles": [],
       "resultHandles": []
     },
     {
-      "opId": "ef0261c6-d0c6-4d9d-afec-78382aad463e:undo:2",
+      "opId": "b782874a-7979-4788-8ebc-1ecdf5491bf6:undo:2",
       "baseRevision": 4,
       "commandId": "UNDO",
       "args": {
-        "originalOpId": "ef0261c6-d0c6-4d9d-afec-78382aad463e"
+        "originalOpId": "b782874a-7979-4788-8ebc-1ecdf5491bf6"
       },
       "targetHandles": [],
       "resultHandles": []
     },
     {
-      "opId": "ef0261c6-d0c6-4d9d-afec-78382aad463e:redo:3",
+      "opId": "b782874a-7979-4788-8ebc-1ecdf5491bf6:redo:3",
       "baseRevision": 5,
       "commandId": "LAYOUT_RENAME",
       "args": {
@@ -656,7 +656,7 @@
       "resultHandles": []
     },
     {
-      "opId": "8f183e37-35fb-4db9-9d47-5f26649d0319:redo:4",
+      "opId": "a3886dc4-ca19-4040-a709-7bb10f35e79e:redo:4",
       "baseRevision": 6,
       "commandId": "LAYOUT_CREATE",
       "args": {

@@ -1,0 +1,128 @@
+{
+  "reference": {
+    "product": "AutoCAD 2024.1.2",
+    "workspace": "Drafting & Annotation",
+    "ref": "private://autocad-2024/line-active",
+    "sha256": "08505f04ee81f68e2adf76aa2cd06a0d5f9d12778ff1391bcd167ddb4cbaf4bc",
+    "redistributablePixelsIncluded": false
+  },
+  "kuubik": {
+    "zonesArtifact": "evidence/artifacts/visual-shell-wave-13/visual-shell-zones.json",
+    "stateArtifact": "evidence/artifacts/visual-shell-wave-13/visual-shell-states.json",
+    "screenshot": "evidence/artifacts/visual-shell-wave-13/visual-shell-empty-workspace.png"
+  },
+  "viewport": [
+    1920,
+    1080
+  ],
+  "browserZoomPercent": 100,
+  "windowsDpiScalePercent": 100,
+  "expectedGeometry": {
+    "layoutStatus": {
+      "x": 0,
+      "y": 1043,
+      "width": 1920,
+      "height": 37
+    },
+    "statusbar": {
+      "y": 1047,
+      "height": 32,
+      "bottom": 1079
+    }
+  },
+  "actualGeometry": {
+    "layoutStatus": {
+      "x": 0,
+      "y": 1043,
+      "width": 1920,
+      "height": 37,
+      "right": 1920,
+      "bottom": 1080,
+      "backgroundColor": "rgb(34, 41, 51)",
+      "borderTopColor": "rgb(59, 68, 83)",
+      "borderTopWidth": "4px",
+      "borderBottomColor": "rgb(6, 150, 215)",
+      "borderBottomWidth": "1px"
+    },
+    "statusbar": {
+      "x": 1260,
+      "y": 1047,
+      "width": 660,
+      "height": 32,
+      "right": 1920,
+      "bottom": 1079,
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderTopColor": "rgb(17, 22, 27)",
+      "borderTopWidth": "0px",
+      "borderBottomColor": "rgb(6, 150, 215)",
+      "borderBottomWidth": "1px"
+    }
+  },
+  "surfaces": {
+    "separator": {
+      "autoCad": "#3b4453",
+      "kuubik": "rgb(59, 68, 83)",
+      "thicknessPx": 4
+    },
+    "content": {
+      "autoCad": "#222933",
+      "kuubik": "rgb(34, 41, 51)",
+      "heightPx": 32
+    },
+    "accent": {
+      "autoCad": "#0696d7",
+      "kuubik": "rgb(6, 150, 215)",
+      "thicknessPx": 1
+    }
+  },
+  "statusControls": {
+    "grid": {
+      "x": 1618.375,
+      "width": 35.265625,
+      "height": 30,
+      "disabled": false,
+      "pressed": "true",
+      "color": "rgb(238, 244, 247)",
+      "backgroundColor": "rgb(23, 106, 153)"
+    },
+    "ortho": {
+      "x": 1653.640625,
+      "width": 44.65625,
+      "height": 30,
+      "disabled": true,
+      "pressed": null,
+      "color": "rgb(120, 130, 139)",
+      "backgroundColor": "rgba(0, 0, 0, 0)"
+    },
+    "osnap": {
+      "x": 1698.296875,
+      "width": 44.15625,
+      "height": 30,
+      "disabled": true,
+      "pressed": null,
+      "color": "rgb(120, 130, 139)",
+      "backgroundColor": "rgba(0, 0, 0, 0)"
+    },
+    "otrack": {
+      "x": 1742.453125,
+      "width": 47.90625,
+      "height": 30,
+      "disabled": true,
+      "pressed": null,
+      "color": "rgb(120, 130, 139)",
+      "backgroundColor": "rgba(0, 0, 0, 0)"
+    },
+    "dyn": {
+      "x": 1790.359375,
+      "width": 33.03125,
+      "height": 30,
+      "disabled": true,
+      "pressed": null,
+      "color": "rgb(120, 130, 139)",
+      "backgroundColor": "rgba(0, 0, 0, 0)"
+    }
+  },
+  "tolerancePx": 1,
+  "scope": "Shared Model/Layout and status-bar zone geometry, surfaces, accent and implemented control states only; the floating command line and five-category score remain separately gated.",
+  "status": "PASS"
+}

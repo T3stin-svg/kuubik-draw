@@ -78,6 +78,33 @@ try {
     }
   }
 
+  $fixture = $state.states.selectedFixture
+  if ((@($fixture.entityKinds) -join ',') -ne 'circle,polyline,text') { throw 'Selected fixture must contain exactly CIRCLE, closed POLYLINE and TEXT.' }
+  if ((@($fixture.handles) -join ',') -ne 'A1,A2,A3' -or (@($fixture.selectedHandles) -join ',') -ne 'A1,A2,A3') {
+    throw 'Selected fixture handles and live selection do not match.'
+  }
+  if (-not $fixture.polyline.closed -or @($fixture.polyline.vertices).Count -ne 4) { throw 'Selected fixture outer POLYLINE is not a closed four-vertex boundary.' }
+  $expectedFixture = [ordered]@{
+    canvasTop = 181
+    polyline = [ordered]@{
+      topLeft = [ordered]@{ x = 785; y = 195 }
+      bottomRight = [ordered]@{ x = 1812; y = 811 }
+    }
+    circle = [ordered]@{ center = [ordered]@{ x = 1298; y = 503 }; radiusPx = 123.5 }
+    text = [ordered]@{ value = 'KUUBIK AUDIT'; insertion = [ordered]@{ x = 1032; y = 134 }; heightPx = 75 }
+  }
+  Assert-Close ([double]$fixture.polyline.vertices[0].x) $expectedFixture.polyline.topLeft.x 1 'Selected POLYLINE left'
+  Assert-Close ([double]$fixture.polyline.vertices[0].y) $expectedFixture.polyline.topLeft.y 1 'Selected POLYLINE top'
+  Assert-Close ([double]$fixture.polyline.vertices[2].x) $expectedFixture.polyline.bottomRight.x 1 'Selected POLYLINE right'
+  Assert-Close ([double]$fixture.polyline.vertices[2].y) $expectedFixture.polyline.bottomRight.y 1 'Selected POLYLINE bottom'
+  Assert-Close ([double]$fixture.circle.center.x) $expectedFixture.circle.center.x 1 'Selected CIRCLE center x'
+  Assert-Close ([double]$fixture.circle.center.y) $expectedFixture.circle.center.y 1 'Selected CIRCLE center y'
+  Assert-Close ([double]$fixture.circle.radiusPx) $expectedFixture.circle.radiusPx 1 'Selected CIRCLE radius'
+  if ([string]$fixture.text.value -ne $expectedFixture.text.value) { throw 'Selected TEXT value does not match the owned AutoCAD fixture.' }
+  Assert-Close ([double]$fixture.text.insertion.x) $expectedFixture.text.insertion.x 1 'Selected TEXT insertion x'
+  Assert-Close ([double]$fixture.text.insertion.y) $expectedFixture.text.insertion.y 1 'Selected TEXT insertion y'
+  Assert-Close ([double]$fixture.text.heightPx) $expectedFixture.text.heightPx 1 'Selected TEXT height'
+
   $result = [ordered]@{
     reference = [ordered]@{
       product = 'AutoCAD 2024.1.2'
@@ -96,8 +123,10 @@ try {
     expectedGeometry = $expectedGeometry
     actualGeometry = $geometry
     surfaces = $surfaceSamples
+    expectedFixture = $expectedFixture
+    actualFixture = $fixture
     tolerancePx = 1
-    scope = 'Selected-object Properties and Layer Properties Manager split, density, repeated row geometry and sampled palette surfaces only; entity fixture completeness and five-category visual score remain separately gated.'
+    scope = 'Selected-object TEXT/POLYLINE/CIRCLE fixture, projected geometry, Properties and Layer Properties Manager split, density, repeated rows and sampled palette surfaces; the five-category visual score remains separately gated.'
     status = 'PASS'
   }
   $directory = Split-Path -Parent $OutputJson
