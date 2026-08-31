@@ -10,8 +10,8 @@
   "ciArtifactsExcluded": [
     "results.sarif"
   ],
-  "fileCount": 1796,
-  "sourceTreeSha256": "17c4a81891eeaca2e38e803d64c2a5912a278641f6fee1383c23949a965502d7",
+  "fileCount": 1811,
+  "sourceTreeSha256": "d53199385849c051bcd7ab579ca59d0be3374999b4c0bd4bc752ca8ee48534a9",
   "files": [
     {
       "path": ".gitattributes",
@@ -509,9 +509,19 @@
       "sha256": "e9ffe73e80412ddfb232b93cec17e8bfec5b29ddca6624967f5a6e70882840a6"
     },
     {
+      "path": "apps/web/src/features/draw-modify/boundary-region-command-adapter.ts",
+      "size": 1286,
+      "sha256": "4fd0f499439f93c67885914e597ee107a29632b363fee09555acd49ff0c4c719"
+    },
+    {
       "path": "apps/web/src/features/draw-modify/f011-revcloud-command-adapter.test.ts",
       "size": 2174,
       "sha256": "e427d375071100c7cb996497d2d4d56a4b21efcaa7c55abd057c7a629d205d64"
+    },
+    {
+      "path": "apps/web/src/features/draw-modify/f014-boundary-region-command-adapter.test.ts",
+      "size": 3198,
+      "sha256": "57d80bbfd7ed39fe2637772a57fda866821fc9b9ece6cfd68e8c6b6d774dd55d"
     },
     {
       "path": "apps/web/src/features/draw-modify/f031-f032-array-command-adapter.test.ts",
@@ -1025,13 +1035,13 @@
     },
     {
       "path": "docs/integration/geometry-modify.md",
-      "size": 24909,
-      "sha256": "5f23ec3dff606f97b858f45244f08aadd8ad97a589baa56bfe71932c2f73277b"
+      "size": 27736,
+      "sha256": "e295347b94d820fcccd871e77369bad0a4be5597a49bfb7c0675d70679ee1658"
     },
     {
       "path": "docs/integration/precision-layers.md",
-      "size": 29890,
-      "sha256": "210e63ca508e6a22e9a3bced31fb181d942c1687e1e0cd5a35ff1736e0942f21"
+      "size": 31703,
+      "sha256": "6a50b94c73fe40625c93f881890cda38d1d75c52ad346a1fe9ed8cac9c597b8b"
     },
     {
       "path": "docs/integration/visual-shell.md",
@@ -4194,6 +4204,11 @@
       "sha256": "ba5db6ebba24c3d49b24b9977773f567e063c4cf5e5c685fa3226f98f77bd078"
     },
     {
+      "path": "evidence/autocad/F-053.json",
+      "size": 7872,
+      "sha256": "79338eb04dd6eb2d2e1ccfb15e34f7ac65bc015fca4bd7727aacbb8c79ef7cc4"
+    },
+    {
       "path": "evidence/autocad/F-097.json",
       "size": 1092,
       "sha256": "33789a5275ca7530d1e578791713f235aee063ee41aa27b0b733d07e964ae87c"
@@ -4744,6 +4759,11 @@
       "sha256": "c6f78a85424f23a973b2f167e193a1fcc40f0959b9102ee4d13a3abec3576315"
     },
     {
+      "path": "evidence/workstreams/geometry-modify/wave-16-f014-boundary-region.json",
+      "size": 4539,
+      "sha256": "a893f90b3c9ebbe6f023ca62c3fa3fdec51bf8b4ef01928e38fc25122194b6b2"
+    },
+    {
       "path": "evidence/workstreams/precision-layers/coordinate-entry-wave11-20260831.json",
       "size": 730,
       "sha256": "212847ad73a226573b08d8e21ef9e24225e308703040b77c757f0f7c825c4b5c"
@@ -4795,8 +4815,8 @@
     },
     {
       "path": "evidence/workstreams/precision-layers/README.md",
-      "size": 22994,
-      "sha256": "a17e11f1fd9482be38ec56144e3359bbdd97e4a95fc16c37b20a12afb1458f19"
+      "size": 24679,
+      "sha256": "51ad35846c5f062f7d825f617f25c814862af9bca4f17e1c344d7317f90d936c"
     },
     {
       "path": "evidence/workstreams/precision-layers/spatial-profile-20260831.json",
@@ -4825,8 +4845,8 @@
     },
     {
       "path": "evidence/workstreams/precision-layers/test-matrix.json",
-      "size": 13806,
-      "sha256": "1c377589795c95599cc8873e5de67aad6f39f27daf50a4d728a1642f0aecb584"
+      "size": 15234,
+      "sha256": "b03003693a2a917306e594d9cf09adc0927321fa15cbad8fb5ac5d263141360c"
     },
     {
       "path": "evidence/workstreams/precision-layers/transparency-draw-order-wave10-20260831.json",
@@ -6135,8 +6155,8 @@
     },
     {
       "path": "packages/cad-core/src/boundary-region.ts",
-      "size": 10596,
-      "sha256": "16933fd3a9d9bc3a9ecd105ebe8403aeb155da5141f73e325bf4c0e3184c7b38"
+      "size": 28811,
+      "sha256": "d143a65b19fa2c90c7f6897256928555834d67dc0b10d49a7a64ce9a69372728"
     },
     {
       "path": "packages/cad-core/src/break.ts",
@@ -6325,8 +6345,8 @@
     },
     {
       "path": "packages/cad-core/test/boundary-region.test.ts",
-      "size": 5036,
-      "sha256": "c4bab3a12b0644a12125baca6ab30ea4e8ae0bdbfba1c25954f7ef9fd0606fc8"
+      "size": 5121,
+      "sha256": "b5c173748fd34468a8385f42cbacae0cd0a69c83728a2d6d03360de3477eb32c"
     },
     {
       "path": "packages/cad-core/test/break.test.ts",
@@ -6457,6 +6477,21 @@
       "path": "packages/cad-core/test/f011-revcloud.golden.json",
       "size": 540,
       "sha256": "e208b16a6fe7f6d3fbcc019eecd229808c4ad3ea37e80c9235c60a1cc9934f5f"
+    },
+    {
+      "path": "packages/cad-core/test/f014-boundary-region-command.test.ts",
+      "size": 9882,
+      "sha256": "918697bbba782098517b5573b82cdb0fe45b97303dc39f61d7802f44b707f9f5"
+    },
+    {
+      "path": "packages/cad-core/test/f014-boundary-region-mutation-proven.test.ts",
+      "size": 3705,
+      "sha256": "277868794b7c3fdf2122abbdf9131f46d7cd7a0530435c78d1cf6a3926b8c286"
+    },
+    {
+      "path": "packages/cad-core/test/f014-boundary-region.golden.json",
+      "size": 201,
+      "sha256": "6db648025ffff0b8bd7a0c399edba1e5f5d41bf4643a1c4b24c82048a5d5729b"
     },
     {
       "path": "packages/cad-core/test/f022-mutation-proven.test.ts",
@@ -6789,6 +6824,11 @@
       "sha256": "933d28d81be846d48bedb6eab56222dc984699d93ea9a1c9d462b22a1cf67878"
     },
     {
+      "path": "packages/cad-dxf/test/f014-boundary-region-roundtrip.test.ts",
+      "size": 3496,
+      "sha256": "d4764205cf97efea115272986e6a29ac5647cef121adede9ec6dfbec21802b71"
+    },
+    {
       "path": "packages/cad-dxf/test/f022-trim-roundtrip.test.ts",
       "size": 9664,
       "sha256": "2d225b2d0d6054351050e1c1f3941054ece16e8ee1d3ad56c130253e95119e8e"
@@ -6902,6 +6942,11 @@
       "path": "packages/cad-dxf/test/f111-roundtrip.test.ts",
       "size": 7903,
       "sha256": "da7cb55eb5dcb24e995127cc42cb075be48a815133957b4856bd61241f52b60b"
+    },
+    {
+      "path": "packages/cad-dxf/test/fixtures/synthetic/F-053-units-header.dxf",
+      "size": 287,
+      "sha256": "57ca083d0f49e91889557ae90204e227549f3c61d009e0f01bda8db5d280844d"
     },
     {
       "path": "packages/cad-dxf/test/fixtures/synthetic/F-110-browser-roundtrip.dxf",
@@ -7729,6 +7774,31 @@
       "sha256": "cc3ccf04cefec97155c66714fa3a33325931b6899ba4217acda270d9f9e003fb"
     },
     {
+      "path": "tools/autocad/f053-content-address.test.mjs",
+      "size": 1579,
+      "sha256": "2384cf69b4d0c75c6047bdc322d86136de7352f3f0d98d93ec887cf5a0b88eac"
+    },
+    {
+      "path": "tools/autocad/f053-dxf-readback.mjs",
+      "size": 4909,
+      "sha256": "d436705147be212bd34a29330d35d38cdd659ef4ba94b4e9ec33fca7543aa719"
+    },
+    {
+      "path": "tools/autocad/f053-dxf-readback.test.mjs",
+      "size": 2469,
+      "sha256": "a728aa5be1ee8e5176175af0103d4b8fd1562d41382e4dcf3b8de5a240432cce"
+    },
+    {
+      "path": "tools/autocad/f053-runner.test.mjs",
+      "size": 3599,
+      "sha256": "7d28d39ee4868b27b886db9312881d72a3fbb3fed3742d4b6f7f0ff17dd7ae65"
+    },
+    {
+      "path": "tools/autocad/f053-units-matrix.ps1",
+      "size": 15005,
+      "sha256": "f370d3a6f59986e162ea7d5cf74c9a0737a6129cc3a868386da3c546d90e8ac5"
+    },
+    {
       "path": "tools/autocad/f097-layout-tabs.ps1",
       "size": 11473,
       "sha256": "1fe7bf8816d43d35de3b1d0e08085c298af74cf529bdc83ebfb574a28f90902b"
@@ -7987,6 +8057,11 @@
       "path": "tools/autocad/run-f030.mjs",
       "size": 5797,
       "sha256": "f220ccb1977be320356e64dab679868534fb1c15238e2ed34fd7294e36827b69"
+    },
+    {
+      "path": "tools/autocad/run-f053.mjs",
+      "size": 3258,
+      "sha256": "a2081de66a0e0bb9a0a710f3eb2ee9a73394b1d3268ae1c99121b38c02433212"
     },
     {
       "path": "tools/autocad/run-f097.mjs",
