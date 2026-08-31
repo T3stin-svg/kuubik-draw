@@ -399,3 +399,46 @@ F-011 has unit, versioned golden, property, mutation, prepared-wiring, feature-a
 roundtrip coverage. It remains uncertified until the AutoCAD 2024.1.2 live REVCLOUD matrix and
 the Kuubik browser workflow are run with output read-back. No parity score or certification
 record was changed.
+
+## Wave 14 exports (F-031/F-032 ARRAY matrix)
+
+From `packages/cad-core/src/array-commands.ts`:
+
+- `prepareArrayCommand`
+- `prepareArrayPathPropertyUpdate`
+- `refreshAssociativePathArrays`
+- `readArrayPathAssociation`
+- `arrayPathLength` and `arrayPathSample`
+- `ArrayCommandInputError`, `ArrayCommandInputErrorCode`
+- ARRAYRECT, ARRAYPOLAR, ARRAYPATH, property-patch, association, refresh, and prepared-result types
+
+From `apps/web/src/features/draw-modify/array-command-adapter.ts`:
+
+- `arrayCommandAdapter`
+- `arrayPathPropertyUpdateAdapter`
+- `refreshArrayPathAdapter`
+- adapter input types
+
+The integration owner should route ARRAYRECT, ARRAYPOLAR, and ARRAYPATH through
+`arrayCommandAdapter` and the shared `createAtomicCommandWorkflow`. RECT supports legacy exact
+vectors plus signed row/column spacing and an array-axis angle. POLAR supports fill angle or angle
+between items, Rotate Items, and radial rows. PATH supports Divide/Measure, start offset, Fill
+Entire Path, an explicit count cap, forward/reverse direction, tangent-relative alignment, and
+normal-direction rows.
+
+The pinned schema has no native array entity. Associative ARRAYPATH therefore keeps standard child
+entities and stores a deterministic `extensionData.kuubikArrayPath` definition on every child.
+Source/path changes call `refreshArrayPathAdapter`; Properties changes call
+`arrayPathPropertyUpdateAdapter`. Both retain a child handle while its
+`sourceHandle:itemIndex:rowIndex` address survives, and add/delete only the count delta. The
+association is a native Kuubik contract and intentionally does not survive standard DXF; expanded
+geometry, handles, layers, and common properties do round-trip.
+
+Do not call the Wave 3 non-associative adapter after migration. The new feature adapter prepares
+preview and commit through the same kernel, and create/update/refresh each commit as one atomic
+`CadSession` operation. Locked, off, frozen, missing-layer, missing-entity, invalid-spacing, invalid-
+count, and source/path collision states fail before an operation exists.
+
+F-031/F-032 remain uncertified until the complete AutoCAD 2024.1.2 command/Properties matrix and
+the integration-owned Kuubik browser workflow are run with saved/rendered read-back. No parity
+score or certification record was changed in this lane.

@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "wave": "f031-f032-complete-array-matrix",
+  "rows": ["F-031", "F-032"],
+  "status": "implemented-kernel-adapters-and-dxf-readback-not-browser-or-autocad-certified",
+  "sourceAuthority": "C:/Users/Olav/Downloads/kuubik-draw-reio-scope-v1.json",
+  "behaviorAuthorities": [
+    "https://help.autodesk.com/cloudhelp/2024/ENU/AutoCAD-Core/files/GUID-BB3DA888-0C3A-4C68-A3ED-E0E528781205.htm",
+    "https://help.autodesk.com/cloudhelp/2024/ENU/AutoCAD-Core/files/GUID-A6E74297-2CB3-4B1C-A07B-69CD08630052.htm",
+    "https://help.autodesk.com/cloudhelp/2024/ENU/AutoCAD-Core/files/GUID-D36C46CD-4E17-4A16-A387-C0B158EA5A9E.htm",
+    "https://help.autodesk.com/cloudhelp/2024/ENU/AutoCAD-Core/files/GUID-298A0544-E6C3-496F-9FA1-12AEC2FF5647.htm"
+  ],
+  "implemented": {
+    "F-031": [
+      "rectangular row and column counts",
+      "signed row and column spacing",
+      "rotated rectangular array axes",
+      "legacy exact row and column vectors",
+      "polar item count",
+      "polar fill angle or angle between items",
+      "Rotate Items",
+      "polar radial rows",
+      "stable handles plus exact source layer, appearance and extension-data cloning"
+    ],
+    "F-032": [
+      "Divide without a duplicate seam on closed paths",
+      "Measure with spacing, item cap and Fill Entire Path",
+      "start offset and forward/reverse path direction",
+      "tangent-relative alignment and normal-direction rows",
+      "exact line/arc and deterministic adaptive ellipse/spline path sampling",
+      "native Kuubik associative definition on every child",
+      "source/path refresh with stable child handles",
+      "Properties update with stable surviving handles and count-delta add/delete",
+      "locked, off, frozen, missing-layer, missing-entity and source/path-collision refusal"
+    ]
+  },
+  "invariants": {
+    "previewEqualsCommit": "array adapters and commit use the same deterministic preparation kernel",
+    "atomicUndoRedo": "create, Properties update and source/path refresh each commit as one CadSession operation",
+    "stableIdentity": "the sourceHandle:itemIndex:rowIndex address retains its child handle across refresh and Properties edits",
+    "propertiesAndLayers": "expanded children retain source layer, appearance and extension data; association metadata is merged under kuubikArrayPath",
+    "safeLayerFailure": "locked, off, frozen and missing layers fail before an EntityChange exists",
+    "dxfReadback": "expanded geometry, handles, layers, true colour and lineweight survive production DXF export/import"
+  },
+  "tests": {
+    "unitGoldenPropertyF031": "packages/cad-core/test/f031-array-command.test.ts and packages/cad-core/test/f031-array.golden.json",
+    "unitGoldenPropertyF032": "packages/cad-core/test/f032-arraypath-command.test.ts and packages/cad-core/test/f032-arraypath.golden.json",
+    "mutation": "packages/cad-core/test/f031-f032-mutation-proven.test.ts",
+    "featureWiringAtomic": "apps/web/src/features/draw-modify/f031-f032-array-command-adapter.test.ts",
+    "dxfRoundtrip": "packages/cad-dxf/test/f031-f032-array-roundtrip.test.ts",
+    "targetedResult": "5 files passed; 27 tests passed",
+    "fullVitestResult": "230 files passed; 1087 tests passed",
+    "dxfGateResult": "23 files passed; 59 tests passed",
+    "typecheckLintBuild": "PASS; Vite reported the existing large-chunk advisory only",
+    "publicTree": "PASS; 1686 files scanned",
+    "license": "PASS; 7 files, 5 provenance entries and 119 installed packages audited",
+    "diffCheck": "PASS"
+  },
+  "knownLimits": [
+    "KDraw v1 has no native array entity, so ARRAYPATH association is stored as Kuubik extension metadata on standard child entities",
+    "standard DXF preserves expanded ARRAY geometry and common properties but not kuubikArrayPath association metadata",
+    "RECT and POLAR are expanded non-associative geometry in this schema lane",
+    "the shared cad-core barrel and command registry are intentionally unchanged by file ownership"
+  ],
+  "certificationGaps": [
+    "AutoCAD 2024.1.2 live creation and Properties read-back matrix was not run in this lane",
+    "Kuubik browser ARRAY workflow and rendered output read-back were not run because App.tsx and shared registry wiring are outside this lane",
+    "F-031/F-032 parity scores and certification records were intentionally not changed"
+  ]
+}
