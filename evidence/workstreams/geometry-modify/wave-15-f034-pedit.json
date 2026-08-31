@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "wave": "f034-pedit-command-matrix",
+  "rows": ["F-034"],
+  "status": "implemented-kernel-adapter-and-dxf-readback-not-browser-or-autocad-certified",
+  "sourceAuthority": "C:/Users/Olav/Downloads/kuubik-draw-reio-scope-v1.json",
+  "behaviorAuthorities": [
+    "https://help.autodesk.com/cloudhelp/2023/ENU/AutoCAD-Core/files/GUID-648BDC21-E835-478F-A318-9D201479998D.htm",
+    "https://help.autodesk.com/cloudhelp/2024/ENU/AutoCAD-MAC-Core/files/GUID-9F9536F0-FBC3-4FA5-89FB-16D6BAFCA5FB.htm",
+    "https://help.autodesk.com/cloudhelp/2024/ENU/AutoCAD-Core/files/GUID-19D69F56-9A1C-4277-AE9D-5C15DF27986F.htm"
+  ],
+  "implemented": {
+    "conversion": [
+      "selected LINE or ARC to lightweight polyline",
+      "exact signed ARC bulge",
+      "selected source handle, layer, appearance and extension-data preservation"
+    ],
+    "join": [
+      "open LINE, ARC and polyline targets",
+      "finite fuzz tolerance",
+      "Extend, Add and bounded Both joint types",
+      "source-property inheritance and joined-source atomic deletion",
+      "per-target rejection for missing, hidden, locked, unsupported, degenerate and non-contiguous geometry"
+    ],
+    "edit": [
+      "Open and Close",
+      "uniform Width and per-vertex start/end width",
+      "Reverse",
+      "Insert with exact bulge and tapered-width split",
+      "Move, Delete and Straighten",
+      "deterministic Fit, Spline, frame refit and Decurve",
+      "linetype-generation extension state"
+    ]
+  },
+  "invariants": {
+    "previewEqualsCommit": "pedit adapter preview and commit call the same deterministic preparation kernel",
+    "atomicUndoRedo": "the retained source put and every joined-source deletion are one CadSession operation",
+    "stableIdentity": "the selected source handle, layer and properties survive conversion and all edits",
+    "safeFailure": "invalid input and non-editable source layers fail before an EntityChange; rejected JOIN targets remain unchanged",
+    "dxfReadback": "expanded polyline geometry, handle, layer, closed state, bulges, widths, true colour and lineweight survive production DXF export/import"
+  },
+  "tests": {
+    "unitGoldenPropertyFuzz": "packages/cad-core/test/f034-pedit-command.test.ts and packages/cad-core/test/f034-pedit.golden.json",
+    "mutation": "packages/cad-core/test/f034-pedit-mutation-proven.test.ts",
+    "featureWiringAtomic": "apps/web/src/features/draw-modify/f034-pedit-command-adapter.test.ts",
+    "dxfRoundtrip": "packages/cad-dxf/test/f034-pedit-roundtrip.test.ts",
+    "targetedResult": "5 files passed; 33 tests passed",
+    "fullVitestResult": "247 files passed; 1141 tests passed",
+    "dxfGateResult": "28 files passed; 70 tests passed",
+    "typecheckLintBuild": "PASS; Vite reported the existing large-chunk advisory only",
+    "publicTree": "PASS; 1756 files scanned",
+    "license": "PASS; 7 files, 5 provenance entries and 119 installed packages audited",
+    "diffCheck": "PASS"
+  },
+  "knownLimits": [
+    "KDraw v1 has no native classic fit-polyline entity, so Fit and Spline retain a Kuubik curve frame and render deterministic sampled lightweight-polyline geometry",
+    "standard DXF preserves the sampled geometry but not extensionData.kuubikPeditCurve or linetype-generation extension state",
+    "the shared cad-core barrel and command registry are intentionally unchanged by file ownership",
+    "AutoCAD remains the final behavioral authority; LibreCAD and FreeCAD were not used as certification evidence"
+  ],
+  "certificationGaps": [
+    "AutoCAD 2024.1.2 live PEDIT command and property read-back matrix was not run in this lane",
+    "Kuubik browser PEDIT workflow and rendered output read-back were not run because App.tsx and shared command wiring are outside this lane",
+    "F-034 parity score and certification records were intentionally not changed"
+  ]
+}
