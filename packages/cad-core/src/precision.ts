@@ -26,7 +26,7 @@ export interface PrecisionRequest {
 
 export interface PrecisionResult {
   point: CadPoint2;
-  source: "typed-cartesian" | "direct-distance" | "osnap" | "otrack" | "grid" | "ortho" | "polar" | "cursor";
+  source: "typed-cartesian" | "typed-polar" | "direct-distance" | "osnap" | "otrack" | "grid" | "ortho" | "polar" | "cursor";
   stages: ReadonlyArray<{ stage: string; point: CadPoint2 }>;
   parsedInput?: CadPrecisionInput;
 }
@@ -86,8 +86,10 @@ export function resolvePrecisionPoint(request: PrecisionRequest): PrecisionResul
   finitePoint(request.cursorPoint, "Cursor point");
   const modes = request.modes ?? {};
   const parsedInput = typeof request.input === "string" ? parseCadPrecisionInput(request.input) : request.input;
-  if (parsedInput?.kind === "absolute-cartesian" || parsedInput?.kind === "relative-cartesian") {
-    return { point: resolveCadPrecisionInput(parsedInput, request.basePoint), source: "typed-cartesian", stages: [], parsedInput };
+  if (parsedInput?.kind === "absolute-cartesian" || parsedInput?.kind === "relative-cartesian"
+    || parsedInput?.kind === "absolute-polar" || parsedInput?.kind === "relative-polar") {
+    const source = parsedInput.kind.endsWith("polar") ? "typed-polar" : "typed-cartesian";
+    return { point: resolveCadPrecisionInput(parsedInput, request.basePoint), source, stages: [], parsedInput };
   }
   const constrained = constrainedDirection(request.basePoint, request.cursorPoint, modes);
   const stages: Array<{ stage: string; point: CadPoint2 }> = [{ stage: constrained.source, point: constrained.point }];

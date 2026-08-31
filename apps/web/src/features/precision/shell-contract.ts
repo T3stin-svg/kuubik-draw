@@ -1,6 +1,10 @@
 import type { CadEntity, CadPoint2, CadUnits, KDrawDocumentV1 } from "@kuubik/cad-schema";
 import { entityParticipates, type CadLayerPurpose } from "../../../../../packages/cad-core/src/layer-policy.js";
-import type { CadPrecisionInput } from "../../../../../packages/cad-core/src/precision-input.js";
+import {
+  parseCadPrecisionInput,
+  type CadPrecisionInput,
+  type CadPrecisionInputOptions,
+} from "../../../../../packages/cad-core/src/precision-input.js";
 import type { PrecisionRequest, PrecisionResult } from "../../../../../packages/cad-core/src/precision.js";
 import { CadSelectionIndex } from "../../../../../packages/cad-renderer/src/selection-index.js";
 import type { CadPickHit } from "../../../../../packages/cad-renderer/src/selection.js";
@@ -37,7 +41,7 @@ import {
   type PrecisionState,
   type VisualShellCommandAdapter,
 } from "./command-adapter.js";
-import { PrecisionFeatureModel, type DynamicInputModel } from "./model.js";
+import { normalizePrecisionUnits, PrecisionFeatureModel, type DynamicInputModel } from "./model.js";
 
 export interface PrecisionPointerInput {
   basePoint: CadPoint2;
@@ -66,6 +70,7 @@ export interface LayerShellIntent {
 export interface PrecisionLayersShellContractOptions {
   settings: PrecisionSettings;
   units: CadUnits;
+  inputFormat?: Omit<CadPrecisionInputOptions, "documentUnit">;
   initialPrecision?: Partial<PrecisionState>;
   layerController?: LayerManagerControllerOptions;
   onLayerIntent?: (intent: LayerShellIntent) => void;
@@ -77,6 +82,10 @@ function cloneSettings(settings: PrecisionSettings): PrecisionSettings {
     ...(settings.polarAdditionalAnglesRad ? { polarAdditionalAnglesRad: [...settings.polarAdditionalAnglesRad] } : {}),
     ...(settings.gridOrigin ? { gridOrigin: { ...settings.gridOrigin } } : {}),
   };
+}
+
+function cloneInputFormat(format: Omit<CadPrecisionInputOptions, "documentUnit"> = {}): Omit<CadPrecisionInputOptions, "documentUnit"> {
+  return { ...format };
 }
 
 /**
@@ -145,12 +154,15 @@ export class PrecisionLayersShellContract {
   readonly #adapter: VisualShellCommandAdapter;
   readonly #layerIntents: LayerShellIntent[] = [];
   readonly #units: CadUnits;
+  readonly #inputFormat: Omit<CadPrecisionInputOptions, "documentUnit">;
+  #layerSnapshot: KDrawDocumentV1["layers"] = [];
   #settings: PrecisionSettings;
 
   constructor(document: KDrawDocumentV1, options: PrecisionLayersShellContractOptions) {
     this.precision = new PrecisionCommandState(options.initialPrecision ?? {});
     this.#settings = cloneSettings(options.settings);
-    this.#units = structuredClone(options.units);
+    this.#units = normalizePrecisionUnits(options.units);
+    this.#inputFormat = cloneInputFormat(options.inputFormat);
     this.#layers = options.layerController
       ? new LayerManagerController(document, options.layerController)
       : new LayerManagerController(document);
@@ -178,6 +190,10 @@ export class PrecisionLayersShellContract {
     return cloneSettings(this.#settings);
   }
 
+  get precisionInputFormat(): Omit<CadPrecisionInputOptions, "documentUnit"> {
+    return cloneInputFormat(this.#inputFormat);
+  }
+
   setPrecisionSettings(settings: PrecisionSettings): void {
     this.precision.precisionModes(settings);
     this.#settings = cloneSettings(settings);
@@ -197,12 +213,26 @@ export class PrecisionLayersShellContract {
 
   preparePointer(input: PrecisionPointerInput): PreparedPrecisionPointer {
     const precisionState = this.precision.state;
-    const layers = this.document.layers;
+    const layers = this.#layerSnapshot;
+    const normalizedInput = input.input === undefined
+      ? undefined
+      : typeof input.input === "string"
+        ? parseCadPrecisionInput(input.input, { ...this.#inputFormat, documentUnit: this.#units.linear })
+        : structuredClone(input.input);
+    const explicitCoordinate = normalizedInput !== undefined && normalizedInput.kind !== "direct-distance";
+    const candidateRequest = this.precision.prepareRequest({
+      basePoint: { ...input.basePoint },
+      cursorPoint: { ...input.cursorPoint },
+      ...(normalizedInput === undefined ? {} : { input: normalizedInput }),
+      objectSnapCandidates: [],
+      trackingCandidates: [],
+    }, this.#settings);
+    const candidateCursor = explicitCoordinate ? input.cursorPoint : this.#precisionModel.preview(candidateRequest).point;
     const eligibleForSnap = (entity: CadEntity): boolean => entityParticipates(entity, layers, "snap").participates;
-    const objectSnapCandidates = precisionState.osnap
+    const objectSnapCandidates = precisionState.osnap && !explicitCoordinate
       ? this.#snap.query({
           modes: precisionState.osnapModes,
-          cursor: input.cursorPoint,
+          cursor: candidateCursor,
           aperture: this.#settings.aperture,
           ...(input.referencePoint ? { referencePoint: input.referencePoint } : {}),
           ...(input.snapReferenceHandles ? { referenceHandles: [...input.snapReferenceHandles] } : {}),
@@ -213,15 +243,15 @@ export class PrecisionLayersShellContract {
     if (input.snapCandidateId !== undefined && !selectedCandidate) throw new RangeError(`Snap candidate ${input.snapCandidateId} is not available for this pointer frame.`);
     const activeSnapCandidates = selectedCandidate ? [selectedCandidate] : objectSnapCandidates;
     const trackingAngles = input.trackingAnglesRad ?? this.#polarTrackingAngles();
-    const trackingCandidates = precisionState.otrack
+    const trackingCandidates = precisionState.otrack && !explicitCoordinate
       ? trackingAngles
-        ? this.tracking.candidates(input.cursorPoint, this.#settings.aperture, trackingAngles)
-        : this.tracking.candidates(input.cursorPoint, this.#settings.aperture)
+        ? this.tracking.candidates(candidateCursor, this.#settings.aperture, trackingAngles)
+        : this.tracking.candidates(candidateCursor, this.#settings.aperture)
       : [];
     const request: PrecisionRequest = this.precision.prepareRequest({
       basePoint: { ...input.basePoint },
       cursorPoint: { ...input.cursorPoint },
-      ...(input.input === undefined ? {} : { input: typeof input.input === "string" ? input.input : structuredClone(input.input) }),
+      ...(normalizedInput === undefined ? {} : { input: normalizedInput }),
       objectSnapCandidates: activeSnapCandidates.map((candidate) => ({
         point: { ...candidate.point }, kind: candidate.mode, priority: candidate.priority, key: candidate.key,
       })),
@@ -238,7 +268,7 @@ export class PrecisionLayersShellContract {
   querySnap(cursor: CadPoint2, referencePoint?: CadPoint2, referenceHandles?: readonly string[]): CadSnapCandidate[] {
     const state = this.precision.state;
     if (!state.osnap) return [];
-    const layers = this.document.layers;
+    const layers = this.#layerSnapshot;
     return this.#snap.query({
       modes: state.osnapModes,
       cursor,
@@ -283,12 +313,12 @@ export class PrecisionLayersShellContract {
   }
 
   select(point: CadPoint2, tolerance: number): CadPickHit[] {
-    const layers = this.document.layers;
+    const layers = this.#layerSnapshot;
     return this.#selection.pick(point, tolerance, (entity) => entityParticipates(entity, layers, "select").participates);
   }
 
   participates(entity: CadEntity, purpose: CadLayerPurpose): boolean {
-    return entityParticipates(entity, this.document.layers, purpose).participates;
+    return entityParticipates(entity, this.#layerSnapshot, purpose).participates;
   }
 
   executeLayer(command: LayerManagerCommand): LayerManagerCommit {
@@ -311,6 +341,7 @@ export class PrecisionLayersShellContract {
 
   #syncSpatialIndexes(): void {
     const document = this.#layers.document;
+    this.#layerSnapshot = structuredClone(document.layers);
     this.#selection.setBlocks(document.blocks);
     this.#selection.setEntities(document.entities);
     this.#snap.setBlocks(document.blocks);

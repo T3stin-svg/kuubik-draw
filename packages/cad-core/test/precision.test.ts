@@ -8,9 +8,9 @@ describe("F-041/F-042/F-044 precision input", () => {
     expect(parseCadPrecisionInput("1.25e3,-0.0000000000000002")).toEqual({ kind: "absolute-cartesian", point: { x: 1250, y: -2e-16 } });
     expect(resolveCadPrecisionInput(parseCadPrecisionInput("@2.5,-4"), { x: 10, y: 20 })).toEqual({ x: 12.5, y: 16 });
     expect(resolveCadPrecisionInput(parseCadPrecisionInput("5"), { x: 1, y: 1 }, { x: 4, y: 5 })).toEqual({ x: 4, y: 5 });
-    expect(() => parseCadPrecisionInput("10junk,20")).toThrow("Expected");
-    expect(() => parseCadPrecisionInput("Infinity,0")).toThrow("Expected");
-    expect(() => parseCadPrecisionInput("@10<45")).toThrow("Expected");
+    expect(() => parseCadPrecisionInput("10junk,20")).toThrow("finite length");
+    expect(() => parseCadPrecisionInput("Infinity,0")).toThrow("finite length");
+    expect(parseCadPrecisionInput("@10<45")).toEqual({ kind: "relative-polar", distance: 10, angleRad: Math.PI / 4 });
   });
 
   it("keeps explicit Cartesian input exact while cursor aids share one deterministic pipeline", () => {

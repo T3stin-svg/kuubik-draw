@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { PrecisionCommandState, PrecisionVisualShellAdapter } from "./command-adapter.js";
+import { PRECISION_TOGGLE_SHORTCUTS, PrecisionCommandState, PrecisionVisualShellAdapter } from "./command-adapter.js";
 
 describe("precision keyboard and command-line state", () => {
   it("maps the standard function keys and never consumes editable/repeat events", () => {
@@ -9,6 +9,18 @@ describe("precision keyboard and command-line state", () => {
     expect(state.handleKey("F3", { editableTarget: true })).toMatchObject({ handled: false, state: { osnap: false } });
     expect(state.handleKey("F11", { repeat: true })).toMatchObject({ handled: false, state: { otrack: false } });
     expect(state.handleKey("A")).toMatchObject({ handled: false, changed: false });
+  });
+
+  it("publishes one exact F3/F7..F12 shortcut contract for shell wiring", () => {
+    expect(PRECISION_TOGGLE_SHORTCUTS.map(({ key, command, toggle, rowIds }) => [key, command, toggle, rowIds])).toEqual([
+      ["F3", "OSNAP", "osnap", ["F-049", "F-050"]],
+      ["F7", "GRID", "grid", ["F-047"]],
+      ["F8", "ORTHO", "ortho", ["F-045"]],
+      ["F9", "SNAP", "snap", ["F-047"]],
+      ["F10", "POLAR", "polar", ["F-046"]],
+      ["F11", "OTRACK", "otrack", ["F-051"]],
+      ["F12", "DYNMODE", "dynamicInput", ["F-052"]],
+    ]);
   });
 
   it("parses deterministic ON/OFF/TOGGLE commands and fails closed on invalid input", () => {
@@ -61,6 +73,9 @@ describe("typed VisualShellCommandAdapter precision boundary", () => {
       execute: (rowId) => delegated.push(rowId),
     });
     expect(adapter.canExecute("F-045", "model")).toBe(true);
+    expect(adapter.canExecute("F-046", "model")).toBe(true);
+    expect(adapter.canExecute("F-047", "model")).toBe(true);
+    expect(adapter.canExecute("F-051", "model")).toBe(true);
     adapter.execute("F-045");
     expect(adapter.precisionMode("F-045")).toBe(true);
     adapter.setPrecisionMode("F-052", true);
