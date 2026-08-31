@@ -16,21 +16,21 @@ Current bindings:
 
 - LINE, PLINE, RECTANGLE, CIRCLE and ARC use `CommandLineEngine` + `CommandRegistry`; geometry is prepared by the integrated core adapters and committed once through `CadSession` plus IndexedDB read-back. The host supplies a UUID operation id because a newly constructed engine's private sequence restarts at one.
 - Existing Move/Copy/Rotate/Scale/Mirror/Offset/Trim/Stretch/Fillet/Match Properties application workflows retain their tested core planners and transaction path.
-- GRID, ORTHO, OSNAP, OTRACK and DYN are owned by `PrecisionCommandState`; the same state handles status clicks, F-key dispatch and command-line input. Cursor read-back uses `PrecisionCommandState.prepareRequest()` before `PrecisionFeatureModel.preview()`.
-- Layer creation/current/toggles are planned by `LayerManagerController.plan()` and committed through the common document transaction path. React does not construct layer changes.
-- MTEXT and LEADER use `prepareAnnotationCommand` and the same atomic runtime commit/read-back path. Dimension, hatch, style and all block commands remain disabled until the shell can collect every required prompt and prove the resulting commit.
-- Document tabs use `document-tabs.ts`; New uses `createNewModelSpaceDocument`, and one `CadSession` is retained per open tab.
+- GRID, ORTHO, OSNAP, OTRACK and DYN retain one command state, while pointer frames now run through `PrecisionLayersShellContract`. The contract owns the real snap/selection indexes, acquired tracking candidates, immutable preview/commit request and Dynamic Input read-back. React never fabricates empty candidate arrays.
+- Layer creation/current/toggles execute first through `PrecisionLayersShellContract.executeLayer()` and the exact committed change set then passes the shared durable transaction path. React does not construct layer changes.
+- MTEXT and LEADER keep their compact command-line path. DIMLINEAR, DIMSTYLE, HATCH, STYLE, BLOCK, INSERT, BEDIT, EXPLODE and ATTRIB use `VisualShellLivePrompt`, which wraps `AnnotationBlockShellAdapter`, exposes one typed field at a time, previews with the feature planner, commits once with a UUID operation and runs `readBackAnnotationBlockCommit`. The durable `DocumentLiveOrchestrator` commit reuses the exact same `committedAt` timestamp and must equal the adapter document byte-for-byte.
+- Document open/activate/layout/close, recovery boundaries and all forward durable commits now pass through `DocumentLiveOrchestrator`. New still uses `createNewModelSpaceDocument` as the pure constructor. The Properties palette exposes PDF underlay import through `preparePdfUnderlay` -> `DocumentLiveOrchestrator.attachPdf()` -> stored byte/checksum read-back.
 
 Selected commands without one of these bindings remain visible and disabled with the integration-pending explanation. Scope selection alone never enables a command.
 
-The browser regression at dev port 5225 proves LINE, Undo/Redo, PLINE, CIRCLE, ARC, F8 ORTHO, command-line GRID, layer creation, committed MTEXT/LEADER and ModelSpaceDocument tab switching while capturing zero console/page errors. It also proves that unfinished dimension, hatch and block commands remain disabled. It does not certify AutoCAD parity or raise any F-row/visual score.
+The browser regression at isolated dev port 5235 contains six workflows. In addition to the earlier shell and accessibility matrix it proves DIMSTYLE + DIMLINEAR, associative HATCH, BLOCK -> ATTRIB -> BEDIT -> INSERT -> EXPLODE, real OSNAP/OTRACK/DYN candidate read-back, multi-document orchestration/recovery and atomic PDF attachment byte read-back while capturing zero console/page errors. It does not certify AutoCAD parity or raise any F-row/visual score.
 
 ## Remaining integrator interfaces
 
-- `DocumentSessionCoordinator` needs a persisted Undo/Redo or explicit candidate-acceptance API before the shell can replace its existing per-document `CadSession` map without weakening durable read-back.
-- Precision OSNAP/OTRACK needs per-document `CadSnapIndex`, `CadSelectionIndex` and world-aperture ownership at the application boundary before candidate snapping can be called live rather than shown as a state toggle.
-- Dimension/HATCH and block commands need a shell-owned typed prompt result for every required field. Until then their visible controls stay `Arenduses` and disabled.
-- Autosave recovery and PDF-underlay surfaces remain document-workstream integration tasks; this wave does not claim them.
+- Persisted Undo/Redo still originates in the active shell `CadSession`, then uses `DocumentLiveOrchestrator.commit()` for durable acceptance. A future coordinator-owned persisted Undo/Redo API would remove this remaining mirrored in-memory session.
+- DIMALIGNED, DIMANGULAR, DIMRADIUS, DIMDIAMETER, DIMCONTINUE and MLEADER stay visibly disabled because their dedicated selection/anchor UX is not yet measured in the shell.
+- BEDIT's typed entity/attribute fields accept explicit JSON. This is a real atomic path, but a CAD-native block editor canvas remains future UI work.
+- PDF pages with inherited/compressed MediaBox values stay fail-closed until the document adapter receives a PDF.js inspection boundary.
 
 ## Persisted shell keys
 

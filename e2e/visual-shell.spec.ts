@@ -1,10 +1,19 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 import { createEmptyDocument } from "../packages/cad-core/src/index.js";
 import { exportDxf } from "../packages/cad-dxf/src/index.js";
 
 const captureRoot = process.env.PARITY_CAPTURE_DIR;
+
+async function answerLivePrompt(page: Page, value: string): Promise<void> {
+  const prompt = page.getByTestId("live-command-prompt");
+  const kind = await prompt.getAttribute("data-kind");
+  const control = prompt.locator("input, select");
+  if (kind === "select") await control.selectOption(value);
+  else await control.fill(value);
+  await prompt.locator(".live-command-next").click();
+}
 
 test("AutoCAD-style shell keeps all eight primary zones visible at 1920x1080", async ({ page }) => {
   const consoleErrors: string[] = [];
@@ -179,17 +188,11 @@ test("AutoCAD-style shell keeps all eight primary zones visible at 1920x1080", a
   await expect(disabledRibbonTool).toBeDisabled();
   await expect(disabledRibbonTool).toHaveAttribute("data-scope-selected", "false");
   await expect(disabledRibbonTool).toHaveAttribute("title", /Pole sinu töövoogu valitud/u);
-  const selectedWithoutAdapter = page.getByRole("button", { name: "Ribbon Insert block unavailable" });
-  await expect(selectedWithoutAdapter).toBeDisabled();
+  const selectedWithoutAdapter = page.getByRole("button", { name: "Ribbon Insert block command" });
+  await expect(selectedWithoutAdapter).toBeEnabled();
   await expect(selectedWithoutAdapter).toHaveAttribute("data-scope-selected", "true");
-  await expect(selectedWithoutAdapter).toHaveAttribute("title", /Arenduses · commit-liides pole veel ühendatud/u);
+  await expect(selectedWithoutAdapter).toHaveAttribute("title", /Valitud sinu töövoogu/u);
   await expect(selectedWithoutAdapter).toHaveAttribute("data-feature-row", "F-088");
-  await selectedWithoutAdapter.hover({ force: true });
-  const developmentTooltip = await selectedWithoutAdapter.evaluate((element) => ({
-    content: getComputedStyle(element, "::after").content,
-    display: getComputedStyle(element, "::after").display,
-  }));
-  expect(developmentTooltip).toMatchObject({ content: '"Arenduses · commit-liides pole veel ühendatud"', display: "block" });
   const disabledRibbonState = await disabledRibbonTool.evaluate((element) => ({
     color: getComputedStyle(element).color,
     backgroundColor: getComputedStyle(element).backgroundColor,
@@ -689,7 +692,7 @@ test("scoped shell persists workspace and palette states and remains accessible"
   const scopedIconCount = await scopedTools.locator(".ribbon-glyph > svg").count();
   expect(scopedIconCount).toBe(await scopedTools.count());
   await expect(page.getByRole("button", { name: "Ribbon Polyline command" })).toBeEnabled();
-  await expect(page.getByRole("button", { name: "Ribbon Insert block unavailable" })).toBeDisabled();
+  await expect(page.getByRole("button", { name: "Ribbon Insert block command" })).toBeEnabled();
   const unselected = page.getByRole("button", { name: "Ribbon Match properties unavailable" });
   await expect(unselected).toBeDisabled();
   await expect(unselected).toHaveAttribute("data-scope-selected", "false");
@@ -859,7 +862,7 @@ test("visual shell routes real runtime workflows without enabling unbound comman
   await expect(layerRows).toHaveCount(1);
   await page.getByRole("button", { name: "Loo uus kiht" }).click();
   await expect(layerRows).toHaveCount(2);
-  await expect(page.locator(".command-history")).toContainText("LayerManagerControlleri plaanist");
+  await expect(page.locator(".command-history")).toContainText("PrecisionLayersShellContracti kaudu");
   await expect(page.getByRole("button", { name: "Layer 1 lukustus" })).toBeEnabled();
 
   await page.getByRole("button", { name: "Mitmerealine tekst" }).click();
@@ -874,8 +877,8 @@ test("visual shell routes real runtime workflows without enabling unbound comman
   await expect(page.getByLabel("Käsu parameetrid")).toContainText("6 objekti");
 
   const blockPanelCommand = page.getByRole("button", { name: "Sisesta plokk" });
-  await expect(blockPanelCommand).toBeDisabled();
-  await expect(page.getByRole("button", { name: "Ribbon Insert block unavailable" })).toBeDisabled();
+  await expect(blockPanelCommand).toBeEnabled();
+  await expect(page.getByRole("button", { name: "Ribbon Insert block unavailable" })).toHaveAttribute("data-state-reason", "Käsk pole praeguses olekus saadaval");
   const disabledBlockState = await blockPanelCommand.getAttribute("title");
 
   await page.getByRole("button", { name: "Uus joonis", exact: true }).click();
@@ -905,7 +908,7 @@ test("visual shell routes real runtime workflows without enabling unbound comman
     tabs: [{ id: "local", active: true }],
     revision: 9,
     entityKinds: ["line", "polyline", "circle", "arc", "mtext", "leader"],
-    disabledRibbonRows: expect.arrayContaining(["F-061", "F-067", "F-087", "F-088", "F-090", "F-091"]),
+    disabledRibbonRows: expect.not.arrayContaining(["F-061", "F-067", "F-088"]),
   });
   if (captureRoot) {
     await writeFile(resolve(captureRoot, "visual-shell-runtime-integration.png"), await page.screenshot());
@@ -918,4 +921,124 @@ test("visual shell routes real runtime workflows without enabling unbound comman
     }, null, 2)}\n`, "utf8");
   }
   expect(consoleErrors).toEqual([]);
+});
+
+test("DIM and HATCH use typed prompts with atomic durable read-back", async ({ page }) => {
+  const errors: string[] = [];
+  page.on("console", (message) => { if (message.type() === "error") errors.push(message.text()); });
+  page.on("pageerror", (error) => errors.push(error.message));
+  await page.setViewportSize({ width: 1920, height: 1080 });
+  await page.goto("/d/local");
+
+  await page.getByRole("button", { name: "Mõõdustiilid" }).click();
+  await answerLivePrompt(page, "create");
+  await answerLivePrompt(page, JSON.stringify({ id: "DIM", name: "Kuubik DIM", textHeight: 2.5, arrowSize: 2.5, extensionOffset: 0.5, scale: 1 }));
+  await expect(page.locator(".command-history")).toContainText("DIM · atomic commit/read-back");
+
+  const command = page.getByRole("textbox", { name: "Command input" });
+  await command.fill("RECTANGLE 0,0 100,80");
+  await page.getByRole("button", { name: "Käivita käsk" }).click();
+  await expect(page.locator(".command-history")).toContainText("RECTANGLE runtime salvestatud");
+  await page.getByRole("button", { name: "Vali kõik", exact: true }).click();
+  const boundary = await page.getByLabel("Kuubik Draw joonestusala").getAttribute("data-selected-handles");
+  expect(boundary).toBeTruthy();
+  await page.getByRole("button", { name: "Ribbon Hatch command" }).click();
+  await answerLivePrompt(page, boundary!);
+  await answerLivePrompt(page, "ANSI31");
+  await answerLivePrompt(page, "0.7853981633974483");
+  await answerLivePrompt(page, "1");
+  await answerLivePrompt(page, "jah");
+  await answerLivePrompt(page, "");
+  await expect(page.locator(".command-history")).toContainText("HATCH · atomic commit/read-back");
+
+  await page.getByRole("button", { name: "Ribbon Dimension command" }).click();
+  await answerLivePrompt(page, "0,0");
+  await answerLivePrompt(page, "100,0");
+  await answerLivePrompt(page, "0,20");
+  await answerLivePrompt(page, "horizontal");
+  await answerLivePrompt(page, "ei");
+  await answerLivePrompt(page, "DIM");
+  await expect(page.locator(".command-history")).toContainText("DIM · atomic commit/read-back");
+  await expect(page.locator(".runtime-intent-readback")).toHaveAttribute("data-runtime-entity-kinds", /hatch.*dimension/u);
+  expect(errors).toEqual([]);
+});
+
+test("BLOCK INSERT ATTRIB BEDIT and EXPLODE stay atomic through the live adapter", async ({ page }) => {
+  const errors: string[] = [];
+  page.on("console", (message) => { if (message.type() === "error") errors.push(message.text()); });
+  page.on("pageerror", (error) => errors.push(error.message));
+  await page.setViewportSize({ width: 1920, height: 1080 });
+  await page.goto("/d/local");
+  const command = page.getByRole("textbox", { name: "Command input" });
+  await command.fill("LINE 0,0 80,0");
+  await page.getByRole("button", { name: "Käivita käsk" }).click();
+
+  await page.getByRole("button", { name: "Ribbon Create command" }).click();
+  await answerLivePrompt(page, "DETAIL");
+  await answerLivePrompt(page, "Detail");
+  await answerLivePrompt(page, "0,0");
+  const attributes = [{ tag: "MARK", prompt: "Mark", defaultValue: "B1", position: { x: 5, y: 5 }, height: 2.5 }];
+  await answerLivePrompt(page, JSON.stringify(attributes));
+  await expect(page.locator(".command-history")).toContainText("BLOCK · atomic commit/read-back");
+
+  await page.getByRole("button", { name: "Ribbon Attributes command" }).click();
+  await answerLivePrompt(page, JSON.stringify({ MARK: "B9" }));
+  await expect(page.locator(".command-history")).toContainText("ATTRIB · atomic commit/read-back");
+
+  await page.getByRole("button", { name: "Ribbon Edit block command" }).click();
+  await answerLivePrompt(page, "0,0");
+  await answerLivePrompt(page, JSON.stringify([{ kind: "line", handle: "BM2", layerId: "0", start: { x: 0, y: 0 }, end: { x: 120, y: 0 } }]));
+  await answerLivePrompt(page, JSON.stringify(attributes));
+  await expect(page.locator(".command-history")).toContainText("BEDIT · atomic commit/read-back");
+
+  await page.getByLabel("Kuubik Draw joonestusala").click({ button: "right", position: { x: 900, y: 600 } });
+  await page.getByRole("menuitem", { name: /Deselect All/u }).click();
+  await page.getByRole("button", { name: "Ribbon Insert block command" }).click();
+  await answerLivePrompt(page, "DETAIL");
+  await answerLivePrompt(page, "180,80");
+  await answerLivePrompt(page, "1");
+  await answerLivePrompt(page, "1");
+  await answerLivePrompt(page, "0");
+  await answerLivePrompt(page, JSON.stringify({ MARK: "B2" }));
+  await expect(page.locator(".command-history")).toContainText("INSERT · atomic commit/read-back");
+
+  await page.getByRole("button", { name: "Ribbon Explode command" }).click();
+  await answerLivePrompt(page, "jah");
+  await expect(page.locator(".command-history")).toContainText("EXPLODE · atomic commit/read-back");
+  expect(errors).toEqual([]);
+});
+
+test("precision candidates, document tabs, recovery and PDF underlay use live orchestrators", async ({ page }) => {
+  const errors: string[] = [];
+  page.on("console", (message) => { if (message.type() === "error") errors.push(message.text()); });
+  page.on("pageerror", (error) => errors.push(error.message));
+  await page.setViewportSize({ width: 1920, height: 1080 });
+  await page.goto("/d/local");
+  const command = page.getByRole("textbox", { name: "Command input" });
+  await command.fill("LINE 0,0 100,0");
+  await page.getByRole("button", { name: "Käivita käsk" }).click();
+  const canvas = page.getByLabel("Kuubik Draw joonestusala");
+  const geometry = await canvas.evaluate((element) => {
+    const rect = element.getBoundingClientRect();
+    const centerX = Number((element as HTMLElement).dataset.worldCenterX);
+    const centerY = Number((element as HTMLElement).dataset.worldCenterY);
+    const units = Number((element as HTMLElement).dataset.worldUnitsPerPixel);
+    return { x: rect.width / 2 + (0 - centerX) / units, y: rect.height / 2 - (0 - centerY) / units };
+  });
+  await canvas.hover({ position: geometry });
+  const readBack = page.getByTestId("live-contract-readback");
+  await expect(readBack).toHaveAttribute("data-snap-candidates", /^[1-9]/u);
+  await expect(readBack).toHaveAttribute("data-dynamic-input", "true");
+
+  await page.getByRole("button", { name: "Uus joonis", exact: true }).click();
+  await expect(readBack).toHaveAttribute("data-live-tabs", /local,drawing-2/u);
+  await page.getByRole("button", { name: "local.kdraw", exact: true }).click();
+  await expect(readBack).toHaveAttribute("data-live-recovery", /local:/u);
+
+  const pdf = Buffer.from("%PDF-1.4\n1 0 obj << /Type /Catalog /Pages 2 0 R >> endobj\n2 0 obj << /Type /Pages /Kids [3 0 R] /Count 1 >> endobj\n3 0 obj << /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] >> endobj\ntrailer << /Root 1 0 R >>\n%%EOF\n");
+  await page.getByLabel("PDF underlay fail").setInputFiles({ name: "reference.pdf", mimeType: "application/pdf", buffer: pdf });
+  await expect(readBack).toHaveAttribute("data-pdf-placement", /underlay-/u);
+  await expect(readBack).toHaveAttribute("data-pdf-bytes", String(pdf.byteLength));
+  await expect(page.locator(".command-history")).toContainText("PDFATTACH");
+  expect(errors).toEqual([]);
 });

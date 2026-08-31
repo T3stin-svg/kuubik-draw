@@ -561,8 +561,28 @@ button:focus-visible, select:focus-visible, input:focus-visible, summary:focus-v
 .runtime-tool-panels button { min-height: 24px; padding: 3px 6px; color: #d7dfe5; background: #333d46; border: 1px solid #56636e; border-radius: 2px; font-size: 10px; }
 .runtime-tool-panels button:hover:not(:disabled) { color: #fff; background: #176a99; }
 .runtime-tool-panels button:disabled { color: #77838d; background: #2a3036; border-color: #3d464e; }
-.runtime-tool-panels button:disabled::after { content: " · Arenduses"; color: #98a4ad; font-size: 9px; }
+.runtime-tool-panels button:disabled::after { content: " · Pole praeguses olekus saadaval"; color: #98a4ad; font-size: 9px; }
+.runtime-tool-panels button[title*="F-062"]:disabled::after,
+.runtime-tool-panels button[title*="F-063"]:disabled::after,
+.runtime-tool-panels button[title*="F-064"]:disabled::after,
+.runtime-tool-panels button[title*="F-065"]:disabled::after,
+.runtime-tool-panels button[title*="F-060"]:disabled::after { content: " · Arenduses"; }
 .runtime-intent-readback { display: block; min-height: 20px; padding: 4px 8px; color: #8fd2f5; background: #1a2229; border-top: 1px solid #45505a; font-size: 10px; }
+.live-contract-readback { display: block; min-height: 20px; padding: 4px 8px; color: #b6c6d1; background: #161d23; border-top: 1px solid #35414b; font-size: 9px; }
+.pdf-underlay-control { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 4px 6px; color: #cbd5dc; background: #252d35; border: 1px solid #424e58; font-size: 10px; }
+.pdf-underlay-control input { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
+.live-command-prompt { position: fixed; z-index: 60; right: 430px; bottom: 69px; left: 16px; display: grid; grid-template-columns: auto minmax(240px, 1fr) auto auto; align-items: end; gap: 8px; min-height: 58px; padding: 8px 10px; color: #e9f0f4; background: #202932; border: 1px solid #5d6d7a; border-left: 3px solid #159ddd; box-shadow: 0 10px 28px rgb(0 0 0 / 46%); }
+.live-command-prompt label { display: grid; gap: 3px; min-width: 0; font-size: 10px; }
+.live-command-prompt input, .live-command-prompt select { width: 100%; min-width: 0; height: 27px; padding: 0 7px; color: #f4f8fa; background: #111820; border: 1px solid #697984; font: 11px Consolas, "Courier New", monospace; }
+.live-command-prompt button { min-height: 27px; padding: 0 10px; color: #e6edf1; background: #35424c; border: 1px solid #62717c; }
+.live-command-prompt button:hover { background: #176a99; border-color: #66b9e8; }
+.live-command-badge { align-self: center; min-width: 76px; color: #73c7f3; font: 700 11px Consolas, "Courier New", monospace; letter-spacing: .04em; }
+.live-command-prompt :focus-visible { outline: 2px solid #7fd4ff; outline-offset: 2px; }
+
+@media (max-width: 1180px) {
+  .live-command-prompt { right: 12px; left: 12px; grid-template-columns: auto minmax(160px, 1fr) auto; }
+  .live-command-cancel { grid-column: 3; }
+}
 
 @media (max-width: 1180px) {
   .command-line { right: 12px; left: 12px; width: auto; }
