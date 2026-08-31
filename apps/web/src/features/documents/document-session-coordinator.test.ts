@@ -82,6 +82,40 @@ describe("F-128 document session coordinator", () => {
     expect(coordinator.document("persisted").revision).toBe(1);
   });
 
+  it("keeps persisted undo and redo candidates private until storage succeeds", async () => {
+    const coordinator = new DocumentSessionCoordinator();
+    coordinator.open(drawing("history", "10"));
+    await coordinator.commitPersisted(
+      "history",
+      operation("11", 0),
+      [{ type: "put", entity: { kind: "circle", handle: "11", layerId: "0", center: { x: 0, y: 0 }, radius: 1 } }],
+      async () => undefined,
+    );
+    await expect(coordinator.undoPersisted("history", async () => { throw new Error("undo storage failed"); }))
+      .rejects.toThrow(/undo storage failed/u);
+    expect(coordinator.document("history")).toMatchObject({ revision: 1, entities: [expect.anything(), expect.objectContaining({ handle: "11" })] });
+    expect(coordinator.readBack().documents[0]).toEqual(expect.objectContaining({ canUndo: true, canRedo: false }));
+
+    const undone = await coordinator.undoPersisted("history", async (document, undoOperation) => {
+      expect(document.revision).toBe(2);
+      expect(undoOperation).toMatchObject({ baseRevision: 1, commandId: "UNDO" });
+    });
+    expect(undone?.committedRevision).toBe(2);
+    expect(coordinator.document("history").entities.map((entity) => entity.handle)).toEqual(["10"]);
+    expect(coordinator.readBack().documents[0]).toEqual(expect.objectContaining({ canUndo: false, canRedo: true }));
+
+    await expect(coordinator.redoPersisted("history", async () => { throw new Error("redo storage failed"); }))
+      .rejects.toThrow(/redo storage failed/u);
+    expect(coordinator.document("history").revision).toBe(2);
+    expect(coordinator.readBack().documents[0]).toEqual(expect.objectContaining({ canUndo: false, canRedo: true }));
+    const redone = await coordinator.redoPersisted("history", async (document, redoOperation) => {
+      expect(document.revision).toBe(3);
+      expect(redoOperation).toMatchObject({ baseRevision: 2, commandId: "LINE" });
+    });
+    expect(redone?.committedRevision).toBe(3);
+    expect(coordinator.document("history").entities.map((entity) => entity.handle)).toEqual(["10", "11"]);
+  });
+
   it("closes only the requested session and activates its adjacent neighbour", () => {
     const coordinator = new DocumentSessionCoordinator();
     coordinator.open(drawing("a", "10"));

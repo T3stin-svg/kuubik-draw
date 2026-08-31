@@ -156,6 +156,34 @@ export class DocumentSessionCoordinator {
     return committed;
   }
 
+  async undoPersisted(
+    documentId: string,
+    persist: (document: KDrawDocumentV1, operation: CadOperation) => Promise<void>,
+    now?: string,
+  ): Promise<CommittedOperation | null> {
+    const entry = this.requireEntry(documentId);
+    const candidate = entry.session.fork();
+    const committed = candidate.undo(now);
+    if (!committed) return null;
+    await persist(candidate.document, committed.operation);
+    this.acceptCandidate(entry, candidate);
+    return committed;
+  }
+
+  async redoPersisted(
+    documentId: string,
+    persist: (document: KDrawDocumentV1, operation: CadOperation) => Promise<void>,
+    now?: string,
+  ): Promise<CommittedOperation | null> {
+    const entry = this.requireEntry(documentId);
+    const candidate = entry.session.fork();
+    const committed = candidate.redo(now);
+    if (!committed) return null;
+    await persist(candidate.document, committed.operation);
+    this.acceptCandidate(entry, candidate);
+    return committed;
+  }
+
   undo(documentId: string, now?: string): CommittedOperation | null {
     const entry = this.requireEntry(documentId);
     const candidate = entry.session.fork();
@@ -197,6 +225,9 @@ export class DocumentSessionCoordinator {
   private acceptCandidate(entry: DocumentSessionEntry, candidate: CadSession): void {
     const document = candidate.document;
     entry.session = candidate;
+    if (!document.layouts.some((layout) => layout.id === entry.activeLayoutId)) {
+      entry.activeLayoutId = document.layouts.find((layout) => layout.kind === "model")?.id ?? document.layouts[0]!.id;
+    }
     entry.selectedHandles = normalizedSelection(document, entry.selectedHandles.filter((handle) => (
       document.entities.some((entity) => entity.handle === handle)
       || document.layouts.some((layout) => (layout.entities ?? []).some((entity) => entity.handle === handle))

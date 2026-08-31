@@ -150,6 +150,26 @@ export class DocumentLiveOrchestrator {
     return this.acceptPersistedDocument(id);
   }
 
+  async undo(documentId: string, now?: string): Promise<KDrawDocumentV1 | null> {
+    const id = requireDocumentId(documentId);
+    const committed = await this.#coordinator.undoPersisted(
+      id,
+      (document, operation) => this.#autosave.commit(document, operation),
+      now,
+    );
+    return committed ? this.acceptPersistedDocument(id) : null;
+  }
+
+  async redo(documentId: string, now?: string): Promise<KDrawDocumentV1 | null> {
+    const id = requireDocumentId(documentId);
+    const committed = await this.#coordinator.redoPersisted(
+      id,
+      (document, operation) => this.#autosave.commit(document, operation),
+      now,
+    );
+    return committed ? this.acceptPersistedDocument(id) : null;
+  }
+
   async attachPdf(
     documentId: string,
     operation: CadOperation,
@@ -206,7 +226,8 @@ export class DocumentLiveOrchestrator {
 
   private acceptPersistedDocument(documentId: string): KDrawDocumentV1 {
     const document = this.#coordinator.document(documentId);
-    this.#tabs = updateDocumentTab(this.#tabs, { document });
+    const activeLayoutId = this.#coordinator.readBack().documents.find((entry) => entry.documentId === documentId)!.activeLayoutId;
+    this.#tabs = updateDocumentTab(this.#tabs, { document, activeLayoutId });
     this.#tabs = markDocumentTabPersisted(this.#tabs, documentId, document.revision);
     return structuredClone(document);
   }
