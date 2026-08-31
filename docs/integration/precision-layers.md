@@ -6,7 +6,7 @@ below. No new runtime dependency is required.
 
 ## Package exports
 
-The current integrated base `cef8bb6edfdf706d92b289d325fb2de69c6af8ca`
+The current integrated base `6490e7ce9a7c187d79c2d749ae65ee651996d7f9`
 already contains all required package exports. No shared `src/index.ts` file
 needs to change for this workstream.
 
@@ -95,8 +95,37 @@ the same request to preview, commit and Dynamic Input.
    GRID/OSNAP/OTRACK stages.
 
 OSNAP priority is fixed as endpoint, midpoint, center, quadrant, intersection,
-perpendicular, tangent, nearest. Ties are deterministic by distance, key and
-coordinates.
+extension, insertion, perpendicular, tangent, nearest, geometric center and
+parallel. Ties are deterministic by distance and stable semantic candidate ID.
+The ID contains mode, canonical entity/segment identity and exact point, but not
+priority, cursor distance or entity input order.
+
+## Complete snap/tracking shell boundary
+
+The fifth-wave renderer API adds `CadSnapSelectionCycle`. Call
+`updateSnapCycle()` for a fresh candidate stack, `cycleSnap()` for next/previous
+selection and pass the returned `candidateId` to `preparePointer()` as
+`snapCandidateId`. A prepared pointer then contains exactly that candidate and
+returns `request`, `snapCandidateIds` and `selectedSnapCandidateId` beside its
+preview, commit and Dynamic Input read-back. A stale explicit ID fails closed.
+
+Extension and Parallel can require a previously hovered/acquired object outside
+its finite R-tree bounds. Pass those handles as `referenceHandles` to
+`CadSnapIndex.query()`, or as `snapReferenceHandles` to `preparePointer()`.
+This avoids scanning all directional objects and preserves the 50,000-object
+spatial bound. Parallel also requires `referencePoint`.
+
+OTRACK acquisition uses the stable snap candidate ID. `acquireTracking()`
+returns the exact stored point/time, while `releaseTracking()` and
+`clearTracking()` return mutation read-back. Polar extensions canonicalize
+opposite angles onto one infinite line; IDs do not depend on angle-list or
+acquisition order. When POLAR is enabled, the shell contract derives OTRACK
+angles from the configured increment and additional angles.
+
+`DynamicInputModel` exposes unrounded `coordinate`, `delta`, `distanceValue`
+and normalized `[0, 2π)` `angleRad`, plus the normalized units snapshot and
+formatted `x`, `y`, `distance` and `angleDeg`. Display precision never changes
+the committed point.
 
 ## Layer and draw-order wiring
 
@@ -157,6 +186,10 @@ preserves entity values and handles and creates one atomic Undo step.
   `redoLayer()` read-back.
 - Use `select()`, `querySnap()` and `participates()` instead of independent
   hidden/frozen/locked predicates.
+- Use `updateSnapCycle()` / `cycleSnap()` and feed the selected ID back to
+  `preparePointer()`; the visual worker must not reorder or regenerate IDs.
+- Use `acquireTracking()`, `releaseTracking()` and `trackingCandidates()` for
+  OTRACK markers and guides. Do not keep a second UI-side acquisition store.
 
 ## App surfaces still requiring integration-owner edits
 
