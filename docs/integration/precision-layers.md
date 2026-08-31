@@ -6,7 +6,7 @@ below. No new runtime dependency is required.
 
 ## Package exports
 
-The current integrated base `e150ebbbaaec5c3aa04eb480b576aefca8d677f8`
+The current integrated base `7bfa2bea649583129844444f9f5788a701ff21a4`
 already contains all required package exports. No shared `src/index.ts` file
 needs to change for this workstream.
 
@@ -214,6 +214,42 @@ formatted `x`, `y`, `distance` and `angleDeg`. Display precision never changes
 the committed point.
 
 ## Layer and draw-order wiring
+
+The eighth-wave F-072–F-079 mapping follows the parity manifest exactly:
+F-072 CRUD/current, F-073 on/off, F-074 lock, F-075 freeze/thaw, F-076
+color, F-077 linetype, F-078 lineweight and F-079 plot toggle. Typed runtime
+capabilities are authoritative; the row strings remain informational dispatch
+metadata. `layers.rename` and `layers.delete` complete the existing
+`layers.create`/`layers.current` CRUD boundary.
+
+Layer names are trimmed, NFC-normalized, case-insensitive and reject control
+characters plus the CAD reserved set. Layer `0` is protected by name even when
+an importer assigned a different internal id. It cannot be renamed or deleted.
+The canonical `Defpoints` layer uses id/name `Defpoints`, is always
+non-plottable and cannot be renamed, deleted or toggled to plot. Existing
+documents without either special layer remain readable; when present their
+rules are enforced by name rather than a caller-specific id convention.
+
+`readCadLayerContract()` is the fail-closed persisted-document boundary. It
+checks canonical unique names, current-layer existence, Defpoints plot state,
+layer/entity linetype references and model/block/paper entity layer references,
+then returns a deep-cloned read-back. `LayerManagerController` invokes it before
+opening a session, so invalid persisted state cannot become editable history.
+
+Use `createCadLayerPropertyIndex()` once per document revision and
+`resolveCadEntityLayerProperties()` for ByLayer color, linetype/scale,
+lineweight and transparency. The resolver reports whether each value came from
+the entity, layer or default and rejects an effective orphan linetype. Renderer
+wiring tests pin the same resolved color, dash pattern, physical lineweight and
+transparency without introducing a second UI-side resolver.
+
+`layers.entity-properties` applies a destination layer and/or explicit entity
+overrides to a deduplicated handle list. Null values clear overrides back to
+ByLayer; clearing color also clears its method and ACI metadata. Every handle,
+source layer, destination layer and linetype is validated before the one
+`ENTITY_LAYER_PROPERTIES` operation. Missing handles and locked source or
+destination layers therefore fail before revision/history/document mutation.
+One Undo and Redo restore the exact entity arrays.
 
 Every layer UI action calls the corresponding `LayerFeatureModel` planner and
 commits its returned changes as one `CadSession` operation. The UI must not

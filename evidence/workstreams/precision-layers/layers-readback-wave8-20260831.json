@@ -1,0 +1,202 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-08-31T18:41:08.307Z",
+  "node": "v26.7.0",
+  "command": "npx vite-node evidence/workstreams/precision-layers/layers-readback-wave8.ts",
+  "baselineCommit": "7bfa2bea649583129844444f9f5788a701ff21a4",
+  "branch": "work8/reio-precision-live",
+  "featureRows": [
+    "F-072",
+    "F-073",
+    "F-074",
+    "F-075",
+    "F-076",
+    "F-077",
+    "F-078",
+    "F-079"
+  ],
+  "operationReadback": {
+    "revisions": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15
+    ],
+    "commandIds": [
+      "LAYER_CREATE",
+      "LAYER_CREATE",
+      "LAYER_RENAME",
+      "LAYER_CURRENT",
+      "LAYER_BATCH_PROPERTIES",
+      "LAYER_BATCH_PROPERTIES",
+      "LAYER_BATCH_PROPERTIES",
+      "LAYER_BATCH_PROPERTIES",
+      "LAYER_CURRENT",
+      "LAYER_BATCH_PROPERTIES",
+      "LAYER_BATCH_PROPERTIES",
+      "LAYER_BATCH_PROPERTIES",
+      "LAYER_BATCH_PROPERTIES",
+      "LAYER_BATCH_PROPERTIES",
+      "LAYER_BATCH_PROPERTIES"
+    ],
+    "entityOperation": {
+      "opId": "layers-wave8:15:16:ENTITY_LAYER_PROPERTIES",
+      "baseRevision": 15,
+      "commandId": "ENTITY_LAYER_PROPERTIES",
+      "args": {
+        "handles": [
+          "10",
+          "11"
+        ],
+        "patch": {
+          "layerId": "steel",
+          "clearOverrides": true,
+          "color": null,
+          "linetypeId": null,
+          "lineweightMm": null
+        }
+      },
+      "targetHandles": [
+        "10",
+        "11"
+      ],
+      "resultHandles": [
+        "10",
+        "11"
+      ]
+    },
+    "oneEntityRevision": true,
+    "undoRevision": 17,
+    "redoRevision": 18,
+    "undoEntitiesEqual": true,
+    "redoEntitiesEqual": true
+  },
+  "persistedReadback": {
+    "documentSha256": "264a4f627e62c6d312bca3e9661594bf0df64970cfe5cd661cceccfa1e464039",
+    "contractSha256": "1933bebfea3f9b52bdb7ad7829314e4330f5ff423aa79fb7e05d6249b2fe21b1",
+    "currentLayerId": "0",
+    "layers": [
+      {
+        "id": "0",
+        "name": "0",
+        "visible": true,
+        "frozen": false,
+        "locked": false,
+        "plottable": true
+      },
+      {
+        "id": "steel",
+        "name": "Steel main",
+        "visible": true,
+        "frozen": false,
+        "locked": false,
+        "plottable": false,
+        "appearance": {
+          "color": "#336699",
+          "colorMethod": "trueColor",
+          "linetypeId": "dash",
+          "lineweightMm": 0.5
+        }
+      },
+      {
+        "id": "Defpoints",
+        "name": "Defpoints",
+        "visible": true,
+        "frozen": false,
+        "locked": false,
+        "plottable": false
+      }
+    ],
+    "entityLayerIds": [
+      [
+        "10",
+        "steel"
+      ],
+      [
+        "11",
+        "steel"
+      ]
+    ]
+  },
+  "resolvedByLayer": [
+    {
+      "handle": "10",
+      "layerId": "steel",
+      "color": "#336699",
+      "colorMethod": "trueColor",
+      "aciIndex": null,
+      "linetypeId": "dash",
+      "linetypeScale": 1,
+      "lineweightMm": 0.5,
+      "transparency": null,
+      "sources": {
+        "color": "layer",
+        "linetype": "layer",
+        "linetypeScale": "default",
+        "lineweight": "layer",
+        "transparency": "default"
+      }
+    },
+    {
+      "handle": "11",
+      "layerId": "steel",
+      "color": "#336699",
+      "colorMethod": "trueColor",
+      "aciIndex": null,
+      "linetypeId": "dash",
+      "linetypeScale": 1,
+      "lineweightMm": 0.5,
+      "transparency": null,
+      "sources": {
+        "color": "layer",
+        "linetype": "layer",
+        "linetypeScale": "default",
+        "lineweight": "layer",
+        "transparency": "default"
+      }
+    }
+  ],
+  "failClosed": {
+    "duplicateName": "CadLayerError: Layer name steel MAIN already exists.",
+    "invalidName": "CadLayerError: Layer name is empty, too long or contains a reserved character.",
+    "defpointsPlot": "CadLayerError: Defpoints is always non-plottable.",
+    "lockedTarget": "CadLayerError: Target layer locked is locked.",
+    "orphanLinetype": "RangeError: Linetype orphan does not exist."
+  },
+  "performance": {
+    "entityCount": 50000,
+    "selectionBuildMs": 40.0779,
+    "snapBuildMs": 31.030399999999872,
+    "queryMs": 11.074399999999741,
+    "queryIterations": 100,
+    "p95QueryMs": 0.11449999999990723,
+    "maxQueryMs": 8.229800000000068,
+    "selectionHits": 1,
+    "snapCandidates": 4,
+    "selection": [
+      {
+        "handle": "1",
+        "segment": 0,
+        "parameter": 0.5,
+        "point": {
+          "x": 25,
+          "y": 0
+        },
+        "distance": 0
+      }
+    ],
+    "byLayerResolutionMs": 11.9206,
+    "resolutionChecksum": 22500
+  }
+}

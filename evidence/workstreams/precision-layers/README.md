@@ -261,3 +261,36 @@ Verification passed: typecheck, lint, 180 files / 906 tests, DXF gate 19 files /
 54 tests, PDF gate 7 files / 22 tests, build, public-tree scan of 1,521 files,
 license audit of 119 installed packages and `git diff --check`. The focused
 precision matrix passed 17 files / 64 tests.
+
+## Integrated-base eighth wave
+
+- Integrated base: `7bfa2bea649583129844444f9f5788a701ff21a4`.
+- Branch: `work8/reio-precision-live`.
+- F-072–F-079 capability metadata now matches the parity manifest exactly;
+  CRUD includes typed create/rename/delete/current commands.
+- Layer `0` is protected by its normalized name. Canonical `Defpoints` is
+  protected and permanently non-plottable.
+- Invalid/control/reserved and case-equivalent duplicate names fail closed.
+  Persisted reopen also rejects missing current layers and orphan linetypes.
+- The indexed ByLayer resolver covers color/ACI method, linetype and scale,
+  lineweight and transparency with explicit entity/layer/default provenance.
+- Multi-entity layer/property updates validate every target before one session
+  revision. Null clears an override back to ByLayer; one Undo/Redo restores the
+  exact before/after entity arrays.
+- Seeded coverage includes 2,000 property cases, 5,000 malformed-name fuzz
+  cases, mutation guards, a golden contract, renderer wiring and JSON reopen.
+- The 50,000-entity profile measured selection build `40.0779 ms`, snap build
+  `31.0304 ms`, query p95 `0.1145 ms`, max `8.2298 ms` and all-property ByLayer
+  resolution `11.9206 ms`. Exact output is in
+  `layers-readback-wave8-20260831.json`.
+
+This wave does not change App/style/shell, geometry, annotation, documents,
+DXF/PDF adapters, package, scope, parity-score or deployment files. No AutoCAD
+or integrated Chromium/output read-back was run, so F-072–F-079 remain
+uncertified and their scores are unchanged.
+
+Repository-wide eighth-wave verification passed: typecheck, lint, 204 Vitest
+files / 984 tests, DXF gate 21 files / 56 tests, PDF gate 7 files / 22 tests,
+150-module production build, public-tree scan of 1,610 files, license audit of
+119 installed packages and `git diff --check`. The focused layer matrix passed
+17 files / 36 tests.
