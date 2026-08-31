@@ -1,4 +1,4 @@
-import type { CreateTableArgs, LeaderArrowType, LeaderEditPatch, MLeaderEditPatch, MTextContract, MTextEditPatch, StableEntityAnchor, TableEditOperation, TableStyle } from "@kuubik/cad-core";
+import type { CreateTableArgs, HatchEditPatch, HatchIslandDetection, LeaderArrowType, LeaderEditPatch, MLeaderEditPatch, MTextContract, MTextEditPatch, StableEntityAnchor, TableEditOperation, TableStyle } from "@kuubik/cad-core";
 import type { CadDimensionStyle, CadPoint2, CadTextStyle, KDrawDocumentV1 } from "@kuubik/cad-schema";
 import type { AnnotationCommandInput } from "./command-adapter.js";
 import type { AnnotationCommandId } from "./model.js";
@@ -152,9 +152,12 @@ export function buildAnnotationPromptInput(
       return { commandId, mode, args: { handle: allocateDocumentHandles(document, 1)[0]!, layerId, vertices: required<CadPoint2[]>(values, "vertices"), text: required<string>(values, "text"), textPosition: required<CadPoint2>(values, "textPosition"), styleId: required<string>(values, "styleId"), textHeight: required<number>(values, "textHeight"), ...(textStyleId ? { textStyleId } : {}), ...(landingGap === undefined ? {} : { landingGap }), ...(arrowType ? { arrowType } : {}), ...(arrowSize === undefined ? {} : { arrowSize }), ...(landingEnabled === undefined ? {} : { landingEnabled }), ...(landingLength === undefined ? {} : { landingLength }), ...(link.anchor ? { anchor: link.anchor } : {}) }, ...(link.targetHandles ? { targetHandles: link.targetHandles } : {}) };
     }
     case "HATCH": {
+      const mode = optional<"create" | "edit">(values, "mode") ?? "create";
+      if (mode === "edit") return { commandId, mode, handle: selectedOrPrompt(values, context), patch: required<HatchEditPatch>(values, "patch") };
       const boundaryHandles = required<string[]>(values, "boundaryHandles");
       const origin = optional<CadPoint2>(values, "origin");
-      return { commandId, args: { handle: allocateDocumentHandles(document, 1)[0]!, layerId, boundaryHandles, pattern: required<string>(values, "pattern"), angleRad: required<number>(values, "angleRad"), scale: required<number>(values, "scale"), associative: required<boolean>(values, "associative"), ...(origin ? { origin } : {}) }, targetHandles: boundaryHandles };
+      const islandDetection = optional<HatchIslandDetection>(values, "islandDetection");
+      return { commandId, mode, args: { handle: allocateDocumentHandles(document, 1)[0]!, layerId, boundaryHandles, pattern: required<string>(values, "pattern"), angleRad: required<number>(values, "angleRad"), scale: required<number>(values, "scale"), associative: required<boolean>(values, "associative"), ...(islandDetection ? { islandDetection } : {}), ...(origin ? { origin } : {}) }, targetHandles: boundaryHandles };
     }
     case "TABLE": {
       const mode = required<"create" | "edit" | "style-create" | "style-update">(values, "mode");

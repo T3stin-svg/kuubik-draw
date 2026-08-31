@@ -126,8 +126,9 @@ export function requiredAnnotationBlockDxfCapabilities(document: KDrawDocumentV1
     }
     if (entity.kind === "hatch") {
       const association = readHatchAssociation(entity);
+      if (extensionKind(entity) === "hatch" && association === null) throw new TypeError(`Malformed HATCH extension contract: ${entity.handle}.`);
       add(association?.pattern.type === "solid" || entity.pattern.trim().toLocaleUpperCase("en-US") === "SOLID" ? "hatch-solid" : "hatch-line-pattern", entity.handle);
-      if (entity.loops.some((loop) => loop.isHole)) add("hatch-islands", entity.handle);
+      if (entity.loops.some((loop) => loop.isHole) || (association !== null && (association.boundaryHandles.length > 1 || association.islandDetection !== "normal"))) add("hatch-islands", entity.handle);
       if (entity.associative) add("hatch-association", entity.handle);
     }
     if (entity.kind === "blockRef") {

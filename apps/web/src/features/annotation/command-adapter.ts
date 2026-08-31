@@ -5,6 +5,7 @@ import {
   createContinuedDimensions,
   createDimensionStyle,
   createHatch,
+  editHatch,
   createLeader,
   createLinearDimension,
   createMLeader,
@@ -26,6 +27,7 @@ import {
   type CadSession,
   type DimensionBaseArgs,
   type HatchArgs,
+  type HatchEditPatch,
   type MTextArgs,
   type MTextEditPatch,
   type TextArgs,
@@ -66,7 +68,8 @@ export type AnnotationCommandInput =
   | { commandId: "LEADER"; mode: "edit"; handle: string; patch: LeaderEditPatch }
   | ({ commandId: "MLEADER"; mode?: "create"; args: MLeaderArgs } & WithTargets)
   | { commandId: "MLEADER"; mode: "edit"; handle: string; patch: MLeaderEditPatch }
-  | ({ commandId: "HATCH"; args: HatchArgs } & WithTargets)
+  | ({ commandId: "HATCH"; mode?: "create"; args: HatchArgs } & WithTargets)
+  | { commandId: "HATCH"; mode: "edit"; handle: string; patch: HatchEditPatch }
   | { commandId: "TABLE"; mode: "create"; args: CreateTableArgs }
   | { commandId: "TABLE"; mode: "edit"; handle: string; operations: TableEditOperation[] }
   | { commandId: "TABLE"; mode: "style-create" | "style-update"; style: TableStyle };
@@ -152,6 +155,10 @@ export function prepareAnnotationCommand(document: KDrawDocumentV1, input: Annot
       return result(input.commandId, [{ type: "put", entity }], targets, [entity.handle], input.args);
     }
     case "HATCH": {
+      if (input.mode === "edit") {
+        const change = editHatch(document, input.handle, input.patch);
+        return result(input.commandId, [change], [input.handle], [input.handle], input);
+      }
       const entity = createHatch(document, input.args);
       return result(input.commandId, [{ type: "put", entity }], input.targetHandles ?? input.args.boundaryHandles, [entity.handle], input.args);
     }
