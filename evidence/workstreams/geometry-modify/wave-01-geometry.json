@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "wave": "geometry-variants",
+  "rows": ["F-001", "F-002", "F-004", "F-005", "F-006", "F-007", "F-011"],
+  "status": "implemented-not-certified",
+  "sourceAuthority": "C:/Users/Olav/Downloads/kuubik-draw-reio-scope-v1.json",
+  "invariants": {
+    "previewEqualsCommit": "one preparation adapter supplies preview entities and committed changes",
+    "atomicUndoRedo": "one CadSession operation contains every entity change produced by one command",
+    "invalidInputIsAtomic": "validation completes before any EntityChange is returned"
+  },
+  "tests": {
+    "unitAndGolden": "packages/cad-core/test/geometry-commands.test.ts",
+    "mutation": "geometry command atomicity and input mutations suite",
+    "previewAndHitTest": "packages/cad-renderer/test/geometry-preview.test.ts",
+    "wiring": "apps/web/src/features/draw-modify/geometry-workflow.test.ts",
+    "lastResult": "3 files passed; 22 tests passed"
+  },
+  "certificationGaps": [
+    "AutoCAD live workflow comparison not run",
+    "Kuubik browser workflow not integrated in this branch",
+    "saved output read-back not run"
+  ]
+}
