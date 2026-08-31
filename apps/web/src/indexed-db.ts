@@ -27,9 +27,10 @@ interface RecoveryEvent {
   eventId: string;
   documentId: string;
   sessionId: string;
-  kind: "open" | "clean";
+  kind: "open" | "clean" | "recover";
   revision: number | null;
   recordedAt: string;
+  ignoredOperationIds?: string[];
 }
 
 export interface DocumentRecoveryResult {
@@ -44,6 +45,11 @@ export interface DocumentRecoveryResult {
 interface StoredAttachment {
   id: string;
   documentId: string;
+  attachment: CadAttachmentRef;
+  bytes: Uint8Array;
+}
+
+interface PendingAttachmentWrite {
   attachment: CadAttachmentRef;
   bytes: Uint8Array;
 }
@@ -130,7 +136,7 @@ export class KDrawIndexedDb {
     const transaction = this.#database!.transaction(["documents", "snapshots"], "readwrite");
     transaction.objectStore("documents").put(structuredClone(document));
     transaction.objectStore("snapshots").add({
-      key: `${document.documentId}:${String(document.revision).padStart(12, "0")}`,
+      key: `${document.documentId}:${String(document.revision).padStart(12, "0")}:snapshot:${crypto.randomUUID()}`,
       documentId: document.documentId,
       revision: document.revision,
       document: structuredClone(document),
@@ -163,12 +169,40 @@ export class KDrawIndexedDb {
   }
 
   async commitRevision(document: KDrawDocumentV1, operation: CadOperation): Promise<void> {
+    await this.commitRevisionRecord(document, operation);
+  }
+
+  async commitRevisionWithAttachment(
+    document: KDrawDocumentV1,
+    operation: CadOperation,
+    attachment: CadAttachmentRef,
+    bytes: Uint8Array,
+  ): Promise<void> {
+    const copy = Uint8Array.from(bytes);
+    if ((await sha256(copy)) !== attachment.sha256.toLowerCase()) {
+      throw new TypeError(`Attachment ${attachment.id} checksum mismatch before atomic commit.`);
+    }
+    const documentAttachment = document.attachments.find((candidate) => candidate.id === attachment.id);
+    if (!documentAttachment || JSON.stringify(documentAttachment) !== JSON.stringify(attachment)) {
+      throw new TypeError(`Document ${document.documentId} does not contain the exact attachment ${attachment.id}.`);
+    }
+    await this.commitRevisionRecord(document, operation, { attachment: structuredClone(attachment), bytes: copy });
+  }
+
+  private async commitRevisionRecord(
+    document: KDrawDocumentV1,
+    operation: CadOperation,
+    pendingAttachment?: PendingAttachmentWrite,
+  ): Promise<void> {
     await this.open();
     assertKDrawDocumentV1(document);
     const expectedCurrent = await this.loadDocument(document.documentId);
     const beforeSha256 = expectedCurrent ? await documentSha256(expectedCurrent) : null;
     const afterSha256 = await documentSha256(document);
-    const transaction = this.#database!.transaction(["documents", "snapshots", "operations"], "readwrite");
+    const transaction = this.#database!.transaction(
+      pendingAttachment ? ["documents", "snapshots", "operations", "attachments"] : ["documents", "snapshots", "operations"],
+      "readwrite",
+    );
     const done = transactionDone(transaction);
     const current = await requestResult(transaction.objectStore("documents").get(document.documentId)) as KDrawDocumentV1 | undefined;
     const actualRevision = current?.revision ?? 0;
@@ -184,7 +218,7 @@ export class KDrawIndexedDb {
     }
     transaction.objectStore("documents").put(structuredClone(document));
     transaction.objectStore("snapshots").add({
-      key: `${document.documentId}:${String(document.revision).padStart(12, "0")}`,
+      key: `${document.documentId}:${String(document.revision).padStart(12, "0")}:operation:${operation.opId}`,
       documentId: document.documentId,
       revision: document.revision,
       document: structuredClone(document),
@@ -202,6 +236,14 @@ export class KDrawIndexedDb {
       afterDocument: structuredClone(document),
     };
     transaction.objectStore("operations").add(record);
+    if (pendingAttachment) {
+      transaction.objectStore("attachments").add({
+        id: `${document.documentId}:${pendingAttachment.attachment.id}`,
+        documentId: document.documentId,
+        attachment: structuredClone(pendingAttachment.attachment),
+        bytes: Uint8Array.from(pendingAttachment.bytes),
+      } satisfies StoredAttachment);
+    }
     await done;
   }
 
@@ -229,7 +271,47 @@ export class KDrawIndexedDb {
     if (!Number.isSafeInteger(revision) || revision < 0) throw new RangeError("Clean recovery revision must be a non-negative integer.");
     const current = await this.loadDocument(documentId);
     if (!current || current.revision !== revision) throw new StorageRevisionConflictError(documentId, revision, current?.revision ?? 0);
+    await this.assertDocumentAttachmentsReadable(current);
     await this.recordRecoveryEvent({ documentId, sessionId, kind: "clean", revision, recordedAt });
+  }
+
+  async acceptRecoveredDocument(
+    document: KDrawDocumentV1,
+    sessionId: string,
+    ignoredOperationIds: readonly string[],
+    recordedAt = new Date().toISOString(),
+  ): Promise<void> {
+    await this.open();
+    assertKDrawDocumentV1(document);
+    const ignored = [...new Set(ignoredOperationIds)];
+    if (ignored.length === 0) return;
+    const current = await this.loadDocument(document.documentId);
+    if (current && JSON.stringify(current) === JSON.stringify(document)) return;
+    const recovery = await this.recoverDocument(document.documentId);
+    if (!recovery.document || recovery.recoveredRevision !== document.revision || JSON.stringify(recovery.document) !== JSON.stringify(document)) {
+      throw new StorageRevisionConflictError(document.documentId, document.revision, recovery.recoveredRevision ?? 0);
+    }
+    const missingIgnored = ignored.filter((opId) => !recovery.ignoredOperationIds.includes(opId));
+    if (missingIgnored.length > 0) throw new TypeError(`Recovery boundary contains unknown ignored operations: ${missingIgnored.join(", ")}.`);
+    const transaction = this.#database!.transaction(["documents", "recoveryEvents"], "readwrite");
+    const done = transactionDone(transaction);
+    const transactionCurrent = await requestResult(transaction.objectStore("documents").get(document.documentId)) as KDrawDocumentV1 | undefined;
+    if (JSON.stringify(transactionCurrent ?? null) !== JSON.stringify(current ?? null)) {
+      transaction.abort();
+      await done.catch(() => undefined);
+      throw new StorageRevisionConflictError(document.documentId, current?.revision ?? 0, transactionCurrent?.revision ?? 0);
+    }
+    transaction.objectStore("documents").put(structuredClone(document));
+    transaction.objectStore("recoveryEvents").add({
+      eventId: `${document.documentId}:${sessionId}:recover:${crypto.randomUUID()}`,
+      documentId: document.documentId,
+      sessionId,
+      kind: "recover",
+      revision: document.revision,
+      recordedAt,
+      ignoredOperationIds: ignored,
+    } satisfies RecoveryEvent);
+    await done;
   }
 
   private async recordRecoveryEvent(input: Omit<RecoveryEvent, "eventId">): Promise<void> {
@@ -263,13 +345,17 @@ export class KDrawIndexedDb {
       validSnapshots.push(snapshot);
     }
 
+    const quarantinedOperationIds = new Set(recoveryEvents
+      .filter((event) => event.kind === "recover")
+      .flatMap((event) => event.ignoredOperationIds ?? []));
+    const activeOperations = operations.filter((record) => !quarantinedOperationIds.has(record.opId));
     let replayed: KDrawDocumentV1 | null = null;
-    const hasEnhancedOperationRecords = operations.some((record) => Boolean(record.afterDocument && record.afterSha256 && record.beforeSha256 !== undefined));
+    const hasEnhancedOperationRecords = activeOperations.some((record) => Boolean(record.afterDocument && record.afterSha256 && record.beforeSha256 !== undefined));
     let previousSha256: string | null = validSnapshots.find((snapshot) => snapshot.revision === 0)?.sha256 ?? null;
     let expectedRevision = 1;
-    let failedIndex = operations.length;
-    for (let index = 0; index < operations.length; index += 1) {
-      const record = operations[index]!;
+    let failedIndex = activeOperations.length;
+    for (let index = 0; index < activeOperations.length; index += 1) {
+      const record = activeOperations[index]!;
       if (!record.afterDocument || !record.afterSha256 || record.beforeSha256 === undefined) {
         failedIndex = index; break;
       }
@@ -285,28 +371,34 @@ export class KDrawIndexedDb {
       previousSha256 = record.afterSha256;
       expectedRevision += 1;
     }
-    const ignoredOperationIds = operations.slice(failedIndex).map((record) => record.opId);
+    const ignoredOperationIds = [...new Set([
+      ...quarantinedOperationIds,
+      ...activeOperations.slice(failedIndex).map((record) => record.opId),
+    ])];
     let document: KDrawDocumentV1 | null = null;
     let source: DocumentRecoveryResult["source"] = "none";
     if (replayed) {
       document = replayed; source = "operation-log";
     } else if (validSnapshots.length > 0) {
-      const firstRejectedRevision = operations[failedIndex]?.revision ?? Number.POSITIVE_INFINITY;
+      const firstRejectedRevision = activeOperations[failedIndex]?.revision ?? Number.POSITIVE_INFINITY;
       const eligibleSnapshots = hasEnhancedOperationRecords
         ? validSnapshots.filter((snapshot) => snapshot.revision < firstRejectedRevision)
         : validSnapshots;
       if (eligibleSnapshots.length > 0) {
         document = structuredClone(eligibleSnapshots.at(-1)!.document); source = "snapshot";
       }
-    } else if (operations.length === 0 && mutableDocument && validDocument(mutableDocument)) {
+    } else if (activeOperations.length === 0 && mutableDocument && validDocument(mutableDocument)) {
       document = structuredClone(mutableDocument); source = "document";
     }
-    const sessions = new Map<string, { open: number; clean: number }>();
-    for (const event of recoveryEvents) {
-      const counts = sessions.get(event.sessionId) ?? { open: 0, clean: 0 };
-      counts[event.kind] += 1; sessions.set(event.sessionId, counts);
+    const sessions = new Map<string, number>();
+    for (const event of recoveryEvents.sort((first, second) => (
+      first.recordedAt.localeCompare(second.recordedAt) || first.eventId.localeCompare(second.eventId)
+    ))) {
+      if (event.kind === "recover") continue;
+      const openDepth = sessions.get(event.sessionId) ?? 0;
+      sessions.set(event.sessionId, event.kind === "open" ? openDepth + 1 : Math.max(0, openDepth - 1));
     }
-    const uncleanSessionIds = [...sessions.entries()].filter(([, counts]) => counts.open > counts.clean).map(([sessionId]) => sessionId).sort();
+    const uncleanSessionIds = [...sessions.entries()].filter(([, openDepth]) => openDepth > 0).map(([sessionId]) => sessionId).sort();
     return {
       document,
       source,
@@ -350,6 +442,17 @@ export class KDrawIndexedDb {
     const bytes = Uint8Array.from(result.bytes);
     if ((await sha256(bytes)) !== result.attachment.sha256.toLowerCase()) throw new TypeError(`Stored attachment ${attachmentId} checksum mismatch.`);
     return { attachment: structuredClone(result.attachment), bytes };
+  }
+
+  async assertDocumentAttachmentsReadable(document: KDrawDocumentV1): Promise<void> {
+    assertKDrawDocumentV1(document);
+    for (const attachment of document.attachments) {
+      const stored = await this.loadAttachment(document.documentId, attachment.id);
+      if (!stored) throw new TypeError(`Stored attachment ${attachment.id} is missing for document ${document.documentId}.`);
+      if (JSON.stringify(stored.attachment) !== JSON.stringify(attachment)) {
+        throw new TypeError(`Stored attachment ${attachment.id} metadata does not match document ${document.documentId}.`);
+      }
+    }
   }
 
   close(): void {

@@ -14,6 +14,9 @@ export class DocumentAutosaveRecovery {
   async open(documentId: string, recordedAt?: string): Promise<DocumentRecoveryResult> {
     if (this.#openDocuments.has(documentId)) throw new TypeError(`Document ${documentId} is already open in recovery session ${this.sessionId}.`);
     const recovery = await this.database.recoverDocument(documentId);
+    if (recovery.document && recovery.ignoredOperationIds.length > 0) {
+      await this.database.acceptRecoveredDocument(recovery.document, this.sessionId, recovery.ignoredOperationIds, recordedAt);
+    }
     await this.database.recordRecoveryOpen(documentId, this.sessionId, recordedAt);
     this.#openDocuments.add(documentId);
     return recovery;
@@ -33,6 +36,10 @@ export class DocumentAutosaveRecovery {
     this.assertOpen(documentId);
     await this.database.recordRecoveryClean(documentId, this.sessionId, revision, recordedAt);
     this.#openDocuments.delete(documentId);
+  }
+
+  isOpen(documentId: string): boolean {
+    return this.#openDocuments.has(documentId);
   }
 
   private assertOpen(documentId: string): void {
