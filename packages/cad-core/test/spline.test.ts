@@ -10,6 +10,20 @@ function chordParameters(points: readonly { x: number; y: number }[]): number[] 
   return [0, ...lengths.map((length) => (cumulative += length) / total)];
 }
 
+function pointToPolylineDistance(point: { x: number; y: number }, vertices: readonly { x: number; y: number }[]): number {
+  let minimum = Number.POSITIVE_INFINITY;
+  for (let index = 0; index < vertices.length - 1; index += 1) {
+    const start = vertices[index]!;
+    const end = vertices[index + 1]!;
+    const dx = end.x - start.x;
+    const dy = end.y - start.y;
+    const lengthSquared = dx * dx + dy * dy;
+    const ratio = lengthSquared === 0 ? 0 : Math.max(0, Math.min(1, ((point.x - start.x) * dx + (point.y - start.y) * dy) / lengthSquared));
+    minimum = Math.min(minimum, Math.hypot(point.x - start.x - ratio * dx, point.y - start.y - ratio * dy));
+  }
+  return minimum;
+}
+
 describe("F-012 SPLINE creation kernel adapted from the WIP branch", () => {
   it("creates clamped control-vertex splines for degrees 1 through 10", () => {
     for (const degree of [1, 3, 10]) {
@@ -40,11 +54,32 @@ describe("F-012 SPLINE creation kernel adapted from the WIP branch", () => {
 
   it("interpolates each open Fit point and retains current-schema definition metadata", () => {
     const points = [{ x: 0, y: 0 }, { x: 20, y: 50 }, { x: 60, y: -10 }, { x: 90, y: 30 }, { x: 130, y: 0 }];
-    const spline = createFitPointSpline({ handle: "FIT", layerId: "0", fitPoints: points, fitTolerance: 2, knotParameterization: "chord" });
+    const spline = createFitPointSpline({ handle: "FIT", layerId: "0", fitPoints: points, knotParameterization: "chord" });
     chordParameters(points).forEach((parameter, index) => {
       expect(splinePointAtParameter(spline, parameter)).toEqual({ x: expect.closeTo(points[index]!.x, 8), y: expect.closeTo(points[index]!.y, 8) });
     });
-    expect(spline.extensionData).toMatchObject({ splineDefinition: { method: "fit-points", fitPoints: points, fitTolerance: 2, knotParameterization: "chord" } });
+    expect(spline.extensionData).toMatchObject({ splineDefinition: { method: "fit-points", fitPoints: points, fitTolerance: 0, knotParameterization: "chord" } });
+  });
+
+  it("uses Fit Tolerance as a real deterministic bounded approximation", () => {
+    const fitPoints = [{ x: 0, y: 200 }, { x: 20, y: 270 }, { x: 60, y: 190 }, { x: 100, y: 260 }, { x: 140, y: 200 }];
+    const exact = createFitPointSpline({ handle: "EXACT", layerId: "0", fitPoints });
+    const approximate = createFitPointSpline({ handle: "TOLERANCE", layerId: "0", fitPoints, fitTolerance: 10 });
+    expect(approximate.controlPoints).not.toEqual(exact.controlPoints);
+    expect(approximate.knots).not.toEqual(exact.knots);
+    const samples = Array.from({ length: 2001 }, (_unused, index) => splinePointAtParameter(approximate, index / 2000)!);
+    const deviations = fitPoints.map((point) => pointToPolylineDistance(point, samples));
+    expect(Math.max(...deviations)).toBeLessThanOrEqual(10);
+    expect(Math.max(...deviations)).toBeGreaterThan(9.5);
+    expect(deviations[0]).toBeLessThan(1e-8);
+    expect(deviations.at(-1)).toBeLessThan(1e-8);
+
+    const document = createEmptyDocument({ documentId: "fit-tolerance-preview-commit" });
+    const input = { method: "fit" as const, handle: "20", layerId: "0", points: fitPoints, fitTolerance: 10 };
+    const preview = prepareSplineCommand(document, input);
+    const commit = prepareSplineCommand(document, input);
+    expect(commit.entity).toEqual(preview.entity);
+    expect(commit.entity.controlPoints).toEqual(approximate.controlPoints);
   });
 
   it("supports normalized endpoint tangents and closed periodic Fit/CV variants", () => {

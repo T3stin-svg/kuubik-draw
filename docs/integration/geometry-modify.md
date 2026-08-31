@@ -106,9 +106,10 @@ fields, so Fit points, tolerance, parameterization, and tangents are stored unde
 Integration should route `SPL`/`SPLINE` to `prepareSplineCommand` and use the generic
 atomic workflow. Fit, control-vertex, closed periodic, endpoint tangent, and Object
 replacement modes are available. Non-zero Fit tolerance is retained as editable
-metadata but currently uses exact interpolation rather than WIP's bounded
-approximation; it must stay visibly partial until that algorithm and live behavior are
-integrated.
+metadata and now drives a deterministic bounded approximation. Preview and commit
+both call `prepareSplineCommand`, so they receive the same control polygon and knots.
+Certification still requires the integration-owned browser workflow and live AutoCAD
+read-back.
 
 ## Wave 5 exports
 

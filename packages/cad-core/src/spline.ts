@@ -187,6 +187,91 @@ function openNaturalFitRepresentation(points: readonly CadPoint2[], parameters: 
   return { knots, controlPoints: x.map((coordinate, index) => ({ x: coordinate, y: y[index]! })) };
 }
 
+function pointToSegmentDistance(point: CadPoint2, start: CadPoint2, end: CadPoint2): number {
+  const dx = end.x - start.x;
+  const dy = end.y - start.y;
+  const lengthSquared = dx * dx + dy * dy;
+  if (lengthSquared <= EPSILON) return Math.hypot(point.x - start.x, point.y - start.y);
+  const parameter = Math.min(1, Math.max(0, ((point.x - start.x) * dx + (point.y - start.y) * dy) / lengthSquared));
+  return Math.hypot(point.x - (start.x + parameter * dx), point.y - (start.y + parameter * dy));
+}
+
+function maximumFitPointDeviation(
+  points: readonly CadPoint2[],
+  representation: { controlPoints: CadPoint2[]; knots: number[] },
+): number {
+  const spline: CadSpline = {
+    kind: "spline",
+    handle: "F012-TOLERANCE-PROBE",
+    layerId: "0",
+    degree: 3,
+    controlPoints: representation.controlPoints,
+    knots: representation.knots,
+    closed: false,
+    periodic: false,
+  };
+  const sampleCount = Math.max(256, Math.min(2048, representation.controlPoints.length * 64));
+  const start = representation.knots[3]!;
+  const end = representation.knots[representation.controlPoints.length]!;
+  const samples = Array.from({ length: sampleCount + 1 }, (_unused, index) => {
+    const point = splinePointAtParameter(spline, start + (end - start) * index / sampleCount);
+    if (!point) throw new TypeError("SPLINE tolerance approximation produced an invalid sample.");
+    return point;
+  });
+  return points.reduce((maximum, point) => {
+    let minimum = Number.POSITIVE_INFINITY;
+    for (let index = 0; index < sampleCount; index += 1) {
+      minimum = Math.min(minimum, pointToSegmentDistance(point, samples[index]!, samples[index + 1]!));
+    }
+    return Math.max(maximum, minimum);
+  }, 0);
+}
+
+function approximateNaturalFitRepresentation(
+  points: readonly CadPoint2[],
+  parameters: readonly number[],
+  fitTolerance: number,
+  parameterization: SplineKnotParameterization,
+): { controlPoints: CadPoint2[]; knots: number[] } {
+  const exact = openNaturalFitRepresentation(points, parameters);
+  if (!(fitTolerance > 0) || points.length < 3) return exact;
+  const directions = points.map((point, index) => {
+    if (index === 0 || index === points.length - 1) return { x: 0, y: 0 };
+    const previous = points[index - 1]!;
+    const next = points[index + 1]!;
+    const span = parameters[index + 1]! - parameters[index - 1]!;
+    const ratio = span <= EPSILON ? 0.5 : (parameters[index]! - parameters[index - 1]!) / span;
+    const chordPoint = {
+      x: previous.x + (next.x - previous.x) * ratio,
+      y: previous.y + (next.y - previous.y) * ratio,
+    };
+    return { x: chordPoint.x - point.x, y: chordPoint.y - point.y };
+  });
+  if (directions.every(({ x, y }) => Math.hypot(x, y) <= EPSILON)) return exact;
+  const at = (factor: number) => {
+    const adjustedPoints = points.map((point, index) => ({
+      x: point.x + directions[index]!.x * factor,
+      y: point.y + directions[index]!.y * factor,
+    }));
+    return openNaturalFitRepresentation(adjustedPoints, parameterValues(adjustedPoints, parameterization));
+  };
+  const limit = fitTolerance * 0.995;
+  const fullySmoothed = at(1);
+  if (maximumFitPointDeviation(points, fullySmoothed) <= limit) return fullySmoothed;
+  let lower = 0;
+  let upper = 1;
+  let accepted = exact;
+  for (let iteration = 0; iteration < 24; iteration += 1) {
+    const factor = (lower + upper) / 2;
+    const candidate = at(factor);
+    if (maximumFitPointDeviation(points, candidate) <= limit) {
+      lower = factor;
+      accepted = candidate;
+    } else upper = factor;
+  }
+  return accepted;
+}
+
 function openFitRepresentationWithTangents(
   points: readonly CadPoint2[], parameters: readonly number[], startTangent: CadPoint2 | undefined, endTangent: CadPoint2 | undefined,
 ): { controlPoints: CadPoint2[]; knots: number[] } {
@@ -292,7 +377,7 @@ export function createFitPointSpline(input: FitPointSplineInput): CadSpline {
     const parameters = parameterValues(fitPoints, knotParameterization);
     representation = startTangent || endTangent
       ? openFitRepresentationWithTangents(fitPoints, parameters, startTangent, endTangent)
-      : openNaturalFitRepresentation(fitPoints, parameters);
+      : approximateNaturalFitRepresentation(fitPoints, parameters, fitTolerance, knotParameterization);
   }
   return {
     kind: "spline", handle: input.handle, layerId: input.layerId,
