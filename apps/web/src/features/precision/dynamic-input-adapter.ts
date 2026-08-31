@@ -1,6 +1,5 @@
 import type { CadPoint2, KDrawDocumentV1 } from "@kuubik/cad-schema";
-import type { CommittedOperation } from "@kuubik/cad-core";
-import { formatCadLengthWithContract } from "../../../../../packages/cad-core/src/units.js";
+import { formatCadLengthWithContract, type CommittedOperation } from "@kuubik/cad-core";
 import {
   type CoordinateEntryAtomicPlanner,
   type CoordinateEntryCommit,
