@@ -288,3 +288,36 @@ This preserves the exact geometric locus, handle, layer, radius, center, and com
 appearance properties, but not the original command-direction flag. F-005 remains
 uncertified until AutoCAD 2024.1.2 live command-matrix and Kuubik browser workflow
 read-back are completed. No parity score or certification record was changed.
+
+## Wave 11 exports (F-006 complete POLYGON matrix)
+
+From `packages/cad-core/src/polygon-command.ts`:
+
+- `prepareCompletePolygonCommand`
+- `PolygonCommandInputError`
+- `CompletePolygonCommandInput`, `CompletePolygonConstruction`,
+  `PolygonOrientation`, `PolygonRotationInput`, `NormalizedPolygonDefinition`,
+  and `PreparedCompletePolygonCommand`
+
+The integration owner should migrate the existing POLYGON parser to this typed
+kernel. It accepts 3 through 1024 sides and covers center-inscribed,
+center-circumscribed, and first-edge construction. Center construction supports
+counter-clockwise or clockwise order plus two rotation references. A radius-point
+rotation points at the first vertex for inscribed geometry and at the first edge
+midpoint for circumscribed geometry. Numeric rotation treats `rotationRad` as the
+current snap-axis direction and places the bottom edge on that axis, matching the
+documented AutoCAD numeric-radius behavior. Edge mode preserves both picked endpoints
+exactly and uses orientation to choose the interior side.
+
+Preview and commit must call `prepareCompletePolygonCommand` with the same immutable
+input. Commit its single returned change once through `CadSession`. Invalid side
+counts, identity, points, size, rotation, orientation, collapsed edges, numeric
+overflow, and degenerate area fail before an `EntityChange` exists. The returned
+entity and normalized geometry clone handle, layer, appearance, extension data,
+center, radii, edge length, winding, and rotation metadata.
+
+F-006 has golden/property/mutation/prepared-wiring coverage and production DXF
+export/import read-back for a rotated clockwise 17-sided closed LWPOLYLINE. It
+remains uncertified until the AutoCAD 2024.1.2 live POLYGON matrix and Kuubik browser
+workflow are run with output read-back. No parity score or certification record was
+changed.
