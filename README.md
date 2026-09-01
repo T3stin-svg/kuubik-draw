@@ -218,6 +218,26 @@ npm install
 npm run check
 ```
 
+## Windowsi portable EXE
+
+Lite v1 saab ehitada üheks Windows x64 portable rakenduseks:
+
+```powershell
+npm run desktop:package
+```
+
+Valmis fail tekib kausta `release/` nimega
+`KuubikDraw-Lite-0.1.0-alpha.0-portable.exe`. Paigaldust ei ole vaja ning
+rakendus ei nõua kasutaja arvutis Node.js-i, Pythonit, WebView2-te ega
+internetiühendust: Electron ja Chromium on EXE-s kaasas. CAD-vaate HTTP(S),
+WebSocketi ja välise navigatsiooni ühendused on desktop-kestas blokeeritud.
+
+Automaatsalvestus kasutab püsiva `kuubik://app` päritolu IndexedDB-d ning jääb
+alles ka portable EXE järgmiste käivituste vahel. Rakendus on praegu
+Authenticode'iga allkirjastamata, mistõttu Windows SmartScreen võib esimesel
+käivitusel hoiatada. Drawi oma ikoon lisatakse eraldi viimistluslaines; esimene
+testipakend kasutab Electroni vaikeikooni.
+
 Pariteedi arhitektuurikäsud:
 
 ```bash

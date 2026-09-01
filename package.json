@@ -3,8 +3,10 @@
   "version": "0.1.0-alpha.0",
   "private": true,
   "description": "Standalone public 2D CAD application targeting a fixed AutoCAD 2024.1.2 parity audit.",
+  "author": "Kuubik Projekt OÜ",
   "license": "GPL-2.0-only",
   "type": "module",
+  "main": "desktop/main.cjs",
   "workspaces": [
     "apps/*",
     "packages/*"
@@ -162,7 +164,11 @@
     "check:fast": "npm run typecheck && npm run lint && npm run test && npm run parity:kit:validate && npm run visual:check",
     "check:certification": "npm run test:mutation && npm run gate:dxf && npm run gate:pdf && npm run parity:check && npm run test:oracles && npm run license:check && npm run security:scan && npm run build && npm run test:e2e",
     "check:full": "npm run check:fast && npm run check:certification",
-    "check": "npm run check:full"
+    "check": "npm run check:full",
+    "desktop:start": "npm run build && electron .",
+    "desktop:test": "node --test desktop/*.test.cjs",
+    "desktop:package:raw": "electron-builder --win portable --x64",
+    "desktop:package": "powershell -NoProfile -ExecutionPolicy Bypass -File desktop/build-portable.ps1"
   },
   "engines": {
     "node": ">=22"
@@ -171,8 +177,39 @@
     "@playwright/test": "^1.55.0",
     "@types/node": "^24.3.0",
     "dxf-parser": "1.1.2",
+    "electron": "43.0.0",
+    "electron-builder": "26.15.3",
     "typescript": "^6.0.0",
     "vitest": "^3.2.4",
     "yaml": "2.9.0"
+  },
+  "build": {
+    "appId": "ee.kuubik.draw.lite",
+    "productName": "Kuubik Draw Lite",
+    "asar": true,
+    "compression": "maximum",
+    "files": [
+      "desktop/main.cjs",
+      "desktop/preload.cjs",
+      "apps/web/dist/**/*",
+      "LICENSE",
+      "THIRD_PARTY_NOTICES.md",
+      "LICENSES/**/*"
+    ],
+    "directories": {
+      "output": "release"
+    },
+    "artifactName": "KuubikDraw-Lite-${version}-portable.${ext}",
+    "win": {
+      "target": [
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "requestedExecutionLevel": "asInvoker"
+    }
   }
 }

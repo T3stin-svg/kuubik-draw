@@ -53,6 +53,12 @@ const allowedLicenses = new Set([
   "CC-BY-4.0",
   "CC0-1.0",
   "0BSD",
+  "Python-2.0",
+  "BlueOak-1.0.0",
+  "WTFPL",
+  "WTFPL OR ISC",
+  "(MIT OR CC0-1.0)",
+  "(WTFPL OR MIT)",
 ]);
 const violations = installed
   .filter((entry) => typeof entry.name === "string")

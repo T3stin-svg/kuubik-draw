@@ -31,5 +31,16 @@
 - License: MIT
 - Use: independent development/CI read-back of synthetic DXF output
 
+## Electron and Chromium
+
+- Electron version: `43.0.0`
+- Electron license: MIT
+- Chromium license: BSD-style license with bundled third-party notices
+- Use: portable Windows desktop shell with a bundled offline browser runtime
+- The packaged application retains Electron's `LICENSE.electron.txt` and
+  Chromium's `LICENSES.chromium.html` resources. Electron Builder and its
+  transitive packaging dependencies are development-only and are not loaded by
+  Kuubik Draw's renderer.
+
 AutoCAD is a trademark of Autodesk, Inc. No Autodesk code, logo, proprietary
 icon, PC3/CTB/STB data, or customer drawing is included.

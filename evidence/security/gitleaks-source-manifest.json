@@ -10,8 +10,8 @@
   "ciArtifactsExcluded": [
     "results.sarif"
   ],
-  "fileCount": 1875,
-  "sourceTreeSha256": "e1b3580da0f575b783d1336dfeade1705e13b6b75c2716ca158e9c7c78cea864",
+  "fileCount": 1883,
+  "sourceTreeSha256": "67fbd015b836103f6b51ae0288101e25e618df40af05fc0c071e5290bb2d8d42",
   "files": [
     {
       "path": ".gitattributes",
@@ -25,8 +25,8 @@
     },
     {
       "path": ".gitignore",
-      "size": 147,
-      "sha256": "48e9797ce53eeaa88c244b0a8da317f81c458277756a26d5852ccd42a5a2c624"
+      "size": 156,
+      "sha256": "91799e7b09b0751a77cf99198d7055cf8b9f7ab4bf066f50763a161bea8a9529"
     },
     {
       "path": ".gitleaks.toml",
@@ -50,8 +50,8 @@
     },
     {
       "path": "apps/web/src/App.tsx",
-      "size": 295790,
-      "sha256": "178005d2196e2a2ba524fc954553931e5fc0ba4982665492240cf8a348e09852"
+      "size": 299727,
+      "sha256": "f26b8ec7d29b5ac27994fd6e69e637579178f709688158eda398f5b58a12ee7d"
     },
     {
       "path": "apps/web/src/context-menu.test.ts",
@@ -940,8 +940,8 @@
     },
     {
       "path": "apps/web/src/shell/CadShell.tsx",
-      "size": 582,
-      "sha256": "1e26897ce3d27ad473cf4a4f9991f227dd2cecc30027bfee58b72e959c6e82b6"
+      "size": 804,
+      "sha256": "1980ac98810c8d688d9a054866012aabe292731a69cd518e4e3d7e65ec8e4830"
     },
     {
       "path": "apps/web/src/shell/CommandLine.tsx",
@@ -974,6 +974,11 @@
       "sha256": "89df43af46a3fb69b940cbdd7d697124406fcdd82548eab330d4b4759114e874"
     },
     {
+      "path": "apps/web/src/shell/lite-shell.test.tsx",
+      "size": 2778,
+      "sha256": "3a7a0f76d717f2a28d62dc039e7f4bc8195fa69e1dfa5d042efaf3d21edb15c5"
+    },
+    {
       "path": "apps/web/src/shell/LiveCommandPrompt.tsx",
       "size": 2129,
       "sha256": "8cf6da5d6d262f3000ad58e1427a2f55de6f80fa5325c1f32517a57e2d6ea5fe"
@@ -994,9 +999,14 @@
       "sha256": "390926616a62fa152535d3d24557f521ae8d38ed639d673847c09c1171a27c59"
     },
     {
+      "path": "apps/web/src/shell/reio-scope.test.ts",
+      "size": 1945,
+      "sha256": "04c9abb0a7970d8c9c59c5931f1fff1c54f2ea48bfde37fe7298f8fe62522ba6"
+    },
+    {
       "path": "apps/web/src/shell/reio-scope.ts",
-      "size": 1371,
-      "sha256": "2ad43f17e0825241a3d46d680fbf80cc58bae8b3736f025c094940e604fab896"
+      "size": 794,
+      "sha256": "e2ac7170cbbcf072d178ea0ab30b6bd195c116fd9584b400a38351eb7c98e397"
     },
     {
       "path": "apps/web/src/shell/Ribbon.tsx",
@@ -1025,13 +1035,13 @@
     },
     {
       "path": "apps/web/src/shell/StatusBar.tsx",
-      "size": 1657,
-      "sha256": "7d362978225ac77cb072d41b2522fb60e14862dee37f6a7ea9179befb889576b"
+      "size": 2075,
+      "sha256": "5a6e84be8677605ce9f9e668609563e7e16c5f85f11bcd5e86177d7cdb75f17d"
     },
     {
       "path": "apps/web/src/shell/TitleBar.tsx",
-      "size": 3259,
-      "sha256": "a5bf63ecef94a371c50ce2988fda46818854fa621946e5d2904fda95f879b8df"
+      "size": 3318,
+      "sha256": "09cadd8c363a043b0b0fb881d354702b0c6c44c0adbe26c3450cda0845fc87c8"
     },
     {
       "path": "apps/web/src/shell/UnitsPanel.tsx",
@@ -1040,8 +1050,8 @@
     },
     {
       "path": "apps/web/src/style.css",
-      "size": 54609,
-      "sha256": "1886b399b335916d572287724013243758cc51183b2e6c6cc9d94b368322e228"
+      "size": 56580,
+      "sha256": "f943e96ccc83c28a12d8c0e1e60ebe78723b7f004b52d05d9a1f2a3ed4507e4b"
     },
     {
       "path": "apps/web/src/workflows/modify-command.test.ts",
@@ -1072,6 +1082,26 @@
       "path": "CONTRIBUTING.md",
       "size": 549,
       "sha256": "c371807e3b8ad8dd31af252f8fbe90c5a331162a6bdc206882bd3f4ab4d58d5c"
+    },
+    {
+      "path": "desktop/build-portable.ps1",
+      "size": 1691,
+      "sha256": "922aa42e16577c459c37b4d12cd293cd5713519448022b978826615a5de93692"
+    },
+    {
+      "path": "desktop/desktop-shell.test.cjs",
+      "size": 1997,
+      "sha256": "ced25f35030eb5f774e2bf6781712405b83959427e6d670ef0cf85fe3bdef89b"
+    },
+    {
+      "path": "desktop/main.cjs",
+      "size": 8270,
+      "sha256": "1a490aea14ace856c7652d3708a232701834375f575248fd4256ec0171537a40"
+    },
+    {
+      "path": "desktop/preload.cjs",
+      "size": 217,
+      "sha256": "2bf38403ef21a6aa8ea1db61f67e2b1b07198ad3da17c5754038c97fef3c2541"
     },
     {
       "path": "docs/adr/0001-license-boundary.md",
@@ -1317,6 +1347,11 @@
       "path": "e2e/indexed-db-current-schema.spec.ts",
       "size": 2089,
       "sha256": "c40ccf8db36e4b225e6e9f931483e942985ba49ee0545e9d9ac9de0057f52f19"
+    },
+    {
+      "path": "e2e/lite-v1-workflow.spec.ts",
+      "size": 10171,
+      "sha256": "582cfc240d7a491c9d2263406bc73c12184b314e4d8ff4c28dfc6712d66be9ad"
     },
     {
       "path": "e2e/local-document.spec.ts",
@@ -6135,13 +6170,13 @@
     },
     {
       "path": "package-lock.json",
-      "size": 84871,
-      "sha256": "da1dcf889d8fbf35f6a8e4403b29ed34666b13176a2b98307a0c23e25fa06a53"
+      "size": 210359,
+      "sha256": "7cb1f7613af98e9f9e9a54e02cab931ac36eedc9f4bd6d350fc9777bfdc971e2"
     },
     {
       "path": "package.json",
-      "size": 16545,
-      "sha256": "f86c0deed35efd89b99c3038e7af967b9ed685d98d8e2d3ab7c171efb5f4e648"
+      "size": 17579,
+      "sha256": "ca661bcdcc8835a941dcffc1e66d1f99ed813bc35abca505bcbb55fbafeb0262"
     },
     {
       "path": "packages/cad-core/package.json",
@@ -7840,13 +7875,18 @@
     },
     {
       "path": "README.md",
-      "size": 15137,
-      "sha256": "edd0ac85d7e88baca1e109730593fca17bf2490c423e5d1bae93235e6b5431da"
+      "size": 16668,
+      "sha256": "a5b13dcd7c73a403f482d3391c57fcf139540a53b06a1f932bffe3638942c244"
     },
     {
       "path": "RIGHTS.md",
       "size": 473,
       "sha256": "057b17a4fb4778b239e79a16ad2c007e46b4d4580fd118fa2509eba240e0359e"
+    },
+    {
+      "path": "scope/kuubik-draw-lite-v1.json",
+      "size": 565,
+      "sha256": "d13a8e0577d29b311d70576b3b70700a0bf0b55183726994e343ab94eadd46b1"
     },
     {
       "path": "scope/README.md",
@@ -7865,8 +7905,8 @@
     },
     {
       "path": "THIRD_PARTY_NOTICES.md",
-      "size": 1165,
-      "sha256": "3808f3d84aab5eb8a1fdeb18c83e9316fa2a7806243403f52cac549c199fb58d"
+      "size": 1645,
+      "sha256": "efb1da8b2cbb50979e63469c6636b4dab9d6fd398500605a7a3afc1079855b4d"
     },
     {
       "path": "tools/autocad/f004-runner.test.mjs",
@@ -9315,8 +9355,8 @@
     },
     {
       "path": "tools/provenance/check-licenses.mjs",
-      "size": 2291,
-      "sha256": "838f40e6c7ff9b39100c1122728976ea1a7a7dcf09ade16b414bb6f09a828eb6"
+      "size": 2397,
+      "sha256": "bc900a763f0f19cce839bf1acafeaca500589a9f1debb14c1ec3b87ff517acaf"
     },
     {
       "path": "tools/provenance/gitleaks-evidence.mjs",
