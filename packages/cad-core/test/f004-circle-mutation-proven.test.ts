@@ -83,7 +83,7 @@ describe("F-004 CIRCLE mutation-proven guards", () => {
     const document = createEmptyDocument({ documentId: "F-004-document-guards" });
     document.entities.push({ kind: "line", handle: "C4", layerId: "0", start: { x: 0, y: 0 }, end: { x: 1, y: 0 } });
     expect(() => prepareCompleteCircleDocumentCommand(document, {
-      command: "CIRCLE", handle: "C4", layerId: "0",
+      command: "CIRCLE", handle: "c4", layerId: "0",
       construction: { mode: "center-radius", center: { x: 0, y: 0 }, radius: 5 },
     })).toThrowError(expect.objectContaining({ code: "HANDLE_COLLISION" }));
     expect(() => prepareCompleteCircleCommand({

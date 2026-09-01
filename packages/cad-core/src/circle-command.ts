@@ -588,7 +588,8 @@ export function prepareCompleteCircleDocumentCommand(
   if (!layer.visible || layer.frozen) {
     throw new CircleCommandInputError("LAYER_HIDDEN", `CIRCLE result layer ${input.layerId} is off or frozen.`);
   }
-  if (document.entities.some((entity) => entity.handle === input.handle)) {
+  const requestedHandle = input.handle.trim().toLocaleUpperCase("en-US");
+  if (document.entities.some((entity) => entity.handle.toLocaleUpperCase("en-US") === requestedHandle)) {
     throw new CircleCommandInputError("HANDLE_COLLISION", `CIRCLE result handle ${input.handle} already exists.`);
   }
   return prepareCompleteCircleCommand(input);

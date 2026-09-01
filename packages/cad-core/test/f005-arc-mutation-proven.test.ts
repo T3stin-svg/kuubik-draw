@@ -62,7 +62,7 @@ describe("F-005 ARC mutation-proven guards", () => {
     const document = createEmptyDocument({ documentId: "F-005-document-guards" });
     document.entities.push({ kind: "line", handle: "A5", layerId: "0", start: { x: 0, y: 0 }, end: { x: 1, y: 0 } });
     expect(() => prepareCompleteArcDocumentCommand(document, {
-      command: "ARC", handle: "A5", layerId: "0",
+      command: "ARC", handle: "a5", layerId: "0",
       construction: { mode: "start-center-angle", start: { x: 10, y: 0 }, center: { x: 0, y: 0 }, includedAngleRad: 1 },
     })).toThrowError(expect.objectContaining({ code: "HANDLE_COLLISION" }));
     expect(() => prepareCompleteArcCommand({

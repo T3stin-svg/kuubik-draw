@@ -521,7 +521,8 @@ export function prepareCompleteArcDocumentCommand(
   if (!layer.visible || layer.frozen) {
     throw new ArcCommandInputError("LAYER_HIDDEN", `ARC result layer ${input.layerId} is off or frozen.`);
   }
-  if (document.entities.some((entity) => entity.handle === input.handle)) {
+  const requestedHandle = input.handle.trim().toLocaleUpperCase("en-US");
+  if (document.entities.some((entity) => entity.handle.toLocaleUpperCase("en-US") === requestedHandle)) {
     throw new ArcCommandInputError("HANDLE_COLLISION", `ARC result handle ${input.handle} already exists.`);
   }
   return prepareCompleteArcCommand(input);
