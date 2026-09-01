@@ -193,6 +193,7 @@ export class VisualShellLivePrompt {
     const dimStyleMode = this.#dimStyleMode(snapshot);
     const textStyleMode = this.#textStyleMode(snapshot);
     const tableMode = this.#tableMode(snapshot);
+    const hatchMode = this.#hatchMode(snapshot);
     const branchRequired = (field.id === "style" && (dimStyleMode === "create" || dimStyleMode === "update"))
       || (field.id === "styleId" && dimStyleMode === "apply")
       || (field.id === "style" && (textStyleMode === "create" || textStyleMode === "update"))
@@ -200,7 +201,10 @@ export class VisualShellLivePrompt {
       || (field.id === "definition" && tableMode === "create")
       || (field.id === "operations" && tableMode === "edit")
       || (field.id === "tableHandle" && tableMode === "edit" && (this.#request.context?.selectedHandles?.length ?? 0) !== 1)
-      || (field.id === "style" && (tableMode === "style-create" || tableMode === "style-update"));
+      || (field.id === "style" && (tableMode === "style-create" || tableMode === "style-update"))
+      || (hatchMode === "create" && ["boundaryHandles", "pattern", "angleRad", "scale", "associative"].includes(field.id))
+      || (hatchMode === "edit" && field.id === "patch")
+      || (hatchMode === "edit" && field.id === "targetHandle" && (this.#request.context?.selectedHandles?.length ?? 0) !== 1);
     return { id: field.id, label: field.label, kind: field.valueKind, required: field.required || branchRequired, choices: [...("choices" in field ? field.choices ?? [] : [])] };
   }
 
@@ -248,10 +252,18 @@ export class VisualShellLivePrompt {
     return mode === "create" || mode === "update" || mode === "apply" ? mode : null;
   }
 
+  #hatchMode(snapshot: CommandPromptSnapshot): "create" | "edit" | null {
+    if (this.#request.commandId !== "HATCH") return null;
+    const mode = snapshot.values.mode;
+    if (mode === "create" || mode === "edit") return mode;
+    return snapshot.currentFieldId === "mode" ? null : "create";
+  }
+
   #skipInactiveBranchFields(snapshot: CommandPromptSnapshot): CommandPromptSnapshot {
     const dimStyleMode = this.#dimStyleMode(snapshot);
     const textStyleMode = this.#textStyleMode(snapshot);
     const tableMode = this.#tableMode(snapshot);
+    const hatchMode = this.#hatchMode(snapshot);
     let routed = snapshot;
     while (routed.status === "active") {
       const skipDimStyle = dimStyleMode === "apply" && routed.currentFieldId === "style";
@@ -263,7 +275,10 @@ export class VisualShellLivePrompt {
       const skipSelectedTableHandle = tableMode === "edit" && (this.#request.context?.selectedHandles?.length ?? 0) === 1 && routed.currentFieldId === "tableHandle";
       const skipTableOperations = tableMode !== null && tableMode !== "edit" && routed.currentFieldId === "operations";
       const skipTableStyle = (tableMode === "create" || tableMode === "edit") && routed.currentFieldId === "style";
-      if (!skipDimStyle && !skipDimStyleId && !skipTextStyle && !skipTextStyleId && !skipTableDefinition && !skipTableHandle && !skipSelectedTableHandle && !skipTableOperations && !skipTableStyle) break;
+      const skipHatchEditFields = hatchMode === "create" && (routed.currentFieldId === "targetHandle" || routed.currentFieldId === "patch");
+      const skipSelectedHatchHandle = hatchMode === "edit" && (this.#request.context?.selectedHandles?.length ?? 0) === 1 && routed.currentFieldId === "targetHandle";
+      const skipHatchCreateFields = hatchMode === "edit" && ["boundaryHandles", "pattern", "angleRad", "scale", "associative", "islandDetection", "origin"].includes(routed.currentFieldId ?? "");
+      if (!skipDimStyle && !skipDimStyleId && !skipTextStyle && !skipTextStyleId && !skipTableDefinition && !skipTableHandle && !skipSelectedTableHandle && !skipTableOperations && !skipTableStyle && !skipHatchEditFields && !skipSelectedHatchHandle && !skipHatchCreateFields) break;
       routed = this.#prompt.skip();
     }
     return routed;
