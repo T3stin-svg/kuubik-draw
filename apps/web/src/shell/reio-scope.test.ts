@@ -2,6 +2,9 @@ import { describe, expect, it } from "vitest";
 import liteScope from "../../../../scope/kuubik-draw-lite-v1.json";
 import {
   isInReioScope,
+  REIO_SCOPE_ID,
+  REIO_SCOPE_LABEL,
+  REIO_SCOPE_SIZE,
   REIO_SCOPE_SOURCE,
   REIO_SELECTED_ROWS,
   UNSCOPED_COMMAND_MESSAGE,
@@ -17,6 +20,9 @@ describe("Kuubik Draw Lite v1 capability profile", () => {
     expect(liteScope.selectedRowIds).toEqual(EXPECTED_ROWS);
     expect(new Set(liteScope.selectedRowIds).size).toBe(20);
     expect([...REIO_SELECTED_ROWS]).toEqual(EXPECTED_ROWS);
+    expect(REIO_SCOPE_ID).toBe("kuubik-draw-lite-v1");
+    expect(REIO_SCOPE_SIZE).toBe(20);
+    expect(REIO_SCOPE_LABEL).toBe("LITE V1 · 20 funktsiooni");
     expect(((REIO_SELECTED_ROWS.size / 133) * 100).toFixed(1)).toBe("15.0");
   });
 

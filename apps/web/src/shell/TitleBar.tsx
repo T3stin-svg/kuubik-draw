@@ -1,5 +1,6 @@
 import { CadIcon } from "../icons/CadIcon.js";
 import type { WorkspacePreset } from "./CadShell.js";
+import { REIO_SCOPE_LABEL } from "./reio-scope.js";
 
 interface TitleBarProps {
   documentName: string;
@@ -51,7 +52,7 @@ export function TitleBar({ documentName, canUndo, canRedo, workspace, storageSta
       <span className="storage-state" data-storage-state={storageState} role="status" aria-live="polite">
         {storageState === "loading" ? "Joonise laadimine…" : storageState === "recovered" ? "Automaatsalvestus taastatud" : storageState === "recovery" ? "Taastamine vajab tähelepanu" : "Salvestus valmis"}
       </span>
-      <span className="product-badge lite-profile-badge" data-testid="lite-profile-badge">LITE V1 · 20 funktsiooni</span>
+      <span className="product-badge lite-profile-badge" data-testid="lite-profile-badge">{REIO_SCOPE_LABEL}</span>
     </header>
   );
 }

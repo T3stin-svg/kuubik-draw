@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { REIO_SCOPE_ID, REIO_SCOPE_SIZE, REIO_SCOPE_SOURCE } from "./reio-scope.js";
 
 export type WorkspacePreset = "drafting" | "focus" | "review";
 
@@ -7,9 +8,9 @@ export function CadShell({ workspace, children }: { workspace: WorkspacePreset; 
     <main
       className="app-shell"
       data-workspace={workspace}
-      data-scope-profile="autocad-familiar-clean"
-      data-product-profile="kuubik-draw-lite-v1"
-      data-scope-size="20"
+      data-scope-profile={REIO_SCOPE_SOURCE.visualProfile}
+      data-product-profile={REIO_SCOPE_ID}
+      data-scope-size={REIO_SCOPE_SIZE}
     >
       {children}
     </main>

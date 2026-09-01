@@ -1,13 +1,24 @@
 # Kuubik Draw
 
-Kuubik Draw on eraldiseisev avalik 2D CAD-rakendus. Projekt sihib fikseeritud
-AutoCAD 2024.1.2 Windowsi **2D Drafting & Annotation** 133-realise auditi
-käitumispariteeti, mitte kogu AutoCADi toodet.
+Kuubik Draw on eraldiseisev avalik 2D CAD-rakendus. Aktiivne tootesiht on
+**Kuubik Draw Lite v1**: 20 igapäevast 2D töövoogu DXF avamisest joonestamise,
+kihtide, mõõdu, DXF/PDF väljundi ja taastamiseni. Fikseeritud AutoCAD 2024.1.2
+Windowsi **2D Drafting & Annotation** 133-realine audit säilib muutumatu
+võrdlusmaterjalina, kuid valimata ridu ei arendata Lite v1 järjekorras.
 
 Uuendatud eesmärk, roadmap.sh arhitektuurikaart ja pärast F-022 kohustuslik
 efektiivsusvärav on failis [`ARCHITECTURE_ROADMAP.md`](ARCHITECTURE_ROADMAP.md).
 
 ## Aus hetkeseis
+
+- aktiivne Lite v1 scope: **20/133 ehk 15,0%** auditi ridadest;
+- Lite v1 tõendatud hetkeseis: **81,3% raw / 81,3% weighted**, millest
+  **6/20** on skooriga `1,00` ja ülejäänud jäävad ausalt osaliseks;
+- `/d/local` kasutab vaikimisi `scope/kuubik-draw-lite-v1.json` profiili;
+- valimata ribboni- ja täpsusrežiimid on nähtavad, kuid disabled-olekus tekstiga
+  `Pole Lite v1 töövoos`;
+- varasem 94-realine Reio valik säilib failis
+  `scope/reio-minimal-scope-v1.json`, kuid ei juhi Lite runtime'i;
 
 - vana Drawi auditi snapshot: **63,9% raw / 68,3% weighted / 60,7% visual**;
 - vana Drawi AutoCADi live-tõendiga read: **22/133**;
