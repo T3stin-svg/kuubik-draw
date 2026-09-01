@@ -76,6 +76,12 @@ describe("F-005 complete ARC command matrix", () => {
     });
     expect(majorClockwise.selected.sweepRad).toBeCloseTo(Math.PI * 5 / 3, 10);
     expect(majorClockwise.entity.counterClockwise).toBe(false);
+    const signedMajor = prepareCompleteArcCommand({
+      command: "ARC", handle: "D3", layerId: "0",
+      construction: { mode, center: { x: 0, y: 0 }, start: { x: 10, y: 0 }, chordLength: -10 },
+    });
+    expect(signedMajor.selected.sweepRad).toBeCloseTo(Math.PI * 5 / 3, 10);
+    expect(signedMajor.entity.counterClockwise).toBe(true);
   });
 
   it("constructs Start-End-Angle minor, major and clockwise arcs", () => {
@@ -131,6 +137,12 @@ describe("F-005 complete ARC command matrix", () => {
     });
     expect(throughPoint.selected.center.y).toBeGreaterThan(0);
     expect(throughPoint.selected.major).toBe(false);
+    const signedMajor = prepareCompleteArcCommand({
+      command: "ARC", handle: "G4", layerId: "0",
+      construction: { ...construction, radius: -10 },
+    });
+    expect(signedMajor.entity.counterClockwise).toBe(true);
+    expect(signedMajor.selected.major).toBe(true);
   });
 
   it("keeps preview equal to commit and commits one atomic Undo/Redo operation with exact properties", () => {

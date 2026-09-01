@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "wave": "f005-arc-document-command-wiring",
+  "rows": ["F-005"],
+  "status": "implemented-and-locally-tested-live-autocad-and-browser-not-run",
+  "sourceAuthority": "C:/Users/Olav/Downloads/kuubik-draw-reio-scope-v1.json",
+  "baseCommit": "494deca1244fda8e9f370c8bec23ae9cef291014",
+  "implemented": [
+    "typed immutable ARC kernel for all ten AutoCAD 2024 2D construction forms",
+    "signed angle plus Ctrl direction XOR and signed chord/radius minor-major conventions",
+    "counter-clockwise, clockwise, tangent-direction, collinear, degenerate and numeric-boundary handling",
+    "document-aware layer existence, locked, off and frozen fail-closed policy",
+    "model-space handle collision rejection before changes exist",
+    "dedicated browser atomic adapter and complete ARC/A command registry options",
+    "versioned golden, deterministic fuzz/property, mutation, wiring and production DXF read-back tests",
+    "prepared AutoCAD Core Console ten-variant plus Undo/Redo exact ARC read-back runner"
+  ],
+  "invariants": {
+    "previewEqualsCommit": "browser preview and commit both invoke prepareCompleteArcDocumentCommand with cloned equivalent input",
+    "atomicUndoRedo": "one ARC put is one CadSession operation",
+    "failClosed": "identity, layer state, handle collision, non-finite, collinear, degenerate, no-solution and ambiguous-pick failures return no changes",
+    "properties": "stable handle, target layer, appearance and extension data survive preparation; standard DXF preserves exact arc locus and common properties"
+  },
+  "tests": {
+    "targeted": "7 files passed; 34 tests passed",
+    "full": "276 files passed; 1224 tests passed",
+    "dxfGate": "30 files passed; 76 tests passed",
+    "typecheck": "PASS for cad-core, cad-renderer, cad-dxf, cad-print and draw-web",
+    "lint": "PASS for cad-core, cad-renderer, cad-dxf, cad-print and draw-web",
+    "build": "PASS; Vite 154 modules transformed with the pre-existing chunk-size warning",
+    "publicTree": "PASS; 1833 files scanned",
+    "license": "PASS; 119 installed packages audited",
+    "diffCheck": "PASS"
+  },
+  "liveEvidence": {
+    "autoCAD2024_1_2": "NOT_RUN: live AutoCAD workflow is owned by another session",
+    "kuubikBrowser": "NOT_RUN: no integration-owned production browser workflow in this lane",
+    "secondaryOracle": "NOT_RUN: not required for the deterministic analytic ARC kernel"
+  },
+  "certification": {
+    "scoreChanged": false,
+    "localCertificationChanged": false,
+    "claim": "F-005 remains below 1.00 and uncertified"
+  }
+}

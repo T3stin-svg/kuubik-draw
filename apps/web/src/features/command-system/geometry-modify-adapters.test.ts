@@ -57,11 +57,36 @@ describe("typed geometry/modify command adapters", () => {
     const circle = registry.resolve("C");
     expect(circle?.id).toBe("CIRCLE");
     expect(circle?.options?.map((candidate) => candidate.id)).toEqual(["2P", "3P", "TTR", "TTT", "DIAMETER"]);
+    const arc = registry.resolve("A");
+    expect(arc?.id).toBe("ARC");
+    expect(arc?.options?.map((candidate) => candidate.id)).toEqual(["CENTER", "END", "ANGLE", "DIRECTION", "RADIUS", "LENGTH"]);
     expect(registry.resolve("ARRAY")?.id).toBe("ARRAYRECT");
     expect(registry.resolve("PE")?.id).toBe("PEDIT");
     expect(registry.resolve("SPL")?.id).toBe("SPLINE");
     expect(registry.resolve("BO")?.id).toBe("BOUNDARY");
     expect(registry.resolve("TR")?.id).toBe("TRIM");
+  });
+
+  it("routes the complete ARC contract through document guards and atomic history", () => {
+    const session = new CadSession(createEmptyDocument({ documentId: "adapter-arc" }));
+    const engine = new CommandLineEngine(session, new CommandRegistry(createGeometryModifyCommandDefinitions(parsers())));
+    const input = {
+      command: "ARC" as const, handle: "A5", layerId: "0",
+      construction: {
+        mode: "start-center-length" as const,
+        start: { x: 10, y: 0 }, center: { x: 0, y: 0 }, chordLength: -10,
+      },
+    };
+    const command = `A '${JSON.stringify(input)}'`;
+    const preview = engine.preview(command);
+    const executed = engine.execute(command);
+    if (executed.kind !== "commit") throw new Error("Expected ARC commit.");
+    expect(executed.committed.changes).toEqual(preview.changes);
+    expect(session.document.entities).toEqual([expect.objectContaining({ kind: "arc", handle: "A5", radius: 10, counterClockwise: true })]);
+    engine.execute("U");
+    expect(session.document.entities).toEqual([]);
+    engine.execute("REDO");
+    expect(session.document.entities).toEqual([expect.objectContaining({ handle: "A5" })]);
   });
 
   it("routes the full CIRCLE contract through document guards and atomic command history", () => {

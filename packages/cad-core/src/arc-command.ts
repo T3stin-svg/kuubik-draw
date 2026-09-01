@@ -1,4 +1,4 @@
-import type { CadAppearance, CadArc, CadPoint2 } from "@kuubik/cad-schema";
+import type { CadAppearance, CadArc, CadPoint2, KDrawDocumentV1 } from "@kuubik/cad-schema";
 import type { EntityChange } from "./transaction.js";
 
 const EPSILON = 1e-9;
@@ -14,7 +14,11 @@ export type ArcCommandErrorCode =
   | "FULL_CIRCLE_UNSUPPORTED"
   | "NO_ARC_SOLUTION"
   | "AMBIGUOUS_ARC_SOLUTION"
-  | "INVALID_SOLUTION_SELECTION";
+  | "INVALID_SOLUTION_SELECTION"
+  | "LAYER_NOT_FOUND"
+  | "LAYER_LOCKED"
+  | "LAYER_HIDDEN"
+  | "HANDLE_COLLISION";
 
 export class ArcCommandInputError extends Error {
   constructor(readonly code: ArcCommandErrorCode, message: string) {
@@ -137,11 +141,8 @@ function finiteSweepMagnitude(angle: number): number {
   return magnitude;
 }
 
-function positive(value: number, code: "INVALID_LENGTH" | "INVALID_RADIUS", label: string): number {
-  if (!Number.isFinite(value) || value <= 0) {
-    throw new ArcCommandInputError(code, `${label} must be finite and greater than zero.`);
-  }
-  return value;
+function clockwiseFromSignedValue(value: number, clockwiseCtrl: boolean | undefined): boolean {
+  return (value < 0) !== (clockwiseCtrl ?? false);
 }
 
 function pointAt(center: CadPoint2, radius: number, angle: number): CadPoint2 {
@@ -189,7 +190,13 @@ function circleThroughThreePoints(first: CadPoint2, second: CadPoint2, third: Ca
   const determinant = 2 * (first.x * (second.y - third.y)
     + second.x * (third.y - first.y)
     + third.x * (first.y - second.y));
-  if (Math.abs(determinant) <= EPSILON) {
+  const coordinateScale = Math.max(
+    1,
+    distance(first, second),
+    distance(second, third),
+    distance(third, first),
+  );
+  if (Math.abs(determinant) <= EPSILON * coordinateScale ** 2) {
     throw new ArcCommandInputError("DEGENERATE_CONSTRUCTION", "Three-point ARC requires non-collinear points.");
   }
   const firstSquared = first.x ** 2 + first.y ** 2;
@@ -239,7 +246,7 @@ function centerStartAngleSolution(construction: CenterStartAngleConstruction): A
   const radius = distance(construction.center, construction.start);
   if (!(radius > EPSILON)) throw new ArcCommandInputError("INVALID_RADIUS", "ARC center and start must differ.");
   const magnitude = finiteSweepMagnitude(construction.includedAngleRad);
-  const clockwise = construction.clockwiseCtrl ?? construction.includedAngleRad < 0;
+  const clockwise = clockwiseFromSignedValue(construction.includedAngleRad, construction.clockwiseCtrl);
   const startAngle = Math.atan2(construction.start.y - construction.center.y, construction.start.x - construction.center.x);
   return makeSolution(construction.center, radius, startAngle, startAngle + (clockwise ? -1 : 1) * magnitude, !clockwise);
 }
@@ -249,12 +256,16 @@ function centerStartLengthSolution(construction: CenterStartLengthConstruction):
   assertPoint(construction.start, "ARC start");
   const radius = distance(construction.center, construction.start);
   if (!(radius > EPSILON)) throw new ArcCommandInputError("INVALID_RADIUS", "ARC center and start must differ.");
-  const chordLength = positive(construction.chordLength, "INVALID_LENGTH", "ARC chord length");
+  if (!Number.isFinite(construction.chordLength) || Math.abs(construction.chordLength) <= EPSILON) {
+    throw new ArcCommandInputError("INVALID_LENGTH", "ARC chord length must be finite and non-zero.");
+  }
+  const chordLength = Math.abs(construction.chordLength);
   if (chordLength > 2 * radius + EPSILON) {
     throw new ArcCommandInputError("NO_ARC_SOLUTION", "ARC chord length exceeds the selected diameter.");
   }
   const minor = 2 * Math.asin(Math.min(1, chordLength / (2 * radius)));
-  const magnitude = construction.major && minor < Math.PI - EPSILON ? TWO_PI - minor : minor;
+  const major = construction.major ?? construction.chordLength < 0;
+  const magnitude = major && minor < Math.PI - EPSILON ? TWO_PI - minor : minor;
   const clockwise = construction.clockwiseCtrl ?? false;
   const startAngle = Math.atan2(construction.start.y - construction.center.y, construction.start.x - construction.center.x);
   return makeSolution(construction.center, radius, startAngle, startAngle + (clockwise ? -1 : 1) * magnitude, !clockwise);
@@ -267,7 +278,7 @@ function startEndAngleSolution(construction: Extract<CompleteArcConstruction, { 
     throw new ArcCommandInputError("DEGENERATE_CONSTRUCTION", "ARC start and end must differ.");
   }
   const magnitude = finiteSweepMagnitude(construction.includedAngleRad);
-  const clockwise = construction.clockwiseCtrl ?? construction.includedAngleRad < 0;
+  const clockwise = clockwiseFromSignedValue(construction.includedAngleRad, construction.clockwiseCtrl);
   const signedSweep = (clockwise ? -1 : 1) * magnitude;
   const chord = distance(construction.start, construction.end);
   const dx = construction.end.x - construction.start.x;
@@ -327,7 +338,10 @@ function startEndRadiusSolutions(construction: Extract<CompleteArcConstruction, 
   if (samePoint(construction.start, construction.end)) {
     throw new ArcCommandInputError("DEGENERATE_CONSTRUCTION", "ARC start and end must differ.");
   }
-  const radius = positive(construction.radius, "INVALID_RADIUS", "ARC radius");
+  if (!Number.isFinite(construction.radius) || Math.abs(construction.radius) <= EPSILON) {
+    throw new ArcCommandInputError("INVALID_RADIUS", "ARC radius must be finite and non-zero.");
+  }
+  const radius = Math.abs(construction.radius);
   const chord = distance(construction.start, construction.end);
   if (chord > 2 * radius + EPSILON) {
     throw new ArcCommandInputError("NO_ARC_SOLUTION", "ARC radius is too small for the selected endpoints.");
@@ -382,16 +396,18 @@ function selectRadiusSolution(
   construction: Extract<CompleteArcConstruction, { mode: "start-end-radius" }>,
 ): { index: number; solution: ArcConstructionSolution } {
   let eligible = candidates.map((solution, index) => ({ solution, index }));
-  if (construction.clockwiseCtrl !== undefined) {
-    eligible = eligible.filter(({ solution }) => solution.counterClockwise === !construction.clockwiseCtrl);
+  const selection = construction.selection;
+  if (construction.clockwiseCtrl !== undefined || selection === undefined) {
+    const clockwise = construction.clockwiseCtrl ?? false;
+    eligible = eligible.filter(({ solution }) => solution.counterClockwise === !clockwise);
   }
-  if (construction.major !== undefined) {
-    eligible = eligible.filter(({ solution }) => solution.major === construction.major);
+  if (construction.major !== undefined || selection === undefined) {
+    const major = construction.major ?? construction.radius < 0;
+    eligible = eligible.filter(({ solution }) => solution.major === major);
   }
   if (eligible.length === 0) {
     throw new ArcCommandInputError("NO_ARC_SOLUTION", "No Start-End-Radius candidate matches the requested direction and major/minor preference.");
   }
-  const selection = construction.selection;
   if (selection?.mode === "index") {
     if (!Number.isInteger(selection.index) || selection.index < 0 || selection.index >= candidates.length) {
       throw new ArcCommandInputError("INVALID_SOLUTION_SELECTION", "ARC solution index is outside the candidate list.");
@@ -465,6 +481,11 @@ export function prepareCompleteArcCommand(input: CompleteArcCommandInput): Prepa
     throw new ArcCommandInputError("INVALID_IDENTITY", "ARC command, handle and layer are required.");
   }
   const resolved = resolveConstruction(input.construction);
+  if (!Number.isFinite(resolved.selected.center.x) || !Number.isFinite(resolved.selected.center.y)
+    || !Number.isFinite(resolved.selected.radius) || !(resolved.selected.radius > EPSILON)
+    || !Number.isFinite(resolved.selected.startAngleRad) || !Number.isFinite(resolved.selected.endAngleRad)) {
+    throw new ArcCommandInputError("DEGENERATE_CONSTRUCTION", "ARC construction did not produce finite non-zero geometry.");
+  }
   const entity: CadArc = {
     kind: "arc",
     handle: input.handle,
@@ -487,4 +508,21 @@ export function prepareCompleteArcCommand(input: CompleteArcCommandInput): Prepa
     selectedCandidateIndex: resolved.selectedCandidateIndex,
     selected: structuredClone(resolved.selected),
   };
+}
+
+/** Document-aware preview/commit gate for the complete F-005 ARC matrix. */
+export function prepareCompleteArcDocumentCommand(
+  document: KDrawDocumentV1,
+  input: CompleteArcCommandInput,
+): PreparedCompleteArcCommand {
+  const layer = document.layers.find((candidate) => candidate.id === input.layerId);
+  if (!layer) throw new ArcCommandInputError("LAYER_NOT_FOUND", `ARC result layer ${input.layerId} does not exist.`);
+  if (layer.locked) throw new ArcCommandInputError("LAYER_LOCKED", `ARC result layer ${input.layerId} is locked.`);
+  if (!layer.visible || layer.frozen) {
+    throw new ArcCommandInputError("LAYER_HIDDEN", `ARC result layer ${input.layerId} is off or frozen.`);
+  }
+  if (document.entities.some((entity) => entity.handle === input.handle)) {
+    throw new ArcCommandInputError("HANDLE_COLLISION", `ARC result handle ${input.handle} already exists.`);
+  }
+  return prepareCompleteArcCommand(input);
 }

@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-005",
+  "cases": [
+    { "name": "3p", "construction": { "mode": "3p", "start": { "x": 10, "y": 0 }, "point": { "x": 0, "y": 10 }, "end": { "x": -10, "y": 0 } }, "expected": { "center": { "x": 0, "y": 0 }, "radius": 10, "sweepRad": 3.141592653589793, "counterClockwise": true } },
+    { "name": "start-center-end", "construction": { "mode": "start-center-end", "start": { "x": 10, "y": 0 }, "center": { "x": 0, "y": 0 }, "end": { "x": 0, "y": 20 } }, "expected": { "center": { "x": 0, "y": 0 }, "radius": 10, "sweepRad": 1.5707963267948966, "counterClockwise": true } },
+    { "name": "start-center-angle", "construction": { "mode": "start-center-angle", "start": { "x": 10, "y": 0 }, "center": { "x": 0, "y": 0 }, "includedAngleRad": 1.5707963267948966 }, "expected": { "center": { "x": 0, "y": 0 }, "radius": 10, "sweepRad": 1.5707963267948966, "counterClockwise": true } },
+    { "name": "start-center-length", "construction": { "mode": "start-center-length", "start": { "x": 10, "y": 0 }, "center": { "x": 0, "y": 0 }, "chordLength": 10 }, "expected": { "center": { "x": 0, "y": 0 }, "radius": 10, "sweepRad": 1.0471975511965976, "counterClockwise": true } },
+    { "name": "start-end-angle", "construction": { "mode": "start-end-angle", "start": { "x": 0, "y": 0 }, "end": { "x": 10, "y": 0 }, "includedAngleRad": 3.141592653589793 }, "expected": { "center": { "x": 5, "y": 0 }, "radius": 5, "sweepRad": 3.141592653589793, "counterClockwise": true } },
+    { "name": "start-end-direction", "construction": { "mode": "start-end-direction", "start": { "x": 0, "y": 0 }, "end": { "x": 10, "y": 10 }, "tangentDirectionRad": 0 }, "expected": { "center": { "x": 0, "y": 10 }, "radius": 10, "sweepRad": 1.5707963267948966, "counterClockwise": true } },
+    { "name": "start-end-radius", "construction": { "mode": "start-end-radius", "start": { "x": -5, "y": 0 }, "end": { "x": 5, "y": 0 }, "radius": 10 }, "expected": { "center": { "x": 0, "y": 8.660254037844386 }, "radius": 10, "sweepRad": 1.0471975511965976, "counterClockwise": true } },
+    { "name": "center-start-end", "construction": { "mode": "center-start-end", "center": { "x": 0, "y": 0 }, "start": { "x": 10, "y": 0 }, "end": { "x": 0, "y": 20 } }, "expected": { "center": { "x": 0, "y": 0 }, "radius": 10, "sweepRad": 1.5707963267948966, "counterClockwise": true } },
+    { "name": "center-start-angle", "construction": { "mode": "center-start-angle", "center": { "x": 0, "y": 0 }, "start": { "x": 10, "y": 0 }, "includedAngleRad": -1.5707963267948966 }, "expected": { "center": { "x": 0, "y": 0 }, "radius": 10, "sweepRad": 1.5707963267948966, "counterClockwise": false } },
+    { "name": "center-start-length", "construction": { "mode": "center-start-length", "center": { "x": 0, "y": 0 }, "start": { "x": 10, "y": 0 }, "chordLength": -10 }, "expected": { "center": { "x": 0, "y": 0 }, "radius": 10, "sweepRad": 5.235987755982989, "counterClockwise": true } }
+  ]
+}
