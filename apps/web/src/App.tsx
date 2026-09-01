@@ -4006,10 +4006,10 @@ export function App() {
           <span>Teine nurk</span>
           <input aria-label="Teine nurk" value={otherCornerInput} onChange={(event) => setOtherCornerInput(event.target.value)} placeholder="x,y" />
         </label>
-        <button type="button" onClick={() => void addRectangle()} disabled={!modelSpaceEditing || activeLayer.locked}>RECTANGLE</button>
+        <button type="button" onClick={() => void addRectangle()} disabled={!isInReioScope("F-003") || !modelSpaceEditing || activeLayer.locked} title={!isInReioScope("F-003") ? UNSCOPED_COMMAND_MESSAGE : undefined}>RECTANGLE</button>
         <button type="button" onClick={() => void createLayer()}>Uus kiht</button>
-        <button type="button" onClick={() => void toggleActiveLayerLock()}>{activeLayer.locked ? "Ava aktiivne" : "Lukusta aktiivne"}</button>
-        <button type="button" onClick={selectAll} disabled={!modelSpaceEditing || document.entities.length === 0}>Vali kõik</button>
+        <button type="button" onClick={() => void toggleActiveLayerLock()} disabled={!isInReioScope("F-075")} title={!isInReioScope("F-075") ? UNSCOPED_COMMAND_MESSAGE : undefined}>{activeLayer.locked ? "Ava aktiivne" : "Lukusta aktiivne"}</button>
+        <button type="button" onClick={selectAll} disabled={!isInReioScope("F-036") || !modelSpaceEditing || document.entities.length === 0} title={!isInReioScope("F-036") ? UNSCOPED_COMMAND_MESSAGE : undefined}>Vali kõik</button>
         <label className="coordinate-input">
           <span>MOVE baaspunkt</span>
           <input aria-label="MOVE baaspunkt" value={moveBaseInput} onFocus={() => setPreviewCommand("MOVE")} onChange={(event) => { setPreviewCommand("MOVE"); setMoveBaseInput(event.target.value); }} placeholder="x,y" />
@@ -4056,7 +4056,7 @@ export function App() {
             </label>
           </>
         )}
-        <button type="button" onClick={() => void rotateSelected()} disabled={!modelSpaceEditing}>ROTATE</button>
+        <button type="button" onClick={() => void rotateSelected()} disabled={!isInReioScope("F-018") || !modelSpaceEditing} title={!isInReioScope("F-018") ? UNSCOPED_COMMAND_MESSAGE : undefined}>ROTATE</button>
         <label className="coordinate-input">
           <span>SCALE baaspunkt</span>
           <input aria-label="SCALE baaspunkt" value={scaleBaseInput} onFocus={() => setPreviewCommand("SCALE")} onChange={(event) => { setPreviewCommand("SCALE"); setScaleBaseInput(event.target.value); }} placeholder="x,y" />
@@ -4089,7 +4089,7 @@ export function App() {
           <span>SCALE Copy</span>
           <input aria-label="SCALE Copy" type="checkbox" checked={scaleCopy} onFocus={() => setPreviewCommand("SCALE")} onChange={(event) => { setPreviewCommand("SCALE"); setScaleCopy(event.target.checked); }} />
         </label>
-        <button type="button" onClick={() => void scaleSelected()} disabled={!modelSpaceEditing}>SCALE</button>
+        <button type="button" onClick={() => void scaleSelected()} disabled={!isInReioScope("F-019") || !modelSpaceEditing} title={!isInReioScope("F-019") ? UNSCOPED_COMMAND_MESSAGE : undefined}>SCALE</button>
         <label className="coordinate-input">
           <span>MIRROR esimene punkt</span>
           <input aria-label="MIRROR esimene punkt" value={mirrorFirstPointInput} onFocus={() => setPreviewCommand("MIRROR")} onChange={(event) => { setPreviewCommand("MIRROR"); setMirrorFirstPointInput(event.target.value); }} placeholder="x,y" />
@@ -4102,7 +4102,7 @@ export function App() {
           <span>MIRROR kustuta lähteobjektid</span>
           <input aria-label="MIRROR kustuta lähteobjektid" type="checkbox" checked={mirrorEraseSource} onFocus={() => setPreviewCommand("MIRROR")} onChange={(event) => { setPreviewCommand("MIRROR"); setMirrorEraseSource(event.target.checked); }} />
         </label>
-        <button type="button" onClick={() => void mirrorSelected()} disabled={!modelSpaceEditing}>MIRROR</button>
+        <button type="button" onClick={() => void mirrorSelected()} disabled={!isInReioScope("F-020") || !modelSpaceEditing} title={!isInReioScope("F-020") ? UNSCOPED_COMMAND_MESSAGE : undefined}>MIRROR</button>
         <label className="coordinate-input">
           <span>OFFSET režiim</span>
           <select aria-label="OFFSET režiim" value={offsetMode} onFocus={() => setPreviewCommand("OFFSET")} onChange={(event) => { setPreviewCommand("OFFSET"); setOffsetMode(event.target.value as "distance" | "through"); }}>
@@ -4215,7 +4215,7 @@ export function App() {
           <span>EXTEND valikutee</span>
           <input aria-label="EXTEND valikutee" value={extendPathInput} onFocus={() => setPreviewCommand("EXTEND")} onChange={(event) => { setPreviewCommand("EXTEND"); setExtendPathInput(event.target.value); }} placeholder="x,y; x,y; ..." />
         </label>
-        <button type="button" onClick={selectExtendTargetsFromPath} disabled={!modelSpaceEditing}>EXTEND Fence/Crossing vali</button>
+        <button type="button" onClick={selectExtendTargetsFromPath} disabled={!isInReioScope("F-023") || !modelSpaceEditing} title={!isInReioScope("F-023") ? UNSCOPED_COMMAND_MESSAGE : undefined}>EXTEND Fence/Crossing vali</button>
         <label className="coordinate-input">
           <span>EXTEND Edge</span>
           <select aria-label="EXTEND Edge" value={extendEdgeMode} onFocus={() => setPreviewCommand("EXTEND")} onChange={(event) => { setPreviewCommand("EXTEND"); setExtendEdgeMode(event.target.value as TrimEdgeMode); }}>
@@ -4238,8 +4238,8 @@ export function App() {
             <option value="trim">Shift-Trim</option>
           </select>
         </label>
-        <button type="button" onClick={() => void extendTargets()} disabled={!modelSpaceEditing}>EXTEND</button>
-        <button type="button" onClick={undoExtendTarget} disabled={!modelSpaceEditing}>EXTEND Undo</button>
+        <button type="button" onClick={() => void extendTargets()} disabled={!isInReioScope("F-023") || !modelSpaceEditing} title={!isInReioScope("F-023") ? UNSCOPED_COMMAND_MESSAGE : undefined}>EXTEND</button>
+        <button type="button" onClick={undoExtendTarget} disabled={!isInReioScope("F-023") || !modelSpaceEditing} title={!isInReioScope("F-023") ? UNSCOPED_COMMAND_MESSAGE : undefined}>EXTEND Undo</button>
         <label className="coordinate-input">
           <span>FILLET režiim</span>
           <select aria-label="FILLET režiim" value={filletMode} onFocus={() => setPreviewCommand("FILLET")} onChange={(event) => { setPreviewCommand("FILLET"); setFilletMode(event.target.value as "pairs" | "polyline"); setFilletFirstCanvasPick(null); setFilletCanvasSessionActive(false); }}>
@@ -4278,8 +4278,8 @@ export function App() {
             <option value="no-trim">No Trim</option>
           </select>
         </label>
-        <button type="button" onClick={() => void filletTargets()} disabled={!modelSpaceEditing}>FILLET</button>
-        <button type="button" onClick={undoFilletSource} disabled={!modelSpaceEditing}>FILLET Undo</button>
+        <button type="button" onClick={() => void filletTargets()} disabled={!isInReioScope("F-024") || !modelSpaceEditing} title={!isInReioScope("F-024") ? UNSCOPED_COMMAND_MESSAGE : undefined}>FILLET</button>
+        <button type="button" onClick={undoFilletSource} disabled={!isInReioScope("F-024") || !modelSpaceEditing} title={!isInReioScope("F-024") ? UNSCOPED_COMMAND_MESSAGE : undefined}>FILLET Undo</button>
         <label className="coordinate-input">
           <span>CHAMFER režiim</span>
           <select aria-label="CHAMFER režiim" value={chamferMode} onFocus={() => setPreviewCommand("CHAMFER")} onChange={(event) => { setPreviewCommand("CHAMFER"); setChamferMode(event.target.value as "pairs" | "polyline"); setChamferFirstCanvasPick(null); setChamferCanvasSessionActive(false); }}>
@@ -4327,8 +4327,8 @@ export function App() {
             <option value="no-trim">No Trim</option>
           </select>
         </label>
-        <button type="button" onClick={() => void chamferTargets()} disabled={!modelSpaceEditing}>CHAMFER</button>
-        <button type="button" onClick={undoChamferSource} disabled={!modelSpaceEditing}>CHAMFER Undo</button>
+        <button type="button" onClick={() => void chamferTargets()} disabled={!isInReioScope("F-025") || !modelSpaceEditing} title={!isInReioScope("F-025") ? UNSCOPED_COMMAND_MESSAGE : undefined}>CHAMFER</button>
+        <button type="button" onClick={undoChamferSource} disabled={!isInReioScope("F-025") || !modelSpaceEditing} title={!isInReioScope("F-025") ? UNSCOPED_COMMAND_MESSAGE : undefined}>CHAMFER Undo</button>
         <label className="coordinate-input">
           <span>BREAK režiim</span>
           <select aria-label="BREAK režiim" value={breakMode} onFocus={() => setPreviewCommand("BREAK")} onChange={(event) => { setPreviewCommand("BREAK"); setBreakMode(event.target.value as BreakMode); setBreakFirstCanvasPick(null); setBreakCanvasSessionActive(false); }}>
@@ -4340,8 +4340,8 @@ export function App() {
           <span>BREAK sihid</span>
           <input aria-label="BREAK sihid" value={breakTargetsInput} onFocus={() => setPreviewCommand("BREAK")} onChange={(event) => { setPreviewCommand("BREAK"); setBreakTargetsInput(event.target.value); setBreakFirstCanvasPick(null); setBreakCanvasSessionActive(false); }} placeholder="10@x1,y1&gt;x2,y2; 20@x,y&gt;@" />
         </label>
-        <button type="button" onClick={() => void breakTargets()} disabled={!modelSpaceEditing || breakFirstCanvasPick !== null}>BREAK</button>
-        <button type="button" onClick={undoBreakTarget} disabled={!modelSpaceEditing}>BREAK Undo</button>
+        <button type="button" onClick={() => void breakTargets()} disabled={!isInReioScope("F-026") || !modelSpaceEditing || breakFirstCanvasPick !== null} title={!isInReioScope("F-026") ? UNSCOPED_COMMAND_MESSAGE : undefined}>BREAK</button>
+        <button type="button" onClick={undoBreakTarget} disabled={!isInReioScope("F-026") || !modelSpaceEditing} title={!isInReioScope("F-026") ? UNSCOPED_COMMAND_MESSAGE : undefined}>BREAK Undo</button>
         <label className="coordinate-input">
           <span>STRETCH crossing</span>
           <input aria-label="STRETCH crossing" value={stretchCrossingInput} onFocus={() => setPreviewCommand("STRETCH")} onChange={(event) => { setPreviewCommand("STRETCH"); setStretchCrossingInput(event.target.value); }} placeholder="x1,y1; x2,y2 | polygon..." />
@@ -4363,7 +4363,7 @@ export function App() {
             <option value="crossing-polygon">Crossing Polygon</option>
           </select>
         </label>
-        <button type="button" onClick={finishStretchPolygon} disabled={!modelSpaceEditing || stretchSelectionMode !== "crossing-polygon"}>Lõpeta STRETCH Polygon</button>
+        <button type="button" onClick={finishStretchPolygon} disabled={!isInReioScope("F-027") || !modelSpaceEditing || stretchSelectionMode !== "crossing-polygon"} title={!isInReioScope("F-027") ? UNSCOPED_COMMAND_MESSAGE : undefined}>Lõpeta STRETCH Polygon</button>
         <label className="coordinate-input">
           <span>STRETCH baaspunkt</span>
           <input aria-label="STRETCH baaspunkt" value={stretchBaseInput} onFocus={() => setPreviewCommand("STRETCH")} onChange={(event) => { setPreviewCommand("STRETCH"); setStretchBaseInput(event.target.value); }} placeholder="0,0" />
@@ -4372,8 +4372,8 @@ export function App() {
           <span>STRETCH teine punkt / nihe</span>
           <input aria-label="STRETCH sihtpunkt" value={stretchDestinationInput} onFocus={() => setPreviewCommand("STRETCH")} onChange={(event) => { setPreviewCommand("STRETCH"); setStretchDestinationInput(event.target.value); }} placeholder="250,50 või @250,50" />
         </label>
-        <button type="button" onClick={() => void stretchTargets()} disabled={!modelSpaceEditing}>STRETCH</button>
-        <button type="button" onClick={undoStretchSelection} disabled={!modelSpaceEditing}>STRETCH Undo</button>
+        <button type="button" onClick={() => void stretchTargets()} disabled={!isInReioScope("F-027") || !modelSpaceEditing} title={!isInReioScope("F-027") ? UNSCOPED_COMMAND_MESSAGE : undefined}>STRETCH</button>
+        <button type="button" onClick={undoStretchSelection} disabled={!isInReioScope("F-027") || !modelSpaceEditing} title={!isInReioScope("F-027") ? UNSCOPED_COMMAND_MESSAGE : undefined}>STRETCH Undo</button>
         <label className="coordinate-input">
           <span>LENGTHEN režiim</span>
           <select
@@ -4412,8 +4412,8 @@ export function App() {
           <span>LENGTHEN sihid</span>
           <input aria-label="LENGTHEN sihid" value={lengthenTargetsInput} onFocus={() => setPreviewCommand("LENGTHEN")} onChange={(event) => { setPreviewCommand("LENGTHEN"); setLengthenTargetsInput(event.target.value); setLengthenFirstCanvasPick(null); setLengthenCanvasSessionActive(false); }} placeholder={lengthenMode === "dynamic" ? "10@pickX,pickY>targetX,targetY" : "10@pickX,pickY; 20@pickX,pickY"} />
         </label>
-        <button type="button" onClick={() => void lengthenTargets()} disabled={!modelSpaceEditing || lengthenFirstCanvasPick !== null}>LENGTHEN</button>
-        <button type="button" onClick={undoLengthenTarget} disabled={!modelSpaceEditing}>LENGTHEN Undo</button>
+        <button type="button" onClick={() => void lengthenTargets()} disabled={!isInReioScope("F-028") || !modelSpaceEditing || lengthenFirstCanvasPick !== null} title={!isInReioScope("F-028") ? UNSCOPED_COMMAND_MESSAGE : undefined}>LENGTHEN</button>
+        <button type="button" onClick={undoLengthenTarget} disabled={!isInReioScope("F-028") || !modelSpaceEditing} title={!isInReioScope("F-028") ? UNSCOPED_COMMAND_MESSAGE : undefined}>LENGTHEN Undo</button>
         <label className="coordinate-input">
           <span>ALIGN punktipaare</span>
           <select
@@ -4454,8 +4454,8 @@ export function App() {
             <input aria-label="ALIGN Scale Yes" type="checkbox" checked={alignScaleToFit} onFocus={() => setPreviewCommand("ALIGN")} onChange={(event) => { setPreviewCommand("ALIGN"); setAlignScaleToFit(event.target.checked); }} />
           </label>
         </>}
-        <button type="button" onClick={() => void alignSelected()} disabled={!modelSpaceEditing}>ALIGN</button>
-        <button type="button" onClick={resetAlignPoints} disabled={!modelSpaceEditing}>ALIGN punktid nulli</button>
+        <button type="button" onClick={() => void alignSelected()} disabled={!isInReioScope("F-029") || !modelSpaceEditing} title={!isInReioScope("F-029") ? UNSCOPED_COMMAND_MESSAGE : undefined}>ALIGN</button>
+        <button type="button" onClick={resetAlignPoints} disabled={!isInReioScope("F-029") || !modelSpaceEditing} title={!isInReioScope("F-029") ? UNSCOPED_COMMAND_MESSAGE : undefined}>ALIGN punktid nulli</button>
         <label className="coordinate-input">
           <span>MATCHPROP lähteobjekt</span>
           <input
@@ -4466,7 +4466,7 @@ export function App() {
             placeholder="handle või vali lõuendilt"
           />
         </label>
-        <button type="button" onClick={resetMatchPropertiesSource} disabled={!modelSpaceEditing}>MATCHPROP vali lähteobjekt</button>
+        <button type="button" onClick={resetMatchPropertiesSource} disabled={!isInReioScope("F-030") || !modelSpaceEditing} title={!isInReioScope("F-030") ? UNSCOPED_COMMAND_MESSAGE : undefined}>MATCHPROP vali lähteobjekt</button>
         <details className="match-properties-options" onToggle={() => setPreviewCommand("MATCHPROP")}>
           <summary>MATCHPROP seaded</summary>
           <div className="match-properties-options-grid">
@@ -4485,7 +4485,7 @@ export function App() {
             <button type="button" onClick={() => setMatchSettings({ ...DEFAULT_MATCH_PROPERTIES_SETTINGS })}>Kõik omadused</button>
           </div>
         </details>
-        <button type="button" onClick={() => void matchSelectedProperties()} disabled={!modelSpaceEditing}>MATCHPROP</button>
+        <button type="button" onClick={() => void matchSelectedProperties()} disabled={!isInReioScope("F-030") || !modelSpaceEditing} title={!isInReioScope("F-030") ? UNSCOPED_COMMAND_MESSAGE : undefined}>MATCHPROP</button>
         <button type="button" onClick={() => void eraseSelected()} disabled={!modelSpaceEditing || selectedHandles.length === 0}>ERASE</button>
         <button type="button" onClick={() => void undoLast()} disabled={!canUndoInActiveLayout}>UNDO</button>
         <button type="button" onClick={() => void redoLast()} disabled={!canRedoInActiveLayout}>REDO</button>

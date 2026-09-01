@@ -62,6 +62,14 @@ test("Lite v1 runs one durable import-edit-layer-PDF-dimension-DXF-recovery work
   await expect(unselectedRectangle).toHaveAttribute("data-scope-selected", "false");
   await expect(unselectedRectangle).toHaveAttribute("data-state-reason", "Pole Lite v1 töövoos");
   await expect(unselectedRectangle).toHaveAttribute("title", /Pole Lite v1 töövoos/u);
+  for (const label of ["RECTANGLE", "ROTATE", "EXTEND", "FILLET", "MATCHPROP"]) {
+    const legacyCommand = page.locator(".ribbon-parameters button").filter({ hasText: new RegExp(`^${label}$`, "u") });
+    await expect(legacyCommand).toHaveCount(1);
+    await expect(legacyCommand).toBeDisabled();
+    await expect(legacyCommand).toHaveAttribute("title", "Pole Lite v1 töövoos");
+    await expect(legacyCommand).toBeHidden();
+  }
+  await expect(page.locator(".drawing-area.model-mode > canvas")).toHaveCSS("background-color", "rgb(30, 34, 37)");
 
   const sourceDocument = createF106Document("lite-v1-source");
   sourceDocument.metadata.title = "Kuubik Draw Lite v1";

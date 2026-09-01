@@ -202,7 +202,7 @@ button:focus-visible, select:focus-visible, input:focus-visible, summary:focus-v
 .document-tabs .drawing-tab-close svg { width: 11px; height: 11px; color: currentColor; }
 .drawing-area { position: relative; min-height: 0; padding: 0; overflow: hidden; background: #111416; box-shadow: inset 0 1px #090b0c; }
 .drawing-area canvas { display: block; width: 100%; height: 100%; background: #1e2225; }
-.drawing-area.model-mode canvas { background: #fff; }
+.drawing-area.model-mode canvas { background: #1e2225; }
 .cad-crosshair { position: absolute; z-index: 3; width: 77px; height: 77px; pointer-events: none; color: #111820; filter: drop-shadow(0 0 1px #fff); transform: translate(-38px, -38px); }
 .cad-crosshair i { position: absolute; display: block; pointer-events: none; }
 .cad-crosshair-horizontal { left: 0; top: 38px; width: 77px; height: 1px; background: currentcolor; }
@@ -281,6 +281,22 @@ button:focus-visible, select:focus-visible, input:focus-visible, summary:focus-v
 .properties-palette input, .properties-palette button, .properties-palette label { pointer-events: auto; }
 .app-shell[data-product-profile="kuubik-draw-lite-v1"] .runtime-tool-panels,
 .app-shell[data-product-profile="kuubik-draw-lite-v1"] .runtime-intent-readback { display: none; }
+/* Keep the selected Lite modify controls, but remove unrelated development
+   controls from the normal workspace so they cannot become a second command
+   surface beside the disabled ribbon. */
+.app-shell[data-product-profile="kuubik-draw-lite-v1"] .ribbon-parameters button[title="Pole Lite v1 töövoos"],
+.app-shell[data-product-profile="kuubik-draw-lite-v1"] .ribbon-parameters label:has([aria-label^="ROTATE"]),
+.app-shell[data-product-profile="kuubik-draw-lite-v1"] .ribbon-parameters label:has([aria-label^="SCALE"]),
+.app-shell[data-product-profile="kuubik-draw-lite-v1"] .ribbon-parameters label:has([aria-label^="MIRROR"]),
+.app-shell[data-product-profile="kuubik-draw-lite-v1"] .ribbon-parameters label:has([aria-label^="EXTEND"]),
+.app-shell[data-product-profile="kuubik-draw-lite-v1"] .ribbon-parameters label:has([aria-label^="FILLET"]),
+.app-shell[data-product-profile="kuubik-draw-lite-v1"] .ribbon-parameters label:has([aria-label^="CHAMFER"]),
+.app-shell[data-product-profile="kuubik-draw-lite-v1"] .ribbon-parameters label:has([aria-label^="BREAK"]),
+.app-shell[data-product-profile="kuubik-draw-lite-v1"] .ribbon-parameters label:has([aria-label^="STRETCH"]),
+.app-shell[data-product-profile="kuubik-draw-lite-v1"] .ribbon-parameters label:has([aria-label^="LENGTHEN"]),
+.app-shell[data-product-profile="kuubik-draw-lite-v1"] .ribbon-parameters label:has([aria-label^="ALIGN"]),
+.app-shell[data-product-profile="kuubik-draw-lite-v1"] .ribbon-parameters label:has([aria-label^="MATCHPROP"]),
+.app-shell[data-product-profile="kuubik-draw-lite-v1"] .ribbon-parameters .match-properties-options { display: none; }
 .palette-resize-handle { position: absolute; z-index: 9; top: 0; right: -3px; bottom: 0; width: 7px; cursor: ew-resize; pointer-events: auto; touch-action: none; }
 .palette-resize-handle::after { position: absolute; top: 0; right: 2px; bottom: 0; width: 1px; content: ""; background: #596775; opacity: .7; }
 .palette-resize-handle:hover::after, .palette-resize-handle:focus-visible::after { width: 2px; background: #70c5f4; opacity: 1; }
