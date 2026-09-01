@@ -1,0 +1,78 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-115",
+  "engine": "production Chromium",
+  "action": "visible file upload -> page 2 -> insertion/scale/rotation -> clip/fade -> reload -> Undo/Redo -> locked/off/frozen layer checks",
+  "source": {
+    "fileName": "f115-synthetic-underlay.pdf",
+    "byteLength": 3238,
+    "sha256": "9cf657664947127909cb3246dd3a78fe88666073b3ac8190422dac780da16043",
+    "pageCount": 3
+  },
+  "readback": {
+    "documentId": "f115-visible",
+    "revision": 10,
+    "canUndo": true,
+    "canRedo": false,
+    "placements": [
+      {
+        "placement": {
+          "id": "f115-underlay",
+          "attachmentId": "f115-pdf-v1",
+          "pageNumber": 2,
+          "position": {
+            "x": 25,
+            "y": 40
+          },
+          "widthMm": 209.9999680555555,
+          "heightMm": 148.5000063888889,
+          "rotationRad": 0.5235987755982988,
+          "opacity": 0.8,
+          "visible": true,
+          "layerId": "pdf-reference",
+          "fadePercent": 40,
+          "clipBoundary": [
+            {
+              "x": 0.1,
+              "y": 0.1
+            },
+            {
+              "x": 0.9,
+              "y": 0.1
+            },
+            {
+              "x": 0.9,
+              "y": 0.9
+            },
+            {
+              "x": 0.1,
+              "y": 0.9
+            }
+          ],
+          "referencePath": "f115-synthetic-underlay.pdf",
+          "referenceMode": "linked-copy"
+        },
+        "sha256": "9cf657664947127909cb3246dd3a78fe88666073b3ac8190422dac780da16043",
+        "byteLength": 3238,
+        "pageCount": 3,
+        "effectiveOpacity": 0.48,
+        "layer": {
+          "layerId": "pdf-reference",
+          "rendered": true,
+          "selectable": true,
+          "editable": true,
+          "reason": "ok"
+        }
+      }
+    ]
+  },
+  "assertions": {
+    "visibleAttach": true,
+    "reload": true,
+    "undoRedo": true,
+    "lockedRejected": true,
+    "offHidden": true,
+    "frozenHidden": true
+  },
+  "consoleErrors": []
+}

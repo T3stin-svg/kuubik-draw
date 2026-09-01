@@ -31,10 +31,13 @@ import {
 } from "./document-tabs.js";
 import {
   commitPdfUnderlayAttachment,
+  commitPdfUnderlayDetach,
+  commitPdfUnderlayReload,
+  commitPdfUnderlayUpdate,
   readStoredPdfUnderlay,
   type StoredPdfUnderlayReadback,
 } from "./pdf-underlay-transaction.js";
-import type { PdfUnderlayPlacement } from "@kuubik/cad-core";
+import type { PdfUnderlayPlacement, PdfUnderlayPlacementPatch } from "@kuubik/cad-core";
 
 export interface OpenLiveDocumentInput {
   documentId: string;
@@ -293,6 +296,38 @@ export class DocumentLiveOrchestrator {
   async readPdf(documentId: string, placementId: string): Promise<StoredPdfUnderlayReadback> {
     const id = requireDocumentId(documentId);
     return readStoredPdfUnderlay(this.database, this.#coordinator.document(id), placementId);
+  }
+
+  async updatePdf(
+    documentId: string,
+    operation: CadOperation,
+    placementId: string,
+    patch: PdfUnderlayPlacementPatch,
+    now?: string,
+  ): Promise<StoredPdfUnderlayReadback> {
+    const id = requireDocumentId(documentId);
+    const readback = await commitPdfUnderlayUpdate(this.database, this.#coordinator, id, operation, placementId, patch, now);
+    this.acceptPersistedDocument(id);
+    return readback;
+  }
+
+  async reloadPdf(
+    documentId: string,
+    operation: CadOperation,
+    prepared: PreparedPdfUnderlay,
+    placement: PdfUnderlayPlacement,
+    now?: string,
+  ): Promise<StoredPdfUnderlayReadback> {
+    const id = requireDocumentId(documentId);
+    const readback = await commitPdfUnderlayReload(this.database, this.#coordinator, id, operation, prepared, placement, now);
+    this.acceptPersistedDocument(id);
+    return readback;
+  }
+
+  async detachPdf(documentId: string, operation: CadOperation, placementId: string, now?: string): Promise<KDrawDocumentV1> {
+    const id = requireDocumentId(documentId);
+    await commitPdfUnderlayDetach(this.database, this.#coordinator, id, operation, placementId, now);
+    return this.acceptPersistedDocument(id);
   }
 
   async close(documentId: string, recordedAt?: string): Promise<void> {
