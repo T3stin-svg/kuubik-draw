@@ -107,6 +107,7 @@ Associativity is encoded as:
     "kind": "dimension",
     "associative": true,
     "linearAxis": "horizontal",
+    "textPlacement": "manual",
     "anchors": [
       { "handle": "10", "feature": "start", "fallback": { "x": 0, "y": 0 } },
       { "handle": "10", "feature": "end", "fallback": { "x": 100, "y": 0 } }
@@ -133,10 +134,24 @@ hard error. A staged geometry command that would orphan an existing dimension is
 before revision change unless the caller explicitly selects a documented broken-association mode.
 
 Linear/aligned dimensions use four definition points: two true measured extension origins,
-dimension-line definition point and text point. `linearAxis` is required for horizontal/vertical
-linear dimensions because the measured origins need not lie on the dimension-line axis. Aligned
-dimensions omit it. Adapters must not infer a linear dimension's rotation from the vector between
-its two measured origins.
+dimension-line definition point and text point. Horizontal/vertical linear dimensions require
+`linearAxis`; rotated linear dimensions instead require one finite `linearRotationRad`. The two
+orientation fields are mutually exclusive because the measured origins need not lie on the
+dimension-line axis. `textPlacement` is `default` when the planner derives the midpoint and
+`manual` when definition point 3 is supplied by the user. Aligned dimensions omit these linear
+orientation fields. Adapters must not infer a linear dimension's rotation from the vector between
+its two measured origins. Text overrides preserve their source string; every `<>` token is replaced
+with the formatted measurement only for presentation.
+
+For the bounded native DXF DIMLINEAR subset, session 4 must serialize definition points 2/3 as
+groups 10/11, measured origins as 13/14, explicit rotation in degrees as group 50, style as group 3,
+measurement as group 42 and source override as group 1. Dimension type is group 70 type 0 plus bit
+32; add bit 128 only for `textPlacement="manual"`. Import must reconstruct the explicit orientation
+and manual/default text placement. The pre-session-4 adapter still infers group 50 from the measured
+origins, writes Euclidean group 42, omits the manual-text bit, ignores group 50 on import and does
+not serialize stable source handles or an audited DIMASSOC relationship. Session 4 must correct
+those gaps and reject associative linear output rather than downgrade it silently, then independently
+reopen the native records.
 
 `styleId` references `document.dimensionStyles[].id`. A dimension style may reference
 `textStyleId`; the full transitive style dependency must be emitted before the entity on formats
@@ -578,7 +593,7 @@ operation is run in AutoCAD and Kuubik and the generated file is independently r
 
 | F-row | Kuubik command/contract | AutoCAD comparison | Required exact read-back | Current evidence |
 | --- | --- | --- | --- | --- |
-| F-061 | `DIMLINEAR`, explicit horizontal/vertical axis | `DIMLINEAR` Horizontal/Vertical | handle, two measured origins, axis, dimension/text point, measurement, style ID | unit/golden/wiring only |
+| F-061 | `DIMLINEAR`, explicit horizontal/vertical axis or rotation | `DIMLINEAR` Horizontal/Vertical/Rotated | handle, two measured origins, source handles, axis/rotation, dimension/text point, override, measurement, layer/style ID, atomic Undo/Redo, DXF groups 10/11/13/14/1/3/42/50/70 | unit/golden/property/mutation/wiring/runner; DXF implementation and AutoCAD live `NOT_RUN` |
 | F-062 | `DIMALIGNED` | `DIMALIGNED` | handle, measured origins, aligned rotation/length, placement, style ID | unit/golden/wiring only |
 | F-063 | `DIMANGULAR`, three stable anchors | `DIMANGULAR` two-line/three-point flow | vertex, ray points, arc radius/sweep, formatted degrees, text placement | unit/golden/wiring only |
 | F-064 | `DIMRADIUS` / `DIMDIAMETER`, center plus quadrant anchor | `DIMRADIUS` / `DIMDIAMETER` | same source handle, quadrant, center, radius/diameter value, arrows and text | unit/associative/wiring only |

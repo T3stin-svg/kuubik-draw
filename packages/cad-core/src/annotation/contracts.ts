@@ -17,6 +17,8 @@ export interface DimensionAssociation {
   associative: boolean;
   anchors: StableEntityAnchor[];
   linearAxis?: "horizontal" | "vertical";
+  linearRotationRad?: number;
+  textPlacement?: "default" | "manual";
   chain?: {
     id: string;
     index: number;
@@ -216,7 +218,18 @@ export function readDimensionAssociation(entity: CadEntity): DimensionAssociatio
     };
   }
   if (value.linearAxis !== undefined && value.linearAxis !== "horizontal" && value.linearAxis !== "vertical") return null;
-  return { kind: "dimension", associative: value.associative, anchors, ...(value.linearAxis ? { linearAxis: value.linearAxis } : {}), ...(chain ? { chain } : {}) };
+  if (value.linearRotationRad !== undefined && (typeof value.linearRotationRad !== "number" || !Number.isFinite(value.linearRotationRad))) return null;
+  if (value.linearAxis !== undefined && value.linearRotationRad !== undefined) return null;
+  if (value.textPlacement !== undefined && value.textPlacement !== "default" && value.textPlacement !== "manual") return null;
+  return {
+    kind: "dimension",
+    associative: value.associative,
+    anchors,
+    ...(value.linearAxis ? { linearAxis: value.linearAxis } : {}),
+    ...(typeof value.linearRotationRad === "number" ? { linearRotationRad: value.linearRotationRad } : {}),
+    ...(value.textPlacement ? { textPlacement: value.textPlacement } : {}),
+    ...(chain ? { chain } : {}),
+  };
 }
 
 export function readMTextContract(entity: CadEntity): MTextContract | null {

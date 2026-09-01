@@ -9,10 +9,13 @@ describe("annotation/block command prompt state machine", () => {
     prompt.answer({ x: 0, y: 0 });
     prompt.answer({ x: 100, y: 0 });
     prompt.answer({ x: 0, y: 20 });
-    expect(prompt.snapshot).toMatchObject({ currentFieldId: "axis", currentChoices: ["horizontal", "vertical"] });
+    expect(prompt.snapshot).toMatchObject({ currentFieldId: "axis", currentChoices: ["horizontal", "vertical", "rotated"] });
     expect(() => prompt.answer("diagonal")).toThrow(/must be one of/u);
     expect(prompt.snapshot.currentFieldId).toBe("axis");
     prompt.answer("horizontal");
+    prompt.skip();
+    prompt.skip();
+    prompt.skip();
     prompt.answer(true);
     expect(prompt.answer("DIM")).toMatchObject({ status: "ready", currentFieldId: null });
     expect(prompt.repeat()).toMatchObject({ status: "active", currentFieldId: "first", values: {} });

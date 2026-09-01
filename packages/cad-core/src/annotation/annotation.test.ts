@@ -25,7 +25,7 @@ describe("F-061..F-066 dimensions", () => {
       { handle: "10", feature: "end" as const, fallback: { x: 100, y: 40 } },
     ];
     const linear = createLinearDimension(document, { handle: "D0", layerId: "0", styleId: "DIM-ISO", first: { x: 0, y: 0 }, second: { x: 100, y: 40 }, dimensionLinePoint: { x: 0, y: 60 }, axis: "horizontal", anchors });
-    expect(linear.definitionPoints).toEqual([{ x: 0, y: 0 }, { x: 100, y: 40 }, { x: 0, y: 60 }, { x: 0, y: 60 }]);
+    expect(linear.definitionPoints).toEqual([{ x: 0, y: 0 }, { x: 100, y: 40 }, { x: 0, y: 60 }, { x: 50, y: 60 }]);
     expect(readDimensionAssociation(linear)?.linearAxis).toBe("horizontal");
     const aligned = createAlignedDimension(document, { handle: "D1", layerId: "0", styleId: "DIM-ISO", first: { x: 0, y: 0 }, second: { x: 100, y: 40 }, dimensionLinePoint: { x: 20, y: 60 }, anchors });
     expect(aligned).toEqual(golden.dimension);
