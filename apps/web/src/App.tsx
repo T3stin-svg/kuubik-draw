@@ -27,6 +27,7 @@ import { LiveCommandPrompt } from "./shell/LiveCommandPrompt.js";
 import { PaletteFrame, type PaletteMode } from "./shell/PaletteFrame.js";
 import { PolygonPrompt, type PolygonFormState } from "./shell/PolygonPrompt.js";
 import { RecoveryPanel } from "./shell/RecoveryPanel.js";
+import { isInReioScope, UNSCOPED_COMMAND_MESSAGE } from "./shell/reio-scope.js";
 import { Ribbon } from "./shell/Ribbon.js";
 import { RibbonTabs } from "./shell/RibbonTabs.js";
 import { RibbonTool } from "./shell/RibbonTool.js";
@@ -59,6 +60,42 @@ const MATCH_PROPERTY_LABELS: Readonly<Record<keyof MatchPropertiesSettings, stri
   centerObject: "Keskobjekt",
 });
 const MODEL_SPACE_COMMANDS = new Set(["LINE", "PLINE", "RECTANGLE", "CIRCLE", "ARC", "POLYGON", "MOVE", "COPY", "ROTATE", "SCALE", "MIRROR", "OFFSET", "TRIM", "EXTEND", "FILLET", "CHAMFER", "BREAK", "STRETCH", "LENGTHEN", "ALIGN", "MATCHPROP", "ERASE"]);
+const LITE_COMMAND_ROWS: Readonly<Record<string, string>> = Object.freeze({
+  LINE: "F-001",
+  PLINE: "F-002",
+  RECTANGLE: "F-003",
+  CIRCLE: "F-004",
+  ARC: "F-005",
+  POLYGON: "F-006",
+  ELLIPSE: "F-007",
+  UNDO: "F-129",
+  REDO: "F-129",
+  GRID: "F-047",
+  ORTHO: "F-045",
+  OSNAP: "F-048",
+  OTRACK: "F-051",
+  DYN: "F-052",
+  SNAP: "F-047",
+  POLAR: "F-046",
+  MTEXT: "F-057",
+  LEADER: "F-059",
+});
+const LITE_PRECISION_ROWS: Readonly<Record<PrecisionToggleId, string>> = Object.freeze({
+  grid: "F-047",
+  ortho: "F-045",
+  osnap: "F-048",
+  otrack: "F-051",
+  dyn: "F-052",
+});
+const LITE_PRECISION_SHORTCUT_ROWS: Readonly<Record<string, string>> = Object.freeze({
+  F3: "F-048",
+  F7: "F-047",
+  F8: "F-045",
+  F9: "F-047",
+  F10: "F-046",
+  F11: "F-051",
+  F12: "F-052",
+});
 const MODEL_VIEW_WORLD = Object.freeze({ minX: -500, minY: -500, maxX: 2500, maxY: 2500 });
 const MODEL_VIEW_REFERENCE_HEIGHT_PX = 793;
 const MODEL_VIEW_WORLD_UNITS_PER_PIXEL = (MODEL_VIEW_WORLD.maxY - MODEL_VIEW_WORLD.minY) / MODEL_VIEW_REFERENCE_HEIGHT_PX;
@@ -1030,6 +1067,12 @@ export function App() {
     const handlePrecisionShortcut = (event: KeyboardEvent) => {
       const target = event.target;
       const editableTarget = target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement || target instanceof HTMLSelectElement || (target instanceof HTMLElement && target.isContentEditable);
+      const scopedRowId = LITE_PRECISION_SHORTCUT_ROWS[event.key.toUpperCase()];
+      if (!editableTarget && scopedRowId && !isInReioScope(scopedRowId)) {
+        event.preventDefault();
+        setStatus(`${event.key.toUpperCase()}: ${UNSCOPED_COMMAND_MESSAGE}`);
+        return;
+      }
       const result = runtime.handlePrecisionKey(event.key, editableTarget, event.repeat);
       if (!result.handled) return;
       event.preventDefault();
@@ -1365,6 +1408,13 @@ export function App() {
       setStatus(`Command viga: ${error instanceof Error ? error.message : String(error)}`);
       return;
     }
+    const scopedRowId = LITE_COMMAND_ROWS[commandName];
+    if (scopedRowId && !isInReioScope(scopedRowId)) {
+      setCommandInput("");
+      setActiveCommandPrompt(null);
+      setStatus(`${commandName}: ${UNSCOPED_COMMAND_MESSAGE}`);
+      return;
+    }
     const precisionResult = runtime.executePrecisionCommand(canonicalRaw);
     if (precisionResult.handled) {
       workspace.recordCommand(document.documentId, raw);
@@ -1610,6 +1660,10 @@ export function App() {
   }
 
   function togglePrecision(mode: PrecisionToggleId): void {
+    if (!isInReioScope(LITE_PRECISION_ROWS[mode])) {
+      setStatus(`${mode.toUpperCase()}: ${UNSCOPED_COMMAND_MESSAGE}`);
+      return;
+    }
     const result = runtime.togglePrecision(mode);
     setPrecision(runtime.precisionState());
     setStatus(`${result.message ?? mode.toUpperCase()} · PrecisionCommandState`);
@@ -3943,7 +3997,7 @@ export function App() {
           </section>
         </div>
         <div className="ribbon-parameters" aria-label="Käsu parameetrid">
-        <button type="button" onClick={() => void addSyntheticLine()} disabled={!modelSpaceEditing || activeLayer.locked}>LINE test</button>
+        <button type="button" onClick={() => void addSyntheticLine()} disabled={!modelSpaceEditing || activeLayer.locked}>LINE</button>
         <label className="coordinate-input">
           <span>Esimene nurk</span>
           <input aria-label="Esimene nurk" value={firstCornerInput} onChange={(event) => setFirstCornerInput(event.target.value)} placeholder="x,y" />
@@ -4710,7 +4764,7 @@ export function App() {
             filter={layerFilterInput}
             operationState={layerOperationState}
             operationMessage={layerOperationMessage}
-            featureAvailable={(rowId) => runtime.canExecute(rowId)}
+            featureAvailable={(rowId) => isInReioScope(rowId) && runtime.canExecute(rowId)}
             onFilterChange={setLayerFilterInput}
             onCreate={createLayer}
             onRename={renameLayer}
