@@ -4,6 +4,26 @@ Source baseline: `b09f4e1e0a661b06e5087e6cbb748220dbc48574`
 
 Branch: `work/reio-precision-layers`
 
+## Wave 16: F-041/F-042/F-044 offline AutoCAD coordinate checkpoint
+
+- Baseline: `0e9f6db81b35d2733ceee9888a9a9b603c852d89`
+- Branch: `work16/reio-precision-coordinate-autocad`
+- Planned live reproducer: `node tools/autocad/run-f041-f042-f044.mjs`
+- Offline PASS covers a content-addressed AutoCAD-pairing fixture for `x,y`,
+  `#x,y`, `@dx,dy`, `@distance<angle`, negative/decimal/near-zero doubles, plus
+  strict LINE/LWPOLYLINE DXF header/entity parsing and mutation rejection.
+- Targeted coverage passed 4 files / 9 tests. Repository-wide verification
+  passed 274 Vitest files / 1,212 tests, DXF 30 files / 76 tests, PDF 7 files /
+  22 tests, typecheck, lint, 154-module build, public-tree scan of 1,824 files,
+  119-package license audit and diff-check.
+- AutoCAD live status is `BLOCKED`: bounded authenticated scratch processes
+  timed out or lost RPC before a complete retained DXF read-back. The final
+  authenticated PID was terminated, but unauthenticated recovery PID `26220`
+  was left untouched, so the exact process set was not restored.
+- F-044 pointer-directed direct distance, Escape-key cancel and non-WCS UCS
+  entry remain `NOT_RUN`. All three F-rows remain uncertified, certification
+  authority is false and no score changed.
+
 ## Wave 15: F-053 AutoCAD 2024.1.2 live UNITS reference
 
 - Baseline: `679a5963fc7ad9128dff78bb076b0e9dbf4c8923`

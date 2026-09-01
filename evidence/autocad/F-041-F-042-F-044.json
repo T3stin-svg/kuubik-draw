@@ -1,0 +1,129 @@
+{
+  "schemaVersion": 1,
+  "rowIds": ["F-041", "F-042", "F-044"],
+  "baselineCommit": "0e9f6db81b35d2733ceee9888a9a9b603c852d89",
+  "branch": "work16/reio-precision-coordinate-autocad",
+  "benchmark": "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
+  "status": "BLOCKED",
+  "rowResults": {
+    "F-041": "NOT_RUN",
+    "F-042": "NOT_RUN",
+    "F-044": "NOT_RUN"
+  },
+  "certificationAuthority": false,
+  "certificationScope": "Offline runner, synthetic fixtures and independent DXF/reference contracts only. No complete AutoCAD live matrix or integrated Kuubik browser/read-back was retained.",
+  "offlineContracts": {
+    "absolutePlainCartesian": "PASS",
+    "absoluteHashCartesian": "PASS",
+    "relativeCartesianNearZero": "PASS",
+    "relativePolarNegativeAngle": "PASS",
+    "directDistanceKernelPairing": "PASS_WITH_AUTOCAD_NOT_RUN",
+    "independentDxfHeaderEntityParser": "PASS",
+    "mutationGuards": "PASS",
+    "ownedProcessRunnerRatchet": "PASS"
+  },
+  "dxfReadback": {
+    "status": "NOT_RUN",
+    "reason": "No complete live matrix produced a retained scratch DXF."
+  },
+  "liveAttempts": [
+    {
+      "ownedProcessId": null,
+      "result": "OWNERSHIP_REFUSED",
+      "stage": "create-owned-process",
+      "reason": "COM returned a pre-existing automation process while other AutoCAD workflows were active.",
+      "authenticatedOwnedProcessTerminated": false,
+      "exactProcessSetRestored": true
+    },
+    {
+      "ownedProcessId": 24728,
+      "result": "FAIL_CLOSED",
+      "stage": "coordinate-context",
+      "reason": "AutoCAD rejected a profile-scoped Dynamic Input variable write before geometry; the runner was corrected to read but never change that profile state.",
+      "authenticatedOwnedProcessTerminated": true,
+      "exactProcessSetRestored": true
+    },
+    {
+      "ownedProcessId": 25040,
+      "result": "FAIL_CLOSED",
+      "stage": "cancel-no-op",
+      "reason": "AutoCAD commands completed, but report construction failed on a PowerShell expected-value expression; no live result or DXF was retained.",
+      "authenticatedOwnedProcessTerminated": true,
+      "exactProcessSetRestored": true
+    },
+    {
+      "ownedProcessId": 31444,
+      "result": "TIMEOUT",
+      "stage": "unknown-before-report",
+      "reason": "The owned scratch process exceeded the fail-closed 300 second timeout without returning a matrix.",
+      "authenticatedOwnedProcessTerminated": true,
+      "exactProcessSetRestored": true
+    },
+    {
+      "ownedProcessId": 31568,
+      "result": "RPC_UNAVAILABLE",
+      "stage": "typed-coordinate-commands",
+      "reason": "The owned AutoCAD process became unavailable before a complete matrix was returned.",
+      "authenticatedOwnedProcessTerminated": true,
+      "exactProcessSetRestored": true
+    },
+    {
+      "ownedProcessId": 26980,
+      "result": "RPC_UNAVAILABLE",
+      "stage": "typed-coordinate-commands",
+      "reason": "The final bounded attempt lost its owned RPC server and AutoCAD started an unauthenticated recovery process.",
+      "authenticatedOwnedProcessTerminated": true,
+      "exactProcessSetRestored": false
+    }
+  ],
+  "processSafety": {
+    "authenticatedOwnedProcessesTerminated": true,
+    "unauthenticatedProcessesTouched": false,
+    "exactProcessSetRestored": false,
+    "userProcessId64444Touched": false,
+    "userProcessId64444PresentAtFinalAttempt": false,
+    "untouchedUnauthenticatedProcess": {
+      "processId": 26220,
+      "executablePath": "C:\\Program Files\\Autodesk\\AutoCAD 2024\\acad.exe",
+      "startTimeUtc": "2026-09-01T06:40:17.3087453Z",
+      "commandLine": "\"C:\\Program Files\\Autodesk\\AutoCAD 2024\\acad.exe\" /product ACAD /language \"en-US\""
+    }
+  },
+  "notRunBoundaries": [
+    {
+      "capability": "completeLiveAutoCadCoordinateMatrix",
+      "rowId": "F-041/F-042/F-044",
+      "reason": "Repeated owned scratch attempts ended in timeout or RPC loss before a complete content-addressed DXF read-back."
+    },
+    {
+      "capability": "directDistancePointerDirection",
+      "rowId": "F-044",
+      "reason": "COM command tokens cannot establish and independently read back a live pointer direction; relative polar input is not a substitute."
+    },
+    {
+      "capability": "escapeKeyCancel",
+      "rowId": "F-041/F-042/F-044",
+      "reason": "Escape is UI input. The offline runner defines command-line blank/internal-Undo cancellation without keyboard or window-message injection."
+    },
+    {
+      "capability": "nonWorldUcsCoordinateEntry",
+      "rowId": "F-041/F-042",
+      "reason": "The current Kuubik precision contract is document/world XY; the candidate pins WCS and does not claim rotated or translated UCS parity."
+    }
+  ],
+  "implementationSha256": {
+    "tools/autocad/f041-f042-f044-coordinate-matrix.ps1": "88d5a0a51a5985e2841b588836a28393690a14233fb59f5829fe21fb4b0c543e",
+    "tools/autocad/run-f041-f042-f044.mjs": "b2c8bf8a0f376a4ef413b05b0297d3a19cd8f2a35ee991c0a12a0682b1f8de4b",
+    "tools/autocad/f041-f044-dxf-readback.mjs": "a871c4b9712a3900a6c076c63c2926bb22ba5503fa2d4b60eb5b7765454141ea",
+    "tools/autocad/f041-f044-runner.test.mjs": "39660a415bb87d8073422543f91d9bc11a20ab278b93874da084748159d5ae86",
+    "tools/autocad/f041-f044-dxf-readback.test.mjs": "1967d604a4b5c82fcaa9e603fb3a51935840f74a14eb22326d845ea5593a12bc",
+    "tools/autocad/f041-f044-content-address.test.mjs": "9ef77d0d1ceae35f276765ee532f07bd7c3ee35928bd52ffc8f91b6bcd931c0d",
+    "tools/autocad/owned-desktop-matrix.mjs": "5b669dc220884b788e2457594aebc10f5e7cb6cf96d0a967424094d6d9dfc8b8",
+    "tools/autocad/process-ownership.mjs": "9f1d48d1b1058a631ef8d6df03c1beedc836688c06e0658a302ba424d654937d",
+    "packages/cad-core/test/fixtures/autocad-2024-coordinate-reference.json": "a8f47b985418aa32638b260eeba654d11229b2a0513b2e638f705d841cc1c213",
+    "packages/cad-core/test/f041-f044-autocad-reference.test.ts": "7190c7aa41f037800d41be5c96845218030d738963dc267e85f44bcb26785699",
+    "packages/cad-dxf/test/fixtures/synthetic/F-041-F-042-coordinate-entry.dxf": "d22b04cc7f43aeb5dab56bfc50579e803443917996c91c5bcc054f4b53a5a008"
+  },
+  "parityScoresChanged": false,
+  "observedAt": "2026-09-01T06:43:26.5709312Z"
+}
