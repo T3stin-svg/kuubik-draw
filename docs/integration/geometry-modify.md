@@ -287,6 +287,7 @@ their read-backs both pass.
 From `packages/cad-core/src/arc-command.ts`:
 
 - `prepareCompleteArcCommand`
+- `prepareCompleteArcDocumentCommand`
 - `solveStartEndRadiusArc`
 - `ArcCommandInputError`
 - `CompleteArcCommandInput`, `CompleteArcConstruction`, `ArcSolutionSelection`,
@@ -295,13 +296,17 @@ From `packages/cad-core/src/arc-command.ts`:
 The integration owner should migrate the existing ARC parser to this typed kernel.
 It retains 3-Point and adds Start-Center-End/Angle/Length,
 Start-End-Angle/Direction/Radius, and Center-Start-End/Angle/Length. The optional
-`clockwiseCtrl` flag models the AutoCAD Ctrl direction switch. Angle and length
-forms preserve minor/major intent; Start-End-Radius enumerates both possible centers
-and both directed traversals. An ambiguous result requires an explicit direction
-plus minor/major pair, a near-center pick, a through-point pick, or a candidate index.
+`clockwiseCtrl` flag models the AutoCAD Ctrl direction switch. Signed Angle is
+directional and Ctrl reverses that direction. Signed chord Length and Radius preserve
+AutoCAD's positive-minor/negative-major convention; Ctrl reverses traversal without
+changing the minor/major choice. Start-End-Radius enumerates both possible centers
+and both directed traversals. Its ordinary no-pick form resolves to the documented
+counter-clockwise minor/major result; an explicit geometric selection may instead
+choose a near-center, through-point, or candidate-index solution.
 
-Preview and commit must call `prepareCompleteArcCommand` with the same immutable
-input. Commit its single returned change once through `CadSession`. Collinear 3P,
+Browser preview and commit must call `prepareCompleteArcDocumentCommand` with the
+same immutable input. Geometry-only consumers may call `prepareCompleteArcCommand`.
+Commit its single returned change once through `CadSession`. Collinear 3P,
 collapsed endpoints, zero/invalid radius or length, infinite-radius direction,
 full-circle angle, impossible radius, and ambiguous picks fail before a change exists.
 
@@ -311,6 +316,29 @@ This preserves the exact geometric locus, handle, layer, radius, center, and com
 appearance properties, but not the original command-direction flag. F-005 remains
 uncertified until AutoCAD 2024.1.2 live command-matrix and Kuubik browser workflow
 read-back are completed. No parity score or certification record was changed.
+
+### Wave 18 F-005 document and command-system wiring
+
+`prepareCompleteArcDocumentCommand(document, input)` is the browser-facing fail-closed
+gate. Before invoking the immutable construction kernel it proves that the target layer
+exists, is on, thawed and unlocked, and that the requested result handle does not collide
+with an existing model-space entity. `arcCommandAdapter` from
+`apps/web/src/features/draw-modify/arc-command-adapter.ts` maps its single change to the
+shared atomic workflow. Preview and commit therefore cross the same gate, and one ARC put
+remains one global Undo/Redo operation.
+
+The typed registry keeps `ARC`/`A` and exposes `CENTER`/`C`, `END`/`E`, `ANGLE`/`A`,
+`DIRECTION`/`D`, `RADIUS`/`R`, and `LENGTH`/`L`. Integration should export the document
+preparer, `CompleteArcCommandInput` and related ARC types, plus `arcCommandAdapter`; no
+shared `src/index.ts` change is required because the core ARC module is already exported
+at this base.
+
+The prepared AutoCAD Core Console runner covers all ten construction forms and reads back
+DXF handle, layer, center, radius, start angle, end angle, plus one Undo/Redo count cycle.
+It is intentionally `NOT_RUN` in this lane. The integration-owned Kuubik production-browser
+workflow is also `NOT_RUN`. These prepared/local results must not raise F-005 to 1.00 or
+change a certification record without both live workflows and their independent output
+read-backs.
 
 ## Wave 11 exports (F-006 complete POLYGON matrix)
 
