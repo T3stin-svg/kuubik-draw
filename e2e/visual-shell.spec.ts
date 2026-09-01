@@ -1149,8 +1149,6 @@ test("DIM and HATCH use typed prompts with atomic durable read-back", async ({ p
   expect(boundary).toBeTruthy();
   await page.getByRole("button", { name: "Ribbon Hatch command" }).click();
   await answerExpectedLivePrompt(page, "mode", "create");
-  await answerExpectedLivePrompt(page, "targetHandle", boundary!);
-  await answerExpectedLivePrompt(page, "patch", JSON.stringify({ pattern: "ANSI31" }));
   await answerExpectedLivePrompt(page, "boundaryHandles", boundary!);
   await answerExpectedLivePrompt(page, "pattern", "ANSI31");
   await answerExpectedLivePrompt(page, "angleRad", "0.7853981633974483");
