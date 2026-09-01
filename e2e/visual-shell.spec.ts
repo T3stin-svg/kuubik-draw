@@ -1163,9 +1163,12 @@ test("DIM and HATCH use typed prompts with atomic durable read-back", async ({ p
   await answerLivePrompt(page, "0,0");
   await answerLivePrompt(page, "100,0");
   await answerLivePrompt(page, "0,20");
-  await answerLivePrompt(page, "horizontal");
-  await answerLivePrompt(page, "ei");
-  await answerLivePrompt(page, "DIM");
+  await answerExpectedLivePrompt(page, "axis", "horizontal");
+  await answerExpectedLivePrompt(page, "rotationRad", "");
+  await answerExpectedLivePrompt(page, "textPoint", "");
+  await answerExpectedLivePrompt(page, "overrideText", "");
+  await answerExpectedLivePrompt(page, "associative", "ei");
+  await answerExpectedLivePrompt(page, "styleId", "DIM");
   await expect(page.locator(".command-history")).toContainText("DIM · atomic commit/read-back");
   await expect(page.locator(".runtime-intent-readback")).toHaveAttribute("data-runtime-entity-kinds", /hatch.*dimension/u);
   expect(errors).toEqual([]);
