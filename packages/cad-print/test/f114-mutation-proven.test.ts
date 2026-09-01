@@ -2,7 +2,7 @@ import { expect, it } from "vitest";
 import { createHash } from "node:crypto";
 import { execFileSync } from "node:child_process";
 import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
-import { tmpdir } from "node:os";
+import { homedir, tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { createF114Document, F114_LAYOUT_IDS } from "../../../parity/fixtures/f114-document.js";
 import { evaluateF114KuubikPdf } from "../../../tools/parity/f114-evidence-contract.mjs";
@@ -39,7 +39,7 @@ it("F-114 independent contract rejects valid raster, page-order, geometry and al
       writeFileSync(path, bytes);
       argumentsList.push(`${key}=${path}`);
     }
-    const bundledPython = "C:\\Users\\Olav\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe";
+    const bundledPython = join(homedir(), ".cache", "codex-runtimes", "codex-primary-runtime", "dependencies", "python", "python.exe");
     const python = process.env.PYTHON_CMD ?? (existsSync(bundledPython) ? bundledPython : "python");
     const readback = JSON.parse(execFileSync(python, [resolve(root, "tools/parity/read-f114-pdf.py"), ...argumentsList], { encoding: "utf8", windowsHide: true }));
     const expected = JSON.parse(readFileSync(resolve(root, "parity/expected/F-114.json"), "utf8"));
