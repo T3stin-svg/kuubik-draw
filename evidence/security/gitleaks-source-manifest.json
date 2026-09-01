@@ -10,8 +10,8 @@
   "ciArtifactsExcluded": [
     "results.sarif"
   ],
-  "fileCount": 1811,
-  "sourceTreeSha256": "d53199385849c051bcd7ab579ca59d0be3374999b4c0bd4bc752ca8ee48534a9",
+  "fileCount": 1875,
+  "sourceTreeSha256": "e1b3580da0f575b783d1336dfeade1705e13b6b75c2716ca158e9c7c78cea864",
   "files": [
     {
       "path": ".gitattributes",
@@ -50,8 +50,8 @@
     },
     {
       "path": "apps/web/src/App.tsx",
-      "size": 295318,
-      "sha256": "3e777f724fda67148cd9932e3e1182f38f36f4960ddf37ff0a7eccc0ce1f36bc"
+      "size": 295790,
+      "sha256": "178005d2196e2a2ba524fc954553931e5fc0ba4982665492240cf8a348e09852"
     },
     {
       "path": "apps/web/src/context-menu.test.ts",
@@ -75,13 +75,13 @@
     },
     {
       "path": "apps/web/src/features/annotation/command-adapter.test.ts",
-      "size": 7954,
-      "sha256": "df2441cceb6ce56bae92e660aa75cca1ac4a5f1982fa2ad988b588cf3ce95a87"
+      "size": 7965,
+      "sha256": "e55cbd22e2cef1876ba1754bbf5b758448b6459b086d95c31e2ef0f3dce9685a"
     },
     {
       "path": "apps/web/src/features/annotation/command-adapter.ts",
-      "size": 9333,
-      "sha256": "84c9fa09975f51c301fc498ef285af6754ba07b0255763d754c87ed4e788e40c"
+      "size": 9325,
+      "sha256": "a54abb27e733247a58fe589d13f14c4983344e947c6fef23b18fcf111078a640"
     },
     {
       "path": "apps/web/src/features/annotation/command-definition.ts",
@@ -99,9 +99,24 @@
       "sha256": "a49f3d7dcba6a479a1a2632c55c22e6329ac56765524ff4e61e45bd8cec2cd81"
     },
     {
+      "path": "apps/web/src/features/annotation/dimensions-wave17.runner.test.ts",
+      "size": 995,
+      "sha256": "9070af8812b08d277d2ac321a7298f019656a5a104c1c1f3133b7afb433b32be"
+    },
+    {
+      "path": "apps/web/src/features/annotation/dimensions-wave17.wiring.test.ts",
+      "size": 5422,
+      "sha256": "aabdb586df9b9c7a73071c5a609deee9084a53953bbfff71525dbf90e8254f38"
+    },
+    {
       "path": "apps/web/src/features/annotation/hatch-wave12.wiring.test.ts",
-      "size": 6766,
-      "sha256": "ffa0bc31263bd6e0235df0adc7269c8710837d0f96bc7ae7e66a99bf6b9e5056"
+      "size": 6875,
+      "sha256": "61cd39132007a2f7915f2d5672d0e5cfe9d9dca12827faf9431fd883dec72a81"
+    },
+    {
+      "path": "apps/web/src/features/annotation/hatch-wave14.wiring.test.ts",
+      "size": 3172,
+      "sha256": "9aa2bfd753f2bd53b0756b1930f0a27c7c83ad983ce5c002dd08563247cbaf05"
     },
     {
       "path": "apps/web/src/features/annotation/live-workflow.test.ts",
@@ -110,23 +125,23 @@
     },
     {
       "path": "apps/web/src/features/annotation/model.test.ts",
-      "size": 1134,
-      "sha256": "10afd292e39a94e1b5417c8388d349f7167af5e14848a66e660d6c83a387bb7f"
+      "size": 1370,
+      "sha256": "825308922d86dd90a83c798691cccf8f071bc265b2dd5cc4eac8693333794659"
     },
     {
       "path": "apps/web/src/features/annotation/model.ts",
-      "size": 13884,
-      "sha256": "b9846003081b5a0b410cdee2ecac9729a495af2f2e54dd8bc581e845cc8cb5ca"
+      "size": 14187,
+      "sha256": "e9d2589f6b0c0dede77231f054b4f3dccbeb7bc105efa84cb70cd7a94a254741"
     },
     {
       "path": "apps/web/src/features/annotation/prompt-input.ts",
-      "size": 14688,
-      "sha256": "7ba4ed63f0368d2e9d4936fe6c0c3aa7d43d537901daaa5cc936978a604dbf86"
+      "size": 15450,
+      "sha256": "f5f2af70f6bf7205eb3227249f90f6ae57d2ed63ff5c314632bf4f6189bc28bc"
     },
     {
       "path": "apps/web/src/features/annotation/prompt-state-machine.test.ts",
-      "size": 1827,
-      "sha256": "27d9f036ab0746beeb6994a7e430632e6cab1327abb352ab54171fa0fb41a68c"
+      "size": 1895,
+      "sha256": "92c5d97ff7f4aa539fc11f805c5c3edcecbb86481ccd348fa487d259bbe2ce22"
     },
     {
       "path": "apps/web/src/features/annotation/prompt-state-machine.ts",
@@ -200,13 +215,13 @@
     },
     {
       "path": "apps/web/src/features/command-system/geometry-modify-adapters.test.ts",
-      "size": 7652,
-      "sha256": "baa969ed5e3ff184d6ab491b2281b629206c862b614f2d09dac9153acd236740"
+      "size": 10567,
+      "sha256": "47904c8a1cdab2b688f0917ed708a91e649ef50f268136abc24b42952346c97d"
     },
     {
       "path": "apps/web/src/features/command-system/geometry-modify-adapters.ts",
-      "size": 11198,
-      "sha256": "b07c7b4b5358a0c526bda8490a91ff10f055bba29fb9cad08cdab994746ab24b"
+      "size": 11853,
+      "sha256": "d6ae484b84da827020bb53ae767ecb59ed4b65fe1100052a7f3934e8c6c7d11e"
     },
     {
       "path": "apps/web/src/features/documents/autosave-recovery.test.ts",
@@ -260,8 +275,8 @@
     },
     {
       "path": "apps/web/src/features/documents/document-live-orchestrator.ts",
-      "size": 12958,
-      "sha256": "d9a55a92b630a7851a70a747bcb4eba57c927d81bd0364297e87544ed3186207"
+      "size": 14262,
+      "sha256": "2fd7d253b6154a0f793281ca2f3da9955eb2a11c363adf9442521719a131e001"
     },
     {
       "path": "apps/web/src/features/documents/document-paper-workspace-harness.html",
@@ -425,8 +440,8 @@
     },
     {
       "path": "apps/web/src/features/documents/layout-plot-shell.golden.json",
-      "size": 4230,
-      "sha256": "2d87950f21caeb6277bd483ab47b8c34631c1292948b35e1d457942309f567e2"
+      "size": 4351,
+      "sha256": "82622dbecea62a431019088e3333cc849d0e12fbcb0f74c8004aba3e3afc5a50"
     },
     {
       "path": "apps/web/src/features/documents/layout-plot-shell.test.ts",
@@ -460,13 +475,48 @@
     },
     {
       "path": "apps/web/src/features/documents/pdf-underlay-transaction.ts",
-      "size": 3299,
-      "sha256": "a21becee812753d9215eb9a0589aa12e0f54850a123235d7609f203f16b1fb2e"
+      "size": 4921,
+      "sha256": "3b673bf10ecc0da7ba6d3ff9e6b9685b72d585c4a80d1e6f5edb51ccb5f53c9a"
+    },
+    {
+      "path": "apps/web/src/features/documents/pdf-underlay-visible-harness.html",
+      "size": 352,
+      "sha256": "1f0575664300becfdd3bfb17a66667108f3f534f3703eb051c20dcda98feb509"
+    },
+    {
+      "path": "apps/web/src/features/documents/pdf-underlay-visible-harness.tsx",
+      "size": 7697,
+      "sha256": "4651d3d10c44530f4ba14f576fc7eccea79a28f461db2d110b9e355f2f4c9d3b"
+    },
+    {
+      "path": "apps/web/src/features/documents/pdf-underlay-workspace.golden.json",
+      "size": 922,
+      "sha256": "0399fa8d4b963f0afcf3738c17de9cea4a1c7e9aca6a187f8e4d284bddfb66f9"
+    },
+    {
+      "path": "apps/web/src/features/documents/pdf-underlay-workspace.test.ts",
+      "size": 5587,
+      "sha256": "5222036987c396a4c37b96085f03fe19568cb02ac9b8eb93563aa2a4886b8631"
+    },
+    {
+      "path": "apps/web/src/features/documents/pdf-underlay-workspace.ts",
+      "size": 7537,
+      "sha256": "e7a99eb896ddadd385bc97dc8a1f2cf0a5b6672ded325a6812091c037bbbe4da"
+    },
+    {
+      "path": "apps/web/src/features/documents/PdfUnderlayAttachPanel.tsx",
+      "size": 6020,
+      "sha256": "de811be047f6dfc5b13c74f853cadb9cfbb7288a1524b9290e45ba52f3b28597"
+    },
+    {
+      "path": "apps/web/src/features/documents/PdfUnderlayView.test.tsx",
+      "size": 1358,
+      "sha256": "9990bcd236ee2a96abde640ac00066d9fe7b1b08333186e10eb35dd7ae644863"
     },
     {
       "path": "apps/web/src/features/documents/PdfUnderlayView.tsx",
-      "size": 1326,
-      "sha256": "3a42250102db8d45a50c54056332701dd83d34dc5a0319e8456d5ca3a61524ad"
+      "size": 1782,
+      "sha256": "b705149715978c66b2f4b8d3e8c11ed274b24f13181df43db35b40d9e2ad3462"
     },
     {
       "path": "apps/web/src/features/documents/recovery-compaction-harness.html",
@@ -494,6 +544,11 @@
       "sha256": "adeafc6d2795b6a1c9e1c2741a3ec4af050056722d6888de58f6376b802e552d"
     },
     {
+      "path": "apps/web/src/features/draw-modify/arc-command-adapter.ts",
+      "size": 746,
+      "sha256": "fc667f30a20e183c7aeb15ad854598ecfcbfa9ed03dd7b2088183dddec681d71"
+    },
+    {
       "path": "apps/web/src/features/draw-modify/array-command-adapter.ts",
       "size": 2156,
       "sha256": "1d77a463091782ec1429718203a4b8edacae850b19b2e4eb87566a732517075c"
@@ -512,6 +567,21 @@
       "path": "apps/web/src/features/draw-modify/boundary-region-command-adapter.ts",
       "size": 1286,
       "sha256": "4fd0f499439f93c67885914e597ee107a29632b363fee09555acd49ff0c4c719"
+    },
+    {
+      "path": "apps/web/src/features/draw-modify/circle-command-adapter.ts",
+      "size": 764,
+      "sha256": "c73b650540e108083b614dd8174da35526d89850f976bf6f5d08393a7288604d"
+    },
+    {
+      "path": "apps/web/src/features/draw-modify/f004-circle-command-adapter.test.ts",
+      "size": 2036,
+      "sha256": "536334c3a079d6ecbd267593ffaf1b1310c91a2746476f638ed3fb8c03fce5dd"
+    },
+    {
+      "path": "apps/web/src/features/draw-modify/f005-arc-command-adapter.test.ts",
+      "size": 1886,
+      "sha256": "82234f4f2ef78d62a40fd6fcbaf194f8829fe32f94b38327daf0d1a0696c17eb"
     },
     {
       "path": "apps/web/src/features/draw-modify/f011-revcloud-command-adapter.test.ts",
@@ -944,9 +1014,14 @@
       "sha256": "98cf0acc1791420f2c52dcf25d4780f53e26b5c3ff6f378739b443c0e2086369"
     },
     {
+      "path": "apps/web/src/shell/runtime-adapter.test.ts",
+      "size": 2624,
+      "sha256": "08b644f014b780d1fd1be02c28d7c1dbe7d39bdf1750d3ae7448aec47cb3a760"
+    },
+    {
       "path": "apps/web/src/shell/runtime-adapter.ts",
-      "size": 34093,
-      "sha256": "5b73a33c9a4aeee2ce4ac8fbb0528585692fd74ae0d3d3cf325fbb2111a487ec"
+      "size": 35377,
+      "sha256": "0607a32d42d98a64ff1d92ab150b4cead05ec7eb381a846ce83b9ad0d8b728c4"
     },
     {
       "path": "apps/web/src/shell/StatusBar.tsx",
@@ -1025,23 +1100,23 @@
     },
     {
       "path": "docs/integration/annotation-blocks.md",
-      "size": 36972,
-      "sha256": "a58134d3cabd77b729911ed64f6300449899e967ce56ff25ae90c4cc1b1d4e92"
+      "size": 39308,
+      "sha256": "d386b8de682706571e9402651b3c598326a1829da98ccf2762100ebc4a5bef1a"
     },
     {
       "path": "docs/integration/documents-io.md",
-      "size": 20723,
-      "sha256": "b8199ce70592473956d2883476b77a1d2c3fb344f9c98b3f55309930e254d61f"
+      "size": 23259,
+      "sha256": "33a216768f8bfdc74efea304b5990151cb96dfc38d46f3fcc21aa766e24b9cc7"
     },
     {
       "path": "docs/integration/geometry-modify.md",
-      "size": 27736,
-      "sha256": "e295347b94d820fcccd871e77369bad0a4be5597a49bfb7c0675d70679ee1658"
+      "size": 30949,
+      "sha256": "23c698d4b24287d951b567809393ee3a9d2d4656baf69fd595ac8521c0530327"
     },
     {
       "path": "docs/integration/precision-layers.md",
-      "size": 31703,
-      "sha256": "6a50b94c73fe40625c93f881890cda38d1d75c52ad346a1fe9ed8cac9c597b8b"
+      "size": 33256,
+      "sha256": "5feb8cc60eeafd7049d7b80c5b653bd27cfa5d68adf9fe6b970ddfa4f948720f"
     },
     {
       "path": "docs/integration/visual-shell.md",
@@ -1055,148 +1130,148 @@
     },
     {
       "path": "e2e/f003-rectangle.spec.ts",
-      "size": 2289,
-      "sha256": "efffd70e665800a8527305e8964dcd9386f6e867a80b4ca4e9cdc0bdcc784620"
+      "size": 2355,
+      "sha256": "d3fd69681c71ae4589c396659f2ec6257840dfff0da8f9a1f6dff3e1a782daf4"
     },
     {
       "path": "e2e/f015-erase.spec.ts",
-      "size": 5544,
-      "sha256": "103071b10f40908024400e9b22d4732565dd7de17c7818254ab92ce196608caf"
+      "size": 6333,
+      "sha256": "3accea00d7fe6146008abba1cb618676ac030aa1c17d5e276a2bffae69260b43"
     },
     {
       "path": "e2e/f016-move.spec.ts",
-      "size": 11790,
-      "sha256": "daa3b7101c22f6cbcd2e7f2a07750d6d48cf7a8465d0fa7cb4db93685ffa35dc"
+      "size": 11979,
+      "sha256": "8f31f89c7d7737b38267ce3e040f401e0b3df4704fc9c19ede131ea8534f3287"
     },
     {
       "path": "e2e/f017-copy.spec.ts",
-      "size": 12807,
-      "sha256": "e35523a321c6d3100dfdbfc039e715825dc2835e0820a231e97cb1cae6497155"
+      "size": 12930,
+      "sha256": "4923b854b4630da51bae8a1d137baab299d62040fe679f32767733f92787e7a6"
     },
     {
       "path": "e2e/f018-rotate.spec.ts",
-      "size": 13340,
-      "sha256": "ee78865278a41ef33e76a8dbda5bb29a682869a4a4d8b16862f7ee98dff0c904"
+      "size": 13463,
+      "sha256": "c205d7f17575ce5ce1e7b1d5ddacac8afe5826ee82c01e36abffc8caf6c7a3bf"
     },
     {
       "path": "e2e/f019-scale.spec.ts",
-      "size": 16357,
-      "sha256": "5b5cde85bada7f98e899e33eca0ea354f33f5f4936a538c88248b8d8e52f2f20"
+      "size": 16631,
+      "sha256": "4feddccc8696c9a0216363ce6ca3d084db5accfd9810238218872514e6566129"
     },
     {
       "path": "e2e/f020-mirror.spec.ts",
-      "size": 10952,
-      "sha256": "a8a2924c355b87ea736f7f48c0dcf62b0b9fea98dbac4d2bbab3c8fedb7a6a4a"
+      "size": 10979,
+      "sha256": "2dd21d880db130729f01a85f474e1ddd85b5151669ecc919b1f8b7f82f28160d"
     },
     {
       "path": "e2e/f021-offset.spec.ts",
-      "size": 17429,
-      "sha256": "4bb998cbfb92fbc3798c783b7d44cd4e10802f2c456098ce815b52061631760c"
+      "size": 16635,
+      "sha256": "8e2555f344fa82ca2ce0e6ac1a7868ac56f6b3f94f57f36d2dbeaa7e2dcf6c60"
     },
     {
       "path": "e2e/f022-trim.spec.ts",
-      "size": 30645,
-      "sha256": "d9e6f64e702005ad86e0de2b06287c0af2eacd9e21425302809ab7835fd3d660"
+      "size": 29883,
+      "sha256": "49c8db8753d74c88b9d37d09971d2cac6267c63c039f8cf7bb3aa210c9a93bbb"
     },
     {
       "path": "e2e/f023-extend.spec.ts",
-      "size": 22078,
-      "sha256": "8660d85fa6954bb84986d029807de0023e86e765259d04948396f18fe4a39e6b"
+      "size": 21281,
+      "sha256": "823ecf7f3f6b74af891eaa3879b11e57d24bc23bee14bc248e96c3cb7d1f01ac"
     },
     {
       "path": "e2e/f024-fillet.spec.ts",
-      "size": 45505,
-      "sha256": "96456af141420408b521f2ff2cdd6af868ce0a0ebe4785b0b0f031746dff0ca0"
+      "size": 44664,
+      "sha256": "9de30ab74c59286e9a533f92bd28c6c7ced2c4d1d59e66e64b05ad02d7a8d6ff"
     },
     {
       "path": "e2e/f025-chamfer.spec.ts",
-      "size": 36421,
-      "sha256": "4ab8953c93263d1b7df6b1b7265ffe391ce6d32dec2ec52e752ffd62a8688bb7"
+      "size": 35715,
+      "sha256": "140ecc1c6f668d2310021c47eaa3f2729d579a686a42a408c113c1ad92fd37c2"
     },
     {
       "path": "e2e/f026-break.spec.ts",
-      "size": 14016,
-      "sha256": "4a858ea1f43946e906f7764bf26f32a22d3197c2d55fada973c2ca40c54fd846"
+      "size": 13222,
+      "sha256": "0816f37ecf4698a2daa3f9814dc36cdaeac769a7d2970f3630050382bb5f6f79"
     },
     {
       "path": "e2e/f027-stretch.spec.ts",
-      "size": 19404,
-      "sha256": "e5daf2b2b2115b61ad741900321f5ad3c496a0503fd1ebbffc90b98ff268e8cf"
+      "size": 18610,
+      "sha256": "ae8c50b16ada5bcf89519885e5935ad7fb2baefe4ad34c60f194cf1aa15407cd"
     },
     {
       "path": "e2e/f028-lengthen.spec.ts",
-      "size": 10905,
-      "sha256": "56846f10001f6586483d2e2fb0d6ed7d26c08c18b879773c67a112dc3f9dacb0"
+      "size": 10067,
+      "sha256": "577a188ee9e5355dd9fc442062ef098ca4bea15f4b2a13add07c718bef516ef7"
     },
     {
       "path": "e2e/f029-align.spec.ts",
-      "size": 9724,
-      "sha256": "ece07640d932d5643c7d02e7355989ec4a71fbfed2d1a164e51a82369a54e6a1"
+      "size": 8886,
+      "sha256": "3165077b008f4a71432d4232f6a69b22b4461ec7ae298c144f9f9f0a814e03ef"
     },
     {
       "path": "e2e/f030-match-properties.spec.ts",
-      "size": 15293,
-      "sha256": "f3746de5071bc993cf0f94a9e4bd3f8769ee2226f63e2a10c1a603a88e6e3fa0"
+      "size": 14777,
+      "sha256": "ac96c4aa0630dbbfaff29514826f511072591ac0e860d77f89672d724d082974"
     },
     {
       "path": "e2e/f097-layout-tabs.spec.ts",
-      "size": 15210,
-      "sha256": "9616ca98a17c14d889bf2eeaca9c5de832d492a97c1d0de67022561d7ddb34f0"
+      "size": 14872,
+      "sha256": "d21443779052314038eeda0a2feab7de01ff1556f6960969037f7a82ac07bccc"
     },
     {
       "path": "e2e/f098-paper-space.spec.ts",
-      "size": 7454,
-      "sha256": "ef01a7350aadc95df21813ae240b6237c9b5f22784f31e3254b35b10d2fd8813"
+      "size": 6845,
+      "sha256": "fe0fde88f754db2841b7c5a47431fd05591c3775ebbbb990c3957b02b3481556"
     },
     {
       "path": "e2e/f099-multiple-viewports.spec.ts",
-      "size": 11741,
-      "sha256": "59c7901082987779107b56a6d7cd4f89ae299531b88a5c95904eaf15aa693ace"
+      "size": 11198,
+      "sha256": "45a4cc92ab941e27ac3d8001fc44ccdf33d46e9a26e52ba348179278d36deaa3"
     },
     {
       "path": "e2e/f100-viewport-view.spec.ts",
-      "size": 17718,
-      "sha256": "b264634524c17a43c6636175dca0bd2f2fe3a09638707752bb6258da4b2e2d71"
+      "size": 16979,
+      "sha256": "296a0af21b7fb439acbc863efa1f50b0bd2182008c459d0f7450c82d0b0b4312"
     },
     {
       "path": "e2e/f101-viewport-lock.spec.ts",
-      "size": 13376,
-      "sha256": "b713d3dd01eb5aee71512f0853e1a46fa641415ccc84e4ad06a145acbc105ee2"
+      "size": 12639,
+      "sha256": "48b32c15cad5288d6c5d4a9e8b14f1b939e0a54bb28e880932a52d9ca061cbb6"
     },
     {
       "path": "e2e/f102-page-setup.spec.ts",
-      "size": 18586,
-      "sha256": "1dd32ca2e9e7b6bec13f99ed110de846608638ad9b180d54b67ab740a0d14de3"
+      "size": 17847,
+      "sha256": "b2d020a6c857ea81f8b77559860c0482de68b34de3b8bea20d31f5a284a0b12f"
     },
     {
       "path": "e2e/f103-plot-style.spec.ts",
-      "size": 18478,
-      "sha256": "e3d0dee69391ba17be26540d72ee1468d7586e99f3ebfdb0c13e0501e5d9eff5"
+      "size": 17802,
+      "sha256": "0a544754e94071c0bb2f511465715b00b634769a1d1404637f9618848b3734a6"
     },
     {
       "path": "e2e/f104-vector-output.spec.ts",
-      "size": 10341,
-      "sha256": "fb32ec6c846d447874039d1e113edf58bc5159d43ddf17e4955dac67182048db"
+      "size": 9586,
+      "sha256": "b3878a3eaedc44c5000162cc67f1dd216a49c9e581145f5de82f6396cf2c112f"
     },
     {
       "path": "e2e/f105-batch-publish.spec.ts",
-      "size": 15250,
-      "sha256": "1e7609ad1f03d608e0963e219dde483eee4379047a0783c196c6b8838114faf0"
+      "size": 14468,
+      "sha256": "c2c12ce0ea83fae3a84dd9d8a1122656063e8ba92dd58a988ba0eed07b3cfc08"
     },
     {
       "path": "e2e/f106-model-print.spec.ts",
-      "size": 13379,
-      "sha256": "669ede401759701f5d08783528e54b1cef26d8b234f3c0620bc827cd27c9e5ee"
+      "size": 12627,
+      "sha256": "1d432ca91e9a5cea60424b8897acb6cb6f7ac927b45a28b511f934c0b2268cc2"
     },
     {
       "path": "e2e/f107-named-page-setups.spec.ts",
-      "size": 14041,
-      "sha256": "54c0156d2c316db0f3ba96056810f82cf5a16484f6283e200c9e7b01f1dea472"
+      "size": 12779,
+      "sha256": "ff1cf2b330ebb06ccb51d3cae152bf7560f7ae0ee8b052adb4cd50274dc8dba3"
     },
     {
       "path": "e2e/f109-dxf-export.spec.ts",
-      "size": 6523,
-      "sha256": "9030f51b4647687a8208c673c6a163010902444626e9443c340f3f65f6ce0acf"
+      "size": 5056,
+      "sha256": "063f8ace5442bfaf30cd310fe1f3b2130451d595f7090ab983b485d9c6db6ab3"
     },
     {
       "path": "e2e/f110-desktop-roundtrip.spec.ts",
@@ -1205,13 +1280,23 @@
     },
     {
       "path": "e2e/f111-dxf-roundtrip.spec.ts",
-      "size": 13581,
-      "sha256": "e0e594fb1548e5c6e80e528897ea05619b3a742caf973b813b155192d752f792"
+      "size": 12177,
+      "sha256": "a40ae0dab5765cff126bee9cdef2efce8f4c7e2cebab0d7c0d53aa049f6ea449"
     },
     {
       "path": "e2e/f114-vector-pdf.spec.ts",
-      "size": 6384,
-      "sha256": "f7cf8938caa04d91b4454984e5c5c8ed117300fa77bd01a3506bfc0ef68789e6"
+      "size": 5608,
+      "sha256": "15cdbce37e1dee9feae7b2a0871b2242d260c448469b40e7d4f316e9dbad83c1"
+    },
+    {
+      "path": "e2e/f115-pdf-underlay.spec.ts",
+      "size": 7110,
+      "sha256": "13ed21171c072b3a5f291f8edc9fbd315139fba13346cefde2a09ee0e2f07670"
+    },
+    {
+      "path": "e2e/helpers/indexed-db.ts",
+      "size": 7869,
+      "sha256": "3984a1cd6231db9545f5698c0b5bdb9a8114269013b85c0d67da6a6fb5c78202"
     },
     {
       "path": "e2e/helpers/layout-tools.ts",
@@ -1224,9 +1309,19 @@
       "sha256": "1a69210e5248af4d572c8809943cfe414fa06bcfd0b4643f652f21d1858f8381"
     },
     {
+      "path": "e2e/helpers/selection.ts",
+      "size": 706,
+      "sha256": "4ddb27135e5038ed4770cf84252bf8c95f868004824d8d2e680da24888e74fea"
+    },
+    {
+      "path": "e2e/indexed-db-current-schema.spec.ts",
+      "size": 2089,
+      "sha256": "c40ccf8db36e4b225e6e9f931483e942985ba49ee0545e9d9ac9de0057f52f19"
+    },
+    {
       "path": "e2e/local-document.spec.ts",
-      "size": 1004,
-      "sha256": "08b933cfe03eafb1becf407bb56b98e2f5e66316f067936e0092800ecaf5f7a0"
+      "size": 1078,
+      "sha256": "66627477dfd09e0ae6e7bf3031cda2ff9cb201e3422bee56bd0b0518736d078b"
     },
     {
       "path": "e2e/scope-selector.spec.ts",
@@ -1245,8 +1340,8 @@
     },
     {
       "path": "e2e/visual-shell.spec.ts",
-      "size": 102502,
-      "sha256": "558d0dc3bdcdbb969c6ef0fec91881e3fc34debd7006967d0634442257a8adc0"
+      "size": 103584,
+      "sha256": "c04cb646d576cb4c86ff43b8cb0ab67469563319696a150cf0c75a812c1a34a7"
     },
     {
       "path": "evidence/artifacts/F-003-autocad-readback.json",
@@ -4204,6 +4299,11 @@
       "sha256": "ba5db6ebba24c3d49b24b9977773f567e063c4cf5e5c685fa3226f98f77bd078"
     },
     {
+      "path": "evidence/autocad/F-041-F-042-F-044.json",
+      "size": 6184,
+      "sha256": "31a2d7736df85d94353d93e543897f1badc2b4ecffe43ded1b2f03064455980f"
+    },
+    {
       "path": "evidence/autocad/F-053.json",
       "size": 7872,
       "sha256": "79338eb04dd6eb2d2e1ccfb15e34f7ac65bc015fca4bd7727aacbb8c79ef7cc4"
@@ -4594,9 +4694,24 @@
       "sha256": "6fb86d6c34ee172772053a1ebc40aa0dbea11123f129d92e777ced037c523294"
     },
     {
+      "path": "evidence/workstreams/annotation-blocks/f061-autocad-live-fixture.json",
+      "size": 823,
+      "sha256": "34e01dda6c50408b738d97857710fec93537c50ab43e5f79050e8131e315eec3"
+    },
+    {
+      "path": "evidence/workstreams/annotation-blocks/f068-autocad-live-fixture.json",
+      "size": 1161,
+      "sha256": "548250d7211cdf9d231080da05920a8452fb4779a6bde9ab0a230999431b4d7f"
+    },
+    {
+      "path": "evidence/workstreams/annotation-blocks/f068-autocad-live-runner.ps1",
+      "size": 549,
+      "sha256": "39b10b62fa8a6c8f2532e50434b2b2ca72d11429713f58303f7ecec237b2af88"
+    },
+    {
       "path": "evidence/workstreams/annotation-blocks/README.md",
-      "size": 15345,
-      "sha256": "ae803dee5763776ef83db8ee942a6567543c2b9134b255c77add08576d5c6114"
+      "size": 17968,
+      "sha256": "022fc900217692d8b2ddf4487d1fe442f122b1bd2247828db31ee31360b4ae03"
     },
     {
       "path": "evidence/workstreams/documents-io/eighth-wave-paper-workspace.md",
@@ -4635,8 +4750,38 @@
     },
     {
       "path": "evidence/workstreams/documents-io/f115-pdf-underlay-wave.md",
-      "size": 1675,
-      "sha256": "81c1ea12630d38d29f991a04af1618e5448b885f7f55c1e6052b53e241343c0c"
+      "size": 1861,
+      "sha256": "bff7efbe03887eb0a0b81718157456422d6c03ce470dc9a7590c0cc344ae9dc0"
+    },
+    {
+      "path": "evidence/workstreams/documents-io/f115/autocad-readback.json",
+      "size": 843,
+      "sha256": "bb264b499cdefe9b4674a22e02e1b6868663a9ea8ec5afd55083caa643600a02"
+    },
+    {
+      "path": "evidence/workstreams/documents-io/f115/F-115-browser-readback.json",
+      "size": 2017,
+      "sha256": "93ccb32b6baac79988752fc2d31137878b3efb2ac5d2d664d4aa63e673c59a3e"
+    },
+    {
+      "path": "evidence/workstreams/documents-io/f115/F-115-browser-underlay.png",
+      "size": 22853,
+      "sha256": "a6c9fe7ff92a46b44b8dfcefd4a34b8d1c9bdcd57f38eb8c2c47fb6c28b9ffdd"
+    },
+    {
+      "path": "evidence/workstreams/documents-io/f115/readback.json",
+      "size": 2159,
+      "sha256": "dfb71a5b31df6463964f7a4af0b6f5522830a151d0274e69884af312fc3c7c2e"
+    },
+    {
+      "path": "evidence/workstreams/documents-io/f115/README.md",
+      "size": 3419,
+      "sha256": "83d649a8194d8a23529316785dea9bebb3e3b1757710558d08d31b214f73e27a"
+    },
+    {
+      "path": "evidence/workstreams/documents-io/f115/threat-model.md",
+      "size": 1940,
+      "sha256": "6c2097bd9891ea3e411a4395f38826ce556d236aea896c88107e4f3f90108ff3"
     },
     {
       "path": "evidence/workstreams/documents-io/f128-document-tabs-wave.md",
@@ -4764,6 +4909,16 @@
       "sha256": "a893f90b3c9ebbe6f023ca62c3fa3fdec51bf8b4ef01928e38fc25122194b6b2"
     },
     {
+      "path": "evidence/workstreams/geometry-modify/wave-17-f004-circle-wiring.json",
+      "size": 2365,
+      "sha256": "6a13b1bde327b907c6caa4acf56f7beab9a4bf8fa5717e63a2cb5cabdb9a1099"
+    },
+    {
+      "path": "evidence/workstreams/geometry-modify/wave-18-f005-arc-wiring.json",
+      "size": 2553,
+      "sha256": "567d3498fa036dd21efa9f1f7964ae7e826441730e3b7db14e43503c517b0c7f"
+    },
+    {
       "path": "evidence/workstreams/precision-layers/coordinate-entry-wave11-20260831.json",
       "size": 730,
       "sha256": "212847ad73a226573b08d8e21ef9e24225e308703040b77c757f0f7c825c4b5c"
@@ -4815,8 +4970,8 @@
     },
     {
       "path": "evidence/workstreams/precision-layers/README.md",
-      "size": 24679,
-      "sha256": "51ad35846c5f062f7d825f617f25c814862af9bca4f17e1c344d7317f90d936c"
+      "size": 25929,
+      "sha256": "41bb81a91c5f8905282e0588761d8d6e2e176c4d2892d8f921905ef0855f3a39"
     },
     {
       "path": "evidence/workstreams/precision-layers/spatial-profile-20260831.json",
@@ -4845,8 +5000,8 @@
     },
     {
       "path": "evidence/workstreams/precision-layers/test-matrix.json",
-      "size": 15234,
-      "sha256": "b03003693a2a917306e594d9cf09adc0927321fa15cbad8fb5ac5d263141360c"
+      "size": 16478,
+      "sha256": "ff37c1ef6babab8a465ba13861b824d8e4590ec349bf75dccf26e0fe4d59144a"
     },
     {
       "path": "evidence/workstreams/precision-layers/transparency-draw-order-wave10-20260831.json",
@@ -6000,8 +6155,8 @@
     },
     {
       "path": "packages/cad-core/src/annotation/annotation.golden.json",
-      "size": 4739,
-      "sha256": "4209c4f99bfe406779aeaa8c3c97227c639ab1b1da3798952716f2252256ffed"
+      "size": 4740,
+      "sha256": "1599a9bb31c33f59024bfd0950aeec1950704036b7e18ddb5f1697265b4471e6"
     },
     {
       "path": "packages/cad-core/src/annotation/annotation.mutation.test.ts",
@@ -6010,18 +6165,18 @@
     },
     {
       "path": "packages/cad-core/src/annotation/annotation.test.ts",
-      "size": 11951,
-      "sha256": "f9d0b72ba93180c3e8a2b9bb81b57af858e47e4c75b0fb91777abd4f0dd07ed6"
+      "size": 11986,
+      "sha256": "f7225fda19b7c0d148f5bf7ff1a2436cb1fb8e18d7807ff836c7c771690f9a19"
     },
     {
       "path": "packages/cad-core/src/annotation/contracts.ts",
-      "size": 17050,
-      "sha256": "41694bc961ef973d1602d24b4ab8e2e115f85bbf356ff71ac7b34404a035935a"
+      "size": 19182,
+      "sha256": "cc08cf84c90f87fb0196167ae44753ac355518c64490cfd7339dcf6c3957ac48"
     },
     {
       "path": "packages/cad-core/src/annotation/dimensions.ts",
-      "size": 34631,
-      "sha256": "33479d1a864450e5405099dfb2c273544178d079a2e24b357eeceb2b1d791ef2"
+      "size": 36555,
+      "sha256": "514201d42e900c1cc039d4fb0c503d13c31de65f8c8cb5c37cc586858f1dca85"
     },
     {
       "path": "packages/cad-core/src/annotation/dimensions.wave10.mutation.test.ts",
@@ -6032,6 +6187,26 @@
       "path": "packages/cad-core/src/annotation/dimensions.wave10.test.ts",
       "size": 10942,
       "sha256": "fa69ffe87a0d65630af79837be350a5498e0f6f508f06fa1dbe17c34f3cdbdf9"
+    },
+    {
+      "path": "packages/cad-core/src/annotation/dimensions.wave17.golden.json",
+      "size": 274,
+      "sha256": "b633d2141cd88c960dfade5de3b34a92b5cd4263f1c9ea950455c34cc4a24a38"
+    },
+    {
+      "path": "packages/cad-core/src/annotation/dimensions.wave17.mutation.test.ts",
+      "size": 1598,
+      "sha256": "bcbed3cd471376c7637dc6461c5f57de9b5f5bc0500c1f1c69385fe74f8209df"
+    },
+    {
+      "path": "packages/cad-core/src/annotation/dimensions.wave17.property.test.ts",
+      "size": 1338,
+      "sha256": "8e4283cbba6ca816e7d22319f540782efee0041c2ef6f51db5052d5b88bc2080"
+    },
+    {
+      "path": "packages/cad-core/src/annotation/dimensions.wave17.test.ts",
+      "size": 4672,
+      "sha256": "ecc45106a75f54126e5bf887dd7f815d67eeaff5241193ed7a9cc0400a4d881a"
     },
     {
       "path": "packages/cad-core/src/annotation/dimensions.wave5.test.ts",
@@ -6050,13 +6225,13 @@
     },
     {
       "path": "packages/cad-core/src/annotation/hatch-table.wave6.test.ts",
-      "size": 12896,
-      "sha256": "2a587aecc58261485b08e414c5d091620a7bb8686bdedc0e95655a1379b18be7"
+      "size": 13169,
+      "sha256": "c8b0aa695a868a90b1371c447600a9220a61a575add337c8f70eb0c24331ca44"
     },
     {
       "path": "packages/cad-core/src/annotation/hatch.ts",
-      "size": 12464,
-      "sha256": "6357a01ef93f0ccf1025f833a27c71dedee5770f6748b66a1266417b1ba72c72"
+      "size": 15069,
+      "sha256": "53160734ad4f0c2709b4736bc7c00c57b28b9043a2bf5a4cfb0824c5541a0fbf"
     },
     {
       "path": "packages/cad-core/src/annotation/hatch.wave12.mutation.test.ts",
@@ -6065,13 +6240,33 @@
     },
     {
       "path": "packages/cad-core/src/annotation/hatch.wave12.property.test.ts",
-      "size": 3234,
-      "sha256": "0c86446fc5172426505e92ccf29e1e1f333c459758a676a31c7fc4371259eb92"
+      "size": 3342,
+      "sha256": "0385ebbf10dc0354470ec5dd060d1b139afbbd3374e7bd124358d9e90574246d"
     },
     {
       "path": "packages/cad-core/src/annotation/hatch.wave12.test.ts",
-      "size": 5875,
-      "sha256": "3c05164a02948fa2f6fbcbbb00c31553bc8232c85975072c180b584e4deab1fb"
+      "size": 5881,
+      "sha256": "52aa894ef04ad698c3f5d95bb2e3eaa1a8372f69133565d0daa5abefeb6c809a"
+    },
+    {
+      "path": "packages/cad-core/src/annotation/hatch.wave14.golden.json",
+      "size": 249,
+      "sha256": "1c03db74cae12842b2f7e3e17044b0394f6cdf5250e317bc12f4c15cefa3ad4b"
+    },
+    {
+      "path": "packages/cad-core/src/annotation/hatch.wave14.mutation.test.ts",
+      "size": 2400,
+      "sha256": "c4f42413857fb6875d949ca9e3f0e4e638f9db102d83e4aba6c606288418d76b"
+    },
+    {
+      "path": "packages/cad-core/src/annotation/hatch.wave14.property.test.ts",
+      "size": 3302,
+      "sha256": "036e13748253ec8dd50c23a1eca9e8d6834e57a6037cfafd20d3a81e9b4fd99e"
+    },
+    {
+      "path": "packages/cad-core/src/annotation/hatch.wave14.test.ts",
+      "size": 2552,
+      "sha256": "aa78e31de561a95f1b89daff231cb39aa69184f1f12b12dadc59da404f1e8d78"
     },
     {
       "path": "packages/cad-core/src/annotation/table.ts",
@@ -6110,8 +6305,8 @@
     },
     {
       "path": "packages/cad-core/src/arc-command.ts",
-      "size": 21771,
-      "sha256": "dbb4e2587724b5b6bef9ad2144f5619b16cdeb7ef4092a0c6dcd482201db137c"
+      "size": 23950,
+      "sha256": "22e71e06bfacfdbe9fabbe3f063898927dbd42a107a553156bff8d8f4794d235"
     },
     {
       "path": "packages/cad-core/src/array-commands.ts",
@@ -6170,8 +6365,8 @@
     },
     {
       "path": "packages/cad-core/src/circle-command.ts",
-      "size": 24226,
-      "sha256": "5143ba371c902c1326a6527d670731e6beb00412b9158edf140bbb8e85daddb7"
+      "size": 25952,
+      "sha256": "ca845e04971804084486d57e6e094843a36df4b0920cefc23a884769b6f28037"
     },
     {
       "path": "packages/cad-core/src/commands.ts",
@@ -6255,8 +6450,8 @@
     },
     {
       "path": "packages/cad-core/src/pdf-underlays.ts",
-      "size": 5634,
-      "sha256": "7cb13896b72fddec9cdc6c62159143c7d47fcde95ac24366f3242d3e5a51b837"
+      "size": 13158,
+      "sha256": "83992546db04f0f615724655ed1329c570ede7d2f357439b457b8182659a4007"
     },
     {
       "path": "packages/cad-core/src/pedit.ts",
@@ -6399,19 +6594,39 @@
       "sha256": "29c4071c722efc178a3d844c5e739b51d4ddbecc07e506e560019cc1db96590c"
     },
     {
+      "path": "packages/cad-core/test/f004-circle-golden-fuzz.test.ts",
+      "size": 2700,
+      "sha256": "47c30093f21c5a48a8807e411d5ed652b682afd90c9119457ca2cc6306549620"
+    },
+    {
       "path": "packages/cad-core/test/f004-circle-mutation-proven.test.ts",
-      "size": 4001,
-      "sha256": "7ac268cfca2fd5b5d4e2b8be476784c12f49deb2cd5c24755927c683c5d61bc0"
+      "size": 6177,
+      "sha256": "ed806980076152edae1915419edaf69be5de17db3b2c979d5aae44dfc4cd5cd8"
+    },
+    {
+      "path": "packages/cad-core/test/f004-circle.golden.json",
+      "size": 944,
+      "sha256": "34a937595886c80db9aad501df2b874d3d5f0bac202533d489d7dc23f2564dc9"
     },
     {
       "path": "packages/cad-core/test/f005-arc-command.test.ts",
-      "size": 9707,
-      "sha256": "69d33813e758d1060662c7fa8f69f7a5c70b72fecbf29bd2a594a5def009c1fb"
+      "size": 10324,
+      "sha256": "fe30051bd63bc378dd54fd0ad81458b8cd4b34e7b7b81789763c30ec021a2d65"
+    },
+    {
+      "path": "packages/cad-core/test/f005-arc-golden-fuzz.test.ts",
+      "size": 3629,
+      "sha256": "bde09d5d7c16f2a57c76df652254a5e7e0d6cc1ec080870d70fcf39ab7a95f1c"
     },
     {
       "path": "packages/cad-core/test/f005-arc-mutation-proven.test.ts",
-      "size": 4177,
-      "sha256": "41cf5a260f897cc08d5c4fde4b2ce66663ca8a9dcc894a36573969c1022f72da"
+      "size": 6251,
+      "sha256": "941be3a085c25ea3400fca085166fb9a0f086ca2f2e0f35090c56e3301696840"
+    },
+    {
+      "path": "packages/cad-core/test/f005-arc.golden.json",
+      "size": 2968,
+      "sha256": "4cb519cca6992054e160db17d001626ea7c435650e1aa1f6f5b3bf45c6c4aed1"
     },
     {
       "path": "packages/cad-core/test/f006-polygon-command.test.ts",
@@ -6579,6 +6794,11 @@
       "sha256": "4e6f2f50aedc61a53d6444206ee3af7c2b5f2cf7c442a61bc47f9e4291aea774"
     },
     {
+      "path": "packages/cad-core/test/f041-f044-autocad-reference.test.ts",
+      "size": 2236,
+      "sha256": "7190c7aa41f037800d41be5c96845218030d738963dc267e85f44bcb26785699"
+    },
+    {
       "path": "packages/cad-core/test/f041-f086-mutation-proven.test.ts",
       "size": 1277,
       "sha256": "6014f46f38e37693e6b6acf950ead2ce273cd5a491e1598707ee35bedc861536"
@@ -6589,9 +6809,19 @@
       "sha256": "cdd77307eb6cdc66833a1f027210046390dcfe332cddfe6a27757e9867d75fa6"
     },
     {
+      "path": "packages/cad-core/test/f115-mutation-proven.test.ts",
+      "size": 1977,
+      "sha256": "db802bab6590b5fbb993f9dff0d49577df4688412a0080ea1c1b0dd5e0d3ef6b"
+    },
+    {
       "path": "packages/cad-core/test/fillet.test.ts",
       "size": 38355,
       "sha256": "1a3c2cd771b6b8ce86c8197bb2e5962dec03ba6ceda1b3b11d06deec0e8a57e2"
+    },
+    {
+      "path": "packages/cad-core/test/fixtures/autocad-2024-coordinate-reference.json",
+      "size": 1382,
+      "sha256": "a8f47b985418aa32638b260eeba654d11229b2a0513b2e638f705d841cc1c213"
     },
     {
       "path": "packages/cad-core/test/geometry-commands.test.ts",
@@ -6679,9 +6909,14 @@
       "sha256": "b36519a721b90e88919f5546d8ebf2fbf3f1ba6d919ce2f750a77f8d820ef0c6"
     },
     {
+      "path": "packages/cad-core/test/pdf-underlays-property.test.ts",
+      "size": 1712,
+      "sha256": "754c7c9658c2782697f5c78327d63596848079c5be35cd50e912ff090abba29b"
+    },
+    {
       "path": "packages/cad-core/test/pdf-underlays-transaction.test.ts",
-      "size": 3568,
-      "sha256": "66b21c91a83a2ce5358c396ffaa8bbf3b1572036da7ec15593e88bb285b60a44"
+      "size": 7305,
+      "sha256": "80df0b9b4161bcbc49e1e4379be319a48d9ba40e94e49bc6da8abf8a1d6e6d99"
     },
     {
       "path": "packages/cad-core/test/plot-style.test.ts",
@@ -6775,13 +7010,13 @@
     },
     {
       "path": "packages/cad-dxf/src/import.ts",
-      "size": 58510,
-      "sha256": "ebb53676249cfc811c41d75de6258044d9cc94a2f914391bc1bf47ac68114ede"
+      "size": 59035,
+      "sha256": "efb2d5d14fa996075f91c26a901f070d688a59b31421397168e8a4367ce68440"
     },
     {
       "path": "packages/cad-dxf/src/index.ts",
-      "size": 44412,
-      "sha256": "c121f9ad478ad4c63d79a370e72c5ce766accd40c5c865e0d26d42bf2f14cbe5"
+      "size": 44805,
+      "sha256": "7ba6b0f1e1d379f0cdf052c1080b1578d0531724ff38a933ac06cb6bfc0e2158"
     },
     {
       "path": "packages/cad-dxf/src/open.ts",
@@ -6889,6 +7124,11 @@
       "sha256": "2ea24a8692400d35c57857c5110d0a31cc2369f3262540b793c35eb6df7dfee8"
     },
     {
+      "path": "packages/cad-dxf/test/f068-hatch-associativity.test.ts",
+      "size": 3326,
+      "sha256": "4bc64d5149553d44db8613ec40908b0adf4223b3e68f5dc185739285253c32ba"
+    },
+    {
       "path": "packages/cad-dxf/test/f109-export.test.ts",
       "size": 10231,
       "sha256": "fcf4c1064784be2ed12848a1ff4993261867f621176f69fe219216e0d6569cda"
@@ -6935,13 +7175,18 @@
     },
     {
       "path": "packages/cad-dxf/test/f111-mutation-proven.test.ts",
-      "size": 3885,
-      "sha256": "5a44c30a0f4efb9da6cbf776e2753560cc48a06673ce22829fa23115a1322a5d"
+      "size": 3880,
+      "sha256": "51b2b0218f76c641c04432355eaa1c5707cc0d7fc0df67d01d5bdb6ba819f618"
     },
     {
       "path": "packages/cad-dxf/test/f111-roundtrip.test.ts",
-      "size": 7903,
-      "sha256": "da7cb55eb5dcb24e995127cc42cb075be48a815133957b4856bd61241f52b60b"
+      "size": 8458,
+      "sha256": "eaf7edd6e6482efde76cb154f8d00390b3146acca8f8a5619d5af79c103fb03b"
+    },
+    {
+      "path": "packages/cad-dxf/test/fixtures/synthetic/F-041-F-042-coordinate-entry.dxf",
+      "size": 644,
+      "sha256": "d22b04cc7f43aeb5dab56bfc50579e803443917996c91c5bcc054f4b53a5a008"
     },
     {
       "path": "packages/cad-dxf/test/fixtures/synthetic/F-053-units-header.dxf",
@@ -6985,8 +7230,8 @@
     },
     {
       "path": "packages/cad-print/src/pdf-underlay.ts",
-      "size": 6088,
-      "sha256": "00c972584164ac1a4fc7a4b480e5b17f404cfdc0e2b186f3eca55a1d66cb6dc9"
+      "size": 15185,
+      "sha256": "9528bbe75149fbeddc9f7c05c8668a0b04dd250a21edcaaf29c652ab978a389f"
     },
     {
       "path": "packages/cad-print/test/f104-mutation-proven.test.ts",
@@ -7005,8 +7250,8 @@
     },
     {
       "path": "packages/cad-print/test/f114-mutation-proven.test.ts",
-      "size": 3861,
-      "sha256": "b334e4b7596f0dd38b108fb6f2d0d82efac7ecf3f2b9063377f5322a5caaa504"
+      "size": 3880,
+      "sha256": "e5681aa9114aba2ad9e307dfaf825b2a0e5641d083d84e74b37e51400208312c"
     },
     {
       "path": "packages/cad-print/test/f114-vector-output.test.ts",
@@ -7015,8 +7260,8 @@
     },
     {
       "path": "packages/cad-print/test/f115-underlay.test.ts",
-      "size": 2919,
-      "sha256": "c6f661c61c2ce4665f3d2ceba0918d2584c9dc2328666738b11002ad7396ef9c"
+      "size": 4917,
+      "sha256": "07c05a9a4742e90174728b5bbed37906e97df5257349b674971bb29bf6e9511f"
     },
     {
       "path": "packages/cad-print/test/vector-output.test.ts",
@@ -7167,6 +7412,16 @@
       "path": "parity/autocad/F-003.scr",
       "size": 601,
       "sha256": "5d1b061fdad8c550282b33f08f9ae28889e6666f6b98740bff5d4e872775ba63"
+    },
+    {
+      "path": "parity/autocad/F-004.scr",
+      "size": 2001,
+      "sha256": "624c3be041d3ea37b15fa632ecf4752c8c58592b7866d865a8c9e21c73f05e19"
+    },
+    {
+      "path": "parity/autocad/F-005.scr",
+      "size": 1834,
+      "sha256": "c6a2e8c7350eba6867c6cf38c3c60d7a046d9c175257f92a7c9e304d6b600a68"
     },
     {
       "path": "parity/autocad/F-015.scr",
@@ -7614,6 +7869,16 @@
       "sha256": "3808f3d84aab5eb8a1fdeb18c83e9316fa2a7806243403f52cac549c199fb58d"
     },
     {
+      "path": "tools/autocad/f004-runner.test.mjs",
+      "size": 1316,
+      "sha256": "0834d48b8e6639af39c6a4ed9c0573303edca8fb78495510b1c69990bda33437"
+    },
+    {
+      "path": "tools/autocad/f005-runner.test.mjs",
+      "size": 1771,
+      "sha256": "7e242f02449f3e00557be380a3e2987c5c104e354e67e9f20257d51cedbeac09"
+    },
+    {
       "path": "tools/autocad/f016-runner.test.mjs",
       "size": 2605,
       "sha256": "f2f4035d6d8b56422b03e02ee39c3912aa4d62cc325537dc1740c81734df037c"
@@ -7772,6 +8037,31 @@
       "path": "tools/autocad/f030-standard-matrix.ps1",
       "size": 18723,
       "sha256": "cc3ccf04cefec97155c66714fa3a33325931b6899ba4217acda270d9f9e003fb"
+    },
+    {
+      "path": "tools/autocad/f041-f042-f044-coordinate-matrix.ps1",
+      "size": 19895,
+      "sha256": "88d5a0a51a5985e2841b588836a28393690a14233fb59f5829fe21fb4b0c543e"
+    },
+    {
+      "path": "tools/autocad/f041-f044-content-address.test.mjs",
+      "size": 2148,
+      "sha256": "9ef77d0d1ceae35f276765ee532f07bd7c3ee35928bd52ffc8f91b6bcd931c0d"
+    },
+    {
+      "path": "tools/autocad/f041-f044-dxf-readback.mjs",
+      "size": 6537,
+      "sha256": "a871c4b9712a3900a6c076c63c2926bb22ba5503fa2d4b60eb5b7765454141ea"
+    },
+    {
+      "path": "tools/autocad/f041-f044-dxf-readback.test.mjs",
+      "size": 3356,
+      "sha256": "1967d604a4b5c82fcaa9e603fb3a51935840f74a14eb22326d845ea5593a12bc"
+    },
+    {
+      "path": "tools/autocad/f041-f044-runner.test.mjs",
+      "size": 3021,
+      "sha256": "39660a415bb87d8073422543f91d9bc11a20ab278b93874da084748159d5ae86"
     },
     {
       "path": "tools/autocad/f053-content-address.test.mjs",
@@ -7964,6 +8254,16 @@
       "sha256": "27f61e6129c12cc865b396e8e8dc5bc2419ba6d3cfd85b8f2d14b6e7325d0163"
     },
     {
+      "path": "tools/autocad/run-f004.mjs",
+      "size": 3991,
+      "sha256": "31809556e3b7343fdce8d046f3975bf120300d7cdee5830d08fb622ad4f2fbf6"
+    },
+    {
+      "path": "tools/autocad/run-f005.mjs",
+      "size": 4453,
+      "sha256": "d2435ef6c57ad42278cb1ef615306611648f59527023663107c8d404556783a1"
+    },
+    {
       "path": "tools/autocad/run-f015.mjs",
       "size": 3143,
       "sha256": "e1fbb6d35fff1b80a8fb1de8027ef2c35e01bf754028cfb8f6a0e0d57140ec22"
@@ -8057,6 +8357,11 @@
       "path": "tools/autocad/run-f030.mjs",
       "size": 5797,
       "sha256": "f220ccb1977be320356e64dab679868534fb1c15238e2ed34fd7294e36827b69"
+    },
+    {
+      "path": "tools/autocad/run-f041-f042-f044.mjs",
+      "size": 3590,
+      "sha256": "b2c8bf8a0f376a4ef413b05b0297d3a19cd8f2a35ee991c0a12a0682b1f8de4b"
     },
     {
       "path": "tools/autocad/run-f053.mjs",
@@ -8157,6 +8462,11 @@
       "path": "tools/autocad/run-f114.mjs",
       "size": 4339,
       "sha256": "501998d1512694aa9192e77163b58d5a758509c6180a70f34f3f3798727a7e37"
+    },
+    {
+      "path": "tools/autocad/run-f115-reference.ps1",
+      "size": 2244,
+      "sha256": "dc73414cf7459bd7dda915a85e95daacbaf94a1877238fa7687748cfb7d11a6e"
     },
     {
       "path": "tools/autocad/send-escape.ps1",
@@ -8987,6 +9297,16 @@
       "path": "tools/parity/run-f114-readback.mjs",
       "size": 8449,
       "sha256": "b35f1570ebdea31c2ec037abbfc907d99108e965bfa136c800131a6174322e88"
+    },
+    {
+      "path": "tools/pdf/create-f115-synthetic.py",
+      "size": 1942,
+      "sha256": "5a78eb17109642b957229e9916d49d3c93c178587a2845f6a8f33bf4beb8d829"
+    },
+    {
+      "path": "tools/pdf/readback-f115.py",
+      "size": 2633,
+      "sha256": "1ddcb47d9e18985489a1f5112d056743392545dcddcc93a42352b70d1701adfc"
     },
     {
       "path": "tools/provenance/capture-source-state.mjs",
