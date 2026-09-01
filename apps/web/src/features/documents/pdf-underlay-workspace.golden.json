@@ -1,0 +1,37 @@
+{
+  "revision": 5,
+  "recoveryCode": "RECOVERY_REPLAYED",
+  "ignoredOperationIds": [],
+  "placement": {
+    "id": "underlay",
+    "attachmentId": "pdf-v2",
+    "pageNumber": 2,
+    "position": { "x": 25, "y": 40 },
+    "widthMm": 209.90277777777777,
+    "heightMm": 148.51944444444442,
+    "rotationRad": 0.7853981633974483,
+    "opacity": 0.5,
+    "visible": true,
+    "layerId": "pdf",
+    "fadePercent": 40,
+    "clipBoundary": [
+      { "x": 0.1, "y": 0.1 },
+      { "x": 0.9, "y": 0.1 },
+      { "x": 0.9, "y": 0.9 },
+      { "x": 0.1, "y": 0.9 }
+    ],
+    "referencePath": "references/source-v2.pdf",
+    "referenceMode": "linked-copy"
+  },
+  "sha256": "58ced4452553c8601980b0acbeeda40f2d9b596d9267b950653e0d5bd51e15ca",
+  "byteLength": 296,
+  "pageCount": 2,
+  "effectiveOpacity": 0.3,
+  "layer": {
+    "layerId": "pdf",
+    "rendered": true,
+    "selectable": true,
+    "editable": true,
+    "reason": "ok"
+  }
+}

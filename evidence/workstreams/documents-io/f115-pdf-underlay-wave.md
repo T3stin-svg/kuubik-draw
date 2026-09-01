@@ -1,13 +1,13 @@
 # F-115 PDF underlay candidate wave
 
-Status: candidate implementation; no parity score change.
+Status: candidate implementation; no parity score change. The work13 closure evidence is in `evidence/workstreams/documents-io/f115/`.
 
 - PDF bytes are preserved unchanged, SHA-256 bound and stored append-only in IndexedDB.
 - Import fails closed for encryption, active content, missing EOF, unsupported inherited/compressed page boxes and files over 128 MiB.
 - Page number, physical dimensions, position, rotation, opacity and visibility use a versioned document extension linked to a schema attachment.
-- A pointer-disabled browser PDF object view is provided as the integration surface; App.tsx is intentionally untouched.
+- A pointer-disabled, clipped image view backed by the safe uncompressed-PDF SVG adapter is provided as the integration surface; App.tsx is intentionally untouched.
 
-The simple built-in inspector covers traditional uncompressed page dictionaries. A future PDF.js adapter is required for compressed object streams and inherited page boxes. Certification still requires the owned AutoCAD PDFATTACH live workflow, Chromium integration, pypdf/pdfplumber/Poppler read-back and current-byte cross-evidence.
+The simple built-in inspector and SVG renderer cover traditional uncompressed page dictionaries/content streams. A future PDF.js adapter is required for compressed object streams and inherited page boxes. AutoCAD 2024, visible production Chromium and pypdf/pdfplumber/Poppler now share current-byte evidence, but certification still requires the production App route and the general PDF.js renderer.
 
 ## Independent file read-back
 

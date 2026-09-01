@@ -1,4 +1,12 @@
-import { planAddPdfUnderlay, planRemovePdfUnderlay, readPdfUnderlays, type PdfUnderlayPlacement } from "@kuubik/cad-core";
+import {
+  planAddPdfUnderlay,
+  planReloadPdfUnderlay,
+  planRemovePdfUnderlay,
+  planUpdatePdfUnderlay,
+  readPdfUnderlays,
+  type PdfUnderlayPlacement,
+  type PdfUnderlayPlacementPatch,
+} from "@kuubik/cad-core";
 import type { PreparedPdfUnderlay } from "@kuubik/cad-print";
 import type { CadAttachmentRef, CadOperation, KDrawDocumentV1 } from "@kuubik/cad-schema";
 import { KDrawIndexedDb } from "../../indexed-db.js";
@@ -74,4 +82,44 @@ export async function commitPdfUnderlayDetach(
     now,
   );
   return coordinator.document(documentId);
+}
+
+export async function commitPdfUnderlayUpdate(
+  database: KDrawIndexedDb,
+  coordinator: DocumentSessionCoordinator,
+  documentId: string,
+  operation: CadOperation,
+  placementId: string,
+  patch: PdfUnderlayPlacementPatch,
+  now?: string,
+): Promise<StoredPdfUnderlayReadback> {
+  const changes = planUpdatePdfUnderlay(coordinator.document(documentId), placementId, patch);
+  await coordinator.commitPersisted(
+    documentId,
+    operation,
+    changes,
+    (document, committedOperation, history) => database.commitRevision(document, committedOperation, history),
+    now,
+  );
+  return readStoredPdfUnderlay(database, coordinator.document(documentId), placementId);
+}
+
+export async function commitPdfUnderlayReload(
+  database: KDrawIndexedDb,
+  coordinator: DocumentSessionCoordinator,
+  documentId: string,
+  operation: CadOperation,
+  prepared: PreparedPdfUnderlay,
+  placement: PdfUnderlayPlacement,
+  now?: string,
+): Promise<StoredPdfUnderlayReadback> {
+  const changes = planReloadPdfUnderlay(coordinator.document(documentId), placement.id, {
+    attachment: prepared.attachment,
+    placement,
+  });
+  await coordinator.commitPersisted(documentId, operation, changes, async (document, committedOperation, history) => {
+    await database.commitRevisionWithAttachment(document, committedOperation, prepared.attachment, prepared.bytes, history);
+    await readStoredPdfUnderlay(database, document, placement.id);
+  }, now);
+  return readStoredPdfUnderlay(database, coordinator.document(documentId), placement.id);
 }

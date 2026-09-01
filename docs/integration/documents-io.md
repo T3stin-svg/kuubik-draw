@@ -125,7 +125,31 @@ The deterministic browser fixture is available during development at `/src/featu
 
 `commitRevisionWithAttachment` writes document head, immutable snapshot, operation record and attachment bytes in one IndexedDB transaction. A checksum mismatch, duplicate append-only attachment id or revision conflict aborts every store. Clean close additionally verifies every referenced attachment byte stream and metadata. No attachment store delete is provided; Undo removes only the document reference.
 
-F-115 atomic persistence and crash/reload wiring now have real-Chromium read-back. Full F-115 parity remains a candidate until the owned AutoCAD PDFATTACH comparison and PDF.js page renderer are live-tested. The current object surface is a safe visual fallback for traditional uncompressed PDFs; compressed object streams and inherited page boxes fail closed.
+F-115 atomic persistence and crash/reload wiring now have real-Chromium read-back, and the owned AutoCAD 2024 scratch comparison is recorded under `evidence/workstreams/documents-io/f115/`. Full F-115 parity remains a candidate until the integration reaches the production App route and a general PDF.js page renderer is live-tested. The current object surface is a safe visual fallback for traditional uncompressed PDFs; compressed object streams and inherited page boxes fail closed.
+
+### F-115 visible underlay integration (work13)
+
+Source branch: `work13/reio-documents-f115-pdf-underlay` from exact base `21acae84e847bf59f7b1307b66df6afc42d83e77`.
+
+New integration surfaces, intentionally kept outside `App.tsx`:
+
+- `PdfUnderlayAttachPanel`: visible file chooser, page selector, insertion X/Y, scale, rotation, opacity, fade and rectangular clip input.
+- `PdfUnderlayWorkspace`: attach, update, immutable-source reload, detach, Undo/Redo and SHA/page-count/layer read-back over `DocumentLiveOrchestrator`.
+- `PdfUnderlayView`: pointer-disabled clipped image surface using effective opacity `opacity * (1 - fade / 100)`.
+- `renderPdfUnderlayPageSvg`: inert SVG fallback for explicit uncompressed page/content objects. Compressed streams and inherited page boxes fail closed pending PDF.js.
+- `pdf-underlay-visible-harness.html`: isolated production-Chromium integration fixture; not part of the user-facing route.
+
+Exact integrator patch required in the owner-controlled `App.tsx`:
+
+1. Create one `PdfUnderlayWorkspace(liveOrchestrator, activeDocumentId, "app-pdf")` for the active document.
+2. Open `PdfUnderlayAttachPanel` from the existing Import/PDF command and pass the active layer id. Its `onAttach` callback must call `liveOrchestrator.attachPdf` (or `PdfUnderlayWorkspace.attach`) with a revision-bound `PDFATTACH` operation.
+3. For every `readPdfUnderlays(activeDocument)` placement, call `resolvePdfUnderlayLayerState`; skip off/frozen/hidden placements.
+4. Load bytes with `liveOrchestrator.readPdf`, call `renderPdfUnderlayPageSvg(bytes, placement.pageNumber)`, create an `image/svg+xml` object URL, and render `PdfUnderlayView` beneath editable CAD geometry.
+5. Revoke each object URL when the placement, document or active tab changes.
+6. Route property edits through `PdfUnderlayWorkspace.update`, reload through `.reload`, detach through `.detach`, and global Undo/Redo through the existing persisted live-orchestrator commands. Never mutate metadata or IndexedDB directly.
+7. Surface the renderer's fail-closed PDF.js requirement to the user; do not silently replace an unsupported page with a blank rectangle.
+
+The work13 evidence uses one shared synthetic PDF across AutoCAD 2024, visible Chromium and independent pypdf/pdfplumber/Poppler read-back. The score remains unchanged because the production `App.tsx` route and general PDF.js renderer are outside this worktree.
 
 ## Recovery boundary
 

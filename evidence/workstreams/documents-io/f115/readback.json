@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-115",
+  "input": {
+    "fileName": "f115-synthetic-underlay.pdf",
+    "byteLength": 3238,
+    "sha256": "9cf657664947127909cb3246dd3a78fe88666073b3ac8190422dac780da16043"
+  },
+  "pypdf": {
+    "pageCount": 3,
+    "encrypted": false,
+    "pages": [
+      {
+        "pageNumber": 1,
+        "widthPt": 595.2756,
+        "heightPt": 841.8898,
+        "rotationDeg": 0
+      },
+      {
+        "pageNumber": 2,
+        "widthPt": 1190.551,
+        "heightPt": 841.8898,
+        "rotationDeg": 0
+      },
+      {
+        "pageNumber": 3,
+        "widthPt": 216.0,
+        "heightPt": 360.0,
+        "rotationDeg": 0
+      }
+    ]
+  },
+  "pdfplumber": {
+    "pageCount": 3,
+    "pages": [
+      {
+        "pageNumber": 1,
+        "widthPt": 595.2756,
+        "heightPt": 841.8898,
+        "text": [
+          "F-115 PAGE 1 — A4 PORTRAIT",
+          "SYNTHETIC PUBLIC FIXTURE — NO CLIENT DATA",
+          "PAGE BOX 595.276 × 841.890 PT"
+        ],
+        "imageCount": 0
+      },
+      {
+        "pageNumber": 2,
+        "widthPt": 1190.551,
+        "heightPt": 841.8898,
+        "text": [
+          "F-115 PAGE 2 — A3 LANDSCAPE",
+          "SYNTHETIC PUBLIC FIXTURE — NO CLIENT DATA",
+          "PAGE BOX 1190.551 × 841.890 PT"
+        ],
+        "imageCount": 0
+      },
+      {
+        "pageNumber": 3,
+        "widthPt": 216,
+        "heightPt": 360,
+        "text": [
+          "F-115 PAGE 3",
+          "SYNTHETIC FIXTURE — NO CLIENT DATA",
+          "PAGE BOX 216.000 × 360.000 PT"
+        ],
+        "imageCount": 0
+      }
+    ]
+  },
+  "poppler": {
+    "pageCount": 3,
+    "pages": [
+      {
+        "fileName": "f115-page-1.png",
+        "byteLength": 64419,
+        "sha256": "ee04e6b356de322c611fb49c837413a173ea3a80da3bb5047fa3ae9b97ea2c40"
+      },
+      {
+        "fileName": "f115-page-2.png",
+        "byteLength": 95759,
+        "sha256": "0fb8d377b0ad0e41572acb16e52f5851bdde2f874d819d491920391ca3b696e9"
+      },
+      {
+        "fileName": "f115-page-3.png",
+        "byteLength": 13763,
+        "sha256": "4d3f73641e7d85b931df70a1a66b73f004be8891c5079bb868ca8eb5e657acc5"
+      }
+    ]
+  }
+}
