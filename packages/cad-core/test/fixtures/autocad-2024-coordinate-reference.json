@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "benchmark": "AutoCAD 2024.1.2 WCS command-line coordinate reference",
+  "coordinateContext": {
+    "ucs": "WCS",
+    "linearUnit": "mm",
+    "angleUnit": "decimal-degrees"
+  },
+  "cases": [
+    {
+      "id": "absolute-plain",
+      "input": "123456.789012345,-98765.4321098765",
+      "base": [0, 0],
+      "expected": [123456.789012345, -98765.4321098765],
+      "autoCadLiveStatus": "PASS"
+    },
+    {
+      "id": "absolute-hash",
+      "input": "#30.75,-40.125",
+      "base": [10.25, -20.5],
+      "expected": [30.75, -40.125],
+      "autoCadLiveStatus": "PASS"
+    },
+    {
+      "id": "relative-cartesian-near-zero",
+      "input": "@-0.000000123456789,0.000000987654321",
+      "base": [-100.5, 200.25],
+      "expected": [-100.50000012345679, 200.25000098765433],
+      "autoCadLiveStatus": "PASS"
+    },
+    {
+      "id": "relative-polar-negative-angle",
+      "input": "@123.456789<-33.333333",
+      "base": [500, -500],
+      "expected": [603.1466428403594, -567.8406133592102],
+      "autoCadLiveStatus": "PASS"
+    },
+    {
+      "id": "direct-distance-pointer-direction",
+      "input": "25.5",
+      "base": [10, -20],
+      "direction": [13, -16],
+      "expected": [25.3, 0.4],
+      "autoCadLiveStatus": "NOT_RUN",
+      "reason": "COM command tokens cannot establish and independently read back a live pointer direction."
+    }
+  ]
+}

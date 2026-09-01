@@ -577,3 +577,30 @@ Two capabilities remain `NOT_RUN` instead of being simulated:
 
 This is a licensed AutoCAD 2024.1.2 reference matrix, not certification
 authority. It does not prove Kuubik UI wiring or change F-053/parity scores.
+
+## Wave 16 coordinate-entry offline checkpoint (F-041/F-042/F-044)
+
+The candidate runner is `tools/autocad/run-f041-f042-f044.mjs`. It is designed
+to launch one authenticated AutoCAD 2024.1.2 process, accept only its blank
+scratch document, issue exact WCS command tokens for LINE, PLINE and MOVE, and
+validate the saved DXF independently. It never attaches to an existing process
+and never injects keyboard or window messages.
+
+The content-addressed offline fixture pairs plain `x,y`, explicit `#x,y`,
+`@dx,dy` and `@distance<angle` with the existing Kuubik double parser. The DXF
+fixture/parser independently covers LINE/LWPOLYLINE handles, layers, vertices
+and coordinate header variables, including finite-value and structural
+mutants.
+
+The AutoCAD live matrix is not complete. Bounded owned-process attempts ended
+in timeout or RPC loss before a retained scratch DXF was read back. The final
+attempt terminated its authenticated PID, but AutoCAD started unauthenticated
+PID `26220`; fail-closed cleanup left it untouched and therefore correctly
+reported that the original process set was not restored. Do not treat the
+offline fixture as AutoCAD certification.
+
+F-044 pointer-directed direct-distance entry remains `NOT_RUN`: COM command
+tokens cannot establish and independently read back a live pointer direction,
+and relative polar input is not a substitute. Escape-key cancellation and
+non-WCS UCS behavior are likewise not claimed. F-041, F-042 and F-044 remain
+uncertified, `certificationAuthority=false`, and parity scores must not change.
