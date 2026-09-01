@@ -28,6 +28,9 @@ test('desktop shell serves the built Lite v1 application from a stable origin', 
   assert.match(mainSource, /kuubik:\/\/app\/d\/local/u);
   assert.match(mainSource, /indexedDbNames\.includes\('kuubik-draw'\)/u);
   assert.match(mainSource, /scopeSize === 20/u);
+  assert.match(mainSource, /runLinePointerSmoke/u);
+  assert.match(mainSource, /linePointer\.afterLines === linePointer\.beforeLines \+ 1/u);
+  assert.match(mainSource, /!state\.orientationIndicatorPresent/u);
   assert.match(html, /<title>Kuubik Draw<\/title>/u);
 });
 

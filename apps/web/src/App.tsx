@@ -429,6 +429,14 @@ export function App() {
     pixel: { x: number; y: number };
     world: { x: number; y: number };
   } | null>(null);
+  const [lineCanvasStart, setLineCanvasStart] = useState<{
+    pixel: { x: number; y: number };
+    world: { x: number; y: number };
+  } | null>(null);
+  const [lineCanvasCursor, setLineCanvasCursor] = useState<{
+    pixel: { x: number; y: number };
+    world: { x: number; y: number };
+  } | null>(null);
   const [drawingContextMenu, setDrawingContextMenu] = useState<{
     x: number;
     y: number;
@@ -1284,6 +1292,8 @@ export function App() {
       setStatus(`${commandId}: runtime adapter puudub`);
       return;
     }
+    setLineCanvasStart(null);
+    setLineCanvasCursor(null);
     setRuntimeIntent(null);
     setActiveCommandPrompt(commandId);
     setCommandInput(`${commandId} `);
@@ -1472,6 +1482,8 @@ export function App() {
       setRuntimeHistoryIndex(runtimeCommandHistory.length + 1);
       setCommandInput("");
       setActiveCommandPrompt(null);
+      setLineCanvasStart(null);
+      setLineCanvasCursor(null);
       setRuntimeIntent(null);
       setStatus(`${committed.operation.commandId} runtime salvestatud, revision ${next.revision}`);
     } catch (error) {
@@ -1499,6 +1511,8 @@ export function App() {
     }
     setCommandInput("");
     setActiveCommandPrompt(null);
+    setLineCanvasStart(null);
+    setLineCanvasCursor(null);
     setRuntimeIntent(null);
     setStatus("Command: *Cancel*");
   }
@@ -2286,6 +2300,61 @@ export function App() {
       : `EXTEND valik: ${hit.handle} · extend`);
   }
 
+  function resolveModelCanvasPoint(
+    element: HTMLCanvasElement,
+    client: { x: number; y: number },
+    basePoint: { x: number; y: number },
+  ): { pixel: { x: number; y: number }; world: { x: number; y: number } } | null {
+    const rect = element.getBoundingClientRect();
+    if (!(rect.width > 0 && rect.height > 0)) return null;
+    const viewport = modelViewport(rect.width, rect.height, window.devicePixelRatio || 1);
+    const rawPixel = { x: client.x - rect.left, y: client.y - rect.top };
+    const rawWorld = viewportScreenToWorld(viewport, rawPixel);
+    const cycle = runtime.updateSnapCycle(document, rawWorld);
+    const resolved = runtime.precisionPointer(document, {
+      basePoint,
+      cursorPoint: rawWorld,
+      trackingAnglesRad: [0, Math.PI / 2, Math.PI, Math.PI * 1.5],
+      ...(cycle.candidateId ? { snapCandidateId: cycle.candidateId } : {}),
+    });
+    const clean = (value: number): number => {
+      const integer = Math.round(value);
+      return Number((Math.abs(value - integer) <= 1e-4 ? integer : value).toFixed(6));
+    };
+    const world = { x: clean(resolved.commit.point.x), y: clean(resolved.commit.point.y) };
+    return { world, pixel: viewportWorldToScreen(viewport, world) };
+  }
+
+  function selectLinePointFromCanvas(event: React.PointerEvent<HTMLCanvasElement>): boolean {
+    if (activeCommandPrompt !== "LINE" || !modelSpaceEditing || activeLayer.locked || event.button !== 0) return false;
+    const point = resolveModelCanvasPoint(
+      event.currentTarget,
+      { x: event.clientX, y: event.clientY },
+      lineCanvasStart?.world ?? { x: 0, y: 0 },
+    );
+    if (!point) return true;
+    event.preventDefault();
+    if (!lineCanvasStart) {
+      setLineCanvasStart(point);
+      setLineCanvasCursor(point);
+      setCommandInput(`LINE ${point.world.x},${point.world.y} `);
+      setStatus(`LINE esimene punkt: ${point.world.x},${point.world.y} · vali teine punkt`);
+      return true;
+    }
+    const start = lineCanvasStart.world;
+    setLineCanvasStart(null);
+    setLineCanvasCursor(null);
+    setStatus(`LINE ${start.x},${start.y} → ${point.world.x},${point.world.y} · salvestamine`);
+    void executeRuntimeCommand(`LINE ${start.x},${start.y} ${point.world.x},${point.world.y}`);
+    return true;
+  }
+
+  function handleModelPointerDown(event: React.PointerEvent<HTMLCanvasElement>): void {
+    event.currentTarget.focus({ preventScroll: true });
+    if (selectLinePointFromCanvas(event)) return;
+    selectModifyTargetFromCanvas(event);
+  }
+
   function openDrawingContextMenu(event: React.MouseEvent<HTMLCanvasElement>): void {
     event.preventDefault();
     if (!modelSpaceEditing || commandHistoryOpen) return;
@@ -2306,6 +2375,8 @@ export function App() {
   function cancelActiveCommandFromContextMenu(): void {
     const command = activeCommandPrompt;
     setActiveCommandPrompt(null);
+    setLineCanvasStart(null);
+    setLineCanvasCursor(null);
     setPreviewCommand(null);
     closeDrawingContextMenu();
     setStatus(command ? `Command: *Cancel* (${command})` : "Command: *Cancel*");
@@ -2339,7 +2410,7 @@ export function App() {
     lastPrecisionCursor.current = cursorPoint;
     const cycle = runtime.updateSnapCycle(document, cursorPoint);
     const resolved = runtime.precisionPointer(document, {
-      basePoint: { x: 0, y: 0 },
+      basePoint: lineCanvasStart?.world ?? { x: 0, y: 0 },
       cursorPoint,
       trackingAnglesRad: [0, Math.PI / 2, Math.PI, Math.PI * 1.5],
       ...(cycle.candidateId ? { snapCandidateId: cycle.candidateId } : {}),
@@ -2354,6 +2425,10 @@ export function App() {
       pixel,
       world: { x: Number(resolved.commit.point.x.toFixed(6)), y: Number(resolved.commit.point.y.toFixed(6)) },
     });
+    if (activeCommandPrompt === "LINE" && lineCanvasStart) {
+      const resolvedWorld = { x: Number(resolved.commit.point.x.toFixed(6)), y: Number(resolved.commit.point.y.toFixed(6)) };
+      setLineCanvasCursor({ world: resolvedWorld, pixel: viewportWorldToScreen(viewport, resolvedWorld) });
+    }
     updateStretchDrag(event);
   }
 
@@ -3895,7 +3970,7 @@ export function App() {
         <div className="ribbon-primary" aria-label="Home ribbon">
           <section className="ribbon-panel ribbon-panel-draw" aria-label="Draw panel" data-ribbon-panel="draw">
             <div className="ribbon-panel-tools">
-              <RibbonTool rowId="F-001" label="Line" icon="line" large available={runtime.canExecute("F-001")} pressed={activeCommandPrompt === "LINE"} onClick={() => beginRuntimeCommand("LINE", "LINE Specify first point · sisesta kaks punkti käsureale")} disabled={!modelSpaceEditing || activeLayer.locked} />
+              <RibbonTool rowId="F-001" label="Line" icon="line" large available={runtime.canExecute("F-001")} pressed={activeCommandPrompt === "LINE"} onClick={() => beginRuntimeCommand("LINE", "LINE · klõpsa joonestusalal esimest punkti")} disabled={!modelSpaceEditing || activeLayer.locked} />
               <div className="ribbon-tool-grid ribbon-tool-grid-dense">
                 <RibbonTool rowId="F-003" label="Rectangle" icon="rectangle" available={runtime.canExecute("F-003")} pressed={activeCommandPrompt === "RECTANGLE"} onClick={() => beginRuntimeCommand("RECTANGLE", "RECTANGLE Specify two corner points on command line")} disabled={!modelSpaceEditing || activeLayer.locked} />
                 <RibbonTool rowId="F-002" label="Polyline" icon="polyline" available={runtime.canExecute("F-002")} pressed={activeCommandPrompt === "PLINE"} onClick={() => beginRuntimeCommand("PLINE", "PLINE · sisesta vähemalt kaks punkti käsureale")} disabled={!modelSpaceEditing || activeLayer.locked} />
@@ -4673,7 +4748,7 @@ export function App() {
               data-ellipse-preview={ellipsePreview.prepared ? "true" : "false"}
               data-ellipse-preview-handle={ellipsePreview.prepared?.resultHandles[0] ?? ""}
               data-selected-handles={selectedHandles.join(",")}
-              onPointerDown={(event) => { event.currentTarget.focus({ preventScroll: true }); selectModifyTargetFromCanvas(event); }}
+              onPointerDown={handleModelPointerDown}
               onPointerMove={updateModelPointer}
               onKeyDown={cycleModelSnap}
               onPointerUp={finishStretchDrag}
@@ -4681,6 +4756,17 @@ export function App() {
               onPointerLeave={() => { if (!stretchDrag) setCursorReadout(null); }}
               onContextMenu={openDrawingContextMenu}
             />
+            {lineCanvasStart && lineCanvasCursor && <svg
+              className="line-canvas-preview"
+              data-testid="line-canvas-preview"
+              data-start-x={lineCanvasStart.world.x}
+              data-start-y={lineCanvasStart.world.y}
+              data-end-x={lineCanvasCursor.world.x}
+              data-end-y={lineCanvasCursor.world.y}
+              aria-hidden="true"
+            >
+              <line x1={lineCanvasStart.pixel.x} y1={lineCanvasStart.pixel.y} x2={lineCanvasCursor.pixel.x} y2={lineCanvasCursor.pixel.y} />
+            </svg>}
             {cursorReadout && <div
               className="cad-crosshair"
               data-testid="cad-crosshair"
@@ -4699,10 +4785,6 @@ export function App() {
               style={{ left: precisionCandidateReadback.pixel.x, top: precisionCandidateReadback.pixel.y }}
               aria-hidden="true"
             ><span /></div>}
-            <div className="view-orientation-indicator" data-testid="view-orientation-indicator" role="img" aria-label="Top view, world coordinate system">
-              <span className="view-north">N</span><span className="view-east">E</span><span className="view-south">S</span><span className="view-west">W</span>
-              <strong>TOP</strong><small>WCS</small>
-            </div>
             {drawingContextMenu && <nav
               ref={drawingContextMenuRef}
               className="cad-context-menu"

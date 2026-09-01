@@ -2,12 +2,16 @@
 
 const { app, BrowserWindow, Menu, ipcMain, protocol, session } = require('electron');
 const fs = require('node:fs/promises');
+const fsSync = require('node:fs');
+const os = require('node:os');
 const path = require('node:path');
 
 const APP_SCHEME = 'kuubik';
 const APP_HOST = 'app';
 const smokeOutputPath = process.env.KUUBIK_DRAW_SMOKE_OUTPUT || '';
 const smokeMode = process.argv.includes('--smoke-test') || Boolean(smokeOutputPath);
+const smokeUserDataPath = smokeMode ? fsSync.mkdtempSync(path.join(os.tmpdir(), 'kuubik-draw-lite-smoke-')) : '';
+if (smokeUserDataPath) app.setPath('userData', smokeUserDataPath);
 let mainWindow = null;
 let blockedNetworkRequests = 0;
 const consoleErrors = [];
@@ -90,6 +94,80 @@ async function writeSmokeReport(report, exitCode) {
   app.exit(exitCode);
 }
 
+async function runLinePointerSmoke() {
+  return mainWindow.webContents.executeJavaScript(`new Promise((resolve, reject) => {
+    void (async () => {
+      const frame = () => new Promise((done) => requestAnimationFrame(() => done()));
+      const readDocument = async () => {
+        const database = await new Promise((resolveOpen, rejectOpen) => {
+          const request = indexedDB.open('kuubik-draw');
+          request.onsuccess = () => resolveOpen(request.result);
+          request.onerror = () => rejectOpen(request.error);
+        });
+        const stored = await new Promise((resolveRead, rejectRead) => {
+          const request = database.transaction('documents', 'readonly').objectStore('documents').get('local');
+          request.onsuccess = () => resolveRead(request.result);
+          request.onerror = () => rejectRead(request.error);
+        });
+        database.close();
+        return stored;
+      };
+      const lineButton = document.querySelector('[aria-label="Ribbon Line command"]');
+      const canvas = document.querySelector('[aria-label="Kuubik Draw joonestusala"]');
+      if (!(lineButton instanceof HTMLButtonElement) || !(canvas instanceof HTMLCanvasElement)) {
+        throw new Error('LINE nupp või joonestusala puudub packaged rendererist.');
+      }
+      const before = await readDocument();
+      const beforeLines = before.entities.filter((entity) => entity.kind === 'line').length;
+      lineButton.click();
+      await frame();
+      await frame();
+      const rect = canvas.getBoundingClientRect();
+      const first = { x: rect.left + rect.width * 0.28, y: rect.top + rect.height * 0.32 };
+      const second = { x: rect.left + rect.width * 0.68, y: rect.top + rect.height * 0.68 };
+      const pointer = (type, point) => canvas.dispatchEvent(new PointerEvent(type, {
+        bubbles: true,
+        cancelable: true,
+        pointerId: 1,
+        pointerType: 'mouse',
+        isPrimary: true,
+        button: 0,
+        buttons: type === 'pointerup' ? 0 : 1,
+        clientX: point.x,
+        clientY: point.y,
+      }));
+      pointer('pointerdown', first);
+      pointer('pointerup', first);
+      await frame();
+      await frame();
+      const previewStarted = Boolean(document.querySelector('[data-testid="line-canvas-preview"]'));
+      pointer('pointermove', second);
+      await frame();
+      pointer('pointerdown', second);
+      pointer('pointerup', second);
+      const started = Date.now();
+      let after = await readDocument();
+      while (after.revision <= before.revision && Date.now() - started <= 10000) {
+        await new Promise((done) => setTimeout(done, 50));
+        after = await readDocument();
+      }
+      const afterLines = after.entities.filter((entity) => entity.kind === 'line');
+      const created = afterLines[afterLines.length - 1];
+      resolve({
+        beforeRevision: before.revision,
+        afterRevision: after.revision,
+        beforeLines,
+        afterLines: afterLines.length,
+        previewStarted,
+        previewCleared: !document.querySelector('[data-testid="line-canvas-preview"]'),
+        createdLength: created && created.kind === 'line'
+          ? Math.hypot(created.end.x - created.start.x, created.end.y - created.start.y)
+          : 0,
+      });
+    })().catch(reject);
+  })`, true);
+}
+
 async function runSmokeReadBack() {
   let report;
   let exitCode = 0;
@@ -115,6 +193,7 @@ async function runSmokeReadBack() {
             badge: badge.textContent || '',
             storageState: storage.dataset.storageState || '',
             canvas: { width: canvas.clientWidth, height: canvas.clientHeight },
+            orientationIndicatorPresent: Boolean(document.querySelector('[data-testid="view-orientation-indicator"]')),
             indexedDbNames: databases.map((entry) => entry.name).filter(Boolean),
             desktopBridge: Boolean(window.kuubikDesktop && window.kuubikDesktop.isDesktop),
           });
@@ -128,6 +207,7 @@ async function runSmokeReadBack() {
       };
       poll();
     })`, true);
+    const linePointer = await runLinePointerSmoke();
     const valid = state.title === 'Kuubik Draw'
       && state.url === 'kuubik://app/d/local'
       && state.profile === 'kuubik-draw-lite-v1'
@@ -138,7 +218,13 @@ async function runSmokeReadBack() {
       && state.canvas.width > 0
       && state.canvas.height > 0
       && state.indexedDbNames.includes('kuubik-draw')
-      && state.desktopBridge;
+      && state.desktopBridge
+      && !state.orientationIndicatorPresent
+      && linePointer.afterRevision === linePointer.beforeRevision + 1
+      && linePointer.afterLines === linePointer.beforeLines + 1
+      && linePointer.previewStarted
+      && linePointer.previewCleared
+      && linePointer.createdLength > 100;
     if (!valid) throw new Error('Portable EXE read-back ei vasta Lite v1 lepingule.');
     if (consoleErrors.length > 0) throw new Error(`Renderer kirjutas konsooli vea: ${consoleErrors[0]}`);
     report = {
@@ -149,6 +235,8 @@ async function runSmokeReadBack() {
       offlineNetworkBlocked: true,
       blockedNetworkRequests,
       consoleErrors,
+      isolatedUserData: Boolean(smokeUserDataPath),
+      linePointer,
       ...state,
     };
   } catch (error) {

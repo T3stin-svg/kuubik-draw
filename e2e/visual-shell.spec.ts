@@ -212,7 +212,7 @@ test("AutoCAD-style shell keeps all eight primary zones visible at 1920x1080", a
   const modelCanvas = page.getByLabel("Kuubik Draw joonestusala");
   const gridToggle = page.getByRole("button", { name: "GRID precision mode" });
   await expect(gridToggle).toHaveAttribute("aria-pressed", "true");
-  await expect(page.getByTestId("view-orientation-indicator")).toBeVisible();
+  await expect(page.getByTestId("view-orientation-indicator")).toHaveCount(0);
   const canvasInkPixels = () => modelCanvas.evaluate((canvas) => {
     const element = canvas as HTMLCanvasElement;
     const context = element.getContext("2d", { willReadFrequently: true });
@@ -242,7 +242,7 @@ test("AutoCAD-style shell keeps all eight primary zones visible at 1920x1080", a
       y: await crosshair.getAttribute("data-world-y"),
     },
     coordinateReadout: await page.getByTestId("coordinate-readout").textContent(),
-    viewIndicator: await page.getByTestId("view-orientation-indicator").getAttribute("aria-label"),
+    viewIndicator: null,
   };
   const modelDisplayReadback = await modelCanvas.evaluate((canvas) => {
     const element = canvas as HTMLCanvasElement;

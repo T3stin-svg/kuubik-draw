@@ -213,15 +213,8 @@ button:focus-visible, select:focus-visible, input:focus-visible, summary:focus-v
 .cad-snap-marker span { display: block; width: 100%; height: 100%; border: 2px solid currentcolor; box-sizing: border-box; transform: rotate(45deg); }
 .cad-snap-marker.snap-center span { border-radius: 50%; transform: none; }
 .cad-snap-marker.snap-midpoint span { width: 0; height: 0; border: 7px solid transparent; border-bottom-color: currentcolor; transform: translateY(-5px); }
-.view-orientation-indicator { position: absolute; z-index: 3; top: 20px; right: 24px; width: 76px; height: 82px; color: #c9d2d8; pointer-events: none; font: 9px "Segoe UI", sans-serif; text-align: center; }
-.view-orientation-indicator::before { position: absolute; top: 15px; left: 14px; width: 46px; height: 46px; content: ""; background: rgb(47 57 64 / 82%); border: 1px solid #77838b; transform: rotate(45deg); box-shadow: inset 0 0 0 1px #20272c, 0 2px 5px rgb(0 0 0 / 35%); }
-.view-orientation-indicator strong { position: absolute; z-index: 1; top: 30px; left: 0; width: 100%; color: #f0f4f6; font-size: 10px; font-weight: 600; letter-spacing: .05em; }
-.view-orientation-indicator small { position: absolute; top: 70px; left: 0; width: 100%; color: #aeb9c0; font-size: 8px; letter-spacing: .08em; }
-.view-orientation-indicator span { position: absolute; z-index: 1; width: 12px; height: 12px; line-height: 12px; }
-.view-north { top: 0; left: 32px; }
-.view-east { top: 33px; right: 0; }
-.view-south { top: 58px; left: 32px; }
-.view-west { top: 33px; left: 0; }
+.line-canvas-preview { position: absolute; z-index: 4; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.line-canvas-preview line { stroke: #00a9e8; stroke-width: 1.5; vector-effect: non-scaling-stroke; }
 .cad-context-menu {
   position: absolute;
   z-index: 20;
