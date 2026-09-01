@@ -15,6 +15,11 @@ async function answerLivePrompt(page: Page, value: string): Promise<void> {
   await prompt.locator(".live-command-next").click();
 }
 
+async function answerExpectedLivePrompt(page: Page, field: string, value: string): Promise<void> {
+  await expect(page.getByTestId("live-command-prompt")).toHaveAttribute("data-field", field);
+  await answerLivePrompt(page, value);
+}
+
 test("AutoCAD-style shell keeps all eight primary zones visible at 1920x1080", async ({ page }) => {
   const consoleErrors: string[] = [];
   page.on("console", (message) => { if (message.type() === "error") consoleErrors.push(message.text()); });
@@ -1143,12 +1148,16 @@ test("DIM and HATCH use typed prompts with atomic durable read-back", async ({ p
   const boundary = await page.getByLabel("Kuubik Draw joonestusala").getAttribute("data-selected-handles");
   expect(boundary).toBeTruthy();
   await page.getByRole("button", { name: "Ribbon Hatch command" }).click();
-  await answerLivePrompt(page, boundary!);
-  await answerLivePrompt(page, "ANSI31");
-  await answerLivePrompt(page, "0.7853981633974483");
-  await answerLivePrompt(page, "1");
-  await answerLivePrompt(page, "jah");
-  await answerLivePrompt(page, "");
+  await answerExpectedLivePrompt(page, "mode", "create");
+  await answerExpectedLivePrompt(page, "targetHandle", boundary!);
+  await answerExpectedLivePrompt(page, "patch", JSON.stringify({ pattern: "ANSI31" }));
+  await answerExpectedLivePrompt(page, "boundaryHandles", boundary!);
+  await answerExpectedLivePrompt(page, "pattern", "ANSI31");
+  await answerExpectedLivePrompt(page, "angleRad", "0.7853981633974483");
+  await answerExpectedLivePrompt(page, "scale", "1");
+  await answerExpectedLivePrompt(page, "associative", "jah");
+  await answerExpectedLivePrompt(page, "islandDetection", "normal");
+  await answerExpectedLivePrompt(page, "origin", "0,0");
   await expect(page.locator(".command-history")).toContainText("HATCH · atomic commit/read-back");
 
   await page.getByTestId("dimension-menu").locator("summary").click();
