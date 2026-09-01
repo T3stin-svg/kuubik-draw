@@ -1,26 +1,17 @@
+import liteScope from "../../../../scope/kuubik-draw-lite-v1.json";
+
 export const REIO_SCOPE_SOURCE = Object.freeze({
-  schemaVersion: 1,
-  benchmark: "AutoCAD 2024.1.2 / Windows / 2D Drafting & Annotation",
-  visualProfile: "autocad-familiar-clean",
-  unselectedMode: "visible-disabled",
-  exportedAt: "2026-08-31T12:25:36.154Z",
+  schemaVersion: liteScope.schemaVersion,
+  benchmark: liteScope.benchmark,
+  visualProfile: liteScope.visualProfile,
+  unselectedMode: liteScope.unselectedMode,
+  primaryViewport: Object.freeze({ ...liteScope.primaryViewport }),
 });
 
-export const REIO_SELECTED_ROWS = new Set([
-  "F-001", "F-002", "F-003", "F-004", "F-005", "F-006", "F-007", "F-011", "F-012", "F-014",
-  "F-015", "F-016", "F-017", "F-018", "F-019", "F-020", "F-021", "F-022", "F-023", "F-024",
-  "F-027", "F-031", "F-032", "F-034", "F-038", "F-041", "F-042", "F-044", "F-045", "F-046",
-  "F-047", "F-048", "F-049", "F-050", "F-051", "F-052", "F-053", "F-057", "F-058", "F-059",
-  "F-060", "F-061", "F-062", "F-063", "F-064", "F-065", "F-066", "F-067", "F-068", "F-072",
-  "F-073", "F-074", "F-075", "F-076", "F-077", "F-078", "F-079", "F-080", "F-086", "F-087",
-  "F-088", "F-089", "F-090", "F-091", "F-096", "F-097", "F-098", "F-099", "F-100", "F-101",
-  "F-102", "F-103", "F-104", "F-105", "F-106", "F-107", "F-109", "F-110", "F-111", "F-112",
-  "F-113", "F-114", "F-115", "F-117", "F-121", "F-122", "F-123", "F-127", "F-128", "F-129",
-  "F-130", "F-131", "F-132", "F-133",
-] as const);
+export const REIO_SELECTED_ROWS: ReadonlySet<string> = new Set(liteScope.selectedRowIds);
 
-export const UNSCOPED_COMMAND_MESSAGE = "Pole sinu töövoogu valitud";
+export const UNSCOPED_COMMAND_MESSAGE = "Pole Lite v1 töövoos";
 
 export function isInReioScope(rowId: string): boolean {
-  return REIO_SELECTED_ROWS.has(rowId as never);
+  return REIO_SELECTED_ROWS.has(rowId);
 }
