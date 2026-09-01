@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "rowId": "F-061",
+  "status": "NOT_RUN",
+  "certificationAuthority": false,
+  "reason": "AutoCAD scratch-process ownership was not established during this worktree run.",
+  "runner": "NOT_PREPARED_OUTSIDE_OWNED_PATHS",
+  "coveredByLocalGates": [
+    "horizontal/vertical/rotated core geometry",
+    "manual/default text placement and override",
+    "stable source handles in Kuubik",
+    "preview equals commit",
+    "atomic Undo/Redo",
+    "session 4 DXF serialization contract"
+  ],
+  "remainingCertificationRequirements": [
+    "owned AutoCAD 2024.1.2 scratch-process run",
+    "session 4 implementation of the documented DXF contract",
+    "AutoCAD source-object associativity read-back",
+    "same live workflow comparison in AutoCAD and Kuubik",
+    "independent saved-file read-back"
+  ]
+}

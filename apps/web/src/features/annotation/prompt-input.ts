@@ -77,7 +77,15 @@ export function buildAnnotationPromptInput(
   switch (commandId) {
     case "DIMLINEAR": {
       const linked = association(values, context);
-      return { commandId, args: { ...common(document, values, context), first: required<CadPoint2>(values, "first"), second: required<CadPoint2>(values, "second"), dimensionLinePoint: required<CadPoint2>(values, "dimensionLinePoint"), axis: required<"horizontal" | "vertical">(values, "axis"), ...(linked.anchors ? { anchors: linked.anchors } : {}) }, ...(linked.targetHandles ? { targetHandles: linked.targetHandles } : {}) };
+      const axis = required<"horizontal" | "vertical" | "rotated">(values, "axis");
+      const rotationRad = optional<number>(values, "rotationRad");
+      const textPoint = optional<CadPoint2>(values, "textPoint");
+      const overrideText = optional<string>(values, "overrideText");
+      if (axis === "rotated" && (rotationRad === undefined || !Number.isFinite(rotationRad))) throw new RangeError("Rotated DIMLINEAR requires a finite rotationRad.");
+      if (axis !== "rotated" && rotationRad !== undefined) throw new RangeError("Horizontal/vertical DIMLINEAR cannot include rotationRad.");
+      const shared = { ...common(document, values, context), first: required<CadPoint2>(values, "first"), second: required<CadPoint2>(values, "second"), dimensionLinePoint: required<CadPoint2>(values, "dimensionLinePoint"), ...(textPoint ? { textPoint } : {}), ...(overrideText === undefined ? {} : { overrideText }), ...(linked.anchors ? { anchors: linked.anchors } : {}) };
+      const args = axis === "rotated" ? { ...shared, axis, rotationRad: rotationRad! } : { ...shared, axis };
+      return { commandId, args, ...(linked.targetHandles ? { targetHandles: linked.targetHandles } : {}) };
     }
     case "DIMALIGNED": {
       const linked = association(values, context);

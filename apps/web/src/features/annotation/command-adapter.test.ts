@@ -19,7 +19,7 @@ function fixture(): KDrawDocumentV1 {
 describe("F-057..F-068 typed annotation command adapter", () => {
   it("declares a concrete prompt/options plan for every panel intent", () => {
     expect(ANNOTATION_TOOLS.every((tool) => annotationPromptPlan(tool.id).fields.length > 0)).toBe(true);
-    expect(annotationPromptPlan("DIMLINEAR").fields.find((field) => field.id === "axis")?.choices).toEqual(["horizontal", "vertical"]);
+    expect(annotationPromptPlan("DIMLINEAR").fields.find((field) => field.id === "axis")?.choices).toEqual(["horizontal", "vertical", "rotated"]);
     expect(annotationPromptPlan("HATCH").fields.map((field) => field.id)).toContain("associative");
   });
 

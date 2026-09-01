@@ -236,3 +236,27 @@ Eleventh-wave (work14) F-068 correction additions:
   subset byte-identically. Edge/spline paths, group-97 sources and native associativity are rejected;
 - AutoCAD plus Kuubik paired live execution is `NOT_RUN` while the precision worker owns AutoCAD.
   No parity score is changed and F-068 remains below `1.00`.
+
+Twelfth-wave (work17) F-061 DIMLINEAR hardening additions:
+
+- horizontal, vertical and rotated variants retain true measured origins and an explicit axis or
+  rotation contract; orientation is never inferred from the measured-origin vector;
+- default and manual text positions are distinct, source overrides preserve `<>`, and layer,
+  dimension-style, handle and source-anchor identity survive associative geometry updates;
+- case-insensitive stable-handle resolution updates measured origins without moving the dimension
+  line or manual text point; orphan deletion remains atomic fail-closed;
+- prompt/planner tests prove preview equals commit and each create or associative geometry change is
+  one Undo/Redo step;
+- the session 4 integration contract specifies H/V/Rotated group 50, groups 10/11/13/14,
+  group-70 manual-text bit, group 1 override and group 3 style, plus fail-closed native
+  associativity. DXF adapter implementation/read-back remains `NOT_RUN` and outside this worktree's
+  file ownership;
+- the evidence runner test ratchets AutoCAD and DXF status to `NOT_RUN`; no AutoCAD process or
+  outside-ownership runner was created. F-061 remains below `1.00`.
+
+Targeted F-061 verification passed 5 files / 11 tests. Final repository regression passed 283
+Vitest files / 1238 tests; the unchanged session-4 DXF gate passed 31 files / 79 tests. Repository
+typecheck, lint, production build, public-tree scan (1840 files), license gate (119 installed
+packages) and `git diff --check` passed. The build retained the known Vite warning for a minified
+chunk larger than 500 kB. No DXF/PDF adapter, App/global CSS, package/lock, shared index,
+scope/parity/security file or F-score was changed.

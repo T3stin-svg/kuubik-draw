@@ -26,6 +26,7 @@ import {
   type CadChange,
   type CadSession,
   type DimensionBaseArgs,
+  type LinearDimensionArgs,
   type HatchArgs,
   type HatchEditPatch,
   type MTextArgs,
@@ -50,7 +51,7 @@ type MLeaderArgs = Parameters<typeof createMLeader>[1];
 interface WithTargets { targetHandles?: string[] }
 
 export type AnnotationCommandInput =
-  | ({ commandId: "DIMLINEAR"; args: DimensionBaseArgs & { axis: "horizontal" | "vertical" } } & WithTargets)
+  | ({ commandId: "DIMLINEAR"; args: LinearDimensionArgs } & WithTargets)
   | ({ commandId: "DIMALIGNED"; args: DimensionBaseArgs } & WithTargets)
   | ({ commandId: "DIMANGULAR"; args: AngularArgs } & WithTargets)
   | ({ commandId: "DIMRADIUS"; args: RadialArgs } & WithTargets)

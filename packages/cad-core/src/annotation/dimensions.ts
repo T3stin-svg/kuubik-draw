@@ -102,7 +102,7 @@ function validateAnchorBindings(document: KDrawDocumentV1, kind: CadDimension["d
 
 function baseDimension(
   document: KDrawDocumentV1,
-  args: { handle: string; layerId: string; styleId: string; dimensionKind: CadDimension["dimensionKind"]; definitionPoints: CadPoint2[]; anchors?: StableEntityAnchor[]; linearAxis?: "horizontal" | "vertical"; overrideText?: string },
+  args: { handle: string; layerId: string; styleId: string; dimensionKind: CadDimension["dimensionKind"]; definitionPoints: CadPoint2[]; anchors?: StableEntityAnchor[]; linearAxis?: "horizontal" | "vertical"; linearRotationRad?: number; textPlacement?: "default" | "manual"; overrideText?: string },
 ): CadDimension {
   if (!args.handle.trim()) throw new TypeError("Dimension handle is required.");
   if (handleExists(document, args.handle)) throw new RangeError(`Duplicate entity handle: ${args.handle}.`);
@@ -123,6 +123,8 @@ function baseDimension(
     associative: (args.anchors?.length ?? 0) > 0,
     anchors: structuredClone(args.anchors ?? []),
     ...(args.linearAxis ? { linearAxis: args.linearAxis } : {}),
+    ...(args.linearRotationRad === undefined ? {} : { linearRotationRad: args.linearRotationRad }),
+    ...(args.textPlacement ? { textPlacement: args.textPlacement } : {}),
   });
 }
 
@@ -133,15 +135,34 @@ export interface DimensionBaseArgs {
   first: CadPoint2;
   second: CadPoint2;
   dimensionLinePoint: CadPoint2;
+  textPoint?: CadPoint2;
   anchors?: StableEntityAnchor[];
   overrideText?: string;
 }
 
-export function createLinearDimension(document: KDrawDocumentV1, args: DimensionBaseArgs & { axis: "horizontal" | "vertical" }): CadDimension {
+export type LinearDimensionArgs = DimensionBaseArgs & (
+  | { axis: "horizontal" | "vertical"; rotationRad?: never }
+  | { axis: "rotated"; rotationRad: number }
+);
+
+export function createLinearDimension(document: KDrawDocumentV1, args: LinearDimensionArgs): CadDimension {
   const first = finitePoint(args.first, "First extension point");
   const second = finitePoint(args.second, "Second extension point");
   const line = finitePoint(args.dimensionLinePoint, "Dimension line point");
-  return baseDimension(document, { ...args, dimensionKind: "linear", definitionPoints: [first, second, line, line], linearAxis: args.axis });
+  const rotationRad = args.axis === "rotated" ? args.rotationRad : undefined;
+  if (args.axis === "rotated" && !Number.isFinite(rotationRad)) throw new RangeError("Rotated linear dimension requires a finite rotation.");
+  const direction = args.axis === "horizontal" ? { x: 1, y: 0 } : args.axis === "vertical" ? { x: 0, y: 1 } : { x: Math.cos(rotationRad!), y: Math.sin(rotationRad!) };
+  if (Math.abs(dot(subtract(second, first), direction)) <= EPSILON) throw new RangeError("Linear dimension requires distinct projected extension points.");
+  const firstProjection = add(line, direction, dot(subtract(first, line), direction));
+  const secondProjection = add(line, direction, dot(subtract(second, line), direction));
+  const text = args.textPoint ? finitePoint(args.textPoint, "Dimension text point") : { x: (firstProjection.x + secondProjection.x) / 2, y: (firstProjection.y + secondProjection.y) / 2 };
+  return baseDimension(document, {
+    ...args,
+    dimensionKind: "linear",
+    definitionPoints: [first, second, line, text],
+    ...(args.axis === "rotated" ? { linearRotationRad: rotationRad! } : { linearAxis: args.axis }),
+    textPlacement: args.textPoint ? "manual" : "default",
+  });
 }
 
 export function createAlignedDimension(document: KDrawDocumentV1, args: DimensionBaseArgs): CadDimension {
@@ -218,7 +239,8 @@ export function createBaselineDimensions(
 }
 
 export function resolveStableAnchor(document: KDrawDocumentV1, anchor: StableEntityAnchor): CadPoint2 | null {
-  const entity = document.entities.find((candidate) => candidate.handle === anchor.handle);
+  const normalizedHandle = anchor.handle.toLocaleUpperCase("en-US");
+  const entity = document.entities.find((candidate) => candidate.handle.toLocaleUpperCase("en-US") === normalizedHandle);
   if (!entity) return null;
   if (anchor.feature === "start" && entity.kind === "line") return structuredClone(entity.start);
   if (anchor.feature === "end" && entity.kind === "line") return structuredClone(entity.end);
@@ -249,14 +271,14 @@ export interface AssociationUpdateResult {
 }
 
 export function updateAssociativeDimensions(document: KDrawDocumentV1, changedHandles: readonly string[]): AssociationUpdateResult {
-  const changed = new Set(changedHandles);
+  const changed = new Set(changedHandles.map((handle) => handle.toLocaleUpperCase("en-US")));
   const changes: EntityChange[] = [];
   const updatedHandles: string[] = [];
   const broken: AssociationUpdateResult["broken"] = [];
   for (const entity of document.entities) {
     if (entity.kind !== "dimension") continue;
     const association = readDimensionAssociation(entity);
-    if (!association?.associative || !association.anchors.some((anchor) => changed.has(anchor.handle))) continue;
+    if (!association?.associative || !association.anchors.some((anchor) => changed.has(anchor.handle.toLocaleUpperCase("en-US")))) continue;
     if (document.layers.find((layer) => layer.id === entity.layerId)?.locked) throw new RangeError(`Associative dimension ${entity.handle} is on locked layer ${entity.layerId}.`);
     const resolved = association.anchors.map((anchor) => resolveStableAnchor(document, anchor));
     resolved.forEach((point, index) => {
@@ -417,7 +439,9 @@ export function deriveDimensionPresentation(document: KDrawDocumentV1, dimension
   if (dimension.dimensionKind === "linear" || dimension.dimensionKind === "aligned") {
     const first = point(0); const second = point(1); const linePoint = point(2);
     const direction = dimension.dimensionKind === "linear"
-      ? (association?.linearAxis === "vertical" ? { x: 0, y: 1 } : { x: 1, y: 0 })
+      ? (association?.linearRotationRad !== undefined
+          ? { x: Math.cos(association.linearRotationRad), y: Math.sin(association.linearRotationRad) }
+          : association?.linearAxis === "vertical" ? { x: 0, y: 1 } : { x: 1, y: 0 })
       : normalize(subtract(second, first));
     const normal = { x: -direction.y, y: direction.x };
     const firstProjection = add(linePoint, direction, dot(subtract(first, linePoint), direction));
@@ -489,7 +513,9 @@ export function deriveDimensionPresentation(document: KDrawDocumentV1, dimension
     handle: dimension.handle,
     styleId: dimension.styleId,
     measurement,
-    formattedText: dimension.overrideText ?? formatMeasurement(measurement, angular, document, style, profile),
+    formattedText: dimension.overrideText === undefined
+      ? formatMeasurement(measurement, angular, document, style, profile)
+      : dimension.overrideText.replaceAll("<>", formatMeasurement(measurement, angular, document, style, profile)),
     text: { position: textPosition, rotationRad: textRotationRad, height: style.textHeight * style.scale, gap: textGap, horizontalPlacement, verticalPlacement },
     dimensionLines,
     extensionLines,
