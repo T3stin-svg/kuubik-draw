@@ -97,6 +97,7 @@ test("F-020 MIRROR preselection defaults to keeping sources, exports DXF and und
     { handle: "11", vertices: [{ x: 190, y: 10, z: 0 }, { x: 20, y: 90, z: 0 }] },
   ]);
   await page.getByRole("button", { name: "UNDO", exact: true }).click();
+  await expect(page.getByText(/UNDO taastatud, revision/u)).toBeVisible();
   expect((await readDocument(page)).entities.map((entity) => entity.handle)).toEqual(["10"]);
   expect(consoleErrors).toEqual([]);
 });
@@ -178,6 +179,7 @@ test("F-020 MIRROR standard 12-family matrix persists and undoes in one operatio
     args: { axisStart: f020AxisStart, axisEnd: f020AxisEnd, eraseSource: false, mirrtext: 0 },
   });
   await page.getByRole("button", { name: "UNDO", exact: true }).click();
+  await expect(page.getByText(/UNDO taastatud, revision/u)).toBeVisible();
   const restored = await readDocument(page);
   expect(restored.entities).toEqual(f020StandardDocument.entities);
   await captureJson("F-020-browser-standard-matrix.json", {
